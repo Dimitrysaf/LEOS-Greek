@@ -78,6 +78,7 @@ public abstract class ComparisonDelegate<T extends XmlDocument> {
         String markedContent = getComparedContent(oldVersion, newVersion);
         final Document document = XercesUtils.createXercesDocument(markedContent.getBytes(XmlHelper.UTF_8));
         markedContent = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
+        markedContent = new String(LeosXercesUtils.removeHighlights(document), UTF_8);
         return markedContent;
     }
 

@@ -37,6 +37,7 @@ define(function aknLevelNumProfileModule(require) {
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
     plugins.push(require("plugins/leosAnnexIndentList/leosAnnexIndentListPlugin"));
     plugins.push(require("plugins/aknLevelNum/aknLevelNumPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={
@@ -62,7 +63,7 @@ define(function aknLevelNumProfileModule(require) {
         // custom configuration to load (none if empty)
         customConfig: "",
         // comma-separated list of plugins to be loaded
-        plugins:  "toolbar,indent, undo",
+        plugins:  "toolbar,indent,undo,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -81,6 +82,7 @@ define(function aknLevelNumProfileModule(require) {
             { name: 'save', items: [ 'leosInlineSave' , 'leosInlineSaveClose', 'leosInlineCancel' ] },
             { name: 'clipboard', items: [ 'Undo', 'Redo' ] },
             { name: 'paragraph', items: ['Outdent', 'Indent'] },
+            { name : "colors" , items: [ 'BGColor' ] }
         ],
         //show toolbar on startup
         startupFocus: 'end',

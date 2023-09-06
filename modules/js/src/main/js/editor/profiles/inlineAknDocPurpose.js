@@ -44,6 +44,7 @@ define(function aknDocPurposeModule(require) {
     plugins.push(require("plugins/leosSpecialChar/leosSpecialCharPlugin"));
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
 
     var pluginNames=[];
@@ -69,7 +70,7 @@ define(function aknDocPurposeModule(require) {
         customConfig: "",
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,enterkey,button,dialog,dialogui,"
-        + "widget,lineutils,basicstyles,fakeobjects,specialchar,contextmenu,menubutton,pastetext",
+        + "widget,lineutils,basicstyles,fakeobjects,specialchar,contextmenu,menubutton,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -90,7 +91,8 @@ define(function aknDocPurposeModule(require) {
             {name: 'basicstyles', items: ['Subscript', 'Superscript', 'TransformTextSwitcher']},
             {name: 'insert', items: ['Mathjax', 'SpecialChar']},
             {name: 'tools', items: ['LeosShowBlocks']},
-            {name: "mode", items: ['Sourcedialog']}
+            {name: "mode", items: ['Sourcedialog']},
+            {name: 'colors', items: ['BGColor']}
         ],
         //show toolbar on startup
         startupFocus: 'end',

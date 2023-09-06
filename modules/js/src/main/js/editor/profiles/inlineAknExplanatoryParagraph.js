@@ -66,6 +66,7 @@ define(function aknExplanatoryParagraphProfileModule(require) {
     plugins.push(require("plugins/aknHtmlExplanatoryHeadingAlign/aknHtmlExplanatoryHeadingAlignPlugin"));
     plugins.push(require("plugins/aknHtmlUnderline/aknHtmlUnderlinePlugin"));
     plugins.push(require("plugins/aknHtmlStrikeThrough/aknHtmlStrikeThroughPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
 
     var pluginNames=[];
@@ -94,7 +95,7 @@ define(function aknExplanatoryParagraphProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,enterkey,button,dialog,dialogui,"
             + "widget,lineutils,basicstyles," + "indent,"
-            + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext",
+            + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -139,6 +140,9 @@ define(function aknExplanatoryParagraphProfileModule(require) {
         }, {
             name : "mode",
             items: [ "Sourcedialog" ]
+        }, {
+            name : "colors",
+            items: [ "BGColor" ]
         } ],
         //show toolbar on startup
         startupFocus: 'end',

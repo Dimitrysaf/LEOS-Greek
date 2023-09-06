@@ -61,7 +61,7 @@ define(function aknInlineClauseProfileModule(require) {
         plugins: "wysiwygarea,elementspath,undo,"
                  + "button,dialog,dialogui",
         // comma-separated list of toolbar button names that must not be rendered
-        removeButtons: "",
+        removeButtons: "TextColor",
         // comma-separated list of additional plugins to be loaded
         extraPlugins: extraPlugins,
         // disable Advanced Content Filter (allow all content)

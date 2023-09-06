@@ -35,6 +35,7 @@ define(function aknCrossHeadingProfileModule(require) {
     plugins.push(require("plugins/leosXmlEntities/leosXmlEntitiesPlugin"));
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
 
     var pluginNames=[];
@@ -63,7 +64,7 @@ define(function aknCrossHeadingProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,button,dialog,dialogui,"
             + "widget,lineutils,basicstyles," + "indent,"
-            + "fakeobjects,specialchar,menubutton,mathjax,pastetext",
+            + "fakeobjects,specialchar,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -82,6 +83,7 @@ define(function aknCrossHeadingProfileModule(require) {
             {name: 'save', items: ['leosInlineSave', 'leosInlineSaveClose', 'leosInlineCancel']},
             {name: 'clipboard', items: ['Cut', 'Copy', 'Paste', '-', 'Undo', 'Redo']},
             {name: 'insert', items: ['SpecialChar']},
+            {name: 'colors', items: ['BGColor']}
         ],
         //show toolbar on startup
         startupFocus: 'end',

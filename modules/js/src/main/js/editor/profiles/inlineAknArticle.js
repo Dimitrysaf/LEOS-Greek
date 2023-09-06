@@ -58,6 +58,7 @@ define(function aknInlineArticleProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -82,7 +83,7 @@ define(function aknInlineArticleProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,enterkey,button,dialog,dialogui,"
                 + "widget,lineutils,basicstyles," + "indent,"
-                + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext",
+                + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -108,7 +109,8 @@ define(function aknInlineArticleProfileModule(require) {
             {name: 'insert', items: ['Mathjax', 'Table', 'SpecialChar']},
             {name: 'tools', items: ['LeosShowBlocks']},
             {name: "mode", items: ['Sourcedialog']},
-            {name: 'trackChanges', items: ['toggleDisplay']}
+            {name: 'trackChanges', items: ['toggleDisplay']},
+            {name: 'colors', items: ['BGColor']}
         ],
         //show toolbar on startup
         startupFocus: 'end',

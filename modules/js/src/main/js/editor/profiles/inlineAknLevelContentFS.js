@@ -51,6 +51,7 @@ define(function aknLevelContentFinancialProfileModule(require) {
     plugins.push(require("plugins/leosElementMergeHandler/leosElementMergeHandlerPlugin"));
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={
@@ -78,7 +79,7 @@ define(function aknLevelContentFinancialProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,enterkey,button,dialog,dialogui,"
             + "widget,lineutils,basicstyles,"
-            + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext",
+            + "fakeobjects,specialchar,table,tableresize,tabletools,tableselection,contextmenu,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
@@ -102,7 +103,8 @@ define(function aknLevelContentFinancialProfileModule(require) {
             { name: 'tools', items: [ 'LeosShowBlocks' ] },
             '/',
             { name: 'splitmerge', items: [ 'leosHierarchicalElementShiftEnterHandler', 'leosElementMerge', 'Table' ] },
-            { name : "mode" , items: [ 'Sourcedialog' ] }
+            { name : "mode" , items: [ 'Sourcedialog' ] },
+            { name : "colors" , items: [ 'BGColor' ] }
         ],
         //show toolbar on startup
         startupFocus: 'end',

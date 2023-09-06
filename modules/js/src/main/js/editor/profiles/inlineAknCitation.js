@@ -47,6 +47,7 @@ define(function aknCitationProfileModule(require) {
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -72,7 +73,7 @@ define(function aknCitationProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath," +
         "clipboard,undo,pastefromword,basicstyles,specialchar,enterkey," +
-        "button,dialog,dialogui,contextmenu,menubutton,widget",
+        "button,dialog,dialogui,contextmenu,menubutton,widget,colorbutton",
         // comma-separated list of toolbar button names that must not be rendered
         removeButtons: "Bold,Italic,Underline,Strike,TextColor,PasteFromWord",
         // comma-separated list of additional plugins to be loaded
@@ -123,6 +124,8 @@ define(function aknCitationProfileModule(require) {
             name : "mode"
         }, {
             name : "about"
+        },{
+            name : "colors"
         } ]
     };
     // adding the specific configs coming from the plugins.
