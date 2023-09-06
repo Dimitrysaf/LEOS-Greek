@@ -11,14 +11,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.leos.repository;
+package eu.europa.ec.leos.repository.security.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
+import java.io.IOException;
 
-@Configuration
-@Import(ApplicationConfiguration.class)
-@ImportResource("classpath:eu/europa/ec/leos/repository/repositoryContext.xml")
-public class RepositoryConfiguration {
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
+
+@Component
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
+	@Override
+	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+	}
 }

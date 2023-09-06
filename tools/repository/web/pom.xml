@@ -33,17 +33,18 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-        </dependency>
-        <dependency>
             <groupId>eu.europa.ec.leos.repository</groupId>
             <artifactId>config</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.leos.repository</groupId>
-            <artifactId>repository-server</artifactId>
+            <artifactId>security</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.leos.repository</groupId>
+            <artifactId>server</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -75,6 +76,12 @@
                         <phase>none</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

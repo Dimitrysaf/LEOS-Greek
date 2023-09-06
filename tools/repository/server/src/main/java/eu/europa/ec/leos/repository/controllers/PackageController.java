@@ -13,12 +13,11 @@
  */
 package eu.europa.ec.leos.repository.controllers;
 
-import eu.europa.ec.leos.repository.controllers.requests.CreatePackageRequest;
-import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
-import eu.europa.ec.leos.repository.exceptions.RepositoryException;
-import eu.europa.ec.leos.repository.model.LeosDocumentList;
-import eu.europa.ec.leos.repository.services.PackageService;
-import eu.europa.ec.leos.repository.utils.RestPreconditions;
+import static com.sun.jndi.toolkit.url.UrlUtil.decode;
+
+import java.net.MalformedURLException;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,20 +25,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import eu.europa.ec.leos.repository.controllers.requests.CreatePackageRequest;
+import eu.europa.ec.leos.repository.controllers.requests.FindDocumentsRequest;
+import eu.europa.ec.leos.repository.exceptions.RepositoryException;
+import eu.europa.ec.leos.repository.model.LeosDocumentList;
 import eu.europa.ec.leos.repository.model.Package;
+import eu.europa.ec.leos.repository.services.PackageService;
+import eu.europa.ec.leos.repository.utils.RestPreconditions;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import javax.validation.Valid;
-import java.net.MalformedURLException;
-
-import static com.sun.jndi.toolkit.url.UrlUtil.decode;
 
 @RestController
 @Tag(name = "Package API", description = "Package API")
@@ -159,6 +172,18 @@ public class PackageController {
         return ResponseEntity.ok(pkg);
     }
 
-    @RequestMapping("/test")
-    public String test() { return "Test RESTful service"; }
+    @RequestMapping(value = {"/test"}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<?> test() {
+        ObjectNode response = new ObjectMapper().createObjectNode();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            UserDetails userDetails = (UserDetails)authentication.getPrincipal();
+            response.put("username", userDetails.getUsername());
+            response.put("description", "Test RESTful service. User authenticated.");
+        } else {
+            response.put("description", "Test RESTful service. No user authenticated.");
+        }
+        response.put("timestamp", System.currentTimeMillis());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
