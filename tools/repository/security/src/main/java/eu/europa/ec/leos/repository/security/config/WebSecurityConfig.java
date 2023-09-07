@@ -33,6 +33,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.cache.SpringCacheBasedUserCache;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.firewall.StrictHttpFirewall;
 import org.springframework.web.client.RestTemplate;
 
 import com.github.benmanes.caffeine.cache.Cache;
@@ -104,6 +105,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				return true;
 			}
 		};
+	}
+
+	@Bean
+	public StrictHttpFirewall httpFirewall() {
+		StrictHttpFirewall firewall = new StrictHttpFirewall();
+		firewall.setAllowUrlEncodedPercent(true);
+		return firewall;
 	}
 
 	@Bean
