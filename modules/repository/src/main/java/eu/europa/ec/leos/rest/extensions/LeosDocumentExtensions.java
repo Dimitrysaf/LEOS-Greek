@@ -368,22 +368,19 @@ public class LeosDocumentExtensions {
     }
 
     private static List<String> getMilestoneComments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
+        Object milestoneComments = document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.MILESTONE_COMMENTS));
         try {
-            String comment = document.getComments();
-            String[] comments = comment.split("::");
-            if (comments.length == 2) {
-                ObjectMapper mapper = new ObjectMapper();
-                String milestoneComments = comments[1];
-                try {
-                    return mapper.readValue(milestoneComments, List.class);
-                } catch (JsonProcessingException e) {
-                    return Arrays.asList(milestoneComments);
-                }
+            if (milestoneComments instanceof List) {
+                return (List<String>) milestoneComments;
             } else {
-                return new ArrayList<>();
+                return new ArrayList<String>() {
+                    {
+                        add(milestoneComments.toString());
+                    }
+                };
             }
         } catch (Exception e) {
-            return new ArrayList<>();
+            return new ArrayList<String>();
         }
     }
 
@@ -476,41 +473,26 @@ public class LeosDocumentExtensions {
     }
 
     private static String getComments(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        try {
-            String comment = document.getComments();
-            String[] comments = comment.split("::");
-            if (comments.length >= 1) {
-                String currentComments = comments[0];
-                return currentComments;
-            } else {
-                return comment;
-            }
-        } catch (Exception e) {
-            return document.getComments();
-        }
+        return document.getComments();
     }
 
     private static List<String> getMilestoneCommentsForLegDocument(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        try {
-            String comment = document.getComments();
-            String[] comments = comment.split("::");
-            if (comments.length >= 1) {
-                String currentComments = comments[0];
-                return Arrays.asList(currentComments);
-            } else {
-                return Arrays.asList(comment);
-            }
-        } catch (Exception e) {
-            return Arrays.asList(document.getComments());
-        }
+        return Arrays.asList(document.getComments());
     }
 
     private static List<String> getClonedMilestoneId(eu.europa.ec.leos.rest.support.model.LeosDocument document) {
-        ObjectMapper mapper = new ObjectMapper();
-        String clonedMilestoneIds = (String) document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID));
+        Object clonedMilestoneIds = document.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID));
         try {
-            return clonedMilestoneIds != null ? mapper.readValue(clonedMilestoneIds, List.class) : new ArrayList<>();
-        } catch (JsonProcessingException e) {
+            if (clonedMilestoneIds instanceof List) {
+                return (List<String>) clonedMilestoneIds;
+            } else {
+                return new ArrayList<String>() {
+                    {
+                        add(clonedMilestoneIds.toString());
+                    }
+                };
+            }
+        } catch (Exception e) {
             return new ArrayList<>();
         }
     }

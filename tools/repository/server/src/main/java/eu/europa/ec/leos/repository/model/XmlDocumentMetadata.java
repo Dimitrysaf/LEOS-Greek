@@ -15,15 +15,20 @@ package eu.europa.ec.leos.repository.model;
 
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
+import eu.europa.ec.leos.repository.entities.DocumentProperties;
 import eu.europa.ec.leos.repository.entities.DocumentPropertiesV;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class XmlDocumentMetadata {
     private String category;
@@ -150,8 +155,20 @@ public class XmlDocumentMetadata {
             metadataMap.put("collaborators", this.getCollaborators());
         }
 
-        for (DocumentPropertyValues propValue : otherMetadata) {
-            metadataMap.put(propValue.getPropertyId().getPropertyName(), propValue.getPropertyValue());
+        Map<DocumentProperties, List<DocumentPropertyValues>> otherMetadataGrouped =
+                otherMetadata.stream().collect(Collectors.groupingBy(m -> m.getPropertyId()));
+        for (Map.Entry<DocumentProperties, List<DocumentPropertyValues>> prop : otherMetadataGrouped.entrySet()) {
+            if (prop.getValue().size() == 1) {
+                metadataMap.put(prop.getKey().getPropertyName(), prop.getValue().get(0).getPropertyValue());
+            } else {
+                Collections.sort(prop.getValue(), new Comparator<DocumentPropertyValues>(){
+                    public int compare(DocumentPropertyValues v1, DocumentPropertyValues v2) {
+                        return v1.getAuditCDate().compareTo(v2.getAuditCDate());
+                    }
+                });
+                List<String> values = prop.getValue().stream().map(v -> v.getPropertyValue()).collect(Collectors.toList());
+                metadataMap.put(prop.getKey().getPropertyName(), values);
+            }
         }
         return metadataMap;
     }

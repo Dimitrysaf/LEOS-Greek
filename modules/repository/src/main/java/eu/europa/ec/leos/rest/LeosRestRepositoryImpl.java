@@ -68,7 +68,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static eu.europa.ec.leos.rest.support.RepositoryUtil.addMilestoneCommentsToComments;
 import static eu.europa.ec.leos.rest.support.RepositoryUtil.updateDocumentProperties;
 import static eu.europa.ec.leos.rest.support.RepositoryUtil.updateMilestoneCommentsProperties;
 import static java.util.Collections.emptyList;
@@ -375,7 +374,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         logger.trace("Updating document content... [id=" + id + ", comment=" + comment + ']');
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id),
-                updateMilestoneCommentsProperties(null, emptyList()), content, versionType, comment,
+                updateMilestoneCommentsProperties(emptyList()), content, versionType, comment,
                 securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
         return toLeosDocument(doc, type, true)
@@ -441,7 +440,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentCache", keyGenerator = "referenceFromIdKeyGenerator") })
     public <D extends LeosDocument> D updateDocument(String id, List<Collaborator> collaborators, Class<? extends D> type) {
         logger.trace("Updating document collaborators... [id=" + id + ']');
-        Map<String, Object> properties = new HashMap<>(updateMilestoneCommentsProperties(null, emptyList()));
+        Map<String, Object> properties = new HashMap<>(updateMilestoneCommentsProperties(emptyList()));
 
         List<Collaborator> collaboratorUsers = collaborators
                 .stream()
@@ -467,8 +466,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments, VersionType versionType, String comment, Class<? extends D> type) {
         logger.trace("Updating document metadata and content... [id=" + id + ", comment=" + comment + ']');
 
-        Map<String, Object> properties = updateMilestoneCommentsProperties(null, milestoneComments);
-        comment = addMilestoneCommentsToComments(comment, milestoneComments);
+        Map<String, ?> properties = updateMilestoneCommentsProperties(milestoneComments);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), properties, content, versionType, comment, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 
@@ -486,7 +484,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> D updateMilestoneComments(String id, List<String> milestoneComments, Class<? extends D> type) {
         logger.trace("Updating document metadata... [id=" + id + ']');
 
-        Map<String, Object> properties = updateMilestoneCommentsProperties(null, milestoneComments);
+        Map<String, ?> properties = updateMilestoneCommentsProperties(milestoneComments);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(extractRefFromId(id), extractVersionIdFromId(id), properties, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
 

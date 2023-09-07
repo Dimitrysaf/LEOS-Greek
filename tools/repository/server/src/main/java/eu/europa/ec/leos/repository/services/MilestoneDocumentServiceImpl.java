@@ -318,8 +318,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
 
     public long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
-        StringBuilder queryBuild = new StringBuilder(
-                String.format("SELECT COUNT(m) FROM MilestoneV m WHERE", packageName));
+        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(m) FROM MilestoneV m WHERE");
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
         }

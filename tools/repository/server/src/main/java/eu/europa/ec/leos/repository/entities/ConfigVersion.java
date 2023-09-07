@@ -20,12 +20,9 @@ import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -84,8 +81,6 @@ public class ConfigVersion implements Serializable {
     private LocalDateTime auditLastMDate;
     @Column(name = "IS_IMMUTABLE")
     private Boolean isImmutable;
-    @OneToMany(mappedBy = "versionId")
-    private Collection<DocumentPropertyValues> documentPropertyValuesCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "versionId")
     private Collection<ConfigContent> configContentCollection;
 
@@ -210,15 +205,6 @@ public class ConfigVersion implements Serializable {
 
     public void setAuditLastMDate(LocalDateTime auditLastMDate) {
         this.auditLastMDate = auditLastMDate;
-    }
-
-    @XmlTransient
-    public Collection<DocumentPropertyValues> getDocumentPropertyValuesCollection() {
-        return documentPropertyValuesCollection;
-    }
-
-    public void setDocumentPropertyValuesCollection(Collection<DocumentPropertyValues> documentPropertyValuesCollection) {
-        this.documentPropertyValuesCollection = documentPropertyValuesCollection;
     }
 
     @XmlTransient

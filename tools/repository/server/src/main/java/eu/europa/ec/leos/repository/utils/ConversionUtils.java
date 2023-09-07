@@ -125,7 +125,7 @@ public class ConversionUtils {
 
     public static LeosDocument buildXmlDocument(Document doc, DocumentVersion docVersion, DocumentContent docContent,
                                                 CollaboratorsService collaboratorsService, DocumentPropertyValuesRepository documentPropertyValuesRepository) {
-        List<DocumentPropertyValues> docProps = documentPropertyValuesRepository.findDocumentPropertiesByDocumentId(doc.getId());
+        List<DocumentPropertyValues> docProps = documentPropertyValuesRepository.findDocumentPropertiesByVersionId(docVersion.getId());
         List<Collaborator> collaborators = collaboratorsService.getCollaborators(doc.getPackageId());
         return new LeosDocument(doc, docVersion, docContent, collaborators, docProps);
     }
@@ -143,7 +143,7 @@ public class ConversionUtils {
                                                 List<DocumentV> docs, boolean fetchContent) {
         List<LeosDocument> convertedDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
-            List<DocumentPropertyValues> docProps = documentPropertyValuesRepository.findDocumentPropertiesByDocumentId(doc.getDocumentId());
+            List<DocumentPropertyValues> docProps = documentPropertyValuesRepository.findDocumentPropertiesByVersionId(doc.getVersionId());
             List<Collaborator> collaborators = collaboratorsService.getCollaborators(doc.getPackageId());
             Optional<DocumentContent> content = Optional.empty();
             if (fetchContent) {
@@ -158,7 +158,7 @@ public class ConversionUtils {
                                                 CollaboratorsService collaboratorsService, DocumentContentRepository documentContentRepository,
                                                 DocumentV doc, boolean fetchContent) {
         if (doc != null) {
-            List<DocumentPropertyValues> docProps = documentPropertyValuesRepository.findDocumentPropertiesByDocumentId(doc.getDocumentId());
+            List<DocumentPropertyValues> docProps = documentPropertyValuesRepository.findDocumentPropertiesByVersionId(doc.getVersionId());
             List<Collaborator> collaborators = collaboratorsService.getCollaborators(doc.getPackageId());
             Optional<DocumentContent> content = Optional.empty();
             if (fetchContent) {
