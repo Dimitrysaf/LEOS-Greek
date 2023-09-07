@@ -355,6 +355,7 @@ public abstract class CollectionContextService {
         financialStatementContext.useType(metadata.getType());
         financialStatementContext.useActionMessageMap(actionMsgMap);
         financialStatementContext.useCollaborators(proposal.getCollaborators());
+        financialStatementContext.useCloneProposal(cloneProposal);
         FinancialStatement financialStatement = financialStatementContext.executeCreateFinancialStatement();
         proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
