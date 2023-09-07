@@ -226,6 +226,21 @@ define(function leosUtilsModule(require) {
             var tcStyle = "";
             for (var i = 0; usersUid.length > i; i++) {
                 var userColors = (usersUid[i] !== "willajh") ? _generateColors(usersUid[i].repeat(5) + proposalRef) : ["hsl(330, 100%, 50%)", "hsl(330, 100%, 90%)"];
+                if (isDocTcStyle) {
+                    tcStyle += "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
+                        "[" + actionAttr.replace("leos:", "leos\\:") + "-number=" + "'delete'" + "][leos\\:tc-original-number]" +
+                        ":not([leos\\:tc-original-number='NEW']):not([leos\\:tc-original-number='UNNUMBERED']):before {" +
+                        "content: attr(leos\\:tc-original-number); margin-left: -20pt; text-decoration: line-through; color: " + userColors[1] + "; " +
+                        "float: left; border: 0pt; padding-top: 6pt;" +
+                        "}\n";
+                    tcStyle += "paragraph:not(:has(num span[leos\\:action])) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
+                        "[leos\\:tc-original-number='NEW']:before, " +
+                        "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
+                        "[leos\\:tc-original-number='NEW']:not(:has(span[leos\\:action])):before {" +
+                        "content: '↵'; margin-left: -20pt; text-decoration: line-through; color: " + userColors[1] + "; " +
+                        "float: left; border: 0pt; padding-top: 6pt;" +
+                        "}\n";
+                }
                 tcStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'], " +
                     "[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:before { color: " + userColors[0] + " !important; &:hover, span." +
                     (isDocTcStyle ? "math" : "cke_widget_mathjax") + ":hover { background-color: " + userColors[1] + "; } }\n";

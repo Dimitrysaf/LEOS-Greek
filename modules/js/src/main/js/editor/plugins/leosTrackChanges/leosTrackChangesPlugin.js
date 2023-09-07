@@ -168,21 +168,42 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on('change', _handleEnterInTrackChange, null, null, 100);
 
             editor.on("handleTcIndent", function (event) {
-                var element = event.data.data;
-                var previousNumber = event.data.previousNumber;
-                if (!element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
-                    if (element.getAttribute(leosPluginUtils.ID) === null) {
-                        element.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, "NEW");
-                    } else {
-                        element.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, previousNumber);
+                if (isTrackChangesEnabled) {
+                    var element = event.data.data;
+                    var previousNumber = event.data.previousNumber;
+                    core.setOriginalNumber(element, previousNumber);
+                    if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED
+                        && element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW
+                        && element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                        if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                            core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
+                        } else {
+                            core.removeTrackChangesAttributesForNumbering(element);
+                        }
+                    }
+                    if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED
+                        && element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW
+                        && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                        core.addTrackChangesAttributesForNumbering(editor, element, core.DELETE_ACTION);
+                    }
+                    if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.UNNUMBERED) {
+                        if (element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                            core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
+                        } else {
+                            core.removeTrackChangesAttributesForNumbering(element);
+                        }
+                    }
+                    if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
+                        core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                     }
                 }
-                if (element.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== previousNumber) {
-                    if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
-                        core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
-                    } else {
-                        core.removeTrackChangesAttributesForNumbering(element);
-                    }
+            });
+
+            editor.on("setOriginalTcNumber", function (event) {
+                if (isTrackChangesEnabled) {
+                    var element = event.data.data;
+                    var previousNumber = event.data.previousNumber;
+                    core.setOriginalNumber(element, previousNumber);
                 }
             });
 
@@ -356,6 +377,13 @@ define(function leosTrackChangesPluginModule(require) {
                         break;
                 }
             });
+
+            editor.on('afterCommandExec', function(event) {
+                if (event.data.name === 'enter') {
+                    var element = event.editor.getSelection().getStartElement();
+                    event.editor.fire("handleTcIndent", {data: element, previousNumber: element.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                }
+            }, null, null, 15);
 
             // Implementation for tracking special characters
             // Handle element added by authorial note, references, mathjax and table

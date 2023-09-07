@@ -237,6 +237,7 @@ define(function aknNumberedParagraphPluginModule(require) {
         if (paragraphs.length > 0) {
             PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM)
             && !(paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).startsWith(DELETED))
+            && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM) !== leosPluginUtils.UNNUMBERED
                 ? NUMBERED : UNNUMBERED;
         }
         cmd.setState(PARA_MODE);
@@ -256,30 +257,38 @@ define(function aknNumberedParagraphPluginModule(require) {
      * Resets the numbering of the points depending on nesting level
      */
     function resetNumbering(event) {
-        event.editor.fire('lockSnapshot');
-        var jqEditor = $(event.editor.editable().$);
+        var ckEditor = event.editor;
+        ckEditor.fire('lockSnapshot');
+        var jqEditor = $(ckEditor.editable().$);
         var paragraphs = jqEditor.find(PARA_SELECTOR);
         if (paragraphs.length > 0) {
             if (PARA_MODE === NUMBERED) {
                 renumberModule.updateNumbers([paragraphs[0].parentElement], renumberModule.getSequences('Paragraph'));
             } else {
                 for (var ii = 0; ii < paragraphs.length; ii++) {
-                    if (paragraphs[ii].getAttribute(leosPluginUtils.DATA_ORIGIN) === "ec") {
-                        var numId = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
-                        if(numId == null || !numId.startsWith(DELETED)){
-                            paragraphs[ii].setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, DELETED + numId);
-                        }
-                    } else {
+                    if (ckEditor.LEOS.isTrackChangesEnabled) {
+                        var previousNumber = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM);
                         paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
                         paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                        ckEditor.fire("handleTcIndent", {data: paragraphs[ii], previousNumber: previousNumber});
+                    } else {
+                        if (paragraphs[ii].getAttribute(leosPluginUtils.DATA_ORIGIN) === "ec") {
+                            var numId = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                            if (numId == null || !numId.startsWith(DELETED)) {
+                                paragraphs[ii].setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, DELETED + numId);
+                            }
+                        } else {
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                        }
                     }
                 }
             }
         }
-        if (!!event.editor.getCommand('indent') && !!event.editor.elementPath()) {
-            event.editor.getCommand('indent').refresh(event.editor, event.editor.elementPath());
+        if (!!ckEditor.getCommand('indent') && !!ckEditor.elementPath()) {
+            ckEditor.getCommand('indent').refresh(ckEditor, ckEditor.elementPath());
         }
-        event.editor.fire('unlockSnapshot');
+        ckEditor.fire('unlockSnapshot');
     }
 
      var getClosestLiElement = function getClosestLiElement(element) {
@@ -523,6 +532,18 @@ define(function aknNumberedParagraphPluginModule(require) {
             }, {
                 akn : "leos:renumbered",
                 html : "data-akn-attr-renumbered"
+            }, {
+                akn: "leos:action-number",
+                html: "data-akn-action-for-number"
+            }, {
+                akn: "leos:uid-number",
+                html: "data-akn-uid-number"
+            }, {
+                akn: "leos:title-number",
+                html: "title-number"
+            }, {
+                akn: "leos:tc-original-number",
+                html: "data-akn-tc-original-number"
             }]
         },
         rootElementsForFrom: ['paragraph'],
