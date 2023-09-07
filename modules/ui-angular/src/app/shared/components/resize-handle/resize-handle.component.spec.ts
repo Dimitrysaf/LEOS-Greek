@@ -8,9 +8,8 @@ describe('ResizeHandleComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ResizeHandleComponent ]
-    })
-    .compileComponents();
+      declarations: [ResizeHandleComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ResizeHandleComponent);
     component = fixture.componentInstance;
