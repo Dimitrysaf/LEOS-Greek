@@ -32,9 +32,14 @@ define(function leosTextHighlightPluginModule(require) {
         if (highlightedSpans) {
             for (let i = 0; i < highlightedSpans.length; i++) {
                 var childSpans = $(highlightedSpans[i]).find('span[style]');
+                var datAknStyleAttr = highlightedSpans[i].getAttribute('data-akn-style');
+                var styleAttr = highlightedSpans[i].getAttribute('style');
                 if (childSpans.length > 0) {
                     childSpans.insertAfter($(highlightedSpans[i]));
                     $(highlightedSpans[i]).remove();
+                } else if(!(datAknStyleAttr && datAknStyleAttr ==="bgcolor" && styleAttr)){
+                    highlightedSpans[i].insertAdjacentText('afterend', highlightedSpans[i].textContent);
+                    highlightedSpans[i].remove();
                 }
             }
         }
