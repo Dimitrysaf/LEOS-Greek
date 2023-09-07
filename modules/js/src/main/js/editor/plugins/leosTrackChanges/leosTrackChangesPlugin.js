@@ -165,6 +165,8 @@ define(function leosTrackChangesPluginModule(require) {
                 });
             }
 
+            editor.on('change', _handleEnterInTrackChange, null, null, 100);
+
             editor.on("handleTcIndent", function (event) {
                 var element = event.data.data;
                 var previousNumber = event.data.previousNumber;
@@ -512,6 +514,10 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             });
         }
+    }
+
+    function _handleEnterInTrackChange(event) {
+        trackChanges.actions.handleEnterInTrackChanges(event);
     }
 
     var EventWrapper = function(_event) {

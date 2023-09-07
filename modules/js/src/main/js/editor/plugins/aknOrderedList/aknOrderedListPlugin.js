@@ -25,9 +25,6 @@ define(function aknOrderedListPluginModule(require) {
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
     var leosPluginUtils = require("plugins/leosPluginUtils");
 
-    var BOGUS = "br";
-    var TEXT = "text";
-    var SPAN = "span";
     var ORDERED_LIST_SELECTOR = "ol[data-akn-name='aknOrderedList']";
     var ENTER_KEY = 13;
     var TAB_KEY = 9;
