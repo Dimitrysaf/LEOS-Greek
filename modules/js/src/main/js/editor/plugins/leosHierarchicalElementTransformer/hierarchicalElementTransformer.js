@@ -50,6 +50,8 @@ define(function hierarchicalElementTransformer(require) {
     var DATA_AKN_UID_NUMBER = "data-akn-uid-number";
     var TITLE_NUMBER = "title-number";
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
+    var NEW = "NEW";
+    var UNNUMBERED = "UNNUMBERED";
     var LEOS_ORIGINAL_DEPTH_ATTR = "leos:originaldepth";
     var DATA_INDENT_LEVEL = "data-indent-level";
     var DATA_INDENT_NUMBERED = "data-indent-numbered";
@@ -648,6 +650,22 @@ define(function hierarchicalElementTransformer(require) {
                                             from: "leos:renumbered",
                                             to: DATA_AKN_ATTR_RENUMBERED,
                                             action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:action-number",
+                                            to: DATA_AKN_ACTION_FOR_NUMBER,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:uid-number",
+                                            to: DATA_AKN_UID_NUMBER,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:title-number",
+                                            to: TITLE_NUMBER,
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:tc-original-number",
+                                            to: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                            action: "passAttributeTransformer"
                                         }]
                                     });
                                     this._.isContentWrapperPresent = false;
@@ -723,10 +741,21 @@ define(function hierarchicalElementTransformer(require) {
                                     }]
                                 });
                             } else if (rootElementsWithNumWithSpanTextForFromRegExp.test(path)) {
-                                this.mapToProducts(element, {
-                                    toPath: rootsElementsPathForTo,
-                                    toAttribute: DATA_AKN_NUM
-                                });
+                                if (element.parent.attributes["leos:action"] === "delete") {
+                                    this.mapToProducts(element, {
+                                        toPath: rootsElementsPathForTo,
+                                        attrs: [{
+                                            to: DATA_AKN_NUM,
+                                            toValue: UNNUMBERED,
+                                            action: "passAttributeTransformer"
+                                        }]
+                                    });
+                                } else {
+                                    this.mapToProducts(element, {
+                                        toPath: rootsElementsPathForTo,
+                                        toAttribute: DATA_AKN_NUM
+                                    });
+                                }
                             } else if (rootElementsWithInlineNumForFromRegExp.test(path)) {
                                 this.mapToProducts(element, {
                                     toPath: rootsElementsPathForTo,
@@ -990,9 +1019,7 @@ define(function hierarchicalElementTransformer(require) {
                                         fromAttribute: DATA_AKN_NUM
                                     }]);
                                 } else if (element.attributes[DATA_AKN_NUM] && element.attributes[DATA_AKN_NUM] !== '\u2610' && element.attributes[DATA_AKN_NUM] !== '\u2611') {
-                                    if (!element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] ||
-                                        element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] === "NEW" ||
-                                        element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] === element.attributes[DATA_AKN_NUM]) {
+                                    if (!element.attributes[DATA_AKN_ACTION_FOR_NUMBER]) {
                                         this.mapToProducts(element, [{
                                             toPath: rootsElementsPathForFrom,
                                             attrs: [{
@@ -1252,46 +1279,63 @@ define(function hierarchicalElementTransformer(require) {
                                             }]
                                         }]);
                                         var contentPath = rootsElementsPathForFrom + "/num";
-                                        this.mapToChildProducts(element, {
-                                            toPath: contentPath,
-                                            toChild: "span",
-                                            attrs: [{
-                                                to: "class",
-                                                toValue: "leos-content-soft-removed",
-                                                action: "passAttributeTransformer"
-                                            }]
-                                        });
-                                        this.mapToChildProducts(element, {
-                                            toPath: contentPath + "/span",
-                                            toChild: "text",
-                                            toChildTextValue: element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER]
-                                        });
-                                        this.mapToChildProducts(element, {
-                                            toPath: contentPath,
-                                            toChild: "span",
-                                            attrs: [{
-                                                from: DATA_AKN_ACTION_FOR_NUMBER,
-                                                to: "leos:action",
-                                                action: "passAttributeTransformer"
-                                            }, {
-                                                from: DATA_AKN_UID_NUMBER,
-                                                to: "leos:uid",
-                                                action: "passAttributeTransformer"
-                                            }, {
-                                                from: TITLE_NUMBER,
-                                                to: "leos:title",
-                                                action: "passAttributeTransformer"
-                                            }, {
-                                                from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                                to: "leos:tc-original-number",
-                                                action: "passAttributeTransformer"
-                                            }]
-                                        });
-                                        this.mapToChildProducts(element, {
-                                            toPath: contentPath + "/span",
-                                            toChild: "text",
-                                            toChildTextValue: element.attributes[DATA_AKN_NUM]
-                                        });
+                                        if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
+                                            && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW) {
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath,
+                                                toChild: "span",
+                                                attrs: [{
+                                                    to: "leos:action",
+                                                    toValue: "delete",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_UID_NUMBER,
+                                                    to: "leos:uid",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: TITLE_NUMBER,
+                                                    to: "leos:title",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                                    to: "leos:tc-original-number",
+                                                    action: "passAttributeTransformer"
+                                                }]
+                                            });
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath + "/span",
+                                                toChild: "text",
+                                                toChildTextValue: element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER]
+                                            });
+                                        }
+                                        if (element.attributes[DATA_AKN_NUM]) {
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath,
+                                                toChild: "span",
+                                                attrs: [{
+                                                    from: DATA_AKN_ACTION_FOR_NUMBER,
+                                                    to: "leos:action",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_UID_NUMBER,
+                                                    to: "leos:uid",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: TITLE_NUMBER,
+                                                    to: "leos:title",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                                    to: "leos:tc-original-number",
+                                                    action: "passAttributeTransformer"
+                                                }]
+                                            });
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath + "/span",
+                                                toChild: "text",
+                                                toChildTextValue: element.attributes[DATA_AKN_NUM]
+                                            });
+                                        }
                                     }
                                 } else if (element.attributes[DATA_AKN_NUM] === '\u2610' || element.attributes[DATA_AKN_NUM] === '\u2611') {
                                     this.mapToProducts(element, [{
@@ -1513,6 +1557,22 @@ define(function hierarchicalElementTransformer(require) {
                                         }, {
                                             from: DATA_AKN_ATTR_RENUMBERED,
                                             to: "leos:renumbered",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_ACTION_FOR_NUMBER,
+                                            to: "leos:action-number",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_UID_NUMBER,
+                                            to: "leos:uid-number",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: TITLE_NUMBER,
+                                            to: "leos:title-number",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                            to: "leos:tc-original-number",
                                             action: "passAttributeTransformer"
                                         }]
                                     }]);

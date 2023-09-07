@@ -17,13 +17,17 @@ define(function leosTrackChangesModule(require) {
 
     var log = require("logger");
     var UTILS = require("core/leosUtils");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
 
     var core = {
 
         // Track changes names and element types
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
         ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
-        UID_ATTR: "data-akn-uid", IS_NEW: "data-akn-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number",
+        UID_ATTR: "data-akn-uid",
+
+        IS_NEW: "data-akn-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number",
+        UNNUMBERED: "UNNUMBERED", NEW: "NEW",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -310,6 +314,20 @@ define(function leosTrackChangesModule(require) {
                 cloneElement.$.classList.remove("cke_widget_focused", "cke_widget_selected");
             }
             return cloneElement;
+        },
+
+        setOriginalNumber: function(element, previousNumber) {
+            if (!element.getAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                if (element.getAttribute(leosPluginUtils.ID) === null) {
+                    element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, core.NEW);
+                } else {
+                    if (previousNumber) {
+                        element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, previousNumber);
+                    } else {
+                        element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, core.UNNUMBERED);
+                    }
+                }
+            }
         }
 
     };

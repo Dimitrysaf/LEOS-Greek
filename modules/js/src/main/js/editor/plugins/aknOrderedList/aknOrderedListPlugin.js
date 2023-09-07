@@ -288,7 +288,7 @@ define(function aknOrderedListPluginModule(require) {
         if (!node || node.type !== CKEDITOR.NODE_ELEMENT){
             return;
         }
-        leosPluginUtils.handleIndentAttributes(node, editor.LEOS.isClonedProposal);
+        leosPluginUtils.handleIndentAttributes(node, editor);
         node.removeAttribute('data-akn-num');
         node.getChildren().toArray().forEach(_handleNode.bind(this, editor));
     }

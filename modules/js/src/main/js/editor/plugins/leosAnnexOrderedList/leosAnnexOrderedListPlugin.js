@@ -373,7 +373,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
         if (!node || node.type !== CKEDITOR.NODE_ELEMENT || node.getParent().getAttribute('data-akn-name') === 'aknAnnexList'){
             return;
         }
-        leosPluginUtils.handleIndentAttributes(node, editor.LEOS.isClonedProposal);
+        leosPluginUtils.handleIndentAttributes(node, editor);
         if (!node.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT) || node.getAttribute(leosPluginUtils.DATA_AKN_ELEMENT).
             toLowerCase() != leosPluginUtils.CROSSHEADING.toLowerCase()) {
             node.removeAttribute(leosPluginUtils.DATA_AKN_NUM);

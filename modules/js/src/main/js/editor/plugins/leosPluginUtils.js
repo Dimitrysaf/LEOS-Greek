@@ -84,6 +84,10 @@ define(function leosPluginUtilsModule(require) {
     var DATA_INDENT_ORIGIN_NUMBER_ORIGIN = "data-indent-origin-num-origin";
     var DATA_INDENT_ORIGIN_TYPE = "data-indent-origin-type";
 
+    var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
+    var UNNUMBERED = "UNNUMBERED";
+    var NEW = "NEW";
+
     var LEOS_SOFTACTION = "leos:softaction";
     var DATA_AKN_NUM_SOFTACTION = "data-akn-num-attr-softaction";
     var DEL = "del";
@@ -1218,8 +1222,8 @@ define(function leosPluginUtilsModule(require) {
         }
     }
 
-    function _handleIndentAttributes(node, isIndentAttributesToBeSet) {
-        if (isIndentAttributesToBeSet && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
+    function _handleIndentAttributes(node, editor) {
+        if (editor.LEOS.isClonedProposal && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
             var elementName = node.getAttribute(DATA_AKN_ELEMENT).toUpperCase();
             switch(elementName) {
                 case "ALINEA":
@@ -1251,6 +1255,7 @@ define(function leosPluginUtilsModule(require) {
             if (!!node.getAttribute(DATA_NUM_ORIGIN)) {
                 node.setAttribute(DATA_INDENT_ORIGIN_NUMBER_ORIGIN, node.getAttribute(DATA_NUM_ORIGIN));
             }
+            editor.fire("setOriginalTcNumber", {data: node, previousNumber: node.getAttribute(DATA_AKN_NUM)});
         }
     }
 

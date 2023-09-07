@@ -87,6 +87,16 @@ $NUM_WIDTH: 40px;
       }
     }
 
+    & > li[data-akn-tc-original-number][data-akn-action-for-number='delete']:not([data-akn-tc-original-number='UNNUMBERED']):not([data-akn-tc-original-number='NEW']) {
+      &:before {
+        color: $GREY_COLOR;
+        content: attr(data-akn-tc-original-number);
+        min-width: $NUM_WIDTH;
+        float: left;
+        text-decoration: line-through;
+      }
+    }
+
     & > li[data-akn-num-id*="deleted"] {
       &:before {
         text-decoration: line-through;
