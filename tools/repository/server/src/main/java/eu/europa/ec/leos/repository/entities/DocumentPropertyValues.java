@@ -62,7 +62,7 @@ public class DocumentPropertyValues implements Serializable {
     private LocalDateTime auditLastMDate;
     @JoinColumn(name = "VERSION_ID", referencedColumnName = "ID")
     @ManyToOne(fetch = FetchType.LAZY)
-    private ConfigVersion versionId;
+    private DocumentVersion version;
     @JoinColumn(name = "PROPERTY_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private DocumentProperties propertyId;
@@ -137,12 +137,12 @@ public class DocumentPropertyValues implements Serializable {
         this.auditLastMDate = auditLastMDate;
     }
 
-    public ConfigVersion getVersionId() {
-        return versionId;
+    public DocumentVersion getVersion() {
+        return version;
     }
 
-    public void setVersionId(ConfigVersion versionId) {
-        this.versionId = versionId;
+    public void setVersion(DocumentVersion version) {
+        this.version = version;
     }
 
     public DocumentProperties getPropertyId() {

@@ -181,7 +181,6 @@ public class DocumentServiceImpl implements DocumentService {
                 }
             }
             doc = documentRepository.save(doc);
-            updateDocumentProperties(doc, (Map<String, Object>) metadata, userId);
 
             Tika tika = new Tika();
             String type = tika.detect(TikaInputStream.get(contentBytes));
@@ -189,6 +188,7 @@ public class DocumentServiceImpl implements DocumentService {
                 return milestoneDocumentService.createMilestoneFromContent(doc, metadata, contentBytes, userId);
             } else {
                 Pair<DocumentContent, DocumentVersion> docs = createDocument(doc, metadata, labelVersion, versionType, contentBytes, comments, userId);
+                updateDocumentProperties(doc, docs.getValue(), (Map<String, Object>) metadata, userId);
                 return ConversionUtils.buildXmlDocument(doc, docs.getValue(), docs.getKey(), collaboratorsService, documentPropertyValuesRepository);
             }
         }
@@ -236,8 +236,8 @@ public class DocumentServiceImpl implements DocumentService {
             latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
         }
 
-        doc = updateDocumentMetadata(doc, (Map<String, Object>) metadata, userId);
         Pair<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId);
+        doc = updateDocumentMetadata(doc, docs.getValue(), (Map<String, Object>) metadata, userId);
 
         if (latestVersion.isPresent()) {
             latestVersion.get().setIsLatestVersion(false);
@@ -264,8 +264,8 @@ public class DocumentServiceImpl implements DocumentService {
             Document doc =
                     documentRepository.findById(docVersion.getDocumentId()).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                             Document.class.getName()));
-            doc = updateDocumentMetadata(doc, (Map<String, Object>) metadata, userId);
             Pair<DocumentContent, DocumentVersion> docs = updateDocumentContentMetadataAndVersionComments(docVersion, metadata, userId);
+            doc = updateDocumentMetadata(doc, docs.getValue(), (Map<String, Object>) metadata, userId);
 
             return ConversionUtils.buildXmlDocument(doc, docs.getValue(), docs.getKey(), collaboratorsService, documentPropertyValuesRepository);
         } else {
@@ -406,7 +406,7 @@ public class DocumentServiceImpl implements DocumentService {
         return newVersion[0] + "." + newVersion[1] + "." + newVersion[2];
     }
 
-    private Document updateDocumentMetadata(Document doc, Map<String, Object> metadata, String userId) throws Exception {
+    private Document updateDocumentMetadata(Document doc, DocumentVersion docVersion, Map<String, Object> metadata, String userId) throws Exception {
         if (metadata.get(PropertiesMetadata.COLLABORATORS.getLeosName()) != null) {
             List<Collaborator> collaborators =
                     ConversionUtils.getLeosCollaboratorsFromLinkedHashMap((ArrayList<LinkedHashMap<String, Object>>) metadata.get(PropertiesMetadata.COLLABORATORS.getLeosName()));
@@ -426,36 +426,67 @@ public class DocumentServiceImpl implements DocumentService {
             doc.setContributionStatus(metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) != null ?
                     (String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()): doc.getContributionStatus());
         }
-        updateDocumentProperties(doc, metadata, userId);
+        updateDocumentProperties(doc, docVersion, metadata, userId);
         return documentRepository.save(doc);
     }
 
-    private void updateDocumentProperties(Document doc, Map<String, Object> metadata, String userId) throws JsonProcessingException {
+    private void updateDocumentProperties(Document doc, DocumentVersion docVersion, Map<String, Object> metadata, String userId) throws JsonProcessingException {
+        List<DocumentPropertyValues> currentProps =
+                documentPropertyValuesRepository.findDocumentPropertiesByVersionId(docVersion.getId());
+        if (currentProps.isEmpty()) {
+            List<DocumentPropertyValues> oldProps =
+                    documentPropertyValuesRepository.findDocumentPropertiesFromPreviousVersion(doc.getId());
+            for (DocumentPropertyValues prop : oldProps) {
+                DocumentPropertyValues value = new DocumentPropertyValues();
+                value.setAuditCBy(prop.getAuditCBy());
+                value.setAuditCDate(prop.getAuditCDate());
+                value.setAuditLastMBy(prop.getAuditLastMBy());
+                value.setAuditLastMDate(prop.getAuditLastMDate());
+                value.setDocumentId(prop.getDocumentId());
+                value.setVersion(docVersion);
+                value.setPropertyId(prop.getPropertyId());
+                value.setPropertyValue(prop.getPropertyValue());
+                documentPropertyValuesRepository.save(value);
+            }
+        }
         List<DocumentProperties> props = documentPropertiesRepository.findDocumentPropertiesByDocCategoryId(doc.getCategoryId());
         if (props != null && !props.isEmpty()) {
             for (DocumentProperties prop: props) {
                 Object newValue = metadata.get(prop.getPropertyName());
-                if (newValue != null && (!(newValue instanceof List) || !((List)newValue).isEmpty())) {
-                    Optional<DocumentPropertyValues> hasValue = documentPropertyValuesRepository.findDocumentPropertyValuesByDocumentIdAndPropertyId(doc.getId()
-                            , prop);
-                    DocumentPropertyValues value = hasValue.orElse(new  DocumentPropertyValues());
-                    if (value.getAuditCBy() == null && value.getAuditCDate() == null) {
-                        value.setAuditCBy(userId);
-                        value.setAuditCDate(LocalDateTime.now());
-                    }
-                    value.setAuditLastMBy(userId);
-                    value.setAuditLastMDate(LocalDateTime.now());
-                    value.setDocumentId(doc.getId());
-                    value.setPropertyId(prop);
-                    if (newValue instanceof String) {
-                        value.setPropertyValue((String) newValue);
+                if (newValue != null) {
+                    List<DocumentPropertyValues> currentValues =
+                            documentPropertyValuesRepository.findDocumentPropertyValuesByDocumentIdAndVersionAndPropertyId(doc.getId(), docVersion, prop);
+                    documentPropertyValuesRepository.deleteAll(currentValues);
+                    if (newValue instanceof List) {
+                        for (Object v : ((List<?>) newValue)) {
+                            createPropertyValue(userId, userId, doc.getId(), docVersion, prop, v);
+                        }
                     } else {
-                        value.setPropertyValue(mapper.writeValueAsString(newValue));
+                        createPropertyValue(userId, userId, doc.getId(), docVersion, prop, newValue);
                     }
-                    documentPropertyValuesRepository.save(value);
                 }
             }
         }
+    }
+
+    private void createPropertyValue(String createdBy, String updatedBy, BigDecimal docId,
+                           DocumentVersion version, DocumentProperties property, Object value) throws JsonProcessingException {
+        DocumentPropertyValues propertyValue = new DocumentPropertyValues();
+        if (propertyValue.getAuditCBy() == null || propertyValue.getAuditCDate() == null) {
+            propertyValue.setAuditCBy(createdBy);
+            propertyValue.setAuditCDate(LocalDateTime.now());
+        }
+        propertyValue.setAuditLastMBy(updatedBy);
+        propertyValue.setAuditLastMDate(LocalDateTime.now());
+        propertyValue.setDocumentId(docId);
+        propertyValue.setVersion(version);
+        propertyValue.setPropertyId(property);
+        if (value instanceof String) {
+            propertyValue.setPropertyValue((String) value);
+        } else {
+            propertyValue.setPropertyValue(mapper.writeValueAsString(value));
+        }
+        documentPropertyValuesRepository.save(propertyValue);
     }
 
     private List<String> parseMajorVersion(String majorVersionLabel) {
