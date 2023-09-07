@@ -337,9 +337,6 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             String categoryStr = categories.stream()
                     .map(a -> "'" + a + "'")
                     .collect(Collectors.joining(","));
-            if ( queryBuild.length() > 7 && !queryBuild.substring(queryBuild.length()-7).trim().equalsIgnoreCase("WHERE") ) {
-                queryBuild.append(" AND ");
-            }
             queryBuild.append(String.format(" m.categoryId IN (SELECT c.id FROM DocumentCategories c WHERE c.categoryCode IN (%s))",
                     categoryStr));
         }
