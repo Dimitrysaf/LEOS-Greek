@@ -57,7 +57,7 @@ public class MemorandumServiceProposalImpl extends MemorandumServiceImpl {
 
     @Override
     public String generateMemorandumReference(String templateId, byte[] content, String language) {
-        content = (content == null) ? getContent(memorandumRepository.findMemorandumById(templateId, false)) : content;
+        content = (content == null) ? getContent(memorandumRepository.findMemorandumById(templateId, true)) : content;
         return this.generateMemorandumReference(content, language);
     }
 }
