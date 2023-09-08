@@ -58,7 +58,7 @@ public class BillServiceProposalImpl extends BillServiceImpl {
 
     @Override
     public String generateBillReference(String templateId, byte[] content, String language) {
-        content = (content == null) ? getContent(billRepository.findBillById(templateId, false)) : content;
+        content = (content == null) ? getContent(billRepository.findBillById(templateId, true)) : content;
         return this.generateBillReference(content, language);
     }
 }

@@ -53,7 +53,7 @@ public class AnnexServiceProposalImpl extends AnnexServiceImpl {
 
     @Override
     public String generateAnnexReference(String templateId, byte[] content, String language) {
-        content = (content == null) ? getContent(annexRepository.findAnnexById(templateId, false)) : content;
+        content = (content == null) ? getContent(annexRepository.findAnnexById(templateId, true)) : content;
         return this.generateAnnexReference(content, language);
     }
 }
