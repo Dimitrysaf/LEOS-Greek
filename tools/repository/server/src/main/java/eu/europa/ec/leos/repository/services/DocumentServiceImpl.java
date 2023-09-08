@@ -574,11 +574,17 @@ public class DocumentServiceImpl implements DocumentService {
     public Optional<LeosDocument> findDocumentByRef(final String ref) {
         Optional<DocumentV> doc = documentVRepository.findDocumentByRef(ref);
         if (!doc.isPresent()) {
-            return milestoneDocumentService.findMilestoneByRef(ref);
+            Optional<LeosDocument> leosDoc = milestoneDocumentService.findMilestoneByRef(ref);
+            if (!leosDoc.isPresent()) {
+                try {
+                    return Optional.of(findTemplateByName(ref));
+                } catch (RepositoryException e) {
+                    return Optional.empty();
+                }
+            }
         }
-        return doc.isPresent() ? Optional.of(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService,
-                documentContentRepository, doc.get(), true)) :
-                Optional.empty();
+        return Optional.of(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService,
+                documentContentRepository, doc.get(), true));
     }
 
     public List<LeosDocument> findDocumentsByStatus(final String status) {
