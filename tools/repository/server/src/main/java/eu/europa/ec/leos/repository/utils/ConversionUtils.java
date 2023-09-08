@@ -128,7 +128,7 @@ public class ConversionUtils {
         List<DocumentPropertyValues> docProps = documentPropertyValuesRepository.findDocumentPropertiesByVersionId(versionId);
         if (docProps.isEmpty()) {
             docProps = documentPropertyValuesRepository.findDocumentPropertiesByDocumentId(documentId);
-            if (docProps.isEmpty() || docProps.get(0).getVersion() != null) {
+            if (!docProps.isEmpty() && docProps.get(0).getVersion() != null) {
                 docProps.clear();
             }
         }
