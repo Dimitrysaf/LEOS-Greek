@@ -35,6 +35,9 @@ define(function aknHigherElementProfileModule(require) {
     plugins.push(require("plugins/leosXmlEntities/leosXmlEntitiesPlugin"));
     plugins.push(require("plugins/leosPreventElementDeletion/leosPreventElementDeletionPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
 
@@ -62,7 +65,7 @@ define(function aknHigherElementProfileModule(require) {
         // comma-separated list of plugins to be loaded
         plugins: "toolbar,wysiwygarea,elementspath,clipboard,undo,pastefromword,button,dialog,dialogui,"
             + "widget,lineutils,basicstyles," + "indent,"
-            + "fakeobjects,specialchar,menubutton,mathjax,pastetext,colorbutton",
+            + "fakeobjects,specialchar,contextmenu,menubutton,mathjax,pastetext,colorbutton",
         // comma-separated list of plugins that must not be loaded
         removePlugins: "",
         // comma-separated list of additional plugins to be loaded
