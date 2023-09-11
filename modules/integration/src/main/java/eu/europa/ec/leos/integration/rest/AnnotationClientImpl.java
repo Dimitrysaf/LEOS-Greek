@@ -3,15 +3,19 @@ package eu.europa.ec.leos.integration.rest;
 import java.net.URI;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.security.LeosPermission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-
 import eu.europa.ec.leos.integration.AnnotationProvider;
+import eu.europa.ec.leos.integration.rest.AnnotationsSearchResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class AnnotationClientImpl implements AnnotationProvider {
@@ -26,7 +30,13 @@ public class AnnotationClientImpl implements AnnotationProvider {
 	public String searchAnnotations(URI uri, String jwtToken, String proposalRef) {
 		HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, proposalRef);
 		HttpEntity<?> request = new HttpEntity<>(headers);
-		return restTemplate.exchange(uri, HttpMethod.GET, request, String.class).getBody();
+		final AnnotationsSearchResponse response = restTemplate.exchange(uri, HttpMethod.GET, request, AnnotationsSearchResponse.class).getBody();
+		try {
+			final ObjectMapper objectMapper = new ObjectMapper();
+			return objectMapper.writeValueAsString(response);
+		} catch(Exception ex) {
+			throw new RestClientException("Error parsing search annotations response.", ex);
+		}
 	}
 
 	@Override
