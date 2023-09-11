@@ -23,7 +23,15 @@ define(function leosTextHighlightPluginModule(require) {
         init: function init(editor) {
             _enableHighlightButton(editor);
             editor.on("saveSnapshot", _resolveOverlappedSpans);
+            editor.on("activeFilterChange", _cancelActiveFilter, null, null, 1);
         }
+    }
+
+    function _cancelActiveFilter(ev) {
+        /*This change is done for bug(#3) here https://code.europa.eu/leos/core/-/issues/897#note_66261.
+        Highlight plugin of Ckeditor 4, is not associated with any explicit command definition. So it is not possible
+        to change the state. So to prevent state change here activeFilterChange event is cancelled.*/
+        ev.cancel();
     }
 
     function _resolveOverlappedSpans(evt) {
