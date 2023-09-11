@@ -142,7 +142,7 @@ export class DocumentService implements OnDestroy {
   private searchAndReplaceTextBS = new BehaviorSubject<string>('');
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
-  private navigationPaneCollapseBS = new BehaviorSubject<boolean>(true);
+  private navigationPaneCollapseBS = new BehaviorSubject<boolean>(false);
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
   private documentRefAndCategoryBS =
