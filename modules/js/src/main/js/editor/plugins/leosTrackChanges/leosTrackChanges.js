@@ -246,7 +246,7 @@ define(function leosTrackChangesModule(require) {
         isTrackChangeElement: function(element, action) {
             var actions = action ? [action] : [this.INSERT_ACTION, this.DELETE_ACTION];
             for (var action of actions) {
-                if ((element != null) && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
+                if ((element != null) && element.$ && (element.$.nodeType === CKEDITOR.NODE_ELEMENT) &&
                     (element.getName().toLowerCase() === this.TRACKCHANGES_ELEMENT) && (element.getAttribute(this.ACTION_ATTR) === action)) {
                     return true;
                 }
@@ -339,7 +339,7 @@ define(function leosTrackChangesModule(require) {
             var ranges = selection && selection.getRanges();
             var range = ranges && ranges[0];
             var el = range.startContainer;
-            if (el && core.isTrackChangeElement(el, core.INSERT_ACTION) && el.getText().trim() === '') {
+            if (el && core.isTrackChangeElement(el, core.INSERT_ACTION) && el.getText() === '') {
                 el.remove();
             }
         },
@@ -377,7 +377,10 @@ define(function leosTrackChangesModule(require) {
             editor.getSelection().getRanges()[0].optimize();
             var tcElement = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
             if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor)) && !tcElement[0].getId()) {
-                if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
+                if (tcElement[0] && core.isTrackChangeElement(tcElement[0]) && tcElement[0].getText().length > 0 && tcElement[0].getText().trim() === '') {
+                    tcElement[0].appendText(data);
+                    core.setToPosition(editor, tcElement[0], CKEDITOR.POSITION_AFTER_END);
+                } else if (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT) {
                     return false;
                 } else if (tcElement[1] === core.CARET_START) {
                     core.setToPosition(editor, tcElement[0], CKEDITOR.POSITION_BEFORE_START);
