@@ -540,13 +540,13 @@ export class DocumentEditorComponent
   }
 
   handlePrevChange() {
-    this.arrowClicked = true;
-    if (this.compareIndex - 1 >= 0) {
+    if (this.compareIndex > 0) {
       this.isScrollFromButton = true;
-      this.compareIndex -= 1;
+      const prevChange = this.compareIndex - 1;
       this.compareChanges
-        .item(this.compareIndex)
+        .item(prevChange)
         ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.compareIndex--;
     }
   }
 
@@ -576,13 +576,13 @@ export class DocumentEditorComponent
   }
 
   handleNextChange() {
-    this.arrowClicked = true;
-    if (this.compareIndex <= this.compareChanges.length) {
+    if (this.compareIndex !== this.compareChanges.length - 1) {
       this.isScrollFromButton = true;
-      const targetItem = this.compareChanges.item(this.compareIndex);
-      if (targetItem)
-        targetItem.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      this.compareIndex += 1;
+      const nextChange = this.compareIndex + 1;
+      this.compareChanges
+        .item(nextChange)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.compareIndex++;
     }
   }
 
@@ -1016,9 +1016,6 @@ export class DocumentEditorComponent
     const nodeListCNDoubleCompare = document.querySelectorAll(
       '.leos-double-compare-removed, .leos-double-compare-added',
     );
-    console.log('nodeList:', nodeList);
-    console.log('nodeListCN:', nodeListCN);
-    console.log('nodeListCNDoubleCompare:', nodeListCNDoubleCompare);
     this.compareChanges = (
       nodeList && nodeList.length > 0
         ? nodeList
