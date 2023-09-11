@@ -462,7 +462,7 @@
                 (click)="handlePrevChange()"
                 [disabled]="compareIndex === 0"
                 [euiTooltip]="
-                  'page.editor.versions.compare.actions.next-change' | translate
+                  'page.editor.versions.compare.actions.prev-change' | translate
                 "
                 [showDelay]="tooltipsDelay"
               >
@@ -479,7 +479,7 @@
                 *ngIf="versionsComparisonForView"
                 (click)="handleNextChange()"
                 [euiTooltip]="
-                  'page.editor.versions.compare.actions.prev-change' | translate
+                  'page.editor.versions.compare.actions.next-change' | translate
                 "
                 [showDelay]="tooltipsDelay"
               >
