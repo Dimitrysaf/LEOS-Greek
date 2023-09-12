@@ -155,6 +155,8 @@ public class DocumentV implements Serializable {
     private String title;
     @Column(name = "NUM_PROPS", updatable = false)
     private int numProps;
+    @Column(name = "NUM_PROPS_PER_DOC", updatable = false)
+    private int numPropsPerDoc;
 
     public DocumentV() {
     }
@@ -469,5 +471,9 @@ public class DocumentV implements Serializable {
 
     public int getNumProps() {
         return numProps;
+    }
+
+    public int getNumPropsPerDoc() {
+        return numPropsPerDoc;
     }
 }
