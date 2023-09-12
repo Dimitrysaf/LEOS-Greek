@@ -306,6 +306,7 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
       moveToItem.softActionAttr = MOVE_TO;
       moveToItem.softActionRoot = isSoftActionRoot;
       moveToItem.originNumAttr = EC;
+      moveToItem.heading = null;
       moveToItem.softUserAttr = null;
       moveToItem.softDateAttr = null;
     }
