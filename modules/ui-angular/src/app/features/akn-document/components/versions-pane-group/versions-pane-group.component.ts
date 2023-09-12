@@ -191,6 +191,17 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
 
     this.title = this.getTitle();
     this.subtitle = this.getSubtitle();
+
+    if (
+      this.isRecent &&
+      this.showMore &&
+      this.versions.length > 0 &&
+      this.docService.getVersionCompareIds().length > 0
+    ) {
+      this.onSelectVersion(this.versions[0], {
+        target: { checked: true },
+      } as any);
+    }
   }
 
   private applyFilter(filter = this.filter) {
