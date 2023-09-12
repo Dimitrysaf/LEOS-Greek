@@ -122,7 +122,8 @@ public class ConversionUtils {
                 .toLocalDateTime();
     }
 
-    private static List<DocumentPropertyValues> getDocumentProperties(DocumentPropertyValuesRepository documentPropertyValuesRepository, BigDecimal versionId,
+    private static List<DocumentPropertyValues> getDocumentProperties(DocumentPropertyValuesRepository documentPropertyValuesRepository,
+                                                                      BigDecimal versionId,
                                                                       BigDecimal documentId) {
         List<DocumentPropertyValues> docProps = documentPropertyValuesRepository.findDocumentPropertiesByVersionId(versionId);
         if (docProps.isEmpty()) {
@@ -132,6 +133,18 @@ public class ConversionUtils {
             }
         }
         return docProps;
+    }
+
+    private static List<DocumentPropertyValues> getDocumentProperties(DocumentPropertyValuesRepository documentPropertyValuesRepository,
+                                                                      int numOfProps, int numOfPropsPerDocs, BigDecimal versionId,
+                                                                      BigDecimal documentId) {
+        if (numOfProps>0) {
+            return documentPropertyValuesRepository.findDocumentPropertiesByVersionId(versionId);
+        } else if (numOfPropsPerDocs>0) {
+            return documentPropertyValuesRepository.findDocumentPropertiesByDocumentId(documentId);
+        } else {
+            return Arrays.asList();
+        }
     }
 
     public static List<Collaborator> fetchCollaborators(CollaboratorsService collaboratorsService, BigDecimal packageId) {
@@ -158,8 +171,9 @@ public class ConversionUtils {
                                                 List<DocumentV> docs, boolean fetchContent) {
         List<LeosDocument> convertedDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
-            List<DocumentPropertyValues> docProps = doc.getNumProps() > 0 ? getDocumentProperties(documentPropertyValuesRepository, doc.getVersionId(),
-                    doc.getDocumentId()) : Arrays.asList();
+            List<DocumentPropertyValues> docProps = getDocumentProperties(documentPropertyValuesRepository, doc.getNumProps(), doc.getNumPropsPerDoc(),
+                    doc.getVersionId(),
+                    doc.getDocumentId());
             Optional<DocumentContent> content = Optional.empty();
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
@@ -174,8 +188,9 @@ public class ConversionUtils {
                                                       List<DocumentV> docs, boolean fetchContent) {
         List<LeosDocument> convertedDocs = new ArrayList<>();
         for (DocumentV doc : docs) {
-            List<DocumentPropertyValues> docProps = doc.getNumProps() > 0 ? getDocumentProperties(documentPropertyValuesRepository, doc.getVersionId(),
-                    doc.getDocumentId()) : Arrays.asList();
+            List<DocumentPropertyValues> docProps = getDocumentProperties(documentPropertyValuesRepository, doc.getNumProps(), doc.getNumPropsPerDoc(),
+                    doc.getVersionId(),
+                    doc.getDocumentId());
             Optional<DocumentContent> content = Optional.empty();
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
@@ -190,13 +205,14 @@ public class ConversionUtils {
                                                 List<Collaborator> collaborators, DocumentContentRepository documentContentRepository,
                                                 DocumentV doc, boolean fetchContent) {
         if (doc != null) {
-            List<DocumentPropertyValues> docProp = doc.getNumProps() > 0 ? getDocumentProperties(documentPropertyValuesRepository, doc.getVersionId(),
-                    doc.getDocumentId()) : Arrays.asList();
+            List<DocumentPropertyValues> docProps = getDocumentProperties(documentPropertyValuesRepository, doc.getNumProps(), doc.getNumPropsPerDoc(),
+                    doc.getVersionId(),
+                    doc.getDocumentId());
             Optional<DocumentContent> content = Optional.empty();
             if (fetchContent) {
                 content = documentContentRepository.findDocumentContentByVersionId(doc.getVersionId());
             }
-            return content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProp) : new LeosDocument(doc, collaborators, docProp);
+            return content.isPresent() ? new LeosDocument(doc, content.get(), collaborators, docProps) : new LeosDocument(doc, collaborators, docProps);
         } else {
             return null;
         }

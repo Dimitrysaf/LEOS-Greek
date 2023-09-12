@@ -326,8 +326,8 @@ CREATE INDEX PACKAGE_COLLABORATORS_IDX2 ON PACKAGE_COLLABORATORS (COLLABORATOR_I
 CREATE OR REPLACE VIEW DOCUMENT_CATEGORIES_V AS
 SELECT ID,CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE FROM DOCUMENT_CATEGORIES;
 
-CREATE OR REPLACE FORCE EDITIONABLE VIEW DOCUMENT_V  AS
-SELECT doc.id||'_'||docver.id||'_'||doccat.id unique_id
+CREATE OR REPLACE VIEW DOCUMENT_V AS
+SELECT CONCAT(doc.id,docver.id,doccat.id) unique_id
      , doc.id document_id,doc.object_id doc_object_id,doc.category_id
      , doc.package_id, pkg.name package_name, docxml.version_id
      , doccat.category_code, doccat.category_desc
@@ -335,13 +335,14 @@ SELECT doc.id||'_'||docver.id||'_'||doccat.id unique_id
      , docver.audit_c_by doc_audit_c_by,docver.audit_c_date doc_audit_c_date,docver.audit_last_m_date doc_audit_last_m_date,docver.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
      , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, (SELECT count(*) FROM document_property_values dpv WHERE dpv.version_id = docver.id) AS num_props
+     , (SELECT count(*) FROM document_property_values dpv WHERE dpv.document_id=doc.id AND dpv.version_id IS NULL ) AS num_props_per_doc
 FROM document doc, document_version docver, document_content docxml, document_categories_v doccat, "PACKAGE" pkg
 WHERE (doc.IS_ARCHIVED IS NULL OR doc.IS_ARCHIVED = 0) AND doc.id = docver.document_id
   AND docver.id = docxml.version_id
   AND doc.category_id = doccat.id AND doc.package_id = pkg.id;
 
-CREATE OR REPLACE FORCE EDITIONABLE VIEW MILESTONE_V AS
-SELECT doc.id||'_'||docmil.id unique_id, doc.id document_id,doc.package_id,pkg.name package_name,doc.object_id doc_object_id,doc.category_id,doccat.category_code,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,
+CREATE OR REPLACE VIEW MILESTONE_V AS
+SELECT CONCAT(doc.id,docmil.id) unique_id, doc.id document_id,doc.package_id,pkg.name package_name,doc.object_id doc_object_id,doc.category_id,doccat.category_code,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,
        doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by, docmil.id milestone_id, docmil.job_id, docmil.job_date, docmil.milestone_comments, docmil.content,
        docmil.status,docmil.EXPORT_STATUS,docmil.EXPORT_DATE , docmil.audit_c_by,docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
 FROM document doc, document_milestone docmil, "PACKAGE" pkg, document_categories doccat

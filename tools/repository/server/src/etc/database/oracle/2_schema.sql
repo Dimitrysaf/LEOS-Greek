@@ -571,6 +571,7 @@ SELECT doc.id||'_'||docver.id||'_'||doccat.id unique_id
      , docver.audit_c_by doc_audit_c_by,docver.audit_c_date doc_audit_c_date,docver.audit_last_m_date doc_audit_last_m_date,docver.audit_last_m_by doc_audit_last_m_by
      , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
      , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, (SELECT count(*) FROM document_property_values dpv WHERE dpv.version_id = docver.id) AS num_props
+     , (SELECT count(*) FROM document_property_values dpv WHERE dpv.document_id=doc.id AND dpv.version_id IS NULL ) AS num_props_per_doc
 FROM document doc, document_version docver, document_content docxml, document_categories_v doccat, "PACKAGE" pkg
 WHERE (doc.IS_ARCHIVED IS NULL OR doc.IS_ARCHIVED = 0) AND doc.id = docver.document_id
   AND docver.id = docxml.version_id
