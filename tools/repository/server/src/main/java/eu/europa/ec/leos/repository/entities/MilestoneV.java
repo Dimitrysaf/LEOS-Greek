@@ -67,10 +67,14 @@ public class MilestoneV implements Serializable {
     private BigDecimal documentId;
     @Column(name = "PACKAGE_ID", updatable = false)
     private BigDecimal packageId;
+    @Column(name = "PACKAGE_NAME", updatable = false)
+    private String packageName;
     @Column(name = "DOC_OBJECT_ID", updatable = false)
     private BigDecimal docObjectId;
     @Column(name = "CATEGORY_ID", updatable = false)
     private BigDecimal categoryId;
+    @Column(name = "CATEGORY_CODE", updatable = false)
+    private String categoryCode;
     @Column(name = "NAME", updatable = false)
     private String name;
     @Column(name = "CLONED_FROM", updatable = false)
@@ -366,5 +370,13 @@ public class MilestoneV implements Serializable {
 
     public LocalDateTime getExportDate() {
         return exportDate;
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public String getCategoryCode() {
+        return categoryCode;
     }
 }

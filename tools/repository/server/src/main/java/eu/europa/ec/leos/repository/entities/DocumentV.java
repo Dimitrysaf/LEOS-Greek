@@ -81,6 +81,8 @@ public class DocumentV implements Serializable {
     private BigDecimal documentId;
     @Column(name = "PACKAGE_ID", updatable = false)
     private BigDecimal packageId;
+    @Column(name = "PACKAGE_NAME", updatable = false)
+    private String packageName;
     @Column(name = "DOC_OBJECT_ID", updatable = false)
     private BigDecimal docObjectId;
     @Column(name = "CATEGORY_ID", updatable = false)
@@ -137,8 +139,6 @@ public class DocumentV implements Serializable {
     private Boolean isMajorVersion;
     @Column(name = "IS_VERSION_SERIES_CHECKED_OUT", updatable = false)
     private Boolean isVersionSeriesCheckedOut;
-    @Column(name = "IS_ARCHIVED", updatable = false)
-    private Boolean isArchived;
     @Column(name = "COMMENTS", updatable = false)
     private String comments;
     @Column(name = "ACT_TYPE", updatable = false)
@@ -153,6 +153,8 @@ public class DocumentV implements Serializable {
     private String template;
     @Column(name = "TITLE", updatable = false)
     private String title;
+    @Column(name = "NUM_PROPS", updatable = false)
+    private int numProps;
 
     public DocumentV() {
     }
@@ -175,6 +177,10 @@ public class DocumentV implements Serializable {
 
     public BigDecimal getPackageId() {
         return packageId;
+    }
+
+    public String getPackageName() {
+        return packageName;
     }
 
     public void setPackageId(BigDecimal packageId) {
@@ -413,9 +419,6 @@ public class DocumentV implements Serializable {
         this.isVersionSeriesCheckedOut = isVersionSeriesCheckedOut;
     }
 
-    public Boolean isArchived() {
-        return isArchived;
-    }
     public String getActType() {
         return actType;
     }
@@ -462,5 +465,9 @@ public class DocumentV implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public int getNumProps() {
+        return numProps;
     }
 }
