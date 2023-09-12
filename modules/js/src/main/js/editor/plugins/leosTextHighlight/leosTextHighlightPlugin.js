@@ -18,12 +18,22 @@ define(function leosTextHighlightPluginModule(require) {
     var LOG = require("logger");
     var pluginTools = require("plugins/pluginTools");
     var pluginName = "leosTextHighlight";
+    var DEFAULT_AUTO_TITLE = "Default";
 
     var pluginDefinition = {
         init: function init(editor) {
             _enableHighlightButton(editor);
             editor.on("saveSnapshot", _resolveOverlappedSpans);
             editor.on("activeFilterChange", _cancelActiveFilter, null, null, 1);
+            editor.on("lockSnapshot", _changeColorDialogAutoTitle);
+        }
+    }
+
+    function _changeColorDialogAutoTitle(event) {
+        var langCode = event.editor.langCode;
+        var autoTitle = langCode &&  event.editor.plugins.colorbutton && event.editor.plugins.colorbutton.langEntries[langCode].auto;
+        if (autoTitle && autoTitle.trim() !== DEFAULT_AUTO_TITLE) {
+            event.editor.plugins.colorbutton.langEntries[langCode].auto = DEFAULT_AUTO_TITLE;
         }
     }
 
@@ -35,17 +45,19 @@ define(function leosTextHighlightPluginModule(require) {
     }
 
     function _resolveOverlappedSpans(evt) {
-        var editedElement = evt.editor.element.getChildren().toArray().find((element) => element.getAttribute('data-akn-name') === evt.editor.LEOS.elementType);
+        var editedElement = evt.editor.element.getChildren().toArray()
+            .find((element) => element.getAttribute('data-akn-element') === evt.editor.LEOS.elementType
+                || element.getAttribute('data-akn-name') === evt.editor.LEOS.elementType);
         var highlightedSpans = editedElement && $(editedElement.$).find('span[data-akn-style]').toArray();
         if (highlightedSpans) {
             for (let i = 0; i < highlightedSpans.length; i++) {
-                var childSpans = $(highlightedSpans[i]).find('span[style]');
+                var childSpans = $(highlightedSpans[i]).children('span[style]');
                 var datAknStyleAttr = highlightedSpans[i].getAttribute('data-akn-style');
                 var styleAttr = highlightedSpans[i].getAttribute('style');
                 if (childSpans.length > 0) {
                     childSpans.insertAfter($(highlightedSpans[i]));
                     $(highlightedSpans[i]).remove();
-                } else if(!(datAknStyleAttr && datAknStyleAttr ==="bgcolor" && styleAttr)){
+                } else if (!(datAknStyleAttr && datAknStyleAttr === "bgcolor" && styleAttr)) {
                     highlightedSpans[i].insertAdjacentText('afterend', highlightedSpans[i].textContent);
                     highlightedSpans[i].remove();
                 }
