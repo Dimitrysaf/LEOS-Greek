@@ -242,7 +242,7 @@ public class DocumentServiceTests {
         assertEquals("0.1.1", lastVersion.getVersionLabel());
         assertEquals("ORDINARY_LEGISLATIVE_PROC", doc.getMetadata().get("procedureType"));
         assertEquals("First version", lastVersion.getComments());
-        assertTrue(lastVersion.getUpdatedOn().compareTo(lastVersion.getCreatedOn()) > 0);
+        assertTrue(lastVersion.getUpdatedOn().compareTo(lastVersion.getCreatedOn()) >= 0);
         assertTrue(Arrays.equals(lastVersion.getSource(), content.getBytes(StandardCharsets.UTF_8)));
         assertNotNull(doc.getMetadata().get("collaborators"));
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
@@ -316,7 +316,7 @@ public class DocumentServiceTests {
         assertEquals("0.1.1", doc.getVersionLabel());
         assertEquals("ORDINARY_LEGISLATIVE_PROC", doc.getMetadata().get("procedureType"));
         assertEquals("First version", doc.getComments());
-        assertTrue(doc.getUpdatedOn().compareTo(doc.getCreatedOn()) > 0);
+        assertTrue(doc.getUpdatedOn().compareTo(doc.getCreatedOn()) >= 0);
         assertTrue(new String(doc.getSource()).equals(new String(t.getSource())));
         assertNotNull(doc.getMetadata().get("collaborators"));
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
@@ -521,7 +521,7 @@ public class DocumentServiceTests {
         assertEquals(pkg.getName(), doc.getUpdatedBy());
         assertEquals("0.1.1", doc.getVersionLabel());
         assertEquals("Second Version", doc.getComments());
-        assertTrue(doc.getUpdatedOn().compareTo(doc.getCreatedOn()) > 0);
+        assertTrue(doc.getUpdatedOn().compareTo(doc.getCreatedOn()) >= 0);
         assertTrue(Arrays.equals(doc.getSource(),content.getBytes(StandardCharsets.UTF_8)));
         assertEquals(doc.getMetadata().get("title"), newTitle);
     }

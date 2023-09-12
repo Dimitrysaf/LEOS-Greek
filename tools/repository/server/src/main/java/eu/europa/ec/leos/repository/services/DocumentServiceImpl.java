@@ -282,7 +282,9 @@ public class DocumentServiceImpl implements DocumentService {
         doc.setAuditLastMBy(userId);
         doc.setAuditLastMDate(LocalDateTime.now());
         documentRepository.save(doc);
-        return ConversionUtils.buildXmlDocument(documentVRepository, documentContentRepository, collaboratorsService, documentPropertyValuesRepository,
+        return ConversionUtils.buildXmlDocument(documentVRepository, documentContentRepository, ConversionUtils.fetchCollaborators(collaboratorsService,
+                        doc.getPackageId().getId()),
+                documentPropertyValuesRepository,
                 doc.getId());
     }
 
@@ -322,7 +324,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     public List<LeosDocument> findAllVersionsByRef(final String ref) {
         List<DocumentV> docViews = documentVRepository.findAllVersionsByRef(ref);
-        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docViews, false);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docViews.isEmpty() ?
+                Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
+                docViews.get(0).getPackageId()), documentContentRepository, docViews, false);
     }
 
     public LeosDocument findDocumentById(final String versionId, final boolean latest) throws RepositoryException {
@@ -332,26 +336,30 @@ public class DocumentServiceImpl implements DocumentService {
         } else if (!docView.isPresent()) {
             return configService.findConfigByVersionId(versionId);
         }
-        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docView.orElse(null), true);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, ConversionUtils.fetchCollaborators(collaboratorsService,
+                docView.get().getPackageId()), documentContentRepository, docView.orElse(null), true);
     }
 
     public LeosDocument findLatestMajorVersionByRef(final String docRef) {
         Optional<DocumentV> docView = documentVRepository.findLatestMajorVersionByRef(docRef);
-        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docView.orElse(null), true);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docView.isPresent() ? ConversionUtils.fetchCollaborators(collaboratorsService,
+                docView.get().getPackageId()) : Arrays.asList(), documentContentRepository, docView.orElse(null), true);
     }
 
     @Cacheable(value = "findFirstVersion", key = "#docRef")
     public LeosDocument findFirstVersion(final String docRef) {
         LOG.info("Find first version: docRef={}", docRef);
         Optional<DocumentV> docView = documentVRepository.findFirstVersion(docRef);
-        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docView.orElse(null), true);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docView.isPresent() ? ConversionUtils.fetchCollaborators(collaboratorsService,
+                docView.get().getPackageId()) : Arrays.asList(), documentContentRepository, docView.orElse(null), true);
     }
 
     @Cacheable(value = "findDocumentByVersion", key = "{#docRef, #versionLabel }")
     public LeosDocument findDocumentByVersion(final String docRef, final String versionLabel) {
         LOG.info("Find Document by version: docRef={}, versionLabel={}", docRef, versionLabel);
         Optional<DocumentV> docView = documentVRepository.findDocumentByVersion(docRef, versionLabel);
-        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docView.orElse(null), true);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docView.isPresent() ? ConversionUtils.fetchCollaborators(collaboratorsService,
+                docView.get().getPackageId()) : Arrays.asList(), documentContentRepository, docView.orElse(null), true);
     }
 
     @Override
@@ -363,7 +371,9 @@ public class DocumentServiceImpl implements DocumentService {
             listDocs.addAll(milestoneDocumentService.findMilestoneByName(fileName));
         }
         if (listDocs.isEmpty()) {
-            listDocs.addAll(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs, true));
+            listDocs.addAll(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
+                    Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
+                    docs.get(0).getPackageId()), documentContentRepository, docs, true));
         }
         return listDocs.isEmpty() ? Optional.empty() : Optional.ofNullable(listDocs.get(0));
     }
@@ -372,7 +382,9 @@ public class DocumentServiceImpl implements DocumentService {
         try {
             List<LeosDocument> listDocs = new ArrayList<>();
             List<DocumentV> docs = documentVRepository.findDocumentsByPackageId(new BigDecimal(Long.parseLong(pkgId)));
-            listDocs.addAll(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs,
+            listDocs.addAll(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
+                            Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
+                            docs.get(0).getPackageId()), documentContentRepository, docs,
                     false));
             listDocs.addAll(milestoneDocumentService.findMilestoneByPackageId(pkgId));
             return listDocs;
@@ -527,7 +539,9 @@ public class DocumentServiceImpl implements DocumentService {
 
         Page<DocumentV> docViews = documentVRepository.findAllMinorsForIntermediate(docRef, currIntVersion, prevMajorVersion,
                 pageRequest);
-        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docViews.toList(), false);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docViews.isEmpty() ?
+                Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
+                docViews.getContent().get(0).getPackageId()), documentContentRepository, docViews.toList(), false);
     }
 
     public long getAllMinorsCountForIntermediate(final String docRef, String currIntVersion) {
@@ -549,7 +563,9 @@ public class DocumentServiceImpl implements DocumentService {
         PageRequest pageRequest =
                 PageRequest.of(startIndex, maxResults < 1 ? MAX_RESULT_DEFAULT : maxResults, Sort.Direction.DESC, "updatedOn");
         Page<DocumentV> docViews = documentVRepository.findAllMajors(docRef, pageRequest);
-        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docViews.toList(), false);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docViews.isEmpty() ?
+                Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
+                docViews.getContent().get(0).getPackageId()), documentContentRepository, docViews.toList(), false);
     }
 
     public List<LeosDocument> findRecentMinorVersions(final String docRef, String lastMajorVersion, final int startIndex, final int maxResults) {
@@ -557,7 +573,9 @@ public class DocumentServiceImpl implements DocumentService {
         PageRequest pageRequest =
                 PageRequest.of(startIndex, maxResults < 1 ? MAX_RESULT_DEFAULT : maxResults, Sort.Direction.DESC, "updatedOn");
         Page<DocumentV> docs = documentVRepository.findRecentMinorVersions(docRef, lastMajorVersion, pageRequest);
-        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository, docs.toList(), false);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
+                Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
+                docs.getContent().get(0).getPackageId()), documentContentRepository, docs.toList(), false);
     }
 
     public List<LeosDocument> findDocumentsByUserId(final String userId, final String leosAuthority) {
@@ -581,9 +599,12 @@ public class DocumentServiceImpl implements DocumentService {
                 } catch (RepositoryException e) {
                     return Optional.empty();
                 }
+            } else {
+                return leosDoc;
             }
         }
-        return Optional.of(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService,
+        return Optional.of(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, ConversionUtils.fetchCollaborators(collaboratorsService,
+                        doc.get().getPackageId()),
                 documentContentRepository, doc.get(), true));
     }
 
@@ -606,9 +627,9 @@ public class DocumentServiceImpl implements DocumentService {
     public List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter,
                                                        final int startIndex, final int maxResults, final boolean fetchContent) {
         //Build query
-        StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true") ;
+        StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d WHERE d.isLatestVersion = true") ;
         if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
+            queryBuild.append(String.format(" AND d.packageName = '%s'", packageName));
         }
 
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
@@ -623,9 +644,9 @@ public class DocumentServiceImpl implements DocumentService {
 
     public long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
-        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true");
+        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE d.isLatestVersion = true");
         if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" AND d.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
+            queryBuild.append(String.format(" AND d.packageName = '%s'", packageName));
         }
         buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
         Long count = (Long)entityManager.createQuery(queryBuild.toString()).getSingleResult();

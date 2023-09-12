@@ -298,7 +298,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         StringBuilder queryBuild = new StringBuilder(
                 String.format("SELECT m FROM MilestoneV m WHERE ", packageName));
         if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
+            queryBuild.append(String.format(" m.packageName = '%s'", packageName));
         }
 
         StringBuilder queryFilterBuild = new StringBuilder();
@@ -320,7 +320,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         //Build query
         StringBuilder queryBuild = new StringBuilder("SELECT COUNT(m) FROM MilestoneV m WHERE");
         if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" m.packageId IN (SELECT p.id FROM Package p WHERE p.name = '%s')", packageName));
+            queryBuild.append(String.format(" m.packageName = '%s'", packageName));
         }
         StringBuilder queryFilterBuild = new StringBuilder();
         buildQueryWithFilterQuery(queryFilterBuild, categories, queryFilter);
@@ -337,7 +337,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             String categoryStr = categories.stream()
                     .map(a -> "'" + a + "'")
                     .collect(Collectors.joining(","));
-            queryBuild.append(String.format(" m.categoryId IN (SELECT c.id FROM DocumentCategories c WHERE c.categoryCode IN (%s))",
+            queryBuild.append(String.format(" m.categoryCode IN (%s)",
                     categoryStr));
         }
         String whereFiltersClause = getWhereClauseFromQueryFilter(queryFilter, MilestoneV.class);

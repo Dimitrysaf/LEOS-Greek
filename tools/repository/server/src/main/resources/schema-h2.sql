@@ -259,26 +259,26 @@ CREATE INDEX PACKAGE_COLLABORATORS_IDX2 ON PACKAGE_COLLABORATORS (COLLABORATOR_I
 CREATE VIEW DOCUMENT_CATEGORIES_V (ID, CATEGORY_CODE, CATEGORY_DESC, AUDIT_C_BY, AUDIT_C_DATE, AUDIT_LAST_M_BY, AUDIT_LAST_M_DATE) AS
 SELECT ID,CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE FROM DOCUMENT_CATEGORIES;
 
-CREATE VIEW DOCUMENT_V AS SELECT doc.id||'_'||docver.id||'_'||docxml.id||'_'||doccat.id unique_id ,
-                                 doc.id document_id, doc.object_id doc_object_id, doc.category_id, doc.package_id, docxml.version_id, doccat.category_code,
-                                 doccat.category_desc, doc.name,doc.cloned_from, doc.revision_status, doc.contribution_status, doc.origin_ref,
-                                 doc.base_revision_id, doc.live_diffing_required, doc.ref,doc.procedure_type, doc.doc_template, doc.language,
-                                 doc.doc_stage, doc.is_private_working_copy, doc.audit_c_by doc_audit_c_by, doc.audit_c_date doc_audit_c_date,
-                                 docver.audit_last_m_date doc_audit_last_m_date, docver.audit_last_m_by doc_audit_last_m_by , docver.version_label,
-                                 docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version,
-                                 docver.is_major_version, docver.is_version_series_checked_out, docxml.act_type,
-                                 docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, doc.is_archived
-                          FROM document doc, document_version docver, document_content docxml, document_categories_v doccat
-                               WHERE doc.id = docver.document_id AND docver.id = docxml.version_id AND doc.category_id = doccat.id;
+CREATE VIEW DOCUMENT_V  AS
+SELECT doc.id||'_'||docver.id||'_'||doccat.id unique_id
+     , doc.id document_id,doc.object_id doc_object_id,doc.category_id
+     , doc.package_id, pkg.name package_name, docxml.version_id
+     , doccat.category_code, doccat.category_desc
+     , doc.name, doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy
+     , docver.audit_c_by doc_audit_c_by,docver.audit_c_date doc_audit_c_date,docver.audit_last_m_date doc_audit_last_m_date,docver.audit_last_m_by doc_audit_last_m_by
+     , docver.version_label, docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version, docver.is_major_version, docver.is_version_series_checked_out
+     , docxml.act_type, docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title, docver.comments, (SELECT count(*) FROM document_property_values dpv WHERE dpv.version_id = docver.id) AS num_props
+FROM document doc, document_version docver, document_content docxml, document_categories_v doccat, "PACKAGE" pkg
+WHERE (doc.IS_ARCHIVED IS NULL OR doc.IS_ARCHIVED = 0) AND docver.DOCUMENT_ID = doc.ID
+  AND docver.id = docxml.version_id
+  AND doc.category_id = doccat.id AND doc.package_id = pkg.id;
 
-CREATE VIEW MILESTONE_V as
-SELECT doc.id||'_'||docmil.id unique_id, doc.id document_id, doc.package_id, doc.object_id doc_object_id,doc.category_id,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by
-     , docmil.id milestone_id, docmil.job_id, docmil.job_date, docmil.export_date, docmil.export_status, docmil.milestone_comments, docmil.content, docmil
-         .status, docmil
-         .audit_c_by,
-       docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
-FROM document doc, document_milestone docmil
-WHERE doc.id = docmil.document_id;
+CREATE VIEW MILESTONE_V AS
+SELECT doc.id||'_'||docmil.id unique_id, doc.id document_id,doc.package_id,pkg.name package_name,doc.object_id doc_object_id,doc.category_id,doccat.category_code,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,
+       doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by, docmil.id milestone_id, docmil.job_id, docmil.job_date, docmil.milestone_comments, docmil.content,
+       docmil.status,docmil.EXPORT_STATUS,docmil.EXPORT_DATE , docmil.audit_c_by,docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
+FROM document doc, document_milestone docmil, "PACKAGE" pkg, document_categories doccat
+WHERE doc.id = docmil.document_id AND doc.category_id = doccat.id AND doc.package_id = pkg.id;
 
 CREATE VIEW MILESTONE_COMMENTS_V as
 SELECT milv.milestone_id||'_'||milcom.id unique_id, milv.package_id, milv.document_id, milv.milestone_id
@@ -300,19 +300,6 @@ FROM config conf, config_version ver, config_content con, config_categories cat
 WHERE
   conf.id = ver.config_id
   and ver.id = con.version_id and cat.id = conf.category_id;
-
-CREATE VIEW PACKAGE_V AS SELECT pkg.id||'_'||doc.id||'_'||docver.id||'_'||docxml.id unique_id, pkg.id package_id, pkg.object_id pkg_object_id,
-                                pkg.name package_name, pkg.audit_c_date, pkg.audit_c_by, pkg.audit_last_m_date,
-                                pkg.audit_last_m_by , doc.id document_id, doc.object_id doc_object_id,doc.category_id,
-                                doc.name, doc.cloned_from, doc.revision_status, doc.contribution_status, doc.origin_ref, doc.base_revision_id,
-                                doc.live_diffing_required, doc.ref, doc.procedure_type, doc.doc_template, doc.language, doc.doc_stage,
-                                doc.is_private_working_copy, doc.audit_c_by doc_audit_c_by, doc.audit_c_date doc_audit_c_date, doc.audit_last_m_date
-                                    doc_audit_last_m_date, doc.audit_last_m_by doc_audit_last_m_by, docver.version_label,
-                                docver.version_series_id, docver.version_type, docver.is_latest_major_version, docver.is_latest_version,
-                                docver.is_major_version, docver.is_version_series_checked_out , docxml.content, docxml.act_type,
-                                docxml.doc_purpose, docxml.doc_type, docxml.eea_relevance, docxml.template, docxml.title
-FROM package pkg, document doc, document_version docver, document_content docxml
-WHERE pkg.id = doc.package_id and doc.id = docver.document_id AND docver.id = docxml.version_id;
 
 CREATE VIEW DOCUMENT_PROPERTIES_V as
 SELECT doc.id||'_'||cat.id||'_'||docver.id||'_'||pro.id||'_'||proval.id unique_id, doc.id,doc.object_id,doc.package_id,doc.category_id,cat.category_code,cat.category_desc,doc.name
