@@ -1,4 +1,6 @@
 import { HttpClient } from '@angular/common/http';
+import { of, Subject } from 'rxjs';
+import { switchMap, take, takeUntil } from 'rxjs/operators';
 
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
@@ -28,6 +30,8 @@ export type CheckBoxesConnectorOptions = {
 };
 
 export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesConnectorState> {
+  private cancelSaveElement$ = new Subject<void>();
+
   constructor(
     state: CheckBoxesConnectorInitialState,
     private options: CheckBoxesConnectorOptions,
@@ -44,6 +48,8 @@ export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesC
     elementType: string;
     elementFragment: string;
   }) {
+    this.cancelSaveElement$.next();
+
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
@@ -53,11 +59,17 @@ export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesC
       elemData.elementType,
       elemData.elementFragment,
       documentType,
-    ).subscribe((response) => {
-      this.tableOfContentService.reload();
-      this.coEditionService.sendUpdateDocumentEvent(documentRef);
-      this.documentService.reloadDocument();
-    });
+    )
+      .pipe(
+        switchMap(() => {
+          this.tableOfContentService.reload();
+          this.coEditionService.sendUpdateDocumentEvent(documentRef);
+          this.documentService.reloadDocument();
+          return of(null);
+        }),
+        takeUntil(this.cancelSaveElement$),
+      )
+      .subscribe();
   }
 
   private saveDocumentElement(
