@@ -18,7 +18,6 @@ import { findNodeById, isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
-import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
