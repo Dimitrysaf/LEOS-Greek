@@ -50,7 +50,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
       const tmp = {
         action: item.action.toUpperCase(),
         elementState: item.elementState.toUpperCase(),
-        elementId: item.elementId,
+        elementId: item.elementId.replaceAll('revision-', ''),
         elementTagName: item.elementTagName,
         contributionVO: this.contribution,
       };
