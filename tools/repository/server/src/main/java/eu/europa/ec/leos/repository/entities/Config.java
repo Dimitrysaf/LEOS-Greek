@@ -39,7 +39,6 @@ import javax.persistence.Table;
         @NamedQuery(name = "Config.findByAuditCDate", query = "SELECT c FROM Config c WHERE c.auditCDate = :auditCDate"),
         @NamedQuery(name = "Config.findByAuditLastMBy", query = "SELECT c FROM Config c WHERE c.auditLastMBy = :auditLastMBy"),
         @NamedQuery(name = "Config.findByAuditLastMDate", query = "SELECT c FROM Config c WHERE c.auditLastMDate = :auditLastMDate"),
-        @NamedQuery(name = "Config.findByOriginalId", query = "SELECT c FROM Config c WHERE c.originalId = :originalId"),
         @NamedQuery(name = "Config.findByLanguage", query = "SELECT c FROM Config c WHERE c.language = :language")})
 public class Config implements Serializable {
 
@@ -62,8 +61,6 @@ public class Config implements Serializable {
     private LocalDateTime auditLastMDate;
     @Column(name = "AUDIT_LAST_M_BY", length = 30)
     private String auditLastMBy;
-    @Column(name = "ORIGINAL_ID", precision = 22, scale = 0)
-    private BigDecimal originalId;
     @Column(name = "LANGUAGE")
     private String language;
     @JoinColumn(name = "CATEGORY_ID", referencedColumnName = "ID")

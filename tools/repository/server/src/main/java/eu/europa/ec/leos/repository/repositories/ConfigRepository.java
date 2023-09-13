@@ -22,5 +22,5 @@ import java.util.Optional;
 
 public interface ConfigRepository extends JpaRepository<Config, BigDecimal> {
     @Query(value = "SELECT * FROM CONFIG c WHERE c.NAME = ?1", nativeQuery = true)
-    Optional<Config> findConfigByNameAndRepositoryId(String name);
+    Optional<Config> findConfigByName(String name);
 }

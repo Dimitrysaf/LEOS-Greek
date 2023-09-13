@@ -35,7 +35,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Cacheable("findConfigByName")
     public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
-        Optional<Config> hasDoc = configRepository.findConfigByNameAndRepositoryId(name);
+        Optional<Config> hasDoc = configRepository.findConfigByName(name);
         if (hasDoc.isPresent()) {
             ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(hasDoc.get().getId());
             if (version == null) {
