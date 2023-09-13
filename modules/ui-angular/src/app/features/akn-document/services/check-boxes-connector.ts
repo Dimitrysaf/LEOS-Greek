@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { of, Subject } from 'rxjs';
-import { switchMap, take, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { debounceTime, take } from 'rxjs/operators';
 
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
@@ -30,7 +30,7 @@ export type CheckBoxesConnectorOptions = {
 };
 
 export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesConnectorState> {
-  private cancelSaveElement$ = new Subject<void>();
+  private lastSaveElementTimestamp = 0;
 
   constructor(
     state: CheckBoxesConnectorInitialState,
@@ -48,28 +48,34 @@ export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesC
     elementType: string;
     elementFragment: string;
   }) {
-    this.cancelSaveElement$.next();
+    const currentTimestamp = Date.now();
+    this.lastSaveElementTimestamp = currentTimestamp;
 
-    this.documentService.setDidDocumentLoadAndRender(false);
-    const documentRef = this.documentService.documentRef;
-    const documentType = this.documentService.documentType;
-    this.saveDocumentElement(
-      documentRef,
-      elemData.elementId,
-      elemData.elementType,
-      elemData.elementFragment,
-      documentType,
-    )
-      .pipe(
-        switchMap(() => {
-          this.tableOfContentService.reload();
-          this.coEditionService.sendUpdateDocumentEvent(documentRef);
-          this.documentService.reloadDocument();
-          return of(null);
-        }),
-        takeUntil(this.cancelSaveElement$),
-      )
-      .subscribe();
+    const debounceCheckBoxChangeSave = new Subject<void>();
+
+    debounceCheckBoxChangeSave
+      .pipe(debounceTime(300), take(1))
+      .subscribe(() => {
+        if (this.lastSaveElementTimestamp === currentTimestamp) {
+          this.documentService.setDidDocumentLoadAndRender(false);
+          const documentRef = this.documentService.documentRef;
+          const documentType = this.documentService.documentType;
+          this.saveDocumentElement(
+            documentRef,
+            elemData.elementId,
+            elemData.elementType,
+            elemData.elementFragment,
+            documentType,
+          ).subscribe(() => {
+            this.tableOfContentService.reload();
+            this.coEditionService.sendUpdateDocumentEvent(documentRef);
+            this.documentService.reloadDocument();
+          });
+        }
+      });
+
+    // Trigger the debouncer
+    debounceCheckBoxChangeSave.next();
   }
 
   private saveDocumentElement(
