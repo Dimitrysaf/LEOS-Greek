@@ -97,7 +97,7 @@ public class GenericDocumentApiService {
     private final UserHelper userHelper;
     private final LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
     private final DocumentVOProvider documentVOProvider;
-    private final ComparisonDelegateAPI comparisonDelegate;
+    private final ComparisonDelegateAPI<XmlDocument> comparisonDelegate;
 
     public GenericDocumentApiService(@NotNull LeosRepository leosRepository,
                                      @NotNull TableOfContentProcessor tableOfContentProcessor,
@@ -119,7 +119,7 @@ public class GenericDocumentApiService {
                                      @NotNull UserHelper userHelper,
                                      @NotNull LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper,
                                      @NotNull DocumentVOProvider documentVOProvider,
-                                     @NotNull ComparisonDelegateAPI comparisonDelegate) {
+                                     @NotNull ComparisonDelegateAPI<XmlDocument> comparisonDelegate) {
         this.leosRepository = Objects.requireNonNull(leosRepository);
         this.tableOfContentProcessor = Objects.requireNonNull(tableOfContentProcessor);
         this.elementProcessor = Objects.requireNonNull(elementProcessor);
