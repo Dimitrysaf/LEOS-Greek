@@ -1473,6 +1473,7 @@ public class LegServiceImpl implements LegService {
         //1. Add Proposal to package
         final Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
         final Map<String, String> proposalRefsMap = enrichZipWithProposalForClone(contentToZip, exportProposalResource, proposal);
+        legPackage.addContainedFile(proposal.getVersionedReference());
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         String language = proposal.getMetadata().get().getLanguage();
         //2. Add Bill to pacakge
