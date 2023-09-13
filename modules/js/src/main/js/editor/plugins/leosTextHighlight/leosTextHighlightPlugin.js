@@ -26,6 +26,13 @@ define(function leosTextHighlightPluginModule(require) {
             editor.on("saveSnapshot", _resolveOverlappedSpans);
             editor.on("activeFilterChange", _cancelActiveFilter, null, null, 1);
             editor.on("lockSnapshot", _changeColorDialogAutoTitle);
+            editor.on("toHtml", _disableContentFilterInHeading, null, null, 1);
+        }
+    }
+
+    function _disableContentFilterInHeading(event) {
+        if(event.data && event.data.context === 'h2' && !event.data.filter.disabled) {
+                event.data.filter.disabled = true;
         }
     }
 
@@ -78,7 +85,7 @@ define(function leosTextHighlightPluginModule(require) {
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
     var transformationConfig = {
-        akn : "inline",
+        akn : "inline[name=bgcolor]",
         html : "span[style]",
         attr : [{
             akn : "xml:id",
@@ -86,7 +93,6 @@ define(function leosTextHighlightPluginModule(require) {
         },{
             akn: "style",
             html : "style"
-
         },{
             akn: "name=bgcolor",
             html : "data-akn-style=bgcolor"
