@@ -14,7 +14,7 @@ import {
 } from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
-import { findNodeById, isNodeLastElement } from '@/shared/utils/toc.utils';
+import { isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
@@ -288,45 +288,46 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementId: string;
     elementType: string;
   }) {
-    this.dialogService.openDialog({
-      title: this.translateService.instant(
-        'page.editor.element-delete-dialog.title',
-      ),
-      content: this.translateService.instant(
-        'page.editor.element-delete-dialog.body',
-      ),
-      accept: () => {
-        const documentRef = this.documentService.documentRef;
-        const documentType = this.documentService.documentType;
-        const deleteDocumentElement = () =>
-          this.deleteDocumentElement(
-            documentRef,
-            elementData.elementType.toLowerCase(),
-            elementData.elementId,
-            documentType,
-          ).subscribe((response) => {
-            this.documentService.setDocumentRefAndCategory(
-              documentRef,
-              documentType,
-            );
-            this.tableOfContentService.reloadToc();
-          });
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
 
-        if (
-          isNodeLastElement(
-            this.tableOfContentService.getCurrentToc(),
-            elementData.elementId,
-          )
-        ) {
-          this.openLastElementDeleteConfirmation(deleteDocumentElement);
-          return;
-        }
-        deleteDocumentElement();
-      },
-      dismiss: () => {
-        this.releaseElement();
-      },
-    });
+    const deleteDocumentElement = () =>
+      this.deleteDocumentElement(
+        documentRef,
+        elementData.elementType.toLowerCase(),
+        elementData.elementId,
+        documentType,
+      ).subscribe((response) => {
+        this.documentService.setDocumentRefAndCategory(
+          documentRef,
+          documentType,
+        );
+        this.tableOfContentService.reloadToc();
+      });
+
+    if (
+      isNodeLastElement(
+        this.tableOfContentService.getCurrentToc(),
+        elementData.elementId,
+      )
+    ) {
+      this.openLastElementDeleteConfirmation(deleteDocumentElement);
+    } else {
+      this.dialogService.openDialog({
+        title: this.translateService.instant(
+          'page.editor.element-delete-dialog.title',
+        ),
+        content: this.translateService.instant(
+          'page.editor.element-delete-dialog.body',
+        ),
+        accept: () => {
+          deleteDocumentElement();
+        },
+        dismiss: () => {
+          this.releaseElement();
+        },
+      });
+    }
   }
 
   // leosEditorExtension > actionHandler
