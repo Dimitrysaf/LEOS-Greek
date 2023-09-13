@@ -92,7 +92,7 @@ public class PackageServiceImpl implements PackageService {
             return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
     }
 
-    @Cacheable(cacheNames = "getPackageByName", key = "{#repositoryId, #name}")
+    @Cacheable(cacheNames = "getPackageByName", key = "{#name}")
     public eu.europa.ec.leos.repository.model.Package getPackageByName(final String name) throws RepositoryException {
         Package pkg =
                 packageRepository.findPackageByName(name).orElse(null);
