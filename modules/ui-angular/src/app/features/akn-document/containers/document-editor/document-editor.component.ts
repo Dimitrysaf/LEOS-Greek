@@ -927,10 +927,6 @@ export class DocumentEditorComponent
   ) {
     if (contributionView) {
       const html = this.cleanupAndSerializeXML(contributionView.editableXml);
-      html.replace(
-        /\s(id|leos:softmove_to|leos:softmove_from)="/gi,
-        (match) => `${match}revision-`,
-      );
       this.contributionForView = html.replace(
         /\s(id|leos:softmove_to|leos:softmove_from)="/gi,
         (match) => `${match}revision-`,
