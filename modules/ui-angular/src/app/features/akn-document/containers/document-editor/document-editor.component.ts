@@ -1008,13 +1008,13 @@ export class DocumentEditorComponent
 
   private handleCompareChanges() {
     const nodeListCN = document.querySelectorAll(
-      '.leos-content-new-cn, .leos-content-removed-cn',
+      '.leos-content-new-cn:not(num), .leos-content-removed-cn:not(num)',
     );
     const nodeList = document.querySelectorAll(
-      '.leos-content-new, .leos-content-removed',
+      '.leos-content-new:not(num), .leos-content-removed:not(num)',
     );
     const nodeListCNDoubleCompare = document.querySelectorAll(
-      '.leos-double-compare-removed, .leos-double-compare-added',
+      '.leos-double-compare-removed:not(num), .leos-double-compare-added:not(num)',
     );
     this.compareChanges = (
       nodeList && nodeList.length > 0
