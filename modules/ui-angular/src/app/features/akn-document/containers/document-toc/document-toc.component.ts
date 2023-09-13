@@ -752,12 +752,32 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     this.draggedItem = null;
   }
 
+  private isMovedNode(node: TableOfContentItemVO) {
+    return (
+      node.softActionRoot && (node.softActionAttr === MOVE_TO || MOVE_FROM)
+    );
+  }
+
+  private isDeletedNode(node: TableOfContentItemVO) {
+    return node.softActionRoot && node.softActionAttr === DELETE;
+  }
+
   private handleAddNodeAfterValidation(
     nodeTarget: TableOfContentItemVO,
     nodeDragged: TableOfContentItemVO,
     isAdd: boolean,
     position: string,
   ) {
+    if (this.isMovedNode(nodeDragged) || this.isDeletedNode(nodeDragged)) {
+      this.populateValidationMessage({
+        success: false,
+        sourceItem: nodeDragged,
+        targetItem: nodeTarget,
+        messageKey: 'toc.edit.window.drop.moved-or-deleted-cannot-move.error',
+      } as NodeValidation);
+      return;
+    }
+
     // same type nodes will validate to response.success since in the validation processs , it will validates if it can drop as sibling and not as children
     if (position === 'AS_CHILDREN') {
       const validationResult: NodeValidation = {

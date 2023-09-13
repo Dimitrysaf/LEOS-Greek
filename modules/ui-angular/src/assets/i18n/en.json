@@ -484,6 +484,7 @@
   "toc.edit.window.drop.error.message": "<b>{{0}}</b> cannot be dropped on <b>{{1}}</b>",
   "toc.edit.window.drop.success.message": "<b>{{0}}</b> has been added successfully!",
   "toc.edit.window.drop.unexpected.error": "An unexpected error occured while editing Table Of Content",
+  "toc.edit.window.drop.moved-or-deleted-cannot-move.error": "<b>Deleted or moved items</b> cannot be moved",
   "toc.edit.window.softmove.label": "MOVED",
   "version.view.header": "v{{ version }} - last edited by {{ updatedByFull }} on {{ updatedOn }}",
   "version.compare.header.default": "Select 2 versions to compare",
