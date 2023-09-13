@@ -5,16 +5,7 @@ import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
-import {
-  combineLatest,
-  filter,
-  map,
-  Subject,
-  switchMap,
-  take,
-  takeUntil,
-} from 'rxjs';
-import { apiBaseUrl } from 'src/config';
+import { combineLatest, map, Subject, take, takeUntil } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { ActionManagerConnector } from '@/features/akn-document/services/action-manager-connector';
@@ -128,9 +119,7 @@ export class CKEditorService implements OnDestroy {
     this.trackChangesConnector?.$triggerStateChange();
     this.mergeContributionConnector?.$triggerStateChange();
     if (this.datePickerConnector) {
-      // TODO: clean this up
       const rootElement = this.domDocument.getElementById('docContainer');
-
       combineLatest([this.leosLegacyService.require$, this.getLeosState()])
         .pipe(take(1))
         .subscribe(([require, leosState]) => {

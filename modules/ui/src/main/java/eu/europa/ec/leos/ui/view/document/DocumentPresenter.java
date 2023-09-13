@@ -296,7 +296,6 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
     private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
     private static final String LEOS_ALTERNATIVE_ATTR = "leos:alternative";
-    private boolean milestoneExplorerOpened = false;
     private InstanceTypeResolver instanceTypeResolver;
     private final AnnotateService annotateService;
     private final List<String> openElementEditors;
@@ -1902,7 +1901,6 @@ class DocumentPresenter extends AbstractLeosPresenter {
     public void fetchMilestoneByVersionedReference(FetchMilestoneByVersionedReferenceEvent event) {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
         LegDocument legDocument = legService.findLastLegByVersionedReference(leosPackage.getPath(), event.getVersionedReference());
-        milestoneExplorerOpened = true;
         documentScreen.showMilestoneExplorer(legDocument, String.join(",", legDocument.getMilestoneComments()), proposalRef);
     }
 
@@ -1931,7 +1929,6 @@ class DocumentPresenter extends AbstractLeosPresenter {
      */
     @Subscribe
     public void afterClosedWindow(WindowClosedEvent<MilestoneExplorer> windowClosedEvent) {
-        milestoneExplorerOpened = false;
         eventBus.post(new NavigationRequestEvent(Target.LEGALTEXT, getDocumentRef()));
     }
 
