@@ -83,6 +83,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     tocTree: TableOfContentItemVO[],
   ) {
     if (
+      moveFromItem.originAttr !== null &&
       moveFromItem.originAttr.toLowerCase() === EC &&
       (moveFromItem.softActionAttr == null ||
         (!this.hasTocItemSoftAction(moveFromItem, MOVE_FROM) &&
