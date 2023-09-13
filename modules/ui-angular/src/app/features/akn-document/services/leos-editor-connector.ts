@@ -14,7 +14,7 @@ import {
 } from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
-import { findNodeById, isNodeLastElement } from '@/shared/utils/toc.utils';
+import { isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
@@ -312,9 +312,22 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       )
     ) {
       this.openLastElementDeleteConfirmation(deleteDocumentElement);
-      return;
+    } else {
+      this.dialogService.openDialog({
+        title: this.translateService.instant(
+          'page.editor.element-delete-dialog.title',
+        ),
+        content: this.translateService.instant(
+          'page.editor.element-delete-dialog.body',
+        ),
+        accept: () => {
+          deleteDocumentElement();
+        },
+        dismiss: () => {
+          this.releaseElement();
+        },
+      });
     }
-    deleteDocumentElement();
   }
 
   // leosEditorExtension > actionHandler
