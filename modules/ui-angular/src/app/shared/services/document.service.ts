@@ -703,7 +703,7 @@ export class DocumentService implements OnDestroy {
         params: {
           references,
           currentElementId: currentElementId ?? null,
-          capital,
+          capital: capital ?? false,
         },
       },
     );

@@ -204,7 +204,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       .fetchReferenceLabel(
         data.references,
         data.currentEditPosition ?? null,
-        data.capital,
+        data.capital ?? false,
         data.documentRef,
       )
       .pipe(take(1))
