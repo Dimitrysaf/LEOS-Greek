@@ -18,6 +18,7 @@ import { findNodeById, isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
+import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
@@ -288,33 +289,45 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementId: string;
     elementType: string;
   }) {
-    const documentRef = this.documentService.documentRef;
-    const documentType = this.documentService.documentType;
+    this.dialogService.openDialog({
+      title: this.translateService.instant(
+        'page.editor.element-delete-dialog.title',
+      ),
+      content: this.translateService.instant(
+        'page.editor.element-delete-dialog.body',
+      ),
+      accept: () => {
+        const documentRef = this.documentService.documentRef;
+        const documentType = this.documentService.documentType;
+        const deleteDocumentElement = () =>
+          this.deleteDocumentElement(
+            documentRef,
+            elementData.elementType.toLowerCase(),
+            elementData.elementId,
+            documentType,
+          ).subscribe((response) => {
+            this.documentService.setDocumentRefAndCategory(
+              documentRef,
+              documentType,
+            );
+            this.tableOfContentService.reloadToc();
+          });
 
-    const deleteDocumentElement = () =>
-      this.deleteDocumentElement(
-        documentRef,
-        elementData.elementType.toLowerCase(),
-        elementData.elementId,
-        documentType,
-      ).subscribe((response) => {
-        this.documentService.setDocumentRefAndCategory(
-          documentRef,
-          documentType,
-        );
-        this.tableOfContentService.reloadToc();
-      });
-
-    if (
-      isNodeLastElement(
-        this.tableOfContentService.getCurrentToc(),
-        elementData.elementId,
-      )
-    ) {
-      this.openLastElementDeleteConfirmation(deleteDocumentElement);
-      return;
-    }
-    deleteDocumentElement();
+        if (
+          isNodeLastElement(
+            this.tableOfContentService.getCurrentToc(),
+            elementData.elementId,
+          )
+        ) {
+          this.openLastElementDeleteConfirmation(deleteDocumentElement);
+          return;
+        }
+        deleteDocumentElement();
+      },
+      dismiss: () => {
+        this.releaseElement();
+      },
+    });
   }
 
   // leosEditorExtension > actionHandler
