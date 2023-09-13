@@ -1030,9 +1030,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private createNodeTooltip(node: TableOfContentItemVO) {
-    const labelEl = this.treeContainer.nativeElement.querySelector(
+    const labelEl: HTMLElement = this.treeContainer.nativeElement.querySelector(
       `#node-label-${node.id}`,
-    ) as HTMLElement;
+    );
     const isLabelTextTruncated =
       labelEl && labelEl.offsetWidth < labelEl.scrollWidth;
     const labelWithoutSpans = node.label.replace(

@@ -332,9 +332,10 @@ export class ProposalsFiltersComponent
   }
 
   private setOptionTooltip(option: FilterOption) {
-    const labelEl = this.filtersContainer.nativeElement.querySelector(
-      `#${option.id} + label`,
-    ) as HTMLElement;
+    const labelEl: HTMLElement =
+      this.filtersContainer.nativeElement.querySelector(
+        `#${option.id} + label`,
+      );
     const isLabelTextTruncated =
       labelEl && labelEl.offsetWidth < labelEl.scrollWidth;
     option.tooltip = isLabelTextTruncated
