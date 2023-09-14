@@ -803,10 +803,14 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
     public void updateUserCoEditionInfo(List<CoEditionVO> coEditionVos, User user) {
         this.getUI().access(() -> {
             // Update memorandum user CoEdition information
-            populateUserCoEditionInfo(memorandumUserCoEdition, (DocumentVO) memorandumBlock.getData(), coEditionVos, user);
+            if (memorandumBlock.getData() != null) {
+                populateUserCoEditionInfo(memorandumUserCoEdition, (DocumentVO) memorandumBlock.getData(), coEditionVos, user);
+            }
 
             // Update legal text user CoEdition information
-            populateUserCoEditionInfo(legalTextUserCoEdition, (DocumentVO) legalTextBlock.getData(), coEditionVos, user);
+            if (legalTextBlock.getData() != null) {
+                populateUserCoEditionInfo(legalTextUserCoEdition, (DocumentVO) legalTextBlock.getData(), coEditionVos, user);
+            }
 
             // Update annexes user CoEdition information
             Iterator<Component> annexesIterator = annexesLayout.iterator();
