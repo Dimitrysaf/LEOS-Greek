@@ -46,9 +46,7 @@ import javax.xml.bind.annotation.XmlTransient;
         @NamedQuery(name = "DocumentMilestone.findByAuditCDate", query = "SELECT d FROM DocumentMilestone d WHERE d.auditCDate = :auditCDate"),
         @NamedQuery(name = "DocumentMilestone.findByAuditLastMBy", query = "SELECT d FROM DocumentMilestone d WHERE d.auditLastMBy = :auditLastMBy"),
         @NamedQuery(name = "DocumentMilestone.findByAuditLastMDate", query = "SELECT d FROM DocumentMilestone d WHERE d.auditLastMDate = :auditLastMDate"),
-        @NamedQuery(name = "DocumentMilestone.findByJobId", query = "SELECT d FROM DocumentMilestone d WHERE d.jobId = :jobId"),
-        @NamedQuery(name = "DocumentMilestone.findByExportStatus", query = "SELECT d FROM DocumentMilestone d WHERE d.exportStatus = :exportStatus"),
-        @NamedQuery(name = "DocumentMilestone.findByExportDate", query = "SELECT d FROM DocumentMilestone d WHERE d.exportDate = :exportDate")})
+        @NamedQuery(name = "DocumentMilestone.findByJobId", query = "SELECT d FROM DocumentMilestone d WHERE d.jobId = :jobId")})
 public class DocumentMilestone implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -75,10 +73,6 @@ public class DocumentMilestone implements Serializable {
     private LocalDateTime auditLastMDate;
     @Column(name = "AUDIT_LAST_M_BY", length = 30)
     private String auditLastMBy;
-    @Column(name = "EXPORT_STATUS", length = 30)
-    private String exportStatus;
-    @Column(name = "EXPORT_DATE")
-    private LocalDateTime exportDate;
     @Column(name = "JOB_ID", length = 30)
     private String jobId;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "milestone")
@@ -181,22 +175,6 @@ public class DocumentMilestone implements Serializable {
 
     public void setJobId(String jobId) {
         this.jobId = jobId;
-    }
-
-    public String getExportStatus() {
-        return exportStatus;
-    }
-
-    public void setExportStatus(String exportStatus) {
-        this.exportStatus = exportStatus;
-    }
-
-    public LocalDateTime getExportDate() {
-        return exportDate;
-    }
-
-    public void setExportDate(LocalDateTime exportDate) {
-        this.exportDate = exportDate;
     }
 
     @XmlTransient

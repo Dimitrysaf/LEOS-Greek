@@ -113,10 +113,6 @@ public class MilestoneV implements Serializable {
     private String jobId;
     @Column(name = "JOB_DATE", updatable = false)
     private LocalDateTime jobDate;
-    @Column(name = "EXPORT_STATUS", length = 30)
-    private String exportStatus;
-    @Column(name = "EXPORT_DATE")
-    private LocalDateTime exportDate;
     @Column(name = "MILESTONE_COMMENTS", updatable = false)
     private String milestoneComments;
     @Lob
@@ -362,14 +358,6 @@ public class MilestoneV implements Serializable {
 
     public void setAuditLastMBy(String  auditLastMBy) {
         this.auditLastMBy = auditLastMBy;
-    }
-
-    public String getExportStatus() {
-        return exportStatus;
-    }
-
-    public LocalDateTime getExportDate() {
-        return exportDate;
     }
 
     public String getPackageName() {
