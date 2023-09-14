@@ -370,7 +370,7 @@ export class DocumentEditorComponent
                 latestMessage.operation === 'REMOVE' ? 'stopped' : 'started'
               }`,
             )}`,
-            life: 4000,
+            life: 6000,
           });
       });
   }
