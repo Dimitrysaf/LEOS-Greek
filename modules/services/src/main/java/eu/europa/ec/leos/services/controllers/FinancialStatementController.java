@@ -11,6 +11,7 @@ import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -132,12 +133,16 @@ public class FinancialStatementController {
     @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public RefreshElementResponse saveElement(@PathVariable("documentRef") String documentRef,
+    public ResponseEntity<Object> saveElement(@PathVariable("documentRef") String documentRef,
                                               @PathVariable("elementName") String elementName,
                                               @PathVariable("elementId") String elementId,
                                               @RequestBody String elementContent) throws Exception {
-        RefreshElementResponse response = this.genericDocumentApiService.saveElement(documentRef, elementId, elementName, elementContent);
-        return response;
+        try {
+            RefreshElementResponse response = this.genericDocumentApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            return ResponseEntity.ok(response);
+        } catch (CmisUpdateConflictException updateConflictException) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 
 
@@ -163,17 +168,17 @@ public class FinancialStatementController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public List<SearchMatchVO> getSearchResults(@PathVariable("documentRef") String documentRef,
-                                                   @RequestParam String searchText,
-                                                   @RequestParam boolean matchCase,
-                                                   @RequestParam boolean completeWords) throws Exception {
-            List<SearchMatchVO> searchMatch = this.genericDocumentApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords);
-            return searchMatch;
+                                                @RequestParam String searchText,
+                                                @RequestParam boolean matchCase,
+                                                @RequestParam boolean completeWords) throws Exception {
+        List<SearchMatchVO> searchMatch = this.genericDocumentApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords);
+        return searchMatch;
     }
 
     @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> compareDocumentVersions(@PathVariable("newVersionId") String newVersionId,
-                                                      @PathVariable("oldVersionId") String oldVersionId) {
+                                                          @PathVariable("oldVersionId") String oldVersionId) {
         try {
             String contentHtml = this.genericDocumentApiService.compare(newVersionId, oldVersionId);
             return ResponseEntity.ok().body(contentHtml);

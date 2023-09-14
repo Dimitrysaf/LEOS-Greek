@@ -1,6 +1,13 @@
 import { HttpClient } from '@angular/common/http';
-import { Subject } from 'rxjs';
-import { debounceTime, take } from 'rxjs/operators';
+import { of, Subject, timer } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  delay,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs/operators';
 
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
@@ -30,7 +37,10 @@ export type CheckBoxesConnectorOptions = {
 };
 
 export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesConnectorState> {
-  private lastSaveElementTimestamp = 0;
+  private saveElementRequestQueue = [];
+  private isRequestInProgress = false; // Flag to track if a request is in progress
+
+  private readonly maxRetryDelay = 10000;
 
   constructor(
     state: CheckBoxesConnectorInitialState,
@@ -48,34 +58,64 @@ export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesC
     elementType: string;
     elementFragment: string;
   }) {
-    const currentTimestamp = Date.now();
-    this.lastSaveElementTimestamp = currentTimestamp;
+    this.saveElementRequestQueue.push(elemData);
 
-    const debounceCheckBoxChangeSave = new Subject<void>();
-
-    debounceCheckBoxChangeSave
-      .pipe(debounceTime(300), take(1))
-      .subscribe(() => {
-        if (this.lastSaveElementTimestamp === currentTimestamp) {
-          this.documentService.setDidDocumentLoadAndRender(false);
-          const documentRef = this.documentService.documentRef;
-          const documentType = this.documentService.documentType;
-          this.saveDocumentElement(
-            documentRef,
-            elemData.elementId,
-            elemData.elementType,
-            elemData.elementFragment,
-            documentType,
-          ).subscribe(() => {
-            this.tableOfContentService.reload();
-            this.coEditionService.sendUpdateDocumentEvent(documentRef);
-            this.documentService.reloadDocument();
-          });
+    if (!this.isRequestInProgress) {
+      setTimeout(() => {
+        if (!this.isRequestInProgress) {
+          this.processQueue();
         }
-      });
+      }, 1000);
+    }
+  }
 
-    // Trigger the debouncer
-    debounceCheckBoxChangeSave.next();
+  private processQueue() {
+    const documentRef = this.documentService.documentRef;
+    const documentType = this.documentService.documentType;
+    this.documentService.setDidDocumentLoadAndRender(false);
+    if (this.saveElementRequestQueue.length === 0) {
+      this.isRequestInProgress = false;
+      this.tableOfContentService.reload();
+      this.coEditionService.sendUpdateDocumentEvent(documentRef);
+      this.documentService.reloadDocument();
+      return;
+    }
+
+    const nextRequest = this.saveElementRequestQueue.shift();
+
+    this.isRequestInProgress = true;
+    this.saveDocumentElement(
+      documentRef,
+      nextRequest.elementId,
+      nextRequest.elementType,
+      nextRequest.elementFragment,
+      documentType,
+    )
+      .pipe(
+        tap(() => {
+          this.processQueue();
+        }),
+        catchError((error) => {
+          if (error.status === 409) {
+            return timer(0, 1000).pipe(
+              take(10),
+              delay(this.maxRetryDelay),
+              switchMap(() =>
+                of(
+                  this.saveElement({
+                    elementId: nextRequest.elementId,
+                    elementType: nextRequest.elementType,
+                    elementFragment: nextRequest.elementFragment,
+                  }),
+                ),
+              ),
+            );
+          }
+        }),
+      )
+      .subscribe(() => {
+        this.isRequestInProgress = false;
+      });
   }
 
   private saveDocumentElement(

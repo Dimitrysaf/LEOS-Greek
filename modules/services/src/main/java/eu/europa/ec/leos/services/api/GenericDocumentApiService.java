@@ -353,10 +353,10 @@ public class GenericDocumentApiService {
         return this.documentViewService.updateDocumentView(document);
     }
 
-     public String compare(String newVersionId, String oldVersionId) {
+    public String compare(String newVersionId, String oldVersionId) {
         XmlDocument oldVersion = this.findDocumentById(oldVersionId);
         XmlDocument newVersion = this.findDocumentById(newVersionId);
-        
+
         return this.comparisonDelegate.getMarkedContent(oldVersion, newVersion);
     }
 
@@ -373,8 +373,7 @@ public class GenericDocumentApiService {
         structure.useDocumentTemplate(this.getDocTemplate(document));
 
         byte[] newXmlContent = this.elementProcessor.updateElement(document, elementContent, elementName, elementId, true);
-        newXmlContent = Optional.ofNullable(this.xmlContentProcessor.doXMLPostProcessing(newXmlContent))
-                .orElseThrow(()->new RuntimeException(String.format("Update element %s failed on document %s", elementId, documentRef)));
+        newXmlContent = this.xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
         document = this.leosRepository.updateDocument(
                 document.getId(),
@@ -407,11 +406,11 @@ public class GenericDocumentApiService {
         );
     }
 
-    public String getUserGuidance(String docRef){
+    public String getUserGuidance(String docRef) {
         return Optional.of(docRef)
                 .map(this::findDocumentByRef)
                 .map(this::getDocTemplate)
-                .map(template->this.templateConfigurationService.getTemplateConfiguration(template, "guidance"))
+                .map(template -> this.templateConfigurationService.getTemplateConfiguration(template, "guidance"))
                 .orElse(null);
     }
 
