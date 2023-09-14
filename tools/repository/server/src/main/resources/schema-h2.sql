@@ -54,9 +54,7 @@ CREATE TABLE DOCUMENT_MILESTONE
     AUDIT_C_DATE TIMESTAMP (6) DEFAULT SYSDATE,
     AUDIT_LAST_M_BY VARCHAR2(30 BYTE),
     AUDIT_LAST_M_DATE TIMESTAMP (6),
-    JOB_ID VARCHAR2(100 BYTE),
-    EXPORT_STATUS VARCHAR2(30 BYTE),
-    EXPORT_DATE TIMESTAMP (6)
+    JOB_ID VARCHAR2(100 BYTE)
 );
 
 CREATE TABLE DOCUMENT_MILESTONE_COMMENTS
@@ -275,7 +273,7 @@ WHERE (doc.IS_ARCHIVED IS NULL OR doc.IS_ARCHIVED = 0) AND docver.DOCUMENT_ID = 
 CREATE VIEW MILESTONE_V AS
 SELECT doc.id||'_'||docmil.id unique_id, doc.id document_id,doc.package_id,pkg.name package_name,doc.object_id doc_object_id,doc.category_id,doccat.category_code,doc.name,doc.cloned_from,doc.revision_status,doc.contribution_status,doc.origin_ref,doc.base_revision_id,doc.live_diffing_required,doc.ref,doc.procedure_type,
        doc.doc_template,doc.language,doc.doc_stage,doc.is_private_working_copy,doc.audit_c_by doc_audit_c_by,doc.audit_c_date doc_audit_c_date,doc.audit_last_m_date doc_audit_last_m_date,doc.audit_last_m_by doc_audit_last_m_by, docmil.id milestone_id, docmil.job_id, docmil.job_date, docmil.milestone_comments, docmil.content,
-       docmil.status,docmil.EXPORT_STATUS,docmil.EXPORT_DATE , docmil.audit_c_by,docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
+       docmil.status,docmil.audit_c_by,docmil.audit_c_date, docmil.audit_last_m_date, docmil.audit_last_m_by
 FROM document doc, document_milestone docmil, "PACKAGE" pkg, document_categories doccat
 WHERE doc.id = docmil.document_id AND doc.category_id = doccat.id AND doc.package_id = pkg.id;
 

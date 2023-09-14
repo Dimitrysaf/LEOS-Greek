@@ -192,9 +192,6 @@ public class LeosDocument {
             this.metadata.put("jobId", documentMilestone.getJobId() != null ? documentMilestone.getJobId() : null);
             this.metadata.put("jobDate", documentMilestone.getJobDate() != null ?
                     Date.from(documentMilestone.getJobDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
-            this.metadata.put("exportStatus", documentMilestone.getExportStatus());
-            this.metadata.put("exportDate", documentMilestone.getExportDate() != null ?
-                    Date.from(documentMilestone.getExportDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
 
             List<String> milestoneComments = Arrays.asList(documentMilestone.getMilestoneComments());
             this.metadata.put("milestoneComments", milestoneComments);
@@ -230,12 +227,9 @@ public class LeosDocument {
             this.setLatestVersion(true);
 
             this.metadata.put("status", milestone.getStatus());
-            this.metadata.put("exportStatus", milestone.getExportStatus());
             this.metadata.put("jobId", milestone.getJobId() != null ? milestone.getJobId() : null);
             this.metadata.put("jobDate", milestone.getJobDate() != null ?
                     Date.from(milestone.getJobDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
-            this.metadata.put("exportDate", milestone.getExportDate() != null ?
-                    Date.from(milestone.getExportDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
 
             List<String> milestoneComments = Arrays.asList(milestone.getMilestoneComments());
             this.metadata.put("milestoneComments", milestoneComments);

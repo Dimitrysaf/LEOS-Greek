@@ -131,13 +131,6 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             if (metadata.get("status") != null) {
                 docMilestone.setStatus((String) metadata.get("status"));
             }
-            if (metadata.get("exportStatus") != null) {
-                docMilestone.setExportStatus((String) metadata.get("exportStatus"));
-            }
-            if (metadata.get("exportDate") != null) {
-                docMilestone.setExportDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("exportDate")
-                        , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
-            }
             if (metadata.get("jobId") != null) {
                 docMilestone.setJobId((String) metadata.get("jobId"));
             }
@@ -191,13 +184,6 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             }
             if (metadata.get("status") != null) {
                 docMilestone.setStatus((String) metadata.get("status"));
-            }
-            if (metadata.get("exportStatus") != null) {
-                docMilestone.setExportStatus((String) metadata.get("exportStatus"));
-            }
-            if (metadata.get("exportDate") != null) {
-                docMilestone.setExportDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("exportDate")
-                        , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
             }
             if (metadata.get("jobId") != null) {
                 docMilestone.setJobId((String) metadata.get("jobId"));
@@ -262,9 +248,6 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         if (metadata.get("exportDate") != null) {
             docMilestone.setJobDate(ConversionUtils.convertToLocalDateTime(ConversionUtils.getDateFromString((String) metadata.get("exportDate")
                     , ConversionUtils.LEOS_REPO_DATE_FORMAT)));
-        }
-        if (metadata.get("exportStatus") != null) {
-            docMilestone.setExportStatus((String) metadata.get("exportStatus"));
         }
 
         if (docMilestone.getJobDate() == null) {
