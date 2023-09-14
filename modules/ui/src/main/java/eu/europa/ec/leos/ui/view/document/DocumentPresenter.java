@@ -86,8 +86,6 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
-import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -215,7 +213,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
 
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
@@ -1400,8 +1397,6 @@ class DocumentPresenter extends AbstractLeosPresenter {
         String versionContent = documentContentService.getCleanDocumentAsHtml(bill,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
                 securityContext.getPermissions(bill));
-        Document doc = XercesUtils.createXercesDocument(versionContent.getBytes(StandardCharsets.UTF_8));
-        versionContent = new String(LeosXercesUtils.removeHighlights(doc), StandardCharsets.UTF_8);
         final String versionInfo = getVersionInfoAsString(bill);
         documentScreen.showCleanVersion(versionContent, versionInfo);
     }
