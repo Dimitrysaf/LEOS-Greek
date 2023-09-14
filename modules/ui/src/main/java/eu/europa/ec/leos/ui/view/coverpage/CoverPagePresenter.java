@@ -61,8 +61,6 @@ import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
-import eu.europa.ec.leos.services.support.LeosXercesUtils;
-import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
@@ -165,13 +163,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.Document;
 
 import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -1049,8 +1045,6 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         final Proposal proposal = getDocument();
         String versionContent = documentContentService.getCleanDocumentAsHtml(proposal, urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
                 securityContext.getPermissions(proposal), true);
-        Document doc = XercesUtils.createXercesDocument(versionContent.getBytes(StandardCharsets.UTF_8));
-        versionContent = new String(LeosXercesUtils.removeHighlights(doc), StandardCharsets.UTF_8);
         final String versionInfo = getVersionInfoAsString(proposal);
         coverPageScreen.showCleanVersion(versionContent, versionInfo);
     }
