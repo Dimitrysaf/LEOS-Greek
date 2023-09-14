@@ -101,10 +101,9 @@
                     <app-document-annotations
                       [documentId]="doc.ref"
                       [containerId]="containerId + '_' + doc.ref"
-                      [connectedEntity]="connectedEntity"
                       [proposalRef]="milestone.proposalRef"
                       [permissions]="documentService.permissions$ | async"
-                      [showStatusFilter]="showStatusFilter"
+                      [showGuideLinesButton]="false"
                       operationMode="READ_ONLY"
                       canvasClass="leos-guideline-canvas--above-modals"
                     ></app-document-annotations>

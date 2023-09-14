@@ -10,9 +10,8 @@ import {
 } from '@angular/core';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
-import { AppConfigService } from '@/core/services/app-config.service';
 import {
   Milestone,
   MilestoneViewItem,
@@ -59,8 +58,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   documents: MilestoneDocument[] = [];
   containerId = 'view-container-id';
-  connectedEntity: string;
-  showStatusFilter: boolean;
   activeTabIndex: number;
   showPdfExport = false;
 
@@ -73,12 +70,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     public documentService: DocumentService,
     public milestonesService: ProposalMilestonesService,
     public translateService: TranslateService,
-    private config: AppConfigService,
   ) {}
 
   ngOnInit(): void {
     this.loadDocuments();
-    this.loadConfig();
   }
 
   ngOnDestroy() {
@@ -114,15 +109,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed,
   ) {
     this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
-  }
-
-  private loadConfig() {
-    this.config.config.pipe(takeUntil(this.destroy$)).subscribe((config) => {
-      this.connectedEntity = (
-        config.user.connectedEntity ?? config.user.defaultEntity
-      ).name;
-      this.showStatusFilter = config.annotateAuthority === 'LEOS';
-    });
   }
 
   private loadDocuments() {

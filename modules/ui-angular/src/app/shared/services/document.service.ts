@@ -112,6 +112,7 @@ export class DocumentService implements OnDestroy {
   isClonedProposal$: Observable<boolean>;
   isContributionDeclinedOrProcessed$: Observable<boolean>;
   contributionDocumentRef$: Observable<string>;
+  contributionLegFileName$: Observable<string>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -161,6 +162,7 @@ export class DocumentService implements OnDestroy {
     false,
   );
   private contributionDocumentRefBS = new BehaviorSubject<string | null>(null);
+  private contributionLegFileNameBS = new BehaviorSubject<string | null>(null);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -175,6 +177,8 @@ export class DocumentService implements OnDestroy {
   ) {
     this.contributionDocumentRef$ =
       this.contributionDocumentRefBS.asObservable();
+    this.contributionLegFileName$ =
+      this.contributionLegFileNameBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
     this.isContributionDeclinedOrProcessed$ =
       this.isContributionDeclinedOrProcessedBS.asObservable();
@@ -997,6 +1001,10 @@ export class DocumentService implements OnDestroy {
     this.contributionDocumentRefBS.next(ref);
   }
 
+  setContributionLegFileName(legFileName: string) {
+    this.contributionLegFileNameBS.next(legFileName);
+  }
+
   setIsClonedProposal(cloned: boolean) {
     this.isClonedProposalBS.next(cloned);
   }
@@ -1082,15 +1090,15 @@ export class DocumentService implements OnDestroy {
     this.contributionModeEnabledBS.next(true);
     this.handleContributionSelectCount(false, true);
     const contributionVersionRef = contribution.versionedReference;
+    const legFileName = contribution.legFileName;
     const documentRef = this.documentRef;
-    this.setContributionDocumentRef(
-      contributionVersionRef.substring(0, contributionVersionRef.length - 6),
-    );
+    this.setContributionDocumentRef(contributionVersionRef.split('_')[0]);
+    this.setContributionLegFileName(legFileName);
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     this.http
       .get<DocumentViewResponse>(
-        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}`,
+        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}&legFileName=${legFileName}`,
         {},
       )
       .subscribe({

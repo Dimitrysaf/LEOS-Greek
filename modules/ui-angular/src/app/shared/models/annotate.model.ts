@@ -23,7 +23,7 @@ export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
 
   // these 3 are used only in revision sidebar (contribution view)
   sidebarAppId?: string; // always 'revision-01'
-  temporaryDataId?: string;
+  temporaryDataId?: string; // legFileName of "contributed document"
   temporaryDataDocument?: string; // documentRef of "contributed document"
 
   // Component context options
