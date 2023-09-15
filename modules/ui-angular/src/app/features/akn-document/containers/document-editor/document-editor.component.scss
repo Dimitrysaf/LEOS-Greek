@@ -216,21 +216,6 @@ app-annex-document {
   width: 26%;
 }
 
-.toc-edit-mode,
-.toc-edit-mode akomantoso {
-  cursor: default;
-  opacity: 0.3;
-  pointer-events: none;
-  user-select: none;
-}
-
-.contribution-disabled-mode,
-.contribution-disabled-mode akomantoso {
-  cursor: default;
-  opacity: 0.3;
-  user-select: none;
-}
-
 .processed-span,
 .select-revisions-span {
   white-space: pre;
