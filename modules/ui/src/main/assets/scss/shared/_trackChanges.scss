@@ -38,7 +38,7 @@
     transition: opacity 250ms ease-in-out;
   }
 
-  [leos\:uid]:hover::before {
+  [leos\:uid]:not(:has([leos\:uid]:hover)):hover::before {
     display: inline;
   }
 
