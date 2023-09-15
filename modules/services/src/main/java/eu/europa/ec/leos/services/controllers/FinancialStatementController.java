@@ -11,7 +11,9 @@ import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
-import org.apache.chemistry.opencmis.commons.exceptions.CmisUpdateConflictException;
+import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +37,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping(value = "/secured/stat_financ_legis")
 public class FinancialStatementController {
+    private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementController.class);
 
     private GenericDocumentApiService genericDocumentApiService;
 
@@ -140,7 +143,8 @@ public class FinancialStatementController {
         try {
             RefreshElementResponse response = this.genericDocumentApiService.saveElement(documentRef, elementId, elementName, elementContent);
             return ResponseEntity.ok(response);
-        } catch (CmisUpdateConflictException updateConflictException) {
+        } catch (CmisBaseException cmisBaseException) {
+            LOG.error("---[FINANCIAL STATEMENT] [CMIS EXCEPTION] --- Error saving element : {} ", cmisBaseException.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
