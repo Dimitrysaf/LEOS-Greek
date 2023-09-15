@@ -61,6 +61,8 @@
         @extend %xmlReference;
         @extend %xmlChangeDetails;
 
+        @extend %xmlTrackChanges;
+
         @include editor;
         
         display: block;
