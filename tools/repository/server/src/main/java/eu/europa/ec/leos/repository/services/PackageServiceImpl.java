@@ -143,7 +143,7 @@ public class PackageServiceImpl implements PackageService {
 
     public List<LeosDocument> findDocumentsByPackageName(String packageName, final Set<String> categories,
                                                          final boolean descendants, boolean fetchContent) {
-        StringBuilder docQuery = new StringBuilder("SELECT d FROM DocumentV d WHERE d.isLatestVersion = true");
+        StringBuilder docQuery = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true");
         StringBuilder milestoneQuery = new StringBuilder("SELECT d FROM MilestoneV d WHERE");
         if (!descendants) {
             docQuery.append(String.format(" AND d.packageName = '%s'", packageName));
@@ -171,7 +171,7 @@ public class PackageServiceImpl implements PackageService {
 
     public List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories,
                                                       final boolean allVersion, boolean fetchContent) {
-        StringBuilder docQuery = new StringBuilder(String.format("SELECT d FROM DocumentV d WHERE d.packageId = %s", packageId));
+        StringBuilder docQuery = new StringBuilder(String.format("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.packageId = %s", packageId));
         if (!allVersion && categories != null) {
             docQuery.append(" AND d.isLatestVersion = true");
         }

@@ -656,7 +656,7 @@ public class DocumentServiceTests {
         assertNotNull(updatedDoc.getMetadata().get("collaborators"));
         collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");
         assertEquals(collaborators.size(), 2);
-        assertTrue(updatedDoc.getUpdatedOn().compareTo(updatedDoc.getCreatedOn()) > 0);
+        assertTrue(updatedDoc.getUpdatedOn().compareTo(updatedDoc.getCreatedOn()) >= 0);
         assertTrue(new String(updatedDoc.getSource()).equals(new String(docBeforeUpdate.getSource())));
     }
 

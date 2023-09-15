@@ -282,10 +282,9 @@ public class DocumentServiceImpl implements DocumentService {
         doc.setAuditLastMBy(userId);
         doc.setAuditLastMDate(LocalDateTime.now());
         documentRepository.save(doc);
-        return ConversionUtils.buildXmlDocument(documentVRepository, documentContentRepository, ConversionUtils.fetchCollaborators(collaboratorsService,
-                        doc.getPackageId().getId()),
-                documentPropertyValuesRepository,
-                doc.getId());
+        return ConversionUtils.buildXmlDocument(documentVRepository, documentContentRepository,
+                ConversionUtils.fetchCollaborators(collaboratorsService, doc.getPackageId().getId()),
+                documentPropertyValuesRepository, doc.getId());
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -424,7 +423,15 @@ public class DocumentServiceImpl implements DocumentService {
                     ConversionUtils.getLeosCollaboratorsFromLinkedHashMap((ArrayList<LinkedHashMap<String, Object>>) metadata.get(PropertiesMetadata.COLLABORATORS.getLeosName()));
             collaboratorsService.updateCollaborators(doc.getPackageId(), collaborators, userId);
         }
-        doc.setLiveDiffingRequired(metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()) == null ? false :
+        doc.setDocStage(metadata.get(PropertiesMetadata.DOC_STAGE.getLeosName()) == null ? doc.getDocStage() :
+                (String) metadata.get(PropertiesMetadata.DOC_STAGE.getLeosName()));
+        doc.setDocTemplate(metadata.get(PropertiesMetadata.DOC_TEMPLATE.getLeosName()) == null ? doc.getDocTemplate() :
+                (String) metadata.get(PropertiesMetadata.DOC_TEMPLATE.getLeosName()));
+        doc.setLanguage(metadata.get(PropertiesMetadata.LANGUAGE.getLeosName()) == null ? doc.getLanguage() :
+                (String) metadata.get(PropertiesMetadata.LANGUAGE.getLeosName()));
+        doc.setProcedureType(metadata.get(PropertiesMetadata.PROCEDURE_TYPE.getLeosName()) == null ? doc.getProcedureType() :
+                (String) metadata.get(PropertiesMetadata.PROCEDURE_TYPE.getLeosName()));
+        doc.setLiveDiffingRequired(metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()) == null ? doc.getLiveDiffingRequired() :
                 (Boolean) metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()));
         doc.setBaseRevisionId(metadata.get(PropertiesMetadata.BASE_REVISION_ID.getLeosName()) != null ?
                 (String) metadata.get(PropertiesMetadata.BASE_REVISION_ID.getLeosName()) : doc.getBaseRevisionId());
@@ -627,7 +634,7 @@ public class DocumentServiceImpl implements DocumentService {
     public List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter,
                                                        final int startIndex, final int maxResults, final boolean fetchContent) {
         //Build query
-        StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d WHERE d.isLatestVersion = true") ;
+        StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true") ;
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" AND d.packageName = '%s'", packageName));
         }
@@ -644,7 +651,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     public long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
-        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE d.isLatestVersion = true");
+        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(d) FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true");
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" AND d.packageName = '%s'", packageName));
         }
