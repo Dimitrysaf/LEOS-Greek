@@ -754,7 +754,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private isMovedNode(node: TableOfContentItemVO) {
     return (
-      node.softActionRoot && (node.softActionAttr === MOVE_TO || MOVE_FROM)
+      node.softActionRoot && [MOVE_TO, MOVE_FROM].includes(node.softActionAttr)
     );
   }
 
