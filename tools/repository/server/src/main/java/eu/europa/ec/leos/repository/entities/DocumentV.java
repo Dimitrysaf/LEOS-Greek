@@ -139,6 +139,8 @@ public class DocumentV implements Serializable {
     private Boolean isMajorVersion;
     @Column(name = "IS_VERSION_SERIES_CHECKED_OUT", updatable = false)
     private Boolean isVersionSeriesCheckedOut;
+    @Column(name = "IS_ARCHIVED", updatable = false)
+    private Boolean isArchived;
     @Column(name = "COMMENTS", updatable = false)
     private String comments;
     @Column(name = "ACT_TYPE", updatable = false)
@@ -417,6 +419,10 @@ public class DocumentV implements Serializable {
 
     public void setIsVersionSeriesCheckedOut(Boolean isVersionSeriesCheckedOut) {
         this.isVersionSeriesCheckedOut = isVersionSeriesCheckedOut;
+    }
+
+    public Boolean isArchived() {
+        return isArchived;
     }
 
     public String getActType() {
