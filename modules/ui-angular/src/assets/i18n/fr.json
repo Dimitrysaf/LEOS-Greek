@@ -449,6 +449,7 @@
   "toc.edit.window.drop.success.message": "[FR] <b>{{0}}</b> has been added successfully!",
   "toc.edit.window.drop.unexpected.error": "[FR] An unexpected error occured while editing Table Of Content",
   "toc.edit.window.drop.moved-or-deleted-cannot-move.error": "[FR] <b>Deleted or moved items</b> cannot be moved",
+  "toc.edit.window.drop.already.contains.list.error.message": "[FR] <b>{{0}}</b> already present in <b>{{1}}</b>",
   "arabic.num.config.validation.error.message": "[FR] Only Arabic Numbers (1, 2, 3...) are allowed",
   "roman.num.config.validation.error.message": "[FR] Only Capitalised Roman Numbers (I, II, III...) are allowed",
   "subdivision.num.config.validation.error.message": "[FR] Only capitalized Roman or Arabic numbers with or without following alphabets are allowed (3a, IIIa, 3 , III)",

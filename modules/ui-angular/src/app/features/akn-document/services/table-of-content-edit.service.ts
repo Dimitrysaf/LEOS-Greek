@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { DocumentConfig } from '@/shared';
 import {
+  CHAPTER,
   CN,
   CROSSHEADING,
   DELETE,
@@ -13,9 +14,12 @@ import {
   LS,
   MOVE_TO,
   PARAGRAPH,
+  PART,
   POINT,
+  SECTION,
   SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
   SUBPARAGRAPH,
+  TITLE,
 } from '@/shared/constants/toc.constant';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import {
@@ -299,20 +303,24 @@ export abstract class TableOfContentEditService {
 
     if (actualTargetItem) {
       sourceItem.parentItem = actualTargetItem.id;
-      if ('BEFORE' === position) {
-        this.insertBefore(tocTree, targetItem, sourceItem, isAdd);
-      } else if ('AFTER' === position) {
-        this.insertAfter(tocTree, targetItem, sourceItem, isAdd);
-      } else if (
-        actualTargetItem === targetItem &&
-        LEVEL === sourceItem.tocItem.aknTag
+      if (
+        (LEVEL === targetItem.tocItem.aknTag &&
+          LEVEL !== sourceItem.tocItem.aknTag) ||
+        [PART, TITLE, CHAPTER, SECTION].includes(targetItem.tocItem.aknTag)
       ) {
         /*
          * This else is when we add level as child or after a Part, Title, Chapter or Section,
          * because in this case the actualTargetItem is equal to targetItem, and we need to set
          * the level as the first of list of children
          */
-        actualTargetItem.childItems.splice(0, 0, sourceItem);
+        sourceItem.parentItem = targetItem.id;
+        targetItem.childItems.splice(0, 0, sourceItem);
+        return;
+      }
+      if ('BEFORE' === position) {
+        this.insertBefore(tocTree, targetItem, sourceItem, isAdd);
+      } else if ('AFTER' === position) {
+        this.insertAfter(tocTree, targetItem, sourceItem, isAdd);
       } else if ('AS_CHILDREN' === position) {
         this.insertChild(tocTree, targetItem, sourceItem, isAdd);
       }
