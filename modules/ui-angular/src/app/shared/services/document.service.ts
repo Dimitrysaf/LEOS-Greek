@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -7,6 +7,7 @@ import { parse as parseContentDisposition } from 'content-disposition-attachment
 import {
   BehaviorSubject,
   combineLatestWith,
+  debounceTime,
   distinctUntilChanged,
   filter,
   mergeMap,
@@ -43,6 +44,7 @@ import {
 import { NodeValidationResponse } from '../models/drop-response.model';
 import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
+import { convertArticle } from '../utils/toc.utils';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 
 export enum RelevantElements {
@@ -240,7 +242,7 @@ export class DocumentService implements OnDestroy {
       .subscribe(() => this.setSearchParams({ searchText: '' }));
 
     this.searchParams$
-      .pipe(takeUntil(this.destroy$), skip(2))
+      .pipe(takeUntil(this.destroy$), skip(2), debounceTime(500))
       .subscribe((params) => this.doSearch(params));
 
     this.versionSearchOpen$
@@ -541,6 +543,9 @@ export class DocumentService implements OnDestroy {
     const currentIndex = this.searchResultIndexArray.indexOf(
       this.focusedSearchResult,
     );
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json', // Set the content type as JSON
+    });
     this.http
       .put<any>(
         `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/replace-one`,
@@ -551,11 +556,16 @@ export class DocumentService implements OnDestroy {
           caseSensitive: this.searchParamsBS.value.matchCase,
           completeWords: this.searchParamsBS.value.wholeWords,
           matchIndex: currentIndex,
+          tempUpdatedContentXML: this.updatedContentToSaveAfterReplace ?? null,
         },
-        { responseType: 'text' as 'json' },
+        {
+          headers,
+          responseType: 'text' as any,
+        },
       )
       .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
+        console.log(res);
         this.updatedContentToSaveAfterReplace = res;
         this.replacedTextPresent = true;
       });
@@ -594,6 +604,9 @@ export class DocumentService implements OnDestroy {
   }
 
   searchReplaceAll() {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json', // Set the content type as JSON
+    });
     this.http
       .put<any>(
         `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/replace-all`,
@@ -603,6 +616,7 @@ export class DocumentService implements OnDestroy {
           replaceText: this.searchAndReplaceTextBS.value,
           caseSensitive: this.searchParamsBS.value.matchCase,
           completeWords: this.searchParamsBS.value.wholeWords,
+          tempUpdatedContentXML: this.updatedContentToSaveAfterReplace ?? null,
         },
         { responseType: 'text' as 'json' },
       )
@@ -629,8 +643,9 @@ export class DocumentService implements OnDestroy {
         `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/save-after-replace`,
         {
           documentRef,
-          updatedContent: this.updatedContentToSaveAfterReplace,
+          updatedContent: this.updatedContentToSaveAfterReplace ?? null,
         },
+        { responseType: 'text' as 'json' },
       )
       .subscribe((updateResult) => {
         this.setDocumentRefAndCategory(this.documentRef, this.documentType);
@@ -646,6 +661,7 @@ export class DocumentService implements OnDestroy {
   searchCancelAndClose() {
     this.toggleSearchPane(false);
     this.resetDocument();
+    this.updatedContentToSaveAfterReplace = null;
     this.replacedTextPresent = false;
   }
 
@@ -1222,8 +1238,9 @@ export class DocumentService implements OnDestroy {
     if (parameters.searchText !== '') {
       this.currentSearchResults = [];
       this.http
-        .get<SearchMatchVO[]>(
+        .post<SearchMatchVO[]>(
           `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/search-text`,
+          this.updatedContentToSaveAfterReplace ?? '',
           {
             params: parameters,
           },

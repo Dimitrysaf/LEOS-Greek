@@ -148,7 +148,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public String getElement(String documentRef, String elementName, String elementId) {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        return  elementProcessor.getElement(proposal, elementName, elementId);
+        return elementProcessor.getElement(proposal, elementName, elementId);
     }
 
     @Override
@@ -237,9 +237,9 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) throws Exception {
-        Proposal coverpage = this.proposalService.getProposalByRef(documentRef);
-        return  searchService.searchText(getContent(coverpage), searchText, matchCase, completeWords);
+    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception {
+        Proposal proposal = this.proposalService.findProposalByRef(documentRef);
+        return searchService.searchText(getContentForReplaceProcess(tempUpdatedContentXML, proposal), searchText, matchCase, completeWords);
     }
 
     @Override
@@ -339,9 +339,11 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
         Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(proposal), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+
+        byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), proposal);
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
-                getContent(proposal),
+                contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));

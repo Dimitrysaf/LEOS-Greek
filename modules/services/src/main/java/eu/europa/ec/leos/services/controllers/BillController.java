@@ -226,14 +226,15 @@ public class BillController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getSearchResults(@PathVariable("documentRef") String documentRef,
                                                    @RequestParam String searchText,
                                                    @RequestParam boolean matchCase,
-                                                   @RequestParam boolean completeWords) {
+                                                   @RequestParam boolean completeWords,
+                                                   @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
-            List<SearchMatchVO> bill = this.billApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords);
+            List<SearchMatchVO> bill = this.billApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill search results - " + e.getMessage());
@@ -331,7 +332,7 @@ public class BillController {
             byte[] response = this.billApiService.replaceOneTextInDocument(request);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
-            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION,  e.getMessage());
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION, e.getMessage());
             return new ResponseEntity<>(ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

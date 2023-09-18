@@ -19,10 +19,7 @@ import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.LegDocument;
-import eu.europa.ec.leos.domain.repository.document.Memorandum;
-import eu.europa.ec.leos.domain.repository.document.Proposal;
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -227,9 +224,10 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) throws Exception {
+    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        return searchService.searchText(getContent(memorandum), searchText, matchCase, completeWords);
+        byte[] contentForReplace = getContentForReplaceProcess(tempUpdatedContentXML, memorandum);
+        return searchService.searchText(contentForReplace, searchText, matchCase, completeWords);
     }
 
     @Override
@@ -326,11 +324,14 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
 
     @Override
     public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
-
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(memorandum), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+
+        byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), memorandum);
+        populateCloneProposalMetadata(memorandum);
+
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
-                getContent(memorandum),
+                contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS);
@@ -339,9 +340,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(memorandum), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+
+        byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), memorandum);
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
-                getContent(memorandum),
+                contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
@@ -419,12 +422,9 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         return content.getSource().getBytes();
     }
 
-    private void populateCloneProposalMetadata(Proposal proposal) {
-        if (proposal != null && proposal.isClonedProposal()) {
-            byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
-            CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
-            cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
-        }
+    protected void populateCloneProposalMetadata(XmlDocument document) {
+        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(this.getContent(document));
+        this.cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
     }
 
     private void createDocumentPackageForExport(ExportOptions exportOptions) throws Exception {
