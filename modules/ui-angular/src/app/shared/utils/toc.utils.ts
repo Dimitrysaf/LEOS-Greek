@@ -357,7 +357,7 @@ export const checkPositionAfterValidationExplanatory = (
       }
       return position;
     }
-    case 'INDENT': {
+    case INDENT: {
       if (
         ([SUBPARAGRAPH] as AknTag[]).includes(nodeTarget.tocItem.aknTag) &&
         nodeDragged.tocItem.numberingType === BULLET_NUM
