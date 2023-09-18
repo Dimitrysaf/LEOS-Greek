@@ -227,9 +227,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tocEditService.setTreeHistory(event.newTree);
       return;
     }
-    this.tocEditService.setTree(event.newTree);
     this.isToCDraft = true;
     this.highlightInvalidNodes();
+    this.tocEditService.setTree(event.newTree);
   }
 
   handlePlaceAt(nodeTarget: TableOfContentItemVO, position: string) {

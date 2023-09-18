@@ -609,7 +609,7 @@ export abstract class TableOfContentEditService {
     targetElement: TableOfContentItemVO,
   ) => {
     if (this.isNumbered(newTree, droppedElement, targetElement)) {
-      if (!droppedElement.isAutoNumOverwritten) {
+      if (!droppedElement.autoNumOverwritten) {
         droppedElement.number = HASH_NUM_VALUE;
       }
       if (isNumSoftDeleted(droppedElement.numSoftActionAttr)) {

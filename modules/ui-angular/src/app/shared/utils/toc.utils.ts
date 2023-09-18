@@ -439,7 +439,7 @@ export const setNumber = (
   targetElement: TableOfContentItemVO,
 ) => {
   if (isNumbered(newTree, droppedElement, targetElement)) {
-    if (!droppedElement.isAutoNumOverwritten) {
+    if (!droppedElement.autoNumOverwritten) {
       droppedElement.number = HASH_NUM_VALUE;
     }
     if (isNumSoftDeleted(droppedElement.numSoftActionAttr)) {
