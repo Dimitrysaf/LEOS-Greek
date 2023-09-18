@@ -36,6 +36,7 @@ import {
   BULLET_NUM,
   CONTENT_SEPARATOR,
   DELETE,
+  DIVISION,
   EC,
   HASH_NUM_VALUE,
   LEOS_TC_DELETE_ACTION,
@@ -277,11 +278,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isArticle(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === 'article';
+    return tocItem.aknTag.toLowerCase() === ARTICLE.toLowerCase();
   }
 
   isDivision(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === 'division';
+    return tocItem.aknTag.toLowerCase() === DIVISION.toLowerCase();
   }
 
   isItemHeadingVisible(tocItem: TocItem) {
@@ -291,7 +292,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isItemHeadingEditable(tocItem: TocItem) {
-    return tocItem.aknTag === 'DIVISION'
+    return tocItem.aknTag === DIVISION
       ? false
       : this.isItemHeadingVisible(tocItem);
   }
