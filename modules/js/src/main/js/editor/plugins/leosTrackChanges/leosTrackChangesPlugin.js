@@ -199,6 +199,21 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             });
 
+            editor.on("handleTrackTraceForEnter", function (event) {
+                if (isTrackChangesEnabled) {
+                    var element = event.data;
+                    var elementToSetAttribute = element.startContainer;
+                    if (elementToSetAttribute.type === CKEDITOR.NODE_TEXT) { elementToSetAttribute = elementToSetAttribute.getParent() }
+                    while (elementToSetAttribute.getName() !== 'li' && elementToSetAttribute.getParent()) {
+                        elementToSetAttribute = elementToSetAttribute.getParent();
+                    };
+                    if (!elementToSetAttribute.getAttribute(core.DATA_AKN_TC_ENTER_DELETED)) {
+                        elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ENTER_DELETED, true);
+                        editor.fire("change");
+                    }
+                }
+            });
+
             editor.on("setOriginalTcNumber", function (event) {
                 if (isTrackChangesEnabled) {
                     var element = event.data.data;
@@ -381,6 +396,9 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on('afterCommandExec', function(event) {
                 if (event.data.name === 'enter') {
                     var element = event.editor.getSelection().getStartElement();
+                    if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                        element.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                    }
                     event.editor.fire("handleTcIndent", {data: element, previousNumber: element.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
                 }
             }, null, null, 15);

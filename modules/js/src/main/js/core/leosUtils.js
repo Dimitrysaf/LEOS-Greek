@@ -230,15 +230,28 @@ define(function leosUtilsModule(require) {
                     tcStyle += "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
                         "[" + actionAttr.replace("leos:", "leos\\:") + "-number=" + "'delete'" + "][leos\\:tc-original-number]" +
                         ":not([leos\\:tc-original-number='NEW']):not([leos\\:tc-original-number='UNNUMBERED']):before {" +
-                        "content: attr(leos\\:tc-original-number); margin-left: -20pt; text-decoration: line-through; color: " + userColors[1] + "; " +
+                        "content: attr(leos\\:tc-original-number); margin-left: -20pt; text-decoration: line-through; color: " + userColors[0] + "; " +
+                        "float: left; border: 0pt; padding-top: 6pt;" +
+                        "}\n";
+                    tcStyle += "paragraph[leos\\:tc-enter-deleted] > num, subparagraph[leos\\:tc-enter-deleted] > num, point[leos\\:tc-enter-deleted] > num {" +
+                        "content: attr(leos\\:tc-original-number); text-decoration: line-through; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";
                     tcStyle += "paragraph:not(:has(num span[leos\\:action])) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
                         "[leos\\:tc-original-number='NEW']:before, " +
                         "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
                         "[leos\\:tc-original-number='NEW']:not(:has(span[leos\\:action])):before {" +
-                        "content: '↵'; margin-left: -20pt; text-decoration: line-through; color: " + userColors[1] + "; " +
+                        "content: '↵'; margin-left: -20pt; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
+                        "}\n";
+                    tcStyle += "[leos\\:tc-enter-deleted]:before {" +
+                        "content: '↵'; margin-left: -20pt; color: " + userColors[0] + "; " +
+                        "float: left; border: 0pt; margin-top: 6px; transform: scale(1, -1);" +
+                        "}\n";
+                } else {
+                    tcStyle += "article > ol > li[data-akn-tc-enter-deleted]:before, li > ol > li[data-akn-tc-enter-deleted]:before {" +
+                        "content: '↵'; min-width: 40px; color: " + userColors[0] + "; " +
+                        "float: left; text-decoration: none; transform: scale(1, -1);" +
                         "}\n";
                 }
                 tcStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'], " +

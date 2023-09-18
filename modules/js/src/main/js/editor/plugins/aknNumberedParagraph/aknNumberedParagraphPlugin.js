@@ -544,6 +544,9 @@ define(function aknNumberedParagraphPluginModule(require) {
             }, {
                 akn: "leos:tc-original-number",
                 html: "data-akn-tc-original-number"
+            }, {
+                akn: "leos:tc-enter-deleted",
+                html: "data-akn-tc-enter-deleted"
             }]
         },
         rootElementsForFrom: ['paragraph'],

@@ -50,6 +50,7 @@ define(function hierarchicalElementTransformer(require) {
     var DATA_AKN_UID_NUMBER = "data-akn-uid-number";
     var TITLE_NUMBER = "title-number";
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
+    var DATA_AKN_TC_ENTER_DELETED = "data-akn-tc-enter-deleted";
     var NEW = "NEW";
     var UNNUMBERED = "UNNUMBERED";
     var LEOS_ORIGINAL_DEPTH_ATTR = "leos:originaldepth";
@@ -666,6 +667,10 @@ define(function hierarchicalElementTransformer(require) {
                                             from: "leos:tc-original-number",
                                             to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                             action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:tc-enter-deleted",
+                                            to: DATA_AKN_TC_ENTER_DELETED,
+                                            action: "passAttributeTransformer"
                                         }]
                                     });
                                     this._.isContentWrapperPresent = false;
@@ -1110,6 +1115,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_AKN_ATTR_RENUMBERED,
                                                 to: "leos:renumbered",
                                                 action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_TC_ENTER_DELETED,
+                                                to: "leos:tc-enter-deleted",
+                                                action: "passAttributeTransformer"
                                             }]
                                         }, {
                                             toPath: [rootsElementsPathForFrom, "num"].join("/"),
@@ -1248,6 +1257,10 @@ define(function hierarchicalElementTransformer(require) {
                                             }, {
                                                 from: DATA_AKN_ATTR_RENUMBERED,
                                                 to: "leos:renumbered",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_TC_ENTER_DELETED,
+                                                to: "leos:tc-enter-deleted",
                                                 action: "passAttributeTransformer"
                                             }]
                                         }, {
@@ -1573,6 +1586,10 @@ define(function hierarchicalElementTransformer(require) {
                                         }, {
                                             from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                             to: "leos:tc-original-number",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: DATA_AKN_TC_ENTER_DELETED,
+                                            to: "leos:tc-enter-deleted",
                                             action: "passAttributeTransformer"
                                         }]
                                     }]);
