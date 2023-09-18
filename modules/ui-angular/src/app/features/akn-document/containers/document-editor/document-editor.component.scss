@@ -7,6 +7,10 @@
     padding: 0.2rem;
   }
 
+  .eui-page-columns {
+    min-height: 100vh;
+  }
+
   .document-pane {
     flex-basis: 0;
     min-width: 200px;
