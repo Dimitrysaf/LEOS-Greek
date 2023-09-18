@@ -26,6 +26,7 @@ define(function leosSubElementMovePluginModule(require) {
     const EC_ORIGIN = "ec";
     const LS_ORIGIN = "ls";
     const MOVED_ELEMENT_CLASS = "selectedMovedElement";
+    var trackChanges = require("plugins/leosTrackChanges/leosTrackChanges"), core = trackChanges.core;
 
     var pluginDefinition = {
         init: function init(editor) {
@@ -111,6 +112,8 @@ define(function leosSubElementMovePluginModule(require) {
             var element = selection.getStartElement();
             UTILS.setItemInStorage("movedElement", element.getOuterHtml());
             element.setAttribute("class", MOVED_ELEMENT_CLASS);
+            element.setAttribute(core.ACTION_ATTR, core.DELETE_ACTION);
+            element.setAttribute(core.UID_ATTR, editor.LEOS.user.login);
         }
     }
 
@@ -130,7 +133,8 @@ define(function leosSubElementMovePluginModule(require) {
                 element.setText(movedElement.innerText);
                 element.setAttribute("data-akn-num", element.getAttribute("data-akn-num"));
                 element.setAttribute("data-num-origin", LS_ORIGIN);
-                _setSoftMovedAttributes(element, editor);
+                //_setSoftMovedAttributes(element, editor);
+                _setTrackChangesElement(element, editor);
                 UTILS.clearItemStorage();
             }
         }
@@ -151,6 +155,11 @@ define(function leosSubElementMovePluginModule(require) {
         var wrapper = document.createElement('div');
         wrapper.innerHTML = movedElement;
         return wrapper.firstChild;
+    }
+
+    function _setTrackChangesElement(element, editor) {
+        element.setAttribute(core.ACTION_ATTR, core.INSERT_ACTION);
+        element.setAttribute(core.UID_ATTR, editor.LEOS.user.login);
     }
 
     function _setSoftMovedAttributes(element, editor) {
