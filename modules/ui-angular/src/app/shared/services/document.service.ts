@@ -111,8 +111,6 @@ export class DocumentService implements OnDestroy {
   contributionViewAndMergeCollapsed$: Observable<boolean>;
   isClonedProposal$: Observable<boolean>;
   isContributionDeclinedOrProcessed$: Observable<boolean>;
-  contributionDocumentRef$: Observable<string>;
-  contributionLegFileName$: Observable<string>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -161,8 +159,6 @@ export class DocumentService implements OnDestroy {
   private isContributionDeclinedOrProcessedBS = new BehaviorSubject<boolean>(
     false,
   );
-  private contributionDocumentRefBS = new BehaviorSubject<string | null>(null);
-  private contributionLegFileNameBS = new BehaviorSubject<string | null>(null);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -175,10 +171,6 @@ export class DocumentService implements OnDestroy {
     private translate: TranslateService,
     private coEditionService: CoEditionServiceWS,
   ) {
-    this.contributionDocumentRef$ =
-      this.contributionDocumentRefBS.asObservable();
-    this.contributionLegFileName$ =
-      this.contributionLegFileNameBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
     this.isContributionDeclinedOrProcessed$ =
       this.isContributionDeclinedOrProcessedBS.asObservable();
@@ -997,14 +989,6 @@ export class DocumentService implements OnDestroy {
     this.contributionViewAndMergeCollapsedBS.next(collapsed);
   }
 
-  setContributionDocumentRef(ref: string) {
-    this.contributionDocumentRefBS.next(ref);
-  }
-
-  setContributionLegFileName(legFileName: string) {
-    this.contributionLegFileNameBS.next(legFileName);
-  }
-
   setIsClonedProposal(cloned: boolean) {
     this.isClonedProposalBS.next(cloned);
   }
@@ -1092,8 +1076,6 @@ export class DocumentService implements OnDestroy {
     const contributionVersionRef = contribution.versionedReference;
     const legFileName = contribution.legFileName;
     const documentRef = this.documentRef;
-    this.setContributionDocumentRef(contributionVersionRef.split('_')[0]);
-    this.setContributionLegFileName(legFileName);
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
     this.http

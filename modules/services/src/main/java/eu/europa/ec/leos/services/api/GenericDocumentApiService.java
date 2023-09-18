@@ -6,7 +6,6 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
@@ -299,7 +298,7 @@ public class GenericDocumentApiService {
         String versionContent = this.documentContentService.getDocumentAsHtml(document, "", userPermissions);
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(document);
         String reference = this.getDocReference(document);
-        return new DocumentViewResponse(reference, versionContent, versionInfoVO);
+        return new DocumentViewResponse(reference, versionContent, versionInfoVO, null, null);
     }
 
     public List<VersionVO> getVersionsData(@NotNull String docRef) {

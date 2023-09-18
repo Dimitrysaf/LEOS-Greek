@@ -6,6 +6,7 @@ import {
   delay,
   switchMap,
   take,
+  takeUntil,
   tap,
 } from 'rxjs/operators';
 
@@ -17,6 +18,7 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 
 import { apiBaseUrl } from '../../../../config';
+import { BlockDocumentEditorService } from './block-document-editor.service';
 
 export type CheckBoxesConnectorState = LeosJavaScriptExtensionState & {
   checkBoxTagName: string;
@@ -37,10 +39,7 @@ export type CheckBoxesConnectorOptions = {
 };
 
 export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesConnectorState> {
-  private saveElementRequestQueue = [];
-  private isRequestInProgress = false; // Flag to track if a request is in progress
-
-  private readonly maxRetryDelay = 10000;
+  private cancelSaveElement$ = new Subject<void>();
 
   constructor(
     state: CheckBoxesConnectorInitialState,
@@ -49,72 +48,39 @@ export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesC
     private documentService: DocumentService,
     private tableOfContentService: TableOfContentService,
     private coEditionService: CoEditionServiceWS,
+    private blockDocumentEdtiorService: BlockDocumentEditorService,
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
   }
-
   saveElement(elemData: {
     elementId: string;
     elementType: string;
     elementFragment: string;
   }) {
-    this.saveElementRequestQueue.push(elemData);
+    this.cancelSaveElement$.next();
+    this.blockDocumentEdtiorService.setIsDocumentEdtiorBlocked(true);
 
-    if (!this.isRequestInProgress) {
-      setTimeout(() => {
-        if (!this.isRequestInProgress) {
-          this.processQueue();
-        }
-      }, 1000);
-    }
-  }
-
-  private processQueue() {
+    this.documentService.setDidDocumentLoadAndRender(true);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
-    this.documentService.setDidDocumentLoadAndRender(false);
-    if (this.saveElementRequestQueue.length === 0) {
-      this.isRequestInProgress = false;
-      this.tableOfContentService.reload();
-      this.coEditionService.sendUpdateDocumentEvent(documentRef);
-      this.documentService.reloadDocument();
-      return;
-    }
-
-    const nextRequest = this.saveElementRequestQueue.shift();
-
-    this.isRequestInProgress = true;
     this.saveDocumentElement(
       documentRef,
-      nextRequest.elementId,
-      nextRequest.elementType,
-      nextRequest.elementFragment,
+      elemData.elementId,
+      elemData.elementType,
+      elemData.elementFragment,
       documentType,
     )
       .pipe(
-        tap(() => {
-          this.processQueue();
+        switchMap(() => {
+          this.tableOfContentService.reload();
+          this.coEditionService.sendUpdateDocumentEvent(documentRef);
+          this.documentService.reloadDocument();
+          return of(null);
         }),
-        catchError((error) => {
-          if (error.status === 409) {
-            return timer(0, 1000).pipe(
-              take(10),
-              delay(this.maxRetryDelay),
-              switchMap(() =>
-                of(
-                  this.saveElement({
-                    elementId: nextRequest.elementId,
-                    elementType: nextRequest.elementType,
-                    elementFragment: nextRequest.elementFragment,
-                  }),
-                ),
-              ),
-            );
-          }
-        }),
+        takeUntil(this.cancelSaveElement$),
       )
       .subscribe(() => {
-        this.isRequestInProgress = false;
+        this.blockDocumentEdtiorService.setIsDocumentEdtiorBlocked(false);
       });
   }
 

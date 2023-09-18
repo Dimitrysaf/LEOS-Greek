@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
 import { DocumentConfig } from '@/shared';
+import { CROSSHEADING } from '@/shared/constants';
 import {
   NodeValidation,
   NodeValidationResponse,
@@ -246,6 +247,13 @@ export abstract class ValidateTocService {
     documentType: string,
     documentRef: string,
   ) {
+    if (draggedNodeTagName === CROSSHEADING) {
+      draggedNodeTagName = 'crossheading';
+    }
+    if (targetNodeTagName === CROSSHEADING) {
+      targetNodeTagName = 'crossheading';
+    }
+
     return this.http.post<NodeValidationResponse>(
       `${apiBaseUrl}/secured/toc/${documentRef}/validate-node-drop`,
       {

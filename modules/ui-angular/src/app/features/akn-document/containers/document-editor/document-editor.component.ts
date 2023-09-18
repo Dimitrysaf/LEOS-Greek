@@ -59,6 +59,7 @@ import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
+import { BlockDocumentEditorService } from '../../services/block-document-editor.service';
 import { CKEditorService } from '../../services/ckeditor.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
@@ -82,7 +83,6 @@ export class DocumentEditorComponent
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
-  contributionAnnotationsContainerId = 'contributionViewContainer';
   documentRef: string;
   documentType: string;
   pageTitle: string;
@@ -136,6 +136,8 @@ export class DocumentEditorComponent
   contribution: ContributionVO;
   contributionChanges$: Observable<NodeListOf<HTMLElement>>;
   contributionIndex = 0;
+  contributionTemporaryDataId?: string;
+  contributionTemporaryDataDocument?: string;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -183,8 +185,9 @@ export class DocumentEditorComponent
   );
 
   constructor(
-    private domService: DomService,
+    public blockDocumentEditorService: BlockDocumentEditorService,
     public documentService: DocumentService,
+    private domService: DomService,
     private route: ActivatedRoute,
     private router: Router,
     private translate: TranslateService,
@@ -953,6 +956,9 @@ export class DocumentEditorComponent
         }, 100);
       }
     }
+    this.contributionTemporaryDataId = contributionView?.temporaryAnnotationsId;
+    this.contributionTemporaryDataDocument =
+      contributionView?.temporaryDataDocument;
   }
 
   private handleGreyedContribution(

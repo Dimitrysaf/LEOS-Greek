@@ -8,6 +8,7 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 
 import { apiBaseUrl } from '../../../../config';
+import { BlockDocumentEditorService } from './block-document-editor.service';
 
 export type DatePickerConnectorState = LeosJavaScriptExtensionState;
 
@@ -28,6 +29,7 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
     private documentService: DocumentService,
     private tableOfContentService: TableOfContentService,
     private coEditionService: CoEditionServiceWS,
+    private blockDocumentEditorService: BlockDocumentEditorService,
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
   }
@@ -37,6 +39,7 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
     elementType: string;
     elementFragment: string;
   }) {
+    this.blockDocumentEditorService.setIsDocumentEdtiorBlocked(true);
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
@@ -50,6 +53,7 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
       this.tableOfContentService.reload();
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
       this.documentService.reloadDocument();
+      this.blockDocumentEditorService.setIsDocumentEdtiorBlocked(false);
     });
   }
 

@@ -36,6 +36,7 @@ import {
   BULLET_NUM,
   CONTENT_SEPARATOR,
   DELETE,
+  DIVISION,
   EC,
   HASH_NUM_VALUE,
   LEOS_TC_DELETE_ACTION,
@@ -226,9 +227,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tocEditService.setTreeHistory(event.newTree);
       return;
     }
-    this.tocEditService.setTree(event.newTree);
     this.isToCDraft = true;
     this.highlightInvalidNodes();
+    this.tocEditService.setTree(event.newTree);
   }
 
   handlePlaceAt(nodeTarget: TableOfContentItemVO, position: string) {
@@ -277,11 +278,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isArticle(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === 'article';
+    return tocItem.aknTag.toLowerCase() === ARTICLE.toLowerCase();
   }
 
   isDivision(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === 'division';
+    return tocItem.aknTag.toLowerCase() === DIVISION.toLowerCase();
   }
 
   isItemHeadingVisible(tocItem: TocItem) {
@@ -291,7 +292,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   isItemHeadingEditable(tocItem: TocItem) {
-    return tocItem.aknTag === 'DIVISION'
+    return tocItem.aknTag === DIVISION
       ? false
       : this.isItemHeadingVisible(tocItem);
   }
@@ -338,7 +339,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
             accept: () => this.deleteWithConfirmationCheck(newTree, item),
           });
         } else {
-          this.deleteWithConfirmationCheck(newTree, item);
+          this.dialogService.openDialog({
+            title: this.translateService.instant(
+              'page.editor.element-delete-dialog.title',
+            ),
+            content: this.translateService.instant(
+              'page.editor.element-delete-dialog.body',
+            ),
+            accept: () => this.deleteWithConfirmationCheck(newTree, item),
+          });
         }
       }
     }

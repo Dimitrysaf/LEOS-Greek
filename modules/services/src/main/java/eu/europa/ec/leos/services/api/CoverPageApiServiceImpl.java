@@ -135,7 +135,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         VersionInfoVO versionInfoVO = getVersionInfo(proposal);
         String editableXml = getEditableXml(proposal);
         String proposalRef = proposal.getMetadata().get().getRef();
-        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO);
+        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO, null, null);
     }
 
     @Override
@@ -247,7 +247,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         final Proposal version = proposalService.findProposalVersion(versionId);
         final String versionContent = documentContentService.getDocumentAsHtml(version, "", securityContext.getPermissions(version), true);
         final VersionInfoVO versionInfo = this.documentViewService.getVersionInfo(version);
-        return new DocumentViewResponse(null, versionContent, versionInfo);
+        return new DocumentViewResponse(null, versionContent, versionInfo, null, null);
     }
 
     @Override

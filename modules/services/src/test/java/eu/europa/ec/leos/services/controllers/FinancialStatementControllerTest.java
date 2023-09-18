@@ -36,7 +36,7 @@ public class FinancialStatementControllerTest {
         final VersionInfoVO TEST_VERSION_INFO = new VersionInfoVO(null, null, null, null, null);
 
         Mockito.when(this.genericDocumentApiService.getDocumentByRef(Mockito.anyString()))
-                .thenReturn(new DocumentViewResponse(TEST_PROPOSAL_REF,TEST_XML,TEST_VERSION_INFO));
+                .thenReturn(new DocumentViewResponse(TEST_PROPOSAL_REF,TEST_XML,TEST_VERSION_INFO, null, null));
 
         DocumentViewResponse response = this.financialStatementController.getDocumentByRef(TEST_DOC_REF);
 

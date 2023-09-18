@@ -17,7 +17,14 @@ import { Subject } from 'rxjs';
 
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
+  ARTICLE,
+  BLOCK,
   BULLET_NUM,
+  CROSSHEADING,
+  DELETE,
+  DIVISION,
+  EC,
+  HASH_NUM_VALUE,
   INDENT,
   LIST,
   MAIN_BODY,
@@ -42,6 +49,7 @@ import {
   isDeletedItem,
   isMoveToItem,
   isUndeletableItem,
+  updateDepthOfTocItems,
 } from '@/shared/utils/toc.utils';
 
 const TYPING_TIME = 500;
@@ -123,11 +131,11 @@ export class TocEditorComponent implements OnInit, OnChanges {
   }
 
   isArticle(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === 'article';
+    return tocItem.aknTag.toLowerCase() === ARTICLE.toLowerCase();
   }
 
   isDivision(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === 'division';
+    return tocItem.aknTag.toLowerCase() === DIVISION.toLowerCase();
   }
 
   isDivionStyleChecked(target: string) {
@@ -139,15 +147,15 @@ export class TocEditorComponent implements OnInit, OnChanges {
   }
 
   isIndentList(tocItem: TocItem) {
-    return ['POINT', 'INDENT'].includes(tocItem.aknTag);
+    return [POINT, INDENT].includes(tocItem.aknTag);
   }
 
   isCrossFading(tocItem: TocItem) {
-    return tocItem.aknTag === 'BLOCK';
+    return tocItem.aknTag === BLOCK;
   }
 
   showTypeField(tocItem: TocItem) {
-    return !['DIVISION'].includes(tocItem.aknTag);
+    return ![DIVISION].includes(tocItem.aknTag);
   }
 
   isItemHeadingVisible(tocItem: TocItem) {
@@ -156,7 +164,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     );
   }
   isItemHeadingEditable(tocItem: TocItem) {
-    return tocItem.aknTag === 'DIVISION'
+    return tocItem.aknTag === DIVISION
       ? false
       : this.isItemHeadingVisible(tocItem);
   }
@@ -208,10 +216,10 @@ export class TocEditorComponent implements OnInit, OnChanges {
     const env = process.env.NG_APP_LEOS_INSTANCE;
     return (
       item.originAttr &&
-      item.originAttr === 'ec' &&
-      item.tocItem.aknTag === 'ARTICLE' &&
+      item.originAttr === EC &&
+      item.tocItem.aknTag === ARTICLE &&
       item.childItems.length > 0 &&
-      !(item.softActionAttr === 'DELETE' || item.softActionAttr === 'MOVE')
+      !(item.softActionAttr === DELETE || item.softActionAttr === 'MOVE')
     );
   }
 
@@ -263,7 +271,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     }
 
     if (this.isDivision(node.tocItem)) {
-      this.active_division_style = node.style;
+      this.active_division_style = node.autoNumOverwritten ? null : node.style;
       this.possibleDivisionType = this.getDivisionTypesToEnable(
         this.getPreviousDivisionType(node),
       );
@@ -345,7 +353,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
         //save snapshot of old tree
         this.handleNodeChanges(this.toc, true);
         this.invalidNumberMsg = null;
-        this.selectedNode.isAutoNumOverwritten = true;
+        this.selectedNode.autoNumOverwritten = true;
         this.selectedNode.number = number;
         this.numberInvalid = false;
       } else {
@@ -443,6 +451,9 @@ export class TocEditorComponent implements OnInit, OnChanges {
     const { value } = event.target;
     this.selectedNode.style = value;
     this.active_division_style = value;
+    this.selectedNode.autoNumOverwritten = false;
+    updateDepthOfTocItems(this.selectedNode.childItems);
+    this.selectedNode.number = HASH_NUM_VALUE;
     this.handleNodeChanges(this.toc);
   }
 
@@ -560,15 +571,15 @@ export class TocEditorComponent implements OnInit, OnChanges {
   private findChildLists(item: TableOfContentItemVO) {
     let childLists: TableOfContentItemVO[] = [];
     const childItems = item.childItems.filter((n) =>
-      ['POINT', 'INDENT'].includes(n.tocItem.aknTag),
+      [POINT, INDENT].includes(n.tocItem.aknTag),
     );
     if (childItems && childItems.length > 0) {
       childLists = [...childItems];
     } else {
       for (const child of item.childItems) {
-        if (child.tocItem.aknTag === 'LIST') {
+        if (child.tocItem.aknTag === LIST) {
           const filtered = item.childItems.filter((n) =>
-            ['POINT', 'INDENT'].includes(n.tocItem.aknTag),
+            [POINT, INDENT].includes(n.tocItem.aknTag),
           );
           filtered.forEach((n) => childLists.push(n));
         }
@@ -638,6 +649,9 @@ export class TocEditorComponent implements OnInit, OnChanges {
     if (tocItem.aknTag === MAIN_BODY) {
       return this.translateService.instant('toc.item.type.mainbody');
     }
+    if (tocItem.aknTag === CROSSHEADING) {
+      return this.translateService.instant('toc.item.type.crossheading');
+    }
     return this.translateService.instant(
       'toc.item.type.' + tocItem.aknTag.toLowerCase(),
     );
@@ -656,7 +670,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
   private getPreviousDivisionType(node: TableOfContentItemVO) {
     const parentNode = findNodeById(this.toc, node.parentItem);
     const divisionNodes = parentNode.childItems.filter(
-      (n) => n.tocItem.aknTag === 'DIVISION',
+      (n) => n.tocItem.aknTag === DIVISION,
     );
     const index = divisionNodes.indexOf(node);
     if (index > 0) {
