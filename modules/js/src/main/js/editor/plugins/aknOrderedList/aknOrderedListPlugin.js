@@ -381,6 +381,12 @@ define(function aknOrderedListPluginModule(require) {
                 html : "data-akn-attr-softdate"
             }, {
                 html : "data-akn-name=aknOrderedList"
+            },{
+                akn : "leos:action",
+                html : "data-akn-action"
+            }, {
+                akn : "leos:uid",
+                html : "data-akn-uid"
             } ]
         },
         rootElementsForFrom : [ "list", { elementTags : ["point", "indent", "subparagraph"], elementTagIndexProvider : elementTagIndexProvider }],
