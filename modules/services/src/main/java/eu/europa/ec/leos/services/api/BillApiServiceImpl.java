@@ -79,6 +79,7 @@ import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
@@ -123,6 +124,8 @@ public class BillApiServiceImpl implements BillApiService {
     DocumentContentService documentContentService;
     @Autowired
     SecurityContext securityContext;
+    @Autowired
+    TrackChangesContext trackChangesContext;
     @Autowired
     ComparisonDelegateAPI<Bill> comparisonDelegate;
 
@@ -583,6 +586,7 @@ public class BillApiServiceImpl implements BillApiService {
     protected void populateCloneProposalMetadata(XmlDocument document) {
         CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(this.getContent(document));
         this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
     }
 
     private String getVersionInfoAsString(XmlDocument document) {
