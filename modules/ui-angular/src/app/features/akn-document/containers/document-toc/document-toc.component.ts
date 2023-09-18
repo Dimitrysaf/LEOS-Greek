@@ -339,7 +339,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
             accept: () => this.deleteWithConfirmationCheck(newTree, item),
           });
         } else {
-          this.deleteWithConfirmationCheck(newTree, item);
+          this.dialogService.openDialog({
+            title: this.translateService.instant(
+              'page.editor.element-delete-dialog.title',
+            ),
+            content: this.translateService.instant(
+              'page.editor.element-delete-dialog.body',
+            ),
+            accept: () => this.deleteWithConfirmationCheck(newTree, item),
+          });
         }
       }
     }
