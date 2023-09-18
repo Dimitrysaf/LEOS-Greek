@@ -201,7 +201,7 @@ public class BillApiServiceImpl implements BillApiService {
                 "",
                 securityContext.getPermissions(bill));
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(bill);
-        return new DocumentViewResponse(null, versionContent, versionInfoVO);
+        return new DocumentViewResponse(null, versionContent, versionInfoVO, null, null);
     }
 
     @Override

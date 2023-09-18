@@ -856,15 +856,13 @@
       >
         <eui-page-column-body class="flex-grow-1">
           <app-document-annotations
-            [containerId]="contributionAnnotationsContainerId"
+            containerId="contributionViewContainer"
             [permissions]="documentService.permissions$ | async"
             [showStatusFilter]="showStatusFilter"
             operationMode="READ_ONLY"
             sidebarAppId="revision-01"
-            [temporaryDataId]="documentService.contributionLegFileName$ | async"
-            [temporaryDataDocument]="
-              documentService.contributionDocumentRef$ | async
-            "
+            [temporaryDataId]="contributionTemporaryDataId"
+            [temporaryDataDocument]="contributionTemporaryDataDocument"
             [collapsed]="isContributionAnnotationsPaneCollapsed"
             (sidebarShown)="onContributionAnnotationsSidebarShown()"
             *ngIf="!milestoneViewData && contributionForView"

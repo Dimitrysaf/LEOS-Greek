@@ -285,7 +285,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
                 "",
                 securityContext.getPermissions(explanatory));
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(explanatory);
-        return new DocumentViewResponse(null, versionContent, versionInfoVO);
+        return new DocumentViewResponse(null, versionContent, versionInfoVO, null, null);
     }
 
     @Override

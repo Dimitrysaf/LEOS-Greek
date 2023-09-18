@@ -33,6 +33,7 @@ import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserService;
@@ -68,6 +69,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private final ProposalService proposalService;
     private final UserService userService;
     private final PackageService packageService;
+    private final LegService legService;
     private final SecurityContext securityContext;
     private final ContributionService contributionService;
     private final LeosRepository leosRepository;
@@ -94,6 +96,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       ProposalService proposalService,
                                       UserService userService,
                                       PackageService packageService,
+                                      LegService legService,
                                       SecurityContext securityContext,
                                       ContributionService contributionService,
                                       LeosRepository leosRepository,
@@ -113,6 +116,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.proposalService = proposalService;
         this.userService = userService;
         this.packageService = packageService;
+        this.legService = legService;
         this.securityContext = securityContext;
         this.contributionService = contributionService;
         this.leosRepository = leosRepository;
@@ -189,7 +193,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     @Override
     public DocumentViewResponse compareAndShowRevision(String contextPath,
                                                        String documentRef,
-                                                       String contributionsVersionRef) {
+                                                       String contributionsVersionRef, String legFileName) {
         XmlDocument document = this.findDocumentByRef(documentRef);
         Class<? extends XmlDocument> docClass = LeosCategoryClass.getClass(document.getCategory());
         XmlDocument contributionVersion = Optional.ofNullable(this.contributionService.findVersionByVersionedReference(contributionsVersionRef, docClass))
@@ -208,12 +212,20 @@ public class ContributionApiServiceImpl implements ContributionApiService {
 
         cloneContext.setContribution(Boolean.TRUE);
         String comparedContent = comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
-
+        final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVersion.getId(), legFileName, contributionsVersionRef);
+        final String temporaryDocument = contributionVersion.getName().replace(".xml", "");
         return new DocumentViewResponse(
                 proposal.getMetadata().get().getRef(),
                 comparedContent,
-                documentViewService.getVersionInfo(contributionVersion)
-        );
+                documentViewService.getVersionInfo(contributionVersion),
+                temporaryAnnotationsId, temporaryDocument);
+    }
+
+    private String storeRevisionAnnotationsTemporary(final String documentId, final String legFileName, final String versionedReference) {
+        final LeosPackage leosPackage = this.packageService.findPackageByDocumentId(documentId);
+        //final LegDocument referenceDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
+        final LegDocument legDocument = this.packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
+        return this.legService.storeLegDocumentTemporary(legDocument);
     }
 
     public void declineContribution(String contributionVersionRef) {

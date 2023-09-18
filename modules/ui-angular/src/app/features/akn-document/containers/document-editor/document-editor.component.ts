@@ -82,7 +82,6 @@ export class DocumentEditorComponent
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
-  contributionAnnotationsContainerId = 'contributionViewContainer';
   documentRef: string;
   documentType: string;
   pageTitle: string;
@@ -136,6 +135,8 @@ export class DocumentEditorComponent
   contribution: ContributionVO;
   contributionChanges$: Observable<NodeListOf<HTMLElement>>;
   contributionIndex = 0;
+  contributionTemporaryDataId?: string;
+  contributionTemporaryDataDocument?: string;
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -953,6 +954,9 @@ export class DocumentEditorComponent
         }, 100);
       }
     }
+    this.contributionTemporaryDataId = contributionView?.temporaryAnnotationsId;
+    this.contributionTemporaryDataDocument =
+      contributionView?.temporaryDataDocument;
   }
 
   private handleGreyedContribution(

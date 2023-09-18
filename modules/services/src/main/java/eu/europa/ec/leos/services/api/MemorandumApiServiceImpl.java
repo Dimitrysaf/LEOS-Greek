@@ -237,7 +237,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         final Memorandum memorandum = memorandumService.findMemorandumVersion(versionId);
         final String versionContent = documentContentService.getDocumentAsHtml(memorandum, "", securityContext.getPermissions(memorandum));
         VersionInfoVO versionInfo = this.documentViewService.getVersionInfo(memorandum);
-        return new DocumentViewResponse(null, versionContent, versionInfo);
+        return new DocumentViewResponse(null, versionContent, versionInfo, null, null);
     }
 
     @Override

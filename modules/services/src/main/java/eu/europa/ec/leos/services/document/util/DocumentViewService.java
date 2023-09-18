@@ -69,7 +69,7 @@ public class DocumentViewService<T extends XmlDocument> {
         String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
         String proposalRef = proposal.getMetadata().getOrNull().getRef();
-        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO);
+        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO, null, null);
     }
 
     public DocumentViewResponse updateDocumentView(T document) {
@@ -81,7 +81,7 @@ public class DocumentViewService<T extends XmlDocument> {
         String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
         String proposalRef = proposal.getMetadata().getOrNull().getRef();
-        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO);
+        return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO, null, null);
     }
 
     public void updateProposalAsync(T document) {

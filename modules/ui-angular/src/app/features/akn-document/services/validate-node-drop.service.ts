@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
 import { DocumentConfig } from '@/shared';
+import { CROSSHEADING } from '@/shared/constants';
 import {
   NodeValidation,
   NodeValidationResponse,
@@ -16,7 +17,6 @@ import {
   isSourceDivision,
 } from '@/shared/utils/toc.utils';
 import { isTocItemsEqual } from '@/shared/utils/tocRules.utils';
-import { CROSSHEADING } from '@/shared/constants';
 
 Injectable();
 export abstract class ValidateTocService {
