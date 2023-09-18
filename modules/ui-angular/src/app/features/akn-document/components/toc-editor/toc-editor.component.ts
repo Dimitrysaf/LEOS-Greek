@@ -24,6 +24,7 @@ import {
   DELETE,
   DIVISION,
   EC,
+  HASH_NUM_VALUE,
   INDENT,
   LIST,
   MAIN_BODY,
@@ -48,6 +49,7 @@ import {
   isDeletedItem,
   isMoveToItem,
   isUndeletableItem,
+  updateDepthOfTocItems,
 } from '@/shared/utils/toc.utils';
 
 const TYPING_TIME = 500;
@@ -269,7 +271,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     }
 
     if (this.isDivision(node.tocItem)) {
-      this.active_division_style = node.style;
+      this.active_division_style = node.autoNumOverwritten ? null : node.style;
       this.possibleDivisionType = this.getDivisionTypesToEnable(
         this.getPreviousDivisionType(node),
       );
@@ -351,7 +353,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
         //save snapshot of old tree
         this.handleNodeChanges(this.toc, true);
         this.invalidNumberMsg = null;
-        this.selectedNode.isAutoNumOverwritten = true;
+        this.selectedNode.autoNumOverwritten = true;
         this.selectedNode.number = number;
         this.numberInvalid = false;
       } else {
@@ -449,6 +451,9 @@ export class TocEditorComponent implements OnInit, OnChanges {
     const { value } = event.target;
     this.selectedNode.style = value;
     this.active_division_style = value;
+    this.selectedNode.autoNumOverwritten = false;
+    updateDepthOfTocItems(this.selectedNode.childItems);
+    this.selectedNode.number = HASH_NUM_VALUE;
     this.handleNodeChanges(this.toc);
   }
 

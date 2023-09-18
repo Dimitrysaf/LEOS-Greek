@@ -42,7 +42,7 @@ export class TableOfContentItemVO {
   indentOriginNumValue: string = null;
   indentOriginNumOrigin: string = null;
   style: string;
-  isAutoNumOverwritten = false;
+  autoNumOverwritten = false;
   moved: boolean;
   isAffected: boolean;
   expanded: boolean;
