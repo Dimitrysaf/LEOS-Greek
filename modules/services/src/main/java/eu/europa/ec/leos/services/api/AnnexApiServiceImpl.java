@@ -302,7 +302,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 "",
                 securityContext.getPermissions(annex));
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(annex);
-        return new DocumentViewResponse(null, versionContent, versionInfoVO);
+        return new DocumentViewResponse(null, versionContent, versionInfoVO,
+                null, null);
     }
 
     @Override

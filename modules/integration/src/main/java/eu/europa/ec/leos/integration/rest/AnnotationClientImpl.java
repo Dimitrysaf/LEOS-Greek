@@ -20,48 +20,48 @@ import org.slf4j.LoggerFactory;
 @Component
 public class AnnotationClientImpl implements AnnotationProvider {
 
-	@Autowired
-	private RestTemplate restTemplate;
+    @Autowired
+    private RestTemplate restTemplate;
 
-	@Autowired
-	private AnnotationAuthProvider authenticationProvider;
+    @Autowired
+    private AnnotationAuthProvider authenticationProvider;
 
-	@Override
-	public String searchAnnotations(URI uri, String jwtToken, String proposalRef) {
-		HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, proposalRef);
-		HttpEntity<?> request = new HttpEntity<>(headers);
-		final AnnotationsSearchResponse response = restTemplate.exchange(uri, HttpMethod.GET, request, AnnotationsSearchResponse.class).getBody();
-		try {
-			final ObjectMapper objectMapper = new ObjectMapper();
-			return objectMapper.writeValueAsString(response);
-		} catch(Exception ex) {
-			throw new RestClientException("Error parsing search annotations response.", ex);
-		}
-	}
+    @Override
+    public String searchAnnotations(URI uri, String jwtToken, String proposalRef) {
+        HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, proposalRef);
+        HttpEntity<?> request = new HttpEntity<>(headers);
+        final AnnotationsSearchResponse response = restTemplate.exchange(uri, HttpMethod.GET, request, AnnotationsSearchResponse.class).getBody();
+        try {
+            final ObjectMapper objectMapper = new ObjectMapper();
+            return objectMapper.writeValueAsString(response);
+        } catch (Exception ex) {
+            throw new RestClientException("Error parsing search annotations response.", ex);
+        }
+    }
 
-	@Override
-	public SendTemporaryAnnotationsResponse sendTemporaryAnnotations(final byte[] legFile, final URI uri, final String jwtToken, String proposalRef) {
-		final HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, proposalRef);
-		headers.set("Content-Type", "application/octet-stream");
-		final HttpEntity<byte[]> request = new HttpEntity<>(legFile, headers);
-		return restTemplate.exchange(uri, HttpMethod.POST, request, SendTemporaryAnnotationsResponse.class).getBody();
-	}
+    @Override
+    public SendTemporaryAnnotationsResponse sendTemporaryAnnotations(final byte[] legFile, final URI uri, final String jwtToken, String proposalRef) {
+        final HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, proposalRef);
+        headers.set("Content-Type", "application/octet-stream");
+        final HttpEntity<byte[]> request = new HttpEntity<>(legFile, headers);
+        return restTemplate.exchange(uri, HttpMethod.POST, request, SendTemporaryAnnotationsResponse.class).getBody();
+    }
 
-	@Override
-	public AnnotateStatusResponse sendUserPermissions(List<LeosPermission> permissions, URI uri, String jwtToken) {
-		final HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, null);
-		headers.set("Content-Type", "application/json");
-		final HttpEntity<AnnotatePermissionsJson> request = new HttpEntity<>(new AnnotatePermissionsJson(permissions), headers);
-		return restTemplate.exchange(uri, HttpMethod.POST, request, AnnotateStatusResponse.class).getBody();
-	}
+    @Override
+    public AnnotateStatusResponse sendUserPermissions(List<LeosPermission> permissions, URI uri, String jwtToken) {
+        final HttpHeaders headers = this.getDefaultHttpHeaders(jwtToken, null);
+        headers.set("Content-Type", "application/json");
+        final HttpEntity<AnnotatePermissionsJson> request = new HttpEntity<>(new AnnotatePermissionsJson(permissions), headers);
+        return restTemplate.exchange(uri, HttpMethod.POST, request, AnnotateStatusResponse.class).getBody();
+    }
 
-	private HttpHeaders getDefaultHttpHeaders(final String jwtToken, final String proposalRef) {
-		HttpHeaders headers = new HttpHeaders();
-		TokenJson tokenJson = authenticationProvider.getToken(jwtToken, proposalRef);
-		// FIX ME In ticket LEOS-2862 Annotations: improve authentication provider
-		headers.set("Authorization", "Bearer " + tokenJson.getAccessToken());
-		headers.set("Accept", "application/json");
-		return headers;
-	}
+    private HttpHeaders getDefaultHttpHeaders(final String jwtToken, final String proposalRef) {
+        HttpHeaders headers = new HttpHeaders();
+        TokenJson tokenJson = authenticationProvider.getToken(jwtToken, proposalRef);
+        // FIX ME In ticket LEOS-2862 Annotations: improve authentication provider
+        headers.set("Authorization", "Bearer " + tokenJson.getAccessToken());
+        headers.set("Accept", "application/json");
+        return headers;
+    }
 
 }

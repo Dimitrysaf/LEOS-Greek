@@ -126,18 +126,20 @@ public class ContributionControllerTest {
         String TEST_DOCUMENT_TYPE = "documentType";
         String TEST_VERSION_LABEL = "versionLabel";
         String TEST_RESPONSE_BODY = "Test Response";
+        String TEST_LEG_FILE_NAME = "PROP_ACT_TEST";
         HttpServletRequest httpRequestMock = Mockito.mock(HttpServletRequest.class);
-        DocumentViewResponse testResponse = new DocumentViewResponse(TEST_DOCUMENT_REF, TEST_RESPONSE_BODY, null);
+        DocumentViewResponse testResponse = new DocumentViewResponse(TEST_DOCUMENT_REF, TEST_RESPONSE_BODY, null, null, null);
         when(httpRequestMock.getContextPath()).thenReturn(TEST_CONTEXT_PATH);
-        when(contributionApiService.compareAndShowRevision(anyString(), anyString(), anyString())).thenReturn(testResponse);
+        when(contributionApiService.compareAndShowRevision(anyString(), anyString(), anyString(), anyString())).thenReturn(testResponse);
 
-        ResponseEntity<DocumentViewResponse> response = contributionController.viewMergePane(httpRequestMock, TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE, TEST_VERSION_LABEL);
+        ResponseEntity<DocumentViewResponse> response = contributionController.viewMergePane(httpRequestMock, TEST_DOCUMENT_REF, TEST_DOCUMENT_TYPE,
+                TEST_VERSION_LABEL, TEST_LEG_FILE_NAME);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
         assertEquals(TEST_RESPONSE_BODY, response.getBody().getEditableXml());
 
-        verify(contributionApiService).compareAndShowRevision(TEST_CONTEXT_PATH, TEST_DOCUMENT_REF, TEST_VERSION_LABEL);
+        verify(contributionApiService).compareAndShowRevision(TEST_CONTEXT_PATH, TEST_DOCUMENT_REF, TEST_VERSION_LABEL, TEST_LEG_FILE_NAME);
     }
 
     @Test

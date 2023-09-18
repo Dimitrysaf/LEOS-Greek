@@ -4,6 +4,8 @@ export interface DocumentViewResponse {
   editableXml: string;
   versionInfoVO: VersionInfoVO;
   proposalRef: string;
+  temporaryAnnotationsId: string;
+  temporaryDataDocument: string;
 }
 
 export interface RefreshElementResponse {
