@@ -84,7 +84,7 @@ $LIST_SPACING: 40px;
         & > li[data-akn-num] {
             position: relative;
 
-            &:before {
+            &:not([data-akn-tc-enter-deleted]):before {
                 color: $GREY_COLOR;
                 content: attr(data-akn-num);
                 min-width: $LIST_SPACING;

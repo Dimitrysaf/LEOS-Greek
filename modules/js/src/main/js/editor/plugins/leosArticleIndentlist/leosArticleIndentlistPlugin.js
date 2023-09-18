@@ -469,22 +469,24 @@ define(function leosArticleIndentListPluginModule(require) {
      */
     function _isDownsideDepthMoreThanThreshold(element, stopLevel) {
         var level = 0;
-        var childList = element.getChildren();
-        for (var child_idx = 0; child_idx < childList.count(); child_idx++) {
-            var child = childList.getItem(child_idx);
-            var child_name = leosPluginUtils.getElementName(child);
-            // only if we find an order_list_element (ol) it means we found another depth level
-            if (child_name === leosPluginUtils.ORDER_LIST_ELEMENT) {
-                level=1;
-                //LOG.debug(child_idx+"-th child found: " + child_name + ", calculated level: " + level + ", stopLevel: " + stopLevel);
-                if (level >= stopLevel) {
-                    return true;
-                } else {
-                    // go deeper in the list, check the children (li elements)
-                    for (var li_item_idx = 0; li_item_idx < child.getChildren().count(); li_item_idx++) {
-                        var listItem = child.getChildren().getItem(li_item_idx);
-                        if (_isDownsideDepthMoreThanThreshold(listItem, (stopLevel - level))) {
-                            return true;
+        if (typeof element.getChildren === 'function') {
+            var childList = element.getChildren();
+            for (var child_idx = 0; child_idx < childList.count(); child_idx++) {
+                var child = childList.getItem(child_idx);
+                var child_name = leosPluginUtils.getElementName(child);
+                // only if we find an order_list_element (ol) it means we found another depth level
+                if (child_name === leosPluginUtils.ORDER_LIST_ELEMENT) {
+                    level = 1;
+                    //LOG.debug(child_idx+"-th child found: " + child_name + ", calculated level: " + level + ", stopLevel: " + stopLevel);
+                    if (level >= stopLevel) {
+                        return true;
+                    } else {
+                        // go deeper in the list, check the children (li elements)
+                        for (var li_item_idx = 0; li_item_idx < child.getChildren().count(); li_item_idx++) {
+                            var listItem = child.getChildren().getItem(li_item_idx);
+                            if (_isDownsideDepthMoreThanThreshold(listItem, (stopLevel - level))) {
+                                return true;
+                            }
                         }
                     }
                 }

@@ -27,7 +27,7 @@ define(function leosTrackChangesModule(require) {
         UID_ATTR: "data-akn-uid",
 
         IS_NEW: "data-akn-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number",
-        UNNUMBERED: "UNNUMBERED", NEW: "NEW",
+        UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_TC_ENTER_DELETED: "data-akn-tc-enter-deleted",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -263,6 +263,18 @@ define(function leosTrackChangesModule(require) {
                 }
             }
             return null;
+        },
+
+        isNewTrackChangeNumber: function(element) {
+            var hasNewNumberAttribute = false;
+            var elementToCheck = element.startContainer;
+            if (elementToCheck.type === CKEDITOR.NODE_TEXT) { elementToCheck = elementToCheck.getParent() }
+            do {
+                if (elementToCheck.getAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER) === this.NEW) {
+                    hasNewNumberAttribute = true;
+                }
+            } while (!hasNewNumberAttribute && elementToCheck.getName() !== 'li' && (elementToCheck = elementToCheck.getParent()));
+            return hasNewNumberAttribute;
         },
 
         breakParentAndMoveTo: function(editor, element, parent, moveTo) {

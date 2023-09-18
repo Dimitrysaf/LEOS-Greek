@@ -34,6 +34,7 @@ define(function leosArticleListPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var numberModule = require("plugins/leosNumber/listItemNumberModule");
+    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var pluginName = "leosArticleList";
 
@@ -1031,6 +1032,12 @@ define(function leosArticleListPluginModule(require) {
                         }
 
                         if ( joinWith ) {
+                            var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(range);
+                            if (!isNewTrackChangeNumber) {
+                                editor.fire("handleTrackTraceForEnter", range);
+                                evt.cancel();
+                                return;
+                            }
                             joinNextLineToCursor( editor, cursor, range );
                             var parentOfPreviousIsParagraph = previous.getParent().getAttribute("data-akn-element") === leosPluginUtils.PARAGRAPH;
                             var parentOfPreviousIsNumbered = previous.getParent().getAttribute("data-akn-num");
@@ -1188,6 +1195,12 @@ define(function leosArticleListPluginModule(require) {
                                     }
                                 }
 
+                                var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(nextLine);
+                                if (!isNewTrackChangeNumber) {
+                                    editor.fire("handleTrackTraceForEnter", nextLine);
+                                    evt.cancel();
+                                    return;
+                                }
                                 joinNextLineToCursor( editor, cursor, nextLine );
                                 evt.cancel();
                             }
@@ -1238,7 +1251,7 @@ define(function leosArticleListPluginModule(require) {
                         editor.selectionChange( 1 );
                     } );
                 }
-            } );
+            }, null, null, 8 );
             editor.on('change', changedContent);
             editor.on("change", resetNumbering);
         }
