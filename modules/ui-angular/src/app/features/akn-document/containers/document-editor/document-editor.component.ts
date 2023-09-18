@@ -59,6 +59,7 @@ import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
+import { BlockDocumentEditorService } from '../../services/block-document-editor.service';
 import { CKEditorService } from '../../services/ckeditor.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
@@ -184,8 +185,9 @@ export class DocumentEditorComponent
   );
 
   constructor(
-    private domService: DomService,
+    public blockDocumentEditorService: BlockDocumentEditorService,
     public documentService: DocumentService,
+    private domService: DomService,
     private route: ActivatedRoute,
     private router: Router,
     private translate: TranslateService,

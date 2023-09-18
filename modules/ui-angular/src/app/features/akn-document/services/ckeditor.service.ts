@@ -24,6 +24,7 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 
 import { TocItem } from '../models/toc.model';
+import { BlockDocumentEditorService } from './block-document-editor.service';
 import { CheckBoxesConnector } from './check-boxes-connector';
 import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
@@ -60,6 +61,7 @@ export class CKEditorService implements OnDestroy {
     private translateService: TranslateService,
     private tableOfContentService: TableOfContentService,
     @Inject(DOCUMENT) private domDocument: Document,
+    private blockDocumentEditorService: BlockDocumentEditorService,
   ) {}
 
   ngOnDestroy() {
@@ -336,6 +338,7 @@ export class CKEditorService implements OnDestroy {
       this.documentService,
       this.tableOfContentService,
       this.coEditionService,
+      this.blockDocumentEditorService,
     );
 
     require(['extension/datePickerExtension'], (datePicker) => {
@@ -362,6 +365,7 @@ export class CKEditorService implements OnDestroy {
       this.documentService,
       this.tableOfContentService,
       this.coEditionService,
+      this.blockDocumentEditorService,
     );
 
     require(['extension/checkBoxesExtension'], (checkBoxes) => {

@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -28,6 +29,7 @@ import { VersionsPaneGroupComponent } from './components/versions-pane-group/ver
 import { DocumentEditorComponent } from './containers/document-editor/document-editor.component';
 import { DocumentTocComponent } from './containers/document-toc/document-toc.component';
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
+import { BlockDocumentEditorService } from './services/block-document-editor.service';
 import { CKEditorService } from './services/ckeditor.service';
 import { TableOfContentMandateEditService } from './services/table-of-content-edit.mandate.service';
 import { TableOfContentProposalEditService } from './services/table-of-content-edit.proposal.service';
@@ -58,6 +60,7 @@ import { ValidateTocService } from './services/validate-node-drop.service';
     RevisionActionsDropdownComponent,
   ],
   imports: [
+    CommonModule,
     SharedModule,
     ReactiveFormsModule,
     AknDocumentRoutingModule,
@@ -83,6 +86,7 @@ import { ValidateTocService } from './services/validate-node-drop.service';
           ? TableOfContentMandateEditService
           : TableOfContentProposalEditService,
     },
+    BlockDocumentEditorService,
   ],
 })
 export class AknDocumentModule {}
