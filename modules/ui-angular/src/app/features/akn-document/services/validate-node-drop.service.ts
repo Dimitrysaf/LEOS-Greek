@@ -16,6 +16,7 @@ import {
   isSourceDivision,
 } from '@/shared/utils/toc.utils';
 import { isTocItemsEqual } from '@/shared/utils/tocRules.utils';
+import { CROSSHEADING } from '@/shared/constants';
 
 Injectable();
 export abstract class ValidateTocService {
@@ -246,6 +247,13 @@ export abstract class ValidateTocService {
     documentType: string,
     documentRef: string,
   ) {
+    if (draggedNodeTagName === CROSSHEADING) {
+      draggedNodeTagName = 'crossheading';
+    }
+    if (targetNodeTagName === CROSSHEADING) {
+      targetNodeTagName = 'crossheading';
+    }
+
     return this.http.post<NodeValidationResponse>(
       `${apiBaseUrl}/secured/toc/${documentRef}/validate-node-drop`,
       {
