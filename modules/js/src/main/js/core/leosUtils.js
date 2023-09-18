@@ -237,10 +237,10 @@ define(function leosUtilsModule(require) {
                         "content: attr(leos\\:tc-original-number); text-decoration: line-through; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";
-                    tcStyle += "paragraph:not(:has(num span[leos\\:action])) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
+                    tcStyle += "paragraph:not(:has(> num > span[leos\\:action])) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
                         "[leos\\:tc-original-number='NEW']:before, " +
                         "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
-                        "[leos\\:tc-original-number='NEW']:not(:has(span[leos\\:action])):before {" +
+                        "[leos\\:tc-original-number='NEW']:not(:has(> num > span[leos\\:action])):before {" +
                         "content: '↵'; margin-left: -20pt; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";

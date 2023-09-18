@@ -230,6 +230,7 @@ define(function leosTrackChangesPluginModule(require) {
 
             editor.on("toDataFormat", function(event) {
                 event.data.dataValue = event.data.dataValue.replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\"");
+                event.data.dataValue = event.data.dataValue.replace(/leos:title-number="([\s\S][^:]+?)"/g, "leos:title-number=\"$1 : " + core.getDateFormat() + "\"");
             }, null, null, 15);
 
             // Bind events if the Dom is ready!
