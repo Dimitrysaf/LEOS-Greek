@@ -134,7 +134,7 @@
   "page.collection.milestones.create-milestone-dialog.success": "[FR] Milestone created",
   "page.collection.milestones.create-milestone-dialog.error": "[FR] Failed creating milestone",
   "page.collection.milestones.create-milestone-dialog.success-clone": "[FR] Contribution from Legal Service has been created for this proposal",
-  "page.collection.milestones.annotation-warning-modal.title": "[FR] Create contribution milestone",
+  "page.collection.milestones.annotation-warning-modal.title": "[FR] Send contribution milestone",
   "page.collection.milestones.annotation-warning-modal.text": "[FR] Suggestions will be excluded in the milestone for contribution. Ok to proceed?",
   "page.collection.milestones.type.proposal1": "Pour Consultation Interservice",
   "page.collection.milestones.type.proposal2": "Pour Decision",
