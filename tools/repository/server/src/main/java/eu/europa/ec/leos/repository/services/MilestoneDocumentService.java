@@ -17,7 +17,7 @@ public interface MilestoneDocumentService {
 
     Optional<LeosDocument> findMilestoneByRef(final String Ref);
 
-    List<LeosDocument> findMilestoneByPackageId(final String pkgId) throws RepositoryException;
+    List<LeosDocument> findMilestoneByPackageId(final String pkgId, final boolean fetchContent) throws RepositoryException;
 
     LeosDocument createMilestoneFromContent(final Document doc, Map<String, ?> metadata,
                                             byte[] contentBytes, final String userId) throws RepositoryException;
@@ -27,7 +27,7 @@ public interface MilestoneDocumentService {
     LeosDocument updateMilestone(final Document doc, byte[] content, Map<String, ?> properties, String userId) throws RepositoryException;
 
     List<LeosDocument> findMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex,
-                                                 final int maxResults);
+                                                 final int maxResults, final boolean fetchContent);
 
     long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter);
 

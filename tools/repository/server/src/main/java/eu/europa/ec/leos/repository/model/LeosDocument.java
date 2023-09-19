@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
+import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.entities.Config;
@@ -170,37 +171,72 @@ public class LeosDocument {
         }
     }
 
-    public LeosDocument(MilestoneV documentMilestone,
-                        String category,
+    public LeosDocument(MilestoneV documentMilestoneV,
                         DocumentMilestoneListRepository documentMilestoneListRepository) {
-        if (documentMilestone != null) {
-            this.setName(documentMilestone.getName());
-            this.setCreatedBy(documentMilestone.getAuditCBy());
-            this.setCreatedOn(Date.from(documentMilestone.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
-            this.setUpdatedBy(documentMilestone.getAuditLastMBy());
-            this.setUpdatedOn(documentMilestone.getAuditLastMDate() != null ?
-                    Date.from(documentMilestone.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
-            this.setSource(documentMilestone.getContent());
-            this.setRef(documentMilestone.getRef());
-            this.setVersionId(documentMilestone.getMilestoneId().toString());
-            this.setPackageId(documentMilestone.getPackageId().toString());
-            this.setCategory(category);
+        if (documentMilestoneV != null) {
+            this.setName(documentMilestoneV.getName());
+            this.setCreatedBy(documentMilestoneV.getAuditCBy());
+            this.setCreatedOn(Date.from(documentMilestoneV.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
+            this.setUpdatedBy(documentMilestoneV.getAuditLastMBy());
+            this.setUpdatedOn(documentMilestoneV.getAuditLastMDate() != null ?
+                    Date.from(documentMilestoneV.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            this.setRef(documentMilestoneV.getRef());
+            this.setVersionId(documentMilestoneV.getMilestoneId().toString());
+            this.setPackageId(documentMilestoneV.getPackageId().toString());
+            this.setCategory(documentMilestoneV.getCategoryCode());
 
             this.setLatestVersion(true);
 
-            this.metadata.put("status", documentMilestone.getStatus());
-            this.metadata.put("jobId", documentMilestone.getJobId() != null ? documentMilestone.getJobId() : null);
-            this.metadata.put("jobDate", documentMilestone.getJobDate() != null ?
-                    Date.from(documentMilestone.getJobDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            this.metadata.put("status", documentMilestoneV.getStatus());
+            this.metadata.put("jobId", documentMilestoneV.getJobId() != null ? documentMilestoneV.getJobId() : null);
+            this.metadata.put("jobDate", documentMilestoneV.getJobDate() != null ?
+                    Date.from(documentMilestoneV.getJobDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
 
-            List<String> milestoneComments = Arrays.asList(documentMilestone.getMilestoneComments());
+            List<String> milestoneComments = Arrays.asList(documentMilestoneV.getMilestoneComments());
             this.metadata.put("milestoneComments", milestoneComments);
             this.metadata.put("comments", milestoneComments);
-            this.setComments(documentMilestone.getMilestoneComments());
+            this.setComments(documentMilestoneV.getMilestoneComments());
 
             List<String> containedDocuments = new ArrayList<>();
             List<DocumentMilestoneList> milestonesDocuments =
-                    documentMilestoneListRepository.findDocumentMilestoneListsByMilestoneId(documentMilestone.getMilestoneId());
+                    documentMilestoneListRepository.findDocumentMilestoneListsByMilestoneId(documentMilestoneV.getMilestoneId());
+            for (DocumentMilestoneList milestone : milestonesDocuments) {
+                containedDocuments.add(milestone.getContainedDocuments());
+            }
+            this.metadata.put("containedDocuments", containedDocuments);
+        }
+    }
+
+    public LeosDocument(MilestoneV documentMilestoneV, DocumentMilestone content,
+                        DocumentMilestoneListRepository documentMilestoneListRepository) {
+        if (documentMilestoneV != null) {
+            this.setName(documentMilestoneV.getName());
+            this.setCreatedBy(documentMilestoneV.getAuditCBy());
+            this.setCreatedOn(Date.from(documentMilestoneV.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
+            this.setUpdatedBy(documentMilestoneV.getAuditLastMBy());
+            this.setUpdatedOn(documentMilestoneV.getAuditLastMDate() != null ?
+                    Date.from(documentMilestoneV.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+            this.setSource(content.getContent());
+            this.setRef(documentMilestoneV.getRef());
+            this.setVersionId(documentMilestoneV.getMilestoneId().toString());
+            this.setPackageId(documentMilestoneV.getPackageId().toString());
+            this.setCategory(documentMilestoneV.getCategoryCode());
+
+            this.setLatestVersion(true);
+
+            this.metadata.put("status", documentMilestoneV.getStatus());
+            this.metadata.put("jobId", documentMilestoneV.getJobId() != null ? documentMilestoneV.getJobId() : null);
+            this.metadata.put("jobDate", documentMilestoneV.getJobDate() != null ?
+                    Date.from(documentMilestoneV.getJobDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
+
+            List<String> milestoneComments = Arrays.asList(documentMilestoneV.getMilestoneComments());
+            this.metadata.put("milestoneComments", milestoneComments);
+            this.metadata.put("comments", milestoneComments);
+            this.setComments(documentMilestoneV.getMilestoneComments());
+
+            List<String> containedDocuments = new ArrayList<>();
+            List<DocumentMilestoneList> milestonesDocuments =
+                    documentMilestoneListRepository.findDocumentMilestoneListsByMilestoneId(documentMilestoneV.getMilestoneId());
             for (DocumentMilestoneList milestone : milestonesDocuments) {
                 containedDocuments.add(milestone.getContainedDocuments());
             }
