@@ -18,12 +18,11 @@ import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
-import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
+import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
-import eu.europa.ec.leos.repository.repositories.MilestoneVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,31 +45,29 @@ import java.util.Set;
 @Service
 public class PackageServiceImpl implements PackageService {
     private final DocumentVRepository documentVRepository;
-    private final MilestoneVRepository milestoneVRepository;
     private final PackageRepository packageRepository;
     private final DocumentPropertyValuesRepository documentPropertyValuesRepository;
     private final DocumentContentRepository documentContentRepository;
     private final CollaboratorsService collaboratorsService;
     private final DocumentMilestoneListRepository documentMilestoneListRepository;
-    private final DocumentCategoriesRepository documentCategoriesRepository;
+    private final DocumentMilestoneRepository documentMilestoneRepository;
     private final DocumentService documentService;
     private final EntityManager entityManager;
 
     @Autowired
-    public PackageServiceImpl(DocumentVRepository documentVRepository, MilestoneVRepository milestoneVRepository, PackageRepository packageRepository,
+    public PackageServiceImpl(DocumentVRepository documentVRepository, PackageRepository packageRepository,
                               DocumentPropertyValuesRepository documentPropertyValuesRepository,
                               DocumentContentRepository documentContentRepository, CollaboratorsService collaboratorsService,
-                              DocumentMilestoneListRepository documentMilestoneListRepository, DocumentCategoriesRepository documentCategoriesRepository,
+                              DocumentMilestoneListRepository documentMilestoneListRepository, DocumentMilestoneRepository documentMilestoneRepository,
                               EntityManager entityManager,
                               @Lazy DocumentService documentService) {
         this.documentVRepository = documentVRepository;
-        this.milestoneVRepository = milestoneVRepository;
         this.packageRepository = packageRepository;
         this.documentContentRepository = documentContentRepository;
         this.documentPropertyValuesRepository = documentPropertyValuesRepository;
         this.collaboratorsService = collaboratorsService;
         this.documentMilestoneListRepository = documentMilestoneListRepository;
-        this.documentCategoriesRepository = documentCategoriesRepository;
+        this.documentMilestoneRepository = documentMilestoneRepository;
         this.documentService = documentService;
         this.entityManager = entityManager;
     }
@@ -163,9 +160,7 @@ public class PackageServiceImpl implements PackageService {
         List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
                 Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()), documentContentRepository, docs
                 , fetchContent);
-        for (MilestoneV m : milestones) {
-            xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
-        }
+        xmlDocs.addAll(ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, fetchContent));
         return xmlDocs;
     }
 
@@ -187,9 +182,7 @@ public class PackageServiceImpl implements PackageService {
                         Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()),
                 documentContentRepository, docs
                 , fetchContent);
-        for (MilestoneV m : milestones) {
-            xmlDocs.add(ConversionUtils.buildLegDocument(m, documentMilestoneListRepository, documentCategoriesRepository));
-        }
+        xmlDocs.addAll(ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, fetchContent));
         return xmlDocs;
     }
 

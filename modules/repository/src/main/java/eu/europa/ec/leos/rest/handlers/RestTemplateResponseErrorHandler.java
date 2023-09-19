@@ -36,19 +36,18 @@ public class RestTemplateResponseErrorHandler implements ResponseErrorHandler {
             // do nothing
         }
 
-        if (httpResponse.getStatusCode().series() == HttpStatus.Series.SERVER_ERROR) {
-            throw new IllegalStateException("Server Error: " + httpResponse.getStatusText());
-        } else if (httpResponse.getStatusCode().series() == HttpStatus.Series.CLIENT_ERROR) {
-            // handle CLIENT_ERROR
-
+        if (exceptionResponse.isPresent()) {
+            throw new IllegalArgumentException(exceptionResponse.get().getMessage() + "|" + exceptionResponse.get().getType());
+        } else {
             if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-                if(exceptionResponse.isPresent()){
-                    throw new IllegalArgumentException(exceptionResponse.get().getMessage() + "|" + exceptionResponse.get().getType());
-                }else{
-                    throw new IllegalArgumentException("Resource not found");
+                throw new IllegalArgumentException("Resource not found");
+            } else {
+                if (httpResponse.getStatusCode().series() == HttpStatus.Series.CLIENT_ERROR) {
+                    throw new IllegalArgumentException("Client error: " + responseAsString);
+                } else {
+                    throw new IllegalStateException("Server Error: " + httpResponse.getStatusText());
                 }
             }
-            throw new IllegalStateException("CLIENT_ERROR: " + responseAsString);
         }
     }
 

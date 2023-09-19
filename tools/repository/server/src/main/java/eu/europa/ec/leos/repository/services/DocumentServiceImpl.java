@@ -385,7 +385,7 @@ public class DocumentServiceImpl implements DocumentService {
                             Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
                             docs.get(0).getPackageId()), documentContentRepository, docs,
                     false));
-            listDocs.addAll(milestoneDocumentService.findMilestoneByPackageId(pkgId));
+            listDocs.addAll(milestoneDocumentService.findMilestoneByPackageId(pkgId, false));
             return listDocs;
         } catch (Exception e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, LeosDocument.class.getName());
@@ -639,13 +639,13 @@ public class DocumentServiceImpl implements DocumentService {
             queryBuild.append(String.format(" AND d.packageName = '%s'", packageName));
         }
 
-        buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
+        buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter, true);
 
         List<DocumentV> docs = entityManager.createQuery(queryBuild.toString()).setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
         List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, collaboratorsService, documentContentRepository,
                 docs,
                 fetchContent);
-        xmlDocs.addAll(milestoneDocumentService.findMilestonesUsingFilter(packageName, categories, queryFilter, startIndex, maxResults));
+        xmlDocs.addAll(milestoneDocumentService.findMilestonesUsingFilter(packageName, categories, queryFilter, startIndex, maxResults, fetchContent));
         return xmlDocs;
     }
 
@@ -655,13 +655,13 @@ public class DocumentServiceImpl implements DocumentService {
         if (!packageName.equals("%")) {
             queryBuild.append(String.format(" AND d.packageName = '%s'", packageName));
         }
-        buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter);
+        buildQueryStringFromQueryFilter(queryBuild, categories, queryFilter, false);
         Long count = (Long)entityManager.createQuery(queryBuild.toString()).getSingleResult();
         count += milestoneDocumentService.countMilestonesUsingFilter(packageName, categories, queryFilter);
         return count;
     }
 
-    private void buildQueryStringFromQueryFilter(StringBuilder queryBuild, final Set<String> categories, QueryFilter queryFilter) {
+    private void buildQueryStringFromQueryFilter(StringBuilder queryBuild, final Set<String> categories, QueryFilter queryFilter, boolean orderBy) {
         if (!categories.isEmpty()) {
             String categoryStr = categories.stream()
                     .map(a -> "'" + a + "'")
@@ -702,7 +702,7 @@ public class DocumentServiceImpl implements DocumentService {
             queryBuild.append(whereFiltersClause);
         }
         String formSortClause = formSortClause(queryFilter, DocumentV.class);
-        if (!formSortClause.isEmpty()) {
+        if (orderBy && !formSortClause.isEmpty()) {
             queryBuild.append(" ORDER BY ");
             queryBuild.append(formSortClause);
         }

@@ -922,4 +922,44 @@ public class DocumentServiceTests {
         List<LeosDocument> docs = documentService.findAllMajors("annex_test",0,10);
         assertEquals(docs.size(), 1);
     }
+
+    @Test
+    public void findDocumentsWithFilter() {
+        QueryFilter filter = new QueryFilter();
+        filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
+                , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
+        filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-017", "SJ-019"
+                , "SJ-023"));
+        filter.addFilter(new QueryFilter.Filter("role", "IN", false, "demo::OWNER::DGT.R.3"
+                , "demo::CONTRIBUTOR::DGT.R.3", "demo::REVIEWER::DGT.R.3", "demo::OWNER"
+                , "demo::CONTRIBUTOR", "demo::REVIEWER"));
+        filter.addSortOrder(new QueryFilter.SortOrder("lastModificationDate", "DESC"));
+        Set<String> categories = Sets.set("PROPOSAL");
+        int startIndex = 0;
+        int maxResults = 5;
+
+        List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%",
+                categories,
+                filter, startIndex, maxResults, false);
+        assertEquals(docs.size(), 1);
+   }
+
+    @Test
+    public void countDocumentsWithFilter() {
+        QueryFilter filter = new QueryFilter();
+        filter.addFilter(new QueryFilter.Filter("procedureType", "IN", true, "ORDINARY_LEGISLATIVE_PROC"
+                , "SPECIAL_LEGISLATIVE_ACTS", "COMMISSION_LEGAL_ACTS", "COUNCIL_LEGAL_ACTS", "COUNCIL_INTERNAL_DOCUMENT"));
+        filter.addFilter(new QueryFilter.Filter("template", "IN", true, "SJ-017", "SJ-019"
+                , "SJ-023"));
+        filter.addFilter(new QueryFilter.Filter("role", "IN", false, "demo::OWNER::DGT.R.3"
+                , "demo::CONTRIBUTOR::DGT.R.3", "demo::REVIEWER::DGT.R.3", "demo::OWNER"
+                , "demo::CONTRIBUTOR", "demo::REVIEWER"));
+        filter.addSortOrder(new QueryFilter.SortOrder("lastModificationDate", "DESC"));
+        Set<String> categories = Sets.set("PROPOSAL");
+
+        long count = documentService.countDocumentsUsingFilter("%",
+                categories,
+                filter);
+        assertEquals(count, 1);
+    }
 }

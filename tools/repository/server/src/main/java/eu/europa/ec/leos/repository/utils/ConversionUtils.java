@@ -31,6 +31,7 @@ import eu.europa.ec.leos.repository.model.Package;
 import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
+import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.services.CollaboratorsService;
@@ -204,6 +205,16 @@ public class ConversionUtils {
         }
     }
 
+
+    public static List<LeosDocument> buildLegDocuments(List<MilestoneV> milestoneViews, DocumentMilestoneRepository documentMilestoneRepository,
+                                                       DocumentMilestoneListRepository documentMilestoneListRepository, boolean fetchContent) {
+        List<LeosDocument> convertedDocs = new ArrayList<>();
+        for (MilestoneV milestoneView : milestoneViews) {
+            convertedDocs.add(buildLegDocument(milestoneView, documentMilestoneListRepository, documentMilestoneRepository, fetchContent));
+        }
+        return convertedDocs;
+    }
+
     public static LeosDocument buildLegDocument(DocumentMilestone docMilestone,
                                                 DocumentMilestoneListRepository documentMilestoneListRepository) {
         return new LeosDocument(docMilestone, documentMilestoneListRepository);
@@ -211,9 +222,13 @@ public class ConversionUtils {
 
     public static LeosDocument buildLegDocument(MilestoneV milestoneV,
                                                 DocumentMilestoneListRepository documentMilestoneListRepository,
-                                                DocumentCategoriesRepository documentCategoriesRepository) {
-        Optional<DocumentCategories> category = documentCategoriesRepository.findById(milestoneV.getCategoryId());
-        return new LeosDocument(milestoneV, category.get().getCategoryCode(), documentMilestoneListRepository);
+                                                DocumentMilestoneRepository documentMilestoneRepository,
+                                                boolean fetchContent) {
+        Optional<DocumentMilestone> content = Optional.empty();
+        if (fetchContent) {
+            content = documentMilestoneRepository.findById(milestoneV.getMilestoneId());
+        }
+        return content.isPresent() ? new LeosDocument(milestoneV, content.get(), documentMilestoneListRepository) : new LeosDocument(milestoneV, documentMilestoneListRepository);
     }
 
     public static LeosDocument buildConfigDocument(Config config,

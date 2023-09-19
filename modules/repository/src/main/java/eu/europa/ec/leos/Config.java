@@ -33,8 +33,8 @@ public class Config {
         RequestConfig requestConfig = RequestConfig
                 .custom()
                 .setConnectionRequestTimeout(5000) // timeout to get connection from pool
-                .setSocketTimeout(20000) // standard connection timeout
-                .setConnectTimeout(20000) // standard connection timeout
+                .setSocketTimeout(60000) // standard connection timeout
+                .setConnectTimeout(60000) // standard connection timeout
                 .build();
 
         HttpClient httpClient = HttpClientBuilder.create()

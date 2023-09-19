@@ -115,9 +115,6 @@ public class MilestoneV implements Serializable {
     private LocalDateTime jobDate;
     @Column(name = "MILESTONE_COMMENTS", updatable = false)
     private String milestoneComments;
-    @Lob
-    @Column(name = "CONTENT", updatable = false)
-    private byte[] content;
     @Column(name = "STATUS", updatable = false)
     private String status;
     @Column(name = "AUDIT_C_BY", updatable = false)
@@ -310,14 +307,6 @@ public class MilestoneV implements Serializable {
 
     public void setMilestoneComments(String milestoneComments) {
         this.milestoneComments = milestoneComments;
-    }
-
-    public byte[] getContent() {
-        return content;
-    }
-
-    public void setContent(byte[] content) {
-        this.content = content;
     }
 
     public String getStatus() {

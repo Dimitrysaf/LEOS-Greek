@@ -117,7 +117,6 @@ public class MilestonesServiceTests {
         List<LeosDocument> milestones = documentService.findDocumentsByStatus("IN_PREPARATION");
         assertEquals(milestones.size(), 1);
         assertEquals(milestones.get(0).getName(), MILESTONE_NAME);
-        assertTrue(Arrays.equals(milestones.get(0).getSource(), content));
         assertEquals(milestones.get(0).getRef(), MILESTONE_NAME.substring(0, MILESTONE_NAME.lastIndexOf('.')));
         assertEquals(milestones.get(0).getMetadata().get("containedDocuments"), milestone.getMetadata().get("containedDocuments"));
         assertEquals(milestones.get(0).getMetadata().get("milestoneComments"), milestone.getMetadata().get("milestoneComments"));
