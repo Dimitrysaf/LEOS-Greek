@@ -13,6 +13,7 @@ import { AknDocumentComponent } from './components/akn-document/akn-document.com
 import { CoEditionDetectedDialogComponent } from './components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { CoEditionInfoComponent } from './components/co-edition-info/co-edition-info.component';
 import { ConfirmDeleteDialogComponent } from './components/confirm-delete-dialog/confirm-delete-dialog.component';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { DocumentAnnotationsComponent } from './components/document-annotations/document-annotations.component';
 import { MilestoneTocComponent } from './components/milestone-toc/milestone-toc.component';
 import { ProposalCreateDraftComponent } from './components/proposal-create-draft/proposal-create-draft.component';
@@ -45,6 +46,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
     ConfirmDeleteDialogComponent,
+    ConfirmDialogComponent,
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
     MilestoneTocComponent,
@@ -71,6 +73,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
     ConfirmDeleteDialogComponent,
+    ConfirmDialogComponent,
     CoEditionInfoComponent,
     CoEditionDetectedDialogComponent,
     ResizeHandleComponent,

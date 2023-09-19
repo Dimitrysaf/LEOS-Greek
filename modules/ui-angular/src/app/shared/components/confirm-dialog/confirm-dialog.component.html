@@ -1,0 +1,15 @@
+<eui-dialog #confirmDialog>
+  <eui-dialog-header>
+    <h3 [innerHTML]="title"></h3>
+  </eui-dialog-header>
+  <div class="d-flex flex-column">
+    <p [innerHTML]="description"></p>
+  </div>
+  <eui-dialog-footer>
+    <div class="app-dialog-footer-content">
+      <button euiButton euiSecondary (click)="handleCancel()">
+        {{ 'global.actions.cancel' | translate }}
+      </button>
+    </div>
+  </eui-dialog-footer>
+</eui-dialog>

@@ -47,6 +47,23 @@
               "
               (confirmDeletion)="handleDelete()"
             ></app-confirm-delete-dialog>
+
+            <app-confirm-dialog
+              #proposalDeleteCannotConf
+              [title]="
+                'page.collection.proposal-header.actions.delete-dialog.title'
+                  | translate
+              "
+              [description]="
+                'page.collection.proposal-header.actions.delete-dialog-cannot.desc'
+                  | translate
+                    : {
+                        totMilestones: (totMilestones)
+                      }
+              "
+              (confirmDeletion)="handleDelete()"
+            ></app-confirm-dialog>
+
           </li>
         </ng-container>
       </ul>
