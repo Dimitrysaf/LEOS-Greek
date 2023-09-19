@@ -244,12 +244,13 @@ define(function leosUtilsModule(require) {
                         "content: '↵'; margin-left: -20pt; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";
-                    tcStyle += "[leos\\:tc-enter-deleted]:before {" +
+                    tcStyle += "[leos\\:tc-enter-deleted]:not([leos\\:action-number='delete']):before {" +
                         "content: '↵'; margin-left: -20pt; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; margin-top: 6px; transform: scale(1, -1);" +
                         "}\n";
                 } else {
-                    tcStyle += "article > ol > li[data-akn-tc-enter-deleted]:before, li > ol > li[data-akn-tc-enter-deleted]:before {" +
+                    tcStyle += "article > ol > li[data-akn-tc-enter-deleted]:not([data-akn-action-for-number='delete']):before, " +
+                        "li > ol > li[data-akn-tc-enter-deleted]:not([data-akn-action-for-number='delete']):before {" +
                         "content: '↵'; min-width: 40px; color: " + userColors[0] + "; " +
                         "float: left; text-decoration: none; transform: scale(1, -1);" +
                         "}\n";
