@@ -258,6 +258,17 @@ define(function listItemNumberModule(require) {
         for (var idx = 0; idx < listItems.length; idx++) {
             if (!(listItems[idx].getAttribute('contenteditable') === "false") && !(listItems[idx].getAttribute('data-akn-num') === '\u2610') && !(listItems[idx].getAttribute('data-akn-num') === '\u2611')) {
                 var numID = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                var number = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM);
+
+                var previousItem = listItems[idx-1];
+                if(!!previousItem && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) === numID && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM) === number) {
+                    listItems[idx].removeAttribute("data-akn-num");
+                    listItems[idx].removeAttribute("data-akn-num-id");
+                    listItems[idx].removeAttribute("data-akn-content-id");
+                    listItems[idx].removeAttribute("data-akn-mp-id");
+                    listItems[idx].removeAttribute("data-akn-tc-original-number");
+                }
+
                 // To keep the num id on indentation and avoid diffing issues
                 var originNumID = listItems[idx].getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUM_ID);
                 if (numID && numID.startsWith(deleted)) {

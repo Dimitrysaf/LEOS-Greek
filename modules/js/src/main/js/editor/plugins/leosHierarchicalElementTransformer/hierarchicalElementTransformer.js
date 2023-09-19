@@ -161,6 +161,22 @@ define(function hierarchicalElementTransformer(require) {
                         from: DATA_INDENT_ORIGIN_NUMBER_ORIGIN,
                         to: "leos:indent-origin-num-origin",
                         action: "passAttributeTransformer"
+                    }, {
+                        from: DATA_AKN_ACTION_FOR_NUMBER,
+                        to: "leos:action-number",
+                        action: "passAttributeTransformer"
+                    }, {
+                        from: DATA_AKN_UID_NUMBER,
+                        to: "leos:uid-number",
+                        action: "passAttributeTransformer"
+                    }, {
+                        from: TITLE_NUMBER,
+                        to: "leos:title-number",
+                        action: "passAttributeTransformer"
+                    }, {
+                        from: DATA_AKN_TC_ORIGINAL_NUMBER,
+                        to: "leos:tc-original-number",
+                        action: "passAttributeTransformer"
                     }]
                 });
                 var contentId = childElement.attributes[DATA_AKN_WRAPPED_CONTENT_ID] ?

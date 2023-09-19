@@ -43,36 +43,8 @@ import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_N
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_URI;
-import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_END_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_NEW_CLASS;
-import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_REMOVED_CLASS;
-import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
-import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
-import static eu.europa.ec.leos.services.support.XmlHelper.ID;
-import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.INLINE;
-import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
-import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.services.support.XmlHelper.OPEN_END_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.OPEN_TAG;
-import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_ACTIONS_PREFIXES;
-import static eu.europa.ec.leos.services.support.XmlHelper.STYLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
-import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
-import static eu.europa.ec.leos.services.support.XmlHelper.convertStringDateToCalendar;
-import static eu.europa.ec.leos.services.support.XmlHelper.findString;
-import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
-import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
-import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
 
 public class XercesUtils {
 
@@ -833,12 +805,28 @@ public class XercesUtils {
     }
 
     public static String getChildContent(Node node, String childTagName) {
-        String number = null;
+        String childContent = null;
         Node child = getFirstChild(node, childTagName);
         if (child != null) {
-            number = child.getTextContent();
+            childContent = getNodeContent(child);
         }
-        return number;
+        return childContent;
+    }
+
+    public static String getNodeContent(Node node) {
+        String nodeContent = null;
+        if(node.hasChildNodes()) {
+            if (getFirstChild(node, "ins") != null) {
+                nodeContent = getFirstChild(node, "ins").getTextContent();
+            } else if(getFirstChild(node, "span") != null && getChildContainingAttributeValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) != null) {
+                nodeContent = getChildContainingAttributeValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION).getTextContent();
+            } else {
+                nodeContent = node.getTextContent();
+            }
+        } else {
+            nodeContent = node.getTextContent();
+        }
+        return  nodeContent;
     }
 
     public static String getParentTagName(Node node) {
@@ -930,12 +918,7 @@ public class XercesUtils {
     }
 
     public static String getNodeNum(Node node) {
-        String nodeNum = null;
-        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
-        if (numNode != null) {
-            nodeNum = numNode.getTextContent();
-        }
-        return nodeNum;
+        return getChildContent(node, getNumTag(node.getNodeName()));
     }
 
     public static String getNodeNumExcludingContentRemoved(Node node) {
@@ -1136,6 +1119,16 @@ public class XercesUtils {
         if (hasAttributeValue(attrName, attrValue, node)) {
             return node;
         } else if (node.hasChildNodes()) {
+            for (Node childNode : getChildren(node)) {
+                if (hasAttributeValue(attrName, attrValue, childNode)) {
+                    return childNode;
+                }
+            }
+        }
+        return null;
+    }
+    public static Node getChildContainingAttributeValue(Node node, String attrName, String attrValue) {
+        if (node.hasChildNodes()) {
             for (Node childNode : getChildren(node)) {
                 if (hasAttributeValue(attrName, attrValue, childNode)) {
                     return childNode;

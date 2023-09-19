@@ -1496,7 +1496,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     }
                 }
             } else {
-                String elementNumber = numNode.getTextContent();
+                String elementNumber = XercesUtils.getChildContent(node, NUM);
                 if (elementNumber.contains(".")) {
                     String[] levelArr = StringUtils.split(elementNumber, LEVEL_NUM_SEPARATOR);
                     depth = levelArr.length;

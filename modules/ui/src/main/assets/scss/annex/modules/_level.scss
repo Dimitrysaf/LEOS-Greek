@@ -15,7 +15,8 @@
 
 $NUM_SPACING: 25px;
 $OUTLINE_BLUE: #47a4f5;
-$LEVEL_SPACING: 22px;
+$LEVEL_SPACING: 40px;
+$NUM_WIDTH: 40px;
 
 //------------------------------- XML Styles --------------------------------//
 %xmlLevel {
@@ -93,6 +94,12 @@ $LEVEL_SPACING: 22px;
     }
   }
 
+  level[leos\:action='delete'] {
+    & > num {
+        text-decoration: line-through;
+    }
+  }
+
 }
 
 //------------------------------- Editor Styles -----------------------------//
@@ -121,6 +128,15 @@ $LEVEL_SPACING: 22px;
 
       & > ol {
         padding-left: $LEVEL_SPACING;
+      }
+
+      & > p[data-akn-tc-original-number][data-akn-action-for-number='delete']:not([data-akn-tc-original-number='UNNUMBERED']):not([data-akn-tc-original-number='NEW']) {
+          &:before {
+              content: attr(data-akn-tc-original-number);
+              min-width: $NUM_WIDTH;
+              float: left;
+              text-decoration: line-through;
+          }
       }
     }
   }

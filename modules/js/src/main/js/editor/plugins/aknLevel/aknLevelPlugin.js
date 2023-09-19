@@ -190,6 +190,15 @@ define(function aknLevelPluginModule(require) {
             }, {
                 akn : "class",
                 html : "data-akn-class"
+            }, {
+                akn : "leos:action",
+                html : "data-akn-action"
+            }, {
+                akn : "leos:uid",
+                html : "data-akn-uid"
+            }, {
+                akn : "leos:title",
+                html : "title"
             }]
         },
         rootElementsForFrom: ["level"],

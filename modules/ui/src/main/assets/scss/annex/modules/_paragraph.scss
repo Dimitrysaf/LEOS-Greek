@@ -13,6 +13,8 @@
  * See the Licence for the specific language governing permissions and limitations under the Licence.
 */
 
+$NUM_WIDTH: 40px;
+
 //------------------------------- XML Styles --------------------------------//
 %xmlParagraph {
     paragraph[leos\:origin='ec'] {
@@ -34,6 +36,24 @@
 
             & > ol{
                 padding-left: 40px;
+            }
+
+            & > p[data-akn-tc-original-number][data-akn-action-for-number='delete']:not([data-akn-tc-original-number='UNNUMBERED']):not([data-akn-tc-original-number='NEW']) {
+                &:before {
+                    content: attr(data-akn-tc-original-number);
+                    min-width: $NUM_WIDTH;
+                    float: left;
+                    text-decoration: line-through;
+                }
+            }
+        }
+
+        & > li[data-akn-tc-original-number][data-akn-action-for-number='delete']:not([data-akn-tc-original-number='UNNUMBERED']):not([data-akn-tc-original-number='NEW']) {
+            &:before {
+                content: attr(data-akn-tc-original-number);
+                min-width: $NUM_WIDTH;
+                float: left;
+                text-decoration: line-through;
             }
         }
     }
