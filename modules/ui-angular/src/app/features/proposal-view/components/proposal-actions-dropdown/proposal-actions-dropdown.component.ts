@@ -1,19 +1,21 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { Permission } from '@/shared';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
+import { ConfirmDialogComponent } from '@/shared/components/confirm-dialog/confirm-dialog.component';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
+import {Subject, takeUntil} from 'rxjs';
 
 @Component({
   selector: 'app-proposal-actions-dropdown',
-  templateUrl: './proposal-actions-dropdown.component.html',
-  styleUrls: ['./proposal-actions-dropdown.component.scss'],
+  templateUrl: './proposal-actions-dropdown.component.html'
 })
-export class ProposalActionsDropdownComponent {
+export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
   @Input() proposalId: string;
   @Input() permissions: Permission[];
+  @Input() totMilestones: number;
   loading = false;
 
   mailtoHeader = 'mailto:?';
@@ -23,6 +25,8 @@ export class ProposalActionsDropdownComponent {
   breakStr = '%0D%0A';
   @ViewChild('proposalDeleteConf')
   proposalDeleteConf: ConfirmDeleteDialogComponent;
+  @ViewChild('proposalDeleteCannotConf')
+  proposalDeleteCannotConf: ConfirmDialogComponent;
   canExportLW = false;
 
   constructor(
@@ -32,6 +36,26 @@ export class ProposalActionsDropdownComponent {
     proposalDetailsService.permissions$.subscribe((permissions) => {
       this.canExportLW = permissions.includes('CAN_EXPORT_LW');
     });
+  }
+
+  private destroy$: Subject<any> = new Subject();
+
+  ngOnInit(): void {
+    this.proposalDetailsService.milestones$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (milestones) => {
+          this.totMilestones = milestones.length;
+        },
+        error: (error) => {
+          console.error("error", error)
+        },
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.unsubscribe();
   }
 
   handleDownload() {
@@ -55,7 +79,11 @@ export class ProposalActionsDropdownComponent {
   }
 
   handleConfirmationDelete() {
-    this.proposalDeleteConf.deleteDialog.openDialog();
+    if (this.totMilestones == 0) {
+      this.proposalDeleteConf.deleteDialog.openDialog();
+    } else {
+      this.proposalDeleteCannotConf.confirmDialog.openDialog();
+    }
   }
 
   getStringifiedMailTo() {

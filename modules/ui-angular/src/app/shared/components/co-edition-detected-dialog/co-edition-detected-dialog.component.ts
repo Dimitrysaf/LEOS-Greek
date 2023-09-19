@@ -15,8 +15,7 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 
 @Component({
   selector: 'app-co-edition-detected-dialog',
-  templateUrl: './co-edition-detected-dialog.component.html',
-  styleUrls: ['./co-edition-detected-dialog.component.scss'],
+  templateUrl: './co-edition-detected-dialog.component.html'
 })
 export class CoEditionDetectedDialogComponent implements OnInit, OnChanges {
   @ViewChild('coEditionDetectedDialog')

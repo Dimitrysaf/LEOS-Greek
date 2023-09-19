@@ -10,8 +10,7 @@ import { EuiDialogComponent } from '@eui/components/eui-dialog';
 
 @Component({
   selector: 'app-confirm-delete-dialog',
-  templateUrl: './confirm-delete-dialog.component.html',
-  styleUrls: ['./confirm-delete-dialog.component.scss'],
+  templateUrl: './confirm-delete-dialog.component.html'
 })
 export class ConfirmDeleteDialogComponent implements OnInit {
   @Input() title: string;
