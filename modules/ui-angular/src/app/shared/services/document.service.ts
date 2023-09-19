@@ -111,6 +111,7 @@ export class DocumentService implements OnDestroy {
   contributionViewAndMergeCollapsed$: Observable<boolean>;
   isClonedProposal$: Observable<boolean>;
   isContributionDeclinedOrProcessed$: Observable<boolean>;
+  isEditorOpen$: Observable<boolean>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -159,6 +160,7 @@ export class DocumentService implements OnDestroy {
   private isContributionDeclinedOrProcessedBS = new BehaviorSubject<boolean>(
     false,
   );
+  private isEditorOpenBS = new BehaviorSubject<boolean>(false);
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -322,6 +324,7 @@ export class DocumentService implements OnDestroy {
     this.contributionSelections$ = this.contributionSelectionsBS.asObservable();
     this.contributionViewAndMergeCollapsed$ =
       this.contributionViewAndMergeCollapsedBS.asObservable();
+    this.isEditorOpen$ = this.isEditorOpenBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -1205,6 +1208,10 @@ export class DocumentService implements OnDestroy {
           item.classList.remove('contribution-wrapper-after-merge');
         });
     }
+  }
+
+  setIsEditorOpen(val: boolean) {
+    this.isEditorOpenBS.next(val);
   }
 
   private setSearchResultsCounter(count: number) {

@@ -113,6 +113,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
     this.elementUnderEdit = data.elementId;
+    this.documentService.setIsEditorOpen(true);
     if (
       this.coEditionService.checkForCoEdition(
         'EDIT_ELEMENT',
@@ -256,6 +257,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       documentType,
     ).subscribe((response) => {
       this.isElementSaved = true;
+      this.documentService.setIsEditorOpen(false);
       this.tableOfContentService.reload();
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
       this.refreshElement(
@@ -280,6 +282,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     }
     this.isElementSaved = false;
     this.setEditorOpenState('CLOSE');
+    this.documentService.setIsEditorOpen(false);
   }
 
   // leosEditorExtension > actionHandler

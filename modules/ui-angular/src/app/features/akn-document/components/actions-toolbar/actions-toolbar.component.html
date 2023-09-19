@@ -9,7 +9,7 @@
   euiSizeS
   [title]="'page.editor.search-button.tooltip' | translate"
   [attr.aria-label]="'page.editor.search-button.tooltip' | translate"
-  [disabled]="disabled"
+  [disabled]="(doc.isEditorOpen$ | async) || disabled"
   (click)="doc.toggleSearchPane()"
 >
   <span class="eui-icon eui-icon-search"></span>
@@ -23,7 +23,7 @@
   euiSizeS
   [title]="'page.editor.reload-button.tooltip' | translate"
   [attr.aria-label]="'page.editor.reload-button.tooltip' | translate"
-  [disabled]="disabled"
+  [disabled]="(doc.isEditorOpen$ | async) || disabled"
   (click)="handleReload()"
 >
   <span class="eui-icon eui-icon-refresh"></span>
