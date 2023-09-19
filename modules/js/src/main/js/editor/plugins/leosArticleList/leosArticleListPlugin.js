@@ -1032,11 +1032,13 @@ define(function leosArticleListPluginModule(require) {
                         }
 
                         if ( joinWith ) {
-                            var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(range);
-                            if (!isNewTrackChangeNumber) {
-                                editor.fire("handleTrackTraceForEnter", range);
-                                evt.cancel();
-                                return;
+                            if (editor.LEOS.isTrackChangesEnabled) {
+                                var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(range);
+                                if (!isNewTrackChangeNumber) {
+                                    editor.fire("handleTrackTraceForEnter", range);
+                                    evt.cancel();
+                                    return;
+                                }
                             }
                             joinNextLineToCursor( editor, cursor, range );
                             var parentOfPreviousIsParagraph = previous.getParent().getAttribute("data-akn-element") === leosPluginUtils.PARAGRAPH;
@@ -1195,11 +1197,13 @@ define(function leosArticleListPluginModule(require) {
                                     }
                                 }
 
-                                var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(nextLine);
-                                if (!isNewTrackChangeNumber) {
-                                    editor.fire("handleTrackTraceForEnter", nextLine);
-                                    evt.cancel();
-                                    return;
+                                if (editor.LEOS.isTrackChangesEnabled) {
+                                    var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(nextLine);
+                                    if (!isNewTrackChangeNumber) {
+                                        editor.fire("handleTrackTraceForEnter", nextLine);
+                                        evt.cancel();
+                                        return;
+                                    }
                                 }
                                 joinNextLineToCursor( editor, cursor, nextLine );
                                 evt.cancel();
