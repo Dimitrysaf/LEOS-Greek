@@ -6,11 +6,7 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
-import eu.europa.ec.leos.domain.repository.document.LegDocument;
-import eu.europa.ec.leos.domain.repository.document.LeosDocument;
-import eu.europa.ec.leos.domain.repository.document.Proposal;
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
@@ -35,6 +31,9 @@ import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.FinancialStatementProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
+import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
+import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
@@ -57,11 +56,7 @@ import io.atlassian.fugue.Option;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class GenericDocumentApiService {
@@ -140,93 +135,6 @@ public class GenericDocumentApiService {
         this.leosPermissionAuthorityMapHelper = Objects.requireNonNull(leosPermissionAuthorityMapHelper);
         this.documentVOProvider = Objects.requireNonNull(documentVOProvider);
         this.comparisonDelegate = Objects.requireNonNull(comparisonDelegate);
-    }
-
-    private StructureContext getStructureContext() {
-        return this.structureContextProvider.get();
-    }
-
-    private CloneContext getCloneContext() {
-        return this.cloneContextProvider.get();
-    }
-
-    private Proposal getDocProposal(XmlDocument document) {
-        return Optional.of(document)
-                .map(XmlDocument::getId)
-                .map(this.packageService::findPackageByDocumentId)
-                .map(pack -> this.proposalService.findProposalByPackagePath(pack.getPath()))
-                .orElseThrow(() -> new RuntimeException(String.format("Not found proposal for document %s", document.getId())));
-    }
-
-    private void populateCloneProposalMetadata(@NotNull XmlDocument document) {
-        Proposal proposal = this.getDocProposal(document);
-        if (proposal.isClonedProposal()) {
-            byte[] xmlContent = this.getDocumentContent(proposal);
-            CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(xmlContent);
-            this.getCloneContext().setCloneProposalMetadataVO(cloneProposalMetadataVO);
-        }
-    }
-
-    // TODO refactor to a Util class
-    private byte[] getDocumentContent(XmlDocument document) throws RuntimeException {
-        return Optional.ofNullable(document.getContent())
-                .map(Maybe::get)
-                .map(Content::getSource)
-                .map(Content.Source::getBytes)
-                .orElseThrow(() -> new RuntimeException(String.format("Document %s is missing content", document.getId())));
-    }
-
-    private String getDocTemplate(XmlDocument document) {
-        return Optional.of(document)
-                .map(XmlDocument::getMetadata)
-                .map(Maybe::get)
-                .map(meta -> meta.getDocTemplate())
-                .orElseThrow(() -> new RuntimeException(String.format("Document %s is missing docTemplate", document.getId())));
-    }
-
-    private String getDocReference(XmlDocument document) {
-        return Optional.of(this.getDocMetadata(document))
-                .map(LeosMetadata::getRef)
-                .orElse(null);
-    }
-
-    private LeosMetadata getDocMetadata(XmlDocument document) {
-        return Optional.of(document)
-                .map(XmlDocument::getMetadata)
-                .map(Option::getOrNull)
-                .orElse(null);
-    }
-
-    // TODO This will be removed when the class extend the BaseDocumentService interface
-    private Map<String, Attribute> getArticleTypesAttributes(List<TocItem> tocItems) {
-        Map<String, Attribute> articleTypesAttributes = new HashMap<>();
-        List<TocItemType> tocItemTypes = StructureConfigUtils.getTocItemTypesByTagName(tocItems, XmlHelper.ARTICLE);
-        tocItemTypes.forEach(tocItemType -> {
-            Attribute attribute = tocItemType.getAttribute();
-            if (attribute == null) {
-                attribute = new Attribute();
-                attribute.setAttributeName("");
-                attribute.setAttributeValue("");
-            }
-            articleTypesAttributes.put(tocItemType.getName().name(), attribute);
-        });
-        return articleTypesAttributes;
-    }
-
-    private <T extends XmlDocument> T findDocumentByRef(@NotNull Class<T> docClass,
-                                                        @NotNull String docRef) throws NotFoundException {
-        return Optional.ofNullable(this.leosRepository.findDocumentByRef(docRef, docClass))
-                .orElseThrow(() -> new NotFoundException(String.format("Not found document with %s reference", docRef)));
-    }
-
-    private XmlDocument findDocumentByRef(@NotNull String docRef) throws NotFoundException {
-        return this.findDocumentByRef(XmlDocument.class, docRef);
-    }
-
-    private XmlDocument findDocumentById(@NotNull String docId) throws NotFoundException {
-        return Optional.ofNullable(this.leosRepository.findDocumentById(docId, XmlDocument.class, false))
-                .map(leosDoc -> (XmlDocument) leosDoc)
-                .orElseThrow(() -> new NotFoundException(String.format("Not found document with %s id", docId)));
     }
 
     public DocumentViewResponse getDocumentByRef(@NotNull String docRef) throws NotFoundException {
@@ -416,9 +324,156 @@ public class GenericDocumentApiService {
     public List<SearchMatchVO> searchTextInDocument(@NotNull String documentRef,
                                                     @NotNull String searchText,
                                                     boolean matchCase,
-                                                    boolean completeWords) throws Exception {
-        XmlDocument document = this.findDocumentByRef(documentRef);
-        List<SearchMatchVO> searchResults = this.searchService.searchText(this.getDocumentContent(document), searchText, matchCase, completeWords);
+                                                    boolean completeWords,
+                                                    String tempUpdatedContentXML) throws Exception {
+        byte[] targetAnnexBytes;
+
+        if (null == tempUpdatedContentXML || tempUpdatedContentXML.isEmpty()) {
+            targetAnnexBytes = getContent(this.findDocumentByRef(documentRef));
+        } else {
+            targetAnnexBytes = tempUpdatedContentXML.getBytes();
+        }
+        List<SearchMatchVO> searchResults = this.searchService.searchText(targetAnnexBytes, searchText, matchCase, completeWords);
         return searchResults;
     }
+
+    public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
+        XmlDocument document = findDocumentByRef(event.getDocumentRef());
+
+        byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), document);
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        return searchService.replaceText(
+                contentForReplace,
+                event.getSearchText(),
+                event.getReplaceText(),
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+    }
+
+    public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
+        XmlDocument document = findDocumentByRef(event.getDocumentRef());
+        byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), document);
+
+        populateCloneProposalMetadata(document);
+
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        return searchService.replaceText(
+                contentForReplace,
+                event.getSearchText(),
+                event.getReplaceText(),
+                searchMatchVOS);
+
+    }
+
+    public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
+        XmlDocument document = this.findDocumentByRef(event.getDocumentRef());
+        populateCloneProposalMetadata(document);
+        document = this.leosRepository.updateDocument(
+                document.getId(),
+                event.getUpdatedContent().getBytes(),
+                VersionType.MINOR,
+                messageHelper.getMessage("operation.search.replace.updated"),
+                XmlDocument.class
+        );
+
+        return this.documentViewService.updateDocumentView(document);
+    }
+
+    private byte[] getContentForReplaceProcess(String updatedContentXML, XmlDocument document) {
+        if (updatedContentXML == null || updatedContentXML.isEmpty()) {
+            return getContent(document);
+        }
+        return updatedContentXML.getBytes();
+    }
+
+    private byte[] getContent(XmlDocument document) {
+        final Content content = document.getContent().getOrError(() -> "Document content is required!");
+        return content.getSource().getBytes();
+    }
+
+    private StructureContext getStructureContext() {
+        return this.structureContextProvider.get();
+    }
+
+    private CloneContext getCloneContext() {
+        return this.cloneContextProvider.get();
+    }
+
+    private Proposal getDocProposal(XmlDocument document) {
+        return Optional.of(document)
+                .map(XmlDocument::getId)
+                .map(this.packageService::findPackageByDocumentId)
+                .map(pack -> this.proposalService.findProposalByPackagePath(pack.getPath()))
+                .orElseThrow(() -> new RuntimeException(String.format("Not found proposal for document %s", document.getId())));
+    }
+
+    private void populateCloneProposalMetadata(@NotNull XmlDocument document) {
+        Proposal proposal = this.getDocProposal(document);
+        if (proposal.isClonedProposal()) {
+            byte[] xmlContent = this.getDocumentContent(proposal);
+            CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(xmlContent);
+            this.getCloneContext().setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        }
+    }
+
+    // TODO refactor to a Util class
+    private byte[] getDocumentContent(XmlDocument document) throws RuntimeException {
+        return Optional.ofNullable(document.getContent())
+                .map(Maybe::get)
+                .map(Content::getSource)
+                .map(Content.Source::getBytes)
+                .orElseThrow(() -> new RuntimeException(String.format("Document %s is missing content", document.getId())));
+    }
+
+    private String getDocTemplate(XmlDocument document) {
+        return Optional.of(document)
+                .map(XmlDocument::getMetadata)
+                .map(Maybe::get)
+                .map(meta -> meta.getDocTemplate())
+                .orElseThrow(() -> new RuntimeException(String.format("Document %s is missing docTemplate", document.getId())));
+    }
+
+    private String getDocReference(XmlDocument document) {
+        return Optional.of(this.getDocMetadata(document))
+                .map(LeosMetadata::getRef)
+                .orElse(null);
+    }
+
+    private LeosMetadata getDocMetadata(XmlDocument document) {
+        return Optional.of(document)
+                .map(XmlDocument::getMetadata)
+                .map(Option::getOrNull)
+                .orElse(null);
+    }
+
+    private Map<String, Attribute> getArticleTypesAttributes(List<TocItem> tocItems) {
+        Map<String, Attribute> articleTypesAttributes = new HashMap<>();
+        List<TocItemType> tocItemTypes = StructureConfigUtils.getTocItemTypesByTagName(tocItems, XmlHelper.ARTICLE);
+        tocItemTypes.forEach(tocItemType -> {
+            Attribute attribute = tocItemType.getAttribute();
+            if (attribute == null) {
+                attribute = new Attribute();
+                attribute.setAttributeName("");
+                attribute.setAttributeValue("");
+            }
+            articleTypesAttributes.put(tocItemType.getName().name(), attribute);
+        });
+        return articleTypesAttributes;
+    }
+
+    private <T extends XmlDocument> T findDocumentByRef(@NotNull Class<T> docClass,
+                                                        @NotNull String docRef) throws NotFoundException {
+        return Optional.ofNullable(this.leosRepository.findDocumentByRef(docRef, docClass))
+                .orElseThrow(() -> new NotFoundException(String.format("Not found document with %s reference", docRef)));
+    }
+
+    private XmlDocument findDocumentByRef(@NotNull String docRef) throws NotFoundException {
+        return this.findDocumentByRef(XmlDocument.class, docRef);
+    }
+
+    private XmlDocument findDocumentById(@NotNull String docId) throws NotFoundException {
+        return Optional.ofNullable(this.leosRepository.findDocumentById(docId, XmlDocument.class, false))
+                .map(leosDoc -> (XmlDocument) leosDoc)
+                .orElseThrow(() -> new NotFoundException(String.format("Not found document with %s id", docId)));
+    }
+
 }

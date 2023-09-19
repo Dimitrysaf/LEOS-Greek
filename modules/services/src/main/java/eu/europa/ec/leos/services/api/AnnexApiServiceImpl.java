@@ -16,7 +16,6 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
-import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
@@ -284,18 +283,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) {
-        Annex annex = this.annexService.findAnnexByRef(documentRef);
-        List<SearchMatchVO> matches = Collections.emptyList();
-        try {
-            matches = searchService.searchText(getContent(annex), searchText, matchCase, completeWords);
-        } catch (Exception e) {
-            LOG.error("couldn't fetch results");
-        }
-        return matches;
-    }
-
-    @Override
     public DocumentViewResponse showVersion(String versionId) {
         Annex annex = this.annexService.findAnnexVersion(versionId);
         final String versionContent = documentContentService.getDocumentAsHtml(annex,
@@ -398,12 +385,29 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
+    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) {
+        List<SearchMatchVO> matches = Collections.emptyList();
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        byte[] contentForReplace = getContentForReplaceProcess(tempUpdatedContentXML, annex);
+
+        try {
+            matches = searchService.searchText(contentForReplace, searchText, matchCase, completeWords);
+        } catch (Exception e) {
+            LOG.error("couldn't fetch results");
+        }
+        return matches;
+    }
+
+    @Override
     public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
-        Annex annex = annexService.findAnnexByRef(event.getDocumentRef());
+        Annex annex = this.annexService.findAnnexByRef(event.getDocumentRef());
+        byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), annex);
         populateCloneProposalMetadata(annex);
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(annex), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
+                event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
-                getContent(annex),
+                contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS);
@@ -412,10 +416,11 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(event.getDocumentRef());
+        byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), annex);
         populateCloneProposalMetadata(annex);
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(annex), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
-                getContent(annex),
+                contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
@@ -523,11 +528,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
     }
 
-    private byte[] getContent(XmlDocument annex) {
-        final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
-        return content.getSource().getBytes();
-    }
-
     private AnnexStructureType getStructureType(StructureContext context) {
         List<TocItem> tocItems = context.getTocItems().stream().
                 filter(tocItem -> (tocItem.getAknTag().value().equalsIgnoreCase(AnnexStructureType.LEVEL.getType()) ||
@@ -554,6 +554,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     protected boolean isClonedProposal() {
         return cloneContext != null && cloneContext.get().isClonedProposal();
     }
+
 
     private VersionInfoVO getVersionInfo(XmlDocument document) {
         String userId = document.getLastModifiedBy();

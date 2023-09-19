@@ -214,14 +214,15 @@ public class MemorandumController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getSearchResults(@PathVariable("documentRef") String documentRef,
                                                    @RequestParam String searchText,
                                                    @RequestParam boolean matchCase,
-                                                   @RequestParam boolean completeWords) {
+                                                   @RequestParam boolean completeWords,
+                                                   @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
-            List<SearchMatchVO> memorandum = this.memorandumApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords);
+            List<SearchMatchVO> memorandum = this.memorandumApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(memorandum);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum search results - " + e.getMessage());

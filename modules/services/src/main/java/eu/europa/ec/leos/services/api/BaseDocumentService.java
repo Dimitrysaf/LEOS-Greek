@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.api;
 
 import com.sun.istack.NotNull;
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -66,7 +67,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) throws MethodNotSupportedException;
 
-    List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) throws Exception;
+    List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception;
 
     DocumentViewResponse showVersion(String versionId);
 
@@ -108,5 +109,18 @@ public interface BaseDocumentService<T extends XmlDocument> {
         });
         return articleTypesAttributes;
     }
+
+    default byte[] getContentForReplaceProcess(String updatedContentXML, XmlDocument document) {
+        if (updatedContentXML == null || updatedContentXML.isEmpty()) {
+            return getContent(document);
+        }
+        return updatedContentXML.getBytes();
+    }
+
+    default byte[] getContent(XmlDocument document) {
+        final Content content = document.getContent().getOrError(() -> "Document content is required!");
+        return content.getSource().getBytes();
+    }
+
 
 }

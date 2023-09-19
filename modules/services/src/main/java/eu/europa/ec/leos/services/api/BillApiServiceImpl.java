@@ -17,13 +17,9 @@ package eu.europa.ec.leos.services.api;
 import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.Subscribe;
 import com.sun.istack.NotNull;
-import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Bill;
-import eu.europa.ec.leos.domain.repository.document.LegDocument;
-import eu.europa.ec.leos.domain.repository.document.Proposal;
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.Result;
@@ -192,9 +188,11 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords) throws Exception {
+    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
-        return searchService.searchText(getContent(bill), searchText, matchCase, completeWords);
+        byte[] contentForReplace = getContentForReplaceProcess(tempUpdatedContentXML, bill);
+
+        return searchService.searchText(contentForReplace, searchText, matchCase, completeWords);
     }
 
     @Override
@@ -303,9 +301,13 @@ public class BillApiServiceImpl implements BillApiService {
     @Override
     public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Bill bill = this.billService.findBillByRef(event.getDocumentRef());
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(bill), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), bill);
+
+        populateCloneProposalMetadata(bill);
+
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
-                getContent(bill),
+                contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 searchMatchVOS);
@@ -315,9 +317,13 @@ public class BillApiServiceImpl implements BillApiService {
     @Override
     public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
         Bill bill = this.billService.findBillByRef(event.getDocumentRef());
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(getContent(bill), event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+
+        byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), bill);
+
+        populateCloneProposalMetadata(bill);
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
-                getContent(bill),
+                contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
                 Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
@@ -554,12 +560,6 @@ public class BillApiServiceImpl implements BillApiService {
         return transformationService.toImportXml(
                 new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)),
                 "", securityContext.getPermissions(content));
-    }
-
-
-    private byte[] getContent(XmlDocument document) {
-        final Content content = document.getContent().getOrError(() -> "Bill content is required!");
-        return content.getSource().getBytes();
     }
 
 

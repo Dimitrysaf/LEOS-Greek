@@ -231,14 +231,15 @@ public class CouncilExplanatoryController {
 
     }
 
-    @GetMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getSearchResults(@PathVariable("documentRef") String documentRef,
                                                    @RequestParam String searchText,
                                                    @RequestParam boolean matchCase,
-                                                   @RequestParam boolean completeWords) {
+                                                   @RequestParam boolean completeWords,
+                                                   @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
-            List<SearchMatchVO> explanatory = this.explanatoryApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords);
+            List<SearchMatchVO> explanatory = this.explanatoryApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory search results - " + e.getMessage());

@@ -20,6 +20,7 @@ public class ReplaceMatchRequest {
     private boolean caseSensitive;
     private boolean completeWords;
     private int matchIndex;
+    private String tempUpdatedContentXML;
 
     public String getDocumentRef() {
         return documentRef;
@@ -68,5 +69,13 @@ public class ReplaceMatchRequest {
 
     public void setMatchIndex(int matchIndex) {
         this.matchIndex = matchIndex;
+    }
+
+    public String getTempUpdatedContentXML() {
+        return tempUpdatedContentXML;
+    }
+
+    public void setTempUpdatedContentXML(String tempUpdatedContentXML) {
+        this.tempUpdatedContentXML = tempUpdatedContentXML;
     }
 }
