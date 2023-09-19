@@ -37,6 +37,7 @@ import eu.europa.ec.leos.ui.model.MilestonesVO;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.ui.component.actions.MilestoneActionMenu;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.vaadin.dialogs.ConfirmDialog;
 
 import java.util.List;
 import java.util.Set;
@@ -208,6 +209,18 @@ public class MilestonesComponent extends CustomComponent {
     }
 
     private void revisionDone(String legDocumentName) {
-        eventBus.post(new RevisionDoneEvent(legDocumentName));
+        if (isClonedProposal) {
+            ConfirmDialog.show(getUI(),
+                    messageHelper.getMessage("create.clone.milestone.title"),
+                    messageHelper.getMessage("create.clone.milestone.suggestion.message"),
+                    messageHelper.getMessage("create.clone.milestone.confirm"),
+                    messageHelper.getMessage("create.clone.milestone.cancel"),
+                    (ConfirmDialog.Listener) dialog -> {
+                        if (dialog.isConfirmed()) {
+                            eventBus.post(new RevisionDoneEvent(legDocumentName));
+                        }
+                    });
+        }
+
     }
 }

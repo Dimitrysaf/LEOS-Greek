@@ -4,12 +4,7 @@
       class="eui-u-mb-m eui-u-mt-2xs"
       euiButton
       euiPrimary
-      (click)="
-        proposal.cloneProposalMetadataVO.clonedProposal
-          ? openAnnotationWarningModal()
-          : openAddMilestoneDialog()
-      "
-    >
+      (click)="openAddMilestoneDialog()">
       {{ 'global.actions.add' | translate }}
     </button>
   </div>
@@ -115,7 +110,7 @@
                   </button>
                   <button
                     euiListItem
-                    (click)="openSendContributionForRevision(row)"
+                    (click)="openAnnotationWarningModal(row)"
                     [disabled]="row.status !== milestoneStatus.Ready"
                     *ngIf="proposal.cloneProposalMetadataVO.clonedProposal"
                   >

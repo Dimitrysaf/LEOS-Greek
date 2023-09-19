@@ -192,7 +192,6 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
     protected Button deleteFinancialStatementButton = new Button();
     protected HeadingComponent financialStatementBlockHeading;
 
-
     // Annexes
     protected Button createAnnexButton = new Button(); // initialized to avoid unmapped field exception from design
     protected HeadingComponent annexesBlockHeading;
@@ -246,7 +245,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
             ConfigurationHelper cfgHelper, WebApplicationContext webApplicationContext,
             SecurityContext securityContext, UrlBuilder urlBuilder,
             LeosPermissionAuthorityMapHelper authorityMapHelper, CloneContext cloneContext,
-                         XmlContentProcessor xmlContentProcessor) {
+            XmlContentProcessor xmlContentProcessor) {
 
         Design.read(this);
         this.messageHelper = messageHelper;
@@ -325,7 +324,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
         originRef.setVisible(false);
         financialStatementBlockHeading.setVisible(Boolean.valueOf(cfgHelper.getProperty("leos.financial.statement.enable")));
         financialStatementBlock.setVisible(Boolean.valueOf(cfgHelper.getProperty("leos.financial.statement.enable")));
-        if(Boolean.valueOf(cfgHelper.getProperty("leos.supporting.documents.enable"))) {
+        if (Boolean.valueOf(cfgHelper.getProperty("leos.supporting.documents.enable"))) {
             supportDocumentsBlockHeading.setCaption(messageHelper.getMessage("collection.block.caption.supporting.documents"));
             supportDocumentsBlockHeading.addRightButton(addCreatSupportingDocumentButton());
         }
@@ -369,21 +368,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
         closeButton.addClickListener(event -> eventBus.post(new CloseScreenRequestEvent()));
         deleteCollection.addClickListener(event -> eventBus.post(new DeleteCollectionRequest()));
         createMilestoneButton.addClickListener(event -> {
-            if(isClonedProposal()) {
-                ConfirmDialog.show(getUI(),
-                        messageHelper.getMessage("create.clone.milestone.title"),
-                        messageHelper.getMessage("create.clone.milestone.suggestion.message"),
-                        messageHelper.getMessage("create.clone.milestone.confirm"),
-                        messageHelper.getMessage("create.clone.milestone.cancel"),
-                        (ConfirmDialog.Listener) dialog -> {
-                            if (dialog.isConfirmed()) {
-                                cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
-                                openCreateMilestoneWindow();
-                            }
-                        });
-            } else {
-                openCreateMilestoneWindow();
-            }
+            openCreateMilestoneWindow();
         });
 
         docPurpose.addValueChangeListener(event -> saveData());
@@ -455,7 +440,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
     abstract protected void initDownloader();
 
     private void populateCloneProposalMetadata(CloneProposalMetadataVO cloneProposalMetadataVO) {
-        if(isClonedProposal()) {
+        if (isClonedProposal()) {
             revision.setValue(messageHelper.getMessage("clone.proposal.contribution.label"));
             revision.addStyleName("cloned-labels");
             revision.setVisible(true);
@@ -693,7 +678,8 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
     private Optional<CollaboratorVO> createCollaboratorVO(String login, String authority, Function<String, User> converter, String entityName) {
         try {
             User user = converter.apply(login);
-            return Optional.of(new CollaboratorVO(new UserVO(user, pickFromUserEntitiesByName(user,entityName)), authorityMapHelper.getRoleFromListOfRoles(authority)));
+            return Optional.of(
+                    new CollaboratorVO(new UserVO(user, pickFromUserEntitiesByName(user, entityName)), authorityMapHelper.getRoleFromListOfRoles(authority)));
         } catch (Exception e) {
             return Optional.empty();
         }
@@ -772,14 +758,19 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
         userCoEditionLabel.setDescription("");
         userCoEditionLabel.removeStyleName("leos-user-coedition-self-user");
         coEditionVos.stream()
-                .filter((x) -> (InfoType.ELEMENT_INFO.equals(x.getInfoType()) || InfoType.TOC_INFO.equals(x.getInfoType())) && x.getDocumentId().equals(documentVO.getVersionSeriesId()))
+                .filter((x) -> (InfoType.ELEMENT_INFO.equals(x.getInfoType()) || InfoType.TOC_INFO.equals(x.getInfoType())) && x.getDocumentId()
+                        .equals(documentVO.getVersionSeriesId()))
                 .sorted(Comparator.comparing(CoEditionVO::getUserName).thenComparingLong(CoEditionVO::getEditionTime))
                 .forEach(x -> {
                     StringBuilder userDescription = new StringBuilder();
                     if (!x.getUserLoginName().equals(user.getLogin())) {
                         userDescription.append("<a class=\"leos-user-coedition-lync\" href=\"")
-                                .append(StringUtils.isEmpty(x.getUserEmail()) ? "" : (coEditionSipEnabled ? new StringBuilder("sip:").append(x.getUserEmail().replaceFirst("@.*", "@" + coEditionSipDomain)).toString()
-                                        : new StringBuilder("mailto:").append(x.getUserEmail()).toString()))
+                                .append(StringUtils.isEmpty(x.getUserEmail()) ?
+                                        "" :
+                                        (coEditionSipEnabled ?
+                                                new StringBuilder("sip:").append(x.getUserEmail().replaceFirst("@.*", "@" + coEditionSipDomain)).toString()
+                                                :
+                                                new StringBuilder("mailto:").append(x.getUserEmail()).toString()))
                                 .append("\">").append(x.getUserName()).append(" (").append(StringUtils.isEmpty(x.getEntity()) ? "-" : x.getEntity())
                                 .append(")</a>");
                     } else {
@@ -787,7 +778,8 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
                     }
                     userCoEditionLabel.setDescription(
                             userCoEditionLabel.getDescription() +
-                                    messageHelper.getMessage("coedition.tooltip.message", userDescription, dataFormat.format(Instant.ofEpochMilli(x.getEditionTime()))) +
+                                    messageHelper.getMessage("coedition.tooltip.message", userDescription,
+                                            dataFormat.format(Instant.ofEpochMilli(x.getEditionTime()))) +
                                     "<br>",
                             ContentMode.HTML);
                 });
@@ -817,14 +809,14 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
             while (annexesIterator.hasNext()) {
                 Component annexComponent = annexesIterator.next();
                 if (annexComponent instanceof AnnexBlockComponent) {
-                    ((AnnexBlockComponent)annexComponent).updateUserCoEditionInfo(coEditionVos, user);
+                    ((AnnexBlockComponent) annexComponent).updateUserCoEditionInfo(coEditionVos, user);
                 }
             }
         });
     }
 
     @Override
-    public void showMilestoneExplorer(LegDocument legDocument, String milestoneTitle, String proposalRef){
+    public void showMilestoneExplorer(LegDocument legDocument, String milestoneTitle, String proposalRef) {
         MilestoneExplorer milestoneExplorer = new MilestoneExplorer(legDocument, milestoneTitle, proposalRef, messageHelper, eventBus, cfgHelper,
                 securityContext, userHelper, xmlContentProcessor, isCoverPageVisible());
         UI.getCurrent().addWindow(milestoneExplorer);
@@ -834,7 +826,7 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
 
     @Override
     public void showContributionMilestone(LegDocument legDocument, LegDocument originalLegDocument, String milestoneTitle,
-                                          String proposalRef, List<Annex> annexes, boolean viewContributionMilestone) {
+            String proposalRef, List<Annex> annexes, boolean viewContributionMilestone) {
         MilestoneExplorer milestoneExplorer = new MilestoneExplorer(legDocument, originalLegDocument, annexes,
                 milestoneTitle, proposalRef, messageHelper, eventBus, cfgHelper, securityContext, userHelper,
                 xmlContentProcessor, isCoverPageVisible(), viewContributionMilestone);
@@ -866,10 +858,12 @@ abstract class CollectionScreenImpl extends VerticalLayout implements Collection
     }
 
     @Override
-    public void showCreateDocumentWizard(List<CatalogItem> templates) {}
+    public void showCreateDocumentWizard(List<CatalogItem> templates) {
+    }
 
     @Override
-    public void showSupportDocumentWizard(List<CatalogItem> templates, List<String> templateDocPresent) {}
+    public void showSupportDocumentWizard(List<CatalogItem> templates, List<String> templateDocPresent) {
+    }
 
     private boolean isClonedProposal() {
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);

@@ -96,14 +96,15 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
-  openAnnotationWarningModal(): void {
+  openAnnotationWarningModal(milestone: MilestoneDescriptor): void {
     this.annotationWarningDialogVisible = true;
+    this.milestoneViewData = milestone;
     setTimeout(() => this.milestoneAnnotationWarningModal.open(), 0);
   }
 
   acceptAnnotationWarningModal(): void {
     this.annotationWarningDialogVisible = false;
-    this.openAddMilestoneDialog();
+    this.openSendContributionForRevision(this.milestoneViewData);
   }
 
   dismissAnnotationWarningModal(): void {

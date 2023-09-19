@@ -1476,8 +1476,6 @@ public class LegServiceImpl implements LegService {
         legPackage.addContainedFile(proposal.getVersionedReference());
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         String language = proposal.getMetadata().get().getLanguage();
-        //2. Add Bill to pacakge
-
         //2. Add Bill to package
         Bill bill = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(),
                 proposalRefsMap.get(LeosCategory.BILL.name() + "_href"), Bill.class);
