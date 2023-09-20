@@ -166,19 +166,17 @@ public class DocumentServiceImpl implements DocumentService {
                 }
             }
             doc.setCategoryId(docCat);
-            if (metadata.get(PropertiesMetadata.CLONED_PROPOSAL.getLeosName()) != null) {
-                if (metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName())!=null) {
-                    doc.setOriginRef((String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()));
-                }
-                if (metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName())!=null) {
-                    doc.setClonedFrom((String) metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()));
-                }
-                if (metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName())!=null) {
-                    doc.setRevisionStatus((String) metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()));
-                }
-                if (metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName())!=null) {
-                    doc.setContributionStatus((String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()));
-                }
+            if (metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName())!=null) {
+                doc.setOriginRef((String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()));
+            }
+            if (metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName())!=null) {
+                doc.setClonedFrom((String) metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()));
+            }
+            if (metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName())!=null) {
+                doc.setRevisionStatus((String) metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()));
+            }
+            if (metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName())!=null) {
+                doc.setContributionStatus((String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()));
             }
             doc = documentRepository.save(doc);
 
@@ -435,16 +433,14 @@ public class DocumentServiceImpl implements DocumentService {
                 (Boolean) metadata.get(PropertiesMetadata.LIVE_DIFFING_REQUIRED.getLeosName()));
         doc.setBaseRevisionId(metadata.get(PropertiesMetadata.BASE_REVISION_ID.getLeosName()) != null ?
                 (String) metadata.get(PropertiesMetadata.BASE_REVISION_ID.getLeosName()) : doc.getBaseRevisionId());
-        if (metadata.get(PropertiesMetadata.CLONED_PROPOSAL.getLeosName()) != null) {
-            doc.setOriginRef(metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) != null ?
-                    (String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) : doc.getOriginRef());
-            doc.setClonedFrom(metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()) != null ?
-                    (String) metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()) : doc.getClonedFrom());
-            doc.setRevisionStatus(metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()) != null ?
-                    (String) metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()) : doc.getRevisionStatus());
-            doc.setContributionStatus(metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) != null ?
-                    (String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()): doc.getContributionStatus());
-        }
+        doc.setOriginRef(metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) != null ?
+                (String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) : doc.getOriginRef());
+        doc.setClonedFrom(metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()) != null ?
+                (String) metadata.get(PropertiesMetadata.CLONED_FROM.getLeosName()) : doc.getClonedFrom());
+        doc.setRevisionStatus(metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()) != null ?
+                (String) metadata.get(PropertiesMetadata.REVISION_STATUS.getLeosName()) : doc.getRevisionStatus());
+        doc.setContributionStatus(metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()) != null ?
+                (String) metadata.get(PropertiesMetadata.CONTRIBUTION_STATUS.getLeosName()): doc.getContributionStatus());
         updateDocumentProperties(doc, docVersion, metadata, userId);
         return documentRepository.save(doc);
     }

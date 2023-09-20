@@ -98,6 +98,8 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     private static String ADMIN_USER = "admin";
     @Value("${leos.workspaces.path}")
     private String workspacesPath;
+    @Value("${leos.rest.cache.enable}")
+    public Boolean cacheEnabled;
 
     @Autowired
     public LeosRestRepositoryImpl(RestRepository repository, SecurityContext securityContext,
@@ -525,7 +527,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator" )
+    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator", condition = "#root.target.cacheEnabled")
     public <D extends LeosDocument> D findDocumentById(String id, Class<? extends D> type, boolean latest) {
         logger.trace("Finding document by ID... [id=" + id + ", latest=" + latest + ']');
 
@@ -552,7 +554,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value = "documentByNameCache", key="#name")
+    @Cacheable(value = "documentByNameCache", key="#name", condition = "#root.target.cacheEnabled")
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 
@@ -632,7 +634,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value="restRepositoryFolderCache", key="#documentId")
+    @Cacheable(value="restRepositoryFolderCache", key="#documentId", condition = "#root.target.cacheEnabled")
     public LeosPackage findPackageByDocumentId(String documentId) {
         Package pkg =  repository.findPackageByDocumentRef(extractRefFromId(documentId));
         if (pkg != null) {
@@ -643,7 +645,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value="restRepositoryFolderCache", key="#documentRef")
+    @Cacheable(value="restRepositoryFolderCache", key="#documentRef", condition = "#root.target.cacheEnabled")
     public <D extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends D> type) {
         Package pkg =  repository.findPackageByDocumentRef(documentRef);
         if (pkg != null) {
@@ -720,7 +722,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator" )
+    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator", condition = "#root.target.cacheEnabled")
     public <D extends LeosDocument> D findDocumentByRef(String ref, Class<? extends D> type) {
         logger.trace("Finding document with ref... [ref=" + ref + ']');
 
@@ -793,7 +795,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value = "documentFirstVersionCache", key = "#documentRef")
+    @Cacheable(value = "documentFirstVersionCache", key = "#documentRef", condition = "#root.target.cacheEnabled")
     public <D extends LeosDocument> D findFirstVersion(Class<? extends D> type, String documentRef) {
         logger.trace("Finding document with ref... [ref=" + documentRef + ']');
 
@@ -804,7 +806,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value = "documentByVersionCache", key = "{#documentRef, #versionLabel}")
+    @Cacheable(value = "documentByVersionCache", key = "{#documentRef, #versionLabel}", condition = "#root.target.cacheEnabled")
     public <D extends LeosDocument> D findDocumentByVersion(Class<? extends D> type, String documentRef, String versionLabel) {
         logger.trace("Finding document with ref... [ref=" + documentRef + ']');
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByVersion(documentRef, versionLabel);
@@ -900,7 +902,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value = "restRepositoryFolderCache", key = "#path")
+    @Cacheable(value = "restRepositoryFolderCache", key = "#path", condition = "#root.target.cacheEnabled")
     public Object findFolderByPath(String path) {
         return repository.findPackageByName(extractPackageNameFromPath(path));
     }
