@@ -1007,6 +1007,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node child = nodeList.item(i);
             XercesUtils.addAttribute(child, MARKER_ATTRIBUTE, Integer.toString(markerNumber++));
+            if(XercesUtils.getAttributeValue(child, PLACEMENT) == null) {
+                XercesUtils.addAttribute(child, PLACEMENT, BOTTOM);
+            }
         }
     }
 
