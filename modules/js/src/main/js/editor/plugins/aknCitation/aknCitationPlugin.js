@@ -27,6 +27,8 @@ define(function aknCitationPluginModule(require) {
 
     var pluginDefinition = {
         init: function init(editor) {
+            $(editor.element.$).on("mouseup", null, [editor], _handleClickEvent);
+
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -71,6 +73,13 @@ define(function aknCitationPluginModule(require) {
 
     function _onCtrlIKey(context) {
         context.event.cancel();
+    }
+
+    var _handleClickEvent = function _handleClickEvent(event) {
+        var range = event.data[0].getSelection().getRanges()[0];
+        if(range.collapsed) {
+            range.checkEndOfBlock(true);
+        }
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
