@@ -39,7 +39,7 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
     elementType: string;
     elementFragment: string;
   }) {
-    this.blockDocumentEditorService.setIsDocumentEdtiorBlocked(true);
+    this.blockDocumentEditorService.setIsDocumentEditorBlocked(true);
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
@@ -53,7 +53,7 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
       this.tableOfContentService.reload();
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
       this.documentService.reloadDocument();
-      this.blockDocumentEditorService.setIsDocumentEdtiorBlocked(false);
+      this.blockDocumentEditorService.setIsDocumentEditorBlocked(false);
     });
   }
 

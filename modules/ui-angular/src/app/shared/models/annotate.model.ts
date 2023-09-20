@@ -7,9 +7,14 @@ export type AnnotateExtension = {
 
 export type AnnotateOperationMode = 'READ_ONLY' | 'PRIVATE' | 'NORMAL';
 
-/* defined in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java` */
+/*
+ * VAADIN: set in `modules/ui/src/main/java/eu/europa/ec/leos/ui/extension/AnnotateExtension.java`
+ * types: leos-annotate/client/src/shared/models/settings.ts
+ */
 export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
   isAngularUI: boolean;
+  /* CSS selector for the sidebar container */
+  sidebarContainer?: string;
 
   // Set on server start (instance + env + dependent)
   authority: string;
@@ -28,7 +33,7 @@ export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
 
   // Component context options
   operationMode: AnnotateOperationMode;
-  /* CSS selector */
+  /* CSS selector for the document container */
   annotationContainer: string;
 
   // Calculated on the server (instance + env + document + user dependent)

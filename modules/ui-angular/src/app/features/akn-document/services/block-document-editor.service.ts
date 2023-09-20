@@ -5,14 +5,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class BlockDocumentEditorService {
   public isDocumentEditorBlocked$: Observable<boolean>;
 
-  private blockDocumentEdtiorBS = new BehaviorSubject<boolean>(false);
+  private blockDocumentEditorBS = new BehaviorSubject<boolean>(false);
 
   constructor() {
-    this.isDocumentEditorBlocked$ = this.blockDocumentEdtiorBS.asObservable();
+    this.isDocumentEditorBlocked$ = this.blockDocumentEditorBS.asObservable();
   }
 
-  setIsDocumentEdtiorBlocked(value: boolean) {
-    console.log('blocking document cotnent', value);
-    this.blockDocumentEdtiorBS.next(value);
+  setIsDocumentEditorBlocked(value: boolean) {
+    this.blockDocumentEditorBS.next(value);
   }
 }
