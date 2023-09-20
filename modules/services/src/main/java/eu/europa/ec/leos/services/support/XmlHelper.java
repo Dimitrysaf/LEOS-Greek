@@ -49,6 +49,8 @@ public class XmlHelper {
     public static final String XML_DOC_EXT = ".xml";
 
     public static final String MARKER_ATTRIBUTE = "marker";
+    public static final String PLACEMENT = "placement";
+    public static final String BOTTOM = "bottom";
 
     public static final String AKNBODY = "aknbody";
     public static final String DOC = "doc";
