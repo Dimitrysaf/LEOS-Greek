@@ -1,12 +1,19 @@
 package eu.europa.ec.leos.security;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.auth0.jwt.interfaces.Claim;
-import eu.europa.ec.leos.config.PasswordConfigurator;
+import static org.springframework.util.StringUtils.hasLength;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,17 +22,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.Claim;
 
-import static org.springframework.util.StringUtils.hasLength;
+import eu.europa.ec.leos.config.PasswordConfigurator;
 
 /**
  * Default class to generate and validate tokens.
@@ -43,9 +47,9 @@ class JwtTokenService implements TokenService {
     @Value("${annotate.jwt.issuer.client.secret}")
     private String annotateSecret;
 
-    @Value("${leos.api.jwt.auth.client.ngLeos.id}")
+    @Value("${leos.api.jwt.auth.client.ngLeos.id:ngLeosClientId}")
     private String ngClientId;
-    @Value("${leos.api.jwt.auth.client.ngLeos.secret}")
+    @Value("${leos.api.jwt.auth.client.ngLeos.secret:ngLeosSecret}")
     private String ngClientSecret;
     private static final int ANNOT_TOKEN_EXPIRE_IN_MIN = 9;
     
@@ -84,6 +88,10 @@ class JwtTokenService implements TokenService {
                 // if not configured correctly we do not add to the list of the known clients
                 registeredClients.add(new AuthClient(clientName, clientId, clientSecret));
             }
+        }
+        boolean containsNgClient = Arrays.asList(clientsNames).contains("ngLeos");
+        if (!containsNgClient) {
+            registeredClients.add(new AuthClient("ngLeos", ngClientId, ngClientSecret));
         }
     }
     
