@@ -1230,6 +1230,23 @@ export class DocumentService implements OnDestroy {
     this.isEditorOpenBS.next(val);
   }
 
+  findNextElementOfTheSameTypeInDocument(
+    prevElementId: string,
+    elementType: string,
+  ) {
+    const nextSibling =
+      document.getElementById(prevElementId).nextElementSibling;
+    if (nextSibling.tagName.toLowerCase() === elementType) {
+      return nextSibling.getAttribute('id');
+    } else {
+      const secondLevelSibling = nextSibling.nextElementSibling;
+      if (secondLevelSibling.tagName.toLowerCase() === elementType) {
+        return secondLevelSibling.getAttribute('id');
+      }
+    }
+    return null;
+  }
+
   private setSearchResultsCounter(count: number) {
     this.searchResultsCounterBS.next(count);
   }

@@ -14,6 +14,7 @@ import {
 } from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
+import { countOccurrencesOfTextInString } from '@/shared/utils/string.utils';
 import { isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
@@ -245,6 +246,14 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     isSplit: boolean;
   }) {
     //! this is needed
+    if (
+      countOccurrencesOfTextInString(
+        elemData.elementType,
+        elemData.elementFragment,
+      ) === 4
+    ) {
+      this.closeElement();
+    }
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
@@ -266,6 +275,17 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
         response.elementFragment,
       );
       this.documentService.reloadDocument();
+      if (
+        countOccurrencesOfTextInString(
+          elemData.elementType,
+          elemData.elementFragment,
+        ) === 4
+      ) {
+        this.openEditorInNewElementAfterSoftEnter(
+          response.elementId,
+          response.elementTagName,
+        );
+      }
     });
   }
 
@@ -468,6 +488,35 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       { elementContent },
       { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
     );
+  }
+
+  //open the editor in the new element after soft enter
+  private openEditorInNewElementAfterSoftEnter(
+    prevElemId: string,
+    elemType: string,
+  ) {
+    const promise = new Promise<void>((resolve, reject) => {
+      this.documentService.didDocumentLoadAndRender$
+        .pipe(filter((isLoaded) => isLoaded === true))
+        .subscribe((loaded) => {
+          resolve();
+        });
+    });
+
+    promise.then(() => {
+      const elemId =
+        this.documentService.findNextElementOfTheSameTypeInDocument(
+          prevElemId,
+          elemType,
+        );
+      if (elemId !== null) {
+        this.editElementAction({
+          action: 'edit',
+          elementId: elemId,
+          elementType: elemType,
+        });
+      }
+    });
   }
 }
 
