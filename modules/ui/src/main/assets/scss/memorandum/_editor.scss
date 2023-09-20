@@ -24,6 +24,8 @@
         @extend %editorFocus;
         
         @extend %editorWidget;
+        @extend %editorTrackChanges;
+        @extend %editorArticleParagraph;
     }
     .cke_editable.cke_show_blocks {
         @extend %showblockParagraph;

@@ -37,10 +37,14 @@ define(function aknNumberedBlockListPluginModule(require) {
                         ols[i].setAttribute("data-akn-name","NumberedBlockList");
                         var listItems = ols[i].children;
                         for (var jj = 0; jj < listItems.length; jj++) {
+                            var previousNumber = listItems[jj].getAttribute("data-akn-num");
                             var numericSequence = jj + 1 + "."; //displayed as (1., 2., 3.) etc.
                             listItems[jj].setAttribute("data-akn-num",numericSequence);
                             listItems[jj].removeAttribute("data-akn-name"); //remove copied attribute from the parent
                             listItems[jj].removeAttribute("style");
+                            if (event.editor.LEOS.isTrackChangesEnabled) {
+                                event.editor.fire("handleTcIndent", { data: listItems[jj], previousNumber: previousNumber } );
+                            }
                         }
                     }
                     event.editor.fire( 'unlockSnapshot' );
