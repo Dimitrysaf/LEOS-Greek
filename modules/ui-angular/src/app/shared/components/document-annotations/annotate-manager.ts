@@ -25,6 +25,7 @@ import { AnnotateConnector } from './annotate-connector';
 export type AnnotateConnectorOptions = Pick<
   AnnotateConnectorState,
   | 'operationMode'
+  | 'sidebarContainer'
   | 'annotationContainer'
   | 'proposalRef'
   | 'showStatusFilter'

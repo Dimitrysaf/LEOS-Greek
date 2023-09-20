@@ -58,7 +58,7 @@ export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesC
     elementFragment: string;
   }) {
     this.cancelSaveElement$.next();
-    this.blockDocumentEdtiorService.setIsDocumentEdtiorBlocked(true);
+    this.blockDocumentEdtiorService.setIsDocumentEditorBlocked(true);
 
     this.documentService.setDidDocumentLoadAndRender(true);
     const documentRef = this.documentService.documentRef;
@@ -80,7 +80,7 @@ export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesC
         takeUntil(this.cancelSaveElement$),
       )
       .subscribe(() => {
-        this.blockDocumentEdtiorService.setIsDocumentEdtiorBlocked(false);
+        this.blockDocumentEdtiorService.setIsDocumentEditorBlocked(false);
       });
   }
 

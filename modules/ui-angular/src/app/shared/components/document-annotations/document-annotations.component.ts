@@ -53,6 +53,9 @@ export class DocumentAnnotationsComponent
   @Input() collapsed = false;
   @Output() sidebarShown = new EventEmitter<void>();
 
+  private static instanceCount = 1;
+  private instanceId = DocumentAnnotationsComponent.instanceCount++;
+
   private annotate: AnnotateManager;
   private mutationObserver?: MutationObserver;
   private canvasMutationObserver?: MutationObserver;
@@ -73,13 +76,14 @@ export class DocumentAnnotationsComponent
   ) {}
 
   ngAfterViewInit() {
-    void this.interceptAndEmbedAnnotatorFrame();
+    void this.interceptAndSetAnnotatorFrame();
     void this.interceptAndProcessAnnotatorCanvas();
     this.annotate = new AnnotateManager(
       this.leos,
       this.appConfig,
       this.permissions,
       {
+        sidebarContainer: `#${this.getOrSetHostId()}`,
         annotationContainer: `#${this.containerId}`,
         connectedEntity: this.connectedEntity,
         operationMode: this.operationMode,
@@ -144,7 +148,15 @@ export class DocumentAnnotationsComponent
     }
   }
 
-  private interceptAndEmbedAnnotatorFrame() {
+  private getOrSetHostId() {
+    const el = this.elementRef.nativeElement;
+    if (el && !el.id) {
+      el.id = `annotation-sidebar-container-${this.instanceId}`;
+    }
+    return el?.id;
+  }
+
+  private interceptAndSetAnnotatorFrame() {
     const isAnnotatorFrameWrapper = (n: Node): n is Element =>
       n instanceof Element && n.classList.contains('annotator-frame');
     const callback: MutationCallback = (mutationList, observer) => {
@@ -155,7 +167,6 @@ export class DocumentAnnotationsComponent
       if (frameWrapperEl) {
         observer.disconnect();
         frameWrapperEl.classList.toggle('annotator-collapsed', this.collapsed);
-        this.elementRef.nativeElement.appendChild(frameWrapperEl);
         this.iframeEl = frameWrapperEl.querySelector('iframe');
         this.toggleBtnEl = this.elementRef.nativeElement.querySelector(
           'button.annotator-frame-button--sidebar_toggle',
@@ -164,7 +175,9 @@ export class DocumentAnnotationsComponent
     };
 
     this.mutationObserver = new MutationObserver(callback);
-    this.mutationObserver.observe(this.document.body, { childList: true });
+    this.mutationObserver.observe(this.elementRef.nativeElement, {
+      childList: true,
+    });
   }
 
   private interceptAndProcessAnnotatorCanvas() {

@@ -266,6 +266,7 @@ define(function annotateExtensionModule(require) {
         var webSocketUrl = annotateState.anotHost.replace('https','wss').replace('http','ws')+"/ws";
         var innerHtmlJson = {
             "isAngularUI": annotateState.isAngularUI,
+            "sidebarContainer": annotateState.sidebarContainer,
             "leosDocumentRootNode": "akomantoso",
             "operationMode" : `${annotateState.operationMode}`,
             "showStatusFilter" : annotateState.showStatusFilter,
