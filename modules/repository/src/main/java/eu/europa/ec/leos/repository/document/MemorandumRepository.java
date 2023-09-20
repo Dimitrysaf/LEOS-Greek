@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.document;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import org.springframework.security.access.prepost.PostAuthorize;
 
 import java.util.List;
@@ -50,6 +51,18 @@ public interface MemorandumRepository {
      * @return the created memorandum document.
      */
     Memorandum createMemorandumFromContent(String path, String name, MemorandumMetadata metadata, byte[] content);
+
+    /**
+     * Creates a [Memorandum] document from a given content and with the specified characteristics.
+     *
+     * @param path     the path where to create the memorandum.
+     * @param name     the name of the memorandum.
+     * @param metadata the metadata of the memorandum.
+     * @param cloneDocumentMetadataVO the metadata of the memorandum.
+     * @param content  the content of the memorandum.
+     * @return the created memorandum document.
+     */
+    Memorandum createClonedMemorandumFromContent(String path, String name, MemorandumMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content);
 
     /**
      * Updates a [Memorandum] document with the given metadata.

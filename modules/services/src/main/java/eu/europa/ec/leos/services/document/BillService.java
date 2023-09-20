@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -30,6 +31,8 @@ public interface BillService {
     Bill createBill(String templateId, String path, BillMetadata metadata, String actionMsg, byte[] content);
 
     Bill createBillFromContent(String path, BillMetadata metadata, String actionMsg, byte[] content, String name);
+
+    Bill createClonedBillFromContent(String path, BillMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMsg, byte[] content, String name);
     
     Bill findBill(String id, boolean latest);
 

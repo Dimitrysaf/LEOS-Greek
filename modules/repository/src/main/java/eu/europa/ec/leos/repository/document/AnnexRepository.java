@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.document;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import org.springframework.security.access.prepost.PostAuthorize;
 
 import java.util.List;
@@ -49,6 +50,18 @@ public interface AnnexRepository {
      * @return the created annex document.
      */
     Annex createAnnexFromContent(String path, String name, AnnexMetadata metadata, byte[] content);
+
+    /**
+     * Creates an [Annex] document from a given content and with the specified characteristics.
+     *
+     * @param path     the path where to create the annex.
+     * @param name     the name of the annex.
+     * @param metadata the metadata of the annex.
+     * @param cloned metadata the cloned metadata of the annex.
+     * @param content  the content of the annex.
+     * @return the created annex document.
+     */
+    Annex createClonedAnnexFromContent(String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content);
 
     /**
      * Updates an [Annex] document with the given metadata.

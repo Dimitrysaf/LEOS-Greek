@@ -20,6 +20,8 @@ import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
+import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -90,14 +92,13 @@ public class BillContextService {
     private String annexRef;
     private boolean cloneProposal;
     private boolean eeaRelevance;
+    private String originRef;
 
     private DocumentVO billDocument;
     private DocumentVO annexDocument;
     private String annexTemplate;
     private CollectionIdsAndUrlsHolder idsAndUrlsHolder;
     private final Map<ContextActionService, String> actionMsgMap;
-
-
 
     @Autowired
     BillContextService(BillService billService,
@@ -256,7 +257,14 @@ public class BillContextService {
         updateAnnexesRefsWithRefOrigin();
 
         final String updateComment = actionMsgMap.get(ContextActionService.METADATA_UPDATED);
-        bill = billService.createBillFromContent(leosPackage.getPath(), metadata, updateComment, billDocument.getSource(), billDocument.getName());
+
+        if (cloneProposal) {
+            CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO(oldRef, originRef);
+            bill = billService.createClonedBillFromContent(leosPackage.getPath(), metadata, cloneDocumentMetadataVO, updateComment, billDocument.getSource(), billDocument.getName());
+        } else {
+            bill = billService.createBillFromContent(leosPackage.getPath(), metadata, updateComment, billDocument.getSource(), billDocument.getName());
+        }
+
         List<Annex> annexes = new ArrayList<>();
         for (DocumentVO docChild : billDocument.getChildDocuments()) {
             if (docChild.getCategory() == ANNEX) {
@@ -269,12 +277,7 @@ public class BillContextService {
         final String updateRefsComment = messageHelper.getMessage("internal.ref.updatedOnImport");
         final byte[] updatedBytes = xmlContentProcessor.doXMLPostProcessing(bill.getContent().get().getSource().getBytes()); //updateRefs
         bill = billService.updateBill(bill, updatedBytes, updateRefsComment);
-        if (cloneProposal) {
-            Map<String, Object> billProperties = new HashMap<>();
-            billProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), billDocument.getId());
-            billProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
-            billService.updateBill(bill.getId(), billProperties, true);
-        }
+
         for (Annex annex : annexes) {
             DocumentVO docChild = billDocument.getChildDocuments().stream()
                     .filter(p -> Integer.parseInt(p.getMetadata().getIndex()) == annex.getMetadata().get().getIndex())
@@ -485,6 +488,7 @@ public class BillContextService {
         annexContext.useActionMessageMap(actionMsgMap);
         annexContext.useAnnexNumber(annexMeta.getNumber());
         annexContext.useCloneProposal(cloneProposal);
+        annexContext.useOriginRef(originRef);
         Annex annex = annexContext.executeImportAnnex();
         String ref = annex.getMetadata().get().getRef();
         idsAndUrlsHolder.addAnnexIdAndUrl(ref, urlBuilder.buildAnnexViewUrl(ref));
@@ -628,5 +632,9 @@ public class BillContextService {
     public String getProposalId() {
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
         return proposal != null ? proposal.getId() : null;
+    }
+
+    public void useOriginRef(String originRef) {
+        this.originRef = originRef;
     }
 }

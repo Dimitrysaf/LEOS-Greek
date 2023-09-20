@@ -4,6 +4,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.repository.LeosRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +36,13 @@ public class FinancialStatementRepositoryImpl implements FinancialStatementRepos
     public FinancialStatement createFinancialStatementFromContent(String path, String name, FinancialStatementMetadata metadata, byte[] content) {
         logger.debug("Creating FinancialStatement From Content... [tpath=" + path + ", name=" + name + "]");
         return leosRepository.createDocumentFromContent(path, name, metadata, FinancialStatement.class,
+                LeosCategory.STAT_FINANC_LEGIS.name(), content);
+    }
+
+    @Override
+    public FinancialStatement createClonedFinancialStatementFromContent(String path, String name, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content) {
+        logger.debug("Creating FinancialStatement From Content... [tpath=" + path + ", name=" + name + "]");
+        return leosRepository.createClonedDocumentFromContent(path, name, metadata, cloneDocumentMetadataVO, FinancialStatement.class,
                 LeosCategory.STAT_FINANC_LEGIS.name(), content);
     }
 

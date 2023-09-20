@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.repository.LeosRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,12 @@ public class MemorandumRepositoryImpl implements MemorandumRepository {
     public Memorandum createMemorandumFromContent(String path, String name, MemorandumMetadata metadata, byte[] content) {
         logger.debug("Creating Memorandum From Content... [path=" + path + ", name=" + name + "]");
         return leosRepository.createDocumentFromContent(path, name, metadata, Memorandum.class, LeosCategory.MEMORANDUM.name(), content);
+    }
+
+    @Override
+    public Memorandum createClonedMemorandumFromContent(String path, String name, MemorandumMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content) {
+        logger.debug("Creating cloned Memorandum From Content... [path=" + path + ", name=" + name + "]");
+        return leosRepository.createClonedDocumentFromContent(path, name, metadata, cloneDocumentMetadataVO, Memorandum.class, LeosCategory.MEMORANDUM.name(), content);
     }
 
     @Override

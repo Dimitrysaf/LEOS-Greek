@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
@@ -29,6 +30,8 @@ public interface MemorandumService {
     Memorandum createMemorandum(String templateId, String path, MemorandumMetadata metadata, String actionMsg, byte[] content);
 
     Memorandum createMemorandumFromContent(String path, MemorandumMetadata metadata, String actionMsg, byte[] content, String name);
+
+    Memorandum createClonedMemorandumFromContent(String path, MemorandumMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMsg, byte[] content, String name);
 
     Memorandum findMemorandum(String id, boolean latest);
     

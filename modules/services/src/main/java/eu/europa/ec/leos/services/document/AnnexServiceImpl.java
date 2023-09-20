@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
@@ -315,6 +316,13 @@ public abstract class AnnexServiceImpl implements AnnexService {
     public Annex createAnnexFromContent(String path, AnnexMetadata metadata, String actionMessage, byte[] content, String name) {
         LOG.trace("Creating Annex From Content... [path={}, metadata={}]", path, metadata);
         Annex annex = annexRepository.createAnnexFromContent(path, name, metadata, content);
+        return annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage);
+    }
+
+    @Override
+    public Annex createClonedAnnexFromContent(String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name) {
+        LOG.trace("Creating cloned Annex From Content... [path={}, metadata={}]", path, metadata);
+        Annex annex = annexRepository.createClonedAnnexFromContent(path, name, metadata, cloneDocumentMetadataVO, content);
         return annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage);
     }
 }

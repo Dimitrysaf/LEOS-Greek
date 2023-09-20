@@ -12,7 +12,6 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.user.User;
-import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
@@ -217,12 +215,5 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
             }
         }
         return new Result<>("OK", null);
-    }
-
-    @Override
-    public void updatePostCloneMetadataProperties(String id, CloneProposalMetadataVO cloneProposalMetadataVO) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), cloneProposalMetadataVO.getClonedFromObjectId());
-        proposalService.updateProposal(id, properties);
     }
 }

@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
@@ -63,6 +64,7 @@ public class MemorandumContextService {
     private String template = null;
     private boolean eeaRelevance;
     private boolean cloneProposal = false;
+    private String originRef;
 
     private DocumentVO memoDocument;
 
@@ -199,13 +201,14 @@ public class MemorandumContextService {
         Validate.notNull(memoDocument.getSource(), "Memorandum xml is required!");
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(memoDocument.getSource(), createValueMap(metadata),
                 xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
-        Memorandum memorandumCreated = memorandumService.createMemorandumFromContent(leosPackage.getPath(), metadata,
-                actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, memoDocument.getName());
+        Memorandum memorandumCreated;
         if (cloneProposal) {
-            Map<String, Object> memoProperties = new HashMap<>();
-            memoProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), memoDocument.getId());
-            memoProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
-            memorandumService.updateMemorandum(memorandumCreated.getId(), memoProperties, true);
+            CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO(memoDocument.getRef(), originRef);
+            memorandumCreated = memorandumService.createClonedMemorandumFromContent(leosPackage.getPath(), metadata, cloneDocumentMetadataVO,
+                    actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, memoDocument.getName());
+        } else {
+            memorandumCreated = memorandumService.createMemorandumFromContent(leosPackage.getPath(), metadata,
+                    actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, memoDocument.getName());
         }
         return memorandumService.createVersion(memorandumCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
@@ -245,5 +248,9 @@ public class MemorandumContextService {
 
     public String getUpdatedMemorandumId() {
         return memorandum.getId();
+    }
+
+    public void useOriginRef(String originRef) {
+        this.originRef = originRef;
     }
 }

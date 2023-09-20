@@ -17,6 +17,7 @@ import eu.europa.ec.leos.cmis.extensions.CmisDocumentExtensions;
 import eu.europa.ec.leos.cmis.extensions.CmisFolderExtensions;
 import eu.europa.ec.leos.cmis.extensions.LeosMetadataExtensions;
 import eu.europa.ec.leos.domain.common.RepositoryProfileType;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.LeosMapper;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
@@ -157,6 +158,33 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), cloneProposalMetadataVO.getClonedFromRef());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.REVISION_STATUS), cloneProposalMetadataVO.getRevisionStatus());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), cloneProposalMetadataVO.isClonedProposal());
+
+        Document doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes);
+        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
+        logger.info("Created cloned document {} in {} milliseconds.", name,  time);
+
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalStateException("Unable to create document! [path=" + path + ", name=" + name + ']'));
+    }
+
+    @Override
+    public <D extends LeosDocument, M extends LeosMetadata> D createClonedDocumentFromContent(String path, String name,
+                                                                                              M metadata,
+                                                                                              CloneDocumentMetadataVO cloneDocumentMetadataVO,
+                                                                                              Class<? extends D> type,
+                                                                                              String leosCategory,
+                                                                                              byte[] contentBytes) {
+        logger.trace("Creating document From Content... [path=" + path + ", name=" + name + ']');
+
+        checkSecurityContextEnsureUserIsPresent();
+
+        long startTimeNanos = System.nanoTime();
+
+        Map<String, Object> properties = getCustomPropertiesMap(name, metadata, leosCategory);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ORIGIN_REF), cloneDocumentMetadataVO.getOriginRef());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), cloneDocumentMetadataVO.getClonedFromRef());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_PROPOSAL), true);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
 
         Document doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes);
         long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);

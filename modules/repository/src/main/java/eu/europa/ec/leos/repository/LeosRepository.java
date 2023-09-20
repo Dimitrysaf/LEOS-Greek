@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.Collaborator;
@@ -76,6 +77,20 @@ public interface LeosRepository {
                                                                                  Class<? extends D> type, String leosCategory,
                                                                                  byte[] contentBytes);
 
+    /**
+     * Creates a document from a given template and with the specified characteristics.
+     *
+     * @param path     the path where to create the document.
+     * @param name     the name of the document.
+     * @param metadata the metadata of the document.
+     * @param cloneDocumentMetadataVO clone document metadata vo
+     * @param type     the type class of the document.
+     * @return the created document.
+     */
+    <D extends LeosDocument, M extends LeosMetadata> D createClonedDocumentFromContent(String path, String name, M metadata,
+                                                                                       CloneDocumentMetadataVO cloneDocumentMetadataVO,
+                                                                                       Class<? extends D> type, String leosCategory,
+                                                                                       byte[] contentBytes);
 
     /**
      * Creates a leg document from a given content and with the specified characteristics.

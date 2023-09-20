@@ -4,6 +4,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.model.FinancialStatement.FinancialStatementStructureType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
@@ -17,6 +18,8 @@ public interface FinancialStatementService {
     FinancialStatement createFinancialStatement(String templateId, String path, FinancialStatementMetadata metadata, String actionMessage, byte[] content);
 
     FinancialStatement createFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, String actionMessage, byte[] content, String name);
+
+    FinancialStatement createClonedFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name);
 
     void createFinancialStatementFromProposal(String proposalRef);
 

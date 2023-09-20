@@ -218,9 +218,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             CreateCollectionError error = new CreateCollectionError(result.getErrorCode().orElse(ErrorCode.EXCEPTION).ordinal(),
                     messageHelper.getMessage("clone.proposal.metadata.preserve.error"));
             return new CreateCollectionResult(idsAndUrlsHolder, true, error);
-        } else {
-            postProcessingDocumentService.updatePostCloneMetadataProperties(cmisObjectId, cloneProposalMetadataVO);
         }
+
         try {
             //Send CNS notification
             notificationService.sendNotification(new ClonedProposalNotification(notificationRecepient,

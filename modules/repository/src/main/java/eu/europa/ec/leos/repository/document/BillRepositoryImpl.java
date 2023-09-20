@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.repository.LeosRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +53,12 @@ public class BillRepositoryImpl implements BillRepository {
     public Bill createBillFromContent(String path, String name, BillMetadata metadata, byte[] content) {
         logger.debug("Creating Bill From Content... [path=" + path + ", name=" + name + "]");
         return leosRepository.createDocumentFromContent(path, name, metadata, Bill.class, LeosCategory.BILL.name(), content);
+    }
+
+    @Override
+    public Bill createClonedBillFromContent(String path, String name, BillMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content) {
+        logger.debug("Creating cloned Bill From Content... [path=" + path + ", name=" + name + "]");
+        return leosRepository.createClonedDocumentFromContent(path, name, metadata, cloneDocumentMetadataVO, Bill.class, LeosCategory.BILL.name(), content);
     }
 
     @Override

@@ -15,6 +15,9 @@ package eu.europa.ec.leos.services.document;
 
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.document.BillRepository;
@@ -28,8 +31,6 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.validation.ValidationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,5 +60,11 @@ public class BillServiceMandateImpl extends BillServiceImpl {
     @Override
     public String generateBillReference(String templateId, byte[] content, String language) {
         return this.generateBillReference(content, language);
+    }
+
+    @Override
+    public Bill createClonedBillFromContent(String path, BillMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO,
+                                            String actionMsg, byte[] content, String name) {
+        return null;
     }
 }
