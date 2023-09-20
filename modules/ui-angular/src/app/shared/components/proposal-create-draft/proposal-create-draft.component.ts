@@ -24,7 +24,7 @@ import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-temp
 
 @Component({
   selector: 'app-proposal-create-draft',
-  templateUrl: './proposal-create-draft.component.html'
+  templateUrl: './proposal-create-draft.component.html',
 })
 export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
   @Input() showCreateButton = true;
