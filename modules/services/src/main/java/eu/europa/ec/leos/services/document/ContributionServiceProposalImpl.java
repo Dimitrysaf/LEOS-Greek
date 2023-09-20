@@ -217,9 +217,8 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
         Proposal updatedProposal;
         LegDocument updatedLegDocument;
         try {
-            Proposal clonedProposal = leosRepository.findDocumentByRef(cloneProposalRef, Proposal.class);
-            String originalProposalId = clonedProposal.getClonedFrom();
-            Proposal originalProposal = proposalService.findProposal(originalProposalId);
+            Proposal clonedProposal = proposalService.findProposalByRef(cloneProposalRef);
+            Proposal originalProposal = proposalService.findProposalByRef(clonedProposal.getClonedFrom());
             LeosPackage clonedPackage = packageService.findPackageByDocumentId(clonedProposal.getId());
             LegDocument legDocument = packageService.findDocumentByPackagePathAndName(clonedPackage.getPath(), cloneLegFileName,
                     LegDocument.class);

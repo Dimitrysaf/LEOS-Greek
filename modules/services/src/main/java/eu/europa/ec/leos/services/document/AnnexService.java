@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.user.User;
@@ -30,6 +31,8 @@ public interface AnnexService {
     Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content);
 
     Annex createAnnexFromContent(String path, AnnexMetadata metadata, String actionMessage, byte[] content, String name);
+
+    Annex createClonedAnnexFromContent(String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name);
 
     void deleteAnnex(Annex annex);
 

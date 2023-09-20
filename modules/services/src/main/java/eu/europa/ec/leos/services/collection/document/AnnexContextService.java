@@ -19,9 +19,9 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
-import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -73,6 +73,7 @@ public class AnnexContextService {
     private String milestoneComment;
     private boolean eeaRelevance;
     private boolean cloneProposal = false;
+    private String originRef;
 
     public AnnexContextService(
             TemplateService templateService,
@@ -219,14 +220,13 @@ public class AnnexContextService {
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .build();
-        annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName());
-        annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
         if (cloneProposal) {
-            Map<String, Object> annexProperties = new HashMap<>();
-            annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), annexDocument.getId());
-            annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
-            annex = annexService.updateAnnex(annex.getId(), annexProperties, true);
+            CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO(annexDocument.getRef(), originRef);
+            annex = annexService.createClonedAnnexFromContent(leosPackage.getPath(), metadataDocument, cloneDocumentMetadataVO, actionMessage, annexDocument.getSource(), annexDocument.getName());
+        } else {
+            annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName());
         }
+        annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -311,5 +311,9 @@ public class AnnexContextService {
     public String getProposalId() {
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
         return proposal != null ? proposal.getId() : null;
+    }
+
+    public void useOriginRef(String originRef) {
+        this.originRef = originRef;
     }
 }

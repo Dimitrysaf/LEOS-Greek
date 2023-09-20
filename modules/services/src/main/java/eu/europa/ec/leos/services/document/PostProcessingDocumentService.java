@@ -106,9 +106,6 @@ public abstract class PostProcessingDocumentService {
                 newStatusBuilder.toString());
     }
 
-    public void updatePostCloneMetadataProperties(String id, CloneProposalMetadataVO cloneProposalMetadataVO) {
-    }
-
     public Result<?> updateOriginalProposalAfterRevisionDone(String cloneProposalRef, String cloneLegFileId,
                                                         CloneProposalMetadataVO cloneProposalMetadataVO) {
         return null;

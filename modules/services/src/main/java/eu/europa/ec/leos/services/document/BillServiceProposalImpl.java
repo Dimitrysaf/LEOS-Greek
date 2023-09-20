@@ -15,6 +15,10 @@ package eu.europa.ec.leos.services.document;
 
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.document.BillRepository;
@@ -60,5 +64,12 @@ public class BillServiceProposalImpl extends BillServiceImpl {
     public String generateBillReference(String templateId, byte[] content, String language) {
         content = (content == null) ? getContent(billRepository.findBillById(templateId, true)) : content;
         return this.generateBillReference(content, language);
+    }
+
+    @Override
+    public Bill createClonedBillFromContent(String path, BillMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO,
+                                            String actionMsg, byte[] content, String name) {
+        Bill bill = billRepository.createClonedBillFromContent(path, name, metadata, cloneDocumentMetadataVO, content);
+        return billRepository.updateBill(bill.getId(), metadata, content, VersionType.MINOR, actionMsg);
     }
 }

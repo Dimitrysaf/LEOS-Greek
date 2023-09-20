@@ -281,6 +281,7 @@ public abstract class CollectionContextService {
                     memorandumContext.usePackageTemplate(metadata.getTemplate());
                     memorandumContext.useEeaRelevance(eeaRelevance);
                     memorandumContext.useCloneProposal(cloneProposal);
+                    memorandumContext.useOriginRef(iscRef);
                     Memorandum memorandum = memorandumContext.executeImportMemorandum();
                     proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
                     String memorandumRef = memorandum.getMetadata().get().getRef();
@@ -299,6 +300,7 @@ public abstract class CollectionContextService {
                     billContext.useIdsAndUrlsHolder(idsAndUrlsHolder);
                     billContext.useCloneProposal(cloneProposal);
                     billContext.useEeaRelevance(eeaRelevance);
+                    billContext.useOriginRef(iscRef);
                     Bill bill = billContext.executeImportBill();
                     proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
                     String billRef = bill.getMetadata().get().getRef();
@@ -320,6 +322,7 @@ public abstract class CollectionContextService {
                     financialStatementContext.useActionMessageMap(actionMsgMap);
                     financialStatementContext.useCollaborators(proposal.getCollaborators());
                     financialStatementContext.useCloneProposal(cloneProposal);
+                    financialStatementContext.useOriginRef(iscRef);
                     FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
                     String financialStatementRef = financialStatement.getMetadata().get().getRef();
                     proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);

@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.repository.LeosRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +54,13 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     public Annex createAnnexFromContent(String path, String name, AnnexMetadata metadata, byte[] content) {
         logger.debug("Creating Annex From Content... [tpath=" + path + ", name=" + name + "]");
         return leosRepository.createDocumentFromContent(path, name, metadata, Annex.class,
+                LeosCategory.ANNEX.name(), content);
+    }
+
+    @Override
+    public Annex createClonedAnnexFromContent(String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content) {
+        logger.debug("Creating cloned Annex From Content... [tpath=" + path + ", name=" + name + "]");
+        return leosRepository.createClonedDocumentFromContent(path, name, metadata, cloneDocumentMetadataVO, Annex.class,
                 LeosCategory.ANNEX.name(), content);
     }
 

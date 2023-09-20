@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.Collaborator;
@@ -216,6 +217,36 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), cloneProposalMetadataVO.getClonedFromRef());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.REVISION_STATUS), cloneProposalMetadataVO.getRevisionStatus());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), cloneProposalMetadataVO.isClonedProposal());
+
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes,
+                securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
+
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalStateException("Unable to create document! [path=" + path + ", name=" + name + ']'));
+    }
+
+    @Override
+    @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", allEntries = true) })
+    public <D extends LeosDocument, M extends LeosMetadata> D createClonedDocumentFromContent(String path, String name,
+                                                                                              M metadata,
+                                                                                              CloneDocumentMetadataVO cloneDocumentMetadataVO,
+                                                                                              Class<? extends D> type,
+                                                                                              String leosCategory,
+                                                                                              byte[] contentBytes) {
+        logger.trace("Creating cloned document From Content... [path=" + path + ", name=" + name + ']');
+
+        checkSecurityContextEnsureUserIsPresent();
+
+        Map<String, Object> properties = getCustomPropertiesMap(name, metadata, leosCategory);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ORIGIN_REF), cloneDocumentMetadataVO.getOriginRef());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), cloneDocumentMetadataVO.getClonedFromRef());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_PROPOSAL), true);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromContent(path, name, properties, leosDocMimeType, contentBytes,
                 securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);

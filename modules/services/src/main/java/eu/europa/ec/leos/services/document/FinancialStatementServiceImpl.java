@@ -10,6 +10,7 @@ import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.FinancialStatement.FinancialStatementStructureType;
@@ -137,6 +138,14 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                                                                   byte[] content, String name) {
         LOG.trace("Creating FinancialStatement From Content... [path={}, metadata={}]", path, metadata);
         FinancialStatement FinancialStatement = financialStatementRepository.createFinancialStatementFromContent(path, name, metadata, content);
+        return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, content, VersionType.MINOR, actionMessage);
+    }
+
+    @Override
+    public FinancialStatement createClonedFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage,
+                                                                        byte[] content, String name) {
+        LOG.trace("Creating cloned FinancialStatement From Content... [path={}, metadata={}]", path, metadata);
+        FinancialStatement FinancialStatement = financialStatementRepository.createClonedFinancialStatementFromContent(path, name, metadata, cloneDocumentMetadataVO, content);
         return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, content, VersionType.MINOR, actionMessage);
     }
 

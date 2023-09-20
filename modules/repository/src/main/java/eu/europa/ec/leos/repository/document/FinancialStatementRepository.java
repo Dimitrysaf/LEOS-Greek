@@ -3,6 +3,7 @@ package eu.europa.ec.leos.repository.document;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import org.springframework.security.access.prepost.PostAuthorize;
 
 import java.util.List;
@@ -30,6 +31,18 @@ public interface FinancialStatementRepository {
      * @return the created FinancialStatement document.
      */
     FinancialStatement createFinancialStatementFromContent(String path, String name, FinancialStatementMetadata metadata, byte[] content);
+
+    /**
+     * Creates an [FinancialStatement] document from a given content and with the specified characteristics.
+     *
+     * @param path     the path where to create the FinancialStatement.
+     * @param name     the name of the FinancialStatement.
+     * @param metadata the metadata of the FinancialStatement.
+     * @param cloneDocumentMetadataVO the clone metadata of the FinancialStatement.
+     * @param content  the content of the FinancialStatement.
+     * @return the created FinancialStatement document.
+     */
+    FinancialStatement createClonedFinancialStatementFromContent(String path, String name, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content);
 
     /**
      * Updates an [FinancialStatement] document with the given metadata.

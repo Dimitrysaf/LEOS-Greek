@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.document;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import org.springframework.security.access.prepost.PostAuthorize;
 
 import java.util.List;
@@ -50,6 +51,18 @@ public interface BillRepository {
      * @return the created bill document.
      */
     Bill createBillFromContent(String path, String name, BillMetadata metadata, byte[] content);
+
+    /**
+     * Creates a [Bill] document from a given content and with the specified characteristics.
+     *
+     * @param path     the path where to create the bill.
+     * @param name     the name of the bill.
+     * @param metadata the metadata of the bill.
+     * @param cloneDocumentMetadataVO clone document metadata vo
+     * @param content  the content of the bill.
+     * @return the created bill document.
+     */
+    Bill createClonedBillFromContent(String path, String name, BillMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, byte[] content);
 
     /**
      * Updates a [Bill] document with the given metadata and content.

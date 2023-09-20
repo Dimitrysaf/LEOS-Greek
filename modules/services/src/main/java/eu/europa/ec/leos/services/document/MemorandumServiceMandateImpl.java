@@ -15,6 +15,9 @@ package eu.europa.ec.leos.services.document;
 
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.document.MemorandumRepository;
@@ -56,5 +59,10 @@ public class MemorandumServiceMandateImpl extends MemorandumServiceImpl {
     @Override
     public String generateMemorandumReference(String templateId, byte[] content, String language) {
         return this.generateMemorandumReference(content, language);
+    }
+
+    @Override
+    public Memorandum createClonedMemorandumFromContent(String path, MemorandumMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMsg, byte[] content, String name) {
+        return null;
     }
 }

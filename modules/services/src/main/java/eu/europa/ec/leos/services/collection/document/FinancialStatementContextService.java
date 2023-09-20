@@ -6,6 +6,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
@@ -65,6 +66,7 @@ public class FinancialStatementContextService {
     private String financialStatementId;
     private boolean eeaRelevance;
     private boolean cloneProposal = false;
+    private String originRef;
 
     public FinancialStatementContextService(TemplateService templateService, FinancialStatementService financialStatementService,
             ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
@@ -220,13 +222,14 @@ public class FinancialStatementContextService {
         Validate.notNull(financialStatementDocument.getSource(), "Financial statement xml is required!");
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(financialStatementDocument.getSource(), createValueMap(metadata),
                 xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
-        FinancialStatement updatedFinancialStatement = financialStatementService.createFinancialStatementFromContent(leosPackage.getPath(), metadata,
-                actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, financialStatementDocument.getName());
+        FinancialStatement updatedFinancialStatement;
         if (cloneProposal) {
-            Map<String, Object> fsProperties = new HashMap<>();
-            fsProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), financialStatementDocument.getId());
-            fsProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
-            financialStatementService.updateFinancialStatement(updatedFinancialStatement.getId(), fsProperties, true);
+            CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO(financialStatementDocument.getRef(), originRef);
+            updatedFinancialStatement = financialStatementService.createClonedFinancialStatementFromContent(leosPackage.getPath(), metadata, cloneDocumentMetadataVO,
+                    actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, financialStatementDocument.getName());
+        } else {
+            updatedFinancialStatement = financialStatementService.createFinancialStatementFromContent(leosPackage.getPath(), metadata,
+                    actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, financialStatementDocument.getName());
         }
         return financialStatementService.createVersion(updatedFinancialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
@@ -324,4 +327,9 @@ public class FinancialStatementContextService {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
     }
+
+    public void useOriginRef(String originRef) {
+        this.originRef = originRef;
+    }
+
 }
