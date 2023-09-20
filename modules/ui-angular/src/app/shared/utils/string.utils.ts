@@ -16,3 +16,17 @@ export const unescapeHtml = (str: string) =>
     .replace(/&quot;/g, '"')
     .replace(/&#039;/g, "'")
     .replace(/&amp;/g, '&');
+
+export const countOccurrencesOfTextInString = (
+  text: string,
+  initialString: string,
+) => {
+  let occurences = 0;
+  let startPos = 0;
+  const searchStrLen = text.length;
+  while (initialString.indexOf(text, startPos) > -1) {
+    occurences++;
+    startPos = initialString.indexOf(text, startPos) + searchStrLen;
+  }
+  return occurences;
+};
