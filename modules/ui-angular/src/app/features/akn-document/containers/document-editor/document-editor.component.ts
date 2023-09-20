@@ -813,7 +813,7 @@ export class DocumentEditorComponent
       const nextChange = this.contributionIndex + 1;
       this.contributionChangesBS.value.item(nextChange)?.scrollIntoView({
         behavior: 'smooth',
-        block: 'start',
+        block: 'nearest',
       });
       this.contributionIndex++;
     }
@@ -825,7 +825,7 @@ export class DocumentEditorComponent
         const prevChange = this.contributionIndex - 1;
         this.contributionChangesBS.value.item(prevChange)?.scrollIntoView({
           behavior: 'smooth',
-          block: 'start',
+          block: 'nearest',
         });
         this.contributionIndex--;
       }
