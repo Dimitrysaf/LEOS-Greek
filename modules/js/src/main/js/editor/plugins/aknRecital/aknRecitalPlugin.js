@@ -37,6 +37,8 @@ define(function aknRecitalPluginModule(require) {
                 event.editor.fire( 'unlockSnapshot' );
             });
 
+            $(editor.element.$).on("mouseup", null, [editor], _handleClickEvent);
+
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -70,6 +72,13 @@ define(function aknRecitalPluginModule(require) {
 
     function _onCtrlBKey(context) {
         context.event.cancel();
+    }
+
+    var _handleClickEvent = function _handleClickEvent(event) {
+        var range = event.data[0].getSelection().getRanges()[0];
+        if(range.collapsed) {
+            range.checkEndOfBlock(true);
+        }
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
