@@ -254,6 +254,7 @@ export class DocumentEditorComponent
     this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
+        this.documentService.setDidDocumentLoadAndRender(true);
         this.loadDocument(documentView.editableXml);
         this.setPageSubTitle(documentView.versionInfoVO);
         this.proposalRef = documentView.proposalRef;

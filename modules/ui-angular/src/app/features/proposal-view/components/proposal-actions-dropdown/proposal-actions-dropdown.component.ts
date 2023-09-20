@@ -1,16 +1,16 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Subject, takeUntil } from 'rxjs';
 
 import { Permission } from '@/shared';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { ConfirmDialogComponent } from '@/shared/components/confirm-dialog/confirm-dialog.component';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
-import {Subject, takeUntil} from 'rxjs';
 
 @Component({
   selector: 'app-proposal-actions-dropdown',
-  templateUrl: './proposal-actions-dropdown.component.html'
+  templateUrl: './proposal-actions-dropdown.component.html',
 })
 export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
   @Input() proposalId: string;
@@ -29,6 +29,8 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
   proposalDeleteCannotConf: ConfirmDialogComponent;
   canExportLW = false;
 
+  private destroy$: Subject<any> = new Subject();
+
   constructor(
     private proposalDetailsService: ProposalDetailsService,
     private sanitizer: DomSanitizer,
@@ -38,8 +40,6 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
     });
   }
 
-  private destroy$: Subject<any> = new Subject();
-
   ngOnInit(): void {
     this.proposalDetailsService.milestones$
       .pipe(takeUntil(this.destroy$))
@@ -48,7 +48,7 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
           this.totMilestones = milestones.length;
         },
         error: (error) => {
-          console.error("error", error)
+          console.error('error', error);
         },
       });
   }
@@ -79,7 +79,7 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   handleConfirmationDelete() {
-    if (this.totMilestones == 0) {
+    if (this.totMilestones === 0) {
       this.proposalDeleteConf.deleteDialog.openDialog();
     } else {
       this.proposalDeleteCannotConf.confirmDialog.openDialog();

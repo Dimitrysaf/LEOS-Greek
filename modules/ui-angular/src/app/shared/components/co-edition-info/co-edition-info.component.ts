@@ -7,7 +7,7 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 
 @Component({
   selector: 'app-co-edition-info',
-  templateUrl: './co-edition-info.component.html'
+  templateUrl: './co-edition-info.component.html',
 })
 export class CoEditionInfoComponent implements OnInit, OnDestroy {
   @Input() documentCoEditions?: CoEditionVO[];
