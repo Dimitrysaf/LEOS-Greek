@@ -133,7 +133,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         }
         if (metadata.get("comments") != null) {
             try {
-                List<String> milestoneCommentsList = (List<String>) metadata.get("milestoneComments");
+                List<String> milestoneCommentsList = (List<String>) metadata.get("comments");
                 if (milestoneCommentsList.isEmpty()) {
                     throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Wrong value for parameter " +
                             "'comments'");
