@@ -311,14 +311,21 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     elementId: string;
     elementType: string;
   }) {
-    const documentRef = this.documentService.documentRef;
-    const documentType = this.documentService.documentType;
+    const { elementType, elementId } = elementData;
+    const isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+    const isLastElement = isNodeLastElement(
+      this.tableOfContentService.getCurrentToc(),
+      elementId,
+    );
 
-    const deleteDocumentElement = () =>
+    const confirmDeletion = () => {
+      const documentRef = this.documentService.documentRef;
+      const documentType = this.documentService.documentType;
+
       this.deleteDocumentElement(
         documentRef,
-        elementData.elementType.toLowerCase(),
-        elementData.elementId,
+        elementType.toLowerCase(),
+        elementId,
         documentType,
       ).subscribe((response) => {
         this.documentService.setDocumentRefAndCategory(
@@ -327,14 +334,15 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
         );
         this.tableOfContentService.reloadToc();
       });
+    };
 
     if (
-      isNodeLastElement(
-        this.tableOfContentService.getCurrentToc(),
-        elementData.elementId,
-      )
+      (isCNInstance &&
+        isLastElement &&
+        ['recital', 'citation', 'body'].includes(elementType)) ||
+      (!isCNInstance && isLastElement)
     ) {
-      this.openLastElementDeleteConfirmation(deleteDocumentElement);
+      this.openLastElementDeleteConfirmation(confirmDeletion);
     } else {
       this.dialogService.openDialog({
         title: this.translateService.instant(
@@ -343,12 +351,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
         content: this.translateService.instant(
           'page.editor.element-delete-dialog.body',
         ),
-        accept: () => {
-          deleteDocumentElement();
-        },
-        dismiss: () => {
-          this.releaseElement();
-        },
+        accept: confirmDeletion,
+        dismiss: () => this.releaseElement(),
       });
     }
   }
