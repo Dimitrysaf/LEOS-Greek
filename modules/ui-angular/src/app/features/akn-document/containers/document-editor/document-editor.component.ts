@@ -357,6 +357,18 @@ export class DocumentEditorComponent
           this.contribution = contribution;
         }
       });
+
+    this.coEditionWSService.shouldReloadAfterUpdate
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((shouldReload) => {
+        if (shouldReload) {
+          const ckeditorOpen = this.document.querySelectorAll('cke').length > 0;
+          if (!ckeditorOpen) {
+            this.documentService.reloadDocument();
+            this.tableOfContentService.reload();
+          }
+        }
+      });
   }
 
   ngAfterViewInit(): void {
