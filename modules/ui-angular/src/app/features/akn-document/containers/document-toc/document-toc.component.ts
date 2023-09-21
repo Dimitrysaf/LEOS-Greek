@@ -353,20 +353,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  openLastElementDeleteConfirmation(onConfirm: () => void) {
-    this.dialogService.openDialog({
-      title: this.translateService.instant(
-        'page.editor.last-element-delete-confirmation.title',
-      ),
-      content: this.translateService.instant(
-        'page.editor.last-element-delete-confirmation.message',
-      ),
-      acceptLabel: this.translateService.instant('global.actions.continue'),
-      accept: onConfirm,
-      dismiss: () => {},
-    });
-  }
-
   deleteWithConfirmationCheck(
     newTree: TableOfContentItemVO[],
     item: TableOfContentItemVO,
