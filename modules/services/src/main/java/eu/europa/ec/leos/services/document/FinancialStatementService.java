@@ -17,6 +17,8 @@ public interface FinancialStatementService {
 
     FinancialStatement createFinancialStatement(String templateId, String path, FinancialStatementMetadata metadata, String actionMessage, byte[] content);
 
+    FinancialStatement createClonedFinancialStatement(String templateId, String path, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content);
+
     FinancialStatement createFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, String actionMessage, byte[] content, String name);
 
     FinancialStatement createClonedFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name);

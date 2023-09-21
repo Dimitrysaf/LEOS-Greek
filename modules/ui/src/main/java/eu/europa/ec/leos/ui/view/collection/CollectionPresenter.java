@@ -858,6 +858,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             String annexTemplate = templateItem.getItems().get(0).getId();
             billContext.useAnnexTemplate(annexTemplate);
             billContext.useCloneProposal((cloneProposalMetadataVO != null) && (cloneProposalMetadataVO.isClonedProposal()));
+            billContext.useOriginRef(cloneOriginRef);
             billContext.executeCreateBillAnnex();
             eventBus.post(new DocumentUpdatedEvent());
             populateData();
@@ -1077,6 +1078,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             context.useCloneProposal((cloneProposalMetadataVO != null) && (cloneProposalMetadataVO.isClonedProposal()));
             String actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
             context.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
+            context.useOriginRef(cloneOriginRef);
             context.executeCreateFinancialStatement();
             eventBus.post(new DocumentUpdatedEvent());
             populateData();

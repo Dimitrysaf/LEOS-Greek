@@ -21,11 +21,9 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
-import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
@@ -441,6 +439,8 @@ public class BillContextService {
         annexContext.useCollaborators(bill.getCollaborators());
         annexContext.useActionMessageMap(actionMsgMap);
         annexContext.useAnnexNumber(annexNumber);
+        annexContext.useCloneProposal(cloneProposal);
+        annexContext.useOriginRef(originRef);
         Annex annex = annexContext.executeCreateAnnex();
 
         String href = annex.getName();

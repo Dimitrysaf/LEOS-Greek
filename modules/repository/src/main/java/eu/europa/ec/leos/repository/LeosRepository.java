@@ -54,6 +54,19 @@ public interface LeosRepository {
     /**
      * Creates a document from a given template and with the specified characteristics.
      *
+     * @param templateId the ID of the template for the document.
+     * @param path       the path where to create the document.
+     * @param name       the name of the document.
+     * @param metadata   the metadata of the document.
+     * @param cloneDocumentMetadataVO clone proposal metadata vo
+     * @param type       the type class of the document.
+     * @return the created document.
+     */
+    <D extends LeosDocument, M extends LeosMetadata> D createClonedDocument(String templateId, String path, String name, M metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, Class<? extends D> type);
+
+    /**
+     * Creates a document from a given template and with the specified characteristics.
+     *
      * @param path     the path where to create the document.
      * @param name     the name of the document.
      * @param metadata the metadata of the document.

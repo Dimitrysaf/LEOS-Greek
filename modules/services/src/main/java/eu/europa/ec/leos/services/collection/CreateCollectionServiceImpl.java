@@ -157,7 +157,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public CreateCollectionResult cloneCollection(File legDocument, String iscRef, String targetUser, String connectedEntity) {
+    public CreateCollectionResult cloneCollection(File legDocument, String originRef, String targetUser, String connectedEntity) {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
         DocumentVO propDocument = null;
         try {
@@ -171,7 +171,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         //set metadata to cloned proposal
         CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
         cloneProposalMetadataVO.setClonedProposal(Boolean.TRUE);
-        cloneProposalMetadataVO.setOriginRef(iscRef);
+        cloneProposalMetadataVO.setOriginRef(originRef);
         cloneProposalMetadataVO.setClonedFromRef(propDocument.getRef());
         cloneProposalMetadataVO.setClonedFromObjectId(propDocument.getId());
         cloneProposalMetadataVO.setLegFileName(legDocument.getName());
@@ -181,13 +181,13 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         CollectionContextService context = proposalContextProvider.get();
         context.useDocument(propDocument);
         context.useIdsAndUrlsHolder(idsAndUrlsHolder);
-        context.useIscRef(iscRef);
+        context.useOriginRef(originRef);
         context.useCloneProposal(true);
         context.useConnectedEntity(connectedEntity);
         context.useClonedProposalMetadataVO(cloneProposalMetadataVO);
         addTemplateInContext(context, propDocument);
 
-        Result<?> result = postProcessingDocumentService.saveOriginalProposalIdToClonedProposal(propDocument, legDocument.getName(), iscRef);
+        Result<?> result = postProcessingDocumentService.saveOriginalProposalIdToClonedProposal(propDocument, legDocument.getName(), originRef);
         if (result.isError()) {
             CreateCollectionError error = new CreateCollectionError(result.getErrorCode().orElse(ErrorCode.EXCEPTION).ordinal(),
                     messageHelper.getMessage("clone.proposal.metadata.preserve.error"));
@@ -196,7 +196,6 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
 
         Proposal proposal = context.executeImportProposal();
         String proposalId = proposal.getMetadata().get().getRef();
-        String cmisObjectId = proposal.getId();
         String proposalUrl = urlBuilder.buildProposalViewUrl(proposalId);
         idsAndUrlsHolder.setProposalId(proposalId);
         idsAndUrlsHolder.setProposalUrl(proposalUrl);
@@ -223,8 +222,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         try {
             //Send CNS notification
             notificationService.sendNotification(new ClonedProposalNotification(notificationRecepient,
-                    messageHelper.getMessage("clone.proposal.notification.title.iscRef", iscRef),
-                    legDocument.getName(), proposalUrl, iscRef));
+                    messageHelper.getMessage("clone.proposal.notification.title.originRef", originRef),
+                    legDocument.getName(), proposalUrl, originRef));
         } catch (Exception e) {
             LOG.error("CNS notification exception. Service is not available at the moment.", e);
         }

@@ -198,9 +198,14 @@ public class AnnexContextService {
                 .withTemplate(template)
                 .build();
 
-        annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), null);
-        annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
+        if (cloneProposal) {
+            CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO("USER_ADDED_IN_CLONE_PROPOSAL", originRef);
+            annex = annexService.createClonedAnnex(annex.getId(), leosPackage.getPath(), metadata, cloneDocumentMetadataVO, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), null);
+        } else {
+            annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), null);
+        }
 
+        annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 

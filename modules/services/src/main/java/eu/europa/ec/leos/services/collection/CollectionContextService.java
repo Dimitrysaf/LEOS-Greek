@@ -90,7 +90,7 @@ public abstract class CollectionContextService {
     private String propChildDocument;
     private String proposalComment;
     private CollectionIdsAndUrlsHolder idsAndUrlsHolder;
-    private String iscRef;
+    private String originRef;
     private boolean cloneProposal = false;
     private String connectedEntity;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
@@ -203,9 +203,9 @@ public abstract class CollectionContextService {
         this.idsAndUrlsHolder = idsAndUrlsHolder;
     }
 
-    public void useIscRef(String iscRef) {
-        Validate.notNull(iscRef, "ISC reference is required!");
-        this.iscRef = iscRef;
+    public void useOriginRef(String originRef) {
+        Validate.notNull(originRef, "originRef reference is required!");
+        this.originRef = originRef;
     }
 
     public void useCloneProposal(boolean cloneProposal) {
@@ -281,7 +281,7 @@ public abstract class CollectionContextService {
                     memorandumContext.usePackageTemplate(metadata.getTemplate());
                     memorandumContext.useEeaRelevance(eeaRelevance);
                     memorandumContext.useCloneProposal(cloneProposal);
-                    memorandumContext.useOriginRef(iscRef);
+                    memorandumContext.useOriginRef(originRef);
                     Memorandum memorandum = memorandumContext.executeImportMemorandum();
                     proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
                     String memorandumRef = memorandum.getMetadata().get().getRef();
@@ -300,7 +300,7 @@ public abstract class CollectionContextService {
                     billContext.useIdsAndUrlsHolder(idsAndUrlsHolder);
                     billContext.useCloneProposal(cloneProposal);
                     billContext.useEeaRelevance(eeaRelevance);
-                    billContext.useOriginRef(iscRef);
+                    billContext.useOriginRef(originRef);
                     Bill bill = billContext.executeImportBill();
                     proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
                     String billRef = bill.getMetadata().get().getRef();
@@ -322,7 +322,7 @@ public abstract class CollectionContextService {
                     financialStatementContext.useActionMessageMap(actionMsgMap);
                     financialStatementContext.useCollaborators(proposal.getCollaborators());
                     financialStatementContext.useCloneProposal(cloneProposal);
-                    financialStatementContext.useOriginRef(iscRef);
+                    financialStatementContext.useOriginRef(originRef);
                     FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
                     String financialStatementRef = financialStatement.getMetadata().get().getRef();
                     proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
@@ -359,6 +359,7 @@ public abstract class CollectionContextService {
         financialStatementContext.useActionMessageMap(actionMsgMap);
         financialStatementContext.useCollaborators(proposal.getCollaborators());
         financialStatementContext.useCloneProposal(cloneProposal);
+        financialStatementContext.useOriginRef(originRef);
         FinancialStatement financialStatement = financialStatementContext.executeCreateFinancialStatement();
         proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));

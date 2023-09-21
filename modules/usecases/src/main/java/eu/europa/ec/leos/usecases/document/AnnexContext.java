@@ -19,9 +19,9 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.user.Collaborator;
-import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -66,6 +66,7 @@ public class AnnexContext {
     private String versionComment;
     private String milestoneComment;
     private boolean cloneProposal;
+    private String originRef;
 
     public AnnexContext(
             TemplateService templateService,
@@ -175,6 +176,7 @@ public class AnnexContext {
 
         Validate.notNull(purpose, "Annex purpose is required!");
         Validate.notNull(type, "Annex type is required!");
+
         AnnexMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
@@ -184,13 +186,14 @@ public class AnnexContext {
                 .withTemplate(template)
                 .build();
 
-        annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.ANNEX_METADATA_UPDATED), null);
-        annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
         if (cloneProposal) {
-            Map<String, Object> annexProperties = new HashMap<>();
-            annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
-            annex = annexService.updateAnnex(annex.getId(), annexProperties, true);
+            CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO("USER_ADDED_IN_CLONE_PROPOSAL", originRef);
+            annex = annexService.createClonedAnnex(annex.getId(), leosPackage.getPath(), metadata, cloneDocumentMetadataVO, actionMsgMap.get(ContextAction.ANNEX_METADATA_UPDATED), null);
+        } else {
+            annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.ANNEX_METADATA_UPDATED), null);
         }
+
+        annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
     }
 
@@ -297,5 +300,9 @@ public class AnnexContext {
     public String getProposalId() {
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
         return proposal != null ? proposal.getId() : null;
+    }
+
+    public void useOriginRef(String originRef) {
+        this.originRef = originRef;
     }
 }

@@ -41,6 +41,18 @@ public interface AnnexRepository {
     Annex createAnnex(String templateId, String path, String name, AnnexMetadata metadata);
 
     /**
+     * Creates an [Annex] document from a given template and with the specified characteristics.
+     *
+     * @param templateId the ID of the template for the annex.
+     * @param path       the path where to create the annex.
+     * @param name       the name of the annex.
+     * @param metadata   the metadata of the annex.
+     * @param cloneDocumentMetadataVO   the clone metadata of the annex.
+     * @return the created annex document.
+     */
+    Annex createClonedAnnex(String templateId, String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO);
+
+    /**
      * Creates an [Annex] document from a given content and with the specified characteristics.
      *
      * @param path     the path where to create the annex.

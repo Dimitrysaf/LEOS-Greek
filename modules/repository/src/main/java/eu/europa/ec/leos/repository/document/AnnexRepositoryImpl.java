@@ -51,6 +51,12 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     }
 
     @Override
+    public Annex createClonedAnnex(String templateId, String path, String name, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO) {
+        logger.debug("Creating cloned Annex... [template=" + templateId + ", path=" + path + ", name=" + name + "]");
+        return leosRepository.createClonedDocument(templateId, path, name, metadata, cloneDocumentMetadataVO, Annex.class);
+    }
+
+    @Override
     public Annex createAnnexFromContent(String path, String name, AnnexMetadata metadata, byte[] content) {
         logger.debug("Creating Annex From Content... [tpath=" + path + ", name=" + name + "]");
         return leosRepository.createDocumentFromContent(path, name, metadata, Annex.class,

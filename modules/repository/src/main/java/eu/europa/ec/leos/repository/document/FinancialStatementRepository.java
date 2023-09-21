@@ -22,6 +22,18 @@ public interface FinancialStatementRepository {
     FinancialStatement createFinancialStatement(String templateId, String path, String name, FinancialStatementMetadata metadata);
 
     /**
+     * Creates an [FinancialStatement] document from a given template and with the specified characteristics.
+     *
+     * @param templateId the ID of the template for the FinancialStatement.
+     * @param path       the path where to create the FinancialStatement.
+     * @param name       the name of the FinancialStatement.
+     * @param metadata   the metadata of the FinancialStatement.
+     * @param cloneDocumentMetadataVO   the clone metadata of the FinancialStatement.
+     * @return the created FinancialStatement document.
+     */
+    FinancialStatement createClonedFinancialStatement(String templateId, String path, String name, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO);
+
+    /**
      * Creates an [FinancialStatement] document from a given content and with the specified characteristics.
      *
      * @param path     the path where to create the FinancialStatement.
