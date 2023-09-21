@@ -48,6 +48,8 @@
         @extend %documentFooter;
         @extend %xmlChangeDetails;
 
+        @extend %xmlTrackChanges;
+
         @include editor;
         
         display: block;

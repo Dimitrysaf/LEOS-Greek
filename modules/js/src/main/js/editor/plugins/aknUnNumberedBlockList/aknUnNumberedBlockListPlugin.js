@@ -38,9 +38,13 @@ define(function aknUnNumberedBlockListPluginModule(require) {
                         uls[i].setAttribute("data-akn-name","UnNumberedBlockList");
                         var listItems = uls[i].children;
                         for (var jj = 0; jj < listItems.length; jj++) {
+                            var previousNumber = listItems[jj].getAttribute("data-akn-num");
                             listItems[jj].setAttribute("data-akn-num","•");
                             listItems[jj].removeAttribute("data-akn-name");
                             listItems[jj].removeAttribute("style");
+                            if (event.editor.LEOS.isTrackChangesEnabled) {
+                                event.editor.fire("handleTcIndent", { data: listItems[jj], previousNumber: previousNumber } );
+                            }
                         }
                     }
                     event.editor.fire( 'unlockSnapshot' );
