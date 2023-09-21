@@ -33,6 +33,12 @@ public class FinancialStatementRepositoryImpl implements FinancialStatementRepos
     }
 
     @Override
+    public FinancialStatement createClonedFinancialStatement(String templateId, String path, String name, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO) {
+        logger.debug("Creating cloned FinancialStatement... [template=" + templateId + ", path=" + path + ", name=" + name + "]");
+        return leosRepository.createClonedDocument(templateId, path, name, metadata, cloneDocumentMetadataVO, FinancialStatement.class);
+    }
+
+    @Override
     public FinancialStatement createFinancialStatementFromContent(String path, String name, FinancialStatementMetadata metadata, byte[] content) {
         logger.debug("Creating FinancialStatement From Content... [tpath=" + path + ", name=" + name + "]");
         return leosRepository.createDocumentFromContent(path, name, metadata, FinancialStatement.class,

@@ -77,6 +77,7 @@ public class BillContext {
     private String moveDirection = null;
     private String annexId;
     private boolean eeaRelevance;
+    private String originRef;
 
     private DocumentVO billDocument;
     private DocumentVO annexDocument;
@@ -418,6 +419,7 @@ public class BillContext {
         annexContext.useActionMessageMap(actionMsgMap);
         annexContext.useAnnexNumber(annexNumber);
         annexContext.useCloneProposal(cloneProposal);
+        annexContext.useOriginRef(originRef);
         Annex annex = annexContext.executeCreateAnnex();
 
         String href = annex.getName();
@@ -621,4 +623,7 @@ public class BillContext {
         return annexId;
     }
 
+    public void useOriginRef(String originRef) {
+        this.originRef = originRef;
+    }
 }

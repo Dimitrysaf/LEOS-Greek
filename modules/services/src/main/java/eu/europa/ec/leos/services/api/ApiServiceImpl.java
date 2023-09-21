@@ -117,7 +117,6 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 @Service
 public abstract class ApiServiceImpl implements ApiService {
     private static final String DOC = "doc";
@@ -725,6 +724,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
             String proposalId = proposal.getId();
+            boolean isClonedProposal = proposal.isClonedProposal();
             try {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
@@ -740,6 +740,8 @@ public abstract class ApiServiceImpl implements ApiService {
                 CatalogItem templateItem = templateService.getTemplateItem(metadata.getDocTemplate());
                 String annexTemplate = templateItem.getItems().get(0).getId();
                 billContext.useAnnexTemplate(annexTemplate);
+                billContext.useCloneProposal(isClonedProposal);
+                billContext.useOriginRef(cloneOriginRef);
                 billContext.executeCreateBillAnnex();
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);

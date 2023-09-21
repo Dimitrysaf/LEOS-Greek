@@ -37,6 +37,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -78,7 +79,8 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     private final Provider<FinancialStatementContextService> financialStatementContextProvider;
     private final UpdateInternalReferencesProducer updateInternalReferencesProducer;
 
-
+    @Value("${leos.clone.originRef}")
+    private String cloneOriginRef;
 
     @Autowired
     FinancialStatementServiceImpl(FinancialStatementRepository financialStatementRepository,
@@ -134,6 +136,24 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
+    public FinancialStatement createClonedFinancialStatement(String templateId, String path, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO,
+                                                       String actionMessage, byte[] content) {
+        LOG.trace("Creating cloned FinancialStatement... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
+        final String FinancialStatementUid = Cuid.createCuid();
+        final String language = metadata.getLanguage();
+        StringBuilder refBuilder = new StringBuilder(STAT_FINANC_LEGIS_NAME_PREFIX).append(FinancialStatementUid).append("-").append(language.toLowerCase());
+        final String ref = refBuilder.toString();
+        final String fileName = refBuilder.append(STAT_FINANC_LEGIS_DOC_EXTENSION).toString();
+        metadata = metadata
+                .builder()
+                .withRef(ref)
+                .build();
+        FinancialStatement FinancialStatement = financialStatementRepository.createClonedFinancialStatement(templateId, path, fileName, metadata, cloneDocumentMetadataVO);
+        byte[] updatedBytes = updateDataInXml((content == null) ? getContent(FinancialStatement) : content, metadata);
+        return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+    }
+
+    @Override
     public FinancialStatement createFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, String actionMessage,
                                                                   byte[] content, String name) {
         LOG.trace("Creating FinancialStatement From Content... [path={}, metadata={}]", path, metadata);
@@ -166,6 +186,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                 .filter(CloneProposalMetadataVO::isClonedProposal)
                 .isPresent();
         context.useCloneProposal(useCloneProposal);
+        context.useOriginRef(cloneOriginRef);
         String actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
         context.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
         context.executeCreateFinancialStatement();

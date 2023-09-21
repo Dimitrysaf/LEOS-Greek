@@ -122,6 +122,31 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public <D extends LeosDocument, M extends LeosMetadata> D createClonedDocument(String templateId, String path, String name,
+                                                                             M metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, Class<? extends D> type) {
+        logger.trace("Creating cloned document... [template=" + templateId + ", path=" + path + ", name=" + name + ']');
+
+        checkSecurityContextEnsureUserIsPresent();
+
+        long startTimeNanos = System.nanoTime();
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(PropertyIds.NAME, name);
+        setDocumentCollaboratorProperties(metadata, properties);
+
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ORIGIN_REF), cloneDocumentMetadataVO.getOriginRef());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), cloneDocumentMetadataVO.getClonedFromRef());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_PROPOSAL), true);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
+
+        Document doc = repository.createDocumentFromSource(templateId, path, properties);
+        long time = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTimeNanos);
+        logger.trace("CMIS Repository document creation took " + time + " milliseconds.");
+
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalStateException("Unable to create document! [template=" + templateId + ", path=" + path + ", name=" + name + ']'));
+    }
+
+    @Override
     public <D extends LeosDocument, M extends LeosMetadata> D createDocumentFromContent(String path, String name, M metadata, Class<? extends D> type, String leosCategory, byte[] contentBytes) {
         logger.trace("Creating document From Content... [path=" + path + ", name=" + name + ']');
 

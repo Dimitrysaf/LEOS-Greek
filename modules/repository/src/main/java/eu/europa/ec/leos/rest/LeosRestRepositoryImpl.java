@@ -183,6 +183,38 @@ public class LeosRestRepositoryImpl implements LeosRepository {
             @CacheEvict(value = "documentByNameCache", allEntries = true),
             @CacheEvict(value = "documentByVersionCache", allEntries = true),
             @CacheEvict(value = "documentCache", allEntries = true) })
+    public <D extends LeosDocument, M extends LeosMetadata> D createClonedDocument(String templateId, String path, String name,
+                                                                             M metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, Class<? extends D> type) {
+        logger.trace("Creating document... [template=" + templateId + ", path=" + path + ", name=" + name + ']');
+
+        checkSecurityContextEnsureUserIsPresent();
+
+        Map<String, Object> properties = new HashMap<>();
+        setDocumentCollaboratorProperties(metadata, properties);
+        Set<LeosCategory> cats = LeosMapper.leosCategories(type);
+        if (!cats.isEmpty()) {
+            properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), cats.iterator().next());
+        }
+
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.ORIGIN_REF), cloneDocumentMetadataVO.getOriginRef());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_FROM), cloneDocumentMetadataVO.getClonedFromRef());
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_PROPOSAL), true);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
+
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromSource(extractRefFromId(templateId), path, name, properties,
+                securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
+
+        return toLeosDocument(doc, type, true)
+                .orElseThrow(() -> new IllegalStateException("Unable to create document! [template=" + templateId + ", path=" + path + ", name=" + name + ']'));
+    }
+
+    @Override
+    @PerformanceLogger
+    @Caching(evict = {
+            @CacheEvict(value = "documentByIdCache", allEntries = true),
+            @CacheEvict(value = "documentByNameCache", allEntries = true),
+            @CacheEvict(value = "documentByVersionCache", allEntries = true),
+            @CacheEvict(value = "documentCache", allEntries = true) })
     public <D extends LeosDocument, M extends LeosMetadata> D createDocumentFromContent(String path, String name, M metadata, Class<? extends D> type, String leosCategory, byte[] contentBytes) {
         logger.trace("Creating document From Content... [path=" + path + ", name=" + name + ']');
 
