@@ -33,13 +33,13 @@ public class LeosCmisAuthenticationProvider extends StandardAuthenticationProvid
     private PasswordConfigurator passwordConfigurator = new PasswordConfigurator();
     private Properties applicationProperties = new Properties();
 
-    public LeosCmisAuthenticationProvider() throws IOException {
+    public LeosCmisAuthenticationProvider() {
+        super();
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application_leos.properties");
             applicationProperties.load(inputStream);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Could not load property file 'application_leos.properties'. Error: {}", e.getMessage());
-            throw new IOException("Could not load property file 'application_leos.properties'.", e);
         }
     }
 
