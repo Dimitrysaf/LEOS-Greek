@@ -653,7 +653,7 @@ export class DocumentEditorComponent
       //reset toc state
       this.documentTocComponent.isToCDraft = false;
     } else {
-      this.closeInlineToCEdit();
+      this.closeInlineToCEdit(true);
     }
   }
 
@@ -690,7 +690,7 @@ export class DocumentEditorComponent
       if (save) {
         this.handleSave();
       }
-      this.closeInlineToCEdit();
+      this.closeInlineToCEdit(true);
     }
     this.unSavedDialog.closeDialog();
   }
@@ -1189,7 +1189,7 @@ export class DocumentEditorComponent
     xml.style.userSelect = 'all';
   }
 
-  private closeInlineToCEdit() {
+  private closeInlineToCEdit(reloadToc = false) {
     this.documentTocComponent.messageFromValidation = null;
     this.documentTocComponent.isDropValid = null;
     this.isEditMode = false;
@@ -1197,6 +1197,7 @@ export class DocumentEditorComponent
     this.documentTocComponent.clearHighlightInvalidNodes();
     this.coEditionWSService.removeTocInlineEdit(this.documentRef);
     this.documentService.setAnnotationMode('NORMAL');
+    if (reloadToc) this.tableOfContentService.reload();
   }
 
   private get tocStructure() {
