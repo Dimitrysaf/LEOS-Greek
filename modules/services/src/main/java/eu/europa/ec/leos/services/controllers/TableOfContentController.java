@@ -49,7 +49,7 @@ public class TableOfContentController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred while getting document toc validation - " + e);
-            return  new ResponseEntity<>("Unexpected error occurred while getting document toc validation", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting document toc validation", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }

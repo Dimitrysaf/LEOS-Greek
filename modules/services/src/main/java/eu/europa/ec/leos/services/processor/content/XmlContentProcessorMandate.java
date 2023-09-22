@@ -442,9 +442,13 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         TableOfContentItemVO parentItemVO = tocVo;
         while (true) {
             parentItemVO = parentItemVO.getParentItem();
-            if (getTagValueFromTocItemVo(parentItemVO).equals(POINT) || getTagValueFromTocItemVo(parentItemVO).equals(INDENT)) {
-                pointDepth++;
-            } else if (getTagValueFromTocItemVo(parentItemVO).equals(PARAGRAPH) || getTagValueFromTocItemVo(parentItemVO).equals(LEVEL)) {
+            if(parentItemVO != null) {
+                if (getTagValueFromTocItemVo(parentItemVO).equals(POINT) || getTagValueFromTocItemVo(parentItemVO).equals(INDENT)) {
+                    pointDepth++;
+                } else if (getTagValueFromTocItemVo(parentItemVO).equals(PARAGRAPH) || getTagValueFromTocItemVo(parentItemVO).equals(LEVEL)) {
+                    break;
+                }
+            } else {
                 break;
             }
         }

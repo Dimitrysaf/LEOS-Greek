@@ -61,14 +61,14 @@ export abstract class ValidateTocService {
         if (position === 'AS_CHILDREN') {
           const validationResult: NodeValidation = {
             success: true,
-            targetItem: nodeTarget,
+            targetItem: response.result.targetItem,
             sourceItem: nodeDragged,
             messageKey: 'toc.edit.window.drop.success.message',
           };
           const resultOfValidation = this.validateAddingItemAsChildOrSibling(
             validationResult,
             nodeDragged,
-            nodeTarget,
+            response.result.targetItem,
             treeData,
             parentNode,
             position,

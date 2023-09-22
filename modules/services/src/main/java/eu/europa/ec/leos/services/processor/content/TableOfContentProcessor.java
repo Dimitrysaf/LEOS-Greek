@@ -33,7 +33,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 public interface TableOfContentProcessor {
 
     static String getTagValueFromTocItemVo(TableOfContentItemVO tableOfContentItemVO) {
-        if (tableOfContentItemVO.getTocItem() != null && tableOfContentItemVO.getTocItem().getAknTag() != null) {
+        if (tableOfContentItemVO != null && tableOfContentItemVO.getTocItem() != null && tableOfContentItemVO.getTocItem().getAknTag() != null) {
             return tableOfContentItemVO.getTocItem().getAknTag().value();
         } else {
             return StringUtils.EMPTY;
@@ -41,7 +41,7 @@ public interface TableOfContentProcessor {
     }
 
     static Boolean checkIfParagraphNumberingIsToggled(TableOfContentItemVO tableOfContentItemVO) {
-        if (PARAGRAPH.equals(tableOfContentItemVO.getTocItem().getAknTag().value())
+        if (tableOfContentItemVO != null && PARAGRAPH.equals(tableOfContentItemVO.getTocItem().getAknTag().value())
                 && tableOfContentItemVO.getParentItem().isNumberingToggled() != null) {
             return tableOfContentItemVO.getParentItem().isNumberingToggled();
         }
