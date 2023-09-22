@@ -47,6 +47,10 @@
     display: none;
   }
 
+  span {
+    white-space: break-spaces;
+  }
+  
   ins, [leos\:action="insert"] {
     text-decoration: underline;
     mref, authorialnote, span.math {
