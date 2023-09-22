@@ -140,6 +140,12 @@
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
+        <dependency>
+            <groupId>eu.europa.ec.leos.pilot</groupId>
+            <artifactId>leos-config</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
