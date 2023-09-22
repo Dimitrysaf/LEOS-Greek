@@ -191,14 +191,27 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
 
     this.title = this.getTitle();
     this.subtitle = this.getSubtitle();
-
+    const currentVersions = this.docService.getVersionCompareIds();
     if (
       this.isRecent &&
       this.showMore &&
       this.versions.length > 0 &&
-      this.docService.getVersionCompareIds().length > 0
+      currentVersions.length > 0
     ) {
-      this.onSelectVersion(this.versions[1], {
+      const sortedCurrentVersions = this.sortVersions(...currentVersions);
+      const maxSortedVersion = this.sortVersions(
+        sortedCurrentVersions.at(-1),
+        sortedCurrentVersions[0],
+      )[1];
+      const maxVersion = this.versions.filter(
+        (v) => v.documentId === maxSortedVersion.documentId,
+      )[0];
+      const checkbox = document.getElementById(
+        `select-${maxVersion.documentId}`,
+      ) as HTMLInputElement;
+      checkbox.checked = false;
+      checkbox.dispatchEvent(new Event('change'));
+      this.onSelectVersion(maxVersion, {
         target: { checked: false },
       } as any);
       this.onSelectVersion(this.versions[0], {
