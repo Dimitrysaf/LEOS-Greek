@@ -34,7 +34,6 @@ public class LeosCmisAuthenticationProvider extends StandardAuthenticationProvid
     private Properties applicationProperties = new Properties();
 
     public LeosCmisAuthenticationProvider() {
-        super();
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application_leos.properties");
             applicationProperties.load(inputStream);
