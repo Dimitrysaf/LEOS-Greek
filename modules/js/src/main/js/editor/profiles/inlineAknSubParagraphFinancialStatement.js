@@ -55,6 +55,9 @@ define(function aknSubParagraphFSProfileModule(require) {
     plugins.push(require("plugins/leosSpellChecker/leosSpellCheckerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
 
     var pluginNames=[];
     var specificConfig={

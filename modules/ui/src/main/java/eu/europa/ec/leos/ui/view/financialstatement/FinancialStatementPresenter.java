@@ -26,10 +26,7 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
-import eu.europa.ec.leos.domain.repository.document.LegDocument;
-import eu.europa.ec.leos.domain.repository.document.Proposal;
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -45,6 +42,8 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.Annotate.AnnotateService;
@@ -73,6 +72,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.component.toc.CheckDeleteLastEditingChildTypeConsumer;
@@ -122,6 +122,7 @@ import eu.europa.ec.leos.web.event.component.VersionListRequestEvent;
 import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
 import eu.europa.ec.leos.web.event.component.WindowClosedEvent;
 import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
+import eu.europa.ec.leos.web.event.view.EnableTrackChangesEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingChildTypeEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
@@ -169,12 +170,7 @@ import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
@@ -239,6 +235,9 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private Element elementToEditAfterClose;
     private final TemplateConfigurationService templateConfigurationService;
     private boolean comparisonMode;
+    private TrackChangesContext trackChangesContext;
+
+    private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     protected FinancialStatementPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
                                           EventBus leosApplicationEventBus, UuidHelper uuidHelper, PackageService packageService,
@@ -255,7 +254,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                                           LegService legService, ProposalService proposalService, SearchService searchService,
                                           ExportPackageService exportPackageService, NotificationService notificationService,
                                           CloneContext cloneContext, AttachmentProcessor attachmentProcessor,
-                                          AnnotateService annotateService, CommonDelegate<FinancialStatement> commonDelegate, TemplateConfigurationService templateConfigurationService, InstanceTypeResolver instanceTypeResolver) {
+                                          AnnotateService annotateService, CommonDelegate<FinancialStatement> commonDelegate, TemplateConfigurationService templateConfigurationService, InstanceTypeResolver instanceTypeResolver,
+                                          TrackChangesContext trackChangesContext, RepositoryPropertiesMapper repositoryPropertiesMapper) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.financialStatementScreen = financialStatementScreen;
         this.financialStatementProcessor = financialStatementProcessor;
@@ -289,6 +289,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         this.openElementEditors = new ArrayList<>();
         this.templateConfigurationService = templateConfigurationService;
         this.instanceTypeResolver = instanceTypeResolver;
+        this.trackChangesContext = trackChangesContext;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
     }
 
     @Override
@@ -455,6 +457,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         documentId = financialStatement.getId();
         structureContextProvider.get().useDocumentTemplate(financialStatement.getMetadata().getOrError(() -> "Financial statement metadata is required!").getDocTemplate());
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        populateTrackChangesContext(financialStatement);
     }
 
     private List<VersionVO> getVersionVOS() {
@@ -479,6 +482,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 eventBus.post(new AddChangeDetailsMenuEvent());
                 financialStatementScreen.initTrackChanges(proposalRef);
             }
+            populateTrackChangesContext(financialStatement);
         }
         catch (Exception ex) {
             LOG.error("Error while processing document", ex);
@@ -1285,6 +1289,14 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, financialStatement.getVersionSeriesId(), id));
     }
 
+    @Subscribe
+    public void enableTrackChanges(EnableTrackChangesEvent event) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), event.isEnabled());
+        FinancialStatement financialStatement = financialStatementService.updateFinancialStatement(documentId, properties, false);
+        populateTrackChangesContext(financialStatement);
+    }
+
     private void resetCloneProposalMetadataVO() {
         cloneContext.setCloneProposalMetadataVO(null);
     }
@@ -1310,5 +1322,9 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         FinancialStatement financialStatement = getDocument();
         byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
         new CheckDeleteLastEditingChildTypeConsumer(xmlContent, xmlContentProcessor, messageHelper, eventBus).accept(event);
+    }
+
+    private void populateTrackChangesContext(FinancialStatement financialStatement) {
+        this.trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
     }
 }
