@@ -98,7 +98,7 @@ export class DocumentService implements OnDestroy {
   searchResultsCounter$: Observable<number>;
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
-  navigationPaneCollapse$: Observable<boolean>;
+  navigationSidebarCollapsed$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
@@ -144,7 +144,7 @@ export class DocumentService implements OnDestroy {
   private searchAndReplaceTextBS = new BehaviorSubject<string>('');
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
-  private navigationPaneCollapseBS = new BehaviorSubject<boolean>(false);
+  private navigationSidebarCollapsedBS = new BehaviorSubject<boolean>(false);
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
   private documentRefAndCategoryBS =
@@ -304,7 +304,8 @@ export class DocumentService implements OnDestroy {
 
     this.setVersionFilter('all');
 
-    this.navigationPaneCollapse$ = this.navigationPaneCollapseBS.asObservable();
+    this.navigationSidebarCollapsed$ =
+      this.navigationSidebarCollapsedBS.asObservable();
     this.userGuidanceVisible$ = this.userGuidanceVisibleBS.asObservable();
     this.reloadTrigger$ = this.reloadTriggerBS.asObservable();
 
@@ -668,8 +669,8 @@ export class DocumentService implements OnDestroy {
     this.replacedTextPresent = false;
   }
 
-  seeNavigation() {
-    this.navigationPaneCollapseBS.next(!this.navigationPaneCollapseBS.value);
+  toggleNavigationSidebar(expanded = this.navigationSidebarCollapsedBS.value) {
+    this.navigationSidebarCollapsedBS.next(!expanded);
   }
 
   seeUserGuidance() {

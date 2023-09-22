@@ -98,8 +98,7 @@ export class DocumentEditorComponent
   documentConfig: DocumentConfig;
   contributionForView: string;
 
-  isTocPaneCollapsed = true;
-  isNavigationPaneExpanded = true;
+  isTocPaneExpanded = true;
   isAnnotationsPaneCollapsed = true;
   isContributionAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
@@ -134,7 +133,7 @@ export class DocumentEditorComponent
   processed = false;
   contributions: ContributionVO[] = [];
   contribution: ContributionVO;
-  contributionChanges$: Observable<NodeListOf<HTMLElement>>;
+  contributionChanges$: Observable<HTMLElement[]>;
   contributionIndex = 0;
   contributionTemporaryDataId?: string;
   contributionTemporaryDataDocument?: string;
@@ -180,9 +179,7 @@ export class DocumentEditorComponent
   private destroy$: Subject<any> = new Subject();
   private scrollables = new Map<Element, () => void>();
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
-  private contributionChangesBS = new BehaviorSubject<NodeListOf<HTMLElement>>(
-    null,
-  );
+  private contributionChangesBS = new BehaviorSubject<HTMLElement[]>([]);
 
   constructor(
     public blockDocumentEditorService: BlockDocumentEditorService,
@@ -490,11 +487,6 @@ export class DocumentEditorComponent
     }
   }
 
-  onToggleTocPaneCollapsed(isTocPaneCollapsed = !this.isTocPaneCollapsed) {
-    this.isTocPaneCollapsed = isTocPaneCollapsed;
-    this.documentService.seeNavigation();
-  }
-
   onToggleAnnotationsPaneCollapsed(
     collapsed = !this.isAnnotationsPaneCollapsed,
   ) {
@@ -774,8 +766,8 @@ export class DocumentEditorComponent
     }
   }
 
-  onNavigationPaneExpanded(e: any) {
-    this.isNavigationPaneExpanded = !this.isNavigationPaneExpanded;
+  onTocPaneExpanded(e: any) {
+    this.isTocPaneExpanded = !this.isTocPaneExpanded;
     if (this.isVersionsPaneExpanded) {
       this.isVersionsPaneExpanded = false;
     }
@@ -786,8 +778,8 @@ export class DocumentEditorComponent
 
   onVersionsPaneExpanded(e: any) {
     this.isVersionsPaneExpanded = !this.isVersionsPaneExpanded;
-    if (this.isNavigationPaneExpanded) {
-      this.isNavigationPaneExpanded = false;
+    if (this.isTocPaneExpanded) {
+      this.isTocPaneExpanded = false;
     }
     if (this.isContributionsPaneExpanded) {
       this.isContributionsPaneExpanded = false;
@@ -796,8 +788,8 @@ export class DocumentEditorComponent
 
   onContributionsPaneExpanded(e: any) {
     this.isContributionsPaneExpanded = !this.isContributionsPaneExpanded;
-    if (this.isNavigationPaneExpanded) {
-      this.isNavigationPaneExpanded = false;
+    if (this.isTocPaneExpanded) {
+      this.isTocPaneExpanded = false;
     }
     if (this.isVersionsPaneExpanded) {
       this.isVersionsPaneExpanded = false;
@@ -824,7 +816,7 @@ export class DocumentEditorComponent
       this.contributionChangesBS.value.length - 1
     ) {
       const nextChange = this.contributionIndex + 1;
-      this.contributionChangesBS.value.item(nextChange)?.scrollIntoView({
+      this.contributionChangesBS.value[nextChange]?.scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       });
@@ -836,7 +828,7 @@ export class DocumentEditorComponent
     if (this.contributionIndex > 0) {
       {
         const prevChange = this.contributionIndex - 1;
-        this.contributionChangesBS.value.item(prevChange)?.scrollIntoView({
+        this.contributionChangesBS.value[prevChange]?.scrollIntoView({
           behavior: 'smooth',
           block: 'nearest',
         });
@@ -1014,11 +1006,12 @@ export class DocumentEditorComponent
   }
 
   private handleContributionsChanges() {
-    this.contributionChangesBS.next(
-      this.contributionViewContainerElement.nativeElement.querySelectorAll(
+    const nodeList =
+      this.contributionViewContainerElement.nativeElement?.querySelectorAll(
         '.merge-contribution-wrapper',
-      ),
-    );
+      );
+    const elemList = nodeList ? [...nodeList] : [];
+    this.contributionChangesBS.next(elemList);
   }
 
   private handleCompareChanges() {

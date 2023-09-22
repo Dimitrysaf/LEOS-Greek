@@ -10,6 +10,7 @@ export class DocumentServiceAnnotationsStub {
   documentRef: string;
   documentType: string;
   documentView$ = of(null);
+  reloadTrigger$ = of(0);
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
 
   setDocumentId(id: string) {
