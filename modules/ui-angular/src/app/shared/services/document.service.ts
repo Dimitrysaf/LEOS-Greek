@@ -1234,13 +1234,26 @@ export class DocumentService implements OnDestroy {
     prevElementId: string,
     elementType: string,
   ) {
-    const nextSibling =
-      document.getElementById(prevElementId).nextElementSibling;
-    if (nextSibling.tagName.toLowerCase() === elementType) {
+    // let foundElement;
+    // let i = 0;
+
+    const foundElement = document.getElementById(prevElementId);
+    // i++;
+    console.log(
+      'findNextElementOfTheSameTypeInDocument>start',
+      foundElement,
+      prevElementId,
+    );
+
+    const nextSibling = foundElement.nextElementSibling;
+    if (nextSibling && nextSibling.tagName.toLowerCase() === elementType) {
       return nextSibling.getAttribute('id');
     } else {
       const secondLevelSibling = nextSibling.nextElementSibling;
-      if (secondLevelSibling.tagName.toLowerCase() === elementType) {
+      if (
+        secondLevelSibling &&
+        secondLevelSibling.tagName.toLowerCase() === elementType
+      ) {
         return secondLevelSibling.getAttribute('id');
       }
     }
