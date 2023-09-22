@@ -1,31 +1,15 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
-import { Subject, takeUntil } from 'rxjs';
+import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit,} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {Subject, takeUntil} from 'rxjs';
 
-import { Permission } from '@/shared';
-import { noWhitespaceValidator } from '@/shared/utils/validators';
+import {Permission} from '@/shared';
+import {noWhitespaceValidator} from '@/shared/utils/validators';
 
-import { ProposalDetailsService } from '../../services/proposal-details.service';
+import {ProposalDetailsService} from '../../services/proposal-details.service';
 
 @Component({
   selector: 'app-proposal-header',
   templateUrl: './proposal-header.component.html',
-  styleUrls: ['./proposal-header.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProposalHeaderComponent implements OnInit, OnDestroy {
@@ -33,8 +17,6 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
   @Input() editableTitle: string;
   @Input() isClonedProposal: boolean;
   @Input() originRef: string | null;
-  @Output() saveTitle: EventEmitter<string> = new EventEmitter();
-  @ViewChild('editTitle') dialog: EuiDialogComponent;
 
   title: string;
   createForm: FormGroup;
@@ -62,21 +44,5 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
     this.proposalDetailsService.permissions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((perms) => (this.permissions = perms));
-  }
-
-  handleEdit() {
-    this.dialog.openDialog();
-  }
-
-  handleSave() {
-    this.dialog.closeDialog();
-    this.saveTitle.emit(this.createForm.get('docPurpose').value.trim());
-  }
-  handleClose() {
-    this.dialog.closeDialog();
-  }
-
-  isFormValid(): boolean {
-    return this.createForm.valid;
   }
 }
