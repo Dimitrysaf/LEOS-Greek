@@ -271,7 +271,7 @@ public class MandateTocEditor extends AbstractTocEditor {
             case SUBPARAGRAPH:
                 if (!isNumbered(actualTargetItem)) {
                     result.setSuccess(false);
-                    result.setMessageKey("toc.edit.window.drop.error.subparagraph.message");
+                    result.setMessageKey("toc.edit.window.drop.error.subparagraph.unnumbered.message");
                     return false;
                 }
                 break;
