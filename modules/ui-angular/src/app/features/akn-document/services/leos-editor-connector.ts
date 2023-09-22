@@ -298,7 +298,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     if (!this.isElementSaved) {
       //   this.documentService.reloadDocument();
       // } else {
-      this.documentService.resetDocument();
+      this.documentService.reloadDocument();
     }
     this.isElementSaved = false;
     this.setEditorOpenState('CLOSE');
@@ -508,18 +508,20 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     });
 
     promise.then(() => {
-      const elemId =
-        this.documentService.findNextElementOfTheSameTypeInDocument(
+      let elemId = null;
+      setTimeout(() => {
+        elemId = this.documentService.findNextElementOfTheSameTypeInDocument(
           prevElemId,
           elemType,
         );
-      if (elemId !== null) {
-        this.editElementAction({
-          action: 'edit',
-          elementId: elemId,
-          elementType: elemType,
-        });
-      }
+        if (elemId !== null) {
+          this.editElementAction({
+            action: 'edit',
+            elementId: elemId,
+            elementType: elemType,
+          });
+        }
+      }, 1000);
     });
   }
 }
