@@ -91,14 +91,14 @@
         <!-- See navigation panel -->
         <li
           euiListItem
-          (click)="doc.seeNavigation()"
+          (click)="doc.toggleNavigationSidebar()"
           *ngIf="seeNavigationPanelVisible"
         >
           <button euiListItem>
             <eui-icon
               euiSizeS
               [iconClass]="
-                (doc.navigationPaneCollapse$ | async)
+                (doc.navigationSidebarCollapsed$ | async)
                   ? 'eui-icon-checkbox-outline'
                   : 'eui-icon-checkbox'
               "

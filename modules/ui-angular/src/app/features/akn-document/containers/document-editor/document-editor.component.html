@@ -39,8 +39,8 @@
         #tocPane
         class="toc-pane"
         isCollapsible
-        [isCollapsed]="documentService.navigationPaneCollapse$ | async"
-        (collapsed)="onToggleTocPaneCollapsed()"
+        [isCollapsed]="documentService.navigationSidebarCollapsed$ | async"
+        (collapsed)="documentService.toggleNavigationSidebar(!$event)"
         style="flex-basis: 400px"
       >
         <eui-page-column-body>
@@ -48,8 +48,8 @@
             class="eui-u-mt-s"
             label="{{ 'page.editor.navigation-pane.label' | translate }}"
             isExpandable
-            [isExpanded]="isNavigationPaneExpanded"
-            (expanded)="onNavigationPaneExpanded($event)"
+            [isExpanded]="isTocPaneExpanded"
+            (expanded)="onTocPaneExpanded($event)"
           >
             <div class="d-flex flex-row align-items-center">
               <!-- Expand all -->
@@ -269,7 +269,7 @@
       <app-resize-handle
         [leftEl]="tocPaneElement?.nativeElement"
         [rightEl]="documentPaneElement?.nativeElement"
-        *ngIf="!isTocPaneCollapsed"
+        *ngIf="(documentService.navigationSidebarCollapsed$ | async) === false"
       ></app-resize-handle>
 
       <!-- document -->
