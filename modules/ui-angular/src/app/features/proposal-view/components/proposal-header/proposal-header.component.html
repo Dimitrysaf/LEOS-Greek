@@ -1,81 +1,27 @@
-<form [formGroup]="createForm">
-  <header class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-xs">
-    <h1 class="flex-grow-1 eui-u-font-2xl">
-      {{ nonEditablePartOfTitle }} {{ editableTitle }}
-    </h1>
+<header class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-xs">
+  <h1 class="flex-grow-1 eui-u-font-2xl">
+    {{ nonEditablePartOfTitle }} {{ editableTitle }}
+  </h1>
 
-    <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
-      <button
-        euiButton
-        euiSizeS
-        euiOutline
-        euiPrimary
-        class="eui-u-ml-s"
-        [euiTooltip]="
-          'page.collection.proposal-header.edit.tooltip' | translate
-        "
-        (click)="handleEdit()"
-      >
-        {{ 'page.collection.proposal-header.edit' | translate }}
-      </button>
-    </ng-container>
-
-    <eui-dialog
-      #editTitle
-      [title]="
-        'page.collection.proposal-header.edit-title-dialog.title' | translate
-      "
-    >
-      <div euiInputGroup class="flex-row">
-        <label class="label">
-          {{
-            'page.collection.proposal-header.edit-title-dialog.label'
-              | translate
-          }}</label
-        >
-        <div class="d-flex flex-wrap">
-          <span>{{ nonEditablePartOfTitle }}</span>
-          <input
-            euiInputText
-            [(ngModel)]="title"
-            formControlName="docPurpose"
-          />
-        </div>
-      </div>
-      <eui-dialog-footer>
-        <div class="d-flex flex-row justify-content-end">
-          <button euiButton euiSecondary (click)="handleClose()">
-            {{ 'global.actions.cancel' | translate }}
-          </button>
-          <button
-            euiButton
-            euiPrimary
-            (click)="handleSave()"
-            [disabled]="!isFormValid()"
-            class="save-button"
-          >
-            {{ 'global.actions.save' | translate }}
-          </button>
-        </div>
-      </eui-dialog-footer>
-    </eui-dialog>
-
-    <app-proposal-actions-dropdown
-      [permissions]="permissions"
-      class="eui-u-ml-s"
-    ></app-proposal-actions-dropdown>
-  </header>
-  <header
-    *ngIf="isClonedProposal"
-    class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-l"
-  >
-    <eui-chip euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
-      <span euiLabel>{{
-        'page.collection.proposal-header.contribution' | translate
-      }}</span>
-    </eui-chip>
-    <eui-chip *ngIf="originRef" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
-      <span euiLabel>{{ originRef }}</span>
-    </eui-chip>
-  </header>
-</form>
+  <app-proposal-actions-dropdown
+    [permissions]="permissions"
+    [nonEditablePartOfTitle]="nonEditablePartOfTitle"
+    [editableTitle]="editableTitle"
+    [isClonedProposal]="isClonedProposal"
+    [originRef]="originRef"
+    class="eui-u-ml-s"
+  ></app-proposal-actions-dropdown>
+</header>
+<header
+  *ngIf="isClonedProposal"
+  class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-l"
+>
+  <eui-chip euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+    <span euiLabel>{{
+      'page.collection.proposal-header.contribution' | translate
+    }}</span>
+  </eui-chip>
+  <eui-chip *ngIf="originRef" euiSize2XL class="eui-u-mr-2xs eui-u-mb-2xs">
+    <span euiLabel>{{ originRef }}</span>
+  </eui-chip>
+</header>

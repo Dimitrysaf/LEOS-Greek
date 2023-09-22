@@ -6,6 +6,13 @@
     </button>
     <eui-dropdown-content>
       <ul euiList>
+        <ng-container *ngIf="permissions?.includes('CAN_UPDATE')">
+          <li euiListItem (click)="openEditTitleDialog()">
+            <button euiListItem>
+              {{ 'page.collection.actions-dropdown.changeTitle' | translate }}
+            </button>
+          </li>
+        </ng-container>
         <ng-container *ngIf="permissions?.includes('CAN_DOWNLOAD_PROPOSAL')">
           <li euiListItem (click)="handleDownload()">
             <button euiListItem>
@@ -63,6 +70,16 @@
               "
               (confirmDeletion)="handleDelete()"
             ></app-confirm-dialog>
+
+            <app-edit-title-dialog
+              #editTitleDialog
+              [permissions]="permissions"
+              [nonEditablePartOfTitle]="nonEditablePartOfTitle"
+              [editableTitle]="editableTitle"
+              [isClonedProposal]="isClonedProposal"
+              [originRef]="originRef"
+              class="eui-u-ml-s"
+            ></app-edit-title-dialog>
           </li>
         </ng-container>
       </ul>
