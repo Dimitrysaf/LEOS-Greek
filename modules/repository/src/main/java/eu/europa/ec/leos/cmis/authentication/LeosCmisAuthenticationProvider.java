@@ -13,18 +13,35 @@
  */
 package eu.europa.ec.leos.cmis.authentication;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.Principal;
+import java.util.Properties;
+
 import org.apache.chemistry.opencmis.client.bindings.spi.StandardAuthenticationProvider;
-import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import java.security.Principal;
+import eu.europa.ec.leos.config.PasswordConfigurator;
 
 public class LeosCmisAuthenticationProvider extends StandardAuthenticationProvider {
 
-    private static final long serialVersionUID = 1L;
-    private static final PropertiesHelper propertiesHelper = new PropertiesHelper();
+    private static final Logger LOG = LoggerFactory.getLogger(LeosCmisAuthenticationProvider.class);
+
+    private PasswordConfigurator passwordConfigurator = new PasswordConfigurator();
+    private Properties applicationProperties = new Properties();
+
+    public LeosCmisAuthenticationProvider() throws IOException {
+        try {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("application_leos.properties");
+            applicationProperties.load(inputStream);
+        } catch (IOException e) {
+            LOG.error("Could not load property file 'application_leos.properties'. Error: {}", e.getMessage());
+            throw new IOException("Could not load property file 'application_leos.properties'.", e);
+        }
+    }
 
     @Override
     protected String getUser() {
@@ -41,23 +58,14 @@ public class LeosCmisAuthenticationProvider extends StandardAuthenticationProvid
 
     @Override
     protected String getPassword() {
-        return propertiesHelper.repositoryPassword;
+        return passwordConfigurator.getProperty("leos.cmis.repository.password");
     }
 
    protected String getTechnicalUserName(){
-        return propertiesHelper.repositoryUsername;
+        return applicationProperties.getProperty("leos.cmis.repository.username");
    }
 
     protected Authentication getPrincipal() {
         return SecurityContextHolder.getContext().getAuthentication();
-    }
-
-    private static class PropertiesHelper extends SpringBeanAutowiringSupport {
-
-        @Value("${leos.cmis.repository.username}")
-        public String repositoryUsername;
-
-        @Value("${leos.cmis.repository.password}")
-        public String repositoryPassword;
     }
 }
