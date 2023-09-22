@@ -112,7 +112,7 @@ export class DocumentEditorComponent
   isEditMode = false;
 
   compareChanges: NodeListOf<HTMLElement>;
-  compareIndex = 0;
+  compareIndex = -1;
   isAsyncScrollEnabled = false;
   arrowClicked = false;
   isScrollFromButton: boolean;
@@ -556,12 +556,14 @@ export class DocumentEditorComponent
   }
 
   handlePrevChange() {
-    if (this.compareIndex > 0) {
+    if (this.compareIndex > -1) {
       this.isScrollFromButton = true;
-      const prevChange = this.compareIndex - 1;
-      this.compareChanges
-        .item(prevChange)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const filteredParents = this.getFilteredParents();
+      const prevIndex = this.compareIndex - 1 < 0 ? 0 : this.compareIndex - 1;
+      filteredParents[prevIndex].scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
       this.compareIndex--;
     }
   }
@@ -592,12 +594,16 @@ export class DocumentEditorComponent
   }
 
   handleNextChange() {
-    if (this.compareIndex !== this.compareChanges.length - 1) {
+    const filteredParents = this.getFilteredParents();
+    if (
+      this.compareIndex !== filteredParents.length - 1 &&
+      filteredParents.length > 0
+    ) {
       this.isScrollFromButton = true;
-      const nextChange = this.compareIndex + 1;
-      this.compareChanges
-        .item(nextChange)
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      filteredParents[this.compareIndex + 1].scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
       this.compareIndex++;
     }
   }
@@ -727,7 +733,7 @@ export class DocumentEditorComponent
 
   clearVersionComparisonView() {
     this.compareChanges = null;
-    this.compareIndex = 0;
+    this.compareIndex = -1;
     this.removeAllPins();
     this.versionsComparisonForView = null;
   }
@@ -1436,5 +1442,24 @@ export class DocumentEditorComponent
         this.hostElRef?.nativeElement.querySelectorAll('.document-pane') ?? [];
       [...documentPanes].forEach((el) => (el.style.flexBasis = ''));
     });
+  }
+
+  private getFilteredParents(): HTMLElement[] {
+    const filteredParents: HTMLElement[] = [];
+    this.compareChanges.forEach((change) => {
+      const parent = change.parentElement;
+      if (
+        parent &&
+        !parent.classList.contains('leos-content-new-cn') &&
+        !parent.classList.contains('leos-content-removed-cn') &&
+        !parent.classList.contains('leos-content-new') &&
+        !parent.classList.contains('leos-content-removed') &&
+        !parent.classList.contains('leos-double-compare-removed') &&
+        !parent.classList.contains('leos-double-compare-added')
+      ) {
+        filteredParents.push(parent);
+      }
+    });
+    return filteredParents;
   }
 }
