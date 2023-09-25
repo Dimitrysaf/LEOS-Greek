@@ -388,7 +388,8 @@ define(function leosTrackChangesModule(require) {
         insertNewData: function(editor, data) {
             editor.getSelection().getRanges()[0].optimize();
             var tcElement = core.searchTrackChangeElementCheckingParent(editor, core.INSERT_ACTION);
-            if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor)) && !tcElement[0].getId()) {
+            if (tcElement && tcElement[0] && (tcElement[0].getAttribute(core.UID_ATTR) === core.getUserId(editor))
+                    && (!tcElement[0].getId() || (tcElement[0].getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION))) {
                 if (tcElement[0] && core.isTrackChangeElement(tcElement[0]) && tcElement[0].getText().length > 0 && tcElement[0].getText().trim() === '') {
                     tcElement[0].appendText(data);
                     core.setToPosition(editor, tcElement[0], CKEDITOR.POSITION_AFTER_END);

@@ -25,6 +25,7 @@ define(function aknNumberedBlockListPluginModule(require) {
 
     var pluginDefinition = {
         init : function init(editor) {
+            $(editor.element.$).on("keyup mouseup", null, [editor], _handleClickEvent);
 
             //Go through ol elements to set "data-akn-name" attribute and through ascendant li elements to set "data-akn-num" attributes.
             editor.on("change", function(event) {
@@ -52,7 +53,14 @@ define(function aknNumberedBlockListPluginModule(require) {
             });
         }
     };
-    
+
+     var _handleClickEvent = function _handleClickEvent(event) {
+        var range = event.data[0].getSelection().getRanges()[0];
+        if(range.collapsed) {
+            range.checkEndOfBlock(true);
+        }
+    }
+
     pluginTools.addPlugin(pluginName, pluginDefinition);
     var BLOCKLIST = "blockList";
     
