@@ -56,6 +56,7 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { parentHasClass } from '@/shared/utils';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
@@ -70,6 +71,15 @@ enum PageMode {
   CompareVersions,
   Contribution,
 }
+
+const compareClasses = [
+  'leos-content-removed',
+  'leos-content-removed-cn',
+  'leos-content-new',
+  'leos-content-new-cn',
+  'leos-double-compare-removed',
+  'leos-double-compare-added',
+];
 
 @Component({
   selector: 'app-document-editor',
@@ -112,6 +122,8 @@ export class DocumentEditorComponent
 
   compareChanges: NodeListOf<HTMLElement>;
   compareIndex = -1;
+  navigationAnchorsList: HTMLElement[];
+  navigationAnchorIndex = -1;
   isAsyncScrollEnabled = false;
   arrowClicked = false;
   isScrollFromButton: boolean;
@@ -548,15 +560,17 @@ export class DocumentEditorComponent
   }
 
   handlePrevChange() {
-    if (this.compareIndex > -1) {
+    if (this.navigationAnchorIndex > -1) {
       this.isScrollFromButton = true;
-      const filteredParents = this.getFilteredParents();
-      const prevIndex = this.compareIndex - 1 < 0 ? 0 : this.compareIndex - 1;
-      filteredParents[prevIndex].scrollIntoView({
+      // const filteredParents = this.getFilteredParents();
+      const prevIndex =
+        this.navigationAnchorIndex - 1 < 0 ? 0 : this.navigationAnchorIndex - 1;
+      this.navigationAnchorsList[prevIndex].scrollIntoView({
         behavior: 'smooth',
         block: 'nearest',
       });
-      this.compareIndex--;
+      this.navigationAnchorIndex--;
+      this.arrowClicked = true;
     }
   }
 
@@ -586,17 +600,19 @@ export class DocumentEditorComponent
   }
 
   handleNextChange() {
-    const filteredParents = this.getFilteredParents();
     if (
-      this.compareIndex !== filteredParents.length - 1 &&
-      filteredParents.length > 0
+      this.navigationAnchorIndex !== this.navigationAnchorsList.length - 1 &&
+      this.navigationAnchorsList.length > 0
     ) {
       this.isScrollFromButton = true;
-      filteredParents[this.compareIndex + 1].scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-      });
-      this.compareIndex++;
+      this.navigationAnchorsList[this.navigationAnchorIndex + 1].scrollIntoView(
+        {
+          behavior: 'smooth',
+          block: 'nearest',
+        },
+      );
+      this.navigationAnchorIndex++;
+      this.arrowClicked = true;
     }
   }
 
@@ -1042,6 +1058,7 @@ export class DocumentEditorComponent
     );
     if (!container) return;
     this.handlePins(container);
+    this.getNavigationAnchors();
   }
 
   private handlePins(container: HTMLElement) {
@@ -1455,5 +1472,70 @@ export class DocumentEditorComponent
       }
     });
     return filteredParents;
+  }
+
+  private getNavigationAnchors() {
+    const navigationAnchors: HTMLElement[] = [];
+    this.compareChanges.forEach((elem) => {
+      if (elem.tagName.toLowerCase() === 'span') {
+        if (!parentHasClass(elem, compareClasses)) {
+          if (
+            !navigationAnchors.find(
+              (element) => element.id === elem.parentElement.id,
+            )
+          ) {
+            navigationAnchors.push(elem.parentElement);
+          }
+        }
+        if (
+          parentHasClass(elem, compareClasses) &&
+          !parentHasClass(elem.parentElement, compareClasses)
+        ) {
+          if (
+            !navigationAnchors.find(
+              (element) => element.id === elem.parentElement.id,
+            )
+          ) {
+            navigationAnchors.push(elem.parentElement);
+          }
+        }
+
+        if (
+          parentHasClass(elem, compareClasses) &&
+          parentHasClass(elem.parentElement, compareClasses) &&
+          !parentHasClass(elem.parentElement.parentElement, compareClasses)
+        ) {
+          if (
+            !navigationAnchors.find(
+              (element) => element.id === elem.parentElement.parentElement.id,
+            )
+          ) {
+            navigationAnchors.push(elem.parentElement.parentElement);
+          }
+        }
+        if (
+          parentHasClass(elem, compareClasses) &&
+          parentHasClass(elem.parentElement, compareClasses) &&
+          parentHasClass(elem.parentElement.parentElement, compareClasses) &&
+          !parentHasClass(
+            elem.parentElement.parentElement.parentElement,
+            compareClasses,
+          )
+        ) {
+          if (
+            !navigationAnchors.find(
+              (element) =>
+                element.id ===
+                elem.parentElement.parentElement.parentElement.id,
+            )
+          ) {
+            navigationAnchors.push(
+              elem.parentElement.parentElement.parentElement,
+            );
+          }
+        }
+      }
+    });
+    this.navigationAnchorsList = navigationAnchors;
   }
 }
