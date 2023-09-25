@@ -1,11 +1,22 @@
-import {ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit,} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Subject, takeUntil} from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { Subject, takeUntil } from 'rxjs';
 
-import {Permission} from '@/shared';
-import {noWhitespaceValidator} from '@/shared/utils/validators';
+import { Permission } from '@/shared';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
 
-import {ProposalDetailsService} from '../../services/proposal-details.service';
+import { ProposalDetailsService } from '../../services/proposal-details.service';
 
 @Component({
   selector: 'app-proposal-header',

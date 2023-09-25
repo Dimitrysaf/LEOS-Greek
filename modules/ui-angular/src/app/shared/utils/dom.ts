@@ -113,3 +113,17 @@ export const scrollInParent = (
     behavior: options.behavior,
   });
 };
+
+export const parentHasClass = (
+  element: HTMLElement,
+  classes: string[],
+): boolean => {
+  let hasClass = false;
+  for (const cl of classes) {
+    hasClass = element.parentElement.classList.contains(cl);
+    if (hasClass) {
+      break;
+    }
+  }
+  return hasClass;
+};

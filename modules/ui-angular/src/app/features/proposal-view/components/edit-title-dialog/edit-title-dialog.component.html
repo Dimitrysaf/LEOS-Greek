@@ -1,15 +1,19 @@
 <form [formGroup]="createForm">
   <eui-dialog
     #editTitleDialog
-    [title]="'page.collection.proposal-header.edit-title-dialog.title' | translate">
+    [title]="
+      'page.collection.proposal-header.edit-title-dialog.title' | translate
+    "
+  >
     <div euiInputGroup class="flex-row">
       <label class="label">
-        {{'page.collection.proposal-header.edit-title-dialog.label' | translate }}
+        {{
+          'page.collection.proposal-header.edit-title-dialog.label' | translate
+        }}
       </label>
       <div class="d-flex flex-wrap">
         <span>{{ nonEditablePartOfTitle }}</span>
-        <input euiInputText
-               formControlName="docPurpose"/>
+        <input euiInputText formControlName="docPurpose" />
       </div>
     </div>
     <eui-dialog-footer>

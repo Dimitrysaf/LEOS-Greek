@@ -7,7 +7,7 @@ import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete
 import { ConfirmDialogComponent } from '@/shared/components/confirm-dialog/confirm-dialog.component';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
-import {EditTitleDialogComponent} from "../edit-title-dialog/edit-title-dialog.component";
+import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog.component';
 
 @Component({
   selector: 'app-proposal-actions-dropdown',

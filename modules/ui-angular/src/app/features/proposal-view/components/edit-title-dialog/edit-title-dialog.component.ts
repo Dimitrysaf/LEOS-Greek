@@ -1,19 +1,22 @@
-import {Component, Input, OnInit, OnDestroy, ViewChild,} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {EuiDialogComponent} from '@eui/components/eui-dialog';
-import {Subject, takeUntil} from 'rxjs';
+import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { Subject, takeUntil } from 'rxjs';
 
-import {Permission} from '@/shared';
-import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
-
-import {noWhitespaceValidator} from '@/shared/utils/validators';
+import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
+import { Permission } from '@/shared';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 @Component({
   selector: 'app-edit-title-dialog',
   templateUrl: './edit-title-dialog.component.html',
-  styleUrls: ['./edit-title-dialog.component.scss']
+  styleUrls: ['./edit-title-dialog.component.scss'],
 })
-
 export class EditTitleDialogComponent implements OnInit, OnDestroy {
   @Input() nonEditablePartOfTitle: string;
   @Input() editableTitle: string;
@@ -28,9 +31,8 @@ export class EditTitleDialogComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private proposalDetailsService: ProposalDetailsService
-  ) {
-  }
+    private proposalDetailsService: ProposalDetailsService,
+  ) {}
 
   ngOnInit(): void {
     this.createForm = this.fb.group({
@@ -59,7 +61,7 @@ export class EditTitleDialogComponent implements OnInit, OnDestroy {
 
   handleSave() {
     this.dialog.closeDialog();
-    let newTitle = this.createForm.get('docPurpose').value.trim();
+    const newTitle = this.createForm.get('docPurpose').value.trim();
     this.proposalDetailsService.updateProposalMetadata(newTitle, null);
   }
 }
