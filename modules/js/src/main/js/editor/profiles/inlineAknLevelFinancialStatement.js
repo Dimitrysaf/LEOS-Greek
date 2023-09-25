@@ -62,6 +62,9 @@ define(function inlineAknLevelFinancialStatementProfileModule(require) {
     plugins.push(require("plugins/leosAnnexIndentList/leosAnnexIndentListPlugin"));
     plugins.push(require("plugins/aknLevel/aknLevelPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
 
     var pluginNames=[];
     var specificConfig={

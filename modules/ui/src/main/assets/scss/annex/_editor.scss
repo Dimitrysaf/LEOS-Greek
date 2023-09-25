@@ -32,6 +32,8 @@
         
         @extend %editorWidget;
         @extend %editorHeading;
+
+        @extend %editorTrackChanges;
     }
     .cke_editable.cke_show_blocks {
         @extend %showblockLevelParagraph;

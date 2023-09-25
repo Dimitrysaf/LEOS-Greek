@@ -97,7 +97,7 @@ define(function leosPluginUtilsModule(require) {
 
     var COUNCIL_INSTANCE = "COUNCIL";
     var ART_DEF = "~_ART_DEF";
-    var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label'];
+    var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-for-number'];
     function _hasTextOrBogusAsNextSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasNext()
             && (_getElementName(element.getNext()) === TEXT || _getElementName(element.getNext()) === BOGUS);
@@ -569,9 +569,9 @@ define(function leosPluginUtilsModule(require) {
             // if the element is inside a table
             var tmpElement = element.getAscendant('li', false);
             element = !!tmpElement ? tmpElement : element;
-        } else if (element.type == CKEDITOR.NODE_TEXT) {
+        } else if (element.type == CKEDITOR.NODE_TEXT || (element.type === CKEDITOR.NODE_ELEMENT && element.getName() === 'span')) {
             var tmpElement = element;
-            while (!!tmpElement && tmpElement.type !== CKEDITOR.NODE_ELEMENT) {
+            while (!!tmpElement && (tmpElement.type !== CKEDITOR.NODE_ELEMENT || tmpElement.getName() === 'span')) {
                 tmpElement = tmpElement.getParent();
             }
             element = !!tmpElement ? tmpElement : element;
@@ -748,12 +748,13 @@ define(function leosPluginUtilsModule(require) {
                     var parentElement = point.getParent().getAttribute(DATA_AKN_ELEMENT);
                     if (parentElement === LEVEL) {
                         point.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
+                        point.setAttribute(DATA_AKN_NAME, SUBPARAGRAPH);
                     } else if (parentElement === PARAGRAPH) {
                         point.setAttribute(DATA_AKN_ELEMENT, PARAGRAPH);
+                        point.setAttribute(DATA_AKN_NAME, AKN_NUMBERED_PARAGRAPH);
                     }
                     if (!!point.is && point.is('li') && !point.getParent().is('ol')) {
                         point.renameNode('p');
-                        point.removeAttribute(DATA_AKN_NAME);
                     } else if (!!point.is && point.is('p') && point.getParent().is('ol')) {
                         point.renameNode('li');
                     }
@@ -1528,6 +1529,7 @@ define(function leosPluginUtilsModule(require) {
         DATA_INDENT_ORIGIN_NUM_ID: DATA_INDENT_ORIGIN_NUM_ID,
         DATA_AKN_WRAPPED_CONTENT_ID: DATA_AKN_WRAPPED_CONTENT_ID,
         DATA_AKN_MP_ID: DATA_AKN_MP_ID,
+        DATA_AKN_TC_ORIGINAL_NUMBER: DATA_AKN_TC_ORIGINAL_NUMBER,
         LEOS_SOFTACTION: LEOS_SOFTACTION,
         DEL: DEL,
         MOVETO: MOVETO,

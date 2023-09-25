@@ -3,27 +3,8 @@ package eu.europa.ec.leos.services.support;
 import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.TYPE_1;
 import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.TYPE_2;
 import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.TYPE_3;
-import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsFirstChildOfNode;
-import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsLastChildOfNode;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
-import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValueAsSimpleBoolean;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
-import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
-import static eu.europa.ec.leos.services.support.XmlHelper.BOLD;
-import static eu.europa.ec.leos.services.support.XmlHelper.DIV;
-import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
-import static eu.europa.ec.leos.services.support.XmlHelper.ORIENTATION_LANDSCAPE;
-import static eu.europa.ec.leos.services.support.XmlHelper.ORIENTATION_PORTRAIT;
-import static eu.europa.ec.leos.services.support.XmlHelper.ITALICS;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_AUTO_NUM_OVERWRITE;
-import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
+import static eu.europa.ec.leos.services.support.XercesUtils.*;
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 import eu.europa.ec.leos.security.SecurityContext;
 import org.slf4j.Logger;
@@ -54,7 +35,7 @@ public class LeosXercesUtils {
                 if(!isTrackChangesEnabled) {
                     numNode.setTextContent(numLabel);
                 } else {
-                    if(hasAttributeWithValue(node, "leos:action", "insert") || hasAttributeWithValue(numNode, "leos:action", "move")) {
+                    if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) || hasAttributeWithValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_MOVE_ACTION)) {
                         // Skip track changes for num node as the parent node is already being tracked.
                         // Skip track change for num node as it is moved from somewhere else.
                         numNode.setTextContent(numLabel);
@@ -68,6 +49,16 @@ public class LeosXercesUtils {
                                 addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
                                 addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
                             }
+                        } else if (getFirstChild(numNode, "span") != null && containsAttribute(getFirstChild(numNode, "span"), LEOS_ACTION_ATTR)) {
+                            Node deletedNode = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
+                            if(deletedNode != null && deletedNode.getTextContent().equals(numLabel)) {
+                                numNode.setTextContent(numLabel);
+                            } else {
+                                Node insertedNum = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
+                                insertedNum.setTextContent(numLabel);
+                                addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
+                                addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                            }
                         } else {
                             if(numNode.getTextContent() == null || numNode.getTextContent().equals(numLabel) || numNode.getTextContent().contains("#")) {
                                 numNode.setTextContent(numLabel);
@@ -76,13 +67,31 @@ public class LeosXercesUtils {
 
                                 numNode.setTextContent(null);
 
-                                Node deletedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "del", oldNumLabel);
+                                Node deletedNum;
+                                if(node.getNodeName() == LEVEL) {
+                                    deletedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "span", oldNumLabel);
+                                } else {
+                                    deletedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "del", oldNumLabel);
+                                }
                                 addAttribute(deletedNum, LEOS_UID, securityContext.getUser().getLogin());
                                 addAttribute(deletedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                                if(node.getNodeName() == LEVEL) {
+                                    addAttribute(deletedNum, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
+                                    addAttribute(deletedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
+                                }
 
-                                Node insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "ins", numLabel);
+                                Node insertedNum;
+                                if(node.getNodeName() == LEVEL) {
+                                    insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "span", numLabel);
+                                } else {
+                                    insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "ins", numLabel);
+                                }
                                 addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
                                 addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                                if(node.getNodeName() == LEVEL) {
+                                    addAttribute(insertedNum, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
+                                    addAttribute(insertedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
+                                }
                             }
                         }
                     }

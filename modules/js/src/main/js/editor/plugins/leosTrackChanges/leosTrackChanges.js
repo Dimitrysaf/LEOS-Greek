@@ -350,7 +350,7 @@ define(function leosTrackChangesModule(require) {
             var selection = event.editor.getSelection();
             var ranges = selection && selection.getRanges();
             var range = ranges && ranges[0];
-            var el = range.startContainer;
+            var el = range && range.startContainer;
             if (el && core.isTrackChangeElement(el, core.INSERT_ACTION) && el.getText() === '') {
                 el.remove();
             }

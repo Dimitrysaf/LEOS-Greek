@@ -89,6 +89,7 @@ import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.event.ChangeBaseVersionEvent;
@@ -160,6 +161,7 @@ import eu.europa.ec.leos.web.event.component.VersionListRequestEvent;
 import eu.europa.ec.leos.web.event.component.VersionListResponseEvent;
 import eu.europa.ec.leos.web.event.component.WindowClosedEvent;
 import eu.europa.ec.leos.web.event.view.AddChangeDetailsMenuEvent;
+import eu.europa.ec.leos.web.event.view.EnableTrackChangesEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentConfirmationEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
@@ -305,6 +307,8 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     private final TemplateConfigurationService templateConfigurationService;
 
+    private TrackChangesContext trackChangesContext;
+
     @Autowired
     AnnexPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
                    AnnexScreen annexScreen,
@@ -320,7 +324,8 @@ class AnnexPresenter extends AbstractLeosPresenter {
                    NotificationService notificationService, CommonDelegate<Annex> commonDelegate, CloneContext cloneContext,
                    AttachmentProcessor attachmentProcessor, InstanceTypeResolver instanceTypeResolver, NumberService numberService,
                    MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor,
-                   TemplateConfigurationService templateConfigurationService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
+                   TemplateConfigurationService templateConfigurationService, RepositoryPropertiesMapper repositoryPropertiesMapper,
+                   TrackChangesContext trackChangesContext) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.attachmentProcessor = attachmentProcessor;
         LOG.trace("Initializing annex presenter...");
@@ -359,6 +364,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         this.annotateService = annotateService;
         this.templateConfigurationService = templateConfigurationService;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.trackChangesContext = trackChangesContext;
     }
 
     @Override
@@ -444,6 +450,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         documentId = annex.getId();
         structureContextProvider.get().useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        populateTrackChangesContext(annex);
     }
 
     private void populateViewData(Annex annex, TocMode mode) {
@@ -466,6 +473,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 eventBus.post(new AddChangeDetailsMenuEvent());
                 annexScreen.initTrackChanges(proposalRef);
             }
+            populateTrackChangesContext(annex);
         } catch (Exception ex) {
             LOG.error("Error while processing document", ex);
             eventBus.post(new NotificationEvent(Type.INFO, "error.message", ex.getMessage()));
@@ -1928,6 +1936,14 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     }
 
+    @Subscribe
+    public void enableTrackChanges(EnableTrackChangesEvent event) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), event.isEnabled());
+        Annex annex = annexService.updateAnnex(documentId, properties, false);
+        populateTrackChangesContext(annex);
+    }
+
     private Annex updateBaseVersion(String documentId, String versionLabel, String versionTitle) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
@@ -1950,5 +1966,9 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private boolean isClonedProposal() {
         cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         return cloneContext != null && cloneContext.isClonedProposal();
+    }
+
+    private void populateTrackChangesContext(Annex annex) {
+        this.trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
     }
 }

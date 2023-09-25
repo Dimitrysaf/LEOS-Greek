@@ -30,6 +30,8 @@ define(function leosAnnexOrderedListPluginModule(require) {
     var TEXT = "text";
     var SPAN = "span";
     var ORDERED_LIST_SELECTOR = "ol[data-akn-name='aknAnnexOrderedList']";
+    var PARA_SELECTOR = "*[data-akn-name='aknNumberedParagraph']";
+    var SUB_PARA_SELECTOR = "*[data-akn-name='subparagraph']";
     var ENTER_KEY = 13;
     var SHIFT_ENTER = CKEDITOR.SHIFT + ENTER_KEY;
     var TAB_KEY = 9;
@@ -387,11 +389,36 @@ define(function leosAnnexOrderedListPluginModule(require) {
      *
      */
     function resetNumbering(event) {
-        event.editor.fire('lockSnapshot');
-        var jqEditor = $(event.editor.editable().$);
+        var ckEditor = event.editor;
+        ckEditor.fire('lockSnapshot');
+        var jqEditor = $(ckEditor.editable().$);
         var orderedLists = jqEditor.find(ORDERED_LIST_SELECTOR);
         renumberLists(orderedLists);
-        event.editor.fire('unlockSnapshot');
+        var paragraphs = jqEditor.find(PARA_SELECTOR);
+        if (paragraphs.length > 0) {
+            for (var ii = 0; ii < paragraphs.length; ii++) {
+                var paragraph = paragraphs[ii];
+                if (ckEditor.LEOS.isTrackChangesEnabled) {
+                    var previousNumber = paragraph.hasAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER) ? paragraph.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER) : paragraph.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    if(previousNumber && previousNumber != null) {
+                        ckEditor.fire("handleTcIndent", {data: paragraph, previousNumber: previousNumber});
+                    }
+                }
+            }
+        }
+        var subparagraphs = jqEditor.find(SUB_PARA_SELECTOR);
+        if (subparagraphs.length > 0) {
+            for (var jj = 0; jj < subparagraphs.length; jj++) {
+                var subparagraph = subparagraphs[jj];
+                if (ckEditor.LEOS.isTrackChangesEnabled) {
+                    var previousNumber = subparagraph.hasAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER) ? subparagraph.getAttribute(leosPluginUtils.DATA_AKN_TC_ORIGINAL_NUMBER) : subparagraph.getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    if(previousNumber && previousNumber != null) {
+                        ckEditor.fire("handleTcIndent", {data: subparagraph, previousNumber: previousNumber});
+                    }
+                }
+            }
+        }
+        ckEditor.fire('unlockSnapshot');
     }
 
     /* For each list, checks if it is numbered or unumbered */

@@ -502,7 +502,7 @@ define(function leosAnnexIndentListPluginModule(require) {
             var $content = $num.contents()
                 .filter(function () {
                     return (this.nodeType === CKEDITOR.NODE_TEXT ||
-                        !(this.nodeType === CKEDITOR.NODE_ELEMENT && this.classList.contains(SOFT_REMOVED_STYLE)));
+                        !(this.nodeType === CKEDITOR.NODE_ELEMENT && this.getAttribute("leos:action") === "delete"));
                 });
             return $content.text();
         }
@@ -515,6 +515,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
         data.listItem.setAttribute("data-akn-num", indentData.nextNum);
         data.listItem.setAttribute(LEOS_ORIGINAL_DEPTH_ATTR, originalDepth);
+        editor.fire("handleTcIndent", {data: data.listItem, previousNumber: data.currLvlNum});
         levelItemVo.levelDepth++;
         levelItemVo.levelNum = indentData.nextNum;
     }
@@ -526,6 +527,7 @@ define(function leosAnnexIndentListPluginModule(require) {
 
         data.listItem.setAttribute("data-akn-num", outdentData.nextNum);
         data.listItem.setAttribute(LEOS_ORIGINAL_DEPTH_ATTR, originalDepth);
+        editor.fire("handleTcIndent", {data: data.listItem, previousNumber: data.currLvlNum});
         levelItemVo.levelDepth--;
         levelItemVo.levelNum = outdentData.nextNum;
     }

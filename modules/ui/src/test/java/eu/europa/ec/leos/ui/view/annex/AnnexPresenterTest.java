@@ -43,6 +43,7 @@ import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.toc.StructureServiceImpl;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import eu.europa.ec.leos.test.support.web.presenter.LeosPresenterTest;
 import eu.europa.ec.leos.ui.event.search.ShowConfirmDialogEvent;
@@ -166,6 +167,9 @@ public class AnnexPresenterTest extends LeosPresenterTest {
 
     @Mock
     private CloneContext cloneContext;
+
+    @Mock
+    private TrackChangesContext trackChangesContext;
 
     private String docRef;
     private String docId;

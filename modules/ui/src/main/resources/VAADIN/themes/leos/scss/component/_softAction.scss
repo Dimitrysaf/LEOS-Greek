@@ -39,7 +39,7 @@ $WHITE:#FFFFFF;
 @mixin softAction {
     span.leos-soft-move-label {
         @extend %leosSoftMoveLabel;
-        background-color: $DARK_GREY;
+        background-color: $DARK_GREY !important;
         cursor: pointer;
         padding: 2px 5px;
         height: 18px;
