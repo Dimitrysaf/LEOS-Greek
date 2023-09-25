@@ -67,10 +67,6 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
                     result.setSuccess(false);
                     result.setMessageKey("toc.edit.window.drop.error.subparagraph.unnumbered.message");
                     return false;
-                } else if(!validateAgainstDropPosition(sourceItem, targetItem, targetName, position)) {
-                    result.setSuccess(false);
-                    result.setMessageKey("toc.edit.window.drop.error.subparagraph.sibling.message");
-                    return false;
                 }
                 break;
             case POINT:
@@ -85,8 +81,7 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
                         || (Arrays.asList(PARAGRAPH, LEVEL).contains(targetName) && !TocItemPosition.AS_CHILDREN.equals(position)
                         && (actualTargetItem.containsItem(LIST) || !actualTargetItem.containsOnlySameIndentType(droppedElementTagNumberingType)))
                         || (targetName.equals(droppedElementTagName) && actualTargetItem.containsItem(LIST))
-                        || !validateAgainstOtherIndentsInList(sourceItem, targetItem)
-                        || !validateAgainstDropPosition(sourceItem, targetItem, targetName, position)) {
+                        || !validateAgainstOtherIndentsInList(sourceItem, targetItem)) {
                     result.setSuccess(false);
                     if (!indentAllowed) {
                         result.setMessageKey("toc.edit.window.drop.error.indentation.message");
@@ -155,14 +150,6 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
         }
         String tagValue = getTagValueFromTocItemVo(element);
         return (tagValue.equals(POINT) || tagValue.equals(INDENT)) ? identLevel + 1 : identLevel;
-    }
-
-    private boolean validateAgainstDropPosition(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem, String targetName, TocItemPosition position) {
-        boolean isValid = true;
-        if(Arrays.asList(PARAGRAPH, LEVEL).contains(targetName)) {
-            isValid = (!sourceItem.equals(targetItem) && TocItemPosition.AS_CHILDREN.equals(position));
-        }
-        return isValid;
     }
 
     private boolean validateAgainstOtherIndentsInList(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem) {
