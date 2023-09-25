@@ -194,7 +194,6 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     const currentVersions = this.docService.getVersionCompareIds();
     if (
       this.isRecent &&
-      this.showMore &&
       this.versions.length > 0 &&
       currentVersions.length > 0
     ) {
@@ -203,9 +202,12 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
         sortedCurrentVersions.at(-1),
         sortedCurrentVersions[0],
       )[1];
-      const maxVersion = this.versions.filter(
-        (v) => v.documentId === maxSortedVersion.documentId,
-      )[0];
+      const maxVersion =
+        this.versions.length > 1
+          ? this.versions.filter(
+              (v) => v.documentId === maxSortedVersion.documentId,
+            )[0]
+          : maxSortedVersion;
       const checkbox = document.getElementById(
         `select-${maxVersion.documentId}`,
       ) as HTMLInputElement;
