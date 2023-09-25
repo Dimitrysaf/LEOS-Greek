@@ -12,9 +12,6 @@ import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,7 +30,6 @@ public class ConfigServiceImpl implements ConfigService {
     @Autowired
     private ConfigContentRepository configContentRepository;
 
-    @Cacheable("findConfigByName")
     public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
         Optional<Config> hasDoc = configRepository.findConfigByName(name);
         if (hasDoc.isPresent()) {
@@ -51,7 +47,6 @@ public class ConfigServiceImpl implements ConfigService {
         }
     }
 
-    @Cacheable("findConfigById")
     public LeosDocument findConfigById(final String id) throws RepositoryException {
         try {
             ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(new BigDecimal(Long.parseLong(id)));
@@ -71,7 +66,6 @@ public class ConfigServiceImpl implements ConfigService {
 
     }
 
-    @Cacheable("findConfigByVersionId")
     public LeosDocument findConfigByVersionId(final String id) throws RepositoryException {
         try {
             ConfigVersion version = this.configVersionRepository.findLastConfigVersionByVersionId(new BigDecimal(Long.parseLong(id)));
@@ -91,17 +85,5 @@ public class ConfigServiceImpl implements ConfigService {
         } catch (Exception var5) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Config.class.getName());
         }
-    }
-
-    @CacheEvict(value = "findConfigByName", allEntries = true)
-    @Scheduled(fixedRateString = "${caching.spring.configTTL}")
-    public void emptyConfigByNameCache() {
-        LOG.info("emptying config by name cache");
-    }
-
-    @CacheEvict(value = "findConfigById", allEntries = true)
-    @Scheduled(fixedRateString = "${caching.spring.configTTL}")
-    public void emptyConfigByIdCache() {
-        LOG.info("emptying config by id cache");
     }
 }
