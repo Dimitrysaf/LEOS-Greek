@@ -26,9 +26,6 @@ import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -73,11 +70,6 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    @Caching(evict = {
-            @CacheEvict(value = "getPackageByName", allEntries = true),
-            @CacheEvict(value = "getPackageById", allEntries = true),
-            @CacheEvict(value = "findPackageByDocumentRef", allEntries = true)
-    })
     public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName, final String userId) {
             Package pkg = new Package();
             pkg.setObjectId(new BigDecimal(0));
@@ -89,14 +81,12 @@ public class PackageServiceImpl implements PackageService {
             return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
     }
 
-    @Cacheable(cacheNames = "getPackageByName", key = "{#name}")
     public eu.europa.ec.leos.repository.model.Package getPackageByName(final String name) throws RepositoryException {
         Package pkg =
                 packageRepository.findPackageByName(name).orElse(null);
         return ConversionUtils.buildPackage(pkg, collaboratorsService);
     }
 
-    @Cacheable(cacheNames = "getPackageById", key = "#id")
     public eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException {
         try {
             Package pkg =
@@ -109,11 +99,6 @@ public class PackageServiceImpl implements PackageService {
 
 
     @Transactional(rollbackFor = Exception.class)
-    @Caching(evict = {
-            @CacheEvict(value = "getPackageByName", allEntries = true),
-            @CacheEvict(value = "getPackageById", allEntries = true),
-            @CacheEvict(value = "findPackageByDocumentRef", allEntries = true)
-    })
     public void deletePackage(final String packageName) throws RepositoryException {
         try {
             Optional<Package> pkg = packageRepository.findPackageByName(packageName);
@@ -158,7 +143,7 @@ public class PackageServiceImpl implements PackageService {
         List<DocumentV> docs = entityManager.createQuery(docQuery.toString()).getResultList();
         List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery.toString()).getResultList();
         List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
-                Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()), documentContentRepository, docs
+                        Collections.emptyList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()), documentContentRepository, docs
                 , fetchContent);
         xmlDocs.addAll(ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, fetchContent));
         return xmlDocs;
@@ -179,7 +164,7 @@ public class PackageServiceImpl implements PackageService {
         List<DocumentV> docs = entityManager.createQuery(docQuery.toString()).getResultList();
         List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery.toString()).getResultList();
         List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
-                        Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()),
+                        Collections.emptyList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()),
                 documentContentRepository, docs
                 , fetchContent);
         xmlDocs.addAll(ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, fetchContent));
@@ -191,7 +176,7 @@ public class PackageServiceImpl implements PackageService {
         Iterator<String> iterator = categories.iterator();
         while (iterator.hasNext()) {
             String categoryCode = iterator.next();
-            query.append("'" + categoryCode + "'");
+            query.append("'").append(categoryCode).append("'");
             if (iterator.hasNext()) {
                 query.append(",");
             }
@@ -208,7 +193,6 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    @Cacheable(cacheNames = "findPackageByDocumentRef", key = "#documentRefId")
     public eu.europa.ec.leos.repository.model.Package findPackageByDocumentRef(final String documentRefId) throws RepositoryException {
         Package pkg =
                 packageRepository.findPackageByDocumentRef(documentRefId)

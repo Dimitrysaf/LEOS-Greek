@@ -26,7 +26,5 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableJpaRepositories(basePackages="eu.europa.ec.leos.repository.repositories")
 @EnableWebMvc
 @EnableSpringDataWebSupport
-@EnableCaching
-@EnableScheduling
 class ApplicationConfiguration {
 }

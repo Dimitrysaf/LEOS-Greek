@@ -279,7 +279,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
+    @Transactional
     public void test_createDocumentFromSource() throws RepositoryException {
         Map<String, ?> properties = new HashMap() {{
             put("ref", "REG-clh5v2p720007ng28khrr03h7-en");

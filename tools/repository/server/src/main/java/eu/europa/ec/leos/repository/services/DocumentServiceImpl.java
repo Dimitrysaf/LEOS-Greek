@@ -45,12 +45,9 @@ import org.apache.tika.io.TikaInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -343,7 +340,6 @@ public class DocumentServiceImpl implements DocumentService {
                 docView.get().getPackageId()) : Arrays.asList(), documentContentRepository, docView.orElse(null), true);
     }
 
-    @Cacheable(value = "findFirstVersion", key = "#docRef")
     public LeosDocument findFirstVersion(final String docRef) {
         LOG.info("Find first version: docRef={}", docRef);
         Optional<DocumentV> docView = documentVRepository.findFirstVersion(docRef);
@@ -351,7 +347,6 @@ public class DocumentServiceImpl implements DocumentService {
                 docView.get().getPackageId()) : Arrays.asList(), documentContentRepository, docView.orElse(null), true);
     }
 
-    @Cacheable(value = "findDocumentByVersion", key = "{#docRef, #versionLabel }")
     public LeosDocument findDocumentByVersion(final String docRef, final String versionLabel) {
         LOG.info("Find Document by version: docRef={}, versionLabel={}", docRef, versionLabel);
         Optional<DocumentV> docView = documentVRepository.findDocumentByVersion(docRef, versionLabel);
@@ -615,8 +610,6 @@ public class DocumentServiceImpl implements DocumentService {
         return milestoneDocumentService.findMilestonesByStatus(status);
     }
 
-
-    @Cacheable("findTemplateByName")
     public LeosDocument findTemplateByName(String name) throws RepositoryException {
         LOG.info("Find template by name: name={}",name);
         List<LeosDocument> docs = configService.findConfigByName(name);
@@ -868,11 +861,5 @@ public class DocumentServiceImpl implements DocumentService {
                 throw new RepositoryException(RepositoryException.RepositoryExceptionCode.PARA_NOT_FOUND, prop.name().toLowerCase());
             }
         }
-    }
-
-    @CacheEvict(value = "findTemplateByName", allEntries = true)
-    @Scheduled(fixedRateString = "${caching.spring.configTTL}")
-    public void emptyTemplateByNameCache() {
-        LOG.info("emptying template by name cache");
     }
 }
