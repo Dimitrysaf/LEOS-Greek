@@ -298,7 +298,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     if (!this.isElementSaved) {
       //   this.documentService.reloadDocument();
       // } else {
-      this.documentService.reloadDocument();
+      this.documentService.resetDocument();
     }
     this.isElementSaved = false;
     this.setEditorOpenState('CLOSE');
