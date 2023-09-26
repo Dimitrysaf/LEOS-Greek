@@ -148,7 +148,7 @@ public class LeosDocumentExtensions {
     }
 
     private static Proposal toLeosProposal(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new Proposal(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -173,7 +173,7 @@ public class LeosDocumentExtensions {
     }
 
     private static Explanatory toCouncilExplanatory(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new Explanatory(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -190,7 +190,7 @@ public class LeosDocumentExtensions {
     }
 
     private static Memorandum toLeosMemorandum(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new Memorandum(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -207,7 +207,7 @@ public class LeosDocumentExtensions {
     }
 
     private static Bill toLeosBill(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new Bill(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -225,7 +225,7 @@ public class LeosDocumentExtensions {
     }
 
     private static Annex toLeosAnnex(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new Annex(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -244,7 +244,7 @@ public class LeosDocumentExtensions {
     }
 
     private static FinancialStatement toFinancialStatement(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new FinancialStatement(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -262,7 +262,7 @@ public class LeosDocumentExtensions {
     }
 
     private static MediaDocument toLeosMediaDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new MediaDocument(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -272,7 +272,7 @@ public class LeosDocumentExtensions {
     }
 
     private static ConfigDocument toLeosConfigDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new ConfigDocument(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -282,7 +282,7 @@ public class LeosDocumentExtensions {
     }
 
     private static Structure toLeosStructureDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new Structure(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -293,7 +293,7 @@ public class LeosDocumentExtensions {
     }
 
     private static LegDocument toLeosLegDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new LegDocument(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
@@ -310,7 +310,7 @@ public class LeosDocumentExtensions {
     }
 
     private static ExportDocument toLeosExportDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
-        String id = d.getVersionId() != null ? d.getRef() + ";" + d.getVersionId() : d.getRef();
+        String id = d.getVersionId() != null ? d.getRef() + ":" + d.getVersionId() : d.getRef();
         return new ExportDocument(id, d.getName(), d.getCreatedBy(),
                 getCreationInstant(d),
                 d.getUpdatedBy(),
