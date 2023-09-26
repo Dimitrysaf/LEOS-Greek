@@ -59,6 +59,12 @@ define(function aknParagraphPluginModule(require) {
             }, {
                 akn: "style",
                 html: "style"
+            }, {
+                akn : "leos:action",
+                html : "data-akn-action"
+            }, {
+                akn : "leos:uid",
+                html : "data-akn-uid"
             }],
             sub: {
                 akn: "text",

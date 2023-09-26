@@ -209,6 +209,12 @@ define(function aknArticlePluginModule(require) {
             }, {
                 akn : "leos:origin",
                 html : "data-origin"
+            }, {
+                akn : "leos:action",
+                html : "data-akn-action"
+            }, {
+                akn : "leos:uid",
+                html : "data-akn-uid"
             } ]
         } ]
     };

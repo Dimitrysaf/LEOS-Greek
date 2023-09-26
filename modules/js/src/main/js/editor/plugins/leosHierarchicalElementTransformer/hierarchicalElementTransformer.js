@@ -110,6 +110,14 @@ define(function hierarchicalElementTransformer(require) {
                         to: LEOS_REFERS_TO,
                         action: "passAttributeTransformer"
                     }, {
+                        from: "data-akn-action",
+                        to: "leos:action",
+                        action: "passAttributeTransformer"
+                    }, {
+                        from: "data-akn-uid",
+                        to: "leos:uid",
+                        action: "passAttributeTransformer"
+                    }, {
                         from: DATA_AKN_SOFTACTION,
                         to: "leos:softaction",
                         action: "passAttributeTransformer"
@@ -624,6 +632,14 @@ define(function hierarchicalElementTransformer(require) {
                                             to: DATA_REFERS_TO,
                                             action: "passAttributeTransformer"
                                         }, {
+                                            from: "leos:action",
+                                            to: "data-akn-action",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:uid",
+                                            to: "data-akn-uid",
+                                            action: "passAttributeTransformer"
+                                        }, {
                                             from: "leos:softaction",
                                             to: DATA_AKN_SOFTACTION,
                                             action: "passAttributeTransformer"
@@ -868,6 +884,14 @@ define(function hierarchicalElementTransformer(require) {
                                         toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:origin", element), //LEOS-2899
                                         action: "passAttributeTransformer"
                                     }, {
+                                        to: "data-akn-action",
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:action", element),
+                                        action: "passAttributeTransformer"
+                                    },  {
+                                        to: "data-akn-uid",
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:uid", element),
+                                        action: "passAttributeTransformer"
+                                    }, {
                                         to: DATA_AKN_SOFTACTION,
                                         toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:softaction", element),
                                         action: "passAttributeTransformer"
@@ -1095,6 +1119,14 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_REFERS_TO,
                                                 to: LEOS_REFERS_TO,
                                                 action: "passAttributeTransformer"
+                                            },{
+                                                from: "data-akn-action",
+                                                to: "leos:action",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-uid",
+                                                to: "leos:uid",
+                                                action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_SOFTACTION,
                                                 to: "leos:softaction",
@@ -1145,6 +1177,14 @@ define(function hierarchicalElementTransformer(require) {
                                             }, {
                                                 from: DATA_NUM_ORIGIN,
                                                 to: "leos:origin",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-action",
+                                                to:"leos:action",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-uid",
+                                                to: "leos:uid",
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_NUM_SOFTACTION,
@@ -1238,6 +1278,14 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_REFERS_TO,
                                                 to: LEOS_REFERS_TO,
                                                 action: "passAttributeTransformer"
+                                            },{
+                                                from: "data-akn-action",
+                                                to: "leos:action",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-uid",
+                                                to: "leos:uid",
+                                                action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_SOFTACTION,
                                                 to: "leos:softaction",
@@ -1288,6 +1336,14 @@ define(function hierarchicalElementTransformer(require) {
                                             }, {
                                                 from: DATA_NUM_ORIGIN,
                                                 to: "leos:origin",
+                                                action: "passAttributeTransformer"
+                                            },{
+                                                from: "data-akn-action",
+                                                to: "leos:action",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-uid",
+                                                to: "leos:uid",
                                                 action: "passAttributeTransformer"
                                             }, {
                                                 from: DATA_AKN_NUM_SOFTACTION,
@@ -1421,6 +1477,14 @@ define(function hierarchicalElementTransformer(require) {
                                             from: DATA_REFERS_TO,
                                             to: LEOS_REFERS_TO,
                                             action: "passAttributeTransformer"
+                                        },{
+                                            from: "data-akn-action",
+                                            to: "leos:action",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "data-akn-uid",
+                                            to: "leos:uid",
+                                            action: "passAttributeTransformer"
                                         }, {
                                             from: DATA_AKN_SOFTACTION,
                                             to: "leos:softaction",
@@ -1467,6 +1531,14 @@ define(function hierarchicalElementTransformer(require) {
                                         }, {
                                             from: DATA_NUM_ORIGIN,
                                             to: "leos:origin",
+                                            action: "passAttributeTransformer"
+                                        },{
+                                            from: "data-akn-action",
+                                            to: "leos:action",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "data-akn-uid",
+                                            to: "leos:uid",
                                             action: "passAttributeTransformer"
                                         }, {
                                             from: DATA_AKN_NUM_SOFTACTION,
@@ -1550,6 +1622,14 @@ define(function hierarchicalElementTransformer(require) {
                                         }, {
                                             from: DATA_REFERS_TO,
                                             to: LEOS_REFERS_TO,
+                                            action: "passAttributeTransformer"
+                                        },{
+                                            from: "data-akn-action",
+                                            to: "leos:action",
+                                            action: "passAttributeTransformer"
+                                        }, {
+                                            from: "data-akn-uid",
+                                            to: "leos:uid",
                                             action: "passAttributeTransformer"
                                         }, {
                                             from: DATA_AKN_SOFTACTION,
