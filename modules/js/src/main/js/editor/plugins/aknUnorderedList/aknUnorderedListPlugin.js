@@ -89,6 +89,12 @@ define(function aknUnorderedListPluginModule(require) {
                 html : "data-akn-attr-softdate"
             }, {
                 html : "data-akn-name=aknUnorderedList"
+            }, {
+                akn : "leos:action",
+                html : "data-akn-action"
+            }, {
+                akn : "leos:uid",
+                html : "data-akn-uid"
             } ]
         },
         rootElementsForFrom : [ "indent", "list" ],
