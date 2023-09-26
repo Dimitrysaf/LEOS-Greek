@@ -509,21 +509,20 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
 
     promise.then(() => {
       let elemId = null;
-      const elemInterval = setInterval(() => {
+      setTimeout(() => {
         elemId = this.documentService.findNextElementOfTheSameTypeInDocument(
           prevElemId,
           elemType,
         );
+      }, 4000);
 
-        if (elemId !== null) {
-          clearInterval(elemInterval);
-          this.editElementAction({
-            action: 'edit',
-            elementId: elemId,
-            elementType: elemType,
-          });
-        }
-      }, 1000);
+      if (elemId !== null) {
+        this.editElementAction({
+          action: 'edit',
+          elementId: elemId,
+          elementType: elemType,
+        });
+      }
     });
   }
 }
