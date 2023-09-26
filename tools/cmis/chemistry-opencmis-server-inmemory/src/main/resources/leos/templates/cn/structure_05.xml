@@ -215,7 +215,7 @@
                     <profileName>inlineAknDivisionHeading</profileName>
                 </profile>
                 <profile>
-                    <elementSelector>heading:not(level[leos\:origin='cn'] heading):not(division heading)
+                    <elementSelector>heading:not(level[leos\:origin='cn'] heading):not(division heading):not([id^='deleted'])
                     </elementSelector>
                     <profileName>inlineAknHeading</profileName>
                 </profile>

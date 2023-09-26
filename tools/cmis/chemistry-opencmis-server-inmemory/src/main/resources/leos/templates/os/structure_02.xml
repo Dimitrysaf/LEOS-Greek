@@ -155,7 +155,7 @@
             <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>heading:not(level heading)</elementSelector>
+                    <elementSelector>heading:not(level heading):not([id^='deleted'])</elementSelector>
                     <profileName>inlineAknHeading</profileName>
                 </profile>
             </profiles>

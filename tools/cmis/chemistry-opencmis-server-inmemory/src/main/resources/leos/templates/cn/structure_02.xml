@@ -181,7 +181,7 @@
             <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>heading:not(level[leos\:origin='cn'] heading)</elementSelector>
+                    <elementSelector>heading:not(level[leos\:origin='cn'] heading):not([id^='deleted'])</elementSelector>
                     <profileName>inlineAknHeading</profileName>
                 </profile>
             </profiles>
