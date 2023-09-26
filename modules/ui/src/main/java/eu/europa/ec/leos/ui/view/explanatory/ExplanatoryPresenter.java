@@ -670,7 +670,14 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     private List<String> getCommentsForExportPackage(String title, ExportOptions exportOptions) {
         List<String> comments = new ArrayList<>();
         comments.add(title);
-        comments.add(messageHelper.getMessage("document.export.package.creation.comment.legal.act"));
+
+        Explanatory explanatory = getDocument();
+        String commentCE = messageHelper.getMessage("document.export.package.creation.comment.explanatory");
+        if(StringUtils.isNotBlank(explanatory.getTitle()) && explanatory.getTitle().equals(commentCE)) {
+            comments.add(commentCE);
+        } else {
+            comments.add(commentCE + " - " + explanatory.getTitle());
+        }
         if (exportOptions.isComparisonMode()) {
             StringBuilder versionsComment = new StringBuilder();
             versionsComment.append(
