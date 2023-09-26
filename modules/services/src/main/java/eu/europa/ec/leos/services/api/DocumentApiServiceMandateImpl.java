@@ -18,10 +18,13 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
@@ -48,6 +51,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -185,7 +189,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         exportOptions.setWithFilteredAnnotations(exportToConsiliumRequest.isWithAnnotations());
         exportOptions.setFilteredAnnotations(exportToConsiliumRequest.getAnnotations());
 
-        return doExportPackage(exportToConsiliumRequest.getTitle(), exportToConsiliumRequest.isCleanVersion(), exportOptions, currentDocument.getId());
+        return doExportPackage(exportToConsiliumRequest.getTitle(), exportToConsiliumRequest.isCleanVersion(), exportOptions, currentDocument, documentType);
     }
 
     private ExportVersions getExportVersionsForEconsilium(String documentRef, LeosCategoryClass documentType, Class<XmlDocument> clazz,
@@ -208,8 +212,8 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         return new ExportVersions(original, current);
     }
 
-    private LeosExportStatus doExportPackage(final String title, final Boolean isExportCleanVersion, ExportOptions exportOptions, String currentDocumentId) {
-        Proposal proposal = getProposal(currentDocumentId);
+    private LeosExportStatus doExportPackage(final String title, final Boolean isExportCleanVersion, ExportOptions exportOptions, XmlDocument currentDocument, LeosCategoryClass documentType) {
+        Proposal proposal = getProposal(currentDocument.getId());
         String proposalId = proposal.getId();
         String proposalRef = proposal.getMetadata().get().getRef();
         final String jobFileName = Boolean.TRUE.equals(isExportCleanVersion) ? PROPOSAL + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + DOCX
@@ -222,7 +226,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         }
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            exportOptions.setComments(getCommentsForExportPackage(title, exportOptions));
+            exportOptions.setComments(getCommentsForExportPackage(title, exportOptions, documentType, currentDocument));
 
             byte[] exportedBytes = exportService.createExportPackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
             exportDocument = exportPackageService.createExportDocument(proposalId, exportOptions.getComments(), exportedBytes);
@@ -246,10 +250,26 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
         }
     }
 
-    private List<String> getCommentsForExportPackage(String title, ExportOptions exportOptions) {
+    private List<String> getCommentsForExportPackage(String title, ExportOptions exportOptions, LeosCategoryClass documentType, XmlDocument currentDocument) {
         List<String> comments = new ArrayList<>();
         comments.add(title);
-        comments.add(messageHelper.getMessage("document.export.package.creation.comment.legal.act"));
+        if(LeosCategoryClass.ANNEX.equals(documentType) && currentDocument instanceof Annex) {
+            AnnexMetadata metadata = ((Annex) currentDocument).getMetadata().get();
+            String annexTitleNumber = StringUtils.EMPTY;
+            if(StringUtils.isNotBlank(metadata.getNumber())) {
+                annexTitleNumber = StringUtils.substringAfter(metadata.getNumber(), " ");
+            }
+            comments.add(messageHelper.getMessage("document.export.package.creation.comment.annex", annexTitleNumber));
+        } else if (LeosCategoryClass.COUNCIL_EXPLANATORY.equals(documentType) && currentDocument instanceof Explanatory) {
+            String commentCE = messageHelper.getMessage("document.export.package.creation.comment.explanatory");
+            if(StringUtils.isNotBlank(currentDocument.getTitle()) && currentDocument.getTitle().equals(commentCE)) {
+                comments.add(commentCE);
+            } else {
+                comments.add(commentCE + " - " + currentDocument.getTitle());
+            }
+        } else {
+            comments.add(messageHelper.getMessage("document.export.package.creation.comment.legal.act"));
+        }
         StringBuilder versionsComment = new StringBuilder();
         versionsComment.append(exportOptions.getExportVersions().getOriginal() != null ? getCommentForVersion(exportOptions.getExportVersions().getOriginal()) : "");
         versionsComment.append(exportOptions.getExportVersions().getIntermediate() != null ? " vs " + getCommentForVersion(exportOptions.getExportVersions().getIntermediate()) : "");

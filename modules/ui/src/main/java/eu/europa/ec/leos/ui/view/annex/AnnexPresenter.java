@@ -864,7 +864,14 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private List<String> getCommentsForExportPackage(String title, ExportOptions exportOptions) {
         List<String> comments = new ArrayList<>();
         comments.add(title);
-        comments.add(messageHelper.getMessage("document.export.package.creation.comment.annex"));
+
+        Annex annex = getDocument();
+        AnnexMetadata metadata = annex.getMetadata().get();
+        String annexTitleNumber = StringUtils.EMPTY;
+        if(StringUtils.isNotBlank(metadata.getNumber())) {
+            annexTitleNumber = StringUtils.substringAfter(metadata.getNumber(), " ");
+        }
+        comments.add(messageHelper.getMessage("document.export.package.creation.comment.annex", annexTitleNumber));
         if (exportOptions.isComparisonMode()) {
             StringBuilder versionsComment = new StringBuilder();
             versionsComment.append(exportOptions.getExportVersions().getOriginal() != null ? getCommentForVersion(exportOptions.getExportVersions().getOriginal()) : "");
