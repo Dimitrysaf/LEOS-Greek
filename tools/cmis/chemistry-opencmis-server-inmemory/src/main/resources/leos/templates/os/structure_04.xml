@@ -152,7 +152,7 @@
             <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>heading:not(article heading)</elementSelector>
+                    <elementSelector>heading:not(article heading):not([id^='deleted'])</elementSelector>
                     <profileName>inlineAknHeading</profileName>
                 </profile>
             </profiles>
