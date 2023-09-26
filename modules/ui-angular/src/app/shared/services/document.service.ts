@@ -1235,16 +1235,7 @@ export class DocumentService implements OnDestroy {
     prevElementId: string,
     elementType: string,
   ) {
-    // let foundElement;
-    // let i = 0;
-
     const foundElement = document.getElementById(prevElementId);
-    // i++;
-    console.log(
-      'findNextElementOfTheSameTypeInDocument>start',
-      foundElement,
-      prevElementId,
-    );
 
     const nextSibling = foundElement.nextElementSibling;
     if (nextSibling && nextSibling.tagName.toLowerCase() === elementType) {

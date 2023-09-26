@@ -509,12 +509,14 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
 
     promise.then(() => {
       let elemId = null;
-      setTimeout(() => {
+      const elemInterval = setInterval(() => {
         elemId = this.documentService.findNextElementOfTheSameTypeInDocument(
           prevElemId,
           elemType,
         );
+
         if (elemId !== null) {
+          clearInterval(elemInterval);
           this.editElementAction({
             action: 'edit',
             elementId: elemId,
@@ -525,7 +527,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     });
   }
 }
-
+// FIXME normally the above timeout should 1000 for the production env. Raised to 4000 to address acceptance env delays.
 const staticExtensionState: LeosJavaScriptExtensionState = {
   callbackNames: [
     // FIXME: add missing callbacks
