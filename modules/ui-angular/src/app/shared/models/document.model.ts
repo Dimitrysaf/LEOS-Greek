@@ -206,6 +206,7 @@ export interface Collaborator {
   login: string;
   entity: Entity;
   role: DocumentRole;
+  additionalRole?: DocumentRole;
 }
 
 export interface Entity {
