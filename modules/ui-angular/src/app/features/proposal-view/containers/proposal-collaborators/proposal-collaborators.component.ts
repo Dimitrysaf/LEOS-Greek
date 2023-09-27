@@ -38,6 +38,9 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     this.detailsService.collaborators$
       .pipe(takeUntil(this.destroy$))
       .subscribe((coll) => {
+        coll.forEach((c) => {
+          if (c.role === 'OWNER') c.additionalRole = 'AUTHOR';
+        });
         this.dataSource = coll;
       });
   }
@@ -82,7 +85,7 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
     this.editUserId = null;
   }
 
-  onFilterChange(event: any) {
+  onFilterChange(event: string | null) {
     this.filteredData = this.collaboratorsTable.filterRows(
       event,
       this.dataSource,
