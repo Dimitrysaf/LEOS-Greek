@@ -17,6 +17,7 @@ import {
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 
 import { ProposalMilestoneSendCopyDialogComponent } from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
+import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
 
 const MILESTONE_RELOAD_INTERVAL = 10000;
 
@@ -57,6 +58,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     protected proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
     private uxAppService: UxAppShellService,
+    private proposalMilestonesService: ProposalMilestonesService
   ) {}
 
   ngOnInit(): void {
@@ -140,6 +142,12 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   onMilestoneSendCopyForContributionDialogClosed() {
     this.sendCopyDialogVisible = false;
     this.milestoneViewData = null;
+  }
+
+  onDownloadMilestone(milestone: Milestone) {
+    if(milestone?.legFileId){
+      this.proposalMilestonesService.downloadLegFile(milestone?.legFileId)
+    }
   }
 
   openSendContributionForRevision(milestone: MilestoneDescriptor) {

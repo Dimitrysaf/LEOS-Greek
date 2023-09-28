@@ -54,4 +54,28 @@ export class ProposalMilestonesService {
         complete: () => this.loadingService.setLoading(false),
       });
   }
+
+  downloadLegFile(legFileId: string) {
+    this.loadingService.setLoading(true);
+    return this.http
+      .get(
+        `${apiBaseUrl}/secured/searchlegfile//${legFileId}`,
+        {
+          observe: 'response',
+          responseType: 'blob',
+        },
+      )
+      .subscribe({
+        next: (response) => {
+          const cd = parseContentDisposition(
+            response.headers.get('Content-Disposition'),
+          );
+          const filename = cd.attachment
+            ? cd.filename
+            : `Proposal_${legFileId}.leg`;
+          downloadBlob(response.body, filename, this.document);
+        },
+        complete: () => this.loadingService.setLoading(false),
+      });
+  }
 }

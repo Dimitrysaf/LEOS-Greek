@@ -122,6 +122,17 @@
                   </button>
                 </li>
               </ng-container>
+              <li euiListItem>
+                <button
+                  euiListItem
+                  (click)="onDownloadMilestone(row)"
+                >
+                  {{
+                  'page.collection.actions-dropdown.download'
+                  | translate
+                  }}
+                </button>
+              </li>
             </ul>
           </eui-dropdown-content>
         </eui-dropdown>
