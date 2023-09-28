@@ -227,13 +227,9 @@ define(function leosUtilsModule(require) {
             for (var i = 0; usersUid.length > i; i++) {
                 var userColors = (usersUid[i] !== "willajh") ? _generateColors(usersUid[i].repeat(5) + proposalRef) : ["hsl(330, 100%, 50%)", "hsl(330, 100%, 90%)"];
                 if (isDocTcStyle) {
-                    tcStyle += "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
-                        "[" + actionAttr.replace("leos:", "leos\\:") + "-number=" + "'delete'" + "][leos\\:tc-original-number]" +
-                        ":not([leos\\:tc-original-number='NEW']):not([leos\\:tc-original-number='UNNUMBERED']):before {" +
-                        "content: attr(leos\\:tc-original-number); margin-left: -20pt; text-decoration: line-through; color: " + userColors[0] + "; " +
-                        "float: left; border: 0pt; padding-top: 6pt;" +
-                        "}\n";
-                    tcStyle += "paragraph[leos\\:tc-enter-deleted] > num, subparagraph[leos\\:tc-enter-deleted] > num, point[leos\\:tc-enter-deleted] > num {" +
+                    tcStyle += "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-enter-deleted] > num, " +
+                        "subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-enter-deleted] > num, " +
+                        "point[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-enter-deleted] > num {" +
                         "content: attr(leos\\:tc-original-number); text-decoration: line-through; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";
@@ -244,25 +240,36 @@ define(function leosUtilsModule(require) {
                         "content: '↵'; margin-left: -20pt; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";
-                    tcStyle += "[leos\\:tc-enter-deleted]:not([leos\\:action-number='delete']):before {" +
-                        "content: '↵'; margin-left: -20pt; color: " + userColors[0] + "; " +
-                        "float: left; border: 0pt; margin-top: 6px; transform: scale(1, -1);" +
+                    tcStyle += "paragraph:not(:has(> num > span[leos\\:action])) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
+                        "[leos\\:tc-enter-deleted]:before, " +
+                        "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" +
+                        "[leos\\:tc-enter-deleted]:not(:has(> num > span[leos\\:action])):before {" +
+                        "content: '↰'; margin-left: -20pt; color: " + userColors[0] + "; " +
+                        "float: left; border: 0pt; padding-top: 6pt;" +
+                        "}\n";
+                    tcStyle += "num > span[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']" +
+                        "[leos\\:tc-enter-deleted]:not([leos\\:tc-original-number]) {" +
+                        "margin-right: 5px !important; color: " + userColors[0] + " !important; " +
+                        "float: left !important; text-decoration: none !important;" +
                         "}\n";
                 } else {
-                    tcStyle += "article > ol > li[data-akn-tc-enter-deleted]:not([data-akn-action-for-number='delete']):before, " +
-                        "li > ol > li[data-akn-tc-enter-deleted]:not([data-akn-action-for-number='delete']):before {" +
-                        "content: '↵'; min-width: 40px; color: " + userColors[0] + "; " +
-                        "float: left; text-decoration: none; transform: scale(1, -1);" +
+                    tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:before, " +
+                        "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:before {" +
+                        "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
+                        "float: left !important; text-decoration: none !important;" +
+                        "}\n";
+                    tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-enter-deleted]:before, " +
+                        "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-enter-deleted]:before {" +
+                        "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
+                        "float: left !important; text-decoration: none !important;" +
                         "}\n";
                 }
                 tcStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'], " +
                     "[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:before { color: " + userColors[0] + " !important; &:hover, span." +
                     (isDocTcStyle ? "math" : "cke_widget_mathjax") + ":hover { background-color: " + userColors[1] + "; } " +
                     "  &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):hover { background-color: white; }" +
-
                     " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover) { background-color: white;  }"+
                     " &:not(:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover)):not(&:hover) { background-color: white;  }" +
-
                     "}\n";
                 tcStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
             }

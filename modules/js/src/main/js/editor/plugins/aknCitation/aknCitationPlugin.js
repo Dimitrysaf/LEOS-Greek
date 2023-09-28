@@ -27,7 +27,7 @@ define(function aknCitationPluginModule(require) {
 
     var pluginDefinition = {
         init: function init(editor) {
-            $(editor.element.$).on("mouseup", null, [editor], _handleClickEvent);
+            $(editor.element.$).on("keyup mouseup", null, [editor], _handleClickEvent);
 
             leosKeyHandler.on({
                 editor : editor,

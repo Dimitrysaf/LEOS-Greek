@@ -37,7 +37,7 @@ define(function aknRecitalPluginModule(require) {
                 event.editor.fire( 'unlockSnapshot' );
             });
 
-            $(editor.element.$).on("mouseup", null, [editor], _handleClickEvent);
+            $(editor.element.$).on("keyup mouseup", null, [editor], _handleClickEvent);
 
             leosKeyHandler.on({
                 editor : editor,

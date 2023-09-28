@@ -17,6 +17,7 @@ define(function listItemNumberModule(require) {
 
     var UTILS = require("core/leosUtils");
     var leosPluginUtils = require("plugins/leosPluginUtils");
+    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
     var ckEditor;
     var defaultList = [];
     var listNumberConfig;
@@ -279,9 +280,11 @@ define(function listItemNumberModule(require) {
                     listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, originNumID);
                 }
                 var previousNumber = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM);
-                sequence && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM, sequence.generator(orderedList, listItems[idx], newIdx)) && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
-                ckEditor.fire("handleTcIndent", { data: listItems[idx],  previousNumber: previousNumber } );
-                newIdx++;
+                if (!listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ENTER_DELETED)) {
+                    sequence && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM, sequence.generator(orderedList, listItems[idx], newIdx)) && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
+                    ckEditor.fire("handleTcIndent", {data: listItems[idx], previousNumber: previousNumber});
+                    newIdx++;
+                }
             }
         }
     }
