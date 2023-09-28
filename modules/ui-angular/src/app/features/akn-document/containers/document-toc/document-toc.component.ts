@@ -1052,7 +1052,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       labelEl && labelEl.offsetWidth < labelEl.scrollWidth;
     const labelWithoutSpans = node.label.replace(
       /<span[^>]*>([^<]+)<\/span>/g,
-      '',
+      '$1',
     );
     return isLabelTextTruncated
       ? this.truncateLabelText(labelWithoutSpans)
