@@ -579,9 +579,10 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public <D extends LeosDocument> List<D> findDocumentsByUserId(String userId, Class<? extends D> type, String leosAuthority) {
         logger.trace("Finding document by userId... [userId=" + userId + ", role=" + leosAuthority + ']');
 
-        LeosDocumentList docs = repository.findDocumentsByUserId(userId, leosAuthority);
+        String category = type != null ? type.getSimpleName().toUpperCase() : null;
+        LeosDocumentList docs = repository.findDocumentsByUserId(userId, leosAuthority, category);
 
-        return toLeosDocuments(docs.getLeosDocumentList(), type, true);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
     }
 
     @Override

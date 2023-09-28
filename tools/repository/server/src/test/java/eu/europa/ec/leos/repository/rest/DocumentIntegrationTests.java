@@ -19,8 +19,6 @@ import org.junit.runner.RunWith;
 import org.mockito.AdditionalMatchers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -31,16 +29,27 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.web.util.UriUtils.encodeUriVariables;
 
 @RunWith(SpringRunner.class)
@@ -392,11 +401,12 @@ public class DocumentIntegrationTests {
     public void findDocumentsByUserId() throws Exception {
         String role = "OWNER";
         List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
+        String category = "BILL";
 
-        when(documentService.findDocumentsByUserId(USER, role))
+        when(documentService.findDocumentsByUserId(USER, role, "BILL"))
                 .thenReturn(listDocs);
 
-        mockMvc.perform(get("/documents/find-by-collaborator/{userId}?role={role}", USER, role).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/documents/find-by-collaborator/{userId}?role={role}&category={category}", USER, role, category).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.leosDocumentList[0].name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.leosDocumentList[0].createdBy", is(USER)))

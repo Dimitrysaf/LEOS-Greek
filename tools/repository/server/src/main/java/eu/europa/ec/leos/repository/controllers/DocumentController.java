@@ -156,9 +156,9 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity findDocumentsByUserId(@RequestParam("role") String role,
+    public ResponseEntity findDocumentsByUserId(@RequestParam("role") String role, @RequestParam(value = "category", defaultValue = "") String category,
                                                 @PathVariable("userId") String userId) {
-        List<LeosDocument> xmlDocs = documentService.findDocumentsByUserId(userId, role);
+        List<LeosDocument> xmlDocs = documentService.findDocumentsByUserId(userId, role, category);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 

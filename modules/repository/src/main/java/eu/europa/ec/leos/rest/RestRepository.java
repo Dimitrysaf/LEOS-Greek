@@ -363,10 +363,10 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    LeosDocumentList findDocumentsByUserId(String userId, String role) {
-        LOGGER.trace("Finding Documents By UserId  [userId={}, role={}]", userId, role);
-        String url = getUrl(leosRestFindDocumentsByUserIdURI + "?role={role}");
-        LeosDocumentList resp = getEntity(url, LeosDocumentList.class, userId, role);
+    LeosDocumentList findDocumentsByUserId(String userId, String role, String category) {
+        LOGGER.trace("Finding Documents By UserId  [userId={}, role={}, category={}]", userId, role, category);
+        String url = getUrl(leosRestFindDocumentsByUserIdURI + "?role={role}&category={category}");
+        LeosDocumentList resp = getEntity(url, LeosDocumentList.class, userId, role, category);
         return resp;
     }
 
