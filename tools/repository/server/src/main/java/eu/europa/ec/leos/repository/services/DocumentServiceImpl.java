@@ -17,12 +17,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
+import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentCategories;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
 import eu.europa.ec.leos.repository.entities.DocumentProperties;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
-import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
@@ -57,6 +57,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -576,12 +577,14 @@ public class DocumentServiceImpl implements DocumentService {
                 docs.getContent().get(0).getPackageId()), documentContentRepository, docs.toList(), false);
     }
 
-    public List<LeosDocument> findDocumentsByUserId(final String userId, final String leosAuthority) {
+    public List<LeosDocument> findDocumentsByUserId(final String userId, final String leosAuthority, String category) {
         List<LeosDocument> xmlDocs = new ArrayList<>();
+        Set<String> categories = new HashSet<>();
+        categories.add(category);
         List<String> pkgIdsList = collaboratorsService.findDocumentsByUserId(userId, leosAuthority);
         for (String pkgId : pkgIdsList) {
             List<LeosDocument> foundDocs = packageService.findDocumentsByPackageId(pkgId,
-                    null, false, false);
+                    categories, false, false);
             xmlDocs.addAll(foundDocs);
         }
         return xmlDocs;

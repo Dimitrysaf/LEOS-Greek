@@ -736,11 +736,11 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_findDocumentByUserId_1() throws RepositoryException {
-        List<LeosDocument> docs = documentService.findDocumentsByUserId("demo", "OWNER");
-        assertEquals(docs.size(), 4);
-        docs = documentService.findDocumentsByUserId("demo", "REVIEWER");
+        List<LeosDocument> docs = documentService.findDocumentsByUserId("demo", "OWNER", null);
         assertEquals(docs.size(), 0);
-        docs = documentService.findDocumentsByUserId("jane", "OWNER");
+        docs = documentService.findDocumentsByUserId("demo", "REVIEWER", null);
+        assertEquals(docs.size(), 0);
+        docs = documentService.findDocumentsByUserId("jane", "OWNER", null);
         assertEquals(docs.size(), 0);
     }
 

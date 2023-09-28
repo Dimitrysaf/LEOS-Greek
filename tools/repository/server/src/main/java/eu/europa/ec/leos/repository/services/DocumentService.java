@@ -63,7 +63,7 @@ public interface DocumentService {
 
     long getRecentMinorVersionsCount(final String docRef, final String versionLabel);
 
-    List<LeosDocument> findDocumentsByUserId(final String userId, final String role);
+    List<LeosDocument> findDocumentsByUserId(final String userId, final String role, String category);
 
     Optional<LeosDocument> findDocumentByRef(final String ref);
 
