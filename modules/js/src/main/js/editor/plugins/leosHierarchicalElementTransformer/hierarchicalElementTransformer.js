@@ -53,6 +53,7 @@ define(function hierarchicalElementTransformer(require) {
     var DATA_AKN_TC_ENTER_DELETED = "data-akn-tc-enter-deleted";
     var NEW = "NEW";
     var UNNUMBERED = "UNNUMBERED";
+    var DELETE = "delete";
     var LEOS_ORIGINAL_DEPTH_ATTR = "leos:originaldepth";
     var DATA_INDENT_LEVEL = "data-indent-level";
     var DATA_INDENT_NUMBERED = "data-indent-numbered";
@@ -775,10 +776,14 @@ define(function hierarchicalElementTransformer(require) {
                                         from: "leos:tc-original-number",
                                         to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                         action: "passAttributeTransformer"
+                                    }, {
+                                        from: "leos:tc-enter-deleted",
+                                        to: DATA_AKN_TC_ENTER_DELETED,
+                                        action: "passAttributeTransformer"
                                     }]
                                 });
                             } else if (rootElementsWithNumWithSpanTextForFromRegExp.test(path)) {
-                                if (element.parent.attributes["leos:action"] === "delete") {
+                                if (element.parent.attributes["leos:action"] === DELETE && !element.parent.attributes["leos:tc-enter-deleted"]) {
                                     this.mapToProducts(element, {
                                         toPath: rootsElementsPathForTo,
                                         attrs: [{
@@ -1322,10 +1327,6 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_AKN_ATTR_RENUMBERED,
                                                 to: "leos:renumbered",
                                                 action: "passAttributeTransformer"
-                                            }, {
-                                                from: DATA_AKN_TC_ENTER_DELETED,
-                                                to: "leos:tc-enter-deleted",
-                                                action: "passAttributeTransformer"
                                             }]
                                         }, {
                                             toPath: [rootsElementsPathForFrom, "num"].join("/"),
@@ -1364,14 +1365,43 @@ define(function hierarchicalElementTransformer(require) {
                                             }]
                                         }]);
                                         var contentPath = rootsElementsPathForFrom + "/num";
-                                        if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
-                                            && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW) {
+                                        if (element.attributes[DATA_AKN_TC_ENTER_DELETED]) {
                                             this.mapToChildProducts(element, {
                                                 toPath: contentPath,
                                                 toChild: "span",
                                                 attrs: [{
                                                     to: "leos:action",
-                                                    toValue: "delete",
+                                                    toValue: DELETE,
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_UID_NUMBER,
+                                                    to: "leos:uid",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: TITLE_NUMBER,
+                                                    to: "leos:title",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ENTER_DELETED,
+                                                    to: "leos:tc-enter-deleted",
+                                                    action: "passAttributeTransformer"
+                                                }]
+                                            });
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath + "/span",
+                                                toChild: "text",
+                                                toChildTextValue: "↰"
+                                            });
+                                        }
+                                        if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
+                                            && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW
+                                            && !element.attributes[DATA_AKN_TC_ENTER_DELETED]) {
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath,
+                                                toChild: "span",
+                                                attrs: [{
+                                                    to: "leos:action",
+                                                    toValue: DELETE,
                                                     action: "passAttributeTransformer"
                                                 }, {
                                                     from: DATA_AKN_UID_NUMBER,
@@ -1384,6 +1414,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                     to: "leos:tc-original-number",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ENTER_DELETED,
+                                                    to: "leos:tc-enter-deleted",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             });
@@ -1412,6 +1446,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 }, {
                                                     from: DATA_AKN_TC_ORIGINAL_NUMBER,
                                                     to: "leos:tc-original-number",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ENTER_DELETED,
+                                                    to: "leos:tc-enter-deleted",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             });
@@ -1573,122 +1611,318 @@ define(function hierarchicalElementTransformer(require) {
                                         fromAttribute: DATA_AKN_NUM
                                     }]);
                                 } else {
-                                    this.mapToProducts(element, [{
-                                        toPath: rootsElementsPathForFrom,
-                                        attrs: [{
-                                            from: "id",
-                                            to: "xml:id",
-                                            action: "passAttributeTransformer"
+                                    var contentPath = rootsElementsPathForFrom + "/num";
+                                    if (element.attributes[DATA_AKN_ACTION_FOR_NUMBER] === DELETE) {
+                                        this.mapToProducts(element, [{
+                                            toPath: rootsElementsPathForFrom,
+                                            attrs: [{
+                                                from: "id",
+                                                to: "xml:id",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_ORIGIN,
+                                                to: "leos:origin",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_EDITABLE,
+                                                to: "leos:editable",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_LEVEL,
+                                                to: LEOS_INDENT_LEVEL,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_NUMBERED,
+                                                to: LEOS_INDENT_NUMBERED,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_NUMBERED,
+                                                to: LEOS_INDENT_NUMBERED,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_LEVEL,
+                                                to: LEOS_INDENT_ORIGIN_LEVEL,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_NUMBER,
+                                                to: LEOS_INDENT_ORIGIN_NUMBER,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_NUMBER_ID,
+                                                to: LEOS_INDENT_ORIGIN_NUMBER_ID,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_NUMBER_ORIGIN,
+                                                to: LEOS_INDENT_ORIGIN_NUMBER_ORIGIN,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_TYPE,
+                                                to: LEOS_INDENT_ORIGIN_TYPE,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_REFERS_TO,
+                                                to: LEOS_REFERS_TO,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-action",
+                                                to: "leos:action",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-uid",
+                                                to: "leos:uid",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTACTION,
+                                                to: "leos:softaction",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTACTION_ROOT,
+                                                to: "leos:softactionroot",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTUSER,
+                                                to: "leos:softuser",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTDATE,
+                                                to: "leos:softdate",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTMOVE_TO,
+                                                to: "leos:softmove_to",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTMOVE_FROM,
+                                                to: "leos:softmove_from",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTMOVE_LABEL,
+                                                to: "leos:softmove_label",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTTRANS_FROM,
+                                                to: "leos:softtrans_from",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_ATTR_RENUMBERED,
+                                                to: "leos:renumbered",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                                to: "leos:tc-original-number",
+                                                action: "passAttributeTransformer"
+                                            }]
                                         }, {
-                                            from: DATA_ORIGIN,
-                                            to: "leos:origin",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_EDITABLE,
-                                            to: "leos:editable",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_INDENT_LEVEL,
-                                            to: LEOS_INDENT_LEVEL,
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_INDENT_NUMBERED,
-                                            to: LEOS_INDENT_NUMBERED,
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_INDENT_NUMBERED,
-                                            to: LEOS_INDENT_NUMBERED,
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_INDENT_ORIGIN_LEVEL,
-                                            to: LEOS_INDENT_ORIGIN_LEVEL,
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_INDENT_ORIGIN_NUMBER,
-                                            to: LEOS_INDENT_ORIGIN_NUMBER,
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_INDENT_ORIGIN_NUMBER_ID,
-                                            to: LEOS_INDENT_ORIGIN_NUMBER_ID,
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_INDENT_ORIGIN_NUMBER_ORIGIN,
-                                            to: LEOS_INDENT_ORIGIN_NUMBER_ORIGIN,
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_INDENT_ORIGIN_TYPE,
-                                            to: LEOS_INDENT_ORIGIN_TYPE,
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_REFERS_TO,
-                                            to: LEOS_REFERS_TO,
-                                            action: "passAttributeTransformer"
-                                        },{
-                                            from: "data-akn-action",
-                                            to: "leos:action",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: "data-akn-uid",
-                                            to: "leos:uid",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_SOFTACTION,
-                                            to: "leos:softaction",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_SOFTACTION_ROOT,
-                                            to: "leos:softactionroot",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_SOFTUSER,
-                                            to: "leos:softuser",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_SOFTDATE,
-                                            to: "leos:softdate",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_SOFTMOVE_TO,
-                                            to: "leos:softmove_to",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_SOFTMOVE_FROM,
-                                            to: "leos:softmove_from",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_SOFTMOVE_LABEL,
-                                            to: "leos:softmove_label",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_SOFTTRANS_FROM,
-                                            to: "leos:softtrans_from",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_ATTR_RENUMBERED,
-                                            to: "leos:renumbered",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_ACTION_FOR_NUMBER,
-                                            to: "leos:action-number",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_UID_NUMBER,
-                                            to: "leos:uid-number",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: TITLE_NUMBER,
-                                            to: "leos:title-number",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_TC_ORIGINAL_NUMBER,
-                                            to: "leos:tc-original-number",
-                                            action: "passAttributeTransformer"
-                                        }, {
-                                            from: DATA_AKN_TC_ENTER_DELETED,
-                                            to: "leos:tc-enter-deleted",
-                                            action: "passAttributeTransformer"
-                                        }]
-                                    }]);
+                                            toPath: [rootsElementsPathForFrom, "num"].join("/"),
+                                            attrs: [{
+                                                from: DATA_AKN_NUM_ID,
+                                                to: "xml:id",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_NUM_ORIGIN,
+                                                to: "leos:origin",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_NUM_SOFTACTION,
+                                                to: "leos:softaction",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_NUM_SOFTACTION_ROOT,
+                                                to: "leos:softactionroot",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_NUM_SOFTUSER,
+                                                to: "leos:softuser",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_NUM_SOFTDATE,
+                                                to: "leos:softdate",
+                                                action: "passAttributeTransformer"
+                                            }]
+                                        }]);
+                                        if (element.attributes[DATA_AKN_TC_ENTER_DELETED]) {
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath,
+                                                toChild: "span",
+                                                attrs: [{
+                                                    to: "leos:action",
+                                                    toValue: DELETE,
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_UID_NUMBER,
+                                                    to: "leos:uid",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: TITLE_NUMBER,
+                                                    to: "leos:title",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ENTER_DELETED,
+                                                    to: "leos:tc-enter-deleted",
+                                                    action: "passAttributeTransformer"
+                                                }]
+                                            });
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath + "/span",
+                                                toChild: "text",
+                                                toChildTextValue: "↰"
+                                            });
+                                        }
+                                        if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
+                                            && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW) {
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath,
+                                                toChild: "span",
+                                                attrs: [{
+                                                    to: "leos:action",
+                                                    toValue: DELETE,
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_UID_NUMBER,
+                                                    to: "leos:uid",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: TITLE_NUMBER,
+                                                    to: "leos:title",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                                    to: "leos:tc-original-number",
+                                                    action: "passAttributeTransformer"
+                                                }, {
+                                                    from: DATA_AKN_TC_ENTER_DELETED,
+                                                    to: "leos:tc-enter-deleted",
+                                                    action: "passAttributeTransformer"
+                                                }]
+                                            });
+                                            this.mapToChildProducts(element, {
+                                                toPath: contentPath + "/span",
+                                                toChild: "text",
+                                                toChildTextValue: element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER]
+                                            });
+                                        }
+                                    } else {
+                                        this.mapToProducts(element, [{
+                                            toPath: rootsElementsPathForFrom,
+                                            attrs: [{
+                                                from: "id",
+                                                to: "xml:id",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_ORIGIN,
+                                                to: "leos:origin",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_EDITABLE,
+                                                to: "leos:editable",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_LEVEL,
+                                                to: LEOS_INDENT_LEVEL,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_NUMBERED,
+                                                to: LEOS_INDENT_NUMBERED,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_NUMBERED,
+                                                to: LEOS_INDENT_NUMBERED,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_LEVEL,
+                                                to: LEOS_INDENT_ORIGIN_LEVEL,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_NUMBER,
+                                                to: LEOS_INDENT_ORIGIN_NUMBER,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_NUMBER_ID,
+                                                to: LEOS_INDENT_ORIGIN_NUMBER_ID,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_NUMBER_ORIGIN,
+                                                to: LEOS_INDENT_ORIGIN_NUMBER_ORIGIN,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_INDENT_ORIGIN_TYPE,
+                                                to: LEOS_INDENT_ORIGIN_TYPE,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_REFERS_TO,
+                                                to: LEOS_REFERS_TO,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-action",
+                                                to: "leos:action",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "data-akn-uid",
+                                                to: "leos:uid",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTACTION,
+                                                to: "leos:softaction",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTACTION_ROOT,
+                                                to: "leos:softactionroot",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTUSER,
+                                                to: "leos:softuser",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTDATE,
+                                                to: "leos:softdate",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTMOVE_TO,
+                                                to: "leos:softmove_to",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTMOVE_FROM,
+                                                to: "leos:softmove_from",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTMOVE_LABEL,
+                                                to: "leos:softmove_label",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_SOFTTRANS_FROM,
+                                                to: "leos:softtrans_from",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_ATTR_RENUMBERED,
+                                                to: "leos:renumbered",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_ACTION_FOR_NUMBER,
+                                                to: "leos:action-number",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_UID_NUMBER,
+                                                to: "leos:uid-number",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: TITLE_NUMBER,
+                                                to: "leos:title-number",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                                to: "leos:tc-original-number",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_TC_ENTER_DELETED,
+                                                to: "leos:tc-enter-deleted",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_TC_ENTER_DELETED,
+                                                to: "leos:tc-enter-deleted",
+                                                action: "passAttributeTransformer"
+                                            }]
+                                        }]);
+                                    }
                                 }
                                 var isContentWrapperPresent = shouldContentBeWrapped.call(this, element);
                                 if (isContentWrapperPresent) {

@@ -24,6 +24,7 @@ define(function aknNumberedParagraphPluginModule(require) {
     var renumberModule = require("plugins/leosNumber/listItemNumberModule");
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
+    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var DATA_INDENT_ORIGIN_LEVEL = "data-indent-origin-indent-level";
     var DATA_INDENT_ORIGIN_NUMBER = "data-indent-origin-num";
@@ -237,7 +238,7 @@ define(function aknNumberedParagraphPluginModule(require) {
         if (paragraphs.length > 0) {
             PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM)
             && !(paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).startsWith(DELETED))
-            && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM) !== leosPluginUtils.UNNUMBERED
+            && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM) !== leosTrackChanges.core.UNNUMBERED
                 ? NUMBERED : UNNUMBERED;
         }
         cmd.setState(PARA_MODE);
