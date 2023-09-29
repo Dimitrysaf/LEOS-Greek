@@ -240,9 +240,32 @@
         </div>
       </div>
       <!-- Cross heading -->
+      <div class="">
+        <div class="input-wrap" euiInputGroup>
+          <label euiLabel class="toc-editor-label"> Content </label>
+          <input
+            euiInputText
+            class="toc-editor-input"
+            name="content"
+            id="content"
+            type="text"
+            [(ngModel)]="content"
+            (ngModelChange)="handleContentChange($event)"
+          />
+          <span
+            *ngIf="invalidContentMsg"
+            euiLabel
+            euiDanger
+            euiSizeS
+            class="text-sm"
+          >
+            {{ invalidContentMsg }}</span
+          >
+        </div>
+      </div>
       <div
         class="d-flex flex-wrap mt-2 justify-content-start"
-        *ngIf="isCrossFading(selectedNode.tocItem)"
+        *ngIf="isCrossHeading(selectedNode.tocItem)"
       >
         <h5 class="mr-3 toc-editor-label">
           {{ 'toc.edit.window.item.list.type' | translate }}
@@ -250,7 +273,7 @@
       </div>
       <div
         class="d-flex flex-wrap mt-2 justify-content-start"
-        *ngIf="isCrossFading(selectedNode.tocItem)"
+        *ngIf="isCrossHeading(selectedNode.tocItem)"
       >
         <div class="d-flex flex-row align-items-center">
           <input

@@ -6,16 +6,15 @@ import {
   OnChanges,
   OnInit,
   Output,
+  SecurityContext,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { Form, FormBuilder } from '@angular/forms';
 import { UserDetails } from '@eui/base';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash-es';
 import { Subject } from 'rxjs';
 
-import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
   ARTICLE,
   BLOCK,
@@ -51,8 +50,11 @@ import {
   isUndeletableItem,
   updateDepthOfTocItems,
 } from '@/shared/utils/toc.utils';
+import { DomSanitizer } from '@angular/platform-browser';
 
 const TYPING_TIME = 500;
+const OPEN_TAG = '<';
+const CLOSE_TAG = '>';
 
 @Component({
   selector: 'app-toc-editor',
@@ -91,6 +93,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   //ng values for the selected node edit
   heading: string;
+  content: string;
   number: string;
   numberConfig: NumberingConfig;
   type: string;
@@ -100,6 +103,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
   deleteType: string;
   deleteButtonCaption: string;
 
+  invalidContentMsg: string;
   invalidHeadingMsg: string;
   invalidNumberMsg: string;
   invalidCrossMsg: string;
@@ -112,10 +116,12 @@ export class TocEditorComponent implements OnInit, OnChanges {
   private typingTimer;
   private numberInvalid = false;
   private headingInvalid = false;
+  private contentInvalid = false;
 
   constructor(
     private translateService: TranslateService,
     private fb: FormBuilder,
+    private sanitizer: DomSanitizer,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -150,8 +156,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
     return [POINT, INDENT].includes(tocItem.aknTag);
   }
 
-  isCrossFading(tocItem: TocItem) {
-    return tocItem.aknTag === BLOCK;
+  isCrossHeading(tocItem: TocItem) {
+    return tocItem.aknTag === CROSSHEADING;
   }
 
   showTypeField(tocItem: TocItem) {
@@ -163,6 +169,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
       tocItem.itemHeading === 'MANDATORY' || tocItem.itemHeading === 'OPTIONAL'
     );
   }
+
   isItemHeadingEditable(tocItem: TocItem) {
     return tocItem.aknTag === DIVISION
       ? false
@@ -231,6 +238,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     this.heading = node.heading;
     this.type = this.getDisplayableTocItem(node.tocItem);
     this.number = node.number;
+    this.content = node.content;
     this.numberConfig = getNumberingByName(
       this.documentConfig.numberingConfig,
       node.tocItem.numberingType,
@@ -279,7 +287,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     if (this.isIndentList(node.tocItem)) {
       this.active_point_style = node.tocItem.numberingType;
     }
-    if (this.isCrossFading(node.tocItem)) {
+    if (this.isCrossHeading(node.tocItem)) {
       this.active_block_style = node.tocItem.numberingType;
     }
     if (this.showNumParagraphToggle(node)) {
@@ -328,6 +336,41 @@ export class TocEditorComponent implements OnInit, OnChanges {
     }, TYPING_TIME);
   }
 
+  handleContentChange(value: string) {
+    clearTimeout(this.typingTimer);
+    this.typingTimer = setTimeout(() => {
+      //validate contet typed
+      if (value.length === 0) {
+        this.handleNodeChanges(this.toc, true);
+        this.invalidContentMsg = this.translateService.instant(
+          'toc.edit.window.item.selected.content.empty.message',
+        );
+        this.contentInvalid = true;
+        this.invalidNodes.add(this.selectedNode);
+        this.handleInvalidNodes.emit(this.invalidNodes);
+      } else if (this.containsXmlTags(value)) {
+        this.handleNodeChanges(this.toc, true);
+        this.invalidContentMsg = this.translateService.instant(
+          'toc.edit.window.item.selected.content.error.message',
+        );
+        this.contentInvalid = true;
+        this.invalidNodes.add(this.selectedNode);
+        this.handleInvalidNodes.emit(this.invalidNodes);
+      } else {
+        this.handleNodeChanges(this.toc, true);
+        this.invalidNodes.delete(this.selectedNode);
+        this.handleInvalidNodes.emit(this.invalidNodes);
+        this.invalidContentMsg = null;
+        this.contentInvalid = false;
+        this.selectedNode.content = this.sanitizer.sanitize(
+          SecurityContext.HTML,
+          value,
+        );
+      }
+      this.handleNodeChanges(this.toc);
+    }, TYPING_TIME);
+  }
+
   removeInvalidNode() {
     for (const node of this.invalidNodes) {
       if (node.id === this.selectedNode.id) {
@@ -342,10 +385,9 @@ export class TocEditorComponent implements OnInit, OnChanges {
     clearTimeout(this.typingTimer);
     this.typingTimer = setTimeout(() => {
       const numberRegex = RegExp(this.numberConfig.regexJS);
-      console.log(this.numberConfig);
       if (number && numberRegex.test(number)) {
         //clear invalid
-        if (!this.headingInvalid) {
+        if (!this.numberInvalid) {
           this.removeInvalidNode();
           this.invalidNodes.delete(this.selectedNode);
           this.handleInvalidNodes.emit(this.invalidNodes);
@@ -686,5 +728,9 @@ export class TocEditorComponent implements OnInit, OnChanges {
       );
     }
     return -1;
+  }
+
+  private containsXmlTags(content: string) {
+    return content.includes(OPEN_TAG) || content.includes(CLOSE_TAG);
   }
 }

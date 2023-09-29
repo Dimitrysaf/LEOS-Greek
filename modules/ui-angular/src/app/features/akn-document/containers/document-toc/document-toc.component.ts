@@ -34,6 +34,7 @@ import {
   ADD,
   ARTICLE,
   BULLET_NUM,
+  CN,
   CONTENT_SEPARATOR,
   DELETE,
   DIVISION,
@@ -57,6 +58,7 @@ import {
 import { DocumentConfig } from '@/shared/models';
 import { DragAction } from '@/shared/models/drag-action.model';
 import { NodeValidation } from '@/shared/models/drop-response.model';
+import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { scrollInParent } from '@/shared/utils';
@@ -68,13 +70,10 @@ import {
   checkPositionAfterValidationExplanatory,
   findNodeById,
   getItemSoftStyle,
+  isFirstPointOrSubparagraph,
   removeTag,
 } from '@/shared/utils/toc.utils';
 
-import {
-  TableOfContentItemVO,
-  TocItem,
-} from '../../../../shared/models/toc.model';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
 import { ValidateTocService } from '../../services/validate-node-drop.service';
@@ -118,6 +117,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   dataSource: MatTreeNestedDataSource<TableOfContentItemVO>;
 
   draggedItem: TableOfContentItemVO = null;
+  targetNode: TableOfContentItemVO = null;
 
   @ViewChild('deleteTocConfirmation')
   deleteDialog: ConfirmDeleteDialogComponent;
@@ -541,6 +541,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!Array.isArray(toc)) toc = [];
     this.persistTreeHeight(); // hack to maintain scroll position
     this.prepareTreeForDisplay(toc);
+    this.checkNodesToRender(toc);
     this.dataSource.data = toc;
     this.treeControl.dataNodes = toc;
     this.clearNodeTooltips();
@@ -576,6 +577,42 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   clearSelectedNode() {
     this.selectedNode = null;
   }
+
+  checkNodesToRender(root: TableOfContentItemVO[]) {
+    for (const n of root) {
+      n.shouldRenderNode = this.shouldRenderNode(root, n);
+      this.checkChildNodesToRender(root, n);
+    }
+  }
+
+  private checkChildNodesToRender(
+    root: TableOfContentItemVO[],
+    parentNode: TableOfContentItemVO,
+  ) {
+    if (parentNode.childItems) {
+      for (const child of parentNode.childItems) {
+        child.shouldRenderNode = this.shouldRenderNode(root, child);
+        this.checkChildNodesToRender(root, child);
+      }
+    }
+  }
+
+  private shouldRenderNode = (
+    root: TableOfContentItemVO[],
+    n: TableOfContentItemVO,
+  ) => {
+    if (process.env.NG_APP_LEOS_INSTANCE === CN) {
+      return (
+        n.tocItem.display &&
+        !(
+          isFirstPointOrSubparagraph(root, n) &&
+          n.node !== null &&
+          !n.movedOnEmptyParent
+        )
+      );
+    }
+    return n.tocItem.display;
+  };
 
   private scrollNodeIntoView(node: TableOfContentItemVO) {
     if (node) {
@@ -710,6 +747,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     isAdd: boolean = false,
   ) {
     this.draggedItem = nodeDragged;
+    this.targetNode = nodeTarget;
     this.validateTocService.validateNodeDrop(
       this.treeControl.dataNodes,
       parentNode,
@@ -738,13 +776,14 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.handleAddNodeAfterValidation(
-      result.targetItem,
+      this.targetNode,
       this.draggedItem,
       this.dragAction.isAdd,
       this.dragAction.action,
     );
 
     this.draggedItem = null;
+    this.targetNode = null;
   }
 
   private isMovedNode(node: TableOfContentItemVO) {

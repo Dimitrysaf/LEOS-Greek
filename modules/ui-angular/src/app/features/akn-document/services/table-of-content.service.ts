@@ -2,15 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import {
   BehaviorSubject,
-  combineLatest,
   filter,
   finalize,
   forkJoin,
-  map,
   mergeMap,
   Observable,
   Subject,
-  switchMap,
   take,
   takeUntil,
 } from 'rxjs';

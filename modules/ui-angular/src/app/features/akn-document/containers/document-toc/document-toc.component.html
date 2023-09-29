@@ -12,7 +12,7 @@
     >
       <mat-nested-tree-node
         cdkScrollable
-        [hidden]="!node.tocItem.display"
+        [hidden]="!node.shouldRenderNode"
         (cdkDragMoved)="dragMoved($event)"
         [attr.data-id]="node.id"
         *matTreeNodeDef="let node"
@@ -60,7 +60,7 @@
       </mat-nested-tree-node>
       <mat-nested-tree-node
         cdkScrollable
-        [hidden]="!node.tocItem.display"
+        [hidden]="!node.shouldRenderNode"
         *matTreeNodeDef="let node; when: hasChildren"
         cdkDrag
         cdkDropList
