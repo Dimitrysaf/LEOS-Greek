@@ -87,7 +87,7 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   handleConfirmationDelete() {
-    if (this.totMilestones === 0) {
+    if (this.isClonedProposal || this.totMilestones === 0) {
       this.proposalDeleteConf.deleteDialog.openDialog();
     } else {
       this.proposalDeleteCannotConf.confirmDialog.openDialog();
