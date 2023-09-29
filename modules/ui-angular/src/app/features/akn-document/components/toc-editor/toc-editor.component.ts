@@ -11,6 +11,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Form, FormBuilder } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
 import { UserDetails } from '@eui/base';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -50,7 +51,6 @@ import {
   isUndeletableItem,
   updateDepthOfTocItems,
 } from '@/shared/utils/toc.utils';
-import { DomSanitizer } from '@angular/platform-browser';
 
 const TYPING_TIME = 500;
 const OPEN_TAG = '<';
