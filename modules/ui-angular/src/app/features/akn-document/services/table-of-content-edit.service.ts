@@ -319,7 +319,7 @@ export abstract class TableOfContentEditService {
       } else if (
         position === 'AFTER' &&
         [SUBPARAGRAPH, POINT].includes(sourceItem.tocItem.aknTag) &&
-        targetItem.tocItem.aknTag == PARAGRAPH
+        targetItem.tocItem.aknTag === PARAGRAPH
       ) {
         sourceItem.parentItem = targetItem.id;
         targetItem.childItems.push(sourceItem);
