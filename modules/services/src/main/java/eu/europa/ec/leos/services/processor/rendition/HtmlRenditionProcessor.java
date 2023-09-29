@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.processor.rendition;
 
 import eu.europa.ec.leos.model.rendition.RenderedDocument;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.freemarker.XmlNodeModelHandler;
 import freemarker.ext.dom.NodeModel;
 import freemarker.template.Configuration;
@@ -93,7 +94,7 @@ public class HtmlRenditionProcessor {
         try {
             StringWriter outputWriter = new StringWriter();
             template.process(root, outputWriter);
-            return outputWriter.getBuffer().toString();
+            return XmlHelper.removeSelfClosingElements(outputWriter.getBuffer().toString());
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while Template processing" + e);
         }

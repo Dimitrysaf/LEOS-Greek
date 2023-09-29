@@ -17,6 +17,7 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.security.LeosPermission;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.freemarker.XmlNodeModelHandler;
 import freemarker.ext.dom.NodeModel;
 import freemarker.template.Configuration;
@@ -151,7 +152,7 @@ public abstract class TransformationServiceImpl implements TransformationService
             }
 
             template.process(root, outputWriter);
-            return outputWriter.getBuffer().toString();
+            return XmlHelper.removeSelfClosingElements(outputWriter.getBuffer().toString());
         } catch (Exception ex) {
             LOG.error("Transformation error!", ex);
             throw new RuntimeException(ex);
