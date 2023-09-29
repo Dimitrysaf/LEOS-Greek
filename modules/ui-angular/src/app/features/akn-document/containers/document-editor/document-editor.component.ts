@@ -567,7 +567,7 @@ export class DocumentEditorComponent
         this.navigationAnchorIndex - 1 < 0 ? 0 : this.navigationAnchorIndex - 1;
       this.navigationAnchorsList[prevIndex].scrollIntoView({
         behavior: 'smooth',
-        block: 'nearest',
+        block: 'start',
       });
       this.navigationAnchorIndex--;
       this.arrowClicked = true;
@@ -605,10 +605,11 @@ export class DocumentEditorComponent
       this.navigationAnchorsList.length > 0
     ) {
       this.isScrollFromButton = true;
+
       this.navigationAnchorsList[this.navigationAnchorIndex + 1].scrollIntoView(
         {
           behavior: 'smooth',
-          block: 'nearest',
+          block: 'start',
         },
       );
       this.navigationAnchorIndex++;
@@ -744,6 +745,8 @@ export class DocumentEditorComponent
     this.compareIndex = -1;
     this.removeAllPins();
     this.versionsComparisonForView = null;
+    this.navigationAnchorIndex = -1;
+    this.navigationAnchorsList = null;
   }
 
   handleClose() {
