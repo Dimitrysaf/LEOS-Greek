@@ -1,5 +1,5 @@
-import { TemplatePortal } from '@angular/cdk/portal';
-import { DOCUMENT } from '@angular/common';
+import {TemplatePortal} from '@angular/cdk/portal';
+import {DOCUMENT} from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -9,17 +9,17 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
+import {FormControl, FormGroup} from '@angular/forms';
+import {DomSanitizer} from '@angular/platform-browser';
+import {ActivatedRoute, Router} from '@angular/router';
 import {
   EuiDialogComponent,
   EuiDialogService,
 } from '@eui/components/eui-dialog';
-import { EuiBreadcrumbService } from '@eui/components/layout';
-import { uniqueId, UxAppShellService } from '@eui/core';
-import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash-es';
+import {EuiBreadcrumbService} from '@eui/components/layout';
+import {uniqueId, UxAppShellService} from '@eui/core';
+import {TranslateService} from '@ngx-translate/core';
+import {cloneDeep} from 'lodash-es';
 import {
   BehaviorSubject,
   combineLatest,
@@ -33,37 +33,41 @@ import {
   take,
   takeUntil,
 } from 'rxjs';
-import { v4 as uuidv4 } from 'uuid';
+import {v4 as uuidv4} from 'uuid';
 
-import { AppConfigService } from '@/core/services/app-config.service';
-import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
-import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
-import { Version } from '@/features/akn-document/models';
-import { ContributionStatus, DOCUMENT_STYLES, DocumentConfig } from '@/shared';
-import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
-import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
+import {AppConfigService} from '@/core/services/app-config.service';
+import {
+  DownloadEconsiliumModalComponent
+} from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
+import {DocumentTocComponent} from '@/features/akn-document/containers/document-toc/document-toc.component';
+import {Version} from '@/features/akn-document/models';
+import {ContributionStatus, DOCUMENT_STYLES, DocumentConfig} from '@/shared';
+import {
+  CoEditionDetectedDialogComponent
+} from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import {ConfirmDeleteDialogComponent} from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
-import { ContributionVO } from '@/shared/models/contribution-vo.model';
-import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
-import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
-import { VersionInfoVO } from '@/shared/models/version-info.model';
-import { VersionSearchParams } from '@/shared/models/versionSearch';
-import { AnnotateService } from '@/shared/services/annotate.service';
-import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
-import { DocumentService } from '@/shared/services/document.service';
-import { DomService } from '@/shared/services/dom.service';
-import { EnvironmentService } from '@/shared/services/enviroment.service';
-import { parentHasClass } from '@/shared/utils';
-import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
-import { findNodeById } from '@/shared/utils/toc.utils';
+import {ContributionVO} from '@/shared/models/contribution-vo.model';
+import {DocumentViewResponse} from '@/shared/models/document-view-response.model';
+import {TableOfContentItemVO, TocItem} from '@/shared/models/toc.model';
+import {VersionInfoVO} from '@/shared/models/version-info.model';
+import {VersionSearchParams} from '@/shared/models/versionSearch';
+import {AnnotateService} from '@/shared/services/annotate.service';
+import {CoEditionServiceWS} from '@/shared/services/coEdition.websocket.service';
+import {DocumentService} from '@/shared/services/document.service';
+import {DomService} from '@/shared/services/dom.service';
+import {EnvironmentService} from '@/shared/services/enviroment.service';
+import {parentHasClass} from '@/shared/utils';
+import {capitalizeFirstLetter} from '@/shared/utils/string.utils';
+import {findNodeById} from '@/shared/utils/toc.utils';
 
-import { BlockDocumentEditorService } from '../../services/block-document-editor.service';
-import { CKEditorService } from '../../services/ckeditor.service';
-import { TableOfContentService } from '../../services/table-of-content.service';
-import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
+import {BlockDocumentEditorService} from '../../services/block-document-editor.service';
+import {CKEditorService} from '../../services/ckeditor.service';
+import {TableOfContentService} from '../../services/table-of-content.service';
+import {TableOfContentEditService} from '../../services/table-of-content-edit.service';
 
 enum PageMode {
   Normal,
@@ -88,8 +92,7 @@ const compareClasses = [
   providers: [AnnotateService, DocumentService, CKEditorService],
 })
 export class DocumentEditorComponent
-  implements OnDestroy, OnInit, AfterViewInit
-{
+  implements OnDestroy, OnInit, AfterViewInit {
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
@@ -169,22 +172,22 @@ export class DocumentEditorComponent
   @ViewChild('eConsiliumModal')
   eConsiliumModal: DownloadEconsiliumModalComponent;
 
-  @ViewChild('tocPane', { read: ElementRef }) tocPaneElement: ElementRef;
-  @ViewChild('documentPane', { read: ElementRef })
+  @ViewChild('tocPane', {read: ElementRef}) tocPaneElement: ElementRef;
+  @ViewChild('documentPane', {read: ElementRef})
   documentPaneElement: ElementRef;
-  @ViewChild('annotationsPane', { read: ElementRef })
+  @ViewChild('annotationsPane', {read: ElementRef})
   annotationsPaneElement: ElementRef;
-  @ViewChild('versionsPane', { read: ElementRef })
+  @ViewChild('versionsPane', {read: ElementRef})
   versionsPaneElement: ElementRef;
-  @ViewChild('versionForViewPane', { read: ElementRef })
+  @ViewChild('versionForViewPane', {read: ElementRef})
   versionForViewPaneElement: ElementRef;
-  @ViewChild('compareModePane', { read: ElementRef })
+  @ViewChild('compareModePane', {read: ElementRef})
   compareModePaneElement: ElementRef;
-  @ViewChild('contributionViewPane', { read: ElementRef })
+  @ViewChild('contributionViewPane', {read: ElementRef})
   contributionViewPaneElement: ElementRef;
-  @ViewChild('contributionViewContainer', { read: ElementRef })
+  @ViewChild('contributionViewContainer', {read: ElementRef})
   contributionViewContainerElement: ElementRef;
-  @ViewChild('contributionAnnotationsPane', { read: ElementRef })
+  @ViewChild('contributionAnnotationsPane', {read: ElementRef})
   contributionAnnotationsPaneElement: ElementRef;
 
   private unloadStyleSheet?: () => void;
@@ -361,7 +364,7 @@ export class DocumentEditorComponent
           this.handleGreyedContribution(contribution, processed);
           this.documentService.setIsContributionDeclinedOrProcessed(
             contribution.contributionStatus ===
-              ContributionStatus.ContributionDone,
+            ContributionStatus.ContributionDone,
           );
           this.contribution = contribution;
         }
@@ -371,7 +374,8 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((shouldReload) => {
         if (shouldReload) {
-          const ckeditorOpen = this.document.querySelectorAll('cke').length > 0;
+          const ckeditorOpen =
+            this.document.querySelectorAll('.cke_editable').length > 0;
           if (!ckeditorOpen) {
             this.documentService.reloadDocument();
             this.tableOfContentService.reload();
@@ -657,7 +661,8 @@ export class DocumentEditorComponent
           this.documentService.reloadDocument();
           this.tableOfContentService.reload();
         },
-        error: (err) => {},
+        error: (err) => {
+        },
       });
   }
 
@@ -826,7 +831,7 @@ export class DocumentEditorComponent
     if (
       this.contribution &&
       this.contribution.contributionStatus ===
-        ContributionStatus.ContributionDone
+      ContributionStatus.ContributionDone
     ) {
       this.isAsyncScrollEnabled = true;
       this.handleAsyncScroll();
@@ -1053,8 +1058,8 @@ export class DocumentEditorComponent
       nodeList && nodeList.length > 0
         ? nodeList
         : nodeListCN && nodeListCN.length > 0
-        ? nodeListCN
-        : nodeListCNDoubleCompare
+          ? nodeListCN
+          : nodeListCNDoubleCompare
     ) as NodeListOf<HTMLElement>;
     const container = this.document.getElementById(
       'versionComparisonContainer',
@@ -1086,7 +1091,7 @@ export class DocumentEditorComponent
     // TODO: reload document and services without page reload
     const currentUrl = this.router.url;
     // this.loadingService.setLoading(true);
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+    this.router.navigateByUrl('/', {skipLocationChange: true}).then(() => {
       this.router.navigate([currentUrl]);
     });
   }
@@ -1375,15 +1380,15 @@ export class DocumentEditorComponent
     } else {
       return versions.length === 2
         ? this.translate.instant('version.compare.header', {
-            oldVersion: this.formatVersionNumber(versions[0]),
-            newVersion: this.formatVersionNumber(versions[1]),
-          })
+          oldVersion: this.formatVersionNumber(versions[0]),
+          newVersion: this.formatVersionNumber(versions[1]),
+        })
         : this.translate.instant('version.compare.header.default');
     }
   }
 
   private getFormValues(): VersionSearchParams {
-    const { type, author } = this.versionSearchForm.getRawValue();
+    const {type, author} = this.versionSearchForm.getRawValue();
     return {
       type: type ?? 'all',
       author: author ?? '',
@@ -1391,7 +1396,7 @@ export class DocumentEditorComponent
   }
 
   private formatVersionNumber(version: Version): string {
-    const { major, intermediate, minor } = version.versionNumber;
+    const {major, intermediate, minor} = version.versionNumber;
     return `${major}.${intermediate}.${minor}`;
   }
 

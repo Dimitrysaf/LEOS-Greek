@@ -86,6 +86,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
       options.rootElement,
     );
   }
+
   //leosEditorExtension > requestToc
   requestToc(...args) {
     this.requestTocAndAncestors([]);
@@ -274,7 +275,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
         response.elementTagName,
         response.elementFragment,
       );
-      this.documentService.reloadDocument();
       if (
         countOccurrencesOfTextInString(
           elemData.elementType,
@@ -432,11 +432,17 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     isSplit: boolean,
     documentType: string,
   ) {
+    const cleanedHtml = this.cleanElementFromCoEditInfo(elementFragment);
     return this.http.put<RefreshElementResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
-      elementFragment,
+      cleanedHtml,
       { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
     );
+  }
+
+  private cleanElementFromCoEditInfo(elementFragment: string) {
+    const cleanedHtml = elementFragment.replace(/<div\b[^>]*>.*?<\/div>/, '');
+    return cleanedHtml.replace('</div>', '');
   }
 
   // called from this.editElementAction > dialog accept
@@ -526,6 +532,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     });
   }
 }
+
 // FIXME normally the above timeout should 1000 for the production env. Raised to 4000 to address acceptance env delays.
 const staticExtensionState: LeosJavaScriptExtensionState = {
   callbackNames: [
