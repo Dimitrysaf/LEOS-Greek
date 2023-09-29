@@ -1,4 +1,4 @@
-import { cloneDeep, drop, remove } from 'lodash-es';
+import { cloneDeep, drop, remove, round } from 'lodash-es';
 
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 
@@ -29,6 +29,7 @@ import {
   SOFT_DELETE_PLACEHOLDER_ID_PREFIX,
   SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
   SUBPARAGRAPH,
+  SUBPOINT,
   TEMP_PREFIX,
   TITLE,
   UNDELETE,
@@ -1347,4 +1348,31 @@ const isPlaceholderForDroppedItem = (
     candidate &&
     candidate.id === SOFT_MOVE_PLACEHOLDER_ID_PREFIX + droppedItem.id
   );
+};
+
+export const isFirstPointOrSubparagraph = (
+  tocTree: TableOfContentItemVO[],
+  item: TableOfContentItemVO,
+) => {
+  const parentNodeOfItem = findNodeById(tocTree, item.parentItem);
+  return (
+    item.parentItem !== null &&
+    [SUBPARAGRAPH, SUBPOINT].includes(item.tocItem.aknTag) &&
+    isTocItemFirstChild(tocTree, parentNodeOfItem, item)
+  );
+};
+
+export const isTocItemFirstChild = (
+  tocTree: TableOfContentItemVO[],
+  item: TableOfContentItemVO,
+  child: TableOfContentItemVO,
+) => {
+  const parentOfItem = findNodeById(tocTree, item.parentItem);
+  return LIST === item.tocItem.aknTag &&
+    child.tocItem.aknTag === SUBPARAGRAPH &&
+    item.childItems.indexOf(child) === 0
+    ? parentOfItem.childItems.indexOf(
+        findNodeById(tocTree, child.parentItem),
+      ) === 0
+    : item.childItems.indexOf(child) === 0;
 };

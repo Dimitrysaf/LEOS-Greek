@@ -107,6 +107,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
     });
 
     promise.then(() => {
+      if (data.elementType === 'crossheading') {
+        data.elementType = 'cross_heading';
+      }
       this.handleEdit(data);
     });
   }

@@ -316,8 +316,15 @@ export abstract class TableOfContentEditService {
         sourceItem.parentItem = targetItem.id;
         targetItem.childItems.splice(0, 0, sourceItem);
         return;
-      }
-      if ('BEFORE' === position) {
+      } else if (
+        position === 'AFTER' &&
+        [SUBPARAGRAPH, POINT].includes(sourceItem.tocItem.aknTag) &&
+        targetItem.tocItem.aknTag == PARAGRAPH
+      ) {
+        sourceItem.parentItem = targetItem.id;
+        targetItem.childItems.push(sourceItem);
+        return;
+      } else if ('BEFORE' === position) {
         this.insertBefore(tocTree, targetItem, sourceItem, isAdd);
       } else if ('AFTER' === position) {
         this.insertAfter(tocTree, targetItem, sourceItem, isAdd);
