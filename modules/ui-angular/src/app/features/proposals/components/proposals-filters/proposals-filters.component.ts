@@ -99,7 +99,7 @@ export class ProposalsFiltersComponent
   }
 
   ngOnDestroy(): void {
-    this.resizeObserver.disconnect();
+    this.resizeObserver?.disconnect();
     this.destroy$.next();
     this.destroy$.complete();
   }
