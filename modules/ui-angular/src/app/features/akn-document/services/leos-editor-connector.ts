@@ -523,15 +523,14 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScr
           prevElemId,
           elemType,
         );
+        if (elemId !== null) {
+          this.editElementAction({
+            action: 'edit',
+            elementId: elemId,
+            elementType: elemType,
+          });
+        }
       }, 4000);
-
-      if (elemId !== null) {
-        this.editElementAction({
-          action: 'edit',
-          elementId: elemId,
-          elementType: elemType,
-        });
-      }
     });
   }
 }
