@@ -42,9 +42,7 @@ define(function leosInlineEditorPluginModule(require) {
                     event.editor.fire("contentChange");
                     contentHeight = newContentHeight;
                 }
-                if (!event.editor.LEOS.isTrackChangesEnabled) {
-                    _addSoftAttributeToParent(event.editor);
-                }
+                _addSoftAttributeToParent(event.editor);
             });
 
 			editor.on('contentDom', function(event) {
