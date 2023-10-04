@@ -10,7 +10,7 @@
       trackByProperty: 'cmisVersionNumber'
     "
     [majorVersion]="version"
-    [subVersions]="version.subVersions"
+    [subVersions]="version.subVersions ?? []"
     (exploreMilestone)="exploreMilestone.emit($event)"
   ></app-versions-pane-group>
 </div>

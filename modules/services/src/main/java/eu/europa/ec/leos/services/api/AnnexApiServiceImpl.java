@@ -19,6 +19,7 @@ import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -234,10 +235,15 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 versionVO.setLegFileName(legDocument.getName());
             }
             versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-            int count = this.annexService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
-            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.annexService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
+    }
+
+    @Override
+    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
+        int count = this.annexService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
+        return VersionsUtil.buildVersionResponse(this.annexService.findAllMinorsForIntermediate(documentRef,
+                currIntVersion, 0, count), messageHelper, userHelper);
     }
 
     @Override

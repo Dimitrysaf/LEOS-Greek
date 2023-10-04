@@ -535,7 +535,6 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         List<VersionVO> versions = this.billService.getAllVersions(bill.getId(), documentRef);
         for (VersionVO versionVO : versions) {
-            Integer count = this.billService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
             //TODO : this code should be handled inside document api service
             if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(bill.getId());
@@ -543,9 +542,15 @@ public class BillApiServiceImpl implements BillApiService {
                 versionVO.setLegFileName(legDocument.getName());
             }
             versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.billService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
+    }
+
+    @Override
+    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
+        int count = this.billService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
+        return VersionsUtil.buildVersionResponse(this.billService.findAllMinorsForIntermediate(documentRef,
+                currIntVersion, 0, count), messageHelper, userHelper);
     }
 
     @Override

@@ -415,6 +415,10 @@ export class DocumentService implements OnDestroy {
     );
   }
 
+  getIntermediateVersions(version: Version) {
+    return this.getIntermediateDocumentVersionsData(this.documentType, this.documentRef, version);
+  }
+
   compareDocumentsDownloadDocuwrite(
     currentVersion: Version,
     originalVersion: Version,
@@ -895,6 +899,13 @@ export class DocumentService implements OnDestroy {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<Version[]>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data`,
+    );
+  }
+
+  getIntermediateDocumentVersionsData(documentType: string, documentRef: string, version: Version) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    return this.http.get<Version[]>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/intermediate-version-data?currIntVersion=${version.cmisVersionNumber}`,
     );
   }
 

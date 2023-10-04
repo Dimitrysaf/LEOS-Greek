@@ -206,16 +206,21 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
         List<VersionVO> versions = this.proposalService.getAllVersions(proposal.getId(), documentRef);
         for (VersionVO versionVO : versions) {
-            Integer count = this.proposalService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
             if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
             }
             versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.proposalService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
+    }
+
+    @Override
+    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
+        int count = this.proposalService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
+        return VersionsUtil.buildVersionResponse(this.proposalService.findAllMinorsForIntermediate(documentRef,
+                currIntVersion, 0, count), messageHelper, userHelper);
     }
 
     @Override

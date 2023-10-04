@@ -216,16 +216,21 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         List<VersionVO> versions = this.explanatoryService.getAllVersions(explanatory.getId(), documentRef);
         for (VersionVO versionVO : versions) {
-            int count = this.explanatoryService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
             if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(explanatory.getId());
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
             }
             versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.explanatoryService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
+    }
+
+    @Override
+    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
+        int count = this.explanatoryService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
+        return VersionsUtil.buildVersionResponse(this.explanatoryService.findAllMinorsForIntermediate(documentRef,
+                currIntVersion, 0, count), messageHelper, userHelper);
     }
 
     @Override

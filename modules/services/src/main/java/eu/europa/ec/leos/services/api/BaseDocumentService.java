@@ -57,6 +57,8 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     List<VersionVO> getVersionsData(String documentRef);
 
+    List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion);
+
     List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
 
     List<TocItem> getTocItems(@NotNull String documentRef);
