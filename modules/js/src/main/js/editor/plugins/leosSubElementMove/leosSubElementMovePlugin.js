@@ -133,7 +133,7 @@ define(function leosSubElementMovePluginModule(require) {
                 element.setText(movedElement.innerText);
                 element.setAttribute("data-akn-num", element.getAttribute("data-akn-num"));
                 element.setAttribute("data-num-origin", LS_ORIGIN);
-                //_setSoftMovedAttributes(element, editor);
+                _setSoftMovedAttributes(editor, element);
                 _setTrackChangesElement(element, editor);
                 UTILS.clearItemStorage();
             }
@@ -162,17 +162,19 @@ define(function leosSubElementMovePluginModule(require) {
         element.setAttribute(core.UID_ATTR, editor.LEOS.user.login);
     }
 
-    function _setSoftMovedAttributes(element, editor) {
-        var currentDate = new Date();
-        var dateString = currentDate.toISOString();
+    function _setSoftMovedAttributes(editor, element) {
         var idAttr = element.getAttribute("id");
         element.setAttribute("data-akn-attr-softaction", "move_from");
         element.setAttribute("data-akn-attr-softactionroot", "true");
-        element.setAttribute("data-akn-attr-softuser", editor.LEOS.user.name);
-        element.setAttribute("data-akn-attr-softdate", dateString);
         element.setAttribute("data-akn-attr-softmove_from", "moved_"+idAttr);
-        //set id attr to temp_ temporarily
         element.setAttribute("id", "temp_"+idAttr);
+
+        // original element
+        var originalMovedElement = document.getElementById(idAttr);
+        originalMovedElement.setAttribute("data-akn-attr-softaction", "move_to");
+        originalMovedElement.setAttribute("data-akn-attr-softactionroot", "true");
+        originalMovedElement.setAttribute("data-akn-attr-softmove_to", idAttr);
+        originalMovedElement.setAttribute("id", "moved_"+idAttr);
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
