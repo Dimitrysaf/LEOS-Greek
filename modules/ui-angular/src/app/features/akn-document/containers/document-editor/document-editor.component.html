@@ -464,7 +464,7 @@
                 euiSizeS
                 *ngIf="versionsComparisonForView"
                 (click)="handlePrevChange()"
-                [disabled]="compareIndex === -1"
+                [disabled]="navigationAnchorIndex === -1"
                 [euiTooltip]="
                   'page.editor.versions.compare.actions.prev-change' | translate
                 "
