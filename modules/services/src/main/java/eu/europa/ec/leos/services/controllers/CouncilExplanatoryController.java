@@ -189,6 +189,19 @@ public class CouncilExplanatoryController {
 
     }
 
+    @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+        try {
+            List<VersionVO> versions = this.explanatoryApiService.getIntermediateVersionsData(documentRef, currIntVersion);
+            return ResponseEntity.ok().body(versions);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
     @GetMapping(value = "/{documentRef}/getToc", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getToc(@PathVariable("documentRef") String documentRef,

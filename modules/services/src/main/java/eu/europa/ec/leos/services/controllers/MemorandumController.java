@@ -214,6 +214,19 @@ public class MemorandumController {
 
     }
 
+    @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+        try {
+            List<VersionVO> versions = this.memorandumApiService.getIntermediateVersionsData(documentRef, currIntVersion);
+            return ResponseEntity.ok().body(versions);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
     @PostMapping(value = "/{documentRef}/search-text", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getSearchResults(@PathVariable("documentRef") String documentRef,

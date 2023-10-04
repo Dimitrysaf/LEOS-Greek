@@ -10,6 +10,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { orderBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
+import { isEmpty } from 'rxjs/operators';
 
 import { Version } from '@/features/akn-document/models/versions';
 import { DocumentService } from '@/shared/services/document.service';
@@ -33,7 +34,8 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected showMore = false;
   protected showMoreLabel: string;
   protected hasMore = false;
-  protected versions: Version[] = [];
+  protected versions: Observable<Version[]>;
+  protected showVersions = false;
   protected isFilteredOut = false;
   protected versionsSearchExcluded: Version[] = [];
 
@@ -67,7 +69,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   }
 
   isLatestRecentVersion(version: Version): boolean {
-    return this.isRecent && this.versions[0] === version;
+    return this.isRecent && this.subVersions[0] === version;
   }
 
   protected onSelectVersion(version: Version, inputChangeEvent: Event) {
@@ -174,18 +176,27 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
           ? 'page.editor.versions.modifications-hide'
           : 'page.editor.versions.modifications-show',
       );
-      this.versions = this.showMore ? this.subVersions : [];
-      this.hasMore = this.subVersions.length > 0;
+      if (this.showMore && !this.versions) {
+        this.versions = this.docService.getIntermediateVersions(this.majorVersion);
+        this.versions.subscribe({
+          next(versions) {
+            this.subVersions = versions;
+          }
+        })
+      }
+      this.showVersions = this.showMore;
+      this.hasMore = true;
     } else {
       this.isRecent = true;
+      this.showVersions = true;
       this.showMoreLabel = this.translate.instant(
         this.showMore
           ? 'page.editor.versions.show-less'
           : 'page.editor.versions.show-more',
       );
-      this.versions = this.showMore
-        ? this.subVersions
-        : [this.subVersions[0]].filter(Boolean);
+      this.versions = new Observable((observer) => {
+        observer.next(this.showMore ? this.subVersions : [this.subVersions[0]].filter(Boolean));
+      });
       this.hasMore = this.subVersions.length > 1;
     }
 
@@ -194,7 +205,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     const currentVersions = this.docService.getVersionCompareIds();
     if (
       this.isRecent &&
-      this.versions.length > 0 &&
+      this.subVersions.length > 0 &&
       currentVersions.length > 0
     ) {
       const sortedCurrentVersions = this.sortVersions(...currentVersions);
@@ -203,8 +214,8 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
         sortedCurrentVersions[0],
       )[1];
       const maxVersion =
-        this.versions.length > 1
-          ? this.versions.filter(
+        this.subVersions.length > 1
+          ? this.subVersions.filter(
               (v) => v.documentId === maxSortedVersion.documentId,
             )[0]
           : maxSortedVersion;
@@ -216,7 +227,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
       this.onSelectVersion(maxVersion, {
         target: { checked: false },
       } as any);
-      this.onSelectVersion(this.versions[0], {
+      this.onSelectVersion(this.subVersions[0], {
         target: { checked: true },
       } as any);
     }

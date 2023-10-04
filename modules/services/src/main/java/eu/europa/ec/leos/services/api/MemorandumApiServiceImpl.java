@@ -191,16 +191,21 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         List<VersionVO> versions = this.memorandumService.getAllVersions(memorandum.getId(), documentRef);
         for (VersionVO versionVO : versions) {
-            Integer count = this.memorandumService.findAllMinorsCountForIntermediate(documentRef, versionVO.getCmisVersionNumber());
             if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
                 LeosPackage leosPackage = packageService.findPackageByDocumentId(memorandum.getId());
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
             }
             versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-            versionVO.setSubVersions(VersionsUtil.buildVersionResponse(this.memorandumService.findAllMinorsForIntermediate(documentRef, versionVO.getCmisVersionNumber(), 0, count), messageHelper, userHelper));
         }
         return versions;
+    }
+
+    @Override
+    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
+        int count = this.memorandumService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
+        return VersionsUtil.buildVersionResponse(this.memorandumService.findAllMinorsForIntermediate(documentRef,
+                currIntVersion, 0, count), messageHelper, userHelper);
     }
 
     @Override
