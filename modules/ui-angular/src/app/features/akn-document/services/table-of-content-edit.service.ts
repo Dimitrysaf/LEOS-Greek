@@ -303,13 +303,19 @@ export abstract class TableOfContentEditService {
 
     if (actualTargetItem) {
       sourceItem.parentItem = actualTargetItem.id;
-      if (
-        (LEVEL === targetItem.tocItem.aknTag &&
-          LEVEL !== sourceItem.tocItem.aknTag) ||
-        [PART, TITLE, CHAPTER, SECTION].includes(targetItem.tocItem.aknTag)
-      ) {
+      const targetRules = [
+        targetItem.tocItem.aknTag.toUpperCase(),
+        targetItem.tocItem.numberingType.toUpperCase(),
+      ].join('_');
+      const targetTocAllowedItems = this.documentConfig.tocRules[targetRules];
+      if ((LEVEL === targetItem.tocItem.aknTag &&
+          LEVEL !== sourceItem.tocItem.aknTag &&
+          targetTocAllowedItems != null &&
+          targetTocAllowedItems.length > 0 &&
+          targetTocAllowedItems.includes(sourceItem.tocItem)) ||
+        [PART, TITLE, CHAPTER, SECTION].includes(targetItem.tocItem.aknTag)) {
         /*
-         * This else is when we add level as child or after a Part, Title, Chapter or Section,
+         * This if is when we add level as child or after a Part, Title, Chapter or Section,
          * because in this case the actualTargetItem is equal to targetItem, and we need to set
          * the level as the first of list of children
          */
