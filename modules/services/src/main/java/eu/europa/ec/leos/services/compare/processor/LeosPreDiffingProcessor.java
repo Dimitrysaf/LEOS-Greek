@@ -16,14 +16,16 @@ public class LeosPreDiffingProcessor {
         NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
         for (int countElements = 0; countElements < elements.getLength(); countElements++) {
             Node element = elements.item(countElements);
-            if (XercesUtils.getAttributeValue(element, "leos:action").equals("delete")) {
-                element.getParentNode().removeChild(element);
-            } else if (XercesUtils.getAttributeValue(element, "leos:action").equals("insert")) {
-                for(int countChildren = 0; countChildren < element.getChildNodes().getLength(); countChildren++) {
-                    Node child = element.getChildNodes().item(countChildren);
-                    element.getParentNode().insertBefore(child, element);
+            if(XercesUtils.getAttributeValue(element, "leos:action") != null){
+                if (XercesUtils.getAttributeValue(element, "leos:action").equals("delete")) {
+                    element.getParentNode().removeChild(element);
+                } else if (XercesUtils.getAttributeValue(element, "leos:action").equals("insert")) {
+                    for(int countChildren = 0; countChildren < element.getChildNodes().getLength(); countChildren++) {
+                        Node child = element.getChildNodes().item(countChildren);
+                        element.getParentNode().insertBefore(child, element);
+                    }
+                    element.getParentNode().removeChild(element);
                 }
-                element.getParentNode().removeChild(element);
             }
         }
 
