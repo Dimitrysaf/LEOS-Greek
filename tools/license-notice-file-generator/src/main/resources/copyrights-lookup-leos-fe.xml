@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<copyrights-lookup>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>ckeditor</artifactId>
+        <version>4.12.1</version>
+        <url>https://ckeditor.com/ckeditor-4</url>
+        <license>
+            <name>GNU</name>
+        </license>
+        <copyright>Copyright (c) 2014-2018 Michael Daines</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>cuid</artifactId>
+        <version>1.3.8</version>
+        <url>https://www.npmjs.com/package/cuid</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright></copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>dateFormat</artifactId>
+        <version>1.2.3</version>
+        <url>https://gist.github.com/eralston/968809</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2007-2009 Steven Levithan, Scott Trenda and and Kris Kowal</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>jqTree</artifactId>
+        <version>1.4.9</version>
+        <url>https://mbraak.github.io/jqTree</url>
+        <license>
+            <name>Apache License, Version 2.0</name>
+        </license>
+        <copyright>Copyright 2018 Marco Braak</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>jquery</artifactId>
+        <version>3.2.1</version>
+        <url>https://jquery.com</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright 2023 OpenJS Foundation and jQuery contributors</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>jsTree</artifactId>
+        <version>3.3.2</version>
+        <url>https://www.jstree.com</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2014 Ivan Bozhanov (http://vakata.com)</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>lodash</artifactId>
+        <version>4.15.0-amd</version>
+        <url>https://lodash.com</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) Lodash Team</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>loglevel</artifactId>
+        <version>1.4.0</version>
+        <url>https://github.com/pimterry/loglevel</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2015 Tim Perry</copyright>
+    </artifact>
+
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>native-promise-only</artifactId>
+        <version>0.8.1</version>
+        <url>https://www.npmjs.com/package/native-promise-only</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright © 2023 Kyle Simpson getify@gmail.com http://getify.mit-license.org</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>noUiSlider</artifactId>
+        <version>10.0.0</version>
+        <url>https://github.com/leongersen/noUiSlider</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright © 2018 Léon Gersen</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>postal.diagnostics</artifactId>
+        <version>0.7.4</version>
+        <url>https://github.com/postaljs/postal.diagnostics</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright © Jim Cowart</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>postal.js</artifactId>
+        <version>2.0.0</version>
+        <url>http://github.com/postaljs/postal.js</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright © Jim Cowart</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>Ref2Link</artifactId>
+        <version>1.2.3</version>
+        <url>https://ec.europa.eu/isa2/solutions/ref2link_en</url>
+        <license>
+            <name>EUPL</name>
+        </license>
+        <copyright>Copyright 2019 European Commission</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>requirejs-domready</artifactId>
+        <version>2.0.1</version>
+        <url>http://github.com/requirejs/domReady</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright (c) 2010-2012, The Dojo Foundation</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>requirejs-promise</artifactId>
+        <version>1.2.0</version>
+        <url>https://github.com/jokeyrhyme/requirejs-promise</url>
+        <license>
+            <name>Simplified BSD Licence</name>
+        </license>
+        <copyright>Copyright (c) Ron Waldon-Howe and Alexander Pervakov</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>requirejs-text</artifactId>
+        <version>2.0.15</version>
+        <url>https://github.com/requirejs/text</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright jQuery Foundation and other contributors</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>requirejs</artifactId>
+        <version>2.3.3</version>
+        <url>https://github.com/requirejs/requirejs</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright jQuery Foundation and other contributors</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>stampit</artifactId>
+        <version>1.2.0</version>
+        <url>https://github.com/stampit-org/stampit</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright stampit API https://stampit.js.org/</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>waypoints</artifactId>
+        <version>4.0.0</version>
+        <url>https://github.com/imakewebthings/waypoints</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright © 2011-2015 Caleb Troughton</copyright>
+    </artifact>
+    <artifact>
+        <groupId>-</groupId>
+        <artifactId>wNumb</artifactId>
+        <version>1.1.0</version>
+        <url>https://github.com/leongersen/wnumb</url>
+        <license>
+            <name>MIT</name>
+        </license>
+        <copyright>Copyright © 2018 Léon Gersen</copyright>
+    </artifact>
+</copyrights-lookup>
