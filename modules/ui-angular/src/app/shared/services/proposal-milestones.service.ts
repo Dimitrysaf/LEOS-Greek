@@ -59,7 +59,7 @@ export class ProposalMilestonesService {
     this.loadingService.setLoading(true);
     return this.http
       .get(
-        `${apiBaseUrl}/secured/searchlegfile//${legFileId}`,
+        `${apiBaseUrl}/secured/searchlegfile/${legFileId}`,
         {
           observe: 'response',
           responseType: 'blob',
