@@ -1,0 +1,9 @@
+#
+POST https://api.clearlydefined.io/notices
+Content-Type: application/json
+
+{
+  "coordinates" : [ "npm/npmjs/-/ckeditor/4.12.1", "npm/npmjs/-/cuid/1.3.8", "npm/npmjs/-/dateFormat/1.2.3", "npm/npmjs/-/jqTree/1.4.9", "npm/npmjs/-/jquery/3.2.1", "npm/npmjs/-/jsTree/3.3.2", "npm/npmjs/-/lodash/4.15.0-amd", "npm/npmjs/-/loglevel/1.4.0", "npm/npmjs/-/native-promise-only/0.8.1", "npm/npmjs/-/noUiSlider/10.0.0", "npm/npmjs/-/postal.diagnostics/.0.0.0", "npm/npmjs/-/postal.js/2.0.0", "npm/npmjs/-/Ref2Link/1.2.3", "npm/npmjs/-/requirejs-domready/;2.0.1", "npm/npmjs/-/requirejs-promise/1.2.0", "npm/npmjs/-/requirejs-text/2.0.15", "npm/npmjs/-/requirejs/2.3.3", "npm/npmjs/-/stampit/1.2.0", "npm/npmjs/-/waypoints/4.0.0", "npm/npmjs/-/wNumb/1.1.0" ],
+  "renderer" : "json",
+  "options" : { }
+}
