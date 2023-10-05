@@ -57,7 +57,7 @@ public class LeosXercesUtils {
                                 Node insertedNum = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
                                 insertedNum.setTextContent(numLabel);
                                 addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
-                                addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                                addAttribute(insertedNum, LEOS_TITLE, getTitleValue(securityContext));
                             }
                         } else {
                             if(numNode.getTextContent() == null || numNode.getTextContent().equals(numLabel) || numNode.getTextContent().contains("#")) {
@@ -101,6 +101,10 @@ public class LeosXercesUtils {
             numNode = createElementAsFirstChildOfNode(node, getNumTag(node.getNodeName()), numLabel);
         }
         return numNode;
+    }
+
+    public static String getTitleValue(SecurityContext securityContext) {
+        return securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 
     private static void buildNumElementForDivision(Node node, String numLabel, Node numNode) {

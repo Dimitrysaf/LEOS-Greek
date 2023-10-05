@@ -22,6 +22,7 @@ import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
@@ -74,6 +75,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.isElementInToc;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftAdded;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.isSoftDeletedOrMovedTo;
+import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.addSibling;
 import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
@@ -110,6 +112,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public static final String NBSP = "\u00a0";
     public static final String[] NUMBERED_AND_LEVEL_ITEMS = {PARAGRAPH, POINT, LEVEL, INDENT};
 
+    @Autowired
+    private CloneContext cloneContext;
     @Autowired
     protected ReferenceLabelService referenceLabelService;
     @Autowired
@@ -1673,6 +1677,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     XercesUtils.getParentId(node), documentNode, attr, sourceDocumentRef);
             if (labelResult != null && labelResult.isOk()) {
                 XercesUtils.addAttribute(node, LEOS_SOFT_MOVED_LABEL_ATTR, labelResult.get());
+                createMoveInfoTitle(node);
             }
         }
     }
@@ -2312,6 +2317,17 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
             removeDuplicateIdsFromDocument(children.get(i), idPrefix, idsSet);
+        }
+    }
+
+    private void createMoveInfoTitle(Node node) {
+        if (cloneContext != null && cloneContext.isClonedProposal()) {
+            String title = getTitleValue(securityContext);
+            XercesUtils.addAttribute(node, LEOS_TITLE, title);
+            Node numNode = XercesUtils.getFirstChild(node, NUM);
+            if (numNode != null) {
+                XercesUtils.addAttribute(numNode, LEOS_TITLE, title);
+            }
         }
     }
 

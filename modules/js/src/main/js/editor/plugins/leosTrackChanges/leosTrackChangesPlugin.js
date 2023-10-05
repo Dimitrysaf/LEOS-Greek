@@ -178,7 +178,7 @@ define(function leosTrackChangesPluginModule(require) {
                         if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                             core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                         } else {
-                            core.removeTrackChangesAttributesForNumbering(element);
+                                core.removeTrackChangesAttributesForNumbering(element);
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED
                         && element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW
@@ -188,7 +188,7 @@ define(function leosTrackChangesPluginModule(require) {
                         if (element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                             core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                         } else {
-                            core.removeTrackChangesAttributesForNumbering(element);
+                                core.removeTrackChangesAttributesForNumbering(element);
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
                         core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
