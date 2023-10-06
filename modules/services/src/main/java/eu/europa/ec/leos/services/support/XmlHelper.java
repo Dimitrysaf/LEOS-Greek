@@ -609,7 +609,15 @@ public class XmlHelper {
     // LEOS-2639: replace XML self-closing tags not supported in HTML
     public static String removeSelfClosingElements(String fragment) {
         String removeSelfClosingRegex = "<([^>^\\s]+)([^>]*)/>";
-        return fragment.replaceAll(removeSelfClosingRegex, "<$1$2></$1>");
+        String insOrDelSelfClosingRegex = "<([ins|del][^>^\\s]+)([^>]*)/>";
+
+        // add space to self closing <ins or <del element
+        String result = fragment.replaceAll(insOrDelSelfClosingRegex, "<$1$2> </$1>");
+        result =  result.replaceAll(removeSelfClosingRegex, "<$1$2></$1>");
+        // add space to empty <ins or <del element
+        result =  result.replace("></ins>", "> </ins>");
+        result =  result.replace("></del>", "> </del>");
+        return result;
     }
 
     public static String extractNumber(String numberStr, boolean isNumWithType) {
