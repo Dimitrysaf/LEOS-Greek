@@ -663,7 +663,9 @@ public class DocumentServiceImpl implements DocumentService {
                     categoryStr));
         }
         String whereFiltersClause = getWhereClauseFromQueryFilter(queryFilter, DocumentV.class);
-        addRoleFilterQuery(queryBuild, queryFilter);
+        if (!addRoleFilterQuery(queryBuild,queryFilter) && !whereFiltersClause.isEmpty()) {
+            queryBuild.append(" AND ");
+        }
         if(!whereFiltersClause.isEmpty()) {
             queryBuild.append(whereFiltersClause);
         }
@@ -675,7 +677,7 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-    private void addRoleFilterQuery(StringBuilder queryBuild, QueryFilter queryFilter) {
+    private boolean addRoleFilterQuery(StringBuilder queryBuild, QueryFilter queryFilter) {
         Optional<QueryFilter.Filter> roleFilter = queryFilter.getFilters().stream().filter(f -> f.key.equals("role")).findFirst();
         if (roleFilter.isPresent()) {
             String[] values = roleFilter.get().value;
@@ -702,6 +704,7 @@ public class DocumentServiceImpl implements DocumentService {
                 queryBuild.append(" AND ");
             }
         }
+        return roleFilter.isPresent();
     }
 
     private Pair<DocumentContent, DocumentVersion> createDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
