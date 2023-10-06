@@ -47,9 +47,9 @@ class JwtTokenService implements TokenService {
     @Value("${annotate.jwt.issuer.client.secret}")
     private String annotateSecret;
 
-    @Value("${leos.api.jwt.auth.client.ngLeos.id:ngLeosClientId}")
+    @Value("${leos.api.jwt.auth.client.ngLeos.id}")
     private String ngClientId;
-    @Value("${leos.api.jwt.auth.client.ngLeos.secret:ngLeosSecret}")
+    @Value("${leos.api.jwt.auth.client.ngLeos.secret}")
     private String ngClientSecret;
     private static final int ANNOT_TOKEN_EXPIRE_IN_MIN = 9;
     
@@ -91,6 +91,8 @@ class JwtTokenService implements TokenService {
         }
         boolean containsNgClient = Arrays.asList(clientsNames).contains("ngLeos");
         if (!containsNgClient) {
+            ngClientId = "ngLeosClientId";
+            ngClientSecret = "ngLeosSecret";
             registeredClients.add(new AuthClient("ngLeos", ngClientId, ngClientSecret));
         }
     }
