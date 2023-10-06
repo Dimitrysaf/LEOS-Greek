@@ -663,40 +663,44 @@ public class DocumentServiceImpl implements DocumentService {
                     categoryStr));
         }
         String whereFiltersClause = getWhereClauseFromQueryFilter(queryFilter, DocumentV.class);
-        if(!whereFiltersClause.isEmpty()){
-            queryBuild.append(" AND ");
-            Optional<QueryFilter.Filter> roleFilter = queryFilter.getFilters().stream().filter(f -> f.key.equals("role")).findFirst();
-            if (roleFilter.isPresent()) {
-                String[] values = roleFilter.get().value;
-                queryBuild.append("d.packageId IN (SELECT p.pkg.id FROM PackageCollaborators p WHERE ");
-                for (int i = 0; i < values.length; i++) {
-                    String value = values[i];
-                    String[] valueAttrs = value.split("::");
-                    if (valueAttrs.length == 1) {
-                        queryBuild.append(String.format("(p.collaborator.collaboratorName = '%s')", valueAttrs[0]));
-                    } else if (valueAttrs.length == 2) {
-                        queryBuild.append(String.format("(p.collaborator.collaboratorName = '%s' AND p.collaborator.role = '%s')", valueAttrs[0],
-                                valueAttrs[1]));
-                    } else if (valueAttrs.length == 3) {
-                        queryBuild.append(String.format("(p.collaborator.collaboratorName = '%s' AND p.collaborator.role = '%s' AND p.collaborator" +
-                                ".organization = '%s')", valueAttrs[0], valueAttrs[1], valueAttrs[2]));
-                    }
-                    if (i < values.length - 1) {
-                        queryBuild.append(" OR ");
-                    }
-                }
-                queryBuild.append(")");
-                queryFilter.removeFilter("role");
-                if (!queryFilter.getFilters().isEmpty()) {
-                    queryBuild.append(" AND ");
-                }
-            }
+        addRoleFilterQuery(queryBuild, queryFilter);
+        if(!whereFiltersClause.isEmpty()) {
             queryBuild.append(whereFiltersClause);
         }
+
         String formSortClause = formSortClause(queryFilter, DocumentV.class);
         if (orderBy && !formSortClause.isEmpty()) {
             queryBuild.append(" ORDER BY ");
             queryBuild.append(formSortClause);
+        }
+    }
+
+    private void addRoleFilterQuery(StringBuilder queryBuild, QueryFilter queryFilter) {
+        Optional<QueryFilter.Filter> roleFilter = queryFilter.getFilters().stream().filter(f -> f.key.equals("role")).findFirst();
+        if (roleFilter.isPresent()) {
+            String[] values = roleFilter.get().value;
+            queryBuild.append(" AND d.packageId IN (SELECT p.pkg.id FROM PackageCollaborators p WHERE ");
+            for (int i = 0; i < values.length; i++) {
+                String value = values[i];
+                String[] valueAttrs = value.split("::");
+                if (valueAttrs.length == 1) {
+                    queryBuild.append(String.format("(p.collaborator.collaboratorName = '%s')", valueAttrs[0]));
+                } else if (valueAttrs.length == 2) {
+                    queryBuild.append(String.format("(p.collaborator.collaboratorName = '%s' AND p.collaborator.role = '%s')", valueAttrs[0],
+                            valueAttrs[1]));
+                } else if (valueAttrs.length == 3) {
+                    queryBuild.append(String.format("(p.collaborator.collaboratorName = '%s' AND p.collaborator.role = '%s' AND p.collaborator" +
+                            ".organization = '%s')", valueAttrs[0], valueAttrs[1], valueAttrs[2]));
+                }
+                if (i < values.length - 1) {
+                    queryBuild.append(" OR ");
+                }
+            }
+            queryBuild.append(")");
+            queryFilter.removeFilter("role");
+            if (!queryFilter.getFilters().isEmpty()) {
+                queryBuild.append(" AND ");
+            }
         }
     }
 
