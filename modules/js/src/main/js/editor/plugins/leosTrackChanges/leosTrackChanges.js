@@ -27,7 +27,7 @@ define(function leosTrackChangesModule(require) {
         UID_ATTR: "data-akn-uid",
 
         IS_NEW: "data-akn-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number",
-        UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_TC_ENTER_DELETED: "data-akn-tc-enter-deleted",
+        UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_TC_ENTER_DELETED: "data-akn-tc-enter-deleted", DATA_AKN_TC_ENTER_CREATED: "data-akn-tc-enter-created",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -275,6 +275,18 @@ define(function leosTrackChangesModule(require) {
                 }
             } while (!hasNewNumberAttribute && elementToCheck.getName() !== 'li' && (elementToCheck = elementToCheck.getParent()));
             return hasNewNumberAttribute;
+        },
+
+        isCreatedByEnterKey: function(element) {
+            var isCreatedByEnterKey = false;
+            var elementToCheck = element.startContainer;
+            if (elementToCheck.type === CKEDITOR.NODE_TEXT) { elementToCheck = elementToCheck.getParent() }
+            do {
+                if (elementToCheck.type === CKEDITOR.NODE_ELEMENT && elementToCheck.getAttribute(this.DATA_AKN_TC_ENTER_CREATED)) {
+                    isCreatedByEnterKey = true;
+                }
+            } while (!isCreatedByEnterKey && elementToCheck.getName() !== 'li' && elementToCheck.getName() !== 'p' && (elementToCheck = elementToCheck.getParent()));
+            return isCreatedByEnterKey;
         },
 
         breakParentAndMoveTo: function(editor, element, parent, moveTo) {

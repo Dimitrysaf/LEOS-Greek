@@ -49,14 +49,17 @@ public class LeosXercesUtils {
                                 addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
                             }
                         } else if (getFirstChild(numNode, "span") != null && containsAttribute(getFirstChild(numNode, "span"), LEOS_ACTION_ATTR)) {
-                            Node deletedNode = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
-                            if(deletedNode != null && deletedNode.getTextContent().equals(numLabel)) {
-                                numNode.setTextContent(numLabel);
-                            } else {
-                                Node insertedNum = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
-                                insertedNum.setTextContent(numLabel);
-                                addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
-                                addAttribute(insertedNum, LEOS_TITLE, getTitleValue(securityContext));
+                            Node enterDeletedNode = getChildContainingAttributeValue(numNode, LEOS_TC_ENTER_DELETED, "true");
+                            if(enterDeletedNode == null) {
+                                Node deletedNode = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
+                                if (deletedNode != null && deletedNode.getTextContent().equals(numLabel)) {
+                                    numNode.setTextContent(numLabel);
+                                } else {
+                                    Node insertedNum = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
+                                    insertedNum.setTextContent(numLabel);
+                                    addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
+                                    addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                                }
                             }
                         } else {
                             if(numNode.getTextContent() == null || numNode.getTextContent().equals(numLabel) || numNode.getTextContent().contains("#")) {
