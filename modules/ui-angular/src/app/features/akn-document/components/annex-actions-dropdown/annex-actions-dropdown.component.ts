@@ -41,7 +41,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   seeNavigationPanelVisible = false;
   changeDocumentStructureVisible = false;
   renumberDocumentVisible = false;
-  seeTrackChanges = false;
+  seeTrackChanges = true;
 
   @ViewChild('createVersionDialog') createVersionDialog: EuiDialogComponent;
   @ViewChild('eConsiliumModal')

@@ -109,7 +109,7 @@
         <!-- Enable track changes -->
         <li
           euiListItem
-          *ngIf="(doc.isClonedProposal$ | async)"
+          *ngIf="documentConfig.clonedProposal"
         >
           <button euiListItem disabled>
             <eui-icon
