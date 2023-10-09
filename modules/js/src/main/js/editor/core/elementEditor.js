@@ -152,6 +152,10 @@ define(function elementEditorModule(require) {
 
         if (editor) {
             // store LEOS data in editor
+            var proposalRef = connector.getState().proposalRef;
+            if (!proposalRef) {
+                proposalRef = connector.getState().proposalMetadata.ref;
+            }
             editor.LEOS = {
                 profile: profile,
                 type: params.docType,
@@ -170,7 +174,7 @@ define(function elementEditorModule(require) {
                 documentsMetadata: JSON.parse(connector.getState().documentsMetadataJsonArray),
                 documentRef: connector.getState().documentRef,
                 isClonedProposal: params.isClonedProposal,
-                proposalRef: connector.getState().proposalRef,
+                proposalRef: proposalRef,
                 isTrackChangesEnabled: connector.getState().isTrackChangesEnabled,
                 isTrackChangesShowed: connector.getState().isTrackChangesShowed,
                 isTrackChangesStyleFormattingEnabled: connector.getState().isTrackChangesStyleFormattingEnabled
