@@ -104,6 +104,7 @@ export interface DocumentConfig {
   tocRules: TocRules;
   trackChangesEnabled: boolean;
   trackChangesShowed: boolean;
+  clonedProposal: boolean;
 }
 
 export interface TocRules {

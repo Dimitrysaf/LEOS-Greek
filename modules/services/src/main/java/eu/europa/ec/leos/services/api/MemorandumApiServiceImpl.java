@@ -374,7 +374,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
 
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context1.getTocRules(), memorandum.isTrackChangesEnabled(), true
+                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context1.getTocRules(),
+                memorandum.isTrackChangesEnabled(), true, proposal.isClonedProposal()
         );
     }
 

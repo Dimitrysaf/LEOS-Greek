@@ -12,14 +12,13 @@ import {
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import {Subject, takeUntil} from 'rxjs';
 
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
-import { Permission } from '@/shared';
+import {DocumentConfig, Permission} from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
-import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 
 @Component({
   selector: 'app-annex-actions-dropdown',
@@ -29,6 +28,8 @@ import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 })
 export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   @Output() annexChangeStructure = new EventEmitter<void>();
+
+  documentConfig: DocumentConfig;
 
   saveVersionVisible = false;
   exportVersionVisible = false;
@@ -40,6 +41,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   seeNavigationPanelVisible = false;
   changeDocumentStructureVisible = false;
   renumberDocumentVisible = false;
+  seeTrackChanges = false;
 
   @ViewChild('createVersionDialog') createVersionDialog: EuiDialogComponent;
   @ViewChild('eConsiliumModal')
@@ -62,11 +64,21 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.doc.documentConfig$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((config) => {
+        this.documentConfig = config;
+      });
     this.doc.permissions$.subscribe((perms) => this.setMenuState(perms));
   }
 
   handleAnnexStructureChange() {
     this.annexChangeStructure.emit();
+  }
+
+  toggleSeeTrackChanges() {
+    this.seeTrackChanges = !this.seeTrackChanges;
+    this.ckEditorService.changeSeeTrackChangesState();
   }
 
   onApplyContinuousNumberingSelect() {
@@ -115,5 +127,6 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
     this.changeDocumentStructureVisible = isAnnex && CAN_UPDATE;
     this.renumberDocumentVisible =
       (isMandateAnnex || isMandateDocument) && CAN_RENUMBER;
+    this.seeTrackChanges = this.documentConfig.trackChangesShowed;
   }
 }

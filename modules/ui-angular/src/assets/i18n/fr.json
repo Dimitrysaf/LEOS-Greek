@@ -262,6 +262,8 @@
   "page.editor.actions-dropdown.see-user-guidance": "Voir les conseils d'utilisation",
   "page.editor.actions-dropdown.hide-user-guidance": "[FR]Hide user guidance",
   "page.editor.actions-dropdown.see-navigation": "Voir le panneau de navigation",
+  "page.editor.actions-dropdown.enable-track-changes": "Suivis des modifications",
+  "page.editor.actions-dropdown.see-track-changes": "Afficher le suivis des modifications",
   "page.editor.actions-dropdown.renumber-document": "[FR]Renumber Document",
   "page.editor.actions-dropdown.change-document-structure": "[FR]Change Annex Structure",
   "page.editor.actions-dropdown.apply-continuous-numbering": "[FR]Apply continuous numbering",

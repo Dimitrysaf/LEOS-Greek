@@ -106,6 +106,41 @@
             {{ 'page.editor.actions-dropdown.see-navigation' | translate }}
           </button>
         </li>
+        <!-- Enable track changes -->
+        <li
+          euiListItem
+          *ngIf="(doc.isClonedProposal$ | async)"
+        >
+          <button euiListItem disabled>
+            <eui-icon
+              euiSizeS
+              [iconClass]="
+                documentConfig.trackChangesEnabled
+                  ? 'eui-icon-checkbox'
+                  : 'eui-icon-checkbox-outline'
+              "
+            ></eui-icon>
+            {{ 'page.editor.actions-dropdown.enable-track-changes' | translate }}
+          </button>
+        </li>
+        <!-- See track changes -->
+        <li
+          euiListItem
+          (click)="toggleSeeTrackChanges()"
+          *ngIf="documentConfig.clonedProposal"
+        >
+          <button euiListItem [disabled]="(doc.isEditorOpen$ | async)">
+            <eui-icon
+              euiSizeS
+              [iconClass]="
+                seeTrackChanges
+                  ? 'eui-icon-checkbox'
+                  : 'eui-icon-checkbox-outline'
+              "
+            ></eui-icon>
+            {{ 'page.editor.actions-dropdown.see-track-changes' | translate }}
+          </button>
+        </li>
         <!-- Renumber Document -->
         <li
           euiListItem
