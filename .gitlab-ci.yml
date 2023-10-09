@@ -1,19 +1,17 @@
-## You can override the included template(s) by including variable overrides
-## SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-## Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-## Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-## Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
-## Note that environment variables can be set in several places
-## See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
-#build-job:
-#  stage: build
-#  script:
-#    - echo "Hello CI/CD"
-#
-#test-job1:
-#  stage: test
-#  script:
-#    - echo "This job tests something"
-#
-#include:
-#  - template: Jobs/Dependency-Scanning.latest.gitlab-ci.yml
+variables:
+  CI_DEBUG_TRACE: "true"
+  DS_JAVA_VERSION: 8
+
+stages:
+  - build
+
+java-build:
+  image: maven:3.8-openjdk-8
+  stage: build
+  script:
+    - mvn clean package -DskipTests=true -Dmaven.repo.local=./.m2/repository
+  artifacts:
+    expire_in: 1 week
+    when: always
+    paths:
+      - "modules/web/target/"
