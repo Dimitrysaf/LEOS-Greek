@@ -24,6 +24,7 @@ export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
   documentRef?: string;
   isAngularUI?: boolean;
+  isTrackChangesShowed: boolean;
 };
 
 export type LeosEditorConnectorInitialState = Omit<
@@ -35,7 +36,7 @@ export type LeosEditorConnectorOptions = {
   rootElement: HTMLElement;
 };
 
-export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosJavaScriptExtensionState> {
+export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorConnectorState> {
   // set in elementEditor.js
   editElement?: (
     elementId: any,

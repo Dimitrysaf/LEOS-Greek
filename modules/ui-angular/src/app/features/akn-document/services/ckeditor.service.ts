@@ -137,6 +137,16 @@ export class CKEditorService implements OnDestroy {
     this.mergeContributionConnector.$triggerStateChange();
   }
 
+  changeSeeTrackChangesState() {
+    this.trackChangesConnector.getState().isTrackChangesShowed = !this.trackChangesConnector.getState().isTrackChangesShowed;
+    this.leosEditorConnector.getState().isTrackChangesShowed = !this.leosEditorConnector.getState().isTrackChangesShowed;
+    this.trackChangesConnector.$triggerStateChange();
+  }
+
+  getSeeTrackChangesState() {
+    return this.trackChangesConnector.getState().isTrackChangesShowed;
+  }
+
   handleMergeContributionsActions(
     acceptAllContributions: boolean,
     contribution: ContributionVO,

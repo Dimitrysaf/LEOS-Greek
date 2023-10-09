@@ -193,7 +193,8 @@ public class GenericDocumentApiService {
                 proposal.getMetadata().getOrNull(),
                 structure.getTocRules(),
                 document.isTrackChangesEnabled(),
-                true
+                true,
+                proposal.isClonedProposal()
         );
     }
 

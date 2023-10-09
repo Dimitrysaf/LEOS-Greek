@@ -25,10 +25,13 @@ public class DocumentConfigResponse {
     private Map<String, List<TocItem>> tocRules;
     private boolean isTrackChangesEnabled;
     private boolean isTrackChangesShowed;
+    private boolean isClonedProposal;
 
     public DocumentConfigResponse(List<LeosMetadata> documentsMetadata, List<NumberingConfig> numberingConfig, List<TocItem> tocItems,
                                   List<AlternateConfig> alternateConfigs, Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray,
-                                  Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata, Map<TocItem, List<TocItem>> tocRules, boolean isTrackChangesEnabled, boolean isTrackChangesShowed) {
+                                  Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata,
+                                  Map<TocItem, List<TocItem>> tocRules, boolean isTrackChangesEnabled, boolean isTrackChangesShowed,
+                                  boolean isClonedProposal) {
         this.documentsMetadata = documentsMetadata;
         this.numberingConfig = numberingConfig;
         this.tocItems = tocItems;
@@ -40,6 +43,7 @@ public class DocumentConfigResponse {
         this.tocRules = transformMap(tocRules);
         this.isTrackChangesEnabled = isTrackChangesEnabled;
         this.isTrackChangesShowed = isTrackChangesShowed;
+        this.isClonedProposal = isClonedProposal;
     }
 
     public List<LeosMetadata> getDocumentsMetadata() {
@@ -143,4 +147,13 @@ public class DocumentConfigResponse {
     public void setTrackChangesShowed(boolean trackChangesShowed) {
         isTrackChangesShowed = trackChangesShowed;
     }
+
+    public boolean isClonedProposal() {
+        return isClonedProposal;
+    }
+
+    public void setClonedProposal(boolean clonedProposal) {
+        isClonedProposal = clonedProposal;
+    }
+
 }

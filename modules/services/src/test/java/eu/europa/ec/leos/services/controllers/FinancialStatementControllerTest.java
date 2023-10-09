@@ -108,6 +108,7 @@ public class FinancialStatementControllerTest {
                 null,
                 new HashMap<>(),
                 false,
+                false,
                 false
         );
 
