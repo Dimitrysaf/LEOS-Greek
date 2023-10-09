@@ -39,7 +39,7 @@ define(function trackChangesExtensionModule(require) {
         // KLUGE delay execution due to sync issues with target update
         var proposalRef = connector.getState().proposalRef;
         if (!proposalRef) {
-            proposalRef = connector.getState().internalRef;
+            proposalRef = connector.getState().proposalMetadata.ref;
         }
         setTimeout(_updateTrackChangesStyles, 500, connector.getState().user.login, proposalRef, connector.getState().isTrackChangesShowed);
     }
