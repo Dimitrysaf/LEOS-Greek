@@ -19,7 +19,6 @@ import org.w3c.dom.NodeList;
 import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 
 public class LeosXercesUtils {
@@ -243,9 +242,7 @@ public class LeosXercesUtils {
     public static byte[] removeHighlights(Document document) {
         NodeList highlightNodes = XercesUtils.getElementsByXPath(document,"//*[@name='bgcolor']");
         for (int i = 0; i < highlightNodes.getLength(); i++) {
-            Node node = highlightNodes.item(i);
-            String text = node.getTextContent();
-            XercesUtils.replaceElement(node, text);
+            XercesUtils.replaceNodeWithSelfContent(highlightNodes.item(i));
         }
         return XercesUtils.nodeToByteArray(document);
     }
