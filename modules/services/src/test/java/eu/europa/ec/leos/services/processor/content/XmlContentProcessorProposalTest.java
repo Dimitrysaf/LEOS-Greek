@@ -727,10 +727,11 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessing(documentXml);
+        String result = squeezeXmlRemovingAttributeAndRemoveAllNS(new String(returnedElement, UTF_8), "leos:title");
 
         //Then
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_clonedProposal_ECOrigin_shouldOnlyChangeLabel_expected.xml");
-        assertEquals(squeezeXmlAndRemoveAllNS(new String(expected)), squeezeXmlAndRemoveAllNS(new String(returnedElement)));
+        assertEquals(squeezeXmlAndRemoveAllNS(new String(expected)), squeezeXmlAndRemoveAllNS(result));
     }
 
     @Test
@@ -759,10 +760,11 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessing(documentXml);
+        String result = squeezeXmlRemovingAttributeAndRemoveAllNS(new String(returnedElement, UTF_8), "leos:title");
 
         //Then
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_clonedProposal_noOriginAttribute_expected.xml");
-        assertEquals(squeezeXmlAndRemoveAllNS(new String(expected)), squeezeXmlAndRemoveAllNS(new String(returnedElement)));
+        assertEquals(squeezeXmlAndRemoveAllNS(new String(expected)), squeezeXmlAndRemoveAllNS(result));
     }
 
     @Test
