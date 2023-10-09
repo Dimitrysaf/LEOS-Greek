@@ -419,6 +419,17 @@ public class XercesUtils {
         return node.getOwnerDocument();
     }
 
+    public static Node replaceNodeWithSelfContent(Node node) {
+        String text = node.getTextContent();
+        Node fakeNodeWithNewContent = createNodeFromXmlFragment(node.getOwnerDocument(), ("<fake>" + text + "</fake>").getBytes(UTF_8), false);
+        NodeList fakeNodeChildNodes = fakeNodeWithNewContent.getChildNodes();
+        for (int i = fakeNodeChildNodes.getLength() - 1; i >= 0; i--) {
+            Node childNode = fakeNodeChildNodes.item(i);
+            replaceElement(childNode, node);
+        }
+        return node.getOwnerDocument();
+    }
+
     public static Node importNodeInDocument(Document document, Node node) {
         if(node.getNodeType() == Node.DOCUMENT_NODE) {
             node = node.getFirstChild();
