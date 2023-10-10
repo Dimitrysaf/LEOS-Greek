@@ -14,4 +14,5 @@ java-build:
     expire_in: 1 week
     when: always
     paths:
-      - "modules/web/target/"
+      - .m2/
+      - "modules/web/target/*.war"
