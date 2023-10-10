@@ -1,9 +1,15 @@
+include:
+  - template: Security/SAST.gitlab-ci.yml
+
 variables:
   CI_DEBUG_TRACE: "true"
+  SECURE_LOG_LEVEL: "debug"
   DS_JAVA_VERSION: 8
-
+  SAST_EXCLUDED_ANALYZERS: "brakeman,flawfinder,nodejs-scan,spotbugs"
+  
 stages:
-  - build
+#  - build
+  - test
 
 java-build:
   image: maven:3.8-openjdk-8
@@ -16,3 +22,13 @@ java-build:
     paths:
       - .m2/
       - "modules/web/target/"
+
+# SpotBugs cannot generate the war file for analysisi because it requires JAVA 8. SpotBugs only supports version 11 or 17 https://docs.gitlab.com/ee/user/application_security/sast/#analyzer-settings
+# It is necessary to precompile files in order to execute SpotBugs https://docs.gitlab.com/ee/user/application_security/sast/#pre-compilation
+spotbugs-sast:
+  dependencies:
+    - java-build
+  variables:
+    MAVEN_REPO_PATH: $CI_PROJECT_DIR/.m2/repository
+    COMPILE: "false"
+  timeout: 10h 0m
