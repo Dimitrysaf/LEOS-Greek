@@ -15,4 +15,4 @@ java-build:
     when: always
     paths:
       - .m2/
-      - "modules/web/target/*.war"
+      - target/*.war
