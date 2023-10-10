@@ -247,6 +247,16 @@ define(function leosUtilsModule(require) {
                         "content: '↰'; margin-left: -20pt; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";
+                    tcStyle += "level subparagraph[leos\\:tc-enter-created]:before {" +
+                        "content: '↵'; margin-left: -20pt; " +
+                        "color: " + userColors[0] + "; " +
+                        "float: left; border: 0pt; padding-top: 6pt;" +
+                        "}\n";
+                    tcStyle += "level subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']" + "[leos\\:tc-enter-deleted]:before {" +
+                        "content: '↰'; margin-left: -20pt; " + 
+                        "color: " + userColors[0] + "; " +
+                        "float: left; border: 0pt; padding-top: 6pt;" +
+                        "}\n";
                     tcStyle += "num > span[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']" +
                         "[leos\\:tc-enter-deleted]:not([leos\\:tc-original-number]) {" +
                         "margin-right: 5px !important; color: " + userColors[0] + " !important; " +
@@ -261,6 +271,14 @@ define(function leosUtilsModule(require) {
                     tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-enter-deleted]:not([data-akn-num]):before, " +
                         "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-enter-deleted]:not([data-akn-num]):before {" +
                         "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
+                        "float: left !important; text-decoration: none !important;" +
+                        "}\n";
+                    tcStyle += "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-enter-deleted]:not([data-akn-num]):before {" +
+                        "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
+                        "float: left !important; text-decoration: none !important;" +
+                        "}\n";
+                    tcStyle += "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[data-akn-tc-enter-created]:not([data-akn-num]):before {" +
+                        "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                         "float: left !important; text-decoration: none !important;" +
                         "}\n";
                 }

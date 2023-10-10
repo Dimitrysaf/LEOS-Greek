@@ -196,17 +196,32 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             });
 
-            editor.on("handleTrackTraceForEnter", function (event) {
+            editor.on("handleTrackTraceForEnterCreated", function (event) {
+                if (isTrackChangesEnabled) {
+                    var editor = event.editor;
+                    var selection = editor.getSelection();
+                    var ranges = selection && selection.getRanges();
+                    var range = ranges && ranges[0];
+                    var el = range && range.startContainer;
+                    if(el) {
+                        el.setAttribute(core.DATA_AKN_TC_ENTER_CREATED, true);
+                    }
+                }
+            });
+
+            editor.on("handleTrackTraceForEnterDeleted", function (event) {
                 if (isTrackChangesEnabled) {
                     var element = event.data;
                     var elementToSetAttribute = element.startContainer;
                     if (elementToSetAttribute.type === CKEDITOR.NODE_TEXT) { elementToSetAttribute = elementToSetAttribute.getParent() }
-                    while (elementToSetAttribute.getName() !== 'li' && elementToSetAttribute.getParent()) {
+                    while (elementToSetAttribute.getName() !== 'li' && elementToSetAttribute.getName() !== 'p' && elementToSetAttribute.getParent()) {
                         elementToSetAttribute = elementToSetAttribute.getParent();
                     };
                     if (!elementToSetAttribute.getAttribute(core.DATA_AKN_TC_ENTER_DELETED)) {
                         elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ENTER_DELETED, true);
-                        elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, elementToSetAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM));
+                        if(elementToSetAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                            elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, elementToSetAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM));
+                        }
                         core.addTrackChangesAttributesForNumbering(editor, elementToSetAttribute, core.DELETE_ACTION);
                         editor.fire("change");
                     }
@@ -272,6 +287,13 @@ define(function leosTrackChangesPluginModule(require) {
                             var range = editor.getSelection().getRanges()[0];
                             var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE);
 
+                            if(!deleteKey) {
+                                var elementToDelete = range.getPreviousNode();
+                                if(elementToDelete.type === CKEDITOR.NODE_TEXT && elementToDelete.$.textContent.replace(/\u200B/g,'') === '' && elementToDelete.getParent().getAttribute(core.DATA_AKN_TC_ENTER_CREATED)) {
+                                    return;
+                                }
+                            } 
+                            
                             if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
 
                                 editor.fire("saveSnapshot");

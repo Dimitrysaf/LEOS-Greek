@@ -146,6 +146,7 @@ public class XmlHelper {
 
     public static final String LEOS_ACTION_ATTR = "leos:action";
     public static final String LEOS_TC_ORIGINAL_NUMBER = "leos:tc-original-number";
+public static final String LEOS_TC_ENTER_DELETED = "leos:tc-enter-deleted";
     public static final String LEOS_TC_INSERT_ACTION = "insert";
     public static final String LEOS_TC_DELETE_ACTION = "delete";
     public static final String LEOS_TC_MOVE_ACTION = "move";

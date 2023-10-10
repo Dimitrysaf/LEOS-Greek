@@ -1035,7 +1035,7 @@ define(function leosArticleListPluginModule(require) {
                             if (editor.LEOS.isTrackChangesEnabled) {
                                 var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(range);
                                 if (!isNewTrackChangeNumber) {
-                                    editor.fire("handleTrackTraceForEnter", range);
+                                    editor.fire("handleTrackTraceForEnterDeleted", range);
                                     evt.cancel();
                                     return;
                                 }
@@ -1200,7 +1200,7 @@ define(function leosArticleListPluginModule(require) {
                                 if (editor.LEOS.isTrackChangesEnabled) {
                                     var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(nextLine);
                                     if (!isNewTrackChangeNumber) {
-                                        editor.fire("handleTrackTraceForEnter", nextLine);
+                                        editor.fire("handleTrackTraceForEnterDeleted", nextLine);
                                         evt.cancel();
                                         return;
                                     }

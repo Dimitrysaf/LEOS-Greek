@@ -21,6 +21,7 @@ define(function leosAnnexListPluginModule(require) {
     var LOG = require("logger");
     var pluginTools = require("plugins/pluginTools");
     var leosPluginUtils = require("plugins/leosPluginUtils");
+var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var pluginName = "leosAnnexList";
 
@@ -929,11 +930,9 @@ define(function leosAnnexListPluginModule(require) {
                             previous = walker.previous();
 
                             if (
-                                previous && previous.type == CKEDITOR.NODE_ELEMENT &&
-                                ( previous.getName() in listNodeNames ||
-                                    previous.is( 'li' ) )
+                                previous && previous.type == CKEDITOR.NODE_ELEMENT && ( previous.getName() in listNodeNames || previous.is( 'li' ) || previous.is( 'p' ) )
                             ) {
-                                if ( !previous.is( 'li' ) ) {
+                                if ( !previous.is( 'li' ) && !previous.is( 'p' ) ) {
                                     walker.range.selectNodeContents( previous );
                                     walker.reset();
                                     walker.evaluator = isTextBlock;
@@ -950,6 +949,11 @@ define(function leosAnnexListPluginModule(require) {
                         }
 
                         if ( joinWith ) {
+                            if (!leosTrackChanges.core.isNewTrackChangeNumber(range) && !leosTrackChanges.core.isCreatedByEnterKey(range)) {
+                                editor.fire("handleTrackTraceForEnterDeleted", range);
+                                evt.cancel();
+                                return;
+                            }
                             joinNextLineToCursor( editor, cursor, range );
                             var parentOfPreviousIsParagraph = previous.getParent().getAttribute("data-akn-element") === leosPluginUtils.PARAGRAPH;
                             var parentOfPreviousIsNumbered = previous.getParent().getAttribute("data-akn-num");
@@ -1107,6 +1111,12 @@ define(function leosAnnexListPluginModule(require) {
                                     }
                                 }
 
+                                var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(nextLine);
+                                if (!isNewTrackChangeNumber) {
+                                    editor.fire("handleTrackTraceForEnterDeleted", nextLine);
+                                    evt.cancel();
+                                    return;
+                                }
                                 joinNextLineToCursor( editor, cursor, nextLine );
                                 evt.cancel();
                             }
@@ -1158,7 +1168,7 @@ define(function leosAnnexListPluginModule(require) {
                         editor.selectionChange( 1 );
                     } );
                 }
-            } );
+            }, null, null, 8 );
         }
     };
 

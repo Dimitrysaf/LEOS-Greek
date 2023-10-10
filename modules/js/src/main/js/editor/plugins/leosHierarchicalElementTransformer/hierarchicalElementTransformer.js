@@ -50,7 +50,10 @@ define(function hierarchicalElementTransformer(require) {
     var DATA_AKN_UID_NUMBER = "data-akn-uid-number";
     var TITLE_NUMBER = "title-number";
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
+    var DATA_AKN_TC_ENTER_CREATED = "data-akn-tc-enter-created";
+    var LEOS_TC_ENTER_CREATED = "leos:tc-enter-created";
     var DATA_AKN_TC_ENTER_DELETED = "data-akn-tc-enter-deleted";
+    var LEOS_TC_ENTER_DELETED = "leos:tc-enter-deleted";
     var NEW = "NEW";
     var UNNUMBERED = "UNNUMBERED";
     var DELETE = "delete";
@@ -185,6 +188,15 @@ define(function hierarchicalElementTransformer(require) {
                     }, {
                         from: DATA_AKN_TC_ORIGINAL_NUMBER,
                         to: "leos:tc-original-number",
+                        action: "passAttributeTransformer"
+                    }, {
+                        from: DATA_AKN_TC_ENTER_CREATED,
+                        to: LEOS_TC_ENTER_CREATED,
+                        action: "passAttributeTransformer"
+                    },
+                    {
+                        from: DATA_AKN_TC_ENTER_DELETED,
+                        to: LEOS_TC_ENTER_DELETED,
                         action: "passAttributeTransformer"
                     }]
                 });
@@ -892,9 +904,25 @@ define(function hierarchicalElementTransformer(require) {
                                         to: "data-akn-action",
                                         toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:action", element),
                                         action: "passAttributeTransformer"
-                                    },  {
+                                    }, {
                                         to: "data-akn-uid",
                                         toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:uid", element),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: "data-akn-action-number",
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:action-number", element),
+                                        action: "passAttributeTransformer"
+                                       }, {
+                                        to: "data-akn-uid-number",
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:uid-number", element),
+                                        action: "passAttributeTransformer"
+                                       }, {
+                                        to: DATA_AKN_TC_ENTER_CREATED,
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, LEOS_TC_ENTER_CREATED, element),
+                                        action: "passAttributeTransformer"
+                                    }, {
+                                        to: DATA_AKN_TC_ENTER_DELETED,
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, LEOS_TC_ENTER_DELETED, element),
                                         action: "passAttributeTransformer"
                                     }, {
                                         to: DATA_AKN_SOFTACTION,

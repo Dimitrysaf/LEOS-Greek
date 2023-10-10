@@ -167,6 +167,8 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         // make selection at the beginning of the new subparagraph
         leosPluginUtils.setFocus(contentAfterShiftEnter, editor);
 
+        editor.fire("handleTrackTraceForEnterCreated");
+
         editor.fire("change");
     }
 

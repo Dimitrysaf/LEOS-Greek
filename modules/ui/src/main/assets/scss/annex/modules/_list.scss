@@ -105,6 +105,18 @@ $LIST_SPACING: 40px;
             }
         }
 
+        & > li[data-akn-tc-original-number][data-akn-action-for-number='delete']:not([data-akn-tc-original-number='UNNUMBERED']):not([data-akn-tc-original-number='NEW']) {
+            padding-left: $LIST_SPACING;
+            position: relative;
+
+            &:before {
+                content: attr(data-akn-tc-original-number);
+                float: left;
+                margin-left: -$LIST_SPACING;
+                text-decoration: line-through;
+            }
+        }
+
         & > li.selectedMovedElement {
             @extend %moveSubElement;
         }
