@@ -1,11 +1,13 @@
 include:
   - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 variables:
   CI_DEBUG_TRACE: "true"
   SECURE_LOG_LEVEL: "debug"
   DS_JAVA_VERSION: 8
   SAST_EXCLUDED_ANALYZERS: "brakeman,flawfinder,nodejs-scan,spotbugs"
+  DS_EXCLUDED_ANALYZERS: "gemnasium-python"
   
 stages:
 #  - build
