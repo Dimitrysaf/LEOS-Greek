@@ -9,7 +9,7 @@ variables:
   SAST_EXCLUDED_ANALYZERS: "brakeman,flawfinder,nodejs-scan"
   DS_EXCLUDED_ANALYZERS: "gemnasium-python,gemnasium"
   # Effort levels (min, less, more, max) for spotbug scan https://docs.gitlab.com/ee/user/application_security/sast/#security-scanner-configuration
-  SAST_SCANNER_ALLOWED_CLI_OPTS: "-effort min"
+  SAST_SCANNER_ALLOWED_CLI_OPTS: "-effort more"
   JAVA_OPTS: "-Xmx8g"
   
 stages:
@@ -22,7 +22,7 @@ java-build:
   script:
     - mvn clean package -DskipTests=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
   artifacts:
-    expire_in: 1 week
+    expire_in: 1 day
     when: always
     paths:
       - .m2/
