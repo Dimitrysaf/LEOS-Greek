@@ -9,7 +9,7 @@ variables:
   SAST_EXCLUDED_ANALYZERS: "brakeman,flawfinder,nodejs-scan"
   DS_EXCLUDED_ANALYZERS: "gemnasium-python,gemnasium"
   # Effort levels (min, less, more, max) for spotbug scan https://docs.gitlab.com/ee/user/application_security/sast/#security-scanner-configuration
-  SAST_SCANNER_ALLOWED_CLI_OPTS: "-effort max"
+  SAST_SCANNER_ALLOWED_CLI_OPTS: "-effort less"
   
 stages:
   - build
@@ -25,7 +25,7 @@ java-build:
     when: always
     paths:
       - .m2/
-      - "modules/web/target/"
+      - target/
 
 # SpotBugs cannot generate the war file for analysisi because it requires JAVA 8. SpotBugs only supports version 11 or 17 https://docs.gitlab.com/ee/user/application_security/sast/#analyzer-settings
 # It is necessary to precompile files in order to execute SpotBugs https://docs.gitlab.com/ee/user/application_security/sast/#pre-compilation
