@@ -9,7 +9,8 @@ variables:
   SAST_EXCLUDED_ANALYZERS: "brakeman,flawfinder,nodejs-scan"
   DS_EXCLUDED_ANALYZERS: "gemnasium-python,gemnasium"
   # Effort levels (min, less, more, max) for spotbug scan https://docs.gitlab.com/ee/user/application_security/sast/#security-scanner-configuration
-  SAST_SCANNER_ALLOWED_CLI_OPTS: "-effort less"
+  SAST_SCANNER_ALLOWED_CLI_OPTS: "-effort min"
+  JAVA_OPTS: "-Xmx8g"
   
 stages:
   - build
