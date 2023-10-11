@@ -50,10 +50,8 @@ define(function hierarchicalElementTransformer(require) {
     var DATA_AKN_UID_NUMBER = "data-akn-uid-number";
     var TITLE_NUMBER = "title-number";
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
-    var DATA_AKN_TC_ENTER_CREATED = "data-akn-tc-enter-created";
-    var LEOS_TC_ENTER_CREATED = "leos:tc-enter-created";
-    var DATA_AKN_TC_ENTER_DELETED = "data-akn-tc-enter-deleted";
-    var LEOS_TC_ENTER_DELETED = "leos:tc-enter-deleted";
+    var DATA_AKN_ACTION_ENTER = "data-akn-action-enter";
+    var LEOS_ACTION_ENTER = "leos:action-enter";
     var NEW = "NEW";
     var UNNUMBERED = "UNNUMBERED";
     var DELETE = "delete";
@@ -190,13 +188,8 @@ define(function hierarchicalElementTransformer(require) {
                         to: "leos:tc-original-number",
                         action: "passAttributeTransformer"
                     }, {
-                        from: DATA_AKN_TC_ENTER_CREATED,
-                        to: LEOS_TC_ENTER_CREATED,
-                        action: "passAttributeTransformer"
-                    },
-                    {
-                        from: DATA_AKN_TC_ENTER_DELETED,
-                        to: LEOS_TC_ENTER_DELETED,
+                        from: DATA_AKN_ACTION_ENTER,
+                        to: LEOS_ACTION_ENTER,
                         action: "passAttributeTransformer"
                     }]
                 });
@@ -713,8 +706,8 @@ define(function hierarchicalElementTransformer(require) {
                                             to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                             action: "passAttributeTransformer"
                                         }, {
-                                            from: "leos:tc-enter-deleted",
-                                            to: DATA_AKN_TC_ENTER_DELETED,
+                                            from: "leos:action-enter",
+                                            to: DATA_AKN_ACTION_ENTER,
                                             action: "passAttributeTransformer"
                                         }]
                                     });
@@ -789,13 +782,13 @@ define(function hierarchicalElementTransformer(require) {
                                         to: DATA_AKN_TC_ORIGINAL_NUMBER,
                                         action: "passAttributeTransformer"
                                     }, {
-                                        from: "leos:tc-enter-deleted",
-                                        to: DATA_AKN_TC_ENTER_DELETED,
+                                        from: "leos:action-enter",
+                                        to: DATA_AKN_ACTION_ENTER,
                                         action: "passAttributeTransformer"
                                     }]
                                 });
                             } else if (rootElementsWithNumWithSpanTextForFromRegExp.test(path)) {
-                                if (element.parent.attributes["leos:action"] === DELETE && !element.parent.attributes["leos:tc-enter-deleted"]) {
+                                if (element.parent.attributes["leos:action"] === DELETE && !element.parent.attributes["leos:action-enter"]) {
                                     this.mapToProducts(element, {
                                         toPath: rootsElementsPathForTo,
                                         attrs: [{
@@ -917,12 +910,8 @@ define(function hierarchicalElementTransformer(require) {
                                         toValue: getElementAttrVal.call(that, contentWrapperForFrom, "leos:uid-number", element),
                                         action: "passAttributeTransformer"
                                        }, {
-                                        to: DATA_AKN_TC_ENTER_CREATED,
-                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, LEOS_TC_ENTER_CREATED, element),
-                                        action: "passAttributeTransformer"
-                                    }, {
-                                        to: DATA_AKN_TC_ENTER_DELETED,
-                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, LEOS_TC_ENTER_DELETED, element),
+                                        to: DATA_AKN_ACTION_ENTER,
+                                        toValue: getElementAttrVal.call(that, contentWrapperForFrom, LEOS_ACTION_ENTER, element),
                                         action: "passAttributeTransformer"
                                     }, {
                                         to: DATA_AKN_SOFTACTION,
@@ -1197,8 +1186,8 @@ define(function hierarchicalElementTransformer(require) {
                                                 to: "leos:renumbered",
                                                 action: "passAttributeTransformer"
                                             }, {
-                                                from: DATA_AKN_TC_ENTER_DELETED,
-                                                to: "leos:tc-enter-deleted",
+                                                from: DATA_AKN_ACTION_ENTER,
+                                                to: "leos:action-enter",
                                                 action: "passAttributeTransformer"
                                             }]
                                         }, {
@@ -1393,7 +1382,7 @@ define(function hierarchicalElementTransformer(require) {
                                             }]
                                         }]);
                                         var contentPath = rootsElementsPathForFrom + "/num";
-                                        if (element.attributes[DATA_AKN_TC_ENTER_DELETED]) {
+                                        if (element.attributes[DATA_AKN_ACTION_ENTER]) {
                                             this.mapToChildProducts(element, {
                                                 toPath: contentPath,
                                                 toChild: "span",
@@ -1410,8 +1399,8 @@ define(function hierarchicalElementTransformer(require) {
                                                     to: "leos:title",
                                                     action: "passAttributeTransformer"
                                                 }, {
-                                                    from: DATA_AKN_TC_ENTER_DELETED,
-                                                    to: "leos:tc-enter-deleted",
+                                                    from: DATA_AKN_ACTION_ENTER,
+                                                    to: "leos:action-enter",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             });
@@ -1423,7 +1412,7 @@ define(function hierarchicalElementTransformer(require) {
                                         }
                                         if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
                                             && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW
-                                            && !element.attributes[DATA_AKN_TC_ENTER_DELETED]) {
+                                            && !element.attributes[DATA_AKN_ACTION_ENTER]) {
                                             this.mapToChildProducts(element, {
                                                 toPath: contentPath,
                                                 toChild: "span",
@@ -1444,8 +1433,8 @@ define(function hierarchicalElementTransformer(require) {
                                                     to: "leos:tc-original-number",
                                                     action: "passAttributeTransformer"
                                                 }, {
-                                                    from: DATA_AKN_TC_ENTER_DELETED,
-                                                    to: "leos:tc-enter-deleted",
+                                                    from: DATA_AKN_ACTION_ENTER,
+                                                    to: "leos:action-enter",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             });
@@ -1476,8 +1465,8 @@ define(function hierarchicalElementTransformer(require) {
                                                     to: "leos:tc-original-number",
                                                     action: "passAttributeTransformer"
                                                 }, {
-                                                    from: DATA_AKN_TC_ENTER_DELETED,
-                                                    to: "leos:tc-enter-deleted",
+                                                    from: DATA_AKN_ACTION_ENTER,
+                                                    to: "leos:action-enter",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             });
@@ -1768,7 +1757,7 @@ define(function hierarchicalElementTransformer(require) {
                                                 action: "passAttributeTransformer"
                                             }]
                                         }]);
-                                        if (element.attributes[DATA_AKN_TC_ENTER_DELETED]) {
+                                        if (element.attributes[DATA_AKN_ACTION_ENTER]) {
                                             this.mapToChildProducts(element, {
                                                 toPath: contentPath,
                                                 toChild: "span",
@@ -1785,8 +1774,8 @@ define(function hierarchicalElementTransformer(require) {
                                                     to: "leos:title",
                                                     action: "passAttributeTransformer"
                                                 }, {
-                                                    from: DATA_AKN_TC_ENTER_DELETED,
-                                                    to: "leos:tc-enter-deleted",
+                                                    from: DATA_AKN_ACTION_ENTER,
+                                                    to: "leos:action-enter",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             });
@@ -1818,8 +1807,8 @@ define(function hierarchicalElementTransformer(require) {
                                                     to: "leos:tc-original-number",
                                                     action: "passAttributeTransformer"
                                                 }, {
-                                                    from: DATA_AKN_TC_ENTER_DELETED,
-                                                    to: "leos:tc-enter-deleted",
+                                                    from: DATA_AKN_ACTION_ENTER,
+                                                    to: "leos:action-enter",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             });
@@ -1941,12 +1930,8 @@ define(function hierarchicalElementTransformer(require) {
                                                 to: "leos:tc-original-number",
                                                 action: "passAttributeTransformer"
                                             }, {
-                                                from: DATA_AKN_TC_ENTER_DELETED,
-                                                to: "leos:tc-enter-deleted",
-                                                action: "passAttributeTransformer"
-                                            }, {
-                                                from: DATA_AKN_TC_ENTER_DELETED,
-                                                to: "leos:tc-enter-deleted",
+                                                from: DATA_AKN_ACTION_ENTER,
+                                                to: "leos:action-enter",
                                                 action: "passAttributeTransformer"
                                             }]
                                         }]);

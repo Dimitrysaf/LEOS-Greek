@@ -70,7 +70,7 @@ define(function blockListTransformer(require) {
     var DATA_AKN_ACTION_FOR_NUMBER = "data-akn-action-for-number";
 
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
-    var DATA_AKN_TC_ENTER_DELETED = "data-akn-tc-enter-deleted";
+    var DATA_AKN_ACTION_ENTER = "data-akn-action-enter";
     var NEW = "NEW";
     var UNNUMBERED = "UNNUMBERED";
 //------------------------
@@ -430,8 +430,8 @@ define(function blockListTransformer(require) {
                                                     to: "leos:renumbered",
                                                     action: "passAttributeTransformer"
                                                 }, {
-                                                    from: DATA_AKN_TC_ENTER_DELETED,
-                                                    to: "leos:tc-enter-deleted",
+                                                    from: DATA_AKN_ACTION_ENTER,
+                                                    to: "leos:action-enter",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             }, {
@@ -573,8 +573,8 @@ define(function blockListTransformer(require) {
                                                     to: "leos:renumbered",
                                                     action: "passAttributeTransformer"
                                                 }, {
-                                                    from: DATA_AKN_TC_ENTER_DELETED,
-                                                    to: "leos:tc-enter-deleted",
+                                                    from: DATA_AKN_ACTION_ENTER,
+                                                    to: "leos:action-enter",
                                                     action: "passAttributeTransformer"
                                                 }]
                                             }, {
@@ -768,8 +768,8 @@ define(function blockListTransformer(require) {
                                                 to: "leos:tc-original-number",
                                                 action: "passAttributeTransformer"
                                             }, {
-                                                from: DATA_AKN_TC_ENTER_DELETED,
-                                                to: "leos:tc-enter-deleted",
+                                                from: DATA_AKN_ACTION_ENTER,
+                                                to: "leos:action-enter",
                                                 action: "passAttributeTransformer"
                                             }]
                                         }]);

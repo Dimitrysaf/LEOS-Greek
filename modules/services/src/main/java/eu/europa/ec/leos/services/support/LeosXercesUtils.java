@@ -49,7 +49,7 @@ public class LeosXercesUtils {
                                 addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
                             }
                         } else if (getFirstChild(numNode, "span") != null && containsAttribute(getFirstChild(numNode, "span"), LEOS_ACTION_ATTR)) {
-                            Node enterDeletedNode = getChildContainingAttributeValue(numNode, LEOS_TC_ENTER_DELETED, "true");
+                            Node enterDeletedNode = getChildContainingAttributeValue(numNode, LEOS_ACTION_ENTER, LEOS_TC_DELETE_ACTION);
                             if(enterDeletedNode == null) {
                                 Node deletedNode = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
                                 if (deletedNode != null && deletedNode.getTextContent().equals(numLabel)) {

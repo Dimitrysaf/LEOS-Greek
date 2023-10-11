@@ -268,16 +268,16 @@ define(function leosUtilsModule(require) {
                         "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                         "float: left !important; text-decoration: none !important;" +
                         "}\n";
-                    tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-enter-deleted]:not([data-akn-num]):before, " +
-                        "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-enter-deleted]:not([data-akn-num]):before {" +
+                    tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                        "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before {" +
                         "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                         "float: left !important; text-decoration: none !important;" +
                         "}\n";
-                    tcStyle += "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-enter-deleted]:not([data-akn-num]):before {" +
+                    tcStyle += "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before {" +
                         "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                         "float: left !important; text-decoration: none !important;" +
                         "}\n";
-                    tcStyle += "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[data-akn-tc-enter-created]:not([data-akn-num]):before {" +
+                    tcStyle += "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[data-akn-action-enter='insert']:not([data-akn-num]):before {" +
                         "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                         "float: left !important; text-decoration: none !important;" +
                         "}\n";
