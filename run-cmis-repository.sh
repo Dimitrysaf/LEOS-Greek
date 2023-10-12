@@ -14,13 +14,11 @@
 # See the Licence for the specific language governing permissions and limitations under the Licence.
 #
 
-#TITLE Repository
-echo "---------------------REPOSITORY-----------------------------------------------"
+#TITLE CMIS Repository
+echo "---------------------CMID REPOSITORY-----------------------------------------------"
 
 cd ./tools/cmis/chemistry-opencmis-server-inmemory
 
-echo "---------------------REPOSITORY STARTING...-----------------------------------"
-mvn clean
+echo "---------------------CMIS REPOSITORY STARTING...-----------------------------------"
 mvn jetty:run-war
-
-echo "---------------------REPOSITORY STOPPED....-----------------------------------"
+echo "---------------------CMIS REPOSITORY STOPPED....-----------------------------------"
