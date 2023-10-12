@@ -15,10 +15,9 @@
 @echo off
 
 CALL "cmd /c start run-user-repository.bat"
-CALL "cmd /c start run-cmis-repository.bat"
+CALL "cmd /c start run-repository.bat"
 CALL "cmd /c start run-leos.bat"
 CALL "cmd /c start run-akn4euutil.bat"
-CALL "cmd /c start run-editlight.bat"
 
 echo "--------------------------------------------------------------------------"
 echo "---BOTH COMMAND WINDOWS NEED TO STAY OPEN FOR LEOS TO FUNCTION-----------"

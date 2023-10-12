@@ -13,13 +13,11 @@
 @REM
 
 @echo off
-TITLE Repository
-echo "---------------------REPOSITORY-----------------------------------------------"
+TITLE CMIS Repository
+echo "---------------------CMIS REPOSITORY-----------------------------------------------"
 
 cd ./tools/cmis/chemistry-opencmis-server-inmemory
 
-echo "---------------------REPOSITORY STARTING...-----------------------------------"
-call mvn clean
+echo "---------------------CMIS REPOSITORY STARTING...-----------------------------------"
 call mvn jetty:run-war
-
-echo "---------------------REPOSITORY STOPPED....-----------------------------------"
+echo "---------------------CMIS REPOSITORY STOPPED....-----------------------------------"
