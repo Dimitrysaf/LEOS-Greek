@@ -220,7 +220,7 @@ public class LeosPostDiffingProcessor {
         if (!nodeList.isEmpty()) {
             for (int nodeIter = 0; nodeIter < nodeList.size(); nodeIter++) {
                 final org.w3c.dom.Node node = nodeList.get(nodeIter);
-                if(node.getAttributes().getNamedItem(CLASS_ATTR).getTextContent().equals(classAdded)) {
+                if (node.getAttributes().getNamedItem(CLASS_ATTR) != null && node.getAttributes().getNamedItem(CLASS_ATTR).getTextContent().equals(classAdded)) {
                     String textNode = node.getTextContent();
                     String parentId = XercesUtils.getParentId(node);
                     if(parentId != null && parentId.startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX)) {
