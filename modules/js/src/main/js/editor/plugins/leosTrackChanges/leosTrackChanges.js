@@ -126,7 +126,7 @@ define(function leosTrackChangesModule(require) {
         getTrackChangeAttributesForNumbering: function(editor, action) {
             var user = this.getUserAndId(editor);
             var tcAttributes = {
-                "data-akn-action-for-number": action,
+                "data-akn-action-number": action,
                 "data-akn-uid-number": user[1],
                 "title-number": user[0]
             };
@@ -138,7 +138,7 @@ define(function leosTrackChangesModule(require) {
             var tcAttributes = {
                 "data-akn-action-enter": action,
                 "data-akn-uid-enter": user[1],
-                "title-enter-deleted": user[0]
+                "title-enter": user[0]
             };
             return tcAttributes;
         },
@@ -151,7 +151,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-for-number", "data-akn-uid-number", "title-number"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }

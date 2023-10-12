@@ -535,7 +535,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                 html : "data-akn-attr-renumbered"
             }, {
                 akn: "leos:action-number",
-                html: "data-akn-action-for-number"
+                html: "data-akn-action-number"
             }, {
                 akn: "leos:uid-number",
                 html: "data-akn-uid-number"

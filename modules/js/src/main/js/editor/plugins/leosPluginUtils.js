@@ -97,7 +97,7 @@ define(function leosPluginUtilsModule(require) {
 
     var COUNCIL_INSTANCE = "COUNCIL";
     var ART_DEF = "~_ART_DEF";
-    var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-for-number'];
+    var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-number'];
     function _hasTextOrBogusAsNextSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasNext()
             && (_getElementName(element.getNext()) === TEXT || _getElementName(element.getNext()) === BOGUS);

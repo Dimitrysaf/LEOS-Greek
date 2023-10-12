@@ -25,7 +25,7 @@ define(function blockListTransformer(require) {
     var DATA_ORIGIN = "data-origin";
 
 //-----------------------------
-    var DATA_AKN_ACTION_FOR_NUMBER = "data-akn-action-for-number";
+    var DATA_AKN_ACTION_NUMBER = "data-akn-action-number";
     var DATA_AKN_UID_NUMBER = "data-akn-uid-number";
     var TITLE_NUMBER = "title-number";
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
@@ -67,7 +67,7 @@ define(function blockListTransformer(require) {
     var DATA_AKN_NUM_SOFTACTION_ROOT = "data-akn-num-attr-softactionroot";
     var DATA_AKN_NUM_SOFTUSER = "data-akn-num-attr-softuser";
     var DATA_AKN_NUM_SOFTDATE = "data-akn-num-attr-softdate";
-    var DATA_AKN_ACTION_FOR_NUMBER = "data-akn-action-for-number";
+    var DATA_AKN_ACTION_NUMBER = "data-akn-action-number";
 
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
     var DATA_AKN_ACTION_ENTER = "data-akn-action-enter";
@@ -207,7 +207,7 @@ define(function blockListTransformer(require) {
                                             action: "passAttributeTransformer"
                                         }, {
                                              from: "leos:action",
-                                             to: DATA_AKN_ACTION_FOR_NUMBER,
+                                             to: DATA_AKN_ACTION_NUMBER,
                                              action: "passAttributeTransformer"
                                          }, {
                                              from: "leos:uid-number",
@@ -248,7 +248,7 @@ define(function blockListTransformer(require) {
                                         toPath: rootElementsPathForHtml,
                                         attrs: [{
                                             from: "leos:action",
-                                            to: DATA_AKN_ACTION_FOR_NUMBER,
+                                            to: DATA_AKN_ACTION_NUMBER,
                                             action: "passAttributeTransformer"
                                         }, {
                                             from: "leos:uid",
@@ -303,7 +303,7 @@ define(function blockListTransformer(require) {
 //---------------------
                                         }, {
                                              from: "leos:action-number",
-                                             to: DATA_AKN_ACTION_FOR_NUMBER,
+                                             to: DATA_AKN_ACTION_NUMBER,
                                              action: "passAttributeTransformer"
                                          }, {
                                              from: "leos:uid-number",
@@ -338,7 +338,7 @@ define(function blockListTransformer(require) {
                                 var path = element.transformationContext.elementPath;
                                 if (rootElementsForHtmlRegExp.test(path)) {
                                     if (element.attributes[DATA_AKN_NUM] && element.attributes[DATA_AKN_NUM] !== '\u2610' && element.attributes[DATA_AKN_NUM] !== '\u2611') {
-                                        if (!element.attributes[DATA_AKN_ACTION_FOR_NUMBER]) {
+                                        if (!element.attributes[DATA_AKN_ACTION_NUMBER]) {
                                             this.mapToProducts(element, [{
                                                 toPath: rootElementsPathForAkn,
                                                 attrs: [{
@@ -461,7 +461,7 @@ define(function blockListTransformer(require) {
                                                     to: "leos:softdate",
                                                     action: "passAttributeTransformer"
                                                 }, {
-                                                    from: DATA_AKN_ACTION_FOR_NUMBER,
+                                                    from: DATA_AKN_ACTION_NUMBER,
                                                     to: "leos:action",
                                                     action: "passAttributeTransformer"
                                                 }, {
@@ -640,7 +640,7 @@ define(function blockListTransformer(require) {
                                                     toPath: contentPath,
                                                     toChild: "span",
                                                     attrs: [{
-                                                        from: DATA_AKN_ACTION_FOR_NUMBER,
+                                                        from: DATA_AKN_ACTION_NUMBER,
                                                         to: "leos:action",
                                                         action: "passAttributeTransformer"
                                                     }, {
@@ -752,7 +752,7 @@ define(function blockListTransformer(require) {
                                                 to: "leos:renumbered",
                                                 action: "passAttributeTransformer"
                                             }, {
-                                                from: DATA_AKN_ACTION_FOR_NUMBER,
+                                                from: DATA_AKN_ACTION_NUMBER,
                                                 to: "leos:action-number",
                                                 action: "passAttributeTransformer"
                                             }, {
@@ -795,7 +795,7 @@ define(function blockListTransformer(require) {
                                             from: "data-akn-attr-softdate",
                                             action: "passAttributeTransformer"
                                         }, {
-                                             from: DATA_AKN_ACTION_FOR_NUMBER,
+                                             from: DATA_AKN_ACTION_NUMBER,
                                              to: "leos:action",
                                              action: "passAttributeTransformer"
                                          }, {
