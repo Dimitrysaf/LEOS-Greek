@@ -1178,9 +1178,9 @@ public class LegServiceImpl implements LegService {
 
     private void addPdfRendition(byte[] pdfJobZip, Map<String, Object> legContent) throws IOException {
         Map.Entry<String, Object> neededEntry = unzipJobResult(pdfJobZip).entrySet().stream()
-                .filter(pdfEntry -> !pdfEntry.getKey().endsWith("_pdfa.pdf"))
+                .filter(pdfEntry -> pdfEntry.getKey().endsWith("_pdfa.pdf"))
                 .findAny()
-                .orElseThrow(() -> new FileNotFoundException("Pdf rendition not found in the pdf document job file"));
+                .orElseThrow(() -> new FileNotFoundException("Pdfa rendition not found in the pdf document job file"));
         legContent.put(PDF_RENDITION + neededEntry.getKey(), neededEntry.getValue());
     }
 
