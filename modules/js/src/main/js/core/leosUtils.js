@@ -247,7 +247,8 @@ define(function leosUtilsModule(require) {
                         "content: '↰'; margin-left: -20pt; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";
-                    tcStyle += "level subparagraph[leos\\:tc-enter-created]:before {" +
+                    tcStyle += "level subparagraph[leos\\:tc-enter-created]:before," +
+                        "paragraph list subparagraph[leos\\:tc-enter-created]:before {" +
                         "content: '↵'; margin-left: -20pt; " +
                         "color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
@@ -277,7 +278,8 @@ define(function leosUtilsModule(require) {
                         "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                         "float: left !important; text-decoration: none !important;" +
                         "}\n";
-                    tcStyle += "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[data-akn-tc-enter-created]:not([data-akn-num]):before {" +
+                    tcStyle += "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[data-akn-tc-enter-created]:not([data-akn-num]):before," +
+                        "ol[data-akn-name='aknAnnexList'][data-akn-element='paragraph'] > li > ol[data-akn-name='aknAnnexOrderedList'] > li[data-akn-name='subparagraph'][data-akn-tc-enter-created]:not([data-akn-num]):before {" +
                         "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                         "float: left !important; text-decoration: none !important;" +
                         "}\n";

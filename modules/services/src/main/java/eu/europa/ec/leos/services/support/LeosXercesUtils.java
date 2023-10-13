@@ -49,8 +49,7 @@ public class LeosXercesUtils {
                                 addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
                             }
                         } else if (getFirstChild(numNode, "span") != null && containsAttribute(getFirstChild(numNode, "span"), LEOS_ACTION_ATTR)) {
-                            Node enterDeletedNode = getChildContainingAttributeValue(numNode, LEOS_TC_ENTER_DELETED, "true");
-                            if(enterDeletedNode == null) {
+                            if(!isEnterDeleted(node)) {
                                 Node deletedNode = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
                                 if (deletedNode != null && deletedNode.getTextContent().equals(numLabel)) {
                                     numNode.setTextContent(numLabel);
@@ -252,5 +251,18 @@ public class LeosXercesUtils {
             XercesUtils.replaceNodeWithSelfContent(highlightNodes.item(i));
         }
         return XercesUtils.nodeToByteArray(document);
+    }
+
+    public static boolean isEnterDeleted(Node node) {
+        boolean isEnterDeleted = false;
+        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+        if(numNode != null) {
+            if (getFirstChild(numNode, "span") != null && containsAttribute(getFirstChild(numNode, "span"), LEOS_ACTION_ATTR)) {
+                isEnterDeleted = getChildContainingAttributeValue(numNode, LEOS_TC_ENTER_DELETED, "true") != null;
+            }
+        } else {
+            isEnterDeleted = containsAttributeWithValue(node, LEOS_TC_ENTER_DELETED, "true");
+        }
+        return  isEnterDeleted;
     }
 }

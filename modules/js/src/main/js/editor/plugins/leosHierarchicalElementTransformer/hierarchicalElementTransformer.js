@@ -716,6 +716,10 @@ define(function hierarchicalElementTransformer(require) {
                                             from: "leos:tc-enter-deleted",
                                             to: DATA_AKN_TC_ENTER_DELETED,
                                             action: "passAttributeTransformer"
+                                        }, {
+                                            from: "leos:tc-enter-created",
+                                            to: DATA_AKN_TC_ENTER_CREATED,
+                                            action: "passAttributeTransformer"
                                         }]
                                     });
                                     this._.isContentWrapperPresent = false;
