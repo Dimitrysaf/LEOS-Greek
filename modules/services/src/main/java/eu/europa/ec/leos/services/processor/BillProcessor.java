@@ -50,4 +50,6 @@ public interface BillProcessor {
     Element getTocElement(final Bill document, final String elementId, final List<TableOfContentItemVO> toc);
 
     byte[] removeDeletedElements(byte[] docContent);
+
+    byte[] renumberingAndPostProcessing(byte[] docContent);
 }

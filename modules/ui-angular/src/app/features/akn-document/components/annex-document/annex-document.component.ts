@@ -19,6 +19,7 @@ import { CKEditorService } from '@/features/akn-document/services/ckeditor.servi
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
+import {TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
 
 @Component({
   selector: 'app-annex-document',
@@ -48,6 +49,7 @@ export class AnnexDocumentComponent
     private documentService: DocumentService,
     private coEditionWSService: CoEditionServiceWS,
     private translate: TranslateService,
+    private trackChangesActionsService:TrackChangesActionsService,
   ) {}
 
   ngOnDestroy(): void {
@@ -65,12 +67,14 @@ export class AnnexDocumentComponent
       this.xml = changes.xml.currentValue;
       this.containerElRef.nativeElement.innerHTML = this.xml;
       this.documentService.setDidDocumentLoadAndRender(true);
+      this.initTrackChangesActions();
     }
     if (
       'reloadTrigger' in changes &&
       changes.reloadTrigger.currentValue !== 0
     ) {
       this.containerElRef.nativeElement.innerHTML = this.xml;
+      this.initTrackChangesActions();
     }
   }
 
@@ -86,7 +90,14 @@ export class AnnexDocumentComponent
         .subscribe((coEdits) => {
           this.showElementsBeingEdited(coEdits);
         });
+      this.initTrackChangesActions();
     }
+  }
+
+  initTrackChangesActions() {
+    this.trackChangesActionsService.show.next({trackChanges: this.document.querySelectorAll(
+        '[' + this.trackChangesActionsService.LEOS_UID_ATTR + '][' + this.trackChangesActionsService.LEOS_SOFT_ACTION_ROOT + '="true"]',
+      )});
   }
 
   generateTooltip(coEdits: CoEditionVO[]) {

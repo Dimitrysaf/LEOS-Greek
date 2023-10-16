@@ -10,6 +10,7 @@ import {
   MOVE_FROM,
   MOVE_TO,
   SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
+  LEOS_TC_INSERT_ACTION
 } from '@/shared/constants';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
@@ -59,6 +60,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
       this.moveOriginAttribute(sourceItem, targetItem);
       this.setNumber(tocTree, sourceItem, targetItem);
       sourceItem.softActionAttr = ADD;
+      sourceItem.trackChangeAction = LEOS_TC_INSERT_ACTION;
       sourceItem.softActionRoot = true;
     } else {
       this.handleMoveAction(sourceItem, tocTree);
@@ -132,6 +134,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     //set values on original item
     originalItem.softActionAttr = MOVE_FROM;
     originalItem.softActionRoot = isSoftActionRoot;
+    originalItem.trackChangeAction = LEOS_TC_INSERT_ACTION;
     originalItem.softMoveFrom =
       SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
     return moveToItem;

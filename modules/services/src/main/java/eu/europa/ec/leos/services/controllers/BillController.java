@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.BillApiService;
 import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
@@ -308,6 +309,38 @@ public class BillController {
         } catch (Exception e) {
             LOG.error("Error occurred  while getting bill element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error while getting bill element ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/accept-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> acceptChange(@PathVariable("documentRef") String documentRef,
+                                                 @PathVariable("elementId") String elementId,
+                                                 @PathVariable("elementTagName") String elementTagName,
+                                               @RequestParam("trackChangeAction") String trackChangeAction) {
+        try {
+            TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
+            DocumentViewResponse response = this.billApiService.acceptChange(documentRef, elementId, elementTagName, trackChangeActionType);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while accepting change - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error while accepting change ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentRef}/reject-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> rejectChange(@PathVariable("documentRef") String documentRef,
+                                               @PathVariable("elementId") String elementId,
+                                               @PathVariable("elementTagName") String elementTagName,
+                                               @RequestParam("trackChangeAction") String trackChangeAction) {
+        try {
+            TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
+            DocumentViewResponse response = this.billApiService.rejectChange(documentRef, elementId, elementTagName, trackChangeActionType);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while rejecting change - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error while rejecting change ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

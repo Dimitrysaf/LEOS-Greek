@@ -1740,6 +1740,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node node = XercesUtils.getElementById(document, elementId);
         boolean isSoftMovedFrom = isSoftMovedFrom(node);
         boolean isProposalElement = isProposalElement(node);
+        boolean isSoftDeleted = isSoftDeletedOrMovedTo(node);
         Node parentNode = node.getParentNode();
         List<Node> siblings =  XercesUtils.getChildren(parentNode, Arrays.asList(SUBPARAGRAPH, POINT, INDENT, LIST, CROSSHEADING));
         boolean singleChild = siblings.size() <= 1;
@@ -1765,7 +1766,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             softDeleteOriginalNode(node, isTrackChangesEnabled);
             restoreTransformedNodeToContent(node);
             XercesUtils.deleteElement(node);
-        } else if (isProposalElement) {
+        } else if (isProposalElement && !isSoftDeleted) {
             removeMovedInElements(node, isTrackChangesEnabled);
             softDeleteElementForNode(node, isTrackChangesEnabled);
         } else {

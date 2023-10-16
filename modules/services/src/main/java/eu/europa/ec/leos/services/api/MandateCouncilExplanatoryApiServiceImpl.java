@@ -20,6 +20,7 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.model.action.CheckinElement;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.explanatory.ExplanatoryStructureType;
@@ -426,6 +427,16 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         // KLUGE temporary hack for compatibility with new domain model
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         return templateConfigurationService.getTemplateConfiguration(explanatory.getMetadata().get().getDocTemplate(), "guidance");
+    }
+
+    @Override
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception {
+        throw new UnsupportedOperationException("Accept change isn't supported for council explanatory");
+    }
+
+    @Override
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception {
+        throw new UnsupportedOperationException("Reject change isn't supported for council explanatory");
     }
 
     private void setStructureContext(String docTemplate) {

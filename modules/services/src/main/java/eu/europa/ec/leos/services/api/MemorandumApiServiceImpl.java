@@ -25,6 +25,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
@@ -212,7 +213,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!").getDocTemplate());
         return structureContext1.getTocItems();
     }
 
@@ -386,6 +387,16 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         return templateConfigurationService.getTemplateConfiguration(memorandum.getMetadata().get().getDocTemplate(), "guidance");
     }
 
+    @Override
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception {
+        throw new UnsupportedOperationException("Accept change isn't supported for memorandum");
+    }
+
+    @Override
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,TrackChangeActionType trackChangeAction) throws Exception {
+        throw new UnsupportedOperationException("Accept change isn't supported for memorandum");
+    }
+
     private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
@@ -424,7 +435,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     private byte[] getContent(Memorandum memorandum) {
-        final Content content = memorandum.getContent().getOrError(() -> "Annex content is required!");
+        final Content content = memorandum.getContent().getOrError(() -> "Memorandum content is required!");
         return content.getSource().getBytes();
     }
 

@@ -19,7 +19,6 @@ import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
-import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -31,6 +30,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.model.action.CheckinElement;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
@@ -63,6 +63,7 @@ import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.processor.TrackChangesProcessor;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -123,6 +124,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     ContentComparatorService compareService;
     @Autowired
     DocumentViewService<Annex> documentViewService;
+    @Autowired
+    TrackChangesProcessor<Annex> trackChangesProcessor;
     @Autowired
     PackageService packageService;
     @Autowired
@@ -511,10 +514,43 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception {
+        String op = "accepted";
+        String msg = "operation.element.annex.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
+
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
+        this.populateCloneProposalMetadata(annex);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
+        populateCloneProposalMetadata(proposal);
+        byte[] newXmlContent = trackChangesProcessor.acceptChange(annex, elementId, elementTagName, trackChangeAction);
+        newXmlContent = annexProcessor.renumberingAndPostProcessing(newXmlContent);
+        annex = annexService.updateAnnex(annex, newXmlContent, VersionType.MINOR, messageHelper.getMessage(msg));
+
+        return documentViewService.updateDocumentView(annex);
+    }
+
+    @Override
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,TrackChangeActionType trackChangeAction) throws Exception {
+        String op = "rejected";
+        String msg = "operation.element.annex.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
+
+        Annex annex = this.annexService.findAnnexByRef(documentRef);
+        this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
+        this.populateCloneProposalMetadata(annex);
+
+        byte[] newXmlContent = trackChangesProcessor.rejectChange(annex, elementId, elementTagName, trackChangeAction);
+        newXmlContent = annexProcessor.renumberingAndPostProcessing(newXmlContent);
+        annex = annexService.updateAnnex(annex, newXmlContent, VersionType.MINOR, messageHelper.getMessage(msg));
+
+        return documentViewService.updateDocumentView(annex);
+    }
+
+    @Override
     public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext context = structureContext.get();
-        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
         populateCloneProposalMetadata(annex);
         List<String> elementAncestorsIds = null;
         if (CollectionUtils.isNotEmpty(elementIds)) {

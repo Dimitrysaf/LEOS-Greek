@@ -338,6 +338,14 @@ class AnnexProcessorImpl implements AnnexProcessor {
     }
 
     @Override
+    public byte[] renumberingAndPostProcessing(byte[] docContent) {
+        byte [] updatedContent = numberService.renumberLevel(docContent);
+        updatedContent = numberService.renumberParagraph(updatedContent);
+        updatedContent = numberService.renumberArticles(updatedContent);
+        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
+    }
+
+    @Override
     public LevelItemVO getLevelItemVO(Annex document, String elementId, String elementTagName) throws Exception {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "ElementId is required.");

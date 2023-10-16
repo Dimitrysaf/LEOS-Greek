@@ -724,7 +724,7 @@ public class XmlHelper {
         return attrVal != null ? Boolean.valueOf(attrVal) : null;
     }
 
-    private static String getAttributeValue(String content, String attrName) {
+    public static String getAttributeValue(String content, String attrName) {
         String attr = null;
         String search = " " + attrName + "=\"";
         int startIndex = content.indexOf(search);
