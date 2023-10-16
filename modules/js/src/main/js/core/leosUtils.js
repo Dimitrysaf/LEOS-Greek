@@ -225,7 +225,7 @@ define(function leosUtilsModule(require) {
             });
             var tcStyle = "";
             for (var i = 0; usersUid.length > i; i++) {
-                var userColors = (usersUid[i] !== "willajh") ? _generateColors(usersUid[i].repeat(5) + proposalRef) : ["hsl(330, 100%, 50%)", "hsl(330, 100%, 90%)"];
+                var userColors = _generateColors(usersUid[i].repeat(5) + proposalRef);
                 if (isDocTcStyle) {
                     tcStyle += "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-enter-deleted] > num, " +
                         "subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-enter-deleted] > num, " +
