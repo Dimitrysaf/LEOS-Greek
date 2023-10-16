@@ -7,6 +7,8 @@ export type AccessTokenResponse = {
 };
 
 export type TokenData = {
+  /** The LEOS API access token. */
   accessToken?: string;
+  /** Expiry date of this token, in Unix time */
   expiresIn: number; // date in ms
 };

@@ -6,7 +6,7 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, Observable, take, tap, throwError } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
@@ -24,13 +24,18 @@ export class AuthInterceptor implements HttpInterceptor {
       : next.handle(req);
   }
 
+  /** Appends the **Access Token** as `Authorization` header to the request. */
   private handleWithToken(req: HttpRequest<any>, next: HttpHandler) {
+    let accessToken: string | null = null;
     return this.authService.accessToken$.pipe(
+      take(1),
+      tap((token) => (accessToken = token)),
       switchMap((token) => next.handle(this.addToken(req, token))),
-      catchError(this.errorHandler),
+      catchError((e) => this.errorHandler(e, accessToken)),
     );
   }
 
+  /** Adds the `Authorization` header to the request. */
   private addToken(req: HttpRequest<any>, token: string) {
     return req.clone({
       setHeaders: {
@@ -39,13 +44,21 @@ export class AuthInterceptor implements HttpInterceptor {
     });
   }
 
-  private errorHandler(requestError: HttpErrorResponse) {
+  private errorHandler(
+    requestError: HttpErrorResponse,
+    accessToken: string | null,
+  ) {
+    console.debug(
+      '[auth.interceptor] errorHandler - request failed',
+      requestError,
+    ); // DEBUG
     if (requestError?.status === 401) {
-      console.warn(
-        'stub:',
-        'Unhandled `accessToken` renewal failure.',
-        requestError.message,
-      ); // FIXME
+      console.debug(
+        '[auth.interceptor] errorHandler - 401 markTokenAsExpired',
+        accessToken,
+      ); // DEBUG
+      // API request failed with 401 Unauthorized - Access Token must be invalid
+      this.authService.markTokenAsExpired(accessToken);
     }
     return throwError(() => requestError);
   }

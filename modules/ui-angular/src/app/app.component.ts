@@ -13,8 +13,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subscription } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { AppLocalStorageService } from '@/core/services/app-local-storage.service';
 
-import { LocalStorageService } from './core/services/local-storage.service';
 import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
 
 @Component({
@@ -40,13 +40,13 @@ export class AppComponent implements OnInit, OnDestroy {
   subs: Subscription[] = [];
   i18nState: Observable<I18nState>;
   userPreferencesState: Observable<UserPreferences>;
-  private storage = new LocalStorageService();
 
   constructor(
     private store: Store<any>,
     private config: AppConfigService,
     private translateService: TranslateService,
     private webSocket: CoEditionServiceWS,
+    private storage: AppLocalStorageService,
   ) {
     this.i18nState = this.store.select(getI18nState);
     this.userPreferencesState = this.store.select(getUserPreferences);
