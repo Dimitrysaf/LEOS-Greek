@@ -266,7 +266,7 @@ abstract class DocumentScreenImpl extends VerticalLayout implements DocumentScre
 
     public abstract void showVersion(String content, String versionInfo);
 
-    public abstract void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList);
+    public abstract void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList, List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal);
 
     public abstract void showCleanVersion(String content, String versionInfo);
 

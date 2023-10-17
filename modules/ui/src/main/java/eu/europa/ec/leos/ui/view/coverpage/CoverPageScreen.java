@@ -97,7 +97,7 @@ interface CoverPageScreen {
 
     void showVersion(String versionContent, String versionInfo);
 
-    void showRevision(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList);
+    void showRevision(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, List<LeosPermission> permissionsForRevision);
 
     void disableMergePane();
 

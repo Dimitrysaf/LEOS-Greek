@@ -49,7 +49,7 @@ public class SearchBarExtension extends LeosJavaScriptExtension {
     }
 
     @Override
-    protected SearchBarState getState() {
+    public SearchBarState getState() {
         return (SearchBarState) super.getState();
     }
 

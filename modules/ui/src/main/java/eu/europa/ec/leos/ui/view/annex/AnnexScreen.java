@@ -106,9 +106,9 @@ interface AnnexScreen {
     
     void showVersion(String versionContent, String versionInfo);
 
-    void showRevision(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList);
+    void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList, List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal);
 
-    void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId);
+    void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId, List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal);
 
     void disableMergePane();
 

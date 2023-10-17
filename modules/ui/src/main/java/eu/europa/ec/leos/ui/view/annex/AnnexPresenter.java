@@ -1268,15 +1268,17 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private void compareAndShowRevision(ContributionVO contributionVO) {
         final Annex contributionVersion = annexService.findAnnexVersion(contributionVO.getDocumentId());
         //Get clean document cleaning soft, origin and other irrelevant attributes.
+        List<LeosPermission> permissionsForRevision = securityContext.getPermissions(contributionVersion);
         String contributionHtml = documentContentService.getCleanDocumentAsHtml(contributionVersion,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
-                securityContext.getPermissions(contributionVersion));
+                permissionsForRevision);
 
         //Get the original version submitted to LS from the metadata of the document
         final Annex originalVersion = annexService.findFirstVersion(contributionVersion.getMetadata().get().getRef());
+        final List<LeosPermission> permissionsForOriginal = securityContext.getPermissions(originalVersion);
         final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
-                securityContext.getPermissions(originalVersion));
+                permissionsForOriginal);
 
         //Get the compared content
         final String comparedContent = comparisonDelegate.getContributionComparedContent(originalVersionHtml, contributionHtml);
@@ -1289,7 +1291,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         List<TocItem> tocItemList = getTocITems(annex);
 
         final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
-        annexScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, temporaryAnnotationsId);
+        annexScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, temporaryAnnotationsId, permissionsForRevision, permissionsForOriginal);
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentId, final String legFileName, final String versionedReference) {

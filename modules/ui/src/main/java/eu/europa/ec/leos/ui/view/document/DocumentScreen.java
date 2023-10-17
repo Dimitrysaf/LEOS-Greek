@@ -121,9 +121,9 @@ interface DocumentScreen {
 
     void showVersion(String content, String versionInfo);
 
-    void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList);
+    void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList, List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal);
 
-    void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId);
+    void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId, List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal);
 
     void disableMergePane();
 

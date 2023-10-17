@@ -148,12 +148,12 @@ public class MandateDocumentScreenImpl extends DocumentScreenImpl {
     }
 
     @Override
-    public void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList){
+    public void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList, List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal){
         throw new IllegalArgumentException("Operation not valid");
     }
     
     @Override
-    public void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId) {
+    public void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId, List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
         throw new IllegalArgumentException("Operation not valid");
     }
 

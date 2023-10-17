@@ -6,10 +6,12 @@ import {
   MergeActionVO,
 } from '@/shared/models/merge-action-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
+import {Permission} from "@/shared";
 
 export type MergeContributionConnectorState = LeosJavaScriptExtensionState & {
   tocItemsJsonArray: string; // json
   isAngularUI?: boolean;
+  permissions: Permission[];
 };
 
 export type MergeContributionConnectorInitialState = Omit<
