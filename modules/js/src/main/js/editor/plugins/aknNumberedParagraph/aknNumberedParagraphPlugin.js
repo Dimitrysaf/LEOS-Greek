@@ -554,6 +554,12 @@ define(function aknNumberedParagraphPluginModule(require) {
             }, {
                 akn: "leos:action-enter",
                 html: "data-akn-action-enter"
+            }, {
+                akn: "leos:uid-enter",
+                html: "data-akn-uid-enter"
+            }, {
+                akn: "leos:title-enter",
+                html: "title-enter"
             }]
         },
         rootElementsForFrom: ['paragraph'],

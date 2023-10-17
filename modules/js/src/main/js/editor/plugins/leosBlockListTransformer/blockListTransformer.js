@@ -29,6 +29,11 @@ define(function blockListTransformer(require) {
     var DATA_AKN_UID_NUMBER = "data-akn-uid-number";
     var TITLE_NUMBER = "title-number";
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
+    var DATA_AKN_ACTION_ENTER = "data-akn-action-enter";
+    var DATA_AKN_UID_ENTER = "data-akn-uid-enter";
+    var DATA_AKN_TITLE_ENTER = "title-enter";
+    var DELETE = "delete";
+    var INSERT = "insert";
     var DATA_AKN_EDITABLE = "data-akn-attr-editable";
     var LEOS_ORIGINAL_DEPTH_ATTR = "leos:originaldepth";
     var DATA_INDENT_LEVEL = "data-indent-level";
@@ -67,10 +72,7 @@ define(function blockListTransformer(require) {
     var DATA_AKN_NUM_SOFTACTION_ROOT = "data-akn-num-attr-softactionroot";
     var DATA_AKN_NUM_SOFTUSER = "data-akn-num-attr-softuser";
     var DATA_AKN_NUM_SOFTDATE = "data-akn-num-attr-softdate";
-    var DATA_AKN_ACTION_NUMBER = "data-akn-action-number";
 
-    var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
-    var DATA_AKN_ACTION_ENTER = "data-akn-action-enter";
     var NEW = "NEW";
     var UNNUMBERED = "UNNUMBERED";
 //------------------------
@@ -165,8 +167,10 @@ define(function blockListTransformer(require) {
                 var rootElementsWithNestedElementForAknRegExp = new RegExp(anchor([rootElementsForAknRegExpString, "\/((?!text|num).)+"].join("")));
 
                 //--added from hierarchicalElementTransformer.js --
-                var rootElementsWithNumWithSpanForFromRegExp = new RegExp(anchor([rootElementsForAknRegExpString, "\/num\/span"].join("")));
-                var rootElementsWithNumWithSpanTextForFromRegExp = new RegExp(anchor([rootElementsForAknRegExpString, "\/num\/span\/text"].join("")));
+                var rootElementsWithNumWithDelForFromRegExp = new RegExp(anchor([rootElementsForAknRegExpString, "\/num\/del"].join("")));
+                var rootElementsWithNumWithDelTextForFromRegExp = new RegExp(anchor([rootElementsForAknRegExpString, "\/num\/del\/text"].join("")));
+                var rootElementsWithNumWithInsForFromRegExp = new RegExp(anchor([rootElementsForAknRegExpString, "\/num\/ins"].join("")));
+                var rootElementsWithNumWithInsTextForFromRegExp = new RegExp(anchor([rootElementsForAknRegExpString, "\/num\/ins\/text"].join("")));
                 //----
 
                 // <= end of regular expression section
@@ -243,11 +247,65 @@ define(function blockListTransformer(require) {
                                         toAttribute: DATA_AKN_NUM
                                     });
 //-------------
-                                } else if (rootElementsWithNumWithSpanForFromRegExp.test(path)) {
+                                } else if (rootElementsWithNumWithDelForFromRegExp.test(path)) {
+                                    if (element.attributes["leos:action-enter"] === DELETE) {
+                                        this.mapToProducts(element, {
+                                            toPath: rootElementsPathForHtml,
+                                            attrs: [{
+                                                from: "leos:action-enter",
+                                                to: DATA_AKN_ACTION_ENTER,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "leos:uid",
+                                                to: DATA_AKN_UID_ENTER,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "leos:title",
+                                                to: DATA_AKN_TITLE_ENTER    ,
+                                                action: "passAttributeTransformer"
+                                            }]
+                                        });
+                                    }
+                                    if (element.attributes["leos:action-number"] === DELETE) {
+                                        this.mapToProducts(element, {
+                                            toPath: rootElementsPathForHtml,
+                                            attrs: [{
+                                                from: "leos:action",
+                                                to: DATA_AKN_ACTION_NUMBER,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "leos:uid",
+                                                to: DATA_AKN_UID_NUMBER,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "leos:title",
+                                                to: TITLE_NUMBER,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: "leos:tc-original-number",
+                                                to: DATA_AKN_TC_ORIGINAL_NUMBER,
+                                                action: "passAttributeTransformer"
+                                            }]
+                                        });
+                                    }
+                                } else if (rootElementsWithNumWithDelTextForFromRegExp.test(path)) {
+                                    if (element.parent.attributes["leos:action-number"] === DELETE && !element.parent.attributes["leos:tc-original-number"]) {
+                                        this.mapToProducts(element, {
+                                            toPath: rootElementsPathForHtml,
+                                            toAttribute: DATA_AKN_NUM
+                                        });
+                                    }
+                                    if (element.parent.attributes["leos:action-number"] === DELETE && element.parent.attributes["leos:tc-original-number"]) {
+                                        this.mapToProducts(element, {
+                                            toPath: rootElementsPathForHtml,
+                                            toAttribute: DATA_AKN_TC_ORIGINAL_NUMBER
+                                        });
+                                    }
+                                } else if (rootElementsWithNumWithInsForFromRegExp.test(path)) {
                                     this.mapToProducts(element, {
                                         toPath: rootElementsPathForHtml,
                                         attrs: [{
-                                            from: "leos:action",
+                                            from: "leos:action-number",
                                             to: DATA_AKN_ACTION_NUMBER,
                                             action: "passAttributeTransformer"
                                         }, {
@@ -264,22 +322,11 @@ define(function blockListTransformer(require) {
                                             action: "passAttributeTransformer"
                                         }]
                                     });
-                                } else if (rootElementsWithNumWithSpanTextForFromRegExp.test(path)) {
-                                    if (element.parent.attributes["leos:action"] === "delete") {
-                                        this.mapToProducts(element, {
-                                            toPath: rootElementsPathForHtml,
-                                            attrs: [{
-                                                to: DATA_AKN_NUM,
-                                                toValue: UNNUMBERED,
-                                                action: "passAttributeTransformer"
-                                            }]
-                                        });
-                                    } else {
-                                        this.mapToProducts(element, {
-                                            toPath: rootElementsPathForHtml,
-                                            toAttribute: DATA_AKN_NUM
-                                        });
-                                    }
+                                } else if (rootElementsWithNumWithInsTextForFromRegExp.test(path)) {
+                                    this.mapToProducts(element, {
+                                        toPath: rootElementsPathForHtml,
+                                        toAttribute: DATA_AKN_NUM
+                                    });
 //---------------
                                 } else if(rootElementsWithMpForAknRegExp.test(path)) {
                                     this.mapToProducts(element, {
@@ -606,11 +653,36 @@ define(function blockListTransformer(require) {
                                                 }]
                                             }]);
                                             var contentPath = rootElementsPathForAkn + "/num";
-                                            if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
-                                                && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW) {
+                                            if (element.attributes[DATA_AKN_ACTION_ENTER] === DELETE) {
                                                 this.mapToChildProducts(element, {
                                                     toPath: contentPath,
-                                                    toChild: "span",
+                                                    toChild: "del",
+                                                    attrs: [{
+                                                        from: DATA_AKN_UID_ENTER,
+                                                        to: "leos:uid",
+                                                        action: "passAttributeTransformer"
+                                                    }, {
+                                                        from: DATA_AKN_TITLE_ENTER,
+                                                        to: "leos:title",
+                                                        action: "passAttributeTransformer"
+                                                    }, {
+                                                        from: DATA_AKN_ACTION_ENTER,
+                                                        to: "leos:action-enter",
+                                                        action: "passAttributeTransformer"
+                                                    }]
+                                                });
+                                                this.mapToChildProducts(element, {
+                                                    toPath: contentPath + "/del",
+                                                    toChild: "text",
+                                                    toChildTextValue: "↰"
+                                                });
+                                            }
+                                            if (element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== UNNUMBERED
+                                                && element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER] !== NEW
+                                                && !element.attributes[DATA_AKN_ACTION_ENTER]) {
+                                                this.mapToChildProducts(element, {
+                                                    toPath: contentPath,
+                                                    toChild: "del",
                                                     attrs: [{
                                                         to: "leos:action",
                                                         toValue: "delete",
@@ -630,18 +702,18 @@ define(function blockListTransformer(require) {
                                                     }]
                                                 });
                                                 this.mapToChildProducts(element, {
-                                                    toPath: contentPath + "/span",
+                                                    toPath: contentPath + "/del",
                                                     toChild: "text",
                                                     toChildTextValue: element.attributes[DATA_AKN_TC_ORIGINAL_NUMBER]
                                                 });
                                             }
-                                            if (element.attributes[DATA_AKN_NUM]) {
+                                            if (element.attributes[DATA_AKN_NUM] && element.attributes[DATA_AKN_ACTION_ENTER] !== 'delete') {
                                                 this.mapToChildProducts(element, {
                                                     toPath: contentPath,
-                                                    toChild: "span",
+                                                    toChild: "ins",
                                                     attrs: [{
-                                                        from: DATA_AKN_ACTION_NUMBER,
-                                                        to: "leos:action",
+                                                        to: "leos:action-number",
+                                                        toValue: INSERT,
                                                         action: "passAttributeTransformer"
                                                     }, {
                                                         from: DATA_AKN_UID_NUMBER,
@@ -658,7 +730,31 @@ define(function blockListTransformer(require) {
                                                     }]
                                                 });
                                                 this.mapToChildProducts(element, {
-                                                    toPath: contentPath + "/span",
+                                                    toPath: contentPath + "/ins",
+                                                    toChild: "text",
+                                                    toChildTextValue: element.attributes[DATA_AKN_NUM]
+                                                });
+                                            }
+                                            if (element.attributes[DATA_AKN_NUM] && element.attributes[DATA_AKN_ACTION_ENTER] === 'delete') {
+                                                this.mapToChildProducts(element, {
+                                                    toPath: contentPath,
+                                                    toChild: "del",
+                                                    attrs: [{
+                                                        to: "leos:action-number",
+                                                        toValue: DELETE,
+                                                        action: "passAttributeTransformer"
+                                                    }, {
+                                                        from: DATA_AKN_UID_NUMBER,
+                                                        to: "leos:uid",
+                                                        action: "passAttributeTransformer"
+                                                    }, {
+                                                        from: TITLE_NUMBER,
+                                                        to: "leos:title",
+                                                        action: "passAttributeTransformer"
+                                                    }]
+                                                });
+                                                this.mapToChildProducts(element, {
+                                                    toPath: contentPath + "/del",
                                                     toChild: "text",
                                                     toChildTextValue: element.attributes[DATA_AKN_NUM]
                                                 });
