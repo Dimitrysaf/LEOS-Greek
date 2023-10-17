@@ -59,7 +59,7 @@ define(function leosSubElementMovePluginModule(require) {
                     var selection = editor.getSelection();
                     if (selection.isCollapsed()) {
                         editor.getMenuItem("moveTo").label = 'Move this '.concat(element.getAttribute('data-akn-element'))
-                          .concat(' to...');
+                            .concat(' to...');
                         return { moveTo: CKEDITOR.TRISTATE_OFF };
                     }
                 }
@@ -140,15 +140,15 @@ define(function leosSubElementMovePluginModule(require) {
         }
     }
 
-/*    var KeepTextCmd = {
-        exec: function executeCommandDefinition(editor) {
-            //TODO: implement
-            var movedElement = _getMovedElement();
-            if(movedElement) {
-                LOG.debug("Moved element is - " + movedElement.getAttribute('data-akn-element'));
+    /*    var KeepTextCmd = {
+            exec: function executeCommandDefinition(editor) {
+                //TODO: implement
+                var movedElement = _getMovedElement();
+                if(movedElement) {
+                    LOG.debug("Moved element is - " + movedElement.getAttribute('data-akn-element'));
+                }
             }
-        }
-    }*/
+        }*/
 
     function _getMovedElement() {
         var movedElement = UTILS.getItemStorage("movedElement");
@@ -164,17 +164,28 @@ define(function leosSubElementMovePluginModule(require) {
 
     function _setSoftMovedAttributes(editor, element) {
         var idAttr = element.getAttribute("id");
-        element.setAttribute("data-akn-attr-softaction", "move_from");
-        element.setAttribute("data-akn-attr-softactionroot", "true");
-        element.setAttribute("data-akn-attr-softmove_from", "moved_"+idAttr);
-        element.setAttribute("id", "temp_"+idAttr);
+        var softActionAttrVal1 = element.getAttribute("data-akn-attr-softaction");
+        if (!(softActionAttrVal1 && softActionAttrVal1 === "move_from")) {
+            element.setAttribute("data-akn-attr-softaction", "move_from");
+            element.setAttribute("data-akn-attr-softactionroot", "true");
+            element.setAttribute("data-akn-attr-softmove_from", "moved_" + idAttr);
+        }
+        if(!idAttr.startsWith("temp_")) {
+            element.setAttribute("id", "temp_" + idAttr);
+        }
 
         // original element
         var originalMovedElement = document.getElementById(idAttr);
-        originalMovedElement.setAttribute("data-akn-attr-softaction", "move_to");
-        originalMovedElement.setAttribute("data-akn-attr-softactionroot", "true");
-        originalMovedElement.setAttribute("data-akn-attr-softmove_to", idAttr);
-        originalMovedElement.setAttribute("id", "moved_"+idAttr);
+
+        var softActionAttrVal2 = originalMovedElement.getAttribute("data-akn-attr-softaction");
+        var leosSoftActionAttrVal = originalMovedElement.getAttribute("leos:softmove_from");
+        if (!((softActionAttrVal2 && softActionAttrVal2 === "move_from") || leosSoftActionAttrVal)) {
+            originalMovedElement.setAttribute("data-akn-attr-softaction", "move_to");
+            originalMovedElement.setAttribute("data-akn-attr-softactionroot", "true");
+            originalMovedElement.setAttribute("data-akn-attr-softmove_to", idAttr);
+            originalMovedElement.setAttribute("id", "moved_" + idAttr);
+        }
+
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
