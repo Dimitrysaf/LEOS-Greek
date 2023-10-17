@@ -41,6 +41,7 @@
 
   [leos\:uid]:hover::before {
     display: inline;
+    z-index: 1;
   }
 
   [leos\:uid]:has([leos\:uid]:hover):hover::before {
@@ -77,6 +78,10 @@
         background-color: hsl(0, 100%, 90%);
       }
     }
+  }
+
+  del[leos\:action-enter="delete"] {
+    text-decoration: none;
   }
 
   tr[leos\:action="insert"] {
