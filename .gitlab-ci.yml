@@ -6,35 +6,35 @@ variables:
   CI_DEBUG_TRACE: "true"
   SECURE_LOG_LEVEL: "debug"
   DS_JAVA_VERSION: 8
-  SAST_EXCLUDED_ANALYZERS: "brakeman,flawfinder,nodejs-scan,spotbugs"
-  DS_EXCLUDED_ANALYZERS: "gemnasium-python,gemnasium"
+  # SAST_EXCLUDED_ANALYZERS: "brakeman,flawfinder,nodejs-scan,spotbugs"
+  # DS_EXCLUDED_ANALYZERS: "gemnasium-python,gemnasium"
   # Effort levels (min, less, more, max) for spotbug scan https://docs.gitlab.com/ee/user/application_security/sast/#security-scanner-configuration
-  #SAST_SCANNER_ALLOWED_CLI_OPTS: "-effort more"
+  SAST_SCANNER_ALLOWED_CLI_OPTS: "-effort more"
   # Memory for spotbugs to avoid out of memory java heap space. Configure based on runner capacities
-  #JAVA_OPTS: "-Xmx8g"
+  JAVA_OPTS: "-Xmx8g"
   
 stages:
-#  - build
+  - build
   - test
 
-#java-build:
-#  image: maven:3.8-openjdk-8
-#  stage: build
-#  script:
-#    - mvn clean package -DskipTests=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
-#  artifacts:
-#    expire_in: 1 day
-#    when: always
-#    paths:
-#      - .m2/
-#      - "modules/web/target/"
+java-build:
+  image: maven:3.8-openjdk-8
+  stage: build
+  script:
+    - mvn clean package -DskipTests=true -Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository
+  artifacts:
+    expire_in: 1 day
+    when: always
+    paths:
+      - .m2/
+      - "modules/web/target/"
 
 # SpotBugs cannot generate the war file for analysisi because it requires JAVA 8. SpotBugs only supports version 11 or 17 https://docs.gitlab.com/ee/user/application_security/sast/#analyzer-settings
 # It is necessary to precompile files in order to execute SpotBugs https://docs.gitlab.com/ee/user/application_security/sast/#pre-compilation
-#spotbugs-sast:
-#  dependencies:
-#    - java-build
-#  variables:
-#    MAVEN_REPO_PATH: $CI_PROJECT_DIR/.m2/repository
-#    COMPILE: "false"
-#  timeout: 10h 0m
+spotbugs-sast:
+  dependencies:
+    - java-build
+  variables:
+    MAVEN_REPO_PATH: $CI_PROJECT_DIR/.m2/repository
+    COMPILE: "false"
+  timeout: 10h 0m
