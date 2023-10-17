@@ -79,7 +79,7 @@ $NUM_WIDTH: 40px;
     & > li {
       @extend %paddedText;
 
-      &:not([data-akn-tc-enter-deleted]):not([data-akn-action-for-number='delete']):before {
+      &:not([data-akn-action-enter='delete']):not([data-akn-action-number='delete']):before {
         color: $GREY_COLOR;
         content: attr(data-akn-num);
         min-width: $NUM_WIDTH;

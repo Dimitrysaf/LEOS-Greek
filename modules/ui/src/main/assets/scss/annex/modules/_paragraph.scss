@@ -38,7 +38,7 @@ $NUM_WIDTH: 40px;
                 padding-left: 40px;
             }
 
-            & > p[data-akn-tc-original-number][data-akn-action-for-number='delete']:not([data-akn-tc-original-number='UNNUMBERED']):not([data-akn-tc-original-number='NEW']) {
+            & > p[data-akn-tc-original-number][data-akn-action-number='delete']:not([data-akn-tc-original-number='UNNUMBERED']):not([data-akn-tc-original-number='NEW']) {
                 &:before {
                     content: attr(data-akn-tc-original-number);
                     min-width: $NUM_WIDTH;
@@ -48,7 +48,7 @@ $NUM_WIDTH: 40px;
             }
         }
 
-        & > li[data-akn-tc-original-number][data-akn-action-for-number='delete']:not([data-akn-tc-original-number='UNNUMBERED']):not([data-akn-tc-original-number='NEW']) {
+        & > li[data-akn-tc-original-number][data-akn-action-number='delete']:not([data-akn-tc-original-number='UNNUMBERED']):not([data-akn-tc-original-number='NEW']) {
             &:before {
                 content: attr(data-akn-tc-original-number);
                 min-width: $NUM_WIDTH;

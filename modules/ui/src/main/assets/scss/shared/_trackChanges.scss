@@ -41,6 +41,7 @@
 
   [leos\:uid]:hover::before {
     display: inline;
+    z-index: 1;
   }
 
   [leos\:uid]:has([leos\:uid]:hover):hover::before {
@@ -79,6 +80,10 @@
     }
   }
 
+  del[leos\:action-enter="delete"] {
+    text-decoration: none;
+  }
+
   tr[leos\:action="insert"] {
     box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);
   }
@@ -92,7 +97,7 @@
 //------------------------------- Editor Styles -----------------------------//
 %editorTrackChanges {
 
-  [data-akn-action="insert"], [data-akn-action-for-number="insert"]:before {
+  [data-akn-action="insert"], [data-akn-action-number="insert"]:before {
     text-decoration: underline;
     mref, span.authorialnote, span.cke_widget_mathjax {
       box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);

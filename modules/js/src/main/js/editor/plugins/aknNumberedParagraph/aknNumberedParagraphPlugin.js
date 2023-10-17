@@ -535,7 +535,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                 html : "data-akn-attr-renumbered"
             }, {
                 akn: "leos:action-number",
-                html: "data-akn-action-for-number"
+                html: "data-akn-action-number"
             }, {
                 akn: "leos:uid-number",
                 html: "data-akn-uid-number"
@@ -552,8 +552,14 @@ define(function aknNumberedParagraphPluginModule(require) {
                 akn : "leos:uid",
                 html : "data-akn-uid"
             }, {
-                akn: "leos:tc-enter-deleted",
-                html: "data-akn-tc-enter-deleted"
+                akn: "leos:action-enter",
+                html: "data-akn-action-enter"
+            }, {
+                akn: "leos:uid-enter",
+                html: "data-akn-uid-enter"
+            }, {
+                akn: "leos:title-enter",
+                html: "title-enter"
             }]
         },
         rootElementsForFrom: ['paragraph'],
