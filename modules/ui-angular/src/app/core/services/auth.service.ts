@@ -13,6 +13,7 @@ import {
   interval,
   Observable,
   Subject,
+  Subscription,
   takeUntil,
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
@@ -55,6 +56,7 @@ export class AuthService implements OnDestroy {
   private accessTokenBS = new BehaviorSubject<string | null>(null);
   private destroy$ = new Subject<void>();
   private http: HttpClient; // without interceptors!
+  private monitorExpirySub?: Subscription;
 
   constructor(
     private handler: HttpBackend,
@@ -87,6 +89,7 @@ export class AuthService implements OnDestroy {
     if (token === storedTokenData?.accessToken) {
       console.debug('[auth.service] markTokenAsExpired - removing'); // DEBUG
       this.storage.remove(AuthService.TOKEN_KEY);
+      this.monitorExpirySub?.unsubscribe();
       this.showExpiredTokenPopup();
     } else {
       console.debug(
@@ -151,18 +154,18 @@ export class AuthService implements OnDestroy {
    * - If close to expiring, it renews the token.
    */
   private monitorExpiryInStorage() {
-    const sub = interval(AuthService.EXPIRY_CHECK_INTERVAL)
+    this.monitorExpirySub = interval(AuthService.EXPIRY_CHECK_INTERVAL)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
         const { expiresIn } = this.loadTokenData();
 
         if (this.isExpired(expiresIn)) {
-          sub.unsubscribe();
           console.debug(
             '[auth.service] monitorExpiryInStorage - expired token',
           ); // DEBUG
+          this.monitorExpirySub?.unsubscribe();
           this.showExpiredTokenPopup();
-        } else if (!this.tokenRenewedRecently(expiresIn)) {
+        } else if (this.tokenExpiresSoon(expiresIn)) {
           console.debug(
             '[auth.service] monitorExpiryInStorage - renew expiring token',
           ); // DEBUG
@@ -227,6 +230,7 @@ export class AuthService implements OnDestroy {
    * known errors or it throws an `HttpErrorResponse`.
    */
   private handleRenewTokenError(requestError: HttpErrorResponse) {
+    this.monitorExpirySub?.unsubscribe();
     if (requestError.status === 403) {
       setTimeout(() => {
         this.showExpiredTokenPopup();
@@ -261,7 +265,7 @@ export class AuthService implements OnDestroy {
   /**
    * Returns `true` if the **Access Token** is expiring soon.
    */
-  private tokenRenewedRecently(expiresIn: number) {
+  private tokenExpiresSoon(expiresIn: number) {
     const timeToExpiry = expiresIn - Date.now();
     return timeToExpiry < AuthService.RENEW_WINDOW;
   }
