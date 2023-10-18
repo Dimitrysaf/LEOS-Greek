@@ -68,4 +68,6 @@ public interface ExplanatoryService {
     
     Explanatory updateExplanatory(String ref, String id, Map<String, Object> properties, boolean latest);
 
+    String generateExplanatoryReference(byte[] content, String language);
+
 }
