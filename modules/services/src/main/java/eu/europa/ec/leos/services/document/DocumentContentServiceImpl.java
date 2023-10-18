@@ -254,6 +254,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     @Override
     public String getCleanDocumentAsHtml(XmlDocument xmlDocument, String contextPath, List<LeosPermission> permissions, boolean includeCoverPage) {
         byte[] xmlContent = xmlContentProcessor.cleanSoftActions(xmlDocument.getContent().get().getSource().getBytes());
+        xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         return transformationService.formatToHtml(new ByteArrayInputStream(xmlContent), contextPath, permissions,
                         includeCoverPage ? new ByteArrayInputStream(getCoverPageContent(xmlDocument.getContent().get().getSource().getBytes()))
                                 : null)
