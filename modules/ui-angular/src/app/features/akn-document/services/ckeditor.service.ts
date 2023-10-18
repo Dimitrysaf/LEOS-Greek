@@ -513,6 +513,7 @@ export class CKEditorService implements OnDestroy {
     config['isTrackChangesShowed'] = oldConfig.trackChangesShowed;
     config['isTrackChangesEnabled'] = oldConfig.trackChangesEnabled;
     config['permissions'] = oldConfig.userAppPermissions;
+    // config['isClonedProposal'] = oldConfig.isClonedProposal;
 
     if (!oldConfig.spellCheckerServiceUrl) {
       config.spellCheckerServiceUrl =
