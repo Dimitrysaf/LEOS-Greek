@@ -613,7 +613,7 @@ define(function leosTrackChangesPluginModule(require) {
         }
         this.getKeyCode = function() {
             var e = event();
-            var charCode = e.data.domEvent ? e.data.domEvent.$.keyCode : e.data.$.keyCode;
+            var charCode = e.data.domEvent ? e.data.domEvent.$.keyCode : (e.data.$ ? e.data.$.keyCode : e.data.keyCode);
             return charCode;
         }
         var getCharCode = function() {
