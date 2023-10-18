@@ -881,7 +881,7 @@ define(function leosAnnexListPluginModule(require) {
             editor.on( 'key', function( evt ) {
                 // Use getKey directly in order to ignore modifiers.
                 // Justification: https://dev.ckeditor.com/ticket/11861#comment:13
-                var key = evt.data.domEvent.getKey(), li;
+                var key = evt.data.domEvent ? evt.data.domEvent.getKey() : evt.data.keyCode, li;
 
                 // DEl/BACKSPACE
                 if ( editor.mode == 'wysiwyg' && key in { 8: 1, 46: 1 } ) {
