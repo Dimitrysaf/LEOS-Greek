@@ -125,6 +125,9 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
         
         // make selection at the beginning of the new subparagraph
         leosPluginUtils.setFocus(emptyElement, editor);
+
+        editor.fire("handleTrackTraceForEnterCreated");
+
         editor.fire("change");
     }
 

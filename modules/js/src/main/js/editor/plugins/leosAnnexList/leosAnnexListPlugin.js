@@ -21,7 +21,7 @@ define(function leosAnnexListPluginModule(require) {
     var LOG = require("logger");
     var pluginTools = require("plugins/pluginTools");
     var leosPluginUtils = require("plugins/leosPluginUtils");
-var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
+    var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var pluginName = "leosAnnexList";
 
@@ -949,7 +949,7 @@ var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
                         }
 
                         if ( joinWith ) {
-                            if (!leosTrackChanges.core.isNewTrackChangeNumber(range) && !leosTrackChanges.core.isCreatedByEnterKey(range)) {
+                            if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(range) && !leosTrackChanges.core.isCreatedByEnterKey(range)) {
                                 editor.fire("handleTrackTraceForEnterDeleted", range);
                                 evt.cancel();
                                 return;
@@ -1111,8 +1111,7 @@ var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
                                     }
                                 }
 
-                                var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(nextLine);
-                                if (!isNewTrackChangeNumber) {
+                                if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(nextLine)) {
                                     editor.fire("handleTrackTraceForEnterDeleted", nextLine);
                                     evt.cancel();
                                     return;
