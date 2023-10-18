@@ -27,7 +27,7 @@ define(function leosTrackChangesModule(require) {
         UID_ATTR: "data-akn-uid",
 
         IS_NEW: "data-akn-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number",
-        UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_TC_ENTER_DELETED: "data-akn-tc-enter-deleted", DATA_AKN_TC_ENTER_CREATED: "data-akn-tc-enter-created",
+        UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -126,9 +126,19 @@ define(function leosTrackChangesModule(require) {
         getTrackChangeAttributesForNumbering: function(editor, action) {
             var user = this.getUserAndId(editor);
             var tcAttributes = {
-                "data-akn-action-for-number": action,
+                "data-akn-action-number": action,
                 "data-akn-uid-number": user[1],
                 "title-number": user[0]
+            };
+            return tcAttributes;
+        },
+
+        getTrackChangeAttributesForEnter: function(editor, action) {
+            var user = this.getUserAndId(editor);
+            var tcAttributes = {
+                "data-akn-action-enter": action,
+                "data-akn-uid-enter": user[1],
+                "title-enter": user[0]
             };
             return tcAttributes;
         },
@@ -141,7 +151,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-for-number", "data-akn-uid-number", "title-number"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -156,6 +166,13 @@ define(function leosTrackChangesModule(require) {
 
         addTrackChangesAttributesForNumbering: function(editor, element, action) {
             var tcAttributes = this.getTrackChangeAttributesForNumbering(editor, action);
+            for (var attrName in tcAttributes) {
+                element.setAttribute(attrName, tcAttributes[attrName]);
+            }
+        },
+
+        addTrackChangesAttributesForEnter: function(editor, element, action) {
+            var tcAttributes = this.getTrackChangeAttributesForEnter(editor, action);
             for (var attrName in tcAttributes) {
                 element.setAttribute(attrName, tcAttributes[attrName]);
             }
@@ -282,7 +299,7 @@ define(function leosTrackChangesModule(require) {
             var elementToCheck = element.startContainer;
             if (elementToCheck.type === CKEDITOR.NODE_TEXT) { elementToCheck = elementToCheck.getParent() }
             do {
-                if (elementToCheck.type === CKEDITOR.NODE_ELEMENT && elementToCheck.getAttribute(this.DATA_AKN_TC_ENTER_CREATED)) {
+                if (elementToCheck.type === CKEDITOR.NODE_ELEMENT && elementToCheck.getAttribute(this.DATA_AKN_ACTION_ENTER) === 'insert') {
                     isCreatedByEnterKey = true;
                 }
             } while (!isCreatedByEnterKey && elementToCheck.getName() !== 'li' && elementToCheck.getName() !== 'p' && (elementToCheck = elementToCheck.getParent()));

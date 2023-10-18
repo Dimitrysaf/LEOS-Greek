@@ -178,7 +178,7 @@ define(function leosTrackChangesPluginModule(require) {
                         if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                             core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                         } else {
-                                core.removeTrackChangesAttributesForNumbering(element);
+                            core.removeTrackChangesAttributesForNumbering(element);
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED
                         && element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW
@@ -187,8 +187,8 @@ define(function leosTrackChangesPluginModule(require) {
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.UNNUMBERED) {
                         if (element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                             core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
-                        } else {
-                                core.removeTrackChangesAttributesForNumbering(element);
+                        } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) !== core.DELETE_ACTION) {
+                            core.removeTrackChangesAttributesForNumbering(element);
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
                         core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
@@ -204,7 +204,7 @@ define(function leosTrackChangesPluginModule(require) {
                     var range = ranges && ranges[0];
                     var el = range && range.startContainer;
                     if(el) {
-                        el.setAttribute(core.DATA_AKN_TC_ENTER_CREATED, true);
+                        core.addTrackChangesAttributesForEnter(editor, el, core.INSERT_ACTION);
                     }
                 }
             });
@@ -217,12 +217,14 @@ define(function leosTrackChangesPluginModule(require) {
                     while (elementToSetAttribute.getName() !== 'li' && elementToSetAttribute.getName() !== 'p' && elementToSetAttribute.getParent()) {
                         elementToSetAttribute = elementToSetAttribute.getParent();
                     };
-                    if (!elementToSetAttribute.getAttribute(core.DATA_AKN_TC_ENTER_DELETED)) {
-                        elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ENTER_DELETED, true);
-                        if(elementToSetAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
-                            elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, elementToSetAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM));
+                    // Not add the attributes if the attributes are already there
+                    if (elementToSetAttribute.getAttribute(core.DATA_AKN_ACTION_ENTER) !== core.DELETE_ACTION) {
+                        core.addTrackChangesAttributesForEnter(editor, elementToSetAttribute, core.DELETE_ACTION);
+                        if (elementToSetAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                            core.addTrackChangesAttributesForNumbering(editor, elementToSetAttribute, core.DELETE_ACTION);
+                        } else {
+                            elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, core.UNNUMBERED);
                         }
-                        core.addTrackChangesAttributesForNumbering(editor, elementToSetAttribute, core.DELETE_ACTION);
                         editor.fire("change");
                     }
                 }
@@ -289,7 +291,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                             if(!deleteKey) {
                                 var elementToDelete = range.getPreviousNode();
-                                if(elementToDelete.type === CKEDITOR.NODE_TEXT && elementToDelete.$.textContent.replace(/\u200B/g,'') === '' && elementToDelete.getParent().getAttribute(core.DATA_AKN_TC_ENTER_CREATED)) {
+                                if(elementToDelete.type === CKEDITOR.NODE_TEXT && elementToDelete.$.textContent.replace(/\u200B/g,'') === '' && elementToDelete.getParent().getAttribute(core.DATA_AKN_ACTION_ENTER) === 'insert') {
                                     return;
                                 }
                             } 
@@ -425,12 +427,12 @@ define(function leosTrackChangesPluginModule(require) {
                     if (elementToRemoveAttribute.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
                     }
-                    if (elementToRemoveAttribute.getAttribute(core.DATA_AKN_TC_ENTER_DELETED)) {
-                        elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ENTER_DELETED);
+                    if (elementToRemoveAttribute.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                        elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
                     }
                     event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
                 }
-            }, null, null, 15);+
+            }, null, null, 15);
 
             // Implementation for tracking special characters
             // Handle element added by authorial note, references, mathjax and table

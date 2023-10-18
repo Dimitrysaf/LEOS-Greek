@@ -33,66 +33,42 @@ public class LeosXercesUtils {
             } else {
                 if(!isTrackChangesEnabled) {
                     numNode.setTextContent(numLabel);
-                } else {
-                    if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) || hasAttributeWithValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_MOVE_ACTION)) {
-                        // Skip track changes for num node as the parent node is already being tracked.
-                        // Skip track change for num node as it is moved from somewhere else.
-                        numNode.setTextContent(numLabel);
-                    } else {
-                        if (getFirstChild(numNode, "del") != null && getFirstChild(numNode, "ins") != null) {
-                            if (getFirstChild(numNode, "del").getTextContent().equals(numLabel)) {
-                                numNode.setTextContent(numLabel);
-                            } else {
-                                Node insertedNum = getFirstChild(numNode, "ins");
-                                insertedNum.setTextContent(numLabel);
-                                addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
-                                addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-                            }
-                        } else if (getFirstChild(numNode, "span") != null && containsAttribute(getFirstChild(numNode, "span"), LEOS_ACTION_ATTR)) {
-                            if(!isEnterDeleted(node)) {
-                                Node deletedNode = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
-                                if (deletedNode != null && deletedNode.getTextContent().equals(numLabel)) {
-                                    numNode.setTextContent(numLabel);
-                                } else {
-                                    Node insertedNum = getChildContainingAttributeValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
-                                    insertedNum.setTextContent(numLabel);
-                                    addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
-                                    addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-                                }
-                            }
+                } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) || hasAttributeWithValue(numNode, LEOS_ACTION_ATTR, LEOS_TC_MOVE_ACTION)) {
+                    // Skip track changes for num node as the parent node is already being tracked.
+                    // Skip track change for num node as it is moved from somewhere else.
+                    numNode.setTextContent(numLabel);
+                } else if(node.getNodeName().equals(ARTICLE) || node.getNodeName().equals(RECITAL) || node.getNodeName().equals(LEVEL)) {
+                    if (getFirstChild(numNode, "del") != null && getFirstChild(numNode, "ins") != null) {
+                        if (getFirstChild(numNode, "del").getTextContent().equals(numLabel)) {
+                            numNode.setTextContent(numLabel);
                         } else {
-                            if(numNode.getTextContent() == null || numNode.getTextContent().equals(numLabel) || numNode.getTextContent().contains("#")) {
-                                numNode.setTextContent(numLabel);
-                            } else {
-                                String oldNumLabel = numNode.getTextContent();
+                            Node insertedNum = getFirstChild(numNode, "ins");
+                            insertedNum.setTextContent(numLabel);
+                            addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
+                            addAttribute(insertedNum, LEOS_TITLE, getTitleValue(securityContext));
+                        }
+                    } else {
+                        if(numNode.getTextContent() == null || numNode.getTextContent().equals(numLabel) || numNode.getTextContent().contains("#")) {
+                            numNode.setTextContent(numLabel);
+                        } else {
+                            String oldNumLabel = numNode.getTextContent();
 
-                                numNode.setTextContent(null);
+                            numNode.setTextContent(null);
 
-                                Node deletedNum;
-                                if(node.getNodeName() == LEVEL) {
-                                    deletedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "span", oldNumLabel);
-                                } else {
-                                    deletedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "del", oldNumLabel);
-                                }
-                                addAttribute(deletedNum, LEOS_UID, securityContext.getUser().getLogin());
-                                addAttribute(deletedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-                                if(node.getNodeName() == LEVEL) {
-                                    addAttribute(deletedNum, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
-                                    addAttribute(deletedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
-                                }
+                            Node deletedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "del", oldNumLabel);
+                            addAttribute(deletedNum, LEOS_UID, securityContext.getUser().getLogin());
+                            addAttribute(deletedNum, LEOS_TITLE, getTitleValue(securityContext));
+                            if(node.getNodeName() == LEVEL) {
+                                addAttribute(deletedNum, LEOS_ACTION_NUMBER, LEOS_TC_DELETE_ACTION);
+                                addAttribute(deletedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
+                            }
 
-                                Node insertedNum;
-                                if(node.getNodeName() == LEVEL) {
-                                    insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "span", numLabel);
-                                } else {
-                                    insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "ins", numLabel);
-                                }
-                                addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
-                                addAttribute(insertedNum, LEOS_TITLE, securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
-                                if(node.getNodeName() == LEVEL) {
-                                    addAttribute(insertedNum, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
-                                    addAttribute(insertedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
-                                }
+                            Node insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "ins", numLabel);
+                            addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
+                            addAttribute(insertedNum, LEOS_TITLE, getTitleValue(securityContext));
+                            if(node.getNodeName() == LEVEL) {
+                                addAttribute(insertedNum, LEOS_ACTION_NUMBER, LEOS_TC_INSERT_ACTION);
+                                addAttribute(insertedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
                             }
                         }
                     }
@@ -251,18 +227,5 @@ public class LeosXercesUtils {
             XercesUtils.replaceNodeWithSelfContent(highlightNodes.item(i));
         }
         return XercesUtils.nodeToByteArray(document);
-    }
-
-    public static boolean isEnterDeleted(Node node) {
-        boolean isEnterDeleted = false;
-        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
-        if(numNode != null) {
-            if (getFirstChild(numNode, "span") != null && containsAttribute(getFirstChild(numNode, "span"), LEOS_ACTION_ATTR)) {
-                isEnterDeleted = getChildContainingAttributeValue(numNode, LEOS_TC_ENTER_DELETED, "true") != null;
-            }
-        } else {
-            isEnterDeleted = containsAttributeWithValue(node, LEOS_TC_ENTER_DELETED, "true");
-        }
-        return  isEnterDeleted;
     }
 }

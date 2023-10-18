@@ -21,7 +21,6 @@ import org.w3c.dom.NodeList;
 import java.util.Arrays;
 import java.util.List;
 
-import static eu.europa.ec.leos.services.support.LeosXercesUtils.isEnterDeleted;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeForSoftAction;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
@@ -301,7 +300,7 @@ public abstract class NumberProcessorHandler {
         Boolean isOverWritten = XercesUtils.getAttributeValueAsBoolean(node, LEOS_AUTO_NUM_OVERWRITE);
         isOverWritten = isOverWritten != null && isOverWritten;
 
-        return containsSoftAttribute || isOverWritten || isEnterDeleted(node);
+        return containsSoftAttribute || isOverWritten;
     }
 
 }

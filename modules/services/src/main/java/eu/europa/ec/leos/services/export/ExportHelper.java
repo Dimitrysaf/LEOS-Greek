@@ -111,7 +111,7 @@ class ExportHelper {
         if (exportOptions.getExportOutput().equals(ExportOptions.Output.WORD)) {
             sb.append("   \"format\":[\"LW\"],\n");
         } else {
-            sb.append("   \"format\":[\"PDF\"],\n");
+            sb.append("   \"format\":[\"PDF_A\"],\n");
         }
         sb.append("   \"mode\":\"individual\",\n");
 
