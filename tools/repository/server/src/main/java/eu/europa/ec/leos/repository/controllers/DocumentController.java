@@ -87,13 +87,13 @@ public class DocumentController {
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.INTERNAL_SERVER_ERROR, "Error while creating document"));
     }
 
-    @DeleteMapping(path = "/document/delete-by-id/{id}")
+    @DeleteMapping(path = "/document/delete-by-id/{versionId}")
     @Operation(summary = "delete a Xml document from version id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document deleted", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity deleteDocumentById(@PathVariable("id") String id) throws RepositoryException {
-        documentService.deleteDocumentById(id);
+    public ResponseEntity deleteDocumentById(@PathVariable("versionId") String versionId) throws RepositoryException {
+        documentService.deleteDocumentById(versionId);
         return ResponseEntity.ok().build();
     }
 
@@ -107,17 +107,17 @@ public class DocumentController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping(path = "/document/update-content/{docRef}",
+    @PutMapping(path = "/document/update-content/{versionId}",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "update a Xml document and its content")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document Updated", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> updateDocument(@PathVariable("docRef") String docRef,
+    public ResponseEntity<Object> updateDocument(@PathVariable("versionId") String versionId,
                                                  @Validated(OnUpdateWithContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest)
             throws Exception {
-        LeosDocument xmlDoc = documentService.updateDocument(docRef, updateDocumentRequest.getMetadata(), updateDocumentRequest.getVersionType(), updateDocumentRequest.getContent(),
+        LeosDocument xmlDoc = documentService.updateDocument(versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getVersionType(), updateDocumentRequest.getContent(),
                 updateDocumentRequest.getComments(), updateDocumentRequest.getUserId());
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
@@ -130,7 +130,8 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Document Updated", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> updateDocumentMetadata(@PathVariable("versionId") String versionId, @PathVariable("docRef") String docRef,
-                                                         @Validated(OnUpdateWithoutContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest, @RequestParam("latest") Boolean latest)
+                                                         @Validated(OnUpdateWithoutContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest,
+                                                            @RequestParam("latest") Boolean latest)
             throws Exception {
         LeosDocument xmlDoc = documentService.updateDocument(docRef, versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getUserId(), latest);
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
@@ -169,9 +170,10 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Document Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> findDocumentById(@PathVariable("versionId") String versionId,
+                                                    @RequestParam("category") String category,
                                                    @RequestParam("latest") Boolean latest)
             throws RepositoryException {
-        LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findDocumentById(versionId, latest),
+        LeosDocument xmlDoc = RestPreconditions.checkFound(documentService.findDocumentById(versionId, category, latest),
                 HttpStatus.NOT_FOUND, "No documents found");
         return ResponseEntity.ok(xmlDoc);
     }
@@ -194,8 +196,9 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<LeosDocument> findDocumentsByRef(@PathVariable("docRef") String ref)  {
-        LeosDocument xmlDoc = documentService.findDocumentByRef(ref).orElse(null);
+    public ResponseEntity<LeosDocument> findDocumentsByRef(@PathVariable("docRef") String ref,
+                                                            @RequestParam("category") String category) {
+        LeosDocument xmlDoc = documentService.findDocumentByRef(ref, category).orElse(null);
         return ResponseEntity.ok(xmlDoc);
     }
 

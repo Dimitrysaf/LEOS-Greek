@@ -236,7 +236,7 @@ abstract class ReferenceLabelServiceImpl implements ReferenceLabelService {
         String docType = getDocType(node);
         if (ANNEX.equals(docType)) {
             final XmlDocument targetDocument = workspaceService.findDocumentByRef(targetDocumentRef, XmlDocument.class);
-            final LeosPackage targetPackage = packageService.findPackageByDocumentId(targetDocument.getId());
+            final LeosPackage targetPackage = packageService.findPackageByDocumentRef(targetDocument.getMetadata().get().getRef(), XmlDocument.class);
             final List<XmlDocument> targetSiblings = packageService.findDocumentsByPackagePath(targetPackage.getPath(), XmlDocument.class, true);
             List<Annex> annexes = targetSiblings.stream()
                 .filter(p -> p.getCategory() == LeosCategory.ANNEX)

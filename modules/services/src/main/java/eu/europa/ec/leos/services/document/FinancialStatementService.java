@@ -37,13 +37,13 @@ public interface FinancialStatementService {
 
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, FinancialStatementMetadata metadata, VersionType versionType, String comment);
 
-    FinancialStatement updateFinancialStatement(String id, Map<String, Object> properties, boolean latest);
+    FinancialStatement updateFinancialStatement(String ref, String id, Map<String, Object> properties, boolean latest);
 
     FinancialStatement updateFinancialStatement(FinancialStatement FinancialStatement, byte[] updatedFinancialStatementContent, String comment);
 
     FinancialStatement updateFinancialStatementWithMilestoneComments(FinancialStatement FinancialStatement, List<String> milestoneComments, VersionType versionType, String comment);
 
-    FinancialStatement updateFinancialStatementWithMilestoneComments(String FinancialStatementId, List<String> milestoneComments);
+    FinancialStatement updateFinancialStatementWithMilestoneComments(String ref, String FinancialStatementId, List<String> milestoneComments);
 
     FinancialStatement findFinancialStatement(String id);
 

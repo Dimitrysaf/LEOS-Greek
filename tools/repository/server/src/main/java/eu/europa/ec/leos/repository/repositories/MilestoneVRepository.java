@@ -28,6 +28,9 @@ public interface MilestoneVRepository extends JpaRepository<MilestoneV, String> 
     @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.REF = ?1", nativeQuery = true)
     Optional<MilestoneV> findMilestonesByRef(String ref);
 
+    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.MILESTONE_ID = ?1", nativeQuery = true)
+    Optional<MilestoneV> findMilestonesById(String id);
+
     @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.PACKAGE_ID = ?1", nativeQuery = true)
     List<MilestoneV> findMilestonesByPackageId(BigDecimal packageId);
 

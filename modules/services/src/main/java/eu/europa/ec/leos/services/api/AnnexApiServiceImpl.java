@@ -230,7 +230,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         List<VersionVO> versions = this.annexService.getAllVersions(annex.getId(), documentRef);
         for (VersionVO versionVO : versions) {
             if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
+                LeosPackage leosPackage = packageService.findPackageByDocumentRef(annex.getMetadata().get().getRef(), Annex.class);
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
             }
@@ -346,7 +346,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         byte[] cleanVersion = new byte[0];
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         Stopwatch stopwatch = Stopwatch.createStarted();
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(annex.getMetadata().get().getRef(), Annex.class);
         contex.get().usePackage(leosPackage);
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
         String proposalId = proposal.getId();
@@ -450,7 +450,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         populateCloneProposalMetadata(annex);
         List<TocItem> tocItems = context.getTocItems();
         List<NumberingConfig> numberConfigs = context.getNumberingConfigs();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
 
 

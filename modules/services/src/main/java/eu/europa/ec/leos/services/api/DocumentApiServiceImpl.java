@@ -113,13 +113,12 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         Class<XmlDocument> clazz = LeosCategoryClass.valueOf(documentType.name()).getClazz();
         XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
         XmlDocument original = documentContentService.getOriginalDocument(currentDocument);
-        String currentDocumentId = currentDocument.getId();
 
         ExportOptions exportOptions = getExportOptions(original, currentDocument, clazz, isWithAnnotations);
         exportOptions.setFilteredAnnotations(filteredAnnotations);
         exportOptions.setWithCoverPage(false);
 
-        Proposal proposal = getProposal(currentDocumentId);
+        Proposal proposal = getProposal(currentDocument.getMetadata().get().getRef());
         String proposalId = proposal.getId();
 
         return doDownloadVersion(proposalId, exportOptions);
@@ -129,8 +128,8 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
 
     protected abstract ExportOptions getExportOptions(XmlDocument original, XmlDocument currentDocument, Class<XmlDocument> clazz, boolean isWithAnnotations);
 
-    protected Proposal getProposal(String documentId) {
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
+    protected Proposal getProposal(String documentRef) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, Proposal.class);
         return proposalService.findProposalByPackagePath(leosPackage.getPath());
     }
 

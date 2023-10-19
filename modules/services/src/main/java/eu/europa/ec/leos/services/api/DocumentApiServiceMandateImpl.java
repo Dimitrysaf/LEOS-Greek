@@ -150,7 +150,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
             exportOptions.setExportVersions(exportVersions);
 
             XmlDocument currentDocument = documentContentService.getDocumentByRef(documentRef, documentType);
-            final Proposal proposal = getProposal(currentDocument.getId());
+            final Proposal proposal = getProposal(currentDocument.getMetadata().get().getRef());
             if (proposal != null) {
                 final String jobFileName = PROPOSAL + proposal.getId() + AKN_2_DW + System.currentTimeMillis() + DOCX;
                 final byte[] exportedBytes = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"),
@@ -213,7 +213,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
     }
 
     private LeosExportStatus doExportPackage(final String title, final Boolean isExportCleanVersion, ExportOptions exportOptions, XmlDocument currentDocument, LeosCategoryClass documentType) {
-        Proposal proposal = getProposal(currentDocument.getId());
+        Proposal proposal = getProposal(currentDocument.getMetadata().get().getRef());
         String proposalId = proposal.getId();
         String proposalRef = proposal.getMetadata().get().getRef();
         final String jobFileName = Boolean.TRUE.equals(isExportCleanVersion) ? PROPOSAL + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + DOCX
@@ -230,7 +230,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
 
             byte[] exportedBytes = exportService.createExportPackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
             exportDocument = exportPackageService.createExportDocument(proposalId, exportOptions.getComments(), exportedBytes);
-            exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
+            exportPackageService.updateExportDocument(null, exportDocument.getId(), LeosExportStatus.NOTIFIED);
             notificationService.sendNotification(proposalRef, exportDocument.getId());
             processedStatus = LeosExportStatus.PROCESSED_OK;
             LOG.info("Export Package {} for proposal {} created in {} milliseconds ({} sec)", exportDocument.getName(), proposalRef,
@@ -244,7 +244,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
                 exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
             }
             if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
-                exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                exportDocument = exportPackageService.updateExportDocument(null, exportDocument.getId(), processedStatus);
                 //TO DO: Send notification to the client
             }
         }

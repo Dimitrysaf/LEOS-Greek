@@ -15,6 +15,7 @@ package eu.europa.ec.leos.repository.document;
 
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -89,21 +90,25 @@ public interface BillRepository {
     /**
      * Updates a [Bill] document with the given metadata.
      *
+     *
+     * @param ref
      * @param id       the ID of the bill document to update.
      * @param metadata the metadata of the bill.
      * @return the updated bill document.
      */
-    Bill updateBill(String id, BillMetadata metadata);
+    Bill updateBill(String ref, String id, BillMetadata metadata);
 
     /**
      * Updates a [Bill] document with the given properties.
      *
+     *
+     * @param ref
      * @param id the ID of the bill document to update.
      * @param properties the metadata properties of the bill.
      * @param latest
      * @return the updated bill document.
      */
-    Bill updateBill(String id, Map<String, Object> properties, boolean latest);
+    Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest);
 
     /**
      * Updates a [Bill] document with the given metadata.
@@ -119,20 +124,23 @@ public interface BillRepository {
     /**
      * Updates a [Bill] document with the given metadata.
      *
+     *
+     * @param ref
      * @param id                the ID of the bill document to update.
      * @param milestoneComments the milestoneComments of the bill document to update.
      * @return the updated bill document.
      */
-    Bill updateMilestoneComments(String id, List<String> milestoneComments);
+    Bill updateMilestoneComments(String ref, String id, List<String> milestoneComments);
 
     /**
      * Finds a [Bill] document with the specified characteristics.
      *
      * @param id     the ID of the bill document to retrieve.
+     * @param type
      * @param latest retrieves the latest version of the proposal document, when *true*.
      * @return the found bill document.
      */
-    Bill findBillById(String id, boolean latest);
+    Bill findBillById(String id, Class<? extends LeosDocument> type, boolean latest);
 
     /**
      * Finds all versions of a [Bill] document with the specified characteristics.

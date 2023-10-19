@@ -40,12 +40,12 @@ class SecurityServiceImpl implements SecurityService {
         T document = workspaceRepository.findDocumentById(id, type, true);
         List<Collaborator> collaborators = document.getCollaborators();
         collaborators.add(new Collaborator(userLogin, authority, userEntity));
-        return updateCollaborators(id, collaborators, type);
+        return updateCollaborators(document.getMetadata().get().getRef(), id, collaborators, type);
     }
 
     @Override
-    public <T extends XmlDocument> T updateCollaborators(String id, List<Collaborator> collaborators, Class<T> type) {
-        return workspaceRepository.updateDocumentCollaborators(id, collaborators, type);
+    public <T extends XmlDocument> T updateCollaborators(String ref, String id, List<Collaborator> collaborators, Class<T> type) {
+        return workspaceRepository.updateDocumentCollaborators(ref, id, collaborators, type);
     }
 
     @Override
@@ -53,6 +53,6 @@ class SecurityServiceImpl implements SecurityService {
         T document = workspaceRepository.findDocumentById(id, type, true);
         List<Collaborator> collaborators = document.getCollaborators();
         collaborators.removeIf(c -> userLogin.equals(c.getLogin()));
-        return workspaceRepository.updateDocumentCollaborators(id, collaborators, type);
+        return workspaceRepository.updateDocumentCollaborators(document.getMetadata().get().getRef(), id, collaborators, type);
     }
 }

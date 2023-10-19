@@ -108,8 +108,8 @@ class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    public Map<String, List<TableOfContentItemVO>> getTableOfContent(String documentId, TocMode mode) {
-        LeosPackage leosPackage = findPackageByDocumentId(documentId);
+    public Map<String, List<TableOfContentItemVO>> getTableOfContent(String documentRef, TocMode mode) {
+        LeosPackage leosPackage = findPackageByDocumentRef(documentRef, XmlDocument.class);
         List<XmlDocument> documents = findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, true);
         Map<String, List<TableOfContentItemVO>> tocItemsMap = new HashMap<>();
         for (XmlDocument document : documents) {
@@ -131,8 +131,8 @@ class PackageServiceImpl implements PackageService {
     }
 
     @Override
-    public List<LeosMetadata> getDocumentsMetadata(String documentId) {
-        LeosPackage leosPackage = findPackageByDocumentId(documentId);
+    public List<LeosMetadata> getDocumentsMetadata(String documentRef) {
+        LeosPackage leosPackage = findPackageByDocumentRef(documentRef, XmlDocument.class);
         List<XmlDocument> documents = findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
         Comparator<XmlDocument> annexIndexComparator = Comparator.comparing(o -> {
             if (o instanceof Annex) {

@@ -47,11 +47,11 @@ public interface BillService {
 
     Bill updateBill(Bill bill, byte[] updatedBillContent, String comments);
 
-    Bill updateBill(String id, Map<String, Object> properties, boolean latest);
+    Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest);
 
     Bill updateBillWithMilestoneComments(Bill bill, List<String> milestoneComments, VersionType versionType, String comment);
 
-    Bill updateBillWithMilestoneComments(String billId, List<String> milestoneComments);
+    Bill updateBillWithMilestoneComments(String ref, String billId, List<String> milestoneComments);
 
     Bill addAttachment(Bill bill, String href, String showAs, String actionMsg);
 
@@ -88,6 +88,4 @@ public interface BillService {
     Bill findFirstVersion(String documentRef);
 
     String generateBillReference(byte[] content, String language);
-
-    String generateBillReference(String templateId, byte[] content, String language);
 }

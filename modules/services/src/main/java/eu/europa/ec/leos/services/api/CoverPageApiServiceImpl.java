@@ -207,7 +207,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         List<VersionVO> versions = this.proposalService.getAllVersions(proposal.getId(), documentRef);
         for (VersionVO versionVO : versions) {
             if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+                LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
             }
@@ -298,7 +298,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         byte[] cleanVersion = new byte[0];
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         context.get().usePackage(leosPackage);
         String proposalId = proposal.getId();
         try {
@@ -368,7 +368,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(proposal.getMetadata().getOrError(() -> "Proposal metadata is required!").getDocTemplate());
         List<TocItem> tocItems = structureContext1.getTocItems();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(proposal.getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(proposal.getMetadata().get().getRef());
 
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
@@ -401,7 +401,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             Stopwatch stopwatch = Stopwatch.createStarted();
             final Proposal currentDocument = this.proposalService.getProposalByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(currentDocument.getId());
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(currentDocument.getMetadata().get().getRef(), Proposal.class);
             context.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
             populateCloneProposalMetadata(proposal);

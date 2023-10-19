@@ -62,9 +62,9 @@ public class WorkspaceRepositoryImpl implements WorkspaceRepository {
     }
 
     @Override
-    public <T extends XmlDocument> T updateDocumentCollaborators(String id, List<Collaborator> collaborators, Class<? extends T> type) {
+    public <T extends XmlDocument> T updateDocumentCollaborators(String ref, String id, List<Collaborator> collaborators, Class<? extends T> type) {
         logger.debug("Updating document collaborators... [id=" + id + ", collaborators=" + collaborators + "]");
-        return leosRepository.updateDocument(id, collaborators, type);
+        return leosRepository.updateDocument(ref, id, collaborators, type);
     }
 
     @Override

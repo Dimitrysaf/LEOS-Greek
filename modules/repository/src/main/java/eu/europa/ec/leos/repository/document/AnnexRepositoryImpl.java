@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.document;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -71,15 +72,15 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     }
 
     @Override
-    public Annex updateAnnex(String id, AnnexMetadata metadata) {
+    public Annex updateAnnex(String ref, String id, AnnexMetadata metadata) {
         logger.debug("Updating Annex metadata... [id=" + id + "]");
-        return leosRepository.updateDocument(id, metadata, Annex.class);
+        return leosRepository.updateDocument(ref, id, metadata, Annex.class);
     }
 
     @Override
-    public Annex updateAnnex(String id, Map<String, Object> properties, boolean latest) {
+    public Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest) {
         logger.debug("Updating Annex metadata... [id=" + id + "]");
-        return leosRepository.updateDocument(id, properties, Annex.class, latest);
+        return leosRepository.updateDocument(ref, id, properties, Annex.class, latest);
     }
 
     @Override
@@ -101,15 +102,15 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     }
 
     @Override
-    public Annex updateMilestoneComments(String id, List<String> milestoneComments) {
+    public Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments) {
         logger.debug("Updating Annex milestoneComments... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(id, milestoneComments, Annex.class);
+        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, Annex.class);
     }
 
     @Override
-    public Annex findAnnexById(String id, boolean latest) {
+    public Annex findAnnexById(String id, Class<? extends LeosDocument> type, boolean latest) {
         logger.debug("Finding Annex by ID... [id=" + id + ", latest=" + latest + "]");
-        return leosRepository.findDocumentById(id, Annex.class, latest);
+        return (Annex) leosRepository.findDocumentById(id, type, latest);
     }
 
     @Override
@@ -154,13 +155,13 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
     
     @Override
     public List<Annex> findRecentMinorVersions(String documentId, String documentRef, int startIndex, int maxResults) {
-        final Annex annex = leosRepository.findLatestMajorVersionById(Annex.class, documentId);
+        final Annex annex = leosRepository.findLatestMajorVersionById(Annex.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersions(Annex.class, documentRef, annex.getCmisVersionLabel(), startIndex, maxResults);
     }
     
     @Override
     public Integer findRecentMinorVersionsCount(String documentId, String documentRef) {
-        final Annex annex = leosRepository.findLatestMajorVersionById(Annex.class, documentId);
+        final Annex annex = leosRepository.findLatestMajorVersionById(Annex.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersionsCount(Annex.class, documentRef, annex.getCmisVersionLabel());
     }
 

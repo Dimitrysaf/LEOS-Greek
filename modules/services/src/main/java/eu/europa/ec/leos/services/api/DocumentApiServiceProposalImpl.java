@@ -115,7 +115,7 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
         exportOptions.setExportVersions(exportVersions);
 
         try {
-            Proposal proposal = getProposal(currentDoc.getId());
+            Proposal proposal = getProposal(currentDoc.getMetadata().get().getRef());
             exportService.exportToToolboxCoDe(proposal.getId(), exportOptions);
             processedStatus = LeosExportStatus.PROCESSED_OK;
         } catch (Exception exception) {

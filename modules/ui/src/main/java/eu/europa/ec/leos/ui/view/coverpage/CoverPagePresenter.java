@@ -902,7 +902,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         Map<String, Object> properties = new HashMap<>();
         String contributionStatus = event.getContributionVO().getContributionStatus().getValue();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), contributionStatus);
-        Proposal updatedProposal = proposalService.updateProposal(revision.getId(), properties, false);
+        Proposal updatedProposal = proposalService.updateProposal(revision.getMetadata().get().getRef(), revision.getId(), properties, false);
         if(updatedProposal != null) {
             coverPageScreen.disableMergePane();
             event.getSelectedItem().setVisible(false);
@@ -918,7 +918,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         coverPageScreen.disableMergePane();
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
-        proposalService.updateProposal(revision.getId(), properties, false);
+        proposalService.updateProposal(revision.getMetadata().get().getRef(), revision.getId(), properties, false);
         final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Proposal.class);
         coverPageScreen.populateContributions(allContributions);
         eventBus.post(new RefreshDocumentEvent());

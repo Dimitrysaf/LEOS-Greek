@@ -2,6 +2,7 @@ package eu.europa.ec.leos.repository.document;
 
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import org.springframework.security.access.prepost.PostAuthorize;
 
@@ -34,11 +35,13 @@ public interface ExplanatoryRepository {
     /**
      * Updates an [Explanatory] document with the given metadata.
      *
+     *
+     * @param ref
      * @param id       the ID of the Explanatory document to update.
      * @param metadata the metadata of the Explanatory.
      * @return the updated Explanatory document.
      */
-    Explanatory updateExplanatory(String id, ExplanatoryMetadata metadata);
+    Explanatory updateExplanatory(String ref, String id, ExplanatoryMetadata metadata);
 
     /**
      * Updates an [Explanatory] document with the given content.
@@ -54,12 +57,14 @@ public interface ExplanatoryRepository {
     /**
      * Updates an [Explanatory] document with the given properties.
      * 
+     *
+     * @param ref
      * @param id
      * @param properties
      * @param latest
      * @return
      */
-    Explanatory updateExplanatory(String id, Map<String, Object> properties, boolean latest);
+    Explanatory updateExplanatory(String ref, String id, Map<String, Object> properties, boolean latest);
 
     /**
      * Updates a [Explanatory] document with the given metadata and content.
@@ -75,16 +80,17 @@ public interface ExplanatoryRepository {
 
     Explanatory updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment);
 
-    Explanatory updateMilestoneComments(String id, List<String> milestoneComments);
+    Explanatory updateMilestoneComments(String ref, String id, List<String> milestoneComments);
 
     /**
      * Finds a [Explanatory] document with the specified characteristics.
      *
      * @param id     the ID of the Explanatory document to retrieve.
+     * @param type
      * @param latest retrieves the latest version of the proposal document, when *true*.
      * @return the found Explanatory document.
      */
-    Explanatory findExplanatoryById(String id, boolean latest);
+    Explanatory findExplanatoryById(String id, Class<? extends LeosDocument> type, boolean latest);
 
     /**
      * Deletes an [Explanatory] document with the specified characteristics.

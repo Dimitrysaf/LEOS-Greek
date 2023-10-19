@@ -44,9 +44,9 @@ public interface MemorandumService {
 
     Memorandum updateMemorandum(Memorandum memorandum, MemorandumMetadata metadata, VersionType versionType, String comment);
 
-    Memorandum updateMemorandum(String memorandumId, MemorandumMetadata metadata);
+    Memorandum updateMemorandum(String ref, String memorandumId, MemorandumMetadata metadata);
 
-    Memorandum updateMemorandum(String id, Map<String, Object> properties, boolean latest);
+    Memorandum updateMemorandum(String ref, String id, Map<String, Object> properties, boolean latest);
 
     Memorandum updateMemorandum(Memorandum memorandum, byte[] updatedMemorandumContent, String comment);
 
@@ -54,7 +54,7 @@ public interface MemorandumService {
 
     Memorandum updateMemorandumWithMilestoneComments(Memorandum memorandum, List<String> milestoneComments, VersionType versionType, String comment);
 
-    Memorandum updateMemorandumWithMilestoneComments(String memorandumId, List<String> milestoneComments);
+    Memorandum updateMemorandumWithMilestoneComments(String ref, String memorandumId, List<String> milestoneComments);
 
     List<TableOfContentItemVO> getTableOfContent(Memorandum document, TocMode mode);
 
@@ -81,6 +81,4 @@ public interface MemorandumService {
     XmlDocument findFirstVersion(String ref);
 
     String generateMemorandumReference(byte[] content, String language);
-
-    String generateMemorandumReference(String templateId, byte[] content, String language);
 }

@@ -2,6 +2,7 @@ package eu.europa.ec.leos.repository.document;
 
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -59,21 +60,25 @@ public interface FinancialStatementRepository {
     /**
      * Updates an [FinancialStatement] document with the given metadata.
      *
+     *
+     * @param ref
      * @param id       the ID of the FinancialStatement document to update.
      * @param metadata the metadata of the FinancialStatement.
      * @return the updated FinancialStatement document.
      */
-    FinancialStatement updateFinancialStatement(String id, FinancialStatementMetadata metadata);
+    FinancialStatement updateFinancialStatement(String ref, String id, FinancialStatementMetadata metadata);
 
     /**
      * Updates a [FinancialStatement] document with the given properties.
      *
+     *
+     * @param ref
      * @param id the ID of the FinancialStatement document to update.
      * @param properties the metadata properties of the FinancialStatement.
      * @param latest
      * @return the updated FinancialStatement document.
      */
-    FinancialStatement updateFinancialStatement(String id, Map<String, Object> properties, boolean latest);
+    FinancialStatement updateFinancialStatement(String ref, String id, Map<String, Object> properties, boolean latest);
 
     /**
      * Updates an [FinancialStatement] document with the given content.
@@ -100,16 +105,18 @@ public interface FinancialStatementRepository {
 
     FinancialStatement updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment);
 
-    FinancialStatement updateMilestoneComments(String id, List<String> milestoneComments);
+    FinancialStatement updateMilestoneComments(String ref, String id, List<String> milestoneComments);
 
     /**
      * Finds a [FinancialStatement] document with the specified characteristics.
      *
      * @param id     the ID of the FinancialStatement document to retrieve.
+     * @param type
      * @param latest retrieves the latest version of the proposal document, when *true*.
      * @return the found FinancialStatement document.
      */
-    FinancialStatement findFinancialStatementById(String id, boolean latest);
+    FinancialStatement findFinancialStatementById(String id, Class<? extends LeosDocument> type,
+            boolean latest);
 
     /**
      * Deletes an [FinancialStatement] document with the specified characteristics.

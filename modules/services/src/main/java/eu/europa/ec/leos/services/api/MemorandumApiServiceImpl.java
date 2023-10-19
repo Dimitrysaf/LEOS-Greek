@@ -192,7 +192,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         List<VersionVO> versions = this.memorandumService.getAllVersions(memorandum.getId(), documentRef);
         for (VersionVO versionVO : versions) {
             if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentId(memorandum.getId());
+                LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, Memorandum.class);
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
             }
@@ -293,7 +293,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         byte[] cleanVersion = new byte[0];
         Stopwatch stopwatch = Stopwatch.createStarted();
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(memorandum.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, Memorandum.class);
         context.get().usePackage(leosPackage);
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
         String proposalId = proposal.getId();
@@ -369,7 +369,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         StructureContext context1 = structureContext.get();
         context1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
         List<TocItem> tocItems = context1.getTocItems();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(memorandum.getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(memorandum.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
 
         return new DocumentConfigResponse(
@@ -391,7 +391,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
             Stopwatch stopwatch = Stopwatch.createStarted();
             final Memorandum currentDocument = memorandumService.findMemorandumByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(currentDocument.getId());
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(currentDocument.getMetadata().get().getRef(), Memorandum.class);
             context.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
             populateCloneProposalMetadata(proposal);

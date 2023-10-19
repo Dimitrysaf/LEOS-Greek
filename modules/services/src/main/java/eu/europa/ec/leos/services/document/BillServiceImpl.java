@@ -92,14 +92,14 @@ public abstract class BillServiceImpl implements BillService {
     @Override
     public Bill findBill(String id, boolean latest) {
         LOG.trace("Finding Bill... [id={}]", id);
-        return billRepository.findBillById(id, latest);
+        return billRepository.findBillById(id, Bill.class, latest);
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public Bill findBillVersion(String id) {
         LOG.trace("Finding Bill version... [it={}]", id);
-        return billRepository.findBillById(id, false);
+        return billRepository.findBillById(id, Bill.class, false);
     }
 
     @Override
@@ -127,9 +127,9 @@ public abstract class BillServiceImpl implements BillService {
     }
 
     @Override
-    public Bill updateBill(String id, Map<String, Object> properties, boolean latest) {
+    public Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Bill metadata properties... [id={}]", id);
-        return billRepository.updateBill(id, properties, latest);
+        return billRepository.updateBill(ref, id, properties, latest);
     }
 
     @Override
@@ -162,9 +162,9 @@ public abstract class BillServiceImpl implements BillService {
     }
 
     @Override
-    public Bill updateBillWithMilestoneComments(String billId, List<String> milestoneComments){
+    public Bill updateBillWithMilestoneComments(String ref, String billId, List<String> milestoneComments){
         LOG.trace("Updating Bill... [id={}, milestoneComments={}]", billId, milestoneComments);
-        return billRepository.updateMilestoneComments(billId, milestoneComments);
+        return billRepository.updateMilestoneComments(ref, billId, milestoneComments);
     }
 
     @Override
@@ -334,7 +334,7 @@ public abstract class BillServiceImpl implements BillService {
     @Override
     public Bill createBill(String templateId, String path, BillMetadata metadata, String actionMsg, byte[] content) {
         LOG.trace("Creating Bill... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        String ref = generateBillReference(templateId, content, metadata.getLanguage());
+        String ref = generateBillReference(content, metadata.getLanguage());
         metadata = metadata
                 .builder()
                 .withRef(ref)

@@ -13,13 +13,13 @@
  */
 package eu.europa.ec.leos.services.collection.document;
 
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
-import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.MemorandumService;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
@@ -33,7 +33,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -156,7 +155,8 @@ public class MemorandumContextService {
                 .withTemplate(template)
                 .build();
 
-        Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED), null);
+        Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
+                getContent(memorandum));
         return memorandumService.createVersion(memorandumCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -237,7 +237,7 @@ public class MemorandumContextService {
             List<String> milestoneComments = memobyPath.getMilestoneComments();
             milestoneComments.add(milestoneComment);
             if (memobyPath.getVersionType().equals(VersionType.MAJOR)) {
-                memobyPath = memorandumService.updateMemorandumWithMilestoneComments(memobyPath.getId(), milestoneComments);
+                memobyPath = memorandumService.updateMemorandumWithMilestoneComments(memobyPath.getMetadata().get().getRef(), memobyPath.getId(), milestoneComments);
                 LOG.info("Major version {} already present. Updated only milestoneComment for [memorandum={}]", memobyPath.getVersionLabel(), memobyPath.getId());
             } else {
                 memobyPath = memorandumService.updateMemorandumWithMilestoneComments(memobyPath, milestoneComments, VersionType.MAJOR, versionComment);
@@ -246,11 +246,12 @@ public class MemorandumContextService {
         }
     }
 
-    public String getUpdatedMemorandumId() {
-        return memorandum.getId();
-    }
-
     public void useOriginRef(String originRef) {
         this.originRef = originRef;
+    }
+
+    private byte[] getContent(Memorandum memorandum) {
+        final Content content = memorandum.getContent().getOrError(() -> "Memorandum content is required!");
+        return content.getSource().getBytes();
     }
 }

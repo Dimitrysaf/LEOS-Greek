@@ -17,12 +17,13 @@ public final class LegDocument extends LeosDocument {
     private final Instant jobDate;
     private final LeosLegStatus status;
     private final List<String> containedDocuments;
+    private final String milestoneRef;
 
     public LegDocument(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy,
                        Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel,
                        String versionComment, VersionType versionType, boolean isLatestVersion, List<String> milestoneComments,
                        Option<Content> content, String initialCreatedBy, Instant initialCreationInstant,
-                       String jobId, Instant jobDate, LeosLegStatus status, List<String> containedDocuments) {
+                       String jobId, Instant jobDate, LeosLegStatus status, List<String> containedDocuments, String milestoneRef) {
 
         super(LeosCategory.LEG, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content);
@@ -33,6 +34,7 @@ public final class LegDocument extends LeosDocument {
         this.jobDate = jobDate;
         this.status = status;
         this.containedDocuments = containedDocuments;
+        this.milestoneRef = milestoneRef;
     }
 
     public List<String> getMilestoneComments() {
@@ -61,5 +63,9 @@ public final class LegDocument extends LeosDocument {
 
     public List<String> getContainedDocuments() {
         return containedDocuments;
+    }
+
+    public String getMilestoneRef() {
+        return milestoneRef;
     }
 }

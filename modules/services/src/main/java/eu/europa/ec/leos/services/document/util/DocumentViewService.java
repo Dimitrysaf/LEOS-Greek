@@ -75,7 +75,7 @@ public class DocumentViewService<T extends XmlDocument> {
     public DocumentViewResponse updateDocumentView(T document) {
         Proposal proposal = getProposalFromPackage(document);
         CollectionContextService context = proposalContextProvider.get();
-        context.useChildDocument(proposal.getId());
+        context.useChildDocument(proposal.getMetadata().get().getRef());
         context.useActionComment(messageHelper.getMessage("operation.metadata.updated"));
         context.executeUpdateProposalAsync();
         String editableXml = getEditableXml(document, proposal);
@@ -87,7 +87,7 @@ public class DocumentViewService<T extends XmlDocument> {
     public void updateProposalAsync(T document) {
         Proposal proposal = getProposalFromPackage(document);
         CollectionContextService context = proposalContextProvider.get();
-        context.useChildDocument(proposal.getId());
+        context.useChildDocument(proposal.getMetadata().get().getRef());
         context.useActionComment(messageHelper.getMessage("operation.metadata.updated"));
         context.executeUpdateProposalAsync();
     }
@@ -143,7 +143,7 @@ public class DocumentViewService<T extends XmlDocument> {
     public Proposal getProposalFromPackage(T document) {
         Proposal proposal = null;
         if (document != null) {
-            LeosPackage leosPackage = this.packageService.findPackageByDocumentId(document.getId());
+            LeosPackage leosPackage = this.packageService.findPackageByDocumentRef(document.getMetadata().get().getRef(), document.getClass());
             proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
         }
         return proposal;
@@ -155,11 +155,5 @@ public class DocumentViewService<T extends XmlDocument> {
             CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
             cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
-    }
-
-    private String getProposalRef(String documentId) {
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
-        Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
-        return proposal.getMetadata().getOrNull().getRef();
     }
 }

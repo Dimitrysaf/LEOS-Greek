@@ -396,7 +396,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void initLeosEditor(InitLeosEditorEvent event) {
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(event.getDocument().getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(getDocumentRef());
         memorandumScreen.initLeosEditor(event.getDocument(), documentsMetadata);
     }
     
@@ -950,7 +950,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         String contributionStatus = event.getContributionVO().getContributionStatus().getValue();
         String versionNumber = event.getContributionVO().getVersionNumber().toString();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), contributionStatus);
-        Memorandum updatedMemo = memorandumService.updateMemorandum(revision.getId(), properties, false);
+        Memorandum updatedMemo = memorandumService.updateMemorandum(revision.getMetadata().get().getRef(), revision.getId(), properties, false);
         if(updatedMemo != null) {
             memorandumScreen.disableMergePane();
             event.getSelectedItem().setVisible(false);
@@ -966,7 +966,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         memorandumScreen.disableMergePane();
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
-        memorandumService.updateMemorandum(revision.getId(), properties, false);
+        memorandumService.updateMemorandum(revision.getMetadata().get().getRef(), revision.getId(), properties, false);
         final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Memorandum.class);
         memorandumScreen.populateContributions(allContributions);
         eventBus.post(new RefreshDocumentEvent());

@@ -3,6 +3,7 @@ package eu.europa.ec.leos.repository.document;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -53,15 +54,15 @@ public class FinancialStatementRepositoryImpl implements FinancialStatementRepos
     }
 
     @Override
-    public FinancialStatement updateFinancialStatement(String id, FinancialStatementMetadata metadata) {
+    public FinancialStatement updateFinancialStatement(String ref, String id, FinancialStatementMetadata metadata) {
         logger.debug("Updating FinancialStatement metadata... [id=" + id + "]");
-        return leosRepository.updateDocument(id, metadata, FinancialStatement.class);
+        return leosRepository.updateDocument(ref, id, metadata, FinancialStatement.class);
     }
 
     @Override
-    public FinancialStatement updateFinancialStatement(String id, Map<String, Object> properties, boolean latest) {
+    public FinancialStatement updateFinancialStatement(String ref, String id, Map<String, Object> properties, boolean latest) {
         logger.trace("Updating FinancialStatement metadata properties... [id={}]", id);
-        return leosRepository.updateDocument(id, properties, FinancialStatement.class, latest);
+        return leosRepository.updateDocument(ref, id, properties, FinancialStatement.class, latest);
     }
 
     @Override
@@ -83,15 +84,16 @@ public class FinancialStatementRepositoryImpl implements FinancialStatementRepos
     }
 
     @Override
-    public FinancialStatement updateMilestoneComments(String id, List<String> milestoneComments) {
+    public FinancialStatement updateMilestoneComments(String ref, String id, List<String> milestoneComments) {
         logger.debug("Updating FinancialStatement milestoneComments... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(id, milestoneComments, FinancialStatement.class);
+        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, FinancialStatement.class);
     }
 
     @Override
-    public FinancialStatement findFinancialStatementById(String id, boolean latest) {
+    public FinancialStatement findFinancialStatementById(String id, Class<? extends LeosDocument> type,
+            boolean latest) {
         logger.debug("Finding FinancialStatement by ID... [id=" + id + ", latest=" + latest + "]");
-        return leosRepository.findDocumentById(id, FinancialStatement.class, latest);
+        return (FinancialStatement) leosRepository.findDocumentById(id, type, latest);
     }
 
     @Override
@@ -136,13 +138,13 @@ public class FinancialStatementRepositoryImpl implements FinancialStatementRepos
 
     @Override
     public List<FinancialStatement> findRecentMinorVersions(String documentId, String documentRef, int startIndex, int maxResults) {
-        final FinancialStatement FinancialStatement = leosRepository.findLatestMajorVersionById(FinancialStatement.class, documentId);
+        final FinancialStatement FinancialStatement = leosRepository.findLatestMajorVersionById(FinancialStatement.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersions(FinancialStatement.class, documentRef, FinancialStatement.getCmisVersionLabel(), startIndex, maxResults);
     }
 
     @Override
     public Integer findRecentMinorVersionsCount(String documentId, String documentRef) {
-        final FinancialStatement FinancialStatement = leosRepository.findLatestMajorVersionById(FinancialStatement.class, documentId);
+        final FinancialStatement FinancialStatement = leosRepository.findLatestMajorVersionById(FinancialStatement.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersionsCount(FinancialStatement.class, documentRef, FinancialStatement.getCmisVersionLabel());
     }
 

@@ -195,7 +195,7 @@ public class FinancialStatementContextService {
             financialStatement = financialStatementService.createFinancialStatement(financialStatement.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED), null);
         }
 
-        financialStatement = securityService.updateCollaborators(financialStatement.getId(), collaborators, FinancialStatement.class);
+        financialStatement = securityService.updateCollaborators(financialStatement.getMetadata().get().getRef(), financialStatement.getId(), collaborators, FinancialStatement.class);
         return financialStatementService.createVersion(financialStatement.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -294,7 +294,7 @@ public class FinancialStatementContextService {
             List<String> milestoneComments = financialStatement.getMilestoneComments();
             milestoneComments.add(milestoneComment);
             if (financialStatement.getVersionType().equals(VersionType.MAJOR)) {
-                financialStatement = financialStatementService.updateFinancialStatementWithMilestoneComments(financialStatement.getId(), milestoneComments);
+                financialStatement = financialStatementService.updateFinancialStatementWithMilestoneComments(financialStatement.getMetadata().get().getRef(), financialStatement.getId(), milestoneComments);
                 LOG.info("Major version {} already present. Updated only milestoneComment for [FinancialStatement={}]", financialStatement.getVersionLabel(), financialStatement.getId());
             } else {
                 financialStatement = financialStatementService.updateFinancialStatementWithMilestoneComments(financialStatement, milestoneComments, VersionType.MAJOR, versionComment);

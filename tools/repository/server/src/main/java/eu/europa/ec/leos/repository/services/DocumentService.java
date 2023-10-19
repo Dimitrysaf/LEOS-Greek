@@ -30,10 +30,10 @@ public interface DocumentService {
     LeosDocument createDocumentFromSource(final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
                                         final String labelVersion, int versionType, String comments, String userId) throws RepositoryException;
 
-    LeosDocument updateDocument(final String ref, Map<String, ?> properties,
+    LeosDocument updateDocument(final String versionId, Map<String, ?> properties,
                             VersionType versionType, byte[] contentBytes, String comments, String userId) throws Exception;
 
-    LeosDocument updateDocument(final String ref, final String versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception;
+    LeosDocument updateDocument(String ref, final String versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception;
 
     LeosDocument archiveDocument(final String ref, String userId) throws Exception;
 
@@ -41,7 +41,7 @@ public interface DocumentService {
 
     void deleteDocumentByRef(String ref) throws RepositoryException;
 
-    LeosDocument findDocumentById(final String id, final boolean latest) throws RepositoryException;
+    LeosDocument findDocumentById(final String id, String category, final boolean latest) throws RepositoryException;
 
     LeosDocument findLatestMajorVersionByRef(final String docRef);
 
@@ -65,7 +65,7 @@ public interface DocumentService {
 
     List<LeosDocument> findDocumentsByUserId(final String userId, final String role, String category);
 
-    Optional<LeosDocument> findDocumentByRef(final String ref);
+    Optional<LeosDocument> findDocumentByRef(final String ref, String category);
 
     List<LeosDocument> findDocumentsByStatus(final String status);
 

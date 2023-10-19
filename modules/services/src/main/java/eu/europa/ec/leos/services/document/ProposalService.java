@@ -42,7 +42,7 @@ public interface ProposalService {
 
     Proposal updateProposal(Proposal proposal, ProposalMetadata metadata);
 
-    Proposal updateProposal(String id, Map<String, Object> properties);
+    Proposal updateProposal(String ref, String id, Map<String, Object> properties);
 
     Proposal updateProposal(String proposalId, byte[] updatedBytes);
 
@@ -54,7 +54,7 @@ public interface ProposalService {
 
     Proposal updateProposalWithMilestoneComments(Proposal proposal, List<String> milestoneComments, VersionType versionType, String comment);
 
-    Proposal updateProposalWithMilestoneComments(String proposalId, List<String> milestoneComments);
+    Proposal updateProposalWithMilestoneComments(String ref, String proposalId, List<String> milestoneComments);
 
     Proposal removeComponentRef(Proposal proposal, String href);
 
@@ -82,9 +82,9 @@ public interface ProposalService {
 
     Proposal updateProposal(Proposal proposal, byte[] updatedProposalContent, VersionType versionType, String comment);
 
-    Proposal updateProposal(String proposalId, ProposalMetadata metadata);
+    Proposal updateProposal(String ref, String proposalId, ProposalMetadata metadata);
 
-    Proposal updateProposal(String id, Map<String, Object> properties, boolean latest);
+    Proposal updateProposal(String ref, String id, Map<String, Object> properties, boolean latest);
 
     Proposal updateProposal(Proposal proposal, byte[] updatedProposalContent, String comment);
 

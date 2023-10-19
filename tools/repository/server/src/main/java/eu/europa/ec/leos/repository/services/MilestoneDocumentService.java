@@ -17,6 +17,8 @@ public interface MilestoneDocumentService {
 
     Optional<LeosDocument> findMilestoneByRef(final String Ref);
 
+    Optional<LeosDocument> findMilestoneById(final String id);
+
     List<LeosDocument> findMilestoneByPackageId(final String pkgId, final boolean fetchContent) throws RepositoryException;
 
     LeosDocument createMilestoneFromContent(final Document doc, Map<String, ?> metadata,

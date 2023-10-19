@@ -29,9 +29,9 @@ public interface LegService {
 
     LegDocument updateLegDocument(String id, byte[] content);
 
-    LegDocument updateLegDocument(String id, LeosLegStatus status);
+    LegDocument updateLegDocument(String ref, String id, LeosLegStatus status);
 
-    LegDocument updateLegDocument(String id, List<String> containedDocuments);
+    LegDocument updateLegDocument(String ref, String id, List<String> containedDocuments);
     
     LegDocument updateLegDocument(String id, byte[] pdfJobZip, byte[] wordJobZip);
     

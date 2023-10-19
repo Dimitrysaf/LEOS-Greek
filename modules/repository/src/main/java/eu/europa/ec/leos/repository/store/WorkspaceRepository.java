@@ -44,12 +44,14 @@ public interface WorkspaceRepository {
     /**
      * Updates the collaborators of the specified document.
      *
+     *
+     * @param ref
      * @param id            the ID of the document to update.
      * @param collaborators the list of users to authorities.
      * @param type          the type class of the document.
      * @return the updated document.
      */
-    <T extends XmlDocument> T updateDocumentCollaborators(String id, List<Collaborator> collaborators, Class<? extends T> type);
+    <T extends XmlDocument> T updateDocumentCollaborators(String ref, String id, List<Collaborator> collaborators, Class<? extends T> type);
 
     /**
      * Finds documents with the specified pagination .

@@ -482,7 +482,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void initLeosEditor(InitLeosEditorEvent event) {
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(event.getDocument().getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(getDocumentRef());
         annexScreen.initLeosEditor(event.getDocument(), documentsMetadata);
     }
 
@@ -845,7 +845,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
             byte[] exportedBytes = exportService.createExportPackage(jobFileName, proposalId, exportOptions);
             exportDocument = exportPackageService.createExportDocument(proposalId, exportOptions.getComments(), exportedBytes);
-            exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
+            exportPackageService.updateExportDocument(null, exportDocument.getId(), LeosExportStatus.NOTIFIED);
             notificationService.sendNotification(proposalRef, exportDocument.getId());
             processedStatus = LeosExportStatus.PROCESSED_OK;
             eventBus.post(new NotificationEvent("document.export.package.window.title", "document.export.package.creation.success", NotificationEvent.Type.TRAY));
@@ -855,7 +855,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         } finally {
             exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
             if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
-                exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                exportDocument = exportPackageService.updateExportDocument(null, exportDocument.getId(), processedStatus);
                 leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));
             }
         }
@@ -1313,7 +1313,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         Map<String, Object> properties = new HashMap<>();
         String contributionStatus = event.getContributionVO().getContributionStatus().getValue();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), contributionStatus);
-        Annex updatedAnnex = annexService.updateAnnex(revision.getId(), properties, false);
+        Annex updatedAnnex = annexService.updateAnnex(revision.getMetadata().get().getRef(), revision.getId(), properties, false);
         if (updatedAnnex != null) {
             annexScreen.disableMergePane();
             event.getSelectedItem().setVisible(false);
@@ -1329,7 +1329,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         annexScreen.disableMergePane();
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
-        annexService.updateAnnex(revision.getId(), properties, false);
+        annexService.updateAnnex(revision.getMetadata().get().getRef(), revision.getId(), properties, false);
         final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, getDocument().getMetadata().get().getIndex(), Annex.class);
         annexScreen.populateContributions(allContributions);
         eventBus.post(new RefreshDocumentEvent());
@@ -1908,7 +1908,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         String versionTitle = event.getBaseVersionTitle();
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
-        Annex updatedAnnex = annexService.updateAnnex(documentId, properties, true);
+        Annex updatedAnnex = annexService.updateAnnex(getDocumentRef(), documentId, properties, true);
         VersionInfoVO versionInfoVO = getVersionInfo(updatedAnnex);
         versionInfoVO.setRevisedBaseVersion(versionLabel);
         versionInfoVO.setBaseVersionTitle(event.getBaseVersionTitle());
@@ -1949,21 +1949,21 @@ class AnnexPresenter extends AbstractLeosPresenter {
     public void enableTrackChanges(EnableTrackChangesEvent event) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), event.isEnabled());
-        Annex annex = annexService.updateAnnex(documentId, properties, false);
+        Annex annex = annexService.updateAnnex(getDocumentRef(), documentId, properties, false);
         populateTrackChangesContext(annex);
     }
 
     private Annex updateBaseVersion(String documentId, String versionLabel, String versionTitle) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
-        Annex updatedExplanatory = annexService.updateAnnex(documentId, properties, true);
+        Annex updatedExplanatory = annexService.updateAnnex(getDocumentRef(), documentId, properties, true);
         return updatedExplanatory;
     }
 
     private Annex updateLiveDiffingRequired(boolean liveDiffingRequired) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), liveDiffingRequired);
-        Annex updatedAnnex = annexService.updateAnnex(documentId, properties, true);
+        Annex updatedAnnex = annexService.updateAnnex(getDocumentRef(), documentId, properties, true);
         return updatedAnnex;
     }
 

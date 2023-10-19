@@ -32,4 +32,7 @@ public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
 
     @Query(value = "SELECT * FROM PACKAGE p WHERE p.ID IN (SELECT d.PACKAGE_ID FROM DOCUMENT d WHERE d.REF = ?1)", nativeQuery = true)
     Optional<Package> findPackageByDocumentRef(String documentRefId);
+
+    @Query(value = "SELECT * FROM PACKAGE p WHERE p.ID IN (SELECT d.PACKAGE_ID FROM DOCUMENT d WHERE d.ID IN (SELECT v.document_id FROM DOCUMENT_VERSION v WHERE v.ID = ?1))", nativeQuery = true)
+    Optional<Package> findPackageByDocumentVersionId(BigDecimal versionId);
 }

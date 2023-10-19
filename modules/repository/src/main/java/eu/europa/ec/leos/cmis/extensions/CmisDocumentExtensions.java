@@ -286,7 +286,8 @@ public class CmisDocumentExtensions {
                 getJobId(d),
                 getJobDate(d),
                 getStatus(d),
-                getContainedDocuments(d));
+                getContainedDocuments(d),
+                null);
     }
 
     private static ExportDocument toLeosExportDocument(Document d, boolean fetchContent) {
@@ -299,7 +300,8 @@ public class CmisDocumentExtensions {
                 getInitialCreationInstant(d),
                 contentOption(d, fetchContent),
                 getExportStatus(d),
-                getComments(d));
+                getComments(d),
+                null);
     }
 
     private static LeosCategory getCategory(Document document) {

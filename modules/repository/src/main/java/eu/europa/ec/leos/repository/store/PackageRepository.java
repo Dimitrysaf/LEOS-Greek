@@ -73,18 +73,20 @@ public interface PackageRepository {
     /**
      * Updating Leg document status.
      *
+     * @param ref
      * @param id     the leg document id.
      * @param status the updated status.
      */
-    LegDocument updateLegDocument(String id, LeosLegStatus status);
+    LegDocument updateLegDocument(String ref, String id, LeosLegStatus status);
 
     /**
      * Updating Leg document contained documents.
      *
+     * @param ref
      * @param id     the leg document id.
      * @param containedDocuments the updated contained documents.
      */
-    LegDocument updateLegDocument(String id, List<String> containedDocuments);
+    LegDocument updateLegDocument(String ref, String id, List<String> containedDocuments);
 
     /**
      * Updating Leg document status and content.
@@ -196,18 +198,19 @@ public interface PackageRepository {
     /**
      * Updating Export document status.
      *
+     * @param ref
      * @param id     the export document id.
      * @param status the updated status.
      */
-    ExportDocument updateExportDocument(String id, LeosExportStatus status);
+    ExportDocument updateExportDocument(String ref, String id, LeosExportStatus status);
 
     /**
      * Updating Export document status.
-     *
+     * @param ref
      * @param id     the export document id.
      * @param comments the updated comments.
      */
-    ExportDocument updateExportDocument(String id, List<String> comments);
+    ExportDocument updateExportDocument(String ref, String id, List<String> comments);
 
     /**
      * Deleting Export document.

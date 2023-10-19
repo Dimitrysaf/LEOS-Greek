@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.collection.document;
 
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
@@ -228,7 +229,8 @@ public class BillContextService {
                 .withPurpose(purpose)
                 .build();
 
-        Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED), null);
+        Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
+                getContent(bill));
         return billService.createVersion(billCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -611,7 +613,7 @@ public class BillContextService {
             List<String> milestoneComments = billByPackagePath.getMilestoneComments();
             milestoneComments.add(milestoneComment);
             if (billByPackagePath.getVersionType().equals(VersionType.MAJOR)) {
-                billByPackagePath = billService.updateBillWithMilestoneComments(billByPackagePath.getId(), milestoneComments);
+                billByPackagePath = billService.updateBillWithMilestoneComments(billByPackagePath.getMetadata().get().getRef(), billByPackagePath.getId(), milestoneComments);
                 LOG.info("Major version {} already present. Updated only milestoneComment for [bill={}]", billByPackagePath.getVersionLabel(), billByPackagePath.getId());
             } else {
                 billByPackagePath = billService.updateBillWithMilestoneComments(billByPackagePath, milestoneComments, VersionType.MAJOR, versionComment);
@@ -636,5 +638,10 @@ public class BillContextService {
 
     public void useOriginRef(String originRef) {
         this.originRef = originRef;
+    }
+
+    private byte[] getContent(Bill bill) {
+        final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
+        return content.getSource().getBytes();
     }
 }

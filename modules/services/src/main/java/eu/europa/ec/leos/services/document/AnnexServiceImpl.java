@@ -91,14 +91,14 @@ public abstract class AnnexServiceImpl implements AnnexService {
     @Override
     public Annex findAnnex(String id, boolean latest) {
         LOG.trace("Finding Annex... [id={}]", id);
-        return annexRepository.findAnnexById(id, latest);
+        return annexRepository.findAnnexById(id, Annex.class, latest);
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public Annex findAnnexVersion(String id) {
         LOG.trace("Finding Annex version... [it={}]", id);
-        return annexRepository.findAnnexById(id, false);
+        return annexRepository.findAnnexById(id, Annex.class, false);
     }
 
     @Override
@@ -159,9 +159,9 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex updateAnnex(String id, Map<String, Object> properties, boolean latest) {
+    public Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Annex metadata properties... [id={}]", id);
-        return annexRepository.updateAnnex(id, properties, latest);
+        return annexRepository.updateAnnex(ref, id, properties, latest);
     }
 
     @Override
@@ -173,9 +173,9 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
-    public Annex updateAnnexWithMilestoneComments(String annexId, List<String> milestoneComments){
+    public Annex updateAnnexWithMilestoneComments(String ref, String annexId, List<String> milestoneComments){
         LOG.trace("Updating Annex... [id={}, milestoneComments={}]", annexId, milestoneComments);
-        return annexRepository.updateMilestoneComments(annexId, milestoneComments);
+        return annexRepository.updateMilestoneComments(ref, annexId, milestoneComments);
     }
 
     @Override
@@ -301,7 +301,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
     @Override
     public Annex createAnnex(String templateId, String path, AnnexMetadata metadata, String actionMessage, byte[] content) {
         LOG.trace("Creating Annex... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        String ref = generateAnnexReference(templateId, content, metadata.getLanguage());
+        String ref = generateAnnexReference(content, metadata.getLanguage());
         metadata = metadata
                 .builder()
                 .withRef(ref)
@@ -315,7 +315,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
     @Override
     public Annex createClonedAnnex(String templateId, String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content) {
         LOG.trace("Creating cloned Annex... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        String ref = generateAnnexReference(templateId, content, metadata.getLanguage());
+        String ref = generateAnnexReference(content, metadata.getLanguage());
         metadata = metadata
                 .builder()
                 .withRef(ref)

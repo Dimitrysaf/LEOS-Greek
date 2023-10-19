@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.repository.document;
 
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
@@ -67,21 +68,25 @@ public interface MemorandumRepository {
     /**
      * Updates a [Memorandum] document with the given metadata.
      *
+     *
+     * @param ref
      * @param id       the ID of the memorandum document to update.
      * @param metadata the metadata of the memorandum.
      * @return the updated memorandum document.
      */
-    Memorandum updateMemorandum(String id, MemorandumMetadata metadata);
+    Memorandum updateMemorandum(String ref, String id, MemorandumMetadata metadata);
 
     /**
      * Updates a [Memorandum] document with the given metadata properties.
      *
+     *
+     * @param ref
      * @param id       the ID of the memorandum document to update.
      * @param properties the metadata properties of the memorandum.
      * @param latest
      * @return the updated memorandum document.
      */
-    Memorandum updateMemorandum(String id, Map<String, Object> properties, boolean latest);
+    Memorandum updateMemorandum(String ref, String id, Map<String, Object> properties, boolean latest);
 
     /**
      * Updates a [Memorandum] document with the given content.
@@ -108,16 +113,18 @@ public interface MemorandumRepository {
 
     Memorandum updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment);
 
-    Memorandum updateMilestoneComments(String id, List<String> milestoneComments);
+    Memorandum updateMilestoneComments(String ref, String id, List<String> milestoneComments);
 
     /**
      * Finds a [Memorandum] document with the specified characteristics.
      *
      * @param id     the ID of the memorandum document to retrieve.
+     * @param ref
+     * @param type
      * @param latest retrieves the latest version of the proposal document, when *true*.
      * @return the found memorandum document.
      */
-    Memorandum findMemorandumById(String id, boolean latest);
+    Memorandum findMemorandumById(String id, String ref, Class<? extends LeosDocument> type, boolean latest);
 
     /**
      * Finds all versions of a [Memorandum] document with the specified characteristics.

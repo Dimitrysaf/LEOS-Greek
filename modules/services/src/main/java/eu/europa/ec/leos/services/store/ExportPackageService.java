@@ -15,9 +15,9 @@ public interface ExportPackageService {
 
     ExportDocument updateExportDocument(String id, byte[] content);
 
-    ExportDocument updateExportDocument(String id, LeosExportStatus status);
+    ExportDocument updateExportDocument(String ref, String id, LeosExportStatus status);
 
-    ExportDocument updateExportDocument(String id, List<String> comments);
+    ExportDocument updateExportDocument(String ref, String id, List<String> comments);
 
     void deleteExportDocument(String id);
 }

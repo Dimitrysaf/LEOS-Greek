@@ -58,8 +58,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestCreateDocumentContentURI;
     @Value("${leos.rest.repository.create.document.source}")
     private String leosRestCreateDocumentSourceURI;
-    @Value("${leos.rest.repository.delete.document.ref}")
-    private String leosRestDeleteDocumentRefURI;
+    @Value("${leos.rest.repository.delete.document.id}")
+    private String leosRestDeleteDocumentIdURI;
     @Value("${leos.rest.repository.update.document.content}")
     private String leosRestUpdateDocumentContentURI;
     @Value("${leos.rest.repository.update.document.metadata}")
@@ -184,18 +184,18 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    void deleteDocumentByRef(final String ref) {
-        LOGGER.trace("Creating document... [ref={}]", ref);
-        String url = getUrl(leosRestDeleteDocumentRefURI);
-        delete(url, ref);
+    void deleteDocumentById(final String id) {
+        LOGGER.trace("Deleting document... [id={}]", id);
+        String url = getUrl(leosRestDeleteDocumentIdURI);
+        delete(url, id);
     }
 
-    LeosDocument updateDocument(final String ref, final String versionId, Map<String, ?> properties, String userId) {
+    LeosDocument updateDocument(String ref, final String versionId, Map<String, ?> properties, String userId) {
         return this.updateDocument(ref, versionId, properties, true, userId);
     }
 
-    LeosDocument updateDocument(final String ref, final String versionId, Map<String, ?> properties, boolean latest, String userId) {
-        LOGGER.trace("Updating document properties... [ref=" + ref + "]");
+    LeosDocument updateDocument(String ref, final String versionId, Map<String, ?> properties, boolean latest, String userId) {
+        LOGGER.trace("Updating document properties... [versionId=" + versionId + "]");
 
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setMetadata(properties);
@@ -206,9 +206,9 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    public LeosDocument updateDocument(String ref, Map<String, ?> properties, byte[] updatedDocumentBytes,
+    public LeosDocument updateDocument(String versionId, Map<String, ?> properties, byte[] updatedDocumentBytes,
                                        VersionType versionType, String comment, String userId) {
-        LOGGER.trace("Updating document properties and content... [ref={}]", ref);
+        LOGGER.trace("Updating document properties and content... [ref={}]", versionId);
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setContent(updatedDocumentBytes);
         updateDocumentRequest.setMetadata(properties);
@@ -217,7 +217,7 @@ public class RestRepository extends AbstractRestClient {
         updateDocumentRequest.setUserId(userId);
 
         String url = getUrl(leosRestUpdateDocumentContentURI);
-        LeosDocument resp = putEntity(url, updateDocumentRequest, LeosDocument.class, ref);
+        LeosDocument resp = putEntity(url, updateDocumentRequest, LeosDocument.class, versionId);
         return resp;
     }
 
@@ -253,17 +253,17 @@ public class RestRepository extends AbstractRestClient {
         return resp == null ? Optional.empty() : Optional.of(resp);
     }
 
-    LeosDocument findDocumentById(final String versionId, final boolean latest) {
+    LeosDocument findDocumentById(final String versionId, String category, final boolean latest) {
         LOGGER.trace("Finding document by id... [versionId={}, latest={}]", versionId, latest);
-        String url = leosRestRepositoryURL + leosRestFindDocumentByVersionIdURI + "?latest={latest}";
-        LeosDocument resp = getEntity(url, LeosDocument.class, versionId, latest);
+        String url = leosRestRepositoryURL + leosRestFindDocumentByVersionIdURI + "?category={category}&latest={latest}";
+        LeosDocument resp = getEntity(url, LeosDocument.class, versionId, category, latest);
         return resp;
     }
 
-    LeosDocument findDocumentByRef(final String ref) {
+    LeosDocument findDocumentByRef(final String ref, String category) {
         LOGGER.trace("Finding document by ref... [ref={}]", ref);
-        String url = getUrl(leosRestFindDocumentbyRefURI);
-        LeosDocument resp = getEntity(url, LeosDocument.class, ref);
+        String url = getUrl(leosRestFindDocumentbyRefURI + "?category={category}");
+        LeosDocument resp = getEntity(url, LeosDocument.class, ref, category);
         return resp;
     }
 
@@ -289,7 +289,7 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    private Package findPackageById(String id) {
+    Package findPackageByDocumentId(String id) {
         String url = getUrl(leosRestFindPackageByIdURI);
         Package resp = getEntity(url, Package.class, id);
         return resp;

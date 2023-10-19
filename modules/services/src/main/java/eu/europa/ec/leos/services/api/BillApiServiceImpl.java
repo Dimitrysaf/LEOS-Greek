@@ -255,7 +255,7 @@ public class BillApiServiceImpl implements BillApiService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         byte[] cleanVersion = new byte[0];
         Bill bill = this.billService.findBillByRef(documentRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(bill.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(bill.getMetadata().get().getRef(), Bill.class);
         contex.get().usePackage(leosPackage);
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
         String proposalId = proposal.getId();
@@ -345,7 +345,7 @@ public class BillApiServiceImpl implements BillApiService {
         List<TocItem> tocItems = structure.getTocItems();
         List<NumberingConfig> numberConfigs = structure.getNumberingConfigs();
         List<AlternateConfig> alternateConfigs = structure.getAlternateConfigs();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(bill.getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(bill.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
 
         return new DocumentConfigResponse(
@@ -412,7 +412,7 @@ public class BillApiServiceImpl implements BillApiService {
             }
         }
         // we are combining two operations (get toc + get selected element ancestors)
-        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(bill.getId(), TocMode.SIMPLIFIED_CLEAN);
+        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(bill.getMetadata().get().getRef(), TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, context.getNumberingConfigs());
     }
 
@@ -538,7 +538,7 @@ public class BillApiServiceImpl implements BillApiService {
         for (VersionVO versionVO : versions) {
             //TODO : this code should be handled inside document api service
             if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentId(bill.getId());
+                LeosPackage leosPackage = packageService.findPackageByDocumentRef(bill.getMetadata().get().getRef(), Bill.class);
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
             }

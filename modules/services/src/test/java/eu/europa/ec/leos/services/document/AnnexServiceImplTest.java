@@ -90,29 +90,29 @@ public class AnnexServiceImplTest extends LeosTest {
 
     @Test
     public void test_updateBaseVersionId() {
-        when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithBaseVersionId());
+        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithBaseVersionId());
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), baseVersionId);
-        Annex annex = annexService.updateAnnex(objectId, properties, true);
+        Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);
         assertEquals(baseVersionId, annex.getBaseRevisionId());
     }
 
     @Test
     public void test_enableLiveDiffing() {
-        when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithLiveDiffing());
+        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithLiveDiffing());
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), true);
-        Annex annex = annexService.updateAnnex(objectId, properties, true);
+        Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);
         assertTrue(annex.isLiveDiffingRequired());
 
     }
 
     @Test
     public void test_disableLiveDiffing() {
-        when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithoutLiveDiffing());
+        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithoutLiveDiffing());
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), false);
-        Annex annex = annexService.updateAnnex(objectId, properties, true);
+        Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);
         assertFalse(annex.isLiveDiffingRequired());
     }
 

@@ -1117,15 +1117,15 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
-    public LegDocument updateLegDocument(String id, LeosLegStatus status) {
+    public LegDocument updateLegDocument(String ref, String id, LeosLegStatus status) {
         LOG.trace("Updating Leg document status... [id={}, status={}]", id, status.name());
-        return packageRepository.updateLegDocument(id, status);
+        return packageRepository.updateLegDocument(ref, id, status);
     }
 
     @Override
-    public LegDocument updateLegDocument(String id, List<String> containedDocuments) {
+    public LegDocument updateLegDocument(String ref, String id, List<String> containedDocuments) {
         LOG.trace("Updating Leg document contained documents... [id={}]", id);
-        return packageRepository.updateLegDocument(id, containedDocuments);
+        return packageRepository.updateLegDocument(ref, id, containedDocuments);
     }
 
     @Override
@@ -1137,7 +1137,7 @@ public class LegServiceImpl implements LegService {
             return packageRepository.updateLegDocument(document.getId(), LeosLegStatus.FILE_READY, content, VersionType.INTERMEDIATE, "Milestone is now validated");
         } catch (Exception e) {
             LOG.error("Error while updating the content of the Leg Document with id=" + id, e);
-            return packageRepository.updateLegDocument(document.getId(), LeosLegStatus.FILE_ERROR);
+            return packageRepository.updateLegDocument(document.getMilestoneRef(), document.getId(), LeosLegStatus.FILE_ERROR);
         }
     }
 

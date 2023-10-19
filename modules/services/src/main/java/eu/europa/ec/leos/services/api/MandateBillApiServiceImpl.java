@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -54,7 +55,7 @@ public class MandateBillApiServiceImpl extends BillApiServiceImpl {
         try {
             final Bill currentDocument = this.billService.findBillByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(currentDocument.getId());
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(currentDocument.getMetadata().get().getRef(), Bill.class);
             contex.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
 

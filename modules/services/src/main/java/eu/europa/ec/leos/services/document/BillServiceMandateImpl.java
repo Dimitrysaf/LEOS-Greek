@@ -58,11 +58,6 @@ public class BillServiceMandateImpl extends BillServiceImpl {
     }
 
     @Override
-    public String generateBillReference(String templateId, byte[] content, String language) {
-        return this.generateBillReference(content, language);
-    }
-
-    @Override
     public Bill createClonedBillFromContent(String path, BillMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO,
                                             String actionMsg, byte[] content, String name) {
         return null;

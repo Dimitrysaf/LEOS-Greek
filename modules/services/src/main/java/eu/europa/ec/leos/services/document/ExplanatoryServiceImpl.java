@@ -111,14 +111,14 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     @Override
     public Explanatory findExplanatory(String id) {
         LOG.trace("Finding Explanatory... [id={}]", id);
-        return explanatoryRepository.findExplanatoryById(id, true);
+        return explanatoryRepository.findExplanatoryById(id, Explanatory.class, true);
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public Explanatory findExplanatoryVersion(String id) {
         LOG.trace("Finding Explanatory version... [it={}]", id);
-        return explanatoryRepository.findExplanatoryById(id, false);
+        return explanatoryRepository.findExplanatoryById(id, Explanatory.class, false);
     }
 
     @Override
@@ -181,9 +181,9 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     }
 
     @Override
-    public Explanatory updateExplanatoryWithMilestoneComments(String explanatoryId, List<String> milestoneComments){
+    public Explanatory updateExplanatoryWithMilestoneComments(String ref, String explanatoryId, List<String> milestoneComments){
         LOG.trace("Updating Explanatory... [id={}, milestoneComments={}]", explanatoryId, milestoneComments);
-        return explanatoryRepository.updateMilestoneComments(explanatoryId, milestoneComments);
+        return explanatoryRepository.updateMilestoneComments(ref, explanatoryId, milestoneComments);
     }
 
     @Override
@@ -307,10 +307,10 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     }
     
     @Override
-    public Explanatory updateExplanatory(String id, Map<String, Object> properties, boolean latest) {
+    public Explanatory updateExplanatory(String ref, String id, Map<String, Object> properties, boolean latest) {
     	LOG.trace("Updating Explanatory Xml Content... [id={}]", id);
     	Stopwatch stopwatch = Stopwatch.createStarted();
-    	Explanatory explanatory = explanatoryRepository.updateExplanatory(id, properties, latest);
+    	Explanatory explanatory = explanatoryRepository.updateExplanatory(ref, id, properties, latest);
     	LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return explanatory;
     }

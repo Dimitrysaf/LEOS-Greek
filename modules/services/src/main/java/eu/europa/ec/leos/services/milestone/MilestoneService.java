@@ -22,9 +22,9 @@ public interface MilestoneService {
 
     LegDocument createMilestone(String proposalId, String milestoneComment) throws Exception;
 
-    LegDocument updateMilestone(String legId, LeosLegStatus status);
+    LegDocument updateMilestone(String ref, String legId, LeosLegStatus status);
 
-    LegDocument updateMilestone(String legId, List<String> containedDocuments);
+    LegDocument updateMilestone(String ref, String legId, List<String> containedDocuments);
 
     LegDocument updateMilestoneRendition(String documentId, String jobId, byte[] pdfJobZip, byte[] wordJobZip);
 }
