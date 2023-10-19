@@ -361,7 +361,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public ShowCleanVersionResponse showCleanVersion(String documentRef) {
+    public DocumentViewResponse showCleanVersion(String documentRef) {
         //not supported
         throw new NotImplementedException();
     }

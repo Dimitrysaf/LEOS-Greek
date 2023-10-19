@@ -316,11 +316,11 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public ShowCleanVersionResponse showCleanVersion(String documentRef) {
+    public DocumentViewResponse showCleanVersion(String documentRef) {
         final Proposal proposal = this.proposalService.findProposalByRef(documentRef);
         final String versionContent = documentContentService.getCleanDocumentAsHtml(proposal, "", securityContext.getPermissions(proposal));
-        final String versionInfo = getVersionInfoAsString(proposal);
-        return new ShowCleanVersionResponse(versionContent, versionInfo);
+        VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(proposal);
+        return new DocumentViewResponse(versionContent, versionInfoVO);
     }
 
     @Override

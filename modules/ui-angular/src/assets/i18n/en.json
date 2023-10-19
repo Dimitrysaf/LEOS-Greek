@@ -256,6 +256,7 @@
   "page.editor.actions-dropdown.export": "Export this version",
   "page.editor.actions-dropdown.export-with-annotations": "Export this version with annotations",
   "page.editor.actions-dropdown.export-clean-version": "Export clean version",
+  "page.editor.actions-dropdown.show-clean-version": "Show clean version",
   "page.editor.actions-dropdown.export-econsilium": "Export to eConsilium",
   "page.editor.actions-dropdown.import": "Import from the Official Journal",
   "page.editor.actions-dropdown.see-user-guidance": "See user guidance",

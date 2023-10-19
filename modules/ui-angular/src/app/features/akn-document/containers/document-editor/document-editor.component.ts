@@ -290,6 +290,17 @@ export class DocumentEditorComponent
         }
       });
 
+    this.documentService.cleanVersionView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((cleanVersionView) => {
+        this.setPageMode(PageMode.ViewVersion);
+          this.versionForView = this.cleanupAndSerializeXML(
+            cleanVersionView.editableXml,
+            `doubleCompare-${this.documentRef}`,
+          );
+          this.setVersionForViewHeader(cleanVersionView.versionInfoVO);
+      });
+
     this.documentService.compareModeEnabled$
       .pipe(takeUntil(this.destroy$))
       .subscribe((enabled) => {

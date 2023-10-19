@@ -84,7 +84,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     byte[] downloadCleanVersion(String documentRef);
 
-    ShowCleanVersionResponse showCleanVersion(String documentRef);
+    DocumentViewResponse showCleanVersion(String documentRef);
 
     byte[] downloadXmlVersionFiles(String documentRef, String versionId);
 
