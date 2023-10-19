@@ -41,6 +41,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.ANNEX_INDEX_META;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.ANNEX_NUMBER_META;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.ANNEX_TITLE_META;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_EEA_RELEVANCE_COVER;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_LANGUAGE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_PURPOSE_META;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_SPECIFIC_TEMPLATE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_STAGE_META;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TEMPLATE;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TYPE_META;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.EXPLANATORY_TITLE_PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 
@@ -176,30 +187,36 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                 MetadataVO metadata = document.getMetadata();
                 templatesCatalog = templateService.getTemplatesCatalog();
                 Map<String, String> metadataVOMap = xmlNodeProcessor.getValuesFromXml(document.getSource(), new String[]{
-                        XmlNodeConfigProcessor.DOC_PURPOSE_META,
-                        XmlNodeConfigProcessor.DOC_STAGE_META,
-                        XmlNodeConfigProcessor.DOC_TYPE_META,
-                        XmlNodeConfigProcessor.DOC_LANGUAGE,
-                        XmlNodeConfigProcessor.DOC_SPECIFIC_TEMPLATE,
-                        XmlNodeConfigProcessor.DOC_TEMPLATE,
-                        XmlNodeConfigProcessor.DOC_EEA_RELEVANCE_COVER,
-                        XmlNodeConfigProcessor.ANNEX_TITLE_META,
-                        XmlNodeConfigProcessor.ANNEX_INDEX_META,
-                        XmlNodeConfigProcessor.ANNEX_NUMBER_META,
+                        DOC_PURPOSE_META,
+                        DOC_STAGE_META,
+                        DOC_TYPE_META,
+                        DOC_LANGUAGE,
+                        DOC_SPECIFIC_TEMPLATE,
+                        DOC_TEMPLATE,
+                        DOC_EEA_RELEVANCE_COVER,
+                        ANNEX_TITLE_META,
+                        ANNEX_INDEX_META,
+                        ANNEX_NUMBER_META,
+                        EXPLANATORY_TITLE_PREFACE
                 }, xmlNodeConfigProcessor.getConfig(document.getCategory()));
 
-                metadata.setDocPurpose(metadataVOMap.get(XmlNodeConfigProcessor.DOC_PURPOSE_META));
-                metadata.setDocStage(metadataVOMap.get(XmlNodeConfigProcessor.DOC_STAGE_META));
-                metadata.setDocType(metadataVOMap.get(XmlNodeConfigProcessor.DOC_TYPE_META));
-                metadata.setLanguage(metadataVOMap.get(XmlNodeConfigProcessor.DOC_LANGUAGE));
-                metadata.setDocTemplate(metadataVOMap.get(XmlNodeConfigProcessor.DOC_SPECIFIC_TEMPLATE));
-                metadata.setTemplate(metadataVOMap.get(XmlNodeConfigProcessor.DOC_TEMPLATE));
-                metadata.setTitle(metadataVOMap.get(XmlNodeConfigProcessor.ANNEX_TITLE_META));
-                metadata.setIndex(metadataVOMap.get(XmlNodeConfigProcessor.ANNEX_INDEX_META));
-                metadata.setNumber(metadataVOMap.get(XmlNodeConfigProcessor.ANNEX_NUMBER_META));
+                metadata.setDocPurpose(metadataVOMap.get(DOC_PURPOSE_META));
+                metadata.setDocStage(metadataVOMap.get(DOC_STAGE_META));
+                metadata.setDocType(metadataVOMap.get(DOC_TYPE_META));
+                metadata.setLanguage(metadataVOMap.get(DOC_LANGUAGE));
+                metadata.setDocTemplate(metadataVOMap.get(DOC_SPECIFIC_TEMPLATE));
+                metadata.setTemplate(metadataVOMap.get(DOC_TEMPLATE));
+                if(document.getDocumentType().name().equals("COUNCIL_EXPLANATORY")) {
+                    metadata.setTitle(metadataVOMap.get(EXPLANATORY_TITLE_PREFACE));
+                } else {
+                    metadata.setTitle(metadataVOMap.get(ANNEX_TITLE_META));
+                }
+
+                metadata.setIndex(metadataVOMap.get(ANNEX_INDEX_META));
+                metadata.setNumber(metadataVOMap.get(ANNEX_NUMBER_META));
 
                 // For now, only check for the existence of an eeaRelevance: text-> boolean
-                String eeaRelevanceText = metadataVOMap.get(XmlNodeConfigProcessor.DOC_EEA_RELEVANCE_COVER);
+                String eeaRelevanceText = metadataVOMap.get(DOC_EEA_RELEVANCE_COVER);
                 metadata.setEeaRelevance(eeaRelevanceText != null && !eeaRelevanceText.isEmpty());
 
                 // if the template doesnt exist in the system we don't continue, we won't import it.

@@ -10,6 +10,8 @@ public class CollectionIdsAndUrlsHolder {
     private String billUrl;
     private String memorandumId;
     private String memorandumUrl;
+    private String explanatoryId;
+    private String explanatoryUrl;
     private String financialStatementId;
     private String financialStatementUrl;
     private String coverpageId;
@@ -20,6 +22,22 @@ public class CollectionIdsAndUrlsHolder {
     public CollectionIdsAndUrlsHolder() {
         this.annexIdAndUrl = new HashMap<>();
         this.docCloneAndOriginIdMap = new HashMap<>();
+    }
+
+    public String getExplanatoryId() {
+        return explanatoryId;
+    }
+
+    public void setExplanatoryId(String explanatoryId) {
+        this.explanatoryId = explanatoryId;
+    }
+
+    public String getExplanatoryUrl() {
+        return explanatoryUrl;
+    }
+
+    public void setExplanatoryUrl(String explanatoryUrl) {
+        this.explanatoryUrl = explanatoryUrl;
     }
 
     public String getProposalId() { return proposalId; }

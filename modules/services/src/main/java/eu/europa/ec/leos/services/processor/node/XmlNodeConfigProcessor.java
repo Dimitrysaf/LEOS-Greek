@@ -140,6 +140,7 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(DOC_PURPOSE_COVER, metadata.getPurpose());
         keyValueMap.put(DOC_LANGUAGE_COVER, metadata.getLanguage().toUpperCase());
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
+        keyValueMap.put(EXPLANATORY_TITLE_PREFACE, metadata.getTitle());
 
         return keyValueMap;
     }

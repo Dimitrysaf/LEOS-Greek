@@ -315,4 +315,9 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         return explanatory;
     }
 
+    @Override
+    public String generateExplanatoryReference(byte[] content, String language) {
+        return EXPLANATORY_NAME_PREFIX + Cuid.createCuid();
+    }
+
 }

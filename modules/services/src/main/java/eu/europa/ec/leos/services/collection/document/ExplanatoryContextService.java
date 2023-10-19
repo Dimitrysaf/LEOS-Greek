@@ -11,11 +11,14 @@ import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.SecurityService;
+import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
+import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +26,9 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
+import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 
 @Component
 @Scope("prototype")
@@ -38,6 +44,8 @@ public class ExplanatoryContextService {
     private final ExplanatoryService explanatoryService;
     private final ProposalService proposalService;
     private final SecurityService securityService;
+    private final XmlNodeProcessor xmlNodeProcessor;
+    private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
 
     private LeosPackage leosPackage;
     private Explanatory explanatory;
@@ -52,15 +60,20 @@ public class ExplanatoryContextService {
     private final Map<ContextActionService, String> actionMsgMap;
     private String versionComment;
     private String milestoneComment;
+    private boolean eeaRelevance;
 
+    @Autowired
     public ExplanatoryContextService(
             TemplateService templateService,
             ExplanatoryService explanatoryService,
-            ProposalService proposalService, SecurityService securityService) {
+            ProposalService proposalService, SecurityService securityService, XmlNodeProcessor xmlNodeProcessor,
+            XmlNodeConfigProcessor xmlNodeConfigProcessor) {
         this.templateService = templateService;
         this.explanatoryService = explanatoryService;
         this.proposalService = proposalService;
         this.securityService = securityService;
+        this.xmlNodeProcessor = xmlNodeProcessor;
+        this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
     }
 
@@ -150,6 +163,11 @@ public class ExplanatoryContextService {
         actionMsgMap.put(action, actionMsg);
     }
 
+    public void useEeaRelevance(boolean eeaRelevance) {
+        LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
+        this.eeaRelevance = eeaRelevance;
+    }
+
     public Explanatory executeCreateExplanatory() {
         LOG.trace("Executing 'Create Explanatory' use case...");
 
@@ -178,17 +196,42 @@ public class ExplanatoryContextService {
     public Explanatory executeImportExplanatory() {
         LOG.trace("Executing 'Import Explanatory' use case...");
         Validate.notNull(leosPackage, EXPLANATORY_PACKAGE_IS_REQUIRED);
-        Validate.notNull(explanatory, "Explanatory template is required!");
-        Validate.notNull(collaborators, "Explanatory collaborators are required!");
+        Validate.notNull(explanatory, EXPLANATORY_DOCUMENT_IS_REQUIRED);
         Validate.notNull(purpose, EXPLANATORY_PURPOSE_IS_REQUIRED);
-        Validate.notNull(type, "Explanatory type is required!");
+        Option<ExplanatoryMetadata> metadataOption = explanatory.getMetadata();
+        Validate.isTrue(metadataOption.isDefined(), EXPLANATORY_METADATA_IS_REQUIRED);
 
-        final String actionMessage = actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED);
-        final ExplanatoryMetadata metadataDocument = (ExplanatoryMetadata) explanatoryDocument.getMetadataDocument();
-        explanatory = explanatoryService.createExplanatoryFromContent(leosPackage.getPath(), metadataDocument, actionMessage, explanatoryDocument.getSource(), explanatoryDocument.getName());
+        String ref = createRefForExplanatory();
+        ExplanatoryMetadata metadata = metadataOption.get()
+                .builder()
+                .withPurpose(purpose)
+                .withType(type)
+                .withTemplate(template)
+                .withRef(ref)
+                .withEeaRelevance(eeaRelevance)
+                .withTitle(explanatoryDocument.getMetadata().getTitle())
+                .build();
+
+        final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(explanatoryDocument.getSource(), createValueMap(metadata),
+                xmlNodeConfigProcessor.getConfig(metadata.getCategory()));
+        explanatory = explanatoryService.createExplanatoryFromContent(leosPackage.getPath(), metadata,
+                actionMsgMap.get(ContextActionService.METADATA_UPDATED), updatedSource, explanatoryDocument.getName());
         explanatory = securityService.updateCollaborators(explanatory.getMetadata().get().getRef(), explanatory.getId(), collaborators, Explanatory.class);
-
         return explanatoryService.createVersion(explanatory.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+    }
+
+    private String createRefForExplanatory() {
+        Validate.notNull(explanatoryDocument.getSource(), "Explanatory xml is required!");
+        final String ref = explanatoryService.generateExplanatoryReference(explanatory.getContent().get().getSource().getBytes(), explanatory.getMetadata().get().getLanguage());
+        final ExplanatoryMetadata updatedExplanatoryMetadata = explanatory.getMetadata().get()
+                .builder()
+                .withPurpose(purpose)
+                .withRef(ref)
+                .build();
+
+        explanatoryDocument.setName(ref + XML_DOC_EXT);
+        explanatoryDocument.setMetadataDocument(updatedExplanatoryMetadata);
+        return ref;
     }
 
     public void executeUpdateExplanatory() {

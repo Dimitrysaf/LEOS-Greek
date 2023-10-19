@@ -268,6 +268,25 @@ public abstract class CollectionContextService {
         // create child element
         for (DocumentVO docChild : propDocument.getChildDocuments()) {
             switch (docChild.getCategory()) {
+                case COUNCIL_EXPLANATORY:
+                    ExplanatoryContextService explanatoryContext = explanatoryContextProvider.get();
+                    explanatoryContext.usePackage(leosPckg);
+                    // use template
+                    explanatoryContext.useTemplate(categoryTemplateMap.get(COUNCIL_EXPLANATORY).getName());
+                    // We want to use the same purpose that was set in the wizard for all the documents.
+                    explanatoryContext.usePurpose(purpose);
+                    explanatoryContext.useDocument(docChild);
+                    explanatoryContext.useActionMessageMap(actionMsgMap);
+                    explanatoryContext.useType(metadata.getType());
+                    explanatoryContext.usePackageTemplate(metadata.getTemplate());
+                    explanatoryContext.useEeaRelevance(eeaRelevance);
+                    explanatoryContext.useCollaborators(proposal.getCollaborators());
+                    Explanatory explanatory = explanatoryContext.executeImportExplanatory();
+                    proposal = proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
+                    String explanatoryRef = explanatory.getMetadata().get().getRef();
+                    idsAndUrlsHolder.setExplanatoryId(explanatoryRef);
+                    idsAndUrlsHolder.setExplanatoryUrl(urlBuilder.buildExplanatoryViewUrl(explanatoryRef));
+                    break;
                 case MEMORANDUM:
                     MemorandumContextService memorandumContext = memorandumContextProvider.get();
                     memorandumContext.usePackage(leosPckg);

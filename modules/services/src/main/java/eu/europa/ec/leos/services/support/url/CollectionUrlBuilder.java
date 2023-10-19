@@ -29,6 +29,13 @@ public class CollectionUrlBuilder {
                 , billId);
     }
 
+    public String buildExplanatoryViewUrl(String memorandumId) {
+        return  MessageFormat.format(
+                applicationProperties.getProperty("leos.mapping.url") +
+                        applicationProperties.getProperty("leos.document.view.explanatory.uri")
+                , memorandumId);
+    }
+
     public String buildMemorandumViewUrl(String memorandumId) {
         return  MessageFormat.format(
                 applicationProperties.getProperty("leos.mapping.url") +
