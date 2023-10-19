@@ -55,7 +55,8 @@ define(function ckEditorTestUtil(require) {
                 user: {
                     name: "testuser",
                     login: "testuser",
-                    permissions: ["CAN_ACCEPT_CHANGES", "CAN_REJECT_CHANGES"]
+                    permissions: ["CAN_ACCEPT_CHANGES", "CAN_REJECT_CHANGES"],
+                    roles: ["SUPPORT"]
                 },
                 dialog: {
                     current: "5"
