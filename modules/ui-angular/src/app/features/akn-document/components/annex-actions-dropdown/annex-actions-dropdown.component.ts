@@ -137,7 +137,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
     this.changeDocumentStructureVisible = isAnnex && CAN_UPDATE;
     this.renumberDocumentVisible = (isMandateAnnex || isMandateDocument) && CAN_RENUMBER;
     this.seeTrackChanges = this.documentConfig.trackChangesShowed;
-    this.canActivateTrackChanges = isClonedProposal || CAN_ACTIVATE_TRACK_CHANGES;
+    this.canActivateTrackChanges = !isClonedProposal && CAN_ACTIVATE_TRACK_CHANGES;
     this.exportCleanVersionVisible = isCN || isClonedProposal;
     this.showCleanVersionVisible = isCN || isClonedProposal;
   }
