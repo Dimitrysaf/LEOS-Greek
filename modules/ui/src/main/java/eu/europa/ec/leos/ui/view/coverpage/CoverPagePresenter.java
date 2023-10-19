@@ -388,7 +388,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void initLeosEditor(InitLeosEditorEvent event) {
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(event.getDocument().getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(getDocumentRef());
         coverPageScreen.initLeosEditor(event.getDocument(), documentsMetadata);
     }
 

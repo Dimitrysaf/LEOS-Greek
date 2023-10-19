@@ -412,7 +412,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         List<TocItem> tocItems = structureContext1.getTocItems();
         List<NumberingConfig> numberConfigs = structureContext1.getNumberingConfigs();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(explanatory.getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(explanatory.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
 
         return new DocumentConfigResponse(
