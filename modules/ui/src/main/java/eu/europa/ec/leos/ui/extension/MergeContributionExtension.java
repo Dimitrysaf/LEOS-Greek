@@ -66,7 +66,7 @@ public class MergeContributionExtension<T extends AbstractField<V>, V> extends L
     }
 
     @Override
-    protected MergeContributionState getState() {
+    public MergeContributionState getState() {
         return (MergeContributionState) super.getState();
     }
 

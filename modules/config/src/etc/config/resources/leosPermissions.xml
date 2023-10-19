@@ -16,6 +16,7 @@
             <permission>CAN_ADD_REMOVE_COLLABORATOR</permission>
             <permission>CAN_DOWNLOAD_PROPOSAL</permission>
             <permission>CAN_UPLOAD</permission>
+            <permission>CAN_ACTIVATE_TRACK_CHANGES</permission>
             <permission>CAN_ACCEPT_CHANGES</permission>
             <permission>CAN_REJECT_CHANGES</permission>
         </permissions>
@@ -31,6 +32,7 @@
             <permission>CAN_SUGGEST</permission>
             <permission>CAN_COMMENT</permission>
             <permission>CAN_MERGE_SUGGESTION</permission>
+            <permission>CAN_ACTIVATE_TRACK_CHANGES</permission>
             <permission>CAN_ACCEPT_CHANGES</permission>
             <permission>CAN_REJECT_CHANGES</permission>
         </permissions>
@@ -68,6 +70,7 @@
             <permission>CAN_UPLOAD</permission>
             <permission>CAN_SEE_SOURCE</permission>
             <permission>CAN_SEE_ALL_DOCUMENTS</permission>
+            <permission>CAN_ACTIVATE_TRACK_CHANGES</permission>
             <permission>CAN_ACCEPT_CHANGES</permission>
             <permission>CAN_REJECT_CHANGES</permission>
         </permissions>
@@ -94,6 +97,7 @@
             <permission>CAN_DOWNLOAD_XML_COMPARISON</permission>
             <permission>CAN_UPLOAD</permission>
             <permission>CAN_SEE_ALL_DOCUMENTS</permission>
+            <permission>CAN_ACTIVATE_TRACK_CHANGES</permission>
             <permission>CAN_ACCEPT_CHANGES</permission>
             <permission>CAN_REJECT_CHANGES</permission>
         </permissions>

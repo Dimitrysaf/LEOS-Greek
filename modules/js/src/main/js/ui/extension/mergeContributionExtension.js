@@ -140,26 +140,36 @@ define(function mergeContributionExtensionModule(require) {
         element.actions = actions;
     }
 
-    function _generateActions(processed) {
+    function _generateActions(connector, processed) {
+        let permissions = connector.getState().permissions;
+        let canAccept = permissions.includes("CAN_ACCEPT_CHANGES");
+        let canReject = permissions.includes("CAN_REJECT_CHANGES");
+        //TODO for now assign decision on each element. The logic should be extended in a second story.
         let template = ['<div class="Vaadin-Icons merge-actions-wrapper">'];
         template.push('<div class="merge-actions">');
         if (processed) {
             template.push('<span class="undo" data-widget-type="undo" title="Undo">reply</span>');
         } else {
-            template.push('<span class="accept" data-widget-type="accept" title="Accept">check</span>');
-            template.push('<span class="reject" data-widget-type="reject" title="Reject">close</span>');
+            if(canAccept){
+                template.push('<span class="accept" data-widget-type="accept" title="Accept">check</span>');
+            }
+            if(canReject){
+                template.push('<span class="reject" data-widget-type="reject" title="Reject">close</span>');
+            }
         }
         template.push('</div>');
         template.push('</div>');
         return template.join('');
     }
 
-    function _generateUnselectAction(action) {
+    function _generateUnselectAction(connector, action) {
+        let canAccept = connector.getState().canAccept;
+        let canReject = connector.getState().canReject;
         let template = ['<div class="Vaadin-Icons merge-actions-wrapper">'];
         template.push('<span class="unselect" data-widget-type="unselect" title="Unselect">rotate-left</span>');
-        if (action === 'accept') {
+        if (action === 'accept' && canAccept) {
             template.push('<span class="accept" data-widget-type="accept" title="Accepted">check</span>');
-        } else if (action === 'reject') {
+        } else if (action === 'reject' && canReject ) {
             template.push('<span class="reject" data-widget-type="reject" title="Rejected">close</span>');
         }
 
@@ -203,7 +213,7 @@ define(function mergeContributionExtensionModule(require) {
         if (action === 'unselect') {
             $parent.children(MERGE_ACTION_WRAPPER).remove();
             $parent.removeClass(CONTRIBUTION_SELECTED);
-            let actionString = _generateActions($parent.attr(MERGE_ACTION_ATTR) && $parent.attr(MERGE_ACTION_ATTR) !== null);
+            let actionString = _generateActions(connector, $parent.attr(MERGE_ACTION_ATTR) && $parent.attr(MERGE_ACTION_ATTR) !== null);
             let actions = ($.parseHTML(actionString))[0];
             $parent.prepend(actions);
             let index = mergeActionList.findIndex(element => element.elementId === data.elementId);
@@ -217,7 +227,7 @@ define(function mergeContributionExtensionModule(require) {
         } else if (!$parent.hasClass(CONTRIBUTION_SELECTED)) {
             $parent.addClass(CONTRIBUTION_SELECTED);
             $parent.children(MERGE_ACTION_WRAPPER).remove();
-            let unselectActionString = _generateUnselectAction(action);
+            let unselectActionString = _generateUnselectAction(connector, action);
             let unseletAction = ($.parseHTML(unselectActionString))[0];
             $parent.prepend(unseletAction);
             //in case of move there are two elements TO & FROM, element TO should not be sent for processing, only FROM
@@ -251,7 +261,7 @@ define(function mergeContributionExtensionModule(require) {
         if (!actions) {
             let mergeActionAttrVal = $element.attr(MERGE_ACTION_ATTR);
             let processed = mergeActionAttrVal != null ? true : false;
-            let actionString = _generateActions(processed);
+            let actionString = _generateActions(connector, processed);
             actions = ($.parseHTML(actionString))[0];
             $element.prepend(actions);
         }

@@ -1270,15 +1270,17 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
     private void compareAndShowRevision(ContributionVO contributionVO) {
         final Bill revision = billService.findBill(contributionVO.getDocumentId(), false);
+        final List<LeosPermission> permissionsForRevision = securityContext.getPermissions(revision);
         final String revisionContent = documentContentService.getDocumentForContributionAsHtml(
                 contributionVO.getXmlContent(), urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
-                securityContext.getPermissions(revision));
+                permissionsForRevision);
 
         //Get the original version submitted to LS from the metadata of the document
         final Bill originalVersion = billService.findFirstVersion(revision.getMetadata().get().getRef());
+        final List<LeosPermission> permissionsForOriginal = securityContext.getPermissions(revision);
         final String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
-                securityContext.getPermissions(originalVersion));
+                permissionsForOriginal);
 
         //Get the compared content
         final String comparedContent = comparisonDelegate.getContributionComparedContent(originalVersionHtml, revisionContent);
@@ -1291,7 +1293,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         List<TocItem> tocItemList = getTocITems(bill);
 
         final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVO.getDocumentId(), contributionVO.getLegFileName(), contributionVO.getVersionedReference());
-        documentScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, temporaryAnnotationsId);
+        documentScreen.showRevisionWithSidebar(comparedContent, contributionVO, tocItemList, temporaryAnnotationsId, permissionsForRevision, permissionsForOriginal);
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentId, final String legFileName, final String versionedReference) {

@@ -41,6 +41,8 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   seeNavigationPanelVisible = false;
   changeDocumentStructureVisible = false;
   renumberDocumentVisible = false;
+  canActivateTrackChanges = true;
+  isTrackChangesEnabled = true;
   seeTrackChanges = true;
 
   @ViewChild('createVersionDialog') createVersionDialog: EuiDialogComponent;
@@ -81,6 +83,11 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
     this.ckEditorService.changeSeeTrackChangesState();
   }
 
+  toggleTrackChangesEnabled() {
+    this.isTrackChangesEnabled = !this.isTrackChangesEnabled;
+    // call the service
+  }
+
   onApplyContinuousNumberingSelect() {
     this.dialogService.openDialog({
       title: this.translateService.instant(
@@ -98,7 +105,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   setMenuState(permissions: Permission[]) {
-    const isClonedProposal = false; // TODO: proposal.isCloned() when implemented
+    const isClonedProposal = this.documentConfig.clonedProposal;
 
     const isCN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
     const isAnnex = this.doc.documentType === 'annex';
@@ -111,22 +118,20 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
     const isMandateMemorandum = isCN && isMemorandum;
     const CAN_UPDATE = permissions.includes('CAN_UPDATE');
     const CAN_RENUMBER = permissions.includes('CAN_RENUMBER');
-    const CAN_WORK_WITH_EXPORT_PACKAGE = permissions.includes(
-      'CAN_WORK_WITH_EXPORT_PACKAGE',
-    );
+    const CAN_WORK_WITH_EXPORT_PACKAGE = permissions.includes('CAN_WORK_WITH_EXPORT_PACKAGE');
+    const CAN_ACTIVATE_TRACK_CHANGES = permissions.includes('CAN_ACTIVATE_TRACK_CHANGES');
 
     this.saveVersionVisible = !isMandateMemorandum && CAN_UPDATE;
     this.exportVersionVisible = !isMandateExplanatory && !isMandateMemorandum;
     this.exportVersionWithAnnotationsVisible = !isMandateMemorandum;
     this.exportCleanVersionVisible = isCN || isClonedProposal;
-    this.exportEConsiliumVisible =
-      isCN && !isMandateMemorandum && CAN_WORK_WITH_EXPORT_PACKAGE;
+    this.exportEConsiliumVisible = isCN && !isMandateMemorandum && CAN_WORK_WITH_EXPORT_PACKAGE;
     this.importVisible = isDocument && CAN_UPDATE;
     this.toggleUserGuidanceVisible = true;
     this.seeNavigationPanelVisible = true;
     this.changeDocumentStructureVisible = isAnnex && CAN_UPDATE;
-    this.renumberDocumentVisible =
-      (isMandateAnnex || isMandateDocument) && CAN_RENUMBER;
+    this.renumberDocumentVisible = (isMandateAnnex || isMandateDocument) && CAN_RENUMBER;
     this.seeTrackChanges = this.documentConfig.trackChangesShowed;
+    this.canActivateTrackChanges = isClonedProposal || CAN_ACTIVATE_TRACK_CHANGES;
   }
 }

@@ -108,14 +108,14 @@
         </li>
         <!-- Enable track changes -->
         <li
-          euiListItem
-          *ngIf="documentConfig.clonedProposal"
+            euiListItem
+            (click)="toggleTrackChangesEnabled()"
         >
-          <button euiListItem disabled>
+          <button euiListItem [disabled]="!canActivateTrackChanges">
             <eui-icon
               euiSizeS
               [iconClass]="
-                documentConfig.trackChangesEnabled
+                isTrackChangesEnabled
                   ? 'eui-icon-checkbox'
                   : 'eui-icon-checkbox-outline'
               "
@@ -127,9 +127,8 @@
         <li
           euiListItem
           (click)="toggleSeeTrackChanges()"
-          *ngIf="documentConfig.clonedProposal"
         >
-          <button euiListItem [disabled]="(doc.isEditorOpen$ | async)">
+          <button euiListItem [disabled]="!canActivateTrackChanges">
             <eui-icon
               euiSizeS
               [iconClass]="

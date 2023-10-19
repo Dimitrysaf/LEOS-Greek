@@ -79,6 +79,8 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     private RevisionComponent<FinancialStatement> revisionComponent;
     protected ContributionsTab<FinancialStatement> contributionsTab;
     private CloneContext cloneContext;
+    private List<LeosPermission> permissionsForRevision;
+    private List<LeosPermission> permissionsForOriginal;
 
     @Value("${leos.coverpage.separated}")
     private boolean coverPageSeparated;
@@ -129,8 +131,9 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     }
 
     @Override
-    public void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId) {
-        this.showRevision(versionContent, contributionVO, tocItemList);
+    public void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId
+            , List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
+        this.showRevision(versionContent, contributionVO, tocItemList, permissionsForRevision, permissionsForOriginal);
         final LeosDisplayField revisionContent =  revisionComponent.getRevisionContent();
         final String temporaryDocument = contributionVO.getDocumentName().replace(".xml", "");
         new AnnotateExtension(revisionContent, eventBus, cfgHelper, "leos-revision-content", AnnotateExtension.OperationMode.READ_ONLY,
@@ -147,7 +150,10 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     }
 
     @Override
-    public void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList) {
+    public void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList,
+                             List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
+        this.permissionsForRevision = permissionsForRevision;
+        this.permissionsForOriginal = permissionsForOriginal;
         initRevisionComponent();
         revisionComponent.populateRevisionContent(content, LeosCategory.STAT_FINANC_LEGIS, contributionVO);
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, revisionComponent));
@@ -171,7 +177,7 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
 
     private void initRevisionComponent() {
         if (revisionComponent == null) {
-            revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext);
+            revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext, permissionsForRevision, permissionsForOriginal);
         }
     }
 

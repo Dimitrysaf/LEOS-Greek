@@ -76,6 +76,8 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
     private MarkedTextComponent<Bill> markedTextComponent;
     private RevisionComponent<Bill> revisionComponent;
     private CloneContext cloneContext;
+    private List<LeosPermission> permissionsForRevision;
+    private List<LeosPermission> permissionsForOriginal;
 
     @Autowired
     ProposalDocumentScreenImpl(UserHelper userHelper, SecurityContext securityContext, CloneContext cloneContext, EventBus eventBus, ConfigurationHelper cfgHelper,
@@ -148,8 +150,9 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
     }
 
     @Override
-    public void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId) {
-        this.showRevision(versionContent, contributionVO, tocItemList);
+    public void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId,
+                                        List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
+        this.showRevision(versionContent, contributionVO, tocItemList, permissionsForRevision, permissionsForOriginal);
         final LeosDisplayField revisionContent =  revisionComponent.getRevisionContent();
         final String temporaryDocument = contributionVO.getDocumentName().replace(".xml", "");
         new AnnotateExtension(revisionContent, eventBus, cfgHelper, "leos-revision-content", AnnotateExtension.OperationMode.READ_ONLY,
@@ -158,7 +161,10 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
     }
 
     @Override
-    public void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList) {
+    public void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList,
+                             List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
+        this.permissionsForRevision = permissionsForRevision;
+        this.permissionsForOriginal = permissionsForOriginal;
         initRevisionComponent();
         revisionComponent.populateRevisionContent(content, LeosCategory.BILL, contributionVO);
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, revisionComponent));
@@ -172,7 +178,7 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
 
     private void initRevisionComponent() {
         if (revisionComponent == null) {
-            revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext);
+            revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext, permissionsForRevision, permissionsForOriginal);
         }
     }
 

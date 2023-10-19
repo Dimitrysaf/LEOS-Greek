@@ -20,4 +20,7 @@ public class MergeContributionState extends LeosJavaScriptExtensionState {
     private static final long serialVersionUID = 1L;
 
     public String tocItemsJsonArray;
+    public boolean canAccept;
+    public boolean canReject;
+
 }

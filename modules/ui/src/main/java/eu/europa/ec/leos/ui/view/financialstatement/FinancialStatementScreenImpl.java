@@ -542,12 +542,12 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
     }
 
     @Override
-    public void showRevision(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList) {
+    public void showRevision(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
 
     }
 
     @Override
-    public void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId) {
+    public void showRevisionWithSidebar(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, String temporaryAnnotationsId, List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
 
     }
 

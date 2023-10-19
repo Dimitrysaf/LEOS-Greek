@@ -29,6 +29,7 @@ import { CheckBoxesConnector } from './check-boxes-connector';
 import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './table-of-content.service';
+import {LeosAppConfig} from "@/shared/models/leos.model";
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -418,7 +419,7 @@ export class CKEditorService implements OnDestroy {
 
   // called from constructor
   private renameConfigKeysForEditor(config: any) {
-    const oldConfig: LeosConfig & DocumentConfig = cloneDeep(config);
+    const oldConfig: LeosAppConfig & DocumentConfig = cloneDeep(config);
     const tocItems: any = cloneDeep(oldConfig.tocItems);
 
     tocItems.forEach((i: TocItem) => {
@@ -511,6 +512,8 @@ export class CKEditorService implements OnDestroy {
 
     config['isTrackChangesShowed'] = oldConfig.trackChangesShowed;
     config['isTrackChangesEnabled'] = oldConfig.trackChangesEnabled;
+    config['permissions'] = oldConfig.userAppPermissions;
+    // config['isClonedProposal'] = oldConfig.isClonedProposal;
 
     if (!oldConfig.spellCheckerServiceUrl) {
       config.spellCheckerServiceUrl =

@@ -73,6 +73,8 @@ class ProposalCoverPageScreenImpl extends CoverPageScreenImpl {
     protected RevisionComponent<Proposal> revisionComponent;
     protected ContributionsTab<Proposal> contributionsTab;
     private CloneContext cloneContext;
+    private List<LeosPermission> permissionsForRevision;
+    private List<LeosPermission> permissionsForOriginal;
 
     @Autowired
     ProposalCoverPageScreenImpl(SecurityContext securityContext, EventBus eventBus, MessageHelper messageHelper,
@@ -125,7 +127,9 @@ class ProposalCoverPageScreenImpl extends CoverPageScreenImpl {
     }
 
     @Override
-    public void showRevision(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList) {
+    public void showRevision(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, List<LeosPermission> permissionsForRevision) {
+        this.permissionsForRevision = permissionsForRevision;
+        this.permissionsForOriginal = permissionsForOriginal;
         initRevisionComponent();
         revisionComponent.populateRevisionContent(versionContent, LeosCategory.PROPOSAL, contributionVO);
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, revisionComponent));
@@ -139,7 +143,7 @@ class ProposalCoverPageScreenImpl extends CoverPageScreenImpl {
 
     private void initRevisionComponent() {
         if (revisionComponent == null) {
-            revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext);
+            revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext, permissionsForRevision, permissionsForOriginal);
         }
     }
 

@@ -879,14 +879,15 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     private void compareAndShowRevision(ContributionVO contributionVO) {
         final Proposal revision = proposalService.findProposal(contributionVO.getDocumentId(), false);
         byte[] contributionContent = contributionVO.getXmlContent();
+        List<LeosPermission> permissionsForRevision = securityContext.getPermissions(revision);
         final String revisionContent = documentContentService.getDocumentForContributionAsHtml(contributionContent,
                 urlBuilder.getWebAppPath(VaadinServletService.getCurrentServletRequest()),
-                securityContext.getPermissions(revision), true);
+                permissionsForRevision, true);
         cloneContext.setContribution(Boolean.TRUE);
         coverPageScreen.refreshVersions(getVersionVOS(), false);
         Proposal proposal = getDocument();
         List<TocItem>  tocItemList = getTocITems(proposal);
-        coverPageScreen.showRevision(revisionContent, contributionVO, tocItemList);
+        coverPageScreen.showRevision(revisionContent, contributionVO, tocItemList, permissionsForRevision);
     }
 
     private List<TocItem> getTocITems(Proposal proposal) {

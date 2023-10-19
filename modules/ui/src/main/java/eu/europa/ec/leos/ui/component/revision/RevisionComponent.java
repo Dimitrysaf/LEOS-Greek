@@ -32,6 +32,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.ui.component.LeosDisplayField;
 import eu.europa.ec.leos.ui.component.navigation.NavigationHelper;
@@ -46,6 +47,7 @@ import eu.europa.ec.leos.ui.extension.SliderPinsExtension;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
 import eu.europa.ec.leos.web.event.component.NavigationRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.ComparisonEvent;
+import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsRequest;
 import eu.europa.ec.leos.web.ui.component.ContentPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,11 +81,16 @@ public class RevisionComponent<T extends XmlDocument> extends CustomComponent im
     private int contributionSelection = 0;
     private String acceptSelectedChanges;
     private String acceptAllOption;
+    private List<LeosPermission> permissionsForRevision;
+    private List<LeosPermission> permissionsForOriginal;
 
-    public RevisionComponent(EventBus eventBus, MessageHelper messageHelper, SecurityContext securityContext) {
+    public RevisionComponent(EventBus eventBus, MessageHelper messageHelper, SecurityContext securityContext,
+                             List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
         this.eventBus = eventBus;
         this.messageHelper = messageHelper;
         this.securityContext = securityContext;
+        this.permissionsForRevision = permissionsForRevision;
+        this.permissionsForOriginal = permissionsForOriginal;
 
         setSizeFull();
         VerticalLayout revisionLayout = new VerticalLayout();
@@ -321,7 +328,11 @@ public class RevisionComponent<T extends XmlDocument> extends CustomComponent im
         scrollPaneExtension.getState().containerSelector = ".leos-revision-content";
         SliderPinsExtension<LeosDisplayField> sliderPins = new SliderPinsExtension<>(revisionContent, getSelectorStyleMap());
         NavigationHelper navHelper = new NavigationHelper(sliderPins);
-        new MergeContributionExtension<>(revisionContent, eventBus);
+        MergeContributionExtension mergeContributionExtension = new MergeContributionExtension<>(revisionContent, eventBus);
+        mergeContributionExtension.getState().canAccept = permissionsForRevision.stream()
+                .anyMatch(leosPermission -> leosPermission.equals(LeosPermission.CAN_ACCEPT_CHANGES));
+        mergeContributionExtension.getState().canReject = permissionsForRevision.stream()
+                .anyMatch(leosPermission -> leosPermission.equals(LeosPermission.CAN_REJECT_CHANGES));
         this.eventBus.register(navHelper);//Registering helper object to eventBus. Presently this method is called only once if multiple invocation occurs in future will need to unregister the object on close of document.
         return revisionContent;
     }
