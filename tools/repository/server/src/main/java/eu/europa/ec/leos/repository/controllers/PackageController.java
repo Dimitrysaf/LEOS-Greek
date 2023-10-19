@@ -103,6 +103,18 @@ public class PackageController {
         return ResponseEntity.ok(pkg);
     }
 
+    @GetMapping(path = "/package/find-by-document-id/{id}")
+    @Operation(summary = "Get a Package by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<Object> getPackageByDocumentId(@PathVariable("id") String id) throws RepositoryException{
+        Package pkg = packageService.findPackageByDocumentVersionId(id);
+        pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"Error while searching for a package");
+        return ResponseEntity.ok(pkg);
+    }
+
+
     @GetMapping(path = "/package/find-by-id/{id}")
     @Operation(summary = "Get a Package by id")
     @ApiResponses(value = {
@@ -161,7 +173,7 @@ public class PackageController {
         return ResponseEntity.ok(xmlDocs);
     }
 
-    @GetMapping(path = "/package/find-by-document-id/{docRef}")
+    @GetMapping(path = "/package/find-by-document-ref/{docRef}")
     @Operation(summary = "Get a Package by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),

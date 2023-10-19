@@ -1155,12 +1155,8 @@ public class LegServiceImpl implements LegService {
     @Override
     public LegDocument findLegDocumentByAnyDocumentIdAndJobId(String documentId, String jobId) {
         LOG.trace("Finding Leg Document by proposal id and job id... [proposalId={}, jobId={}]", documentId, jobId);
-        LeosPackage leosPackage = packageRepository.findPackageByDocumentId(documentId);
-        List<LegDocument> legDocuments = packageRepository.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
-        return legDocuments.stream()
-                .filter(legDocument -> jobId.equals(legDocument.getJobId()))
-                .findAny()
-                .orElse(null);
+        LegDocument legDocument = packageRepository.findLegDocumentById(documentId, true);
+        return legDocument;
     }
 
     @Override

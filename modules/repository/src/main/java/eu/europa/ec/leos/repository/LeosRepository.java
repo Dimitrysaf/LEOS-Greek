@@ -290,6 +290,14 @@ public interface LeosRepository {
     /**
      * Finds a [LeosPackage] with the specified characteristics.
      *
+     * @param packageId the ID of the package.
+     * @return the found package.
+     */
+    LeosPackage findPackageByPackageId(String packageId);
+
+    /**
+     * Finds a [LeosPackage] with the specified characteristics.
+     *
      * @param documentRef the doc ref of a document inside the package.
      * @param type the type class of the document.
      * @return the found package.

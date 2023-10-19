@@ -37,4 +37,6 @@ public interface PackageService {
     long getDocumentCountByPackageName(final String packageName, Set<String> categories);
 
     eu.europa.ec.leos.repository.model.Package findPackageByDocumentRef(String documentRefId) throws RepositoryException;
+
+    eu.europa.ec.leos.repository.model.Package findPackageByDocumentVersionId(String versionId) throws RepositoryException;
 }

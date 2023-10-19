@@ -26,6 +26,7 @@ import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,22 +82,32 @@ public class PackageServiceImpl implements PackageService {
             return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
     }
 
+    @Cacheable(cacheNames = "getPackageByName", key = "{#name}")
     public eu.europa.ec.leos.repository.model.Package getPackageByName(final String name) throws RepositoryException {
         Package pkg =
                 packageRepository.findPackageByName(name).orElse(null);
         return ConversionUtils.buildPackage(pkg, collaboratorsService);
     }
 
+    @Cacheable(cacheNames = "getPackageById", key = "#id")
     public eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException {
         try {
-            Optional<Package> pkg =
-                    packageRepository.findPackageByDocumentVersionId(new BigDecimal(id));
+            Optional<Package> pkg = packageRepository.findById(new BigDecimal(id));
             return ConversionUtils.buildPackage(pkg.get(), collaboratorsService);
         } catch (Exception e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
         }
     }
 
+    @Override
+    public eu.europa.ec.leos.repository.model.Package findPackageByDocumentVersionId(String versionId) throws RepositoryException {
+        try {
+            Optional<Package> pkg = packageRepository.findPackageByDocumentVersionId(new BigDecimal(versionId));
+            return ConversionUtils.buildPackage(pkg.get(), collaboratorsService);
+        } catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
+        }
+    }
 
     @Transactional(rollbackFor = Exception.class)
     public void deletePackage(final String packageName) throws RepositoryException {
