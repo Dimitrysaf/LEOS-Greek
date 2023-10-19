@@ -502,6 +502,7 @@ public class LegServiceImpl implements LegService {
                     xmlContent = getComparedContent(exportOptions);
                 } else {
                     xmlContent = xmlContentProcessor.cleanSoftActions(memorandum.getContent().get().getSource().getBytes());
+                    xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
                 }
                 enrichZipWithMemorandum(contentToZip, exportProposalResource, proposalRefsMap, memorandum, proposal.getMetadata().getOrNull().getRef(), xmlContent);
                 legPackage.addContainedFile(memorandum.getVersionedReference());
@@ -513,6 +514,7 @@ public class LegServiceImpl implements LegService {
                     xmlContent = getComparedContent(exportOptions);
                 } else {
                     xmlContent = xmlContentProcessor.cleanSoftActions(bill.getContent().get().getSource().getBytes());
+                    xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
                 }
                 if (exportOptions.isWithRelevantElements()) {
                     structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
@@ -538,6 +540,7 @@ public class LegServiceImpl implements LegService {
                     xmlContent = getComparedContent(exportOptions);
                 } else {
                     xmlContent = xmlContentProcessor.cleanSoftActions(financialStatement.getContent().get().getSource().getBytes());
+                    xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
                 }
                 enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement,
                         proposal.getMetadata().getOrNull().getRef(), xmlContent);
@@ -915,6 +918,7 @@ public class LegServiceImpl implements LegService {
             xmlContent = getComparedContent(exportOptions);
         } else if(exportOptions.isCleanVersion()){
             xmlContent = xmlContentProcessor.cleanSoftActions(annex.getContent().get().getSource().getBytes());
+            xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         } else {
             xmlContent = annex.getContent().get().getSource().getBytes();
             xmlContent = addMetadataToAnnex(annex, xmlContent);
@@ -951,6 +955,7 @@ public class LegServiceImpl implements LegService {
             xmlContent = getComparedContent(exportOptions);
         } else if(exportOptions.isCleanVersion()){
             xmlContent = xmlContentProcessor.cleanSoftActions(explanatory.getContent().get().getSource().getBytes());
+            xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         } else {
             xmlContent = explanatory.getContent().get().getSource().getBytes();
             xmlContent = addMetadataToExplanatory(explanatory, xmlContent);
@@ -1492,6 +1497,7 @@ public class LegServiceImpl implements LegService {
             xmlContent = XmlHelper.cleanDiffingClassesForTag(xmlContent, XmlHelper.PREFACE, Arrays.asList(CONTENT_ADDED_CLASS, CONTENT_REMOVED_CLASS));
         } else if (exportOptions.isCleanVersion()) {
             xmlContent = xmlContentProcessor.cleanSoftActions(xmlContent);
+            xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         }
         xmlContent = addMetadataToBill(bill, xmlContent);
 
@@ -1605,6 +1611,7 @@ public class LegServiceImpl implements LegService {
             xmlContent = simpleCompareXmlContentsForClone(originalAnnex, annex).getBytes(UTF_8);
         } else if (exportOptions.isCleanVersion()) {
             xmlContent = xmlContentProcessor.cleanSoftActions(xmlContent);
+            xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         }
         xmlContent = addMetadataToAnnexWithoutPreface(annex, xmlContent);
 
@@ -1653,6 +1660,7 @@ public class LegServiceImpl implements LegService {
             xmlContent = simpleCompareXmlContentsForClone(originalMemorandum, memorandum).getBytes(UTF_8);
         } else if (exportOptions.isCleanVersion()) {
             xmlContent = xmlContentProcessor.cleanSoftActions(xmlContent);
+            xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         }
         xmlContent = addMetadataToMemorandum(memorandum, xmlContent);
 

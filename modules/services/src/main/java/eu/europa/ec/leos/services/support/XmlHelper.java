@@ -147,11 +147,17 @@ public class XmlHelper {
     public static final String LEOS_ACTION_ATTR = "leos:action";
     public static final String LEOS_TC_ORIGINAL_NUMBER = "leos:tc-original-number";
     public static final String LEOS_ACTION_ENTER = "leos:action-enter";
+    public static final String LEOS_UID_ENTER = "leos:uid-enter";
+    public static final String LEOS_TITLE_ENTER = "leos:title-enter";
     public static final String LEOS_ACTION_NUMBER = "leos:action-number";
+    public static final String LEOS_UID_NUMBER = "leos:uid-number";
+    public static final String LEOS_TITLE_NUMBER = "leos:title-number";
     public static final String LEOS_TC_INSERT_ACTION = "insert";
     public static final String LEOS_TC_DELETE_ACTION = "delete";
     public static final String LEOS_TC_MOVE_ACTION = "move";
     public static final String LEOS_TC_MOVE_TO_ORIGIN_ACTION = "move-to-origin";
+    public static final String LEOS_TC_DELETE_ELEMENT_NAME = "del";
+    public static final String LEOS_TC_INSERT_ELEMENT_NAME = "ins";
     public static final String LEOS_LIST_TYPE_ATTR = "leos:list-type";
     public static final String LEOS_CROSSHEADING_TYPE = "leos:crossheading-type";
 
