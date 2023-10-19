@@ -12,7 +12,7 @@ import {
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {Subject, takeUntil} from 'rxjs';
+import {Subject, combineLatest, takeUntil} from 'rxjs';
 
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';
@@ -35,6 +35,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   exportVersionVisible = false;
   exportVersionWithAnnotationsVisible = false;
   exportCleanVersionVisible = false;
+  showCleanVersionVisible = false;
   exportEConsiliumVisible = false;
   importVisible = false;
   toggleUserGuidanceVisible = false;
@@ -66,12 +67,11 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.doc.documentConfig$
+    combineLatest([this.doc.documentConfig$, this.doc.permissions$])
       .pipe(takeUntil(this.destroy$))
-      .subscribe((config) => {
-        this.documentConfig = config;
+      .subscribe(([config, perms]) => {
+        this.setMenuState(config, perms);
       });
-    this.doc.permissions$.subscribe((perms) => this.setMenuState(perms));
   }
 
   handleAnnexStructureChange() {
@@ -81,6 +81,10 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
   toggleSeeTrackChanges() {
     this.seeTrackChanges = !this.seeTrackChanges;
     this.ckEditorService.changeSeeTrackChangesState();
+  }
+
+  showCleanVersion() {
+    this.doc.showCleanVersion();
   }
 
   toggleTrackChangesEnabled() {
@@ -104,7 +108,8 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
     });
   }
 
-  setMenuState(permissions: Permission[]) {
+  setMenuState(config: DocumentConfig, permissions: Permission[]) {
+    this.documentConfig = config;
     const isClonedProposal = this.documentConfig.clonedProposal;
 
     const isCN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
@@ -133,5 +138,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
     this.renumberDocumentVisible = (isMandateAnnex || isMandateDocument) && CAN_RENUMBER;
     this.seeTrackChanges = this.documentConfig.trackChangesShowed;
     this.canActivateTrackChanges = !isClonedProposal && CAN_ACTIVATE_TRACK_CHANGES;
+    this.exportCleanVersionVisible = isCN || isClonedProposal;
+    this.showCleanVersionVisible = isCN || isClonedProposal;
   }
 }

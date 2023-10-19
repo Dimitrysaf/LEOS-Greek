@@ -17,6 +17,11 @@ public class DocumentViewResponse {
         this.temporaryDataDocument = temporaryDataDocument;
     }
 
+    public DocumentViewResponse(String editableXml, VersionInfoVO versionInfoVO) {
+        this.editableXml = editableXml;
+        this.versionInfoVO = versionInfoVO;
+    }
+
     public String getProposalRef() {
         return proposalRef;
     }

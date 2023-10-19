@@ -80,6 +80,7 @@ export class DocumentService implements OnDestroy {
   documentView$: Observable<DocumentViewResponse | null>;
   didDocumentLoadAndRender$: Observable<boolean>;
   versionView$: Observable<DocumentViewResponse | null>;
+  cleanVersionView$: Observable<DocumentViewResponse | null>;
   versionCompareView$: Observable<string>;
   searchPaneOpen$: Observable<boolean>;
   searchParams$: Observable<DocumentSearchParams>;
@@ -156,6 +157,7 @@ export class DocumentService implements OnDestroy {
   private contributionViewAndMergeCollapsedBS = new BehaviorSubject<boolean>(
     true,
   );
+  private cleanVersionViewBS = new BehaviorSubject<DocumentViewResponse | null>(null);
   /* 1-indexed */
   private annexDocNumber = 0;
   private isClonedProposalBS = new BehaviorSubject<boolean>(false);
@@ -328,6 +330,7 @@ export class DocumentService implements OnDestroy {
     this.contributionViewAndMergeCollapsed$ =
       this.contributionViewAndMergeCollapsedBS.asObservable();
     this.isEditorOpen$ = this.isEditorOpenBS.asObservable();
+    this.cleanVersionView$ = this.cleanVersionViewBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -371,6 +374,15 @@ export class DocumentService implements OnDestroy {
         },
       )
       .subscribe((resp) => this.handleDownloadResponse(resp));
+  }
+
+  showCleanVersion() {
+    const documentType = this.documentType;
+    const documentRef = this.documentRef;
+
+    this.http.get<DocumentViewResponse>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/clean-version`,
+    ).subscribe((resp) => this.cleanVersionViewBS.next(resp));
   }
 
   async downloadEConsilium(options: DownloadEConsiliumOptions) {

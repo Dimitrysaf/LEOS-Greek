@@ -312,11 +312,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public ShowCleanVersionResponse showCleanVersion(String documentRef) {
+    public DocumentViewResponse showCleanVersion(String documentRef) {
         final Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         final String versionContent = documentContentService.getCleanDocumentAsHtml(memorandum, "", securityContext.getPermissions(memorandum));
-        final String versionInfo = getVersionInfoAsString(memorandum);
-        return new ShowCleanVersionResponse(versionContent, versionInfo);
+        VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(memorandum);
+        return new DocumentViewResponse(versionContent, versionInfoVO);
     }
 
     @Override

@@ -286,11 +286,11 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Subscribe
-    public ShowCleanVersionResponse showCleanVersion(String documentRef) {
+    public DocumentViewResponse showCleanVersion(String documentRef) {
         final Bill bill = billService.findBillByRef(documentRef);
         final String versionContent = documentContentService.getCleanDocumentAsHtml(bill, "", securityContext.getPermissions(bill));
-        final String versionInfo = getVersionInfoAsString(bill);
-        return new ShowCleanVersionResponse(versionContent, versionInfo);
+        VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(bill);
+        return new DocumentViewResponse(versionContent, versionInfoVO);
     }
 
     @Override

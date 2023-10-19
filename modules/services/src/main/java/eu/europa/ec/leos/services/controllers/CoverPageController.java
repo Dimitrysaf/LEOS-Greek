@@ -407,11 +407,11 @@ public class CoverPageController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/{documentRef}/clean-version", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
         try {
-            ShowCleanVersionResponse cleanVersion = this.coverPageApiService.showCleanVersion(documentRef);
+            DocumentViewResponse cleanVersion = this.coverPageApiService.showCleanVersion(documentRef);
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for coverPage " + e.getMessage());

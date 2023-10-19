@@ -377,11 +377,11 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public ShowCleanVersionResponse showCleanVersion(String documentRef) {
+    public DocumentViewResponse showCleanVersion(String documentRef) {
         final Annex annex = this.annexService.findAnnexByRef(documentRef);
         final String versionContent = documentContentService.getCleanDocumentAsHtml(annex, "", securityContext.getPermissions(annex));
-        final String versionInfo = getVersionInfoAsString(annex);
-        return new ShowCleanVersionResponse(versionContent, versionInfo);
+        VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(annex);
+        return new DocumentViewResponse(versionContent, versionInfoVO);
     }
 
     @Override

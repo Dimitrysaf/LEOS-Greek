@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
+import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
@@ -27,6 +28,8 @@ import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.exception.NotFoundException;
+
+import eu.europa.ec.leos.services.export.*;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.FinancialStatementProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -53,13 +56,17 @@ import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.vo.toc.TocItemType;
 import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Option;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class GenericDocumentApiService {
+    private static final Logger LOG = LoggerFactory.getLogger(GenericDocumentApiService.class);
 
     private static final Map<LeosCategory, String> DOCUMENT_TOC_STARTING_NODE = new HashMap<LeosCategory, String>() {{
         this.put(LeosCategory.BILL, "bill");
@@ -70,6 +77,8 @@ public class GenericDocumentApiService {
         this.put(LeosCategory.COUNCIL_EXPLANATORY, "doc");
         this.put(LeosCategory.COVERPAGE, "coverPage");
     }};
+
+    private static final String PROPOSAL = "Proposal_";
 
     private final LeosRepository leosRepository;
     private final TableOfContentProcessor tableOfContentProcessor;
@@ -92,6 +101,7 @@ public class GenericDocumentApiService {
     private final LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
     private final DocumentVOProvider documentVOProvider;
     private final ComparisonDelegateAPI<XmlDocument> comparisonDelegate;
+    private final ExportService exportService;
 
     public GenericDocumentApiService(@NotNull LeosRepository leosRepository,
                                      @NotNull TableOfContentProcessor tableOfContentProcessor,
@@ -113,7 +123,8 @@ public class GenericDocumentApiService {
                                      @NotNull UserHelper userHelper,
                                      @NotNull LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper,
                                      @NotNull DocumentVOProvider documentVOProvider,
-                                     @NotNull ComparisonDelegateAPI<XmlDocument> comparisonDelegate) {
+                                     @NotNull ComparisonDelegateAPI<XmlDocument> comparisonDelegate,
+                                     @NotNull ExportService exportService) {
         this.leosRepository = Objects.requireNonNull(leosRepository);
         this.tableOfContentProcessor = Objects.requireNonNull(tableOfContentProcessor);
         this.elementProcessor = Objects.requireNonNull(elementProcessor);
@@ -135,6 +146,7 @@ public class GenericDocumentApiService {
         this.leosPermissionAuthorityMapHelper = Objects.requireNonNull(leosPermissionAuthorityMapHelper);
         this.documentVOProvider = Objects.requireNonNull(documentVOProvider);
         this.comparisonDelegate = Objects.requireNonNull(comparisonDelegate);
+        this.exportService = exportService;
     }
 
     public DocumentViewResponse getDocumentByRef(@NotNull String docRef) throws NotFoundException {
@@ -208,6 +220,43 @@ public class GenericDocumentApiService {
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(document);
         String reference = this.getDocReference(document);
         return new DocumentViewResponse(reference, versionContent, versionInfoVO, null, null);
+    }
+
+    public DocumentViewResponse showCleanVersion(String documentRef) {
+        final XmlDocument document = this.findDocumentByRef(documentRef);
+        final String versionContent = documentContentService.getCleanDocumentAsHtml(document, "", securityContext.getPermissions(document));
+        VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(document);
+        return new DocumentViewResponse(versionContent, versionInfoVO);
+    }
+
+    public byte[] downloadCleanVersion(String documentRef) {
+        byte[] cleanVersion = new byte[0];
+        FinancialStatement document = this.findDocumentByRef(FinancialStatement.class, documentRef);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Proposal proposal = this.documentViewService.getProposalFromPackage(document);
+        String proposalId = proposal.getId();
+        CloneContext cloneContext = getCloneContext();
+        if (cloneContext != null && cloneContext.isClonedProposal()) {
+            try {
+                final String jobFileName = PROPOSAL + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".docx";
+                ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, FinancialStatement.class, false, true);
+                exportOptions.setExportVersions(new ExportVersions(null, document));
+                exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while using ExportService", e);
+            }
+        } else {
+            try {
+                final String jobFileName = PROPOSAL + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
+                ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, FinancialStatement.class, false, true);
+                exportOptions.setExportVersions(new ExportVersions<FinancialStatement>(null, document));
+                cleanVersion = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
+            } catch (Exception e) {
+                LOG.error("Unexpected error occurred while using ExportService", e);
+            }
+        }
+        LOG.info("The actual version of CLEANED FinancialStatement for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        return cleanVersion;
     }
 
     public List<VersionVO> getVersionsData(@NotNull String docRef) {

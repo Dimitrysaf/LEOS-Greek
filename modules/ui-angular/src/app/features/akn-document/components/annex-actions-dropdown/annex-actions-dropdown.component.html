@@ -50,6 +50,17 @@
             translate="page.editor.actions-dropdown.export-clean-version"
           ></button>
         </li>
+        <!-- Show clean version -->
+        <li
+          euiListItem
+          (click)="showCleanVersion()"
+          *ngIf="showCleanVersionVisible"
+        >
+          <button
+            euiListItem
+            translate="page.editor.actions-dropdown.show-clean-version"
+          ></button>
+        </li>
         <!-- Export to eConsilium -->
         <li
           euiListItem
