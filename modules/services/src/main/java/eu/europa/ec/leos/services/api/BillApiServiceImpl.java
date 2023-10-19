@@ -30,6 +30,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.model.action.CheckinElement;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
@@ -63,6 +64,7 @@ import eu.europa.ec.leos.services.importoj.ImportService;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.processor.BillProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.processor.TrackChangesProcessor;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -131,6 +133,8 @@ public class BillApiServiceImpl implements BillApiService {
     UserService userService;
     @Autowired
     ElementProcessor<Bill> elementProcessor;
+    @Autowired
+    TrackChangesProcessor<Bill> trackChangesProcessor;
     @Autowired
     TemplateConfigurationService templateConfigurationService;
     @Autowired
@@ -360,6 +364,44 @@ public class BillApiServiceImpl implements BillApiService {
         // KLUGE temporary hack for compatibility with new domain model
         Bill bill = this.billService.findBillByRef(documentRef);
         return templateConfigurationService.getTemplateConfiguration(bill.getMetadata().get().getDocTemplate(), "guidance");
+    }
+
+    @Override
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception {
+        String op = "accepted";
+        String msg = "operation.element.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
+
+        Bill bill = this.billService.findBillByRef(documentRef);
+        this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
+        this.populateCloneProposalMetadata(bill);
+
+        byte[] newXmlContent = trackChangesProcessor.acceptChange(bill, elementId, elementTagName, trackChangeAction);
+        newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
+
+        final String updatedLabel = generateLabel(elementId, bill);
+        final String comment = messageHelper.getMessage(msg, updatedLabel);
+        bill = billService.updateBill(bill, newXmlContent, comment);
+
+        return documentViewService.updateDocumentView(bill);
+    }
+
+    @Override
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,TrackChangeActionType trackChangeAction) throws Exception {
+        String op = "rejected";
+        String msg = "operation.element.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
+
+        Bill bill = this.billService.findBillByRef(documentRef);
+        this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
+        this.populateCloneProposalMetadata(bill);
+
+        byte[] newXmlContent = trackChangesProcessor.rejectChange(bill, elementId, elementTagName, trackChangeAction);
+        newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
+
+        final String updatedLabel = generateLabel(elementId, bill);
+        final String comment = messageHelper.getMessage(msg, updatedLabel);
+        bill = billService.updateBill(bill, newXmlContent, comment);
+
+        return documentViewService.updateDocumentView(bill);
     }
 
     @Override

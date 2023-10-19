@@ -27,6 +27,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
@@ -73,6 +74,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import javax.transaction.NotSupportedException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -382,6 +384,16 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         // KLUGE temporary hack for compatibility with new domain model
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
         return templateConfigurationService.getTemplateConfiguration(proposal.getMetadata().get().getDocTemplate(), "guidance");
+    }
+
+    @Override
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception {
+        throw new UnsupportedOperationException("Accept change isn't supported for cover page");
+    }
+
+    @Override
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception {
+        throw new UnsupportedOperationException("Accept change isn't supported for cover page");
     }
 
     private String getVersionInfoAsString(XmlDocument document) {

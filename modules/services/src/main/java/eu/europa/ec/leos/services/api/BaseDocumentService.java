@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -97,6 +98,10 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     String fetchUserGuidance(String documentRef);
 
+    DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception;
+
+    DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception;
+
     default Map<String, Attribute> getArticleTypesAttributes(List<TocItem> tocItems) {
         Map<String, Attribute> articleTypesAttributes = new HashMap<>();
         List<TocItemType> tocItemTypes = StructureConfigUtils.getTocItemTypesByTagName(tocItems, XmlHelper.ARTICLE);
@@ -123,6 +128,4 @@ public interface BaseDocumentService<T extends XmlDocument> {
         final Content content = document.getContent().getOrError(() -> "Document content is required!");
         return content.getSource().getBytes();
     }
-
-
 }

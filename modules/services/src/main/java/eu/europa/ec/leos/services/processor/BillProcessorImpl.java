@@ -39,6 +39,7 @@ import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
+import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLAUSE;
 import static eu.europa.ec.leos.services.support.XmlHelper.ID_PLACEHOLDER;
@@ -49,10 +50,13 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static org.apache.commons.lang3.StringUtils.replaceAll;
 
 @Service
@@ -357,6 +361,13 @@ public class BillProcessorImpl implements BillProcessor {
     public byte[] removeDeletedElements(byte[] docContent) {
         String xPath = "//*[@" + LEOS_SOFT_ACTION_ATTR + "=\"del\"]";
         return xmlContentProcessor.removeElements(docContent, xPath);
+    }
+
+    @Override
+    public byte[] renumberingAndPostProcessing(byte[] docContent) {
+        byte [] updatedContent = numberService.renumberRecitals(docContent);
+        updatedContent = numberService.renumberArticles(updatedContent);
+        return xmlContentProcessor.doXMLPostProcessing(updatedContent);
     }
 
     private byte[] getContent(Bill document) {

@@ -7,6 +7,7 @@ export const MOVE_FROM = 'MOVE_FROM';
 export const ADD = 'ADD';
 export const DELETE = 'DELETE';
 export const UNDELETE = 'UNDELETE';
+export const LEOS_TC_INSERT_ACTION = 'insert';
 export const LEOS_TC_DELETE_ACTION = 'delete';
 export const LS = 'ls';
 export const EC = 'ec';
