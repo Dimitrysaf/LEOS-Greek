@@ -22,6 +22,7 @@ public class UpdateDocumentRequest implements Serializable {
     private String userId;
     private Map<String, ?> metadata;
     private VersionType versionType;
+    private String category;
     private byte[] content;
     private String comments;
 
@@ -47,6 +48,14 @@ public class UpdateDocumentRequest implements Serializable {
 
     public void setVersionType(VersionType versionType) {
         this.versionType = versionType;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public byte[] getContent() {

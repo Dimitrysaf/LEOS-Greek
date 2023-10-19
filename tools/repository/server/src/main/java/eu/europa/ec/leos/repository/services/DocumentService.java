@@ -31,7 +31,7 @@ public interface DocumentService {
                                         final String labelVersion, int versionType, String comments, String userId) throws RepositoryException;
 
     LeosDocument updateDocument(final String versionId, Map<String, ?> properties,
-                            VersionType versionType, byte[] contentBytes, String comments, String userId) throws Exception;
+            VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception;
 
     LeosDocument updateDocument(String ref, final String versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception;
 

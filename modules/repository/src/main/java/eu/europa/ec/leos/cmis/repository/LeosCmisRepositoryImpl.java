@@ -560,6 +560,10 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         throw new IllegalStateException("Package not found! [documentId=" + documentId + ']');
     }
 
+    public LeosPackage findPackageByPackageId(String packageId) {
+        return null;
+    }
+
     @Override
     public <D extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends D> type) {
         logger.trace("Finding package by document ref... [documentRef=" + documentRef + ']');

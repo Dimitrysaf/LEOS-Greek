@@ -107,6 +107,15 @@ public interface PackageRepository {
      */
     LeosPackage findPackageByDocumentId(String documentId);
 
+
+    /**
+     * Finds a [LeosPackage] with the specified characteristics.
+     *
+     * @param packageId the ID of the package.
+     * @return the found package.
+     */
+    LeosPackage findPackageByPackageId(String packageId);
+
     /**
      * Finds a [LeosPackage] with the specified characteristics.
      *

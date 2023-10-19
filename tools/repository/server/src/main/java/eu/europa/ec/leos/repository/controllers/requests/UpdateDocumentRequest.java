@@ -28,6 +28,8 @@ public class UpdateDocumentRequest implements Serializable {
     private Map<String, ?> metadata;
     @NotNull(message = "Document version's type cannot be null")
     private VersionType versionType;
+    @NotNull(message = "Document category cannot be null")
+    private String category;
     @Null(groups = OnUpdateWithoutContent.class)
     @NotNull(groups = OnUpdateWithContent.class)
     private byte[] content;
@@ -56,6 +58,14 @@ public class UpdateDocumentRequest implements Serializable {
 
     public void setVersionType(VersionType versionType) {
         this.versionType = versionType;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public byte[] getContent() {

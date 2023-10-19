@@ -68,6 +68,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestFindPackageByNameURI;
     @Value("${leos.rest.repository.find.package.id.uri}")
     private String leosRestFindPackageByIdURI;
+    @Value("${leos.rest.repository.find.package.document.id.uri}")
+    private String leosRestFindPackageByDocumentIdURI;
     @Value("${leos.rest.repository.find.documents.package.name.uri}")
     private String leosRestFindDocumentsbyPackageNameURI;
     @Value("${leos.rest.repository.find.documents.package.id.uri}")
@@ -108,7 +110,7 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestFindDocumentsByUserIdURI;
     @Value("${leos.rest.repository.count.all.minors.intermediate}")
     private String leosRestGetAllMinorsCountForIntermediateURI;
-    @Value("${leos.rest.repository.find.package.by.document.id.uri}")
+    @Value("${leos.rest.repository.find.package.by.document.ref.uri}")
     private String leosRestFindPackageByDocumentRefURI;
     @Value("${leos.rest.repository.archive.document}")
     private String leosRestArchiveDocumentURI;
@@ -207,12 +209,13 @@ public class RestRepository extends AbstractRestClient {
     }
 
     public LeosDocument updateDocument(String versionId, Map<String, ?> properties, byte[] updatedDocumentBytes,
-                                       VersionType versionType, String comment, String userId) {
+            VersionType versionType, String category, String comment, String userId) {
         LOGGER.trace("Updating document properties and content... [ref={}]", versionId);
         UpdateDocumentRequest updateDocumentRequest = new UpdateDocumentRequest();
         updateDocumentRequest.setContent(updatedDocumentBytes);
         updateDocumentRequest.setMetadata(properties);
         updateDocumentRequest.setVersionType(versionType);
+        updateDocumentRequest.setCategory(category);
         updateDocumentRequest.setComments(comment);
         updateDocumentRequest.setUserId(userId);
 
@@ -290,6 +293,12 @@ public class RestRepository extends AbstractRestClient {
     }
 
     Package findPackageByDocumentId(String id) {
+        String url = getUrl(leosRestFindPackageByDocumentIdURI);
+        Package resp = getEntity(url, Package.class, id);
+        return resp;
+    }
+
+    Package findPackageByPackageId(String id) {
         String url = getUrl(leosRestFindPackageByIdURI);
         Package resp = getEntity(url, Package.class, id);
         return resp;

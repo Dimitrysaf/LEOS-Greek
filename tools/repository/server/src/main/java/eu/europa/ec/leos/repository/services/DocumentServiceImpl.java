@@ -214,40 +214,45 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Transactional(rollbackFor = Exception.class)
     public LeosDocument updateDocument(final String versionId, Map<String, ?> metadata,
-                                    VersionType versionType, byte[] contentBytes, String comments, String userId) throws Exception {
-        boolean isMajor = !versionType.equals(VersionType.MINOR);
-        Optional<DocumentV> docView = documentVRepository.findVersionByVersionId(new BigDecimal(versionId));
+            VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception {
 
-        if (!docView.isPresent()) {
-            Document doc = documentRepository.findDocumentByDocumentId(new BigDecimal(versionId)).orElseThrow(() ->
-                    new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
-            return milestoneDocumentService.updateMilestone(doc, contentBytes, metadata, userId);
+        switch (category) {
+            case "LEG":
+            case "EXPORT":
+                Optional<LeosDocument> leosDoc = milestoneDocumentService.findMilestoneById(versionId);
+                Document legDoc = documentRepository.findDocumentByRef(leosDoc.get().getRef()).orElseThrow(() ->
+                        new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
+                    return milestoneDocumentService.updateMilestone(legDoc, contentBytes, metadata, userId);
+
+            default:
+                boolean isMajor = !versionType.equals(VersionType.MINOR);
+                Optional<DocumentV> docView = documentVRepository.findVersionByVersionId(new BigDecimal(versionId));
+                Document doc = documentRepository.findDocumentByRef(docView.get().getRef()).orElseThrow(() ->
+                        new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
+
+                String labelVersion = getNextVersionLabel(versionType, docView.get().getVersionLabel());
+
+                Optional<DocumentVersion> latestVersion = documentVersionRepository.findLastVersionByDocumentId(doc.getId());
+                Optional<DocumentVersion> latestMajorVersion = Optional.empty();
+                if (isMajor) {
+                    latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
+                }
+
+                Pair<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId);
+                doc = updateDocumentMetadata(doc, docs.getValue(), (Map<String, Object>) metadata, userId);
+
+                if (latestVersion.isPresent()) {
+                    latestVersion.get().setIsLatestVersion(false);
+                    documentVersionRepository.save(latestVersion.get());
+                }
+                if (latestMajorVersion.isPresent()) {
+                    latestMajorVersion.get().setIsLatestMajorVersion(false);
+                    documentVersionRepository.save(latestMajorVersion.get());
+                }
+
+                return ConversionUtils.buildXmlDocument(doc, docs.getValue(), docs.getKey(), collaboratorsService, documentPropertyValuesRepository);
         }
 
-        Document doc = documentRepository.findDocumentByRef(docView.get().getRef()).orElseThrow(() ->
-                new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
-
-        String labelVersion = getNextVersionLabel(versionType, docView.get().getVersionLabel());
-
-        Optional<DocumentVersion> latestVersion = documentVersionRepository.findLastVersionByDocumentId(doc.getId());
-        Optional<DocumentVersion> latestMajorVersion = Optional.empty();
-        if (isMajor) {
-            latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
-        }
-
-        Pair<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId);
-        doc = updateDocumentMetadata(doc, docs.getValue(), (Map<String, Object>) metadata, userId);
-
-        if (latestVersion.isPresent()) {
-            latestVersion.get().setIsLatestVersion(false);
-            documentVersionRepository.save(latestVersion.get());
-        }
-        if (latestMajorVersion.isPresent()) {
-            latestMajorVersion.get().setIsLatestMajorVersion(false);
-            documentVersionRepository.save(latestMajorVersion.get());
-        }
-
-        return ConversionUtils.buildXmlDocument(doc, docs.getValue(), docs.getKey(), collaboratorsService, documentPropertyValuesRepository);
     }
 
     @Transactional(rollbackFor = Exception.class)
