@@ -217,7 +217,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         List<VersionVO> versions = this.explanatoryService.getAllVersions(explanatory.getId(), documentRef);
         for (VersionVO versionVO : versions) {
             if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentId(explanatory.getId());
+                LeosPackage leosPackage = packageService.findPackageByDocumentRef(explanatory.getMetadata().get().getRef(), Explanatory.class);
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
                 versionVO.setLegFileName(legDocument.getName());
             }
@@ -343,7 +343,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         try {
             Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
             Stopwatch stopwatch = Stopwatch.createStarted();
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(explanatory.getId());
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(explanatory.getMetadata().get().getRef(), Explanatory.class);
             context.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
             String proposalId = proposal.getId();
@@ -455,7 +455,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         try {
             final Explanatory currentDocument = this.explanatoryService.findExplanatoryByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(currentDocument.getId());
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(currentDocument.getMetadata().get().getRef(), Explanatory.class);
             context.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
 

@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.document;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -74,15 +75,15 @@ public class BillRepositoryImpl implements BillRepository {
     }
 
     @Override
-    public Bill updateBill(String id, BillMetadata metadata) {
+    public Bill updateBill(String ref, String id, BillMetadata metadata) {
         logger.debug("Updating Bill metadata... [id=" + id + "]");
-        return leosRepository.updateDocument(id, metadata, Bill.class);
+        return leosRepository.updateDocument(ref, id, metadata, Bill.class);
     }
 
     @Override
-    public Bill updateBill(String id, Map<String, Object> properties, boolean latest) {
+    public Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest) {
         logger.debug("Updating Bill properties... [id=" + id + "]");
-        return leosRepository.updateDocument(id, properties, Bill.class, latest);
+        return leosRepository.updateDocument(ref, id, properties, Bill.class, latest);
     }
 
     @Override
@@ -92,15 +93,15 @@ public class BillRepositoryImpl implements BillRepository {
     }
 
     @Override
-    public Bill updateMilestoneComments(String id, List<String> milestoneComments) {
+    public Bill updateMilestoneComments(String ref, String id, List<String> milestoneComments) {
         logger.debug("Updating Bill milestoneComments... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(id, milestoneComments, Bill.class);
+        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, Bill.class);
     }
 
     @Override
-    public Bill findBillById(String id, boolean latest) {
+    public Bill findBillById(String id, Class<? extends LeosDocument> type, boolean latest) {
         logger.debug("Finding Bill by ID... [id=" + id + ", latest=" + latest + "]");
-        return leosRepository.findDocumentById(id, Bill.class, latest);
+        return (Bill) leosRepository.findDocumentById(id, type, latest);
     }
 
     @Override
@@ -139,13 +140,13 @@ public class BillRepositoryImpl implements BillRepository {
     
     @Override
     public List<Bill> findRecentMinorVersions(String documentId, String documentRef, int startIndex, int maxResults) {
-        Bill bill = leosRepository.findLatestMajorVersionById(Bill.class, documentId);
+        Bill bill = leosRepository.findLatestMajorVersionById(Bill.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersions(Bill.class, documentRef, bill.getCmisVersionLabel(), startIndex, maxResults);
     }
     
     @Override
     public Integer findRecentMinorVersionsCount(String documentId, String documentRef) {
-        Bill bill = leosRepository.findLatestMajorVersionById(Bill.class, documentId);
+        Bill bill = leosRepository.findLatestMajorVersionById(Bill.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersionsCount(Bill.class, documentRef, bill.getCmisVersionLabel());
     }
 

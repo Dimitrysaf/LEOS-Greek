@@ -14,11 +14,12 @@ public final class ExportDocument extends LeosDocument {
     private final Instant initialCreationInstant;
     private final LeosExportStatus status;
     private final List<String> comments;
+    private final String exportRef;
 
     public ExportDocument(String id, String name, String createdBy, Instant creationInstant, String lastModifiedBy,
                           Instant lastModificationInstant, String versionSeriesId, String cmisVersionLabel, String versionLabel, String versionComment,
                           VersionType versionType, boolean isLatestVersion, String initialCreatedBy, Instant initialCreationInstant, Option<Content> content,
-                          LeosExportStatus status, List<String> comments) {
+                          LeosExportStatus status, List<String> comments, String exportRef) {
 
         super(LeosCategory.EXPORT, id, name, createdBy, creationInstant, lastModifiedBy, lastModificationInstant,
                 versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion, content);
@@ -26,17 +27,22 @@ public final class ExportDocument extends LeosDocument {
         this.initialCreationInstant = initialCreationInstant;
         this.status = status;
         this.comments = comments;
+        this.exportRef = exportRef;
     }
 
-    public final String getInitialCreatedBy() {
+    public String getInitialCreatedBy() {
         return this.initialCreatedBy;
     }
 
-    public final Instant getInitialCreationInstant() {
+    public Instant getInitialCreationInstant() {
         return this.initialCreationInstant;
     }
 
-    public final LeosExportStatus getStatus() { return status; }
+    public LeosExportStatus getStatus() { return status; }
 
-    public final List<String> getComments() { return comments; }
+    public List<String> getComments() { return comments; }
+
+    public String getExportRef() {
+        return exportRef;
+    }
 }

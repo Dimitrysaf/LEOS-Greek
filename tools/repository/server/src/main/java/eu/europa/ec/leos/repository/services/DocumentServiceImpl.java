@@ -40,6 +40,7 @@ import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
 import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.slf4j.Logger;
@@ -73,6 +74,7 @@ import static eu.europa.ec.leos.repository.controllers.requests.QueryFilter.getW
 public class DocumentServiceImpl implements DocumentService {
     private static final Logger LOG = LoggerFactory.getLogger( DocumentServiceImpl.class);
     private static final int MAX_RESULT_DEFAULT = 100;
+    private static final String XML_DOC_EXT = ".xml";
 
     private final DocumentRepository documentRepository;
     private final DocumentVRepository documentVRepository;
@@ -197,9 +199,9 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public LeosDocument createDocumentFromSource(final String sourceDocumentName, final String packageName, final String name, Map<String, ?> metadata,
+    public LeosDocument createDocumentFromSource(final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
                                        final String labelVersion, int versionType, String comments, String userId)  throws RepositoryException {
-        LeosDocument template = findTemplateByName(sourceDocumentName);
+        LeosDocument template = findTemplateByName((String) metadata.get("docTemplate"));
         metadata = mergeDocMetadataWithTemplateMetadata(metadata, template);
         return createDocumentFromContent(packageName, name, metadata, labelVersion, versionType, template.getSource(), comments, userId);
     }
@@ -211,19 +213,20 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public LeosDocument updateDocument(final String ref, Map<String, ?> metadata,
+    public LeosDocument updateDocument(final String versionId, Map<String, ?> metadata,
                                     VersionType versionType, byte[] contentBytes, String comments, String userId) throws Exception {
         boolean isMajor = !versionType.equals(VersionType.MINOR);
+        Optional<DocumentV> docView = documentVRepository.findVersionByVersionId(new BigDecimal(versionId));
 
-        Document doc =
-                documentRepository.findDocumentByRef(ref).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
-                        Document.class.getName()));
-
-        Optional<DocumentV> docView =
-                documentVRepository.findDocumentByRef(ref);
         if (!docView.isPresent()) {
+            Document doc = documentRepository.findDocumentByDocumentId(new BigDecimal(versionId)).orElseThrow(() ->
+                    new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
             return milestoneDocumentService.updateMilestone(doc, contentBytes, metadata, userId);
         }
+
+        Document doc = documentRepository.findDocumentByRef(docView.get().getRef()).orElseThrow(() ->
+                new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
+
         String labelVersion = getNextVersionLabel(versionType, docView.get().getVersionLabel());
 
         Optional<DocumentVersion> latestVersion = documentVersionRepository.findLastVersionByDocumentId(doc.getId());
@@ -248,10 +251,10 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public LeosDocument updateDocument(final String ref, final String versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception {
-        Optional<DocumentV> docV = documentVRepository.findVersionByRefAndVersionId(ref, new BigDecimal(Long.parseLong(versionId)));
+    public LeosDocument updateDocument(String ref, final String versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception {
+        Optional<DocumentV> docV = documentVRepository.findVersionByRefAndVersionId(ref, new BigDecimal(versionId));
         if (docV.isPresent()) {
-            DocumentVersion docVersion = documentVersionRepository.findById(new BigDecimal(Long.parseLong(versionId))).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
+            DocumentVersion docVersion = documentVersionRepository.findById(new BigDecimal(versionId)).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                     DocumentVersion.class.getName()));
             if (latest) {
                 docVersion = documentVersionRepository.findLastVersionByDocumentId(docVersion.getDocumentId()).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
@@ -285,7 +288,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Transactional(rollbackFor = Exception.class)
     public void deleteDocumentById(String id) throws RepositoryException {
-        DocumentV docView = documentVRepository.findVersionByVersionId(new BigDecimal(Long.parseLong(id))).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentV.class.getName()));
+        DocumentV docView = documentVRepository.findVersionByVersionId(new BigDecimal(id)).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentV.class.getName()));
         Optional<Document> doc = documentRepository.findById(docView.getDocumentId());
         doc.ifPresent(documentRepository::delete);
         List<DocumentVersion> versions = documentVersionRepository.findAllVersionsByDocumentId(docView.getDocumentId());
@@ -324,15 +327,34 @@ public class DocumentServiceImpl implements DocumentService {
                 docViews.get(0).getPackageId()), documentContentRepository, docViews, false);
     }
 
-    public LeosDocument findDocumentById(final String versionId, final boolean latest) throws RepositoryException {
-        Optional<DocumentV> docView = documentVRepository.findVersionByVersionId(new BigDecimal(Long.parseLong(versionId)));
-        if (docView.isPresent() && latest && !docView.get().isLatestVersion()) {
-            docView = documentVRepository.findLastVersionByDocumentId(docView.get().getDocumentId());
-        } else if (!docView.isPresent()) {
-            return configService.findConfigByVersionId(versionId);
+    public LeosDocument findDocumentById(final String versionId, String category, final boolean latest) throws RepositoryException {
+        Validate.notNull(category, "Method findDocumentById: Document category should not be null");
+        switch (category) {
+            case "CONFIG":
+            case "STRUCTURE":
+            case "TEMPLATE":
+                return configService.findConfigByVersionId(versionId);
+            case "LEG":
+            case "EXPORT":
+                Optional<LeosDocument> leosDocument = milestoneDocumentService.findMilestoneById(versionId);
+                if(!leosDocument.isPresent()) {
+                    throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Document with id - " + versionId + " not found!");
+                }
+                return leosDocument.get();
+            default:
+                Optional<DocumentV> docView = documentVRepository.findDocumentByRef(versionId);
+                if(!docView.isPresent()) {
+                    docView = documentVRepository.findVersionByVersionId(new BigDecimal(versionId));
+                    if(!docView.isPresent()) {
+                        throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Document with id - " + versionId + " not found!");
+                    }
+                }
+                if (docView.isPresent() && latest && !docView.get().isLatestVersion()) {
+                    docView = documentVRepository.findLastVersionByDocumentId(docView.get().getDocumentId());
+                }
+                return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, ConversionUtils.fetchCollaborators(collaboratorsService,
+                        docView.get().getPackageId()), documentContentRepository, docView.orElse(null), true);
         }
-        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, ConversionUtils.fetchCollaborators(collaboratorsService,
-                docView.get().getPackageId()), documentContentRepository, docView.orElse(null), true);
     }
 
     public LeosDocument findLatestMajorVersionByRef(final String docRef) {
@@ -590,37 +612,30 @@ public class DocumentServiceImpl implements DocumentService {
         return xmlDocs;
     }
 
-    public Optional<LeosDocument> findDocumentByRef(final String ref) {
-        Optional<DocumentV> doc = documentVRepository.findDocumentByRef(ref);
-        if (!doc.isPresent()) {
-            Optional<LeosDocument> leosDoc = milestoneDocumentService.findMilestoneByRef(ref);
-            if (!leosDoc.isPresent()) {
+    public Optional<LeosDocument> findDocumentByRef(final String ref, String category) {
+        Validate.notNull(category, "Method findDocumentByRef: document category should not be null");
+        switch (category) {
+            case "CONFIG":
+            case "STRUCTURE":
+            case "TEMPLATE":
                 try {
                     return Optional.of(findTemplateByName(ref));
                 } catch (RepositoryException e) {
                     return Optional.empty();
                 }
-            } else {
-                return leosDoc;
-            }
+            case "LEG":
+            case "EXPORT":
+                return milestoneDocumentService.findMilestoneByRef(ref);
+            default:
+                Optional<DocumentV> doc = documentVRepository.findDocumentByRef(ref);
+                return Optional.of(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, ConversionUtils.fetchCollaborators(collaboratorsService,
+                                doc.get().getPackageId()),
+                        documentContentRepository, doc.get(), true));
         }
-        return Optional.of(ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, ConversionUtils.fetchCollaborators(collaboratorsService,
-                        doc.get().getPackageId()),
-                documentContentRepository, doc.get(), true));
     }
 
     public List<LeosDocument> findDocumentsByStatus(final String status) {
         return milestoneDocumentService.findMilestonesByStatus(status);
-    }
-
-    public LeosDocument findTemplateByName(String name) throws RepositoryException {
-        LOG.info("Find template by name: name={}",name);
-        List<LeosDocument> docs = configService.findConfigByName(name);
-        if (docs.isEmpty()) {
-            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Template " + name + " not found");
-        } else {
-            return docs.get(0);
-        }
     }
 
     public List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter,
@@ -639,6 +654,16 @@ public class DocumentServiceImpl implements DocumentService {
                 fetchContent);
         xmlDocs.addAll(milestoneDocumentService.findMilestonesUsingFilter(packageName, categories, queryFilter, startIndex, maxResults, fetchContent));
         return xmlDocs;
+    }
+
+    public LeosDocument findTemplateByName(String name) throws RepositoryException {
+        LOG.info("Find template by name: name={}",name);
+        List<LeosDocument> docs = configService.findConfigByName(name);
+        if (docs.isEmpty()) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Template " + name + " not found");
+        } else {
+            return docs.get(0);
+        }
     }
 
     public long countDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {

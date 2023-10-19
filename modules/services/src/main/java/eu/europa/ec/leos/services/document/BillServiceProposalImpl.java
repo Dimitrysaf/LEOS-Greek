@@ -17,6 +17,7 @@ import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -58,12 +59,6 @@ public class BillServiceProposalImpl extends BillServiceImpl {
         String docName = xmlContentProcessor.getDocReference(content);
         return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(Cuid.createCuid())
                 .concat(DOC_FILE_NAME_SEPARATOR).concat(language.toLowerCase());
-    }
-
-    @Override
-    public String generateBillReference(String templateId, byte[] content, String language) {
-        content = (content == null) ? getContent(billRepository.findBillById(templateId, true)) : content;
-        return this.generateBillReference(content, language);
     }
 
     @Override

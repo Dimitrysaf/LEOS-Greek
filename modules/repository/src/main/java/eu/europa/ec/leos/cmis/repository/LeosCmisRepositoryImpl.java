@@ -270,7 +270,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public LegDocument updateLegDocument(String id, LeosLegStatus status) {
+    public LegDocument updateLegDocument(String ref, String id, LeosLegStatus status) {
         logger.trace("Updating Leg document status... [id=" + id + ", status=" + status.name() + ']');
         long startTimeNanos = System.nanoTime();
 
@@ -286,7 +286,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public LegDocument updateLegDocument(String id, List<String> containedDocuments) {
+    public LegDocument updateLegDocument(String ref, String id, List<String> containedDocuments) {
         logger.trace("Updating Leg document contained files... [id=" + id + "]");
         long startTimeNanos = System.nanoTime();
 
@@ -318,7 +318,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, Class<? extends D> type) {
+    public <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String ref, String id, M metadata, Class<? extends D> type) {
         logger.trace("Updating document metadata... [id=" + id + ']');
 
         long startTimeNanos = System.nanoTime();
@@ -375,7 +375,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public <D extends LeosDocument> D updateDocument(String id, Map<String, Object> properties, Class<? extends D> type, boolean latest) {
+    public <D extends LeosDocument> D updateDocument(String ref, String id, Map<String, Object> properties, Class<? extends D> type, boolean latest) {
         logger.trace("Updating document collaborators... [id=" + id + ']');
         long startTimeNanos = System.nanoTime();
 
@@ -388,7 +388,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public <D extends LeosDocument> D updateDocument(String id, List<Collaborator> collaborators, Class<? extends D> type) {
+    public <D extends LeosDocument> D updateDocument(String ref, String id, List<Collaborator> collaborators, Class<? extends D> type) {
         logger.trace("Updating document collaborators... [id=" + id + ']');
         long startTimeNanos = System.nanoTime();
 
@@ -430,7 +430,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public <D extends LeosDocument> D updateMilestoneComments(String id, List<String> milestoneComments, Class<? extends D> type) {
+    public <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type) {
         logger.trace("Updating document metadata... [id=" + id + ']');
         long startTimeNanos = System.nanoTime();
 
@@ -703,7 +703,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public <D extends LeosDocument> D findLatestMajorVersionById(Class<? extends D> type, String documentId) {
+    public <D extends LeosDocument> D findLatestMajorVersionById(Class<? extends D> type, String documentId, String documentRef) {
         Document doc = repository.findLatestMajorVersionById(documentId);
         Map<String, String> oldVersions = repositoryContextProvider.get().getVersionsWithoutVersionLabel();
         return CmisDocumentExtensions.toLeosDocument(doc, type, false, oldVersions);
@@ -797,7 +797,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public ExportDocument updateExportDocument(String id, LeosExportStatus status) {
+    public ExportDocument updateExportDocument(String ref, String id, LeosExportStatus status) {
         logger.trace("Updating Export document status... [id=" + id + ", status=" + status.name() + ']');
         long startTimeNanos = System.nanoTime();
 
@@ -813,7 +813,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public ExportDocument updateExportDocument(String id, List<String> comments) {
+    public ExportDocument updateExportDocument(String ref, String id, List<String> comments) {
         logger.trace("Updating Export document comments... [id=" + id + ", comments=" + comments + ']');
         long startTimeNanos = System.nanoTime();
 

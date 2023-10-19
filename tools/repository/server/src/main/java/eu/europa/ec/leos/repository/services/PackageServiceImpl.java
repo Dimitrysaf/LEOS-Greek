@@ -89,9 +89,9 @@ public class PackageServiceImpl implements PackageService {
 
     public eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException {
         try {
-            Package pkg =
-                    packageRepository.getById(new BigDecimal(Long.parseLong(id)));
-            return ConversionUtils.buildPackage(pkg, collaboratorsService);
+            Optional<Package> pkg =
+                    packageRepository.findPackageByDocumentVersionId(new BigDecimal(id));
+            return ConversionUtils.buildPackage(pkg.get(), collaboratorsService);
         } catch (Exception e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
         }

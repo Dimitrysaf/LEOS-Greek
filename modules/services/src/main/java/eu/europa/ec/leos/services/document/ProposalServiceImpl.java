@@ -116,13 +116,13 @@ public abstract class ProposalServiceImpl implements ProposalService {
     @Override
     public Proposal updateProposal(Proposal proposal, ProposalMetadata metadata) {
         LOG.trace("Updating Proposal... [id={}, metadata={}]", proposal.getId(), metadata);
-        return proposalRepository.updateProposal(proposal.getId(), metadata);
+        return proposalRepository.updateProposal(proposal.getMetadata().get().getRef(), proposal.getId(), metadata);
     }
 
     @Override
-    public Proposal updateProposal(String id, Map<String, Object> properties) {
+    public Proposal updateProposal(String ref, String id, Map<String, Object> properties) {
         LOG.trace("Updating Proposal...with custom properties [id={}]", id);
-        return proposalRepository.updateProposal(id, properties);
+        return proposalRepository.updateProposal(ref, id, properties);
     }
 
     @Override
@@ -144,9 +144,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public Proposal updateProposalWithMilestoneComments(String proposalId, List<String> milestoneComments) {
+    public Proposal updateProposalWithMilestoneComments(String ref, String proposalId, List<String> milestoneComments) {
         LOG.trace("Updating Proposal... [id={}, milestoneComments={}]", proposalId, milestoneComments);
-        return proposalRepository.updateMilestoneComments(proposalId, milestoneComments);
+        return proposalRepository.updateMilestoneComments(ref, proposalId, milestoneComments);
     }
 
     @Override
@@ -170,7 +170,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
             Option<ProposalMetadata> metadataOption = proposal.getMetadata();
             ProposalMetadata metadata = metadataOption.get();
             if (StringUtils.isEmpty(comment)) {                                // Comment will be stored in cmis:checkinComment property.
-                proposalRepository.updateProposal(proposal.getId(), metadata); // This property only can be updated with a document checkout/checkin (creating new version).
+                proposalRepository.updateProposal(proposal.getMetadata().get().getRef(), proposal.getId(), metadata); // This property only can be updated with a document checkout/checkin (creating new version).
             } else {                                                           // Then a new proposal version is created only when a comment is received.
                 proposalRepository.updateProposal(proposal.getId(), metadata, getContent(proposal), VersionType.MINOR, comment);
             }
@@ -394,14 +394,14 @@ public abstract class ProposalServiceImpl implements ProposalService {
         return proposal;
     }
 
-    @Override public Proposal updateProposal(String proposalId, ProposalMetadata metadata) {
+    @Override public Proposal updateProposal(String ref, String proposalId, ProposalMetadata metadata) {
         LOG.trace("Updating Proposal Xml Content... [id={}]", proposalId);
-        return proposalRepository.updateProposal(proposalId, metadata);
+        return proposalRepository.updateProposal(ref, proposalId, metadata);
     }
 
-    @Override public Proposal updateProposal(String id, Map<String, Object> properties, boolean latest) {
+    @Override public Proposal updateProposal(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Proposal metadata properties...");
-        return proposalRepository.updateProposal(id, properties, latest);
+        return proposalRepository.updateProposal(ref, id, properties, latest);
     }
 
     @Override public Proposal updateProposal(Proposal proposal, byte[] updatedProposalContent, String comment) {

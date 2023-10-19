@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.usecases.document;
 
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
@@ -143,7 +144,8 @@ public class MemorandumContext {
                 .withEeaRelevance(eeaRelevance)
                 .build();
 
-        Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.METADATA_UPDATED), null);
+        Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.METADATA_UPDATED),
+                getContent(memorandum));
         return memorandumService.createVersion(memorandumCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
     }
 
@@ -213,12 +215,17 @@ public class MemorandumContext {
             List<String> milestoneComments = memorandum.getMilestoneComments();
             milestoneComments.add(milestoneComment);
             if (memorandum.getVersionType().equals(VersionType.MAJOR)) {
-                memorandum = memorandumService.updateMemorandumWithMilestoneComments(memorandum.getId(), milestoneComments);
+                memorandum = memorandumService.updateMemorandumWithMilestoneComments(null, memorandum.getId(), milestoneComments);
                 LOG.info("Major version {} already present. Updated only milestoneComment for [memorandum={}]", memorandum.getVersionLabel(), memorandum.getId());
             } else {
                 memorandum = memorandumService.updateMemorandumWithMilestoneComments(memorandum, milestoneComments, VersionType.MAJOR, versionComment);
                 LOG.info("Created major version {} for [memorandum={}]", memorandum.getVersionLabel(), memorandum.getId());
             }
         }
+    }
+
+    private byte[] getContent(Memorandum memorandum) {
+        final Content content = memorandum.getContent().getOrError(() -> "Memorandum content is required!");
+        return content.getSource().getBytes();
     }
 }

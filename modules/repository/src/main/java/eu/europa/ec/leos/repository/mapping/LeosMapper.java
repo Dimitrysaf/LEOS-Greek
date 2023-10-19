@@ -77,7 +77,7 @@ public class LeosMapper {
     public static String leosPrimaryType(Class<? extends LeosDocument> type) {
         String result = documentPrimaryTypeMap.get(type);
         if (result == null) {
-            throw new IllegalArgumentException("Unknown CMIS primary type!");
+            throw new IllegalArgumentException("Unknown primary type!");
         }
         return result;
     }

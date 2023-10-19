@@ -66,20 +66,20 @@ public class ProposalRepositoryImpl implements ProposalRepository {
     }
 
     @Override
-    public Proposal updateProposal(String id, ProposalMetadata metadata) {
+    public Proposal updateProposal(String ref, String id, ProposalMetadata metadata) {
         logger.debug("Updating Proposal metadata... [id=" + id + "]");
-        return leosRepository.updateDocument(id, metadata, Proposal.class);
+        return leosRepository.updateDocument(ref, id, metadata, Proposal.class);
     }
 
     @Override
-    public Proposal updateProposal(String id, Map<String, Object> properties) {
+    public Proposal updateProposal(String ref, String id, Map<String, Object> properties) {
         logger.debug("Updating Proposal custom properties... [id=" + id + "]");
-        return leosRepository.updateDocument(id, properties, Proposal.class, true);
+        return leosRepository.updateDocument(ref, id, properties, Proposal.class, true);
     }
 
-    @Override public Proposal updateProposal(String id, Map<String, Object> properties, boolean latest) {
+    @Override public Proposal updateProposal(String ref, String id, Map<String, Object> properties, boolean latest) {
         logger.debug("Updating Proposal metadata properties... [id=" + id + "]");
-        return leosRepository.updateDocument(id, properties, Proposal.class, latest);
+        return leosRepository.updateDocument(ref, id, properties, Proposal.class, latest);
     }
 
     @Override public Proposal updateProposal(String id, byte[] content, VersionType versionType, String comment) {
@@ -99,9 +99,9 @@ public class ProposalRepositoryImpl implements ProposalRepository {
     }
 
     @Override
-    public Proposal updateMilestoneComments(String id, List<String> milestoneComments) {
+    public Proposal updateMilestoneComments(String ref, String id, List<String> milestoneComments) {
         logger.debug("Updating Proposal metadata... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(id, milestoneComments, Proposal.class);
+        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, Proposal.class);
     }
 
     @Override
@@ -159,13 +159,13 @@ public class ProposalRepositoryImpl implements ProposalRepository {
 
     @Override
     public List<Proposal> findRecentMinorVersions(String documentId, String documentRef, int startIndex, int maxResults) {
-        final Proposal proposal = leosRepository.findLatestMajorVersionById(Proposal.class, documentId);
+        final Proposal proposal = leosRepository.findLatestMajorVersionById(Proposal.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersions(Proposal.class, documentRef, proposal.getCmisVersionLabel(), startIndex, maxResults);
     }
 
     @Override
     public Integer findRecentMinorVersionsCount(String documentId, String documentRef) {
-        final Proposal proposal = leosRepository.findLatestMajorVersionById(Proposal.class, documentId);
+        final Proposal proposal = leosRepository.findLatestMajorVersionById(Proposal.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersionsCount(Proposal.class, documentRef, proposal.getCmisVersionLabel());
     }
 

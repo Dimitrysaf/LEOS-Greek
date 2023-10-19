@@ -15,6 +15,7 @@ package eu.europa.ec.leos.repository.document;
 
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import org.springframework.security.access.prepost.PostAuthorize;
@@ -78,21 +79,26 @@ public interface AnnexRepository {
     /**
      * Updates an [Annex] document with the given metadata.
      *
+     *
+     * @param ref
      * @param id       the ID of the annex document to update.
      * @param metadata the metadata of the annex.
      * @return the updated annex document.
      */
-    Annex updateAnnex(String id, AnnexMetadata metadata);
+    Annex updateAnnex(String ref, String id, AnnexMetadata metadata);
 
     /**
      * Updates a [Annex] document with the given properties.
      *
+     *
+     *
+     * @param ref
      * @param id the ID of the bill document to update.
      * @param properties the metadata properties of the bill.
      * @param latest
      * @return the updated bill document.
      */
-    Annex updateAnnex(String id, Map<String, Object> properties, boolean latest);
+    Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest);
 
     /**
      * Updates an [Annex] document with the given content.
@@ -119,16 +125,17 @@ public interface AnnexRepository {
 
     Annex updateMilestoneComments(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment);
 
-    Annex updateMilestoneComments(String id, List<String> milestoneComments);
+    Annex updateMilestoneComments(String ref, String id, List<String> milestoneComments);
 
     /**
      * Finds a [Annex] document with the specified characteristics.
      *
      * @param id     the ID of the annex document to retrieve.
+     * @param type
      * @param latest retrieves the latest version of the proposal document, when *true*.
      * @return the found annex document.
      */
-    Annex findAnnexById(String id, boolean latest);
+    Annex findAnnexById(String id, Class<? extends LeosDocument> type, boolean latest);
 
     /**
      * Deletes an [Annex] document with the specified characteristics.

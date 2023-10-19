@@ -888,7 +888,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel +
                 CMIS_PROPERTY_SPLITTER + versionComment);
-        Bill updatedBill = billService.updateBill(documentId, properties, true);
+        Bill updatedBill = billService.updateBill(getDocumentRef(), documentId, properties, true);
         documentScreen.refreshContent(getEditableXml(updatedBill), updatedBill.isTrackChangesEnabled());
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "document.base.version.changed.info",
                 versionLabel));
@@ -1003,13 +1003,13 @@ class DocumentPresenter extends AbstractLeosPresenter {
     public void enableTrackChanges(EnableTrackChangesEvent event) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), event.isEnabled());
-        Bill bill = billService.updateBill(documentId, properties, false);
+        Bill bill = billService.updateBill(getDocumentRef(), documentId, properties, false);
         populateTrackChangesContext(bill);
     }
 
     @Subscribe
     public void initLeosEditor(InitLeosEditorEvent event) {
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(event.getDocument().getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(getDocumentRef());
         documentScreen.initLeosEditor(event.getDocument(), documentsMetadata);
     }
 
@@ -1313,7 +1313,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         Map<String, Object> properties = new HashMap<>();
         String contributionStatus = event.getContributionVO().getContributionStatus().getValue();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), contributionStatus);
-        Bill updatedBill = billService.updateBill(revision.getId(), properties, false);
+        Bill updatedBill = billService.updateBill(revision.getMetadata().get().getRef(), revision.getId(), properties, false);
         if (updatedBill != null) {
             documentScreen.disableMergePane();
             event.getSelectedItem().setVisible(false);
@@ -1329,7 +1329,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         documentScreen.disableMergePane();
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
-        billService.updateBill(revision.getId(), properties, false);
+        billService.updateBill(revision.getMetadata().get().getRef(), revision.getId(), properties, false);
         final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, 0, Bill.class);
         documentScreen.populateContributions(allContributions);
         eventBus.post(new RefreshDocumentEvent());
@@ -1718,7 +1718,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
             byte[] exportedBytes = exportService.createExportPackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
             exportDocument = exportPackageService.createExportDocument(proposalId, exportOptions.getComments(), exportedBytes);
-            exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
+            exportPackageService.updateExportDocument(null, exportDocument.getId(), LeosExportStatus.NOTIFIED);
             notificationService.sendNotification(proposalRef, exportDocument.getId());
             processedStatus = LeosExportStatus.PROCESSED_OK;
             eventBus.post(new NotificationEvent("document.export.package.window.title", "document.export.package.creation.success", NotificationEvent.Type.TRAY));
@@ -1728,7 +1728,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         } finally {
             exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
             if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
-                exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                exportDocument = exportPackageService.updateExportDocument(null, exportDocument.getId(), processedStatus);
                 leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));
             }
         }

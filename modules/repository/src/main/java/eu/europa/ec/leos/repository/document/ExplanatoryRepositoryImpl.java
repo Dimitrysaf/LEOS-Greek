@@ -3,6 +3,7 @@ package eu.europa.ec.leos.repository.document;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.repository.LeosRepository;
 import org.slf4j.Logger;
@@ -39,15 +40,15 @@ public class ExplanatoryRepositoryImpl implements ExplanatoryRepository {
     }
     
     @Override
-    public Explanatory updateExplanatory(String id, Map<String, Object> properties, boolean latest) {
+    public Explanatory updateExplanatory(String ref, String id, Map<String, Object> properties, boolean latest) {
     	logger.debug("Updating Annex metadata... [id=" + id + "]");
-        return leosRepository.updateDocument(id, properties, Explanatory.class, latest);
+        return leosRepository.updateDocument(ref, id, properties, Explanatory.class, latest);
     }
 
     @Override
-    public Explanatory updateExplanatory(String id, ExplanatoryMetadata metadata) {
+    public Explanatory updateExplanatory(String ref, String id, ExplanatoryMetadata metadata) {
         logger.debug("Updating Explanatory metadata... [id=" + id + "]");
-        return leosRepository.updateDocument(id, metadata, Explanatory.class);
+        return leosRepository.updateDocument(ref, id, metadata, Explanatory.class);
     }
 
     @Override
@@ -69,15 +70,15 @@ public class ExplanatoryRepositoryImpl implements ExplanatoryRepository {
     }
 
     @Override
-    public Explanatory updateMilestoneComments(String id, List<String> milestoneComments) {
+    public Explanatory updateMilestoneComments(String ref, String id, List<String> milestoneComments) {
         logger.debug("Updating Explanatory milestoneComments... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(id, milestoneComments, Explanatory.class);
+        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, Explanatory.class);
     }
 
     @Override
-    public Explanatory findExplanatoryById(String id, boolean latest) {
+    public Explanatory findExplanatoryById(String id, Class<? extends LeosDocument> type, boolean latest) {
         logger.debug("Finding Explanatory by ID... [id=" + id + ", latest=" + latest + "]");
-        return leosRepository.findDocumentById(id, Explanatory.class, latest);
+        return (Explanatory) leosRepository.findDocumentById(id, type, latest);
     }
 
     @Override
@@ -122,13 +123,13 @@ public class ExplanatoryRepositoryImpl implements ExplanatoryRepository {
 
     @Override
     public List<Explanatory> findRecentMinorVersions(String documentId, String documentRef, int startIndex, int maxResults) {
-        final Explanatory explanatory = leosRepository.findLatestMajorVersionById(Explanatory.class, documentId);
+        final Explanatory explanatory = leosRepository.findLatestMajorVersionById(Explanatory.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersions(Explanatory.class, documentRef, explanatory.getCmisVersionLabel(), startIndex, maxResults);
     }
 
     @Override
     public Integer findRecentMinorVersionsCount(String documentId, String documentRef) {
-        final Explanatory explanatory = leosRepository.findLatestMajorVersionById(Explanatory.class, documentId);
+        final Explanatory explanatory = leosRepository.findLatestMajorVersionById(Explanatory.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersionsCount(Explanatory.class, documentRef, explanatory.getCmisVersionLabel());
     }
 

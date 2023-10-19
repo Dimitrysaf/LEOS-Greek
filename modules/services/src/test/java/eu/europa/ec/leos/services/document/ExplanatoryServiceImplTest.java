@@ -89,30 +89,30 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 	
 	@Test
     public void test_updateBaseVersionId() {
-		when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithBaseVersionId());
+		when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithBaseVersionId());
 		Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), baseVersionId);
-		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, properties, true);
+		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, objectId, properties, true);
 		assertEquals(baseVersionId, explanatory.getBaseRevisionId());
 		
 	}
 	
 	@Test
     public void test_enableLiveDiffing() {
-		when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithLiveDiffing());
+		when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithLiveDiffing());
 		Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), true);
-		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, properties, true);
+		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, objectId, properties, true);
 		assertTrue(explanatory.isLiveDiffingRequired());
 		
 	}
 	
 	@Test
     public void test_disableLiveDiffing() {
-		when(leosRepository.updateDocument(anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithoutLiveDiffing());
+		when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithoutLiveDiffing());
 		Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), false);
-		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, properties, true);
+		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, objectId, properties, true);
 		assertFalse(explanatory.isLiveDiffingRequired());
 		
 	}

@@ -69,12 +69,12 @@ public abstract class AbstractMilestoneService implements MilestoneService{
     }
 
     @Override
-    public LegDocument updateMilestone(String legId, LeosLegStatus status) {
+    public LegDocument updateMilestone(String ref, String legId, LeosLegStatus status) {
         LOG.trace("Updating Leg document status... [legId={}, status={}]", legId, status.name());
         if(legId != null && !legId.isEmpty()){
             long stamp = updateMilestoneLock.writeLock();
             try{
-                return legService.updateLegDocument(legId, status);
+                return legService.updateLegDocument(ref, legId, status);
             } finally {
                 updateMilestoneLock.unlockWrite(stamp);
             }
@@ -84,12 +84,12 @@ public abstract class AbstractMilestoneService implements MilestoneService{
     }
 
     @Override
-    public LegDocument updateMilestone(String legId, List<String> containedDocuments) {
+    public LegDocument updateMilestone(String ref, String legId, List<String> containedDocuments) {
         LOG.trace("Updating Leg document contained files [legId={}]", legId);
         if(legId != null && !legId.isEmpty()){
             long stamp = updateMilestoneLock.writeLock();
             try{
-                return legService.updateLegDocument(legId, containedDocuments);
+                return legService.updateLegDocument(ref, legId, containedDocuments);
             } finally {
                 updateMilestoneLock.unlockWrite(stamp);
             }
@@ -139,7 +139,7 @@ public abstract class AbstractMilestoneService implements MilestoneService{
         LegDocument legDocument = legService.findLegDocumentByAnyDocumentIdAndJobId(documentId, jobId);
         if(legDocument != null ){
             if(!LeosLegStatus.FILE_ERROR.equals(legDocument.getStatus())){
-                return legService.updateLegDocument(legDocument.getId(), LeosLegStatus.FILE_ERROR);
+                return legService.updateLegDocument(legDocument.getMilestoneRef(), legDocument.getId(), LeosLegStatus.FILE_ERROR);
             } else {
                 return legDocument;
             }

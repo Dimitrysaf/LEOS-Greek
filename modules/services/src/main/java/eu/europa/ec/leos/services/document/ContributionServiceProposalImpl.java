@@ -128,7 +128,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                 LOG.error("Error retrieving cloned proposal with reference " + proposalRef, e.getMessage());
                 continue;
             }
-            LeosPackage clonedPackage = packageService.findPackageByDocumentId(clonedProposal.getId());
+            LeosPackage clonedPackage = packageService.findPackageByDocumentRef(clonedProposal.getMetadata().get().getRef(), Proposal.class);
             LegDocument legDocument = packageService.findDocumentByPackagePathAndName(clonedPackage.getPath(), legName, LegDocument.class);
             List<String> containedDocuments = legDocument.getContainedDocuments();
             Map<String, Object> legContent;
@@ -219,7 +219,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
         try {
             Proposal clonedProposal = proposalService.findProposalByRef(cloneProposalRef);
             Proposal originalProposal = proposalService.findProposalByRef(clonedProposal.getClonedFrom());
-            LeosPackage clonedPackage = packageService.findPackageByDocumentId(clonedProposal.getId());
+            LeosPackage clonedPackage = packageService.findPackageByDocumentRef(clonedProposal.getMetadata().get().getRef(), Proposal.class);
             LegDocument legDocument = packageService.findDocumentByPackagePathAndName(clonedPackage.getPath(), cloneLegFileName,
                     LegDocument.class);
             List<String> containedDocuments = legDocument.getContainedDocuments();
@@ -227,7 +227,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             //update cloned proposal properties
             Map<String, Object> clonedProperties = new HashMap<>();
             clonedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.REVISION_STATUS), cloneProposalMetadataVO.getRevisionStatus());
-            proposalService.updateProposal(clonedProposal.getId(), clonedProperties);
+            proposalService.updateProposal(clonedProposal.getMetadata().get().getRef(), clonedProposal.getId(), clonedProperties);
 
             //update Bill metadata
             clonedProperties = new HashMap<>();
@@ -240,7 +240,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                 Bill clonedBill = findVersionByVersionedReference(billFile.get(), Bill.class);
                 clonedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
                         ContributionVO.ContributionStatus.RECEIVED.getValue());
-                billService.updateBill(clonedBill.getId(), clonedProperties, true);
+                billService.updateBill(clonedBill.getMetadata().get().getRef(), clonedBill.getId(), clonedProperties, true);
             }
             //update Memorandum metadata
             clonedProperties = new HashMap<>();
@@ -250,7 +250,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                 Memorandum clonedMemo = findVersionByVersionedReference(memorandumFile.get(), Memorandum.class);
                 clonedProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
                         ContributionVO.ContributionStatus.RECEIVED.getValue());
-                memorandumService.updateMemorandum(clonedMemo.getId(), clonedProperties, true);
+                memorandumService.updateMemorandum(clonedMemo.getMetadata().get().getRef(), clonedMemo.getId(), clonedProperties, true);
             }
             //update Annex metadata
             Stream<String> annexFile = containedDocuments.stream()
@@ -260,19 +260,19 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                 Map<String, Object>  annexProperties = new HashMap<>();
                 annexProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
                         ContributionVO.ContributionStatus.RECEIVED.getValue());
-                annexService.updateAnnex(clonedAnnex.getId(), annexProperties, true);
+                annexService.updateAnnex(clonedAnnex.getMetadata().get().getRef(), clonedAnnex.getId(), annexProperties, true);
             });
 
             // Update cloned proposal
-            proposalService.updateProposal(clonedProposal.getId(), clonedProperties, true);
+            proposalService.updateProposal(clonedProposal.getMetadata().get().getRef(), clonedProposal.getId(), clonedProperties, true);
 
             //update original proposal properties
             Map<String, Object> properties = new HashMap<>();
             List<String> clonedMilestoneIds = originalProposal.getClonedMilestoneIds();
             clonedMilestoneIds.add(getClonedMilestoneId(cloneProposalRef, cloneLegFileName));
             properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID), clonedMilestoneIds);
-            updatedProposal = proposalService.updateProposal(originalProposal.getId(), properties);
-            updatedLegDocument = legService.updateLegDocument(legDocument.getId(), LeosLegStatus.CONTRIBUTION_SENT);
+            updatedProposal = proposalService.updateProposal(originalProposal.getMetadata().get().getRef(), originalProposal.getId(), properties);
+            updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legDocument.getId(), LeosLegStatus.CONTRIBUTION_SENT);
         } catch(Exception e) {
             LOG.error("Unexpected error occurred while updating the proposal after revision", e);
             return new Result<>(e.getMessage(), ErrorCode.EXCEPTION);
@@ -284,6 +284,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     public void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName,
                                                byte[] xmlContent)
             throws IOException {
+        //TODO: change to findPackageByDocumentRef
         LeosPackage clonedPackage = packageService.findPackageByDocumentId(cloneDocumentId);
         LegDocument legDocument = packageService.findDocumentByPackagePathAndName(clonedPackage.getPath(), legFileName,
                 LegDocument.class);

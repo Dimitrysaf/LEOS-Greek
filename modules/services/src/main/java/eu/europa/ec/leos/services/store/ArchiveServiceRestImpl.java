@@ -21,6 +21,6 @@ public class ArchiveServiceRestImpl implements ArchiveService {
 
     @Override
     public <D extends LeosDocument> void archiveDocument(DocumentVO documentVO, Class<? extends D> type, String packagePath) {
-        leosRepository.archiveDocument(documentVO.getId(), type);
+        leosRepository.archiveDocument(documentVO.getRef(), type);
     }
 }

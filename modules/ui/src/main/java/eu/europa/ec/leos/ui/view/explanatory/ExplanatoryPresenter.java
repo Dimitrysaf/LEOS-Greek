@@ -380,7 +380,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void initLeosEditor(InitLeosEditorEvent event) {
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(event.getDocument().getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(getDocumentRef());
         explanatoryScreen.initLeosEditor(event.getDocument(), documentsMetadata);
     }
 
@@ -649,7 +649,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             byte[] exportedBytes = exportService.createExportPackage(jobFileName, proposalId, exportOptions);
             ExportDocument exportDocument = exportPackageService.createExportDocument(proposalId, exportOptions.getComments(), exportedBytes);
             exportDocumentId = exportDocument.getId();
-            exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
+            exportPackageService.updateExportDocument(null, exportDocument.getId(), LeosExportStatus.NOTIFIED);
             notificationService.sendNotification(proposalRef, exportDocument.getId());
             processedStatus = LeosExportStatus.PROCESSED_OK;
             eventBus.post(
@@ -661,7 +661,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         } finally {
             ExportDocument exportDocument = exportPackageService.findExportDocumentById(exportDocumentId, true);
             if (exportDocument != null && !exportDocument.getStatus().equals(LeosExportStatus.FILE_READY)) {
-                exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                exportDocument = exportPackageService.updateExportDocument(null, exportDocument.getId(), processedStatus);
                 leosApplicationEventBus.post(new ExportPackageCreatedEvent(proposalRef, exportDocument));
             }
         }
@@ -1595,14 +1595,14 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     private Explanatory updateBaseVersion(String documentId, String versionLabel, String versionTitle) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
-        Explanatory updatedExplanatory = explanatoryService.updateExplanatory(documentId, properties, true);
+        Explanatory updatedExplanatory = explanatoryService.updateExplanatory(getDocumentRef(), documentId, properties, true);
         return updatedExplanatory;
     }
 
     private Explanatory updateLiveDiffingRequired(boolean liveDiffingRequired) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), liveDiffingRequired);
-        Explanatory updatedExplanatory = explanatoryService.updateExplanatory(documentId, properties, true);
+        Explanatory updatedExplanatory = explanatoryService.updateExplanatory(getDocumentRef(), documentId, properties, true);
         return updatedExplanatory;
     }
 

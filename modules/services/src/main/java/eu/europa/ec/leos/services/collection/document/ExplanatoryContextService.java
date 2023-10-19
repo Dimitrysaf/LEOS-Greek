@@ -170,7 +170,7 @@ public class ExplanatoryContextService {
                 .build();
 
         explanatory = explanatoryService.createExplanatory(explanatory.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), null);
-        explanatory = securityService.updateCollaborators(explanatory.getId(), collaborators, Explanatory.class);
+        explanatory = securityService.updateCollaborators(explanatory.getMetadata().get().getRef(), explanatory.getId(), collaborators, Explanatory.class);
 
         return explanatoryService.createVersion(explanatory.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
@@ -186,7 +186,7 @@ public class ExplanatoryContextService {
         final String actionMessage = actionMsgMap.get(ContextActionService.ANNEX_BLOCK_UPDATED);
         final ExplanatoryMetadata metadataDocument = (ExplanatoryMetadata) explanatoryDocument.getMetadataDocument();
         explanatory = explanatoryService.createExplanatoryFromContent(leosPackage.getPath(), metadataDocument, actionMessage, explanatoryDocument.getSource(), explanatoryDocument.getName());
-        explanatory = securityService.updateCollaborators(explanatory.getId(), collaborators, Explanatory.class);
+        explanatory = securityService.updateCollaborators(explanatory.getMetadata().get().getRef(), explanatory.getId(), collaborators, Explanatory.class);
 
         return explanatoryService.createVersion(explanatory.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
@@ -236,7 +236,7 @@ public class ExplanatoryContextService {
         List<String> milestoneComments = explanatory.getMilestoneComments();
         milestoneComments.add(milestoneComment);
         if (explanatory.getVersionType().equals(VersionType.MAJOR)) {
-            explanatory = explanatoryService.updateExplanatoryWithMilestoneComments(explanatory.getId(), milestoneComments);
+            explanatory = explanatoryService.updateExplanatoryWithMilestoneComments(explanatory.getMetadata().get().getRef(), explanatory.getId(), milestoneComments);
             LOG.info("Major version {} already present. Updated only milestoneComment for [explanatory={}]", explanatory.getVersionLabel(), explanatory.getId());
         } else {
             explanatory = explanatoryService.updateExplanatoryWithMilestoneComments(explanatory, milestoneComments, VersionType.MAJOR, versionComment);

@@ -494,9 +494,9 @@ public class DocumentIntegrationTests {
     @Test
     public void findDocumentById() throws Exception {
         Boolean latest = true;
-        when(documentService.findDocumentById(xmlDoc.getVersionId(), latest)).thenReturn(xmlDoc);
+        when(documentService.findDocumentById(xmlDoc.getVersionId(), "BILL", latest)).thenReturn(xmlDoc);
 
-        mockMvc.perform(get("/document/find-version/{id}?latest={latest}", xmlDoc.getVersionId(), latest).accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/document/find-version/{id}?category={category}&latest={latest}", xmlDoc.getVersionId(), "BILL",latest).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.createdBy", is(USER)))

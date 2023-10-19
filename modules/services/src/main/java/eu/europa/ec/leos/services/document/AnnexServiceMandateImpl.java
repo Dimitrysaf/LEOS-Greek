@@ -48,9 +48,4 @@ public class AnnexServiceMandateImpl extends AnnexServiceImpl {
     public String generateAnnexReference(byte[] content, String language) {
         return ANNEX_NAME_PREFIX + Cuid.createCuid();
     }
-
-    @Override
-    public String generateAnnexReference(String templateId, byte[] content, String language) {
-        return this.generateAnnexReference(content, language);
-    }
 }

@@ -183,7 +183,7 @@ public class GenericDocumentApiService {
         Proposal proposal = this.getDocProposal(document);
 
         return new DocumentConfigResponse(
-                packageService.getDocumentsMetadata(document.getId()),
+                packageService.getDocumentsMetadata(document.getMetadata().get().getRef()),
                 numberConfigs,
                 tocItems,
                 structure.getAlternateConfigs(),
@@ -227,7 +227,7 @@ public class GenericDocumentApiService {
                     )
             );
             if (VersionType.MAJOR.equals(version.getVersionType())) {
-                LeosPackage leosPackage = this.packageService.findPackageByDocumentId(document.getId());
+                LeosPackage leosPackage = this.packageService.findPackageByDocumentRef(document.getMetadata().get().getRef(), XmlDocument.class);
                 LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), version.getVersionedReference());
                 version.setLegFileName(legDocument.getName());
             }
@@ -237,7 +237,7 @@ public class GenericDocumentApiService {
 
     public List<VersionVO> getRecentMinorVersions(@NotNull String docRef) {
         XmlDocument document = this.findDocumentByRef(docRef);
-        LeosDocument latestVersion = this.leosRepository.findLatestMajorVersionById(XmlDocument.class, document.getId());
+        LeosDocument latestVersion = this.leosRepository.findLatestMajorVersionById(XmlDocument.class, document.getId(), docRef);
         List<XmlDocument> versionDocs = this.leosRepository.findRecentMinorVersions(XmlDocument.class, docRef, latestVersion.getCmisVersionLabel(), 0, Integer.MAX_VALUE);
         return VersionsUtil.buildVersionResponse(versionDocs, messageHelper, userHelper);
     }
@@ -401,8 +401,9 @@ public class GenericDocumentApiService {
 
     private Proposal getDocProposal(XmlDocument document) {
         return Optional.of(document)
-                .map(XmlDocument::getId)
-                .map(this.packageService::findPackageByDocumentId)
+                .map(XmlDocument::getMetadata)
+                .map(metadata -> this.packageService.findPackageByDocumentRef(metadata.get().getRef(),
+                        XmlDocument.class))
                 .map(pack -> this.proposalService.findProposalByPackagePath(pack.getPath()))
                 .orElseThrow(() -> new RuntimeException(String.format("Not found proposal for document %s", document.getId())));
     }

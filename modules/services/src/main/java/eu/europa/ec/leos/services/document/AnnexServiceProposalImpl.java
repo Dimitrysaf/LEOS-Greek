@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.document.AnnexRepository;
@@ -49,11 +50,5 @@ public class AnnexServiceProposalImpl extends AnnexServiceImpl {
         String docName = xmlContentProcessor.getDocReference(content);
         return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(Cuid.createCuid())
                 .concat(DOC_FILE_NAME_SEPARATOR).concat(language.toLowerCase());
-    }
-
-    @Override
-    public String generateAnnexReference(String templateId, byte[] content, String language) {
-        content = (content == null) ? getContent(annexRepository.findAnnexById(templateId, true)) : content;
-        return this.generateAnnexReference(content, language);
     }
 }

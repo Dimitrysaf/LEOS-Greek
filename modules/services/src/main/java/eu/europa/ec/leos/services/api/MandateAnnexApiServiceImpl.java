@@ -55,7 +55,7 @@ public class MandateAnnexApiServiceImpl extends AnnexApiServiceImpl {
         try {
             Annex annex = this.annexService.findAnnexByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(annex.getId());
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(annex.getMetadata().get().getRef(), Annex.class);
             contex.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
 

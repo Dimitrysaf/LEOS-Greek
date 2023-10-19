@@ -86,14 +86,14 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     @Override
     public Memorandum findMemorandum(String id, boolean latest) {
         LOG.trace("Finding Memorandum... [id={}]", id);
-        return memorandumRepository.findMemorandumById(id, latest);
+        return memorandumRepository.findMemorandumById(id, id, Memorandum.class, latest);
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public Memorandum findMemorandumVersion(String id) {
         LOG.trace("Finding Memorandum version... [id={}]", id);
-        return memorandumRepository.findMemorandumById(id, false);
+        return memorandumRepository.findMemorandumById(id, null, Memorandum.class, false);
     }
     
     @Override
@@ -121,15 +121,15 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     }
 
     @Override
-    public Memorandum updateMemorandum(String memorandumId, MemorandumMetadata updatedMetadata) {
+    public Memorandum updateMemorandum(String ref, String memorandumId, MemorandumMetadata updatedMetadata) {
         LOG.trace("Updating Memorandum Xml Content... [id={}]", memorandumId);
-        return memorandumRepository.updateMemorandum(memorandumId, updatedMetadata);
+        return memorandumRepository.updateMemorandum(ref, memorandumId, updatedMetadata);
     }
 
     @Override
-    public Memorandum updateMemorandum(String memorandumId, Map<String, Object> properties, boolean latest) {
+    public Memorandum updateMemorandum(String ref, String memorandumId, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Memorandum metadata properties...");
-        return memorandumRepository.updateMemorandum(memorandumId, properties, latest);
+        return memorandumRepository.updateMemorandum(ref, memorandumId, properties, latest);
     }
 
     @Override
@@ -169,9 +169,9 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     }
 
     @Override
-    public Memorandum updateMemorandumWithMilestoneComments(String memorandumId, List<String> milestoneComments){
+    public Memorandum updateMemorandumWithMilestoneComments(String ref, String memorandumId, List<String> milestoneComments){
         LOG.trace("Updating Memorandum... [id={}, milestoneComments={}]", memorandumId, milestoneComments);
-        return memorandumRepository.updateMilestoneComments(memorandumId, milestoneComments);
+        return memorandumRepository.updateMilestoneComments(ref, memorandumId, milestoneComments);
     }
 
     @Override
@@ -263,7 +263,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     @Override
     public Memorandum createMemorandum(String templateId, String path, MemorandumMetadata metadata, String actionMsg, byte[] content) {
         LOG.trace("Creating Memorandum... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
-        final String ref = generateMemorandumReference(templateId, content, metadata.getLanguage());
+        final String ref = generateMemorandumReference(content, metadata.getLanguage());
         metadata = metadata
                 .builder()
                 .withRef(ref)

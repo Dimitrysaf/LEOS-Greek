@@ -188,9 +188,9 @@ public abstract class CollectionContextService {
         this.milestoneComment = milestoneComment;
     }
 
-    public void useChildDocument(String documentId) {
-        Validate.notNull(documentId, "Proposal child document is required!");
-        propChildDocument = documentId;
+    public void useChildDocument(String documentRef) {
+        Validate.notNull(documentRef, "Proposal child document is required!");
+        propChildDocument = documentRef;
     }
 
     public void useActionComment(String comment) {
@@ -345,7 +345,7 @@ public abstract class CollectionContextService {
     }
 
     public void executeCreateFinancialStatement() {
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
         financialStatementContext.usePackage(leosPackage);
         String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
@@ -426,7 +426,7 @@ public abstract class CollectionContextService {
 
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);
 
-        LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPckg = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
 
         MemorandumContextService memorandumContext = memorandumContextProvider.get();
         memorandumContext.usePackage(leosPckg);
@@ -448,7 +448,7 @@ public abstract class CollectionContextService {
     public void executeDeleteProposal() {
         LOG.trace("Executing 'Delete Proposal' use case...");
         if (proposal != null && proposal.getId() != null) {
-            LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
+            LeosPackage leosPckg = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
             packageService.deletePackage(leosPckg);
         }
     }
@@ -469,7 +469,7 @@ public abstract class CollectionContextService {
         List<String> milestoneComments = proposal.getMilestoneComments();
         milestoneComments.add(milestoneComment);
         if (proposal.getVersionType().equals(VersionType.MAJOR)) {
-            proposal = proposalService.updateProposalWithMilestoneComments(proposal.getId(), milestoneComments);
+            proposal = proposalService.updateProposalWithMilestoneComments(proposal.getMetadata().get().getRef(), proposal.getId(), milestoneComments);
             LOG.info("Major version {} already present. Updated only milestoneComment for [proposal={}]", proposal.getVersionLabel(), proposal.getId());
         } else {
             proposal = proposalService.updateProposalWithMilestoneComments(proposal, milestoneComments, VersionType.MAJOR, versionComment);
@@ -477,7 +477,7 @@ public abstract class CollectionContextService {
         }
 
         // Update the last structure
-        final LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
+        final LeosPackage leosPckg = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
 
         //Memorandum
         final MemorandumContextService memorandumContext = memorandumContextProvider.get();
@@ -506,7 +506,7 @@ public abstract class CollectionContextService {
     }
 
     public void executeCreateExplanatory() {
-        LeosPackage leosPckg = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPckg = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         ExplanatoryContextService explanatoryContext = explanatoryContextProvider.get();
         explanatoryContext.usePackage(leosPckg);
         String template = categoryTemplateMap.get(COUNCIL_EXPLANATORY).getName();

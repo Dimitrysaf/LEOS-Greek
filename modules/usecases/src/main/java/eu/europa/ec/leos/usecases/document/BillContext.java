@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.usecases.document;
 
+import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
@@ -221,7 +222,8 @@ public class BillContext {
                 .withEeaRelevance(eeaRelevance)
                 .build();
 
-        Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.METADATA_UPDATED), null);
+        Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.METADATA_UPDATED),
+                getContent(bill));
         return billService.createVersion(billCreated.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
     }
 
@@ -597,7 +599,7 @@ public class BillContext {
         List<String> milestoneComments = bill.getMilestoneComments();
         milestoneComments.add(milestoneComment);
         if (bill.getVersionType().equals(VersionType.MAJOR)) {
-            bill = billService.updateBillWithMilestoneComments(bill.getId(), milestoneComments);
+            bill = billService.updateBillWithMilestoneComments(bill.getMetadata().get().getRef(), bill.getId(), milestoneComments);
             LOG.info("Major version {} already present. Updated only milestoneComment for [bill={}]", bill.getVersionLabel(), bill.getId());
         } else {
             bill = billService.updateBillWithMilestoneComments(bill, milestoneComments, VersionType.MAJOR, versionComment);
@@ -625,5 +627,10 @@ public class BillContext {
 
     public void useOriginRef(String originRef) {
         this.originRef = originRef;
+    }
+
+    private byte[] getContent(Bill bill) {
+        final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
+        return content.getSource().getBytes();
     }
 }

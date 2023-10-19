@@ -201,7 +201,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     @Override
     public void deleteFinancialStatement(String proposalRef, String financialStatementRef) {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         FinancialStatement financialStatement = this.financialStatementRepository.findFinancialStatementByRef(financialStatementRef);
 
         FinancialStatementContextService financialStatementContext = this.financialStatementContextProvider.get();
@@ -213,14 +213,14 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     @Override
     public FinancialStatement findFinancialStatement(String id) {
         LOG.trace("Finding FinancialStatement... [id={}]", id);
-        return financialStatementRepository.findFinancialStatementById(id, true);
+        return financialStatementRepository.findFinancialStatementById(id, FinancialStatement.class, true);
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public FinancialStatement findFinancialStatementVersion(String id) {
         LOG.trace("Finding FinancialStatement version... [it={}]", id);
-        return financialStatementRepository.findFinancialStatementById(id, false);
+        return financialStatementRepository.findFinancialStatementById(id, FinancialStatement.class, false);
     }
 
     @Override
@@ -284,9 +284,9 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public FinancialStatement updateFinancialStatement(String id, Map<String, Object> properties, boolean latest) {
+    public FinancialStatement updateFinancialStatement(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating FinancialStatement metadata properties... [id={}]", id);
-        return financialStatementRepository.updateFinancialStatement(id, properties, latest);
+        return financialStatementRepository.updateFinancialStatement(ref, id, properties, latest);
     }
 
     @Override
@@ -298,9 +298,9 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public FinancialStatement updateFinancialStatementWithMilestoneComments(String financialStatementId, List<String> milestoneComments) {
+    public FinancialStatement updateFinancialStatementWithMilestoneComments(String ref, String financialStatementId, List<String> milestoneComments) {
         LOG.trace("Updating FinancialStatement... [id={}, milestoneComments={}]", financialStatementId, milestoneComments);
-        return financialStatementRepository.updateMilestoneComments(financialStatementId, milestoneComments);
+        return financialStatementRepository.updateMilestoneComments(ref, financialStatementId, milestoneComments);
     }
 
     @Override

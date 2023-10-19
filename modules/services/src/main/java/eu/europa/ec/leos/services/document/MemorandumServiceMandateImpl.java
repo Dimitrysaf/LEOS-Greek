@@ -57,11 +57,6 @@ public class MemorandumServiceMandateImpl extends MemorandumServiceImpl {
     }
 
     @Override
-    public String generateMemorandumReference(String templateId, byte[] content, String language) {
-        return this.generateMemorandumReference(content, language);
-    }
-
-    @Override
     public Memorandum createClonedMemorandumFromContent(String path, MemorandumMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMsg, byte[] content, String name) {
         return null;
     }

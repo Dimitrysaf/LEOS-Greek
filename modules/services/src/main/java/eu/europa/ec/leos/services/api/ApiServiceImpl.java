@@ -371,7 +371,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(explanatoryRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         CollectionContextService collectionContext = collectionContextProvider.get();
         collectionContext.useExplanatoryId(explanatory.getId());
         collectionContext.usePackage(leosPackage);
@@ -386,7 +386,7 @@ public abstract class ApiServiceImpl implements ApiService {
     public List<ExportPackageVO> updateExportDocument(String proposalRef, String id, List<String> comments) {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            ExportDocument exportDocument = this.exportPackageService.updateExportDocument(id, comments);
+            ExportDocument exportDocument = this.exportPackageService.updateExportDocument(proposalRef, id, comments);
             LOG.info("Export Package {} for proposal {} comments updated in {} milliseconds ({} sec)", id, proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while updating comments for Export Package", e);
@@ -415,7 +415,7 @@ public abstract class ApiServiceImpl implements ApiService {
             Stopwatch stopwatch = Stopwatch.createStarted();
             byte[] updatedContent = exportService.updateExportPackageWithComments(exportId);
             exportDocument = exportPackageService.updateExportDocument(exportId, updatedContent);
-            exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
+            exportPackageService.updateExportDocument(exportDocument.getExportRef(), exportDocument.getId(), LeosExportStatus.NOTIFIED);
             notificationService.sendNotification(proposalRef, exportDocument.getId());
             processedStatus = LeosExportStatus.PROCESSED_OK;
             LOG.info("Export Package {} for proposal {} notified in {} milliseconds ({} sec)", exportDocument.getId(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
@@ -425,7 +425,7 @@ public abstract class ApiServiceImpl implements ApiService {
             if (exportDocument != null) {
                 exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
                 if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
-                    exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                    exportDocument = exportPackageService.updateExportDocument(null, exportDocument.getId(), processedStatus);
                 }
             }
         }
@@ -434,7 +434,7 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public List<ExportPackageVO> getExportDocuments(String proposalRef) {
         Proposal proposal = this.proposalService.getProposalByRef(proposalRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         List<ExportDocument> exportDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), ExportDocument.class, false, false);
         List<ExportPackageVO> exportDocumentsVO = new ArrayList<>();
         exportDocuments.forEach(exportDocument -> exportDocumentsVO.add(getExportPackageVO(exportDocument)));
@@ -502,7 +502,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposalXmlContent);
                 cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
             }
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
             List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
             List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
             legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
@@ -546,6 +546,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposalVO.setUpdatedOn(Date.from(proposal.getLastModificationInstant()));
                     proposalVO.setLanguage(metadataVO.getLanguage());
                     proposalVO.setSource(proposalXmlContent);
+                    proposalVO.setRef(proposal.getMetadata().get().getRef());
                     if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO, proposal.getOriginRef()));
                     }
@@ -567,6 +568,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 case MEMORANDUM: {
                     Memorandum memorandum = (Memorandum) document;
                     DocumentVO memorandumVO = getMemorandumVO(memorandum);
+                    memorandumVO.setRef(memorandum.getMetadata().get().getRef());
                     proposalVO.addChildDocument(memorandumVO);
                     memorandumVO.addCollaborators(memorandum.getCollaborators());
                     memorandumVO.getMetadata().setInternalRef(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is not available!").getRef());
@@ -579,6 +581,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 case BILL: {
                     Bill bill = (Bill) document;
                     DocumentVO billVO = getLegalTextVO(bill);
+                    billVO.setRef(bill.getMetadata().get().getRef());
                     proposalVO.addChildDocument(billVO);
                     billVO.addCollaborators(bill.getCollaborators());
                     billVO.getMetadata().setInternalRef(bill.getMetadata().getOrError(() -> "Legal text metadata is not available!").getRef());
@@ -641,6 +644,7 @@ public abstract class ApiServiceImpl implements ApiService {
         if (financialStatement.getMetadata().isDefined()) {
             FinancialStatementMetadata metadata = financialStatement.getMetadata().get();
             financialDocumentVO.setTitle(metadata.getTitle());
+            financialDocumentVO.setRef(financialStatement.getMetadata().get().getRef());
         }
         return financialDocumentVO;
     }
@@ -655,6 +659,7 @@ public abstract class ApiServiceImpl implements ApiService {
         if (explanatory.getMetadata().isDefined()) {
             ExplanatoryMetadata metadata = explanatory.getMetadata().get();
             explanatoryVO.setTitle(metadata.getTitle());
+            explanatoryVO.setRef(explanatory.getMetadata().get().getRef());
         }
 
         return explanatoryVO;
@@ -689,6 +694,7 @@ public abstract class ApiServiceImpl implements ApiService {
             annexVO.setDocNumber(metadata.getIndex());
             annexVO.setTitle(metadata.getTitle());
             annexVO.getMetadata().setNumber(metadata.getNumber());
+            annexVO.setRef(annex.getMetadata().get().getRef());
         }
 
         return annexVO;
@@ -726,7 +732,7 @@ public abstract class ApiServiceImpl implements ApiService {
             String proposalId = proposal.getId();
             boolean isClonedProposal = proposal.isClonedProposal();
             try {
-                LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+                LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
                 BillContextService billContext = billContextProvider.get();
@@ -754,9 +760,9 @@ public abstract class ApiServiceImpl implements ApiService {
         Validate.notNull(clonedProposalRef, "Cloned proposal ref should not be null");
         Validate.notNull(clonedLegFileName, "Cloned leg file name should not be null");
         Proposal proposal = proposalService.getProposalByRef(clonedProposalRef);
-        LeosPackage clonedLeosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage clonedLeosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument clonedLegDocument = getLegDocument(clonedLegFileName, clonedLeosPackage);
-        LeosPackage originalLeosPackage = packageService.findPackageByDocumentId(proposalId);
+        LeosPackage originalLeosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         String originalLegName = proposalService.getOriginalMilestoneName(proposal.getName(), proposal.getContent().get().getSource().getBytes());
         LegDocument originalLegDocument = getLegDocument(originalLegName, originalLeosPackage);
         boolean contributionChanged = false;
@@ -812,7 +818,7 @@ public abstract class ApiServiceImpl implements ApiService {
             cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposalXmlContent);
             cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
         List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
         List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
         legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
@@ -866,7 +872,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
         if (proposal != null) {
             String proposalId = proposal.getId();
-            LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
             BillContextService billContext = billContextProvider.get();
             billContext.useAnnexwithRef(annexRef);
             billContext.useAnnex(annex.getId());
@@ -888,7 +894,7 @@ public abstract class ApiServiceImpl implements ApiService {
         if (proposal != null) {
             for (int i = 0; i < timesToMove; i++) {
                 String proposalId = proposal.getId();
-                LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+                LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
                 BillContextService billContext = billContextProvider.get();
                 billContext.useAnnexwithRef(annexRef);
                 billContext.usePackage(leosPackage);
@@ -950,7 +956,7 @@ public abstract class ApiServiceImpl implements ApiService {
     public MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName) throws IOException {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
 
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument = getLegDocument(legFileName, leosPackage);
         File legFileTemp = File.createTempFile(MILESTONE, ".leg");
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
@@ -1009,7 +1015,7 @@ public abstract class ApiServiceImpl implements ApiService {
     public MilestonePDFDownloadResponse downloadMilestonePDF(String proposalRef, String legFileName) throws IOException {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         byte[] content = null;
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument = getLegDocument(legFileName, leosPackage);
         File legFileTemp = File.createTempFile(MILESTONE, ".leg");
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);

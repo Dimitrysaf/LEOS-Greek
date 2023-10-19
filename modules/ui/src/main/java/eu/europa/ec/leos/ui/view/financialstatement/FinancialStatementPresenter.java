@@ -524,7 +524,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void initLeosEditor(InitLeosEditorEvent event) {
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(event.getDocument().getId());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(getDocumentRef());
         financialStatementScreen.initLeosEditor(event.getDocument(), documentsMetadata);
     }
 
@@ -1293,7 +1293,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     public void enableTrackChanges(EnableTrackChangesEvent event) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), event.isEnabled());
-        FinancialStatement financialStatement = financialStatementService.updateFinancialStatement(documentId, properties, false);
+        FinancialStatement financialStatement = financialStatementService.updateFinancialStatement(documentRef, documentId, properties, false);
         populateTrackChangesContext(financialStatement);
     }
 

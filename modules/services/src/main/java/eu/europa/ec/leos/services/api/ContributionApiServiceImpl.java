@@ -143,7 +143,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         User user = userService.getUser(userLogin);
         Proposal proposal = proposalService.getProposalByRef(proposalRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legDocumentName, LegDocument.class);
         String loggedInUser = securityContext.getUser().getLogin();
         CreateCollectionResult createCollectionResult = null;
@@ -212,7 +212,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
 
         cloneContext.setContribution(Boolean.TRUE);
         String comparedContent = comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
-        final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVersion.getId(), legFileName, contributionsVersionRef);
+        final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVersion.getMetadata().get().getRef(), legFileName, contributionsVersionRef);
         final String temporaryDocument = contributionVersion.getName().replace(".xml", "");
         return new DocumentViewResponse(
                 proposal.getMetadata().get().getRef(),
@@ -221,8 +221,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 temporaryAnnotationsId, temporaryDocument);
     }
 
-    private String storeRevisionAnnotationsTemporary(final String documentId, final String legFileName, final String versionedReference) {
-        final LeosPackage leosPackage = this.packageService.findPackageByDocumentId(documentId);
+    private String storeRevisionAnnotationsTemporary(final String documentRef, final String legFileName, final String versionedReference) {
+        final LeosPackage leosPackage = this.packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
         //final LegDocument referenceDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
         final LegDocument legDocument = this.packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
         return this.legService.storeLegDocumentTemporary(legDocument);
@@ -235,7 +235,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
                 ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()
         );
-        this.leosRepository.updateDocument(document.getId(), properties, XmlDocument.class, true);
+        this.leosRepository.updateDocument(document.getMetadata().get().getRef(), document.getId(), properties, XmlDocument.class, true);
     }
 
     protected void populateCloneProposalMetadata(Proposal proposal) {
@@ -292,12 +292,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 this.repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS),
                 ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()
         );
-        this.leosRepository.updateDocument(
-                contribution.getId(),
-                properties,
-                XmlDocument.class,
-                false
-        );
+        this.leosRepository.updateDocument(contribution.getMetadata().get().getRef(), contribution.getId(), properties,
+                XmlDocument.class,false);
     }
 
     private List<InternalRefMap> getInternalRefMaps(ApplyContributionsRequest event, LeosDocument document, byte[] xmlClonedContent) {

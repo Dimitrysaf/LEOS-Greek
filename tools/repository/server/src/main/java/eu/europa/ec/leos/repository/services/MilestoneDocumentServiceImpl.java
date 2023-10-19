@@ -41,6 +41,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
     @Autowired
     private EntityManager entityManager;
 
+    @Override
     public List<LeosDocument> findMilestonesByStatus(String status) {
         List<LeosDocument> legDocuments = new ArrayList<>();
         List<MilestoneV> milestones = milestoneVRepository.findMilestonesByStatus(status);
@@ -53,6 +54,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         return legDocuments;
     }
 
+    @Override
     public List<LeosDocument> findMilestoneByName(final String fileName) {
         List<LeosDocument> listDocs = new ArrayList<>();
         List<MilestoneV> docs = milestoneVRepository.findMilestonesByName(fileName);
@@ -61,12 +63,19 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         }
         return listDocs;
     }
-
+    @Override
     public Optional<LeosDocument> findMilestoneByRef(final String ref) {
         Optional<MilestoneV> doc = milestoneVRepository.findMilestonesByRef(ref);
         return doc.map(milestoneV -> ConversionUtils.buildLegDocument(milestoneV, documentMilestoneListRepository, documentMilestoneRepository, true));
     }
 
+    @Override
+    public Optional<LeosDocument> findMilestoneById(String id) {
+        Optional<MilestoneV> doc = milestoneVRepository.findMilestonesById(id);
+        return doc.map(milestoneV -> ConversionUtils.buildLegDocument(milestoneV, documentMilestoneListRepository, documentMilestoneRepository, true));
+    }
+
+    @Override
     public List<LeosDocument> findMilestoneByPackageId(final String pkgId, final boolean fetchContent) throws RepositoryException {
         try {
             List<MilestoneV> docs = milestoneVRepository.findMilestonesByPackageId(new BigDecimal(Long.parseLong(pkgId)));
@@ -76,12 +85,14 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         }
     }
 
+    @Override
     public LeosDocument createMilestoneFromContent(final Document doc, Map<String, ?> metadata,
                                                    byte[] contentBytes, final String userId) throws RepositoryException {
         DocumentMilestone documentMilestone = createDocumentMilestone(doc, contentBytes, userId, metadata);
         return ConversionUtils.buildLegDocument(documentMilestone, documentMilestoneListRepository);
     }
 
+    @Override
     public LeosDocument updateMilestoneMetadata(final String milestoneId, Map<String, ?> metadata, String userId) throws RepositoryException {
         try {
             DocumentMilestone docMilestone = documentMilestoneRepository.findById(new BigDecimal(Long.parseLong(milestoneId))).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentMilestone.class.getName()));
@@ -95,7 +106,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         }
     }
 
-
+    @Override
     public LeosDocument updateMilestone(final Document doc, byte[] content, Map<String, ?> metadata, String userId) throws RepositoryException {
         try {
             List<DocumentMilestone> docMilestones = documentMilestoneRepository.findDocumentMilestonesByDocument(doc);
@@ -203,6 +214,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         return docMilestone;
     }
 
+    @Override
     public List<LeosDocument> findMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter,
                                                         final int startIndex, final int maxResults, final boolean fetchContent) {
         //Build query
@@ -222,6 +234,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         return ConversionUtils.buildLegDocuments(docs, documentMilestoneRepository, documentMilestoneListRepository, fetchContent);
     }
 
+    @Override
     public long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
         //Build query
         StringBuilder queryBuild = new StringBuilder("SELECT COUNT(m) FROM MilestoneV m WHERE");
@@ -272,6 +285,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         }
     }
 
+    @Override
     public void deleteMilestoneByRef(Document doc) {
         List<DocumentMilestone> milestones = documentMilestoneRepository.findDocumentMilestonesByDocument(doc);
         for (DocumentMilestone m : milestones) {

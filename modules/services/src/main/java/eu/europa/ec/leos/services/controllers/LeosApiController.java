@@ -279,7 +279,7 @@ public class LeosApiController {
                 HttpHeaders headers = new HttpHeaders();
                 headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + legDocument.getName() + "\"");
                 headers.setContentLength(file.length);
-                LegDocument updatedLegDocument = legService.updateLegDocument(legFileId, LeosLegStatus.EXPORTED);
+                LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
                 leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
                 isStatusUpdated = true;
                 return new ResponseEntity<>(file, headers, HttpStatus.OK);
@@ -289,7 +289,8 @@ public class LeosApiController {
         } catch (Exception ex) {
             // in case of any exception reverting to current status
             if (isStatusUpdated) {
-                LegDocument updatedLegDocument = legService.updateLegDocument(legFileId, currentStatus);
+                LegDocument legDocument = legService.findLegDocumentById(legFileId);
+                LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, currentStatus);
                 leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
             }
             LOG.error("Exception occurred in downloading leg file " + ex.getMessage());

@@ -398,6 +398,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     proposalVO.setUpdatedOn(Date.from(proposal.getLastModificationInstant()));
                     proposalVO.setLanguage(metadataVO.getLanguage());
                     proposalVO.setSource(proposalXmlContent);
+                    proposalVO.setRef(proposal.getMetadata().get().getRef());
                     if (ArrayUtils.isNotEmpty(proposalXmlContent) && documentContentService.isCoverPageExists(proposalXmlContent)) {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO));
                     }
@@ -412,6 +413,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     explanatoryVO.addCollaborators(explanatory.getCollaborators());
                     explanatoryVO.getMetadata().setInternalRef(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is not available!").getRef());
                     explanatoryVO.setVersionSeriesId(explanatory.getVersionSeriesId());
+                    explanatoryVO.setRef(explanatory.getMetadata().get().getRef());
                     explanatoryVO.setTemplate(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is not available!").getTemplate());
                     proposalVO.addChildDocument(explanatoryVO);
                     docVersionSeriesIds.add(explanatory.getVersionSeriesId());
@@ -427,6 +429,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     memorandumVO.addCollaborators(memorandum.getCollaborators());
                     memorandumVO.getMetadata().setInternalRef(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is not available!").getRef());
                     memorandumVO.setVersionSeriesId(memorandum.getVersionSeriesId());
+                    memorandumVO.setRef(memorandum.getMetadata().get().getRef());
                     docVersionSeriesIds.add(memorandum.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
                         isValid = documentContentService.isDeprecatedDocument(memorandum, akn4euVersionConversionValue, leosTemplateVersionConversionValue) ? false : isValid;
@@ -440,6 +443,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                     billVO.addCollaborators(bill.getCollaborators());
                     billVO.getMetadata().setInternalRef(bill.getMetadata().getOrError(() -> "Legal text metadata is not available!").getRef());
                     billVO.setVersionSeriesId(bill.getVersionSeriesId());
+                    billVO.setRef(bill.getMetadata().get().getRef());
                     docVersionSeriesIds.add(bill.getVersionSeriesId());
                     if (akn4euConversionDocumentsEnabled) {
                         isValid = documentContentService.isDeprecatedDocument(bill, akn4euVersionConversionValue, leosTemplateVersionConversionValue) ? false : isValid;
@@ -657,7 +661,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             Stopwatch stopwatch = Stopwatch.createStarted();
             byte[] updatedContent = exportService.updateExportPackageWithComments(notifyExportPackageEvent.getId());
             exportDocument = exportPackageService.updateExportDocument(notifyExportPackageEvent.getId(), updatedContent);
-            exportPackageService.updateExportDocument(exportDocument.getId(), LeosExportStatus.NOTIFIED);
+            exportPackageService.updateExportDocument(null, exportDocument.getId(), LeosExportStatus.NOTIFIED);
             notificationService.sendNotification(proposalRef, exportDocument.getId());
             processedStatus = LeosExportStatus.PROCESSED_OK;
             LOG.info("Export Package {} for proposal {} notified in {} milliseconds ({} sec)", exportDocument.getId(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
@@ -668,7 +672,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             if (exportDocument != null) {
                 exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
                 if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
-                    exportDocument = exportPackageService.updateExportDocument(exportDocument.getId(), processedStatus);
+                    exportDocument = exportPackageService.updateExportDocument(null, exportDocument.getId(), processedStatus);
                     leosApplicationEventBus.post(new ExportPackageUpdatedEvent(proposalRef, exportDocument));
                 }
             }
@@ -697,7 +701,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
     private void updateCommentsExportPackage(UpdateCommentsExportPackageEvent updateCommentsExportPackageEvent) {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
-            ExportDocument exportDocument = exportPackageService.updateExportDocument(updateCommentsExportPackageEvent.getId(), updateCommentsExportPackageEvent.getComments());
+            ExportDocument exportDocument = exportPackageService.updateExportDocument(proposalRef, updateCommentsExportPackageEvent.getId(), updateCommentsExportPackageEvent.getComments());
             leosApplicationEventBus.post(new ExportPackageUpdatedEvent(proposalRef, exportDocument));
             LOG.info("Export Package {} for proposal {} comments updated in {} milliseconds ({} sec)", updateCommentsExportPackageEvent.getId(), proposalRef, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
@@ -766,6 +770,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             annexVO.setDocNumber(metadata.getIndex());
             annexVO.setTitle(metadata.getTitle());
             annexVO.getMetadata().setNumber(metadata.getNumber());
+            annexVO.setRef(annex.getMetadata().get().getRef());
         }
 
         return annexVO;
@@ -783,6 +788,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         if (financialStatement.getMetadata().isDefined()) {
             FinancialStatementMetadata metadata = financialStatement.getMetadata().get();
             financialDocumentVO.setTitle(metadata.getTitle());
+            financialDocumentVO.setRef(financialStatement.getMetadata().get().getRef());
         }
         return financialDocumentVO;
     }
@@ -889,7 +895,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 updatedDocuments.add(fileName);
             }
         });
-        milestoneService.updateMilestone(legDocument.getId(), updatedDocuments);
+        milestoneService.updateMilestone(legDocument.getMilestoneRef(), legDocument.getId(), updatedDocuments);
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "contribution.milestone.annex.reject.confirmation"));
     }
 
@@ -988,7 +994,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         // 2. update ui
         populateData();
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, "collection.block.financial.statement.deleted"));
-        LOG.info("Deleted Annex {} id {}, in {} milliseconds ({} sec)", event.getFinancialStatement().getMetadata().getInternalRef(), event.getFinancialStatement().getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        LOG.info("Deleted Financial statement {} id {}, in {} milliseconds ({} sec)", event.getFinancialStatement().getMetadata().getInternalRef(), event.getFinancialStatement().getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
 
     @Subscribe

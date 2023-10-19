@@ -54,15 +54,15 @@ public class ExportPackageServiceImpl implements ExportPackageService {
     }
 
     @Override
-    public ExportDocument updateExportDocument(String id, LeosExportStatus status) {
+    public ExportDocument updateExportDocument(String ref, String id, LeosExportStatus status) {
         LOG.trace("Updating Export document status... [id={}, status={}]", id, status.name());
-        return packageRepository.updateExportDocument(id, status);
+        return packageRepository.updateExportDocument(ref, id, status);
     }
 
     @Override
-    public ExportDocument updateExportDocument(String id, List<String> comments) {
+    public ExportDocument updateExportDocument(String ref, String id, List<String> comments) {
         LOG.trace("Updating Export document comments... [id={}, comments={}]", id, comments);
-        return packageRepository.updateExportDocument(id, comments);
+        return packageRepository.updateExportDocument(ref, id, comments);
     }
 
     @Override

@@ -134,30 +134,36 @@ public interface LeosRepository {
     /**
      * Updating Leg document status.
      *
+     *
+     * @param ref
      * @param id     the leg document id.
      * @param status the updated status.
      * @return the updated Leg document
      */
-    LegDocument updateLegDocument(String id, LeosLegStatus status);
+    LegDocument updateLegDocument(String ref, String id, LeosLegStatus status);
 
     /**
      * Updating Leg document contained documents.
      *
+     *
+     * @param ref
      * @param id     the leg document id.
      * @param containedDocuments the updated contained documents.
      * @return the updated Leg document
      */
-    LegDocument updateLegDocument(String id, List<String> containedDocuments);
+    LegDocument updateLegDocument(String ref, String id, List<String> containedDocuments);
 
     /**
      * Updates a document with the given metadata.
      *
+     *
+     * @param ref
      * @param id       the ID of the document to update.
      * @param metadata the metadata of the document.
      * @param type     the type class of the document.
      * @return the updated document.
      */
-    <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String id, M metadata, Class<? extends D> type);
+    <D extends LeosDocument, M extends LeosMetadata> D updateDocument(String ref, String id, M metadata, Class<? extends D> type);
 
     /**
      * Updates a document with the given content.
@@ -177,7 +183,7 @@ public interface LeosRepository {
     <D extends LeosDocument> D updateMilestoneComments(String id, byte[] content, List<String> milestoneComments,
                                                        VersionType versionType, String comment, Class<? extends D> type);
 
-    <D extends LeosDocument> D updateMilestoneComments(String id, List<String> milestoneComments, Class<? extends D> type);
+    <D extends LeosDocument> D updateMilestoneComments(String ref, String id, List<String> milestoneComments, Class<? extends D> type);
 
     /**
      * Updates a document with the given metadata and content.
@@ -195,12 +201,14 @@ public interface LeosRepository {
     /**
      * Updates a document with the given collaborators.
      *
+     *
+     * @param ref
      * @param id            the ID of the document to update.
      * @param collaborators the map of users to authorities.
      * @param type          the type class of the document.
      * @return the updated document.
      */
-    <D extends LeosDocument> D updateDocument(String id, List<Collaborator> collaborators, Class<? extends D> type);
+    <D extends LeosDocument> D updateDocument(String ref, String id, List<Collaborator> collaborators, Class<? extends D> type);
 
     /**
      * Moves a document in another package.
@@ -337,7 +345,7 @@ public interface LeosRepository {
 
     <D extends LeosDocument> List<D> findAllMajors(Class<? extends D> type, String docRef, int startIndex, int maxResult);
     
-    <D extends LeosDocument> D findLatestMajorVersionById(Class<? extends D> type, String documentId);
+    <D extends LeosDocument> D findLatestMajorVersionById(Class<? extends D> type, String documentId, String documentRef);
 
     <D extends LeosDocument> List<D> findRecentMinorVersions(Class<? extends D> type, String documentRef, String versionLabel, int startIndex, int maxResults);
 
@@ -351,11 +359,11 @@ public interface LeosRepository {
 
     ExportDocument updateExportDocument(String id, LeosExportStatus status, byte[] contentBytes, VersionType versionType, String comment);
 
-    ExportDocument updateExportDocument(String id, LeosExportStatus status);
+    ExportDocument updateExportDocument(String ref, String id, LeosExportStatus status);
 
-    ExportDocument updateExportDocument(String id, List<String> comments);
+    ExportDocument updateExportDocument(String ref, String id, List<String> comments);
 
-    <D extends LeosDocument> D updateDocument(String id, Map<String, Object> properties, Class<? extends D> type, boolean latest);
+    <D extends LeosDocument> D updateDocument(String ref, String id, Map<String, Object> properties, Class<? extends D> type, boolean latest);
 
     Object createFolder(String path, String name);
 

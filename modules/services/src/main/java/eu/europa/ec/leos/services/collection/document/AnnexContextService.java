@@ -36,7 +36,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -200,12 +199,14 @@ public class AnnexContextService {
 
         if (cloneProposal) {
             CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO("USER_ADDED_IN_CLONE_PROPOSAL", originRef);
-            annex = annexService.createClonedAnnex(annex.getId(), leosPackage.getPath(), metadata, cloneDocumentMetadataVO, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), null);
+            annex = annexService.createClonedAnnex(annex.getId(), leosPackage.getPath(), metadata, cloneDocumentMetadataVO, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED),
+                    getContent(annex));
         } else {
-            annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), null);
+            annex = annexService.createAnnex(annex.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED),
+                    getContent(annex));
         }
 
-        annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
+        annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -231,7 +232,7 @@ public class AnnexContextService {
         } else {
             annex = annexService.createAnnexFromContent(leosPackage.getPath(), metadataDocument, actionMessage, annexDocument.getSource(), annexDocument.getName());
         }
-        annex = securityService.updateCollaborators(annex.getId(), collaborators, Annex.class);
+        annex = securityService.updateCollaborators(annex.getMetadata().get().getRef(), annex.getId(), collaborators, Annex.class);
         return annexService.createVersion(annex.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
     }
 
@@ -301,7 +302,7 @@ public class AnnexContextService {
         List<String> milestoneComments = annex.getMilestoneComments();
         milestoneComments.add(milestoneComment);
         if (annex.getVersionType().equals(VersionType.MAJOR)) {
-            annex = annexService.updateAnnexWithMilestoneComments(annex.getId(), milestoneComments);
+            annex = annexService.updateAnnexWithMilestoneComments(annex.getMetadata().get().getRef(), annex.getId(), milestoneComments);
             LOG.info("Major version {} already present. Updated only milestoneComment for [annex={}]", annex.getVersionLabel(), annex.getId());
         } else {
             annex = annexService.updateAnnexWithMilestoneComments(annex, milestoneComments, VersionType.MAJOR, versionComment);

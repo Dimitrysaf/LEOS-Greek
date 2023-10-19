@@ -14,8 +14,10 @@
 package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.Document;
+import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.entities.Package;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,4 +27,7 @@ public interface DocumentRepository extends JpaRepository<Document, BigDecimal> 
     List<Document> findAllDocumentsByPackageId(Package packageId);
 
     Optional<Document> findDocumentByRef(String ref);
+
+    @Query(value = "SELECT * FROM DOCUMENT d WHERE d.ID IN (SELECT v.DOCUMENT_ID FROM DOCUMENT_VERSION v WHERE v.ID='?1' AND v.IS_LATEST_VERSION = 1);", nativeQuery = true)
+    Optional<Document> findDocumentByDocumentId(BigDecimal documentId);
 }

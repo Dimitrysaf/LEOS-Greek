@@ -30,7 +30,7 @@ public interface ExplanatoryService {
 
     Explanatory updateExplanatoryWithMilestoneComments(Explanatory explanatory, List<String> milestoneComments, VersionType versionType, String comment);
 
-    Explanatory updateExplanatoryWithMilestoneComments(String explanatoryId, List<String> milestoneComments);
+    Explanatory updateExplanatoryWithMilestoneComments(String ref, String explanatoryId, List<String> milestoneComments);
 
     Explanatory findExplanatory(String id);
 
@@ -66,6 +66,6 @@ public interface ExplanatoryService {
 
     List<Explanatory> findCouncilExplanatoryByPackagePath(String path);
     
-    Explanatory updateExplanatory(String id, Map<String, Object> properties, boolean latest);
+    Explanatory updateExplanatory(String ref, String id, Map<String, Object> properties, boolean latest);
 
 }

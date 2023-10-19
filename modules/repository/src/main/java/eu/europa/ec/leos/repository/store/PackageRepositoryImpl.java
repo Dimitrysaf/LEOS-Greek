@@ -74,15 +74,15 @@ public class PackageRepositoryImpl implements PackageRepository {
     }
 
     @Override
-    public LegDocument updateLegDocument(String id, LeosLegStatus status) {
+    public LegDocument updateLegDocument(String ref, String id, LeosLegStatus status) {
         logger.debug("Updating Leg document status... [id=" + id + ", status=" + status.name() + "]");
-        return leosRepository.updateLegDocument(id, status);
+        return leosRepository.updateLegDocument(ref, id, status);
     }
 
     @Override
-    public LegDocument updateLegDocument(String id, List<String> containedDocuments) {
+    public LegDocument updateLegDocument(String ref, String id, List<String> containedDocuments) {
         logger.debug("Updating contained documents... [id=" + id + "");
-        return leosRepository.updateLegDocument(id, containedDocuments);
+        return leosRepository.updateLegDocument(ref, id, containedDocuments);
     }
 
     @Override
@@ -164,15 +164,15 @@ public class PackageRepositoryImpl implements PackageRepository {
     }
 
     @Override
-    public ExportDocument updateExportDocument(String id, LeosExportStatus status) {
+    public ExportDocument updateExportDocument(String ref, String id, LeosExportStatus status) {
         logger.debug("Updating Export document status... [id=" + id + ", status=" + status.name() + "]");
-        return leosRepository.updateExportDocument(id, status);
+        return leosRepository.updateExportDocument(ref, id, status);
     }
 
     @Override
-    public ExportDocument updateExportDocument(String id, List<String> comments) {
+    public ExportDocument updateExportDocument(String ref, String id, List<String> comments) {
         logger.debug("Updating Export document comments... [id=" + id + ", comments=" + comments + "]");
-        return leosRepository.updateExportDocument(id, comments);
+        return leosRepository.updateExportDocument(ref, id, comments);
     }
 
     @Override

@@ -15,6 +15,7 @@ package eu.europa.ec.leos.repository.document;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
@@ -63,15 +64,15 @@ public class MemorandumRepositoryImpl implements MemorandumRepository {
     }
 
     @Override
-    public Memorandum updateMemorandum(String id, MemorandumMetadata metadata) {
+    public Memorandum updateMemorandum(String ref, String id, MemorandumMetadata metadata) {
         logger.debug("Updating Memorandum metadata... [id=" + id + "]");
-        return leosRepository.updateDocument(id, metadata, Memorandum.class);
+        return leosRepository.updateDocument(ref, id, metadata, Memorandum.class);
     }
 
     @Override
-    public Memorandum updateMemorandum(String id, Map<String, Object> properties, boolean latest) {
+    public Memorandum updateMemorandum(String ref, String id, Map<String, Object> properties, boolean latest) {
         logger.debug("Updating Memorandum metadata properties... [id=" + id + "]");
-        return leosRepository.updateDocument(id, properties, Memorandum.class, latest);
+        return leosRepository.updateDocument(ref, id, properties, Memorandum.class, latest);
     }
 
     @Override
@@ -93,15 +94,15 @@ public class MemorandumRepositoryImpl implements MemorandumRepository {
     }
 
     @Override
-    public Memorandum updateMilestoneComments(String id, List<String> milestoneComments) {
+    public Memorandum updateMilestoneComments(String ref, String id, List<String> milestoneComments) {
         logger.debug("Updating Memorandum milestoneComments... [id=" + id + "]");
-        return leosRepository.updateMilestoneComments(id, milestoneComments, Memorandum.class);
+        return leosRepository.updateMilestoneComments(ref, id, milestoneComments, Memorandum.class);
     }
 
     @Override
-    public Memorandum findMemorandumById(String id, boolean latest) {
+    public Memorandum findMemorandumById(String id, String ref, Class<? extends LeosDocument> type, boolean latest) {
         logger.debug("Finding Memorandum by ID... [id=" + id + ", latest=" + latest + "]");
-        return leosRepository.findDocumentById(id, Memorandum.class, latest);
+        return (Memorandum) leosRepository.findDocumentById(id, type, latest);
     }
 
     @Override
@@ -140,13 +141,13 @@ public class MemorandumRepositoryImpl implements MemorandumRepository {
     
     @Override
     public List<Memorandum> findRecentMinorVersions(String documentId, String documentRef, int startIndex, int maxResults) {
-        final Memorandum memorandum = leosRepository.findLatestMajorVersionById(Memorandum.class, documentId);
+        final Memorandum memorandum = leosRepository.findLatestMajorVersionById(Memorandum.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersions(Memorandum.class, documentRef, memorandum.getCmisVersionLabel(), startIndex, maxResults);
     }
     
     @Override
     public Integer findRecentMinorVersionsCount(String documentId, String documentRef) {
-        final Memorandum memorandum = leosRepository.findLatestMajorVersionById(Memorandum.class, documentId);
+        final Memorandum memorandum = leosRepository.findLatestMajorVersionById(Memorandum.class, documentId, documentRef);
         return leosRepository.findRecentMinorVersionsCount(Memorandum.class, documentRef, memorandum.getCmisVersionLabel());
     }
 

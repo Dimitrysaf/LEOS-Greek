@@ -88,7 +88,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         final Role role = getRole(roleName);
         final String entity = getEntity(selectedEntity, user);
 
-        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getId());
+        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
         if (isCollaboratorPresent(documents, user, role, entity)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.present", user.getLogin(), role.getName(), entity));
         }
@@ -107,7 +107,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         final Role role = getRole(roleName);
         final String entity = getEntity(selectedEntity, user);
 
-        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getId());
+        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
         if (!isCollaboratorPresent(documents, user, role, entity)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.notPresent", user.getLogin(), role.getName(), entity));
         }
@@ -130,7 +130,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         final User user = getUser(userId);
         final Role newRole = getRole(newRoleName);
         final String entity = getEntity(selectedEntity, user);
-        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getId());
+        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
         String collaboratorRole = documents.get(0).getCollaborators().stream()
                 .filter(c -> user.getLogin().equals(c.getLogin()) && c.getEntity().equals(entity))
                 .map(Collaborator::getRole)
@@ -255,8 +255,8 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         }
     }
 
-    private List<XmlDocument> getXmlDocumentsForProposal(String proposalId) {
-        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
+    private List<XmlDocument> getXmlDocumentsForProposal(String proposalRef) {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
         return packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
     }
 
@@ -277,7 +277,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
                 }
                 collaborators.add(new Collaborator(user.getLogin(), role.getName(), newEntity));
             }
-            securityService.updateCollaborators(doc.getId(), collaborators, doc.getClass());
+            securityService.updateCollaborators(doc.getMetadata().get().getRef(), doc.getId(), collaborators, doc.getClass());
         }
     }
 }

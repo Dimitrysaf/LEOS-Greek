@@ -67,15 +67,17 @@ public interface ProposalRepository {
     /**
      * Updates a [Proposal] document with the given metadata.
      *
+     *
+     * @param ref
      * @param id       the ID of the proposal document to update.
      * @param metadata the metadata of the proposal.
      * @return the updated proposal document.
      */
-    Proposal updateProposal(String id, ProposalMetadata metadata);
+    Proposal updateProposal(String ref, String id, ProposalMetadata metadata);
 
     Proposal updateProposal(String id, List<String> milestoneComments, byte[] content, VersionType versionType, String comment);
 
-    Proposal updateMilestoneComments(String id, List<String> milestoneComments);
+    Proposal updateMilestoneComments(String ref, String id, List<String> milestoneComments);
 
     /**
      * Updates a [Proposal] document with the given content and metadata properties.
@@ -129,21 +131,24 @@ public interface ProposalRepository {
     /**
      * Updates a [Proposal] metadata properties.
      *
+     * @param ref
      * @param id       the ID of the proposal document to update.
      * @param properties the cmis metadata properties to update.
      * @return the updated proposal document.
      */
-    Proposal updateProposal(String id, Map<String, Object> properties);
+    Proposal updateProposal(String ref, String id, Map<String, Object> properties);
 
     /**
      * Updates a [Proposal] document with the given metadata properties.
      *
+     *
+     * @param ref
      * @param id       the ID of the proposal document to update.
      * @param properties the metadata properties of the proposal.
      * @param latest
      * @return the updated proposal document.
      */
-    Proposal updateProposal(String id, Map<String, Object> properties, boolean latest);
+    Proposal updateProposal(String ref, String id, Map<String, Object> properties, boolean latest);
 
     /**
      * Updates a [Proposal] document with the given content.
