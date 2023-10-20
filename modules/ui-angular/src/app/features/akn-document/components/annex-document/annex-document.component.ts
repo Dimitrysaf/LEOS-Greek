@@ -95,9 +95,7 @@ export class AnnexDocumentComponent
   }
 
   initTrackChangesActions() {
-    this.trackChangesActionsService.show.next({trackChanges: this.document.querySelectorAll(
-        '[' + this.trackChangesActionsService.LEOS_UID_ATTR + '][' + this.trackChangesActionsService.LEOS_SOFT_ACTION_ROOT + '="true"]',
-      )});
+    this.trackChangesActionsService.show.next({trackChanges: this.document.querySelectorAll(this.trackChangesActionsService.getSelector())});
   }
 
   generateTooltip(coEdits: CoEditionVO[]) {

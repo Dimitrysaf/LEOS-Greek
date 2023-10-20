@@ -21,17 +21,30 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INITIAL_NUM_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ORIGIN_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVED_LABEL_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LS;
+import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
+import static eu.europa.ec.leos.services.support.XmlHelper.P;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 
 @Service
 public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackChangesProcessor<T> {
@@ -40,43 +53,58 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
     @Autowired
     protected XmlContentProcessor xmlContentProcessor;
 
-    private static ArrayList<String> trackChangesAttrs = new ArrayList<>(Arrays.asList("leos:uid", "leos:action", "leos:title", "leos:initial-num", "leos:softaction", "leos:softactionroot", "leos:softuser", "leos:softdate", "leos:softmove_to",  "leos:softmove_from", "leos:softmove_label"));
+    private static ArrayList<String> trackChangesAttrs = new ArrayList<>(Arrays.asList(LEOS_UID_ATTR, LEOS_ACTION_ATTR, LEOS_TITLE_ATTR, LEOS_INITIAL_NUM_ATTR,
+            LEOS_SOFT_ACTION_ATTR, LEOS_SOFT_ACTION_ROOT_ATTR, LEOS_SOFT_USER_ATTR, LEOS_SOFT_DATE_ATTR, LEOS_SOFT_MOVE_TO,  LEOS_SOFT_MOVE_FROM,
+            LEOS_SOFT_MOVED_LABEL_ATTR));
 
-    private String removeTrackChangesActionOnElement(String elementContent, String elementTagName, String elementId, boolean updateOrigin) {
+    private String removeTrackChangesActionOnElement(String elementContent, boolean updateOrigin) {
         int endOfTag = elementContent.indexOf(">");
         if (endOfTag != -1) {
             String tagStr = elementContent.substring(0, endOfTag+1);
-            StringBuilder updatedTag = new StringBuilder(tagStr);
-            for (String attr : this.trackChangesAttrs) {
-                updatedTag = XmlHelper.removeAttribute(updatedTag, attr);
-            }
-            Boolean leosEditableAttrValue = XmlHelper.getAttributeValueAsBoolean(tagStr, LEOS_EDITABLE_ATTR);
-            Boolean leosDeletableAttrValue = XmlHelper.getAttributeValueAsBoolean(tagStr, LEOS_DELETABLE_ATTR);
-            String leosOriginAttrValue = XmlHelper.getAttributeValue(tagStr, LEOS_ORIGIN_ATTR);
-
-            if (leosEditableAttrValue != null) {
-                updatedTag = XmlHelper.insertOrUpdateAttributeValue(updatedTag, LEOS_EDITABLE_ATTR, true);
-            }
-            if (leosDeletableAttrValue != null) {
-                updatedTag = XmlHelper.insertOrUpdateAttributeValue(updatedTag, LEOS_DELETABLE_ATTR, true);
-            }
-            if (updateOrigin && leosOriginAttrValue != null && leosOriginAttrValue == LS) {
-                updatedTag = XmlHelper.insertOrUpdateAttributeValue(updatedTag, LEOS_ORIGIN_ATTR, EC);
-            }
-            elementContent = elementContent.replace(tagStr, updatedTag.toString());
+            elementContent = cleanTag(elementContent, tagStr, updateOrigin);
         }
-        return elementContent.replaceAll("<aknp", "<p").replaceAll("</aknp>", "</p>").replaceAll("<akntitle", "<title").replaceAll(
-                "</akntitle>", "</title>");
+        //Check num
+        int startOfNumTag = elementContent.indexOf("<" + NUM);
+        int endOfNumTag = elementContent.indexOf("</" + NUM + ">");
+        if (startOfNumTag != -1) {
+            String tagNum = elementContent.substring(startOfNumTag, endOfNumTag + new String("</" + NUM + ">").length());
+            if (!tagNum.contains(LEOS_ACTION_ATTR) && tagNum.contains(LEOS_TITLE_ATTR)) {
+                elementContent = cleanTag(elementContent, tagNum, false);
+            }
+        }
+        return elementContent.replaceAll("<akn" + P, "<" + P).replaceAll("</akn" + P + ">", "</" + P + ">").replaceAll("<akn" + TITLE, "<" + TITLE).replaceAll(
+                "</akn" + TITLE + ">", "</" + TITLE + ">");
     }
 
-    private String keepOriginalMunValue(String moveToElementContent, String moveFromElementContent) {
-        int startOfNumTag = moveToElementContent.indexOf("<num");
-        int endOfNumTag = moveToElementContent.indexOf("</num>");
+    private String cleanTag(String elementContent, String tagStr, boolean updateOrigin) {
+        StringBuilder updatedTag = new StringBuilder(tagStr);
+        for (String attr : this.trackChangesAttrs) {
+            updatedTag = XmlHelper.removeAttribute(updatedTag, attr);
+        }
+        Boolean leosEditableAttrValue = XmlHelper.getAttributeValueAsBoolean(tagStr, LEOS_EDITABLE_ATTR);
+        Boolean leosDeletableAttrValue = XmlHelper.getAttributeValueAsBoolean(tagStr, LEOS_DELETABLE_ATTR);
+        String leosOriginAttrValue = XmlHelper.getAttributeValue(tagStr, LEOS_ORIGIN_ATTR);
+
+        if (leosEditableAttrValue != null) {
+            updatedTag = XmlHelper.insertOrUpdateAttributeValue(updatedTag, LEOS_EDITABLE_ATTR, true);
+        }
+        if (leosDeletableAttrValue != null) {
+            updatedTag = XmlHelper.insertOrUpdateAttributeValue(updatedTag, LEOS_DELETABLE_ATTR, true);
+        }
+        if (updateOrigin && leosOriginAttrValue != null && leosOriginAttrValue.equals(LS)) {
+            updatedTag = XmlHelper.insertOrUpdateAttributeValue(updatedTag, LEOS_ORIGIN_ATTR, EC);
+        }
+        return elementContent.replace(tagStr, updatedTag.toString());
+    }
+
+    private String keepOriginalNumValue(String moveToElementContent, String moveFromElementContent) {
+        int startOfNumTag = moveToElementContent.indexOf("<" + NUM);
+        int endOfNumTag = moveToElementContent.indexOf("</" + NUM + ">");
         startOfNumTag = startOfNumTag != -1 && endOfNumTag != -1 ? startOfNumTag + moveToElementContent.substring(startOfNumTag, endOfNumTag).indexOf(">") : -1;
         if (startOfNumTag != -1) {
             String tagNumValue = moveToElementContent.substring(startOfNumTag+1, endOfNumTag);
-            startOfNumTag = moveFromElementContent.indexOf("<num");
-            endOfNumTag = moveFromElementContent.indexOf("</num>");
+            startOfNumTag = moveFromElementContent.indexOf("<" + NUM);
+            endOfNumTag = moveFromElementContent.indexOf("</" + NUM + ">");
             startOfNumTag = startOfNumTag != -1 && endOfNumTag != -1 ? startOfNumTag + moveFromElementContent.substring(startOfNumTag, endOfNumTag).indexOf(">") : -1;
             if (startOfNumTag != -1) {
                 StringBuilder elementContent = new StringBuilder(moveFromElementContent);
@@ -88,13 +116,13 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
     }
 
     private byte[] updateElement(byte[] contentBytes, String elementFragment, String elementId, String elementName, boolean updateOrigin) {
-        elementFragment = removeTrackChangesActionOnElement(elementFragment, elementName, elementId, updateOrigin);
+        elementFragment = removeTrackChangesActionOnElement(elementFragment, updateOrigin);
         return xmlContentProcessor.replaceElementById(contentBytes, elementFragment, elementId);
     }
 
     @Override
     public byte[] acceptChange(T doc, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception {
-        String elementType = elementTagName == "akntitle" ? "title" : elementTagName;
+        String elementType = elementTagName.equals("akn" + TITLE) ? TITLE : elementTagName;
         byte[] updatedContent = doc.getContent().get().getSource().getBytes();
         String elementFragment;
         switch (trackChangeAction) {
@@ -122,7 +150,7 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
 
     @Override
     public byte[] rejectChange(T doc, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception {
-        String elementType = elementTagName == "akntitle" ? "title" : elementTagName;
+        String elementType = elementTagName.equals("akn" + TITLE) ? TITLE : elementTagName;
         byte[] updatedContent = doc.getContent().get().getSource().getBytes();
         String elementFragment;
         String moveToElementFragment;
@@ -136,14 +164,14 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
                 String movedFromElementId = elementId.replace(SOFT_MOVE_PLACEHOLDER_ID_PREFIX, "");
                 elementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, movedFromElementId);
                 moveToElementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, elementId);
-                elementFragment = keepOriginalMunValue(moveToElementFragment, elementFragment);
+                elementFragment = keepOriginalNumValue(moveToElementFragment, elementFragment);
                 updatedContent = elementProcessor.deleteElement(doc, movedFromElementId, elementType, false);
                 return updateElement(updatedContent, elementFragment, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + movedFromElementId, elementType,  true);
             case MOVE_FROM:
                 String movedToElementId = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elementId;
                 elementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, elementId);
                 moveToElementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, movedToElementId);
-                elementFragment = keepOriginalMunValue(moveToElementFragment, elementFragment);
+                elementFragment = keepOriginalNumValue(moveToElementFragment, elementFragment);
                 updatedContent = elementProcessor.deleteElement(doc, elementId, elementType, false);
                 return updateElement(updatedContent, elementFragment, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + elementId, elementType,  true);
             default:

@@ -18,15 +18,30 @@ export enum TrackChangeAction {
 @Injectable()
 export class TrackChangesActionsService{
   public LEOS_UID_ATTR = "leos\\:uid";
-  public LEOS_SOFT_ACTION_ROOT = "leos\\:softactionroot";
+  public LEOS_SOFT_ACTION_ROOT = "leos\\:action";
+  private ALLOWED_TAGS = ["article", "citation", "recital", ":not(article) paragraph", "level", "chapter", "akntitle", "part", "section"];
+  private selector: string;
 
   public show:Subject<{trackChanges: NodeListOf<HTMLElement>}> = new Subject<{trackChanges: NodeListOf<HTMLElement>}>();
+
   constructor(
     private http: HttpClient,
     private tableOfContentService: TableOfContentService,
     private coEditionService: CoEditionServiceWS,
     private blockDocumentEditorService: BlockDocumentEditorService,
   ) {
+    this.selector = '';
+    for (let i = 0; i < this.ALLOWED_TAGS.length; i++) {
+      let allowedTag = this.ALLOWED_TAGS[i];
+      this.selector += allowedTag + '[' + this.LEOS_UID_ATTR + '][' + this.LEOS_SOFT_ACTION_ROOT + ']';
+      if (i < this.ALLOWED_TAGS.length-1) {
+        this.selector += ', ';
+      }
+    }
+  }
+
+  getSelector() {
+    return this.selector;
   }
 
   applyTrackChangeAction(trackChangeAction: TrackChangeAction, elementData: {elementType: string, elementId: string}, docService: DocumentService) {

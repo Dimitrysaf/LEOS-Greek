@@ -9,6 +9,7 @@ import {DocumentService} from "@/shared/services/document.service";
 import {DocumentConfig, Permission} from "@/shared";
 import {Subject, takeUntil} from "rxjs";
 import {HttpClient} from "@angular/common/http";
+import {CKEditorService} from "@/features/akn-document/services/ckeditor.service";
 
 @Component({
   selector:'app-track-changes-actions',
@@ -24,7 +25,6 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
 
   isShown = false;
   trackChangesDr: NodeListOf<Element>;
-  seeTrackChanges: boolean;
   canAcceptTrackChanges: boolean;
   canRejectTrackChanges: boolean;
   currentElement: HTMLElement;
@@ -36,7 +36,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
 
   private mouseLocation :{left:number,top:number} = {left:0, top:0};
 
-  constructor(private http: HttpClient, private doc: DocumentService, private ref: ChangeDetectorRef, private trackChangesActionsService:TrackChangesActionsService){
+  constructor(private http: HttpClient, private doc: DocumentService, private ref: ChangeDetectorRef, private trackChangesActionsService:TrackChangesActionsService, private ckEditorService: CKEditorService){
     trackChangesActionsService.show.subscribe(trackChanges => {
       this.trackChangesDr = trackChanges.trackChanges;
       this.addTrackChangesEvents();
@@ -55,7 +55,10 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   setMenuState(permissions: Permission[]) {
     this.canAcceptTrackChanges = permissions.includes('CAN_ACCEPT_CHANGES');
     this.canRejectTrackChanges = permissions.includes('CAN_REJECT_CHANGES');
-    this.seeTrackChanges = (!!this.documentConfig && !!this.documentConfig.trackChangesShowed) ? this.documentConfig.trackChangesShowed : false;
+  }
+
+  seeTrackChanges() {
+    return this.ckEditorService.getSeeTrackChangesState();
   }
 
   addTrackChangesEvents() {
@@ -63,8 +66,10 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
       if (!!this.trackChangesDr) {
         this.trackChangesDr.forEach(tc => {
           tc.addEventListener("contextmenu", e => {
-            e.preventDefault();
-            this.showMenu(e);
+            if (this.seeTrackChanges()) {
+              e.preventDefault();
+              this.showMenu(e);
+            }
           })
         });
       }
