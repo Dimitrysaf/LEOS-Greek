@@ -840,7 +840,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             }
         }
         // we are combining two operations (get toc + get selected element ancestors)
-        documentScreen.setTocAndAncestors(packageService.getTableOfContent(bill.getId(), TocMode.SIMPLIFIED_CLEAN), elementAncestorsIds);
+        documentScreen.setTocAndAncestors(packageService.getTableOfContent(bill.getMetadata().get().getRef(), TocMode.SIMPLIFIED_CLEAN), elementAncestorsIds);
     }
 
     @Subscribe
