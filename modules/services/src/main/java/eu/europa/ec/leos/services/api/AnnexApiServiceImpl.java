@@ -561,7 +561,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
             }
         }
         // we are combining two operations (get toc + get selected element ancestors)
-        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(annex.getId(), TocMode.SIMPLIFIED_CLEAN);
+        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(annex.getMetadata().get().getRef(),
+                TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, context.getNumberingConfigs());
     }
 

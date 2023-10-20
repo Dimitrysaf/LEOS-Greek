@@ -447,7 +447,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         Content content = mock(Content.class);
         Source source = mock(Source.class);
 
-        String docRef = "bill_test.xml";
+        String docRef = "bill_test";
         String docId = "555";
         String windowName = "";
         List<String> selectedNodeId = new ArrayList<>();
@@ -456,7 +456,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(source.getBytes()).thenReturn(new byte[]{1, 2, 3});
         when(content.getSource()).thenReturn(source);
 
-        BillMetadata billMetadata =new BillMetadata("", "REGULATION", "", "BL-000.xml", "EN", "BL-023", "bill-id", "", "0.0.1", false);
+        BillMetadata billMetadata =new BillMetadata("", "REGULATION", "", "BL-000.xml", "EN", "BL-023", "bill_test", "", "0.0.1", false);
         List<Collaborator> collaborators = new ArrayList<>();
         collaborators.add(new Collaborator("login", "OWNER", "SG"));
         final Bill document = getMockedBill(content, docId, "title", "", billMetadata, collaborators);
@@ -467,14 +467,14 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(document);
         when(packageService.findPackageByDocumentId(document.getId())).thenReturn(leosPackage);
-        when(packageService.getTableOfContent(docId, TocMode.SIMPLIFIED_CLEAN)).thenReturn(tableOfContentItemVoMap);
+        when(packageService.getTableOfContent(docRef, TocMode.SIMPLIFIED_CLEAN)).thenReturn(tableOfContentItemVoMap);
         when(billService.getAncestorsIdsForElementId(document, selectedNodeId)).thenReturn(ancestorsIds);
 
         // DO THE ACTUAL CALL
         documentPresenter.fetchTocAndAncestors(new FetchCrossRefTocRequestEvent(selectedNodeId));
 
         verify(billService).findBillByRef(docRef);
-        verify(packageService).getTableOfContent(docId, TocMode.SIMPLIFIED_CLEAN);
+        verify(packageService).getTableOfContent(docRef, TocMode.SIMPLIFIED_CLEAN);
         verify(billService).getAncestorsIdsForElementId(document, selectedNodeId);
         verify(documentScreen).setTocAndAncestors(argThat(sameInstance(tableOfContentItemVoMap)), argThat(sameInstance(ancestorsIds)));
         verifyNoMoreInteractions(billService, documentScreen);
