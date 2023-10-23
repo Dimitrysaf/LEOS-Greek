@@ -958,6 +958,19 @@ public abstract class ApiServiceImpl implements ApiService {
 
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument = getLegDocument(legFileName, leosPackage);
+        return doListMilestoneDocuments(legDocument);
+    }
+
+    @Override
+    public MilestoneViewResponse listMilestoneDocumentsFromVersionRef(String proposalRef, String versionedReference) throws IOException {
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
+        return doListMilestoneDocuments(legDocument);
+    }
+
+    private MilestoneViewResponse doListMilestoneDocuments(LegDocument legDocument) throws IOException {
         File legFileTemp = File.createTempFile(MILESTONE, ".leg");
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
         Map<String, Object> contentFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, HTML);
@@ -1014,9 +1027,21 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public MilestonePDFDownloadResponse downloadMilestonePDF(String proposalRef, String legFileName) throws IOException {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
-        byte[] content = null;
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument = getLegDocument(legFileName, leosPackage);
+        return doDownloadMilestonePDF(legDocument);
+    }
+
+    @Override
+    public MilestonePDFDownloadResponse downloadMilestonePDFFromVersion(String proposalRef, String versionedReference) throws IOException {
+        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
+        return doDownloadMilestonePDF(legDocument);
+    }
+
+    private MilestonePDFDownloadResponse doDownloadMilestonePDF(LegDocument legDocument) throws IOException {
+        byte[] content = null;
         File legFileTemp = File.createTempFile(MILESTONE, ".leg");
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
         Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);

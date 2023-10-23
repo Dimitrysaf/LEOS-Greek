@@ -562,8 +562,8 @@ public class DocumentServiceImpl implements DocumentService {
         Optional<DocumentV> prevMajorVersionDoc = documentVRepository.findPreviousMajorVersion(docRef, currIntVersion);
         String prevMajorVersion = prevMajorVersionDoc.isPresent() ? prevMajorVersionDoc.get().getVersionLabel() : "0.0.0";
 
-        Page<DocumentV> docViews = documentVRepository.findAllMinorsForIntermediate(docRef, currIntVersion, prevMajorVersion,
-                pageRequest);
+        String lastMajorVersion = buildMinorVersionsGreaterThanMajorRegularExp(prevMajorVersion, true);
+        Page<DocumentV> docViews = documentVRepository.findRecentMinorVersions(docRef, lastMajorVersion, pageRequest);
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docViews.isEmpty() ?
                 Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
                 docViews.getContent().get(0).getPackageId()), documentContentRepository, docViews.toList(), false);
@@ -572,7 +572,8 @@ public class DocumentServiceImpl implements DocumentService {
     public long getAllMinorsCountForIntermediate(final String docRef, String currIntVersion) {
         Optional<DocumentV> prevMajorVersionDoc = documentVRepository.findPreviousMajorVersion(docRef, currIntVersion);
         String prevMajorVersion = prevMajorVersionDoc.isPresent() ? prevMajorVersionDoc.get().getVersionLabel() : "0.0.0";
-        return documentVRepository.getAllMinorsCountForIntermediate(docRef, currIntVersion, prevMajorVersion);
+        currIntVersion = buildMinorVersionsGreaterThanMajorRegularExp(prevMajorVersion, true);
+        return documentVRepository.getRecentMinorVersionsCount(docRef, currIntVersion);
     }
 
     public long getAllMajorsCount(final String docRef) {

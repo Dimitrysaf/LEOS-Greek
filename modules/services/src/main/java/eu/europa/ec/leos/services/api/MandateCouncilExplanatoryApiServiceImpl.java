@@ -38,7 +38,6 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
-import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportDW;
@@ -121,6 +120,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     ProposalService proposalService;
     @Autowired
     LegService legService;
+    @Autowired
+    GenericDocumentApiService genericDocumentApiService;
     @Autowired
     UserHelper userHelper;
     @Autowired
@@ -205,36 +206,6 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public List<VersionVO> getRecentMinorVersions(String documentRef) {
-        Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        Integer recentCount = this.explanatoryService.findRecentMinorVersionsCount(explanatory.getId(), documentRef);
-        List<Explanatory> explanatories = this.explanatoryService.findRecentMinorVersions(explanatory.getId(), documentRef, 0, recentCount);
-        return VersionsUtil.buildVersionResponse(explanatories, messageHelper, userHelper);
-    }
-
-    @Override
-    public List<VersionVO> getVersionsData(String documentRef) {
-        Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        List<VersionVO> versions = this.explanatoryService.getAllVersions(explanatory.getId(), documentRef);
-        for (VersionVO versionVO : versions) {
-            if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentRef(explanatory.getMetadata().get().getRef(), Explanatory.class);
-                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
-                versionVO.setLegFileName(legDocument.getName());
-            }
-            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-        }
-        return versions;
-    }
-
-    @Override
-    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
-        int count = this.explanatoryService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
-        return VersionsUtil.buildVersionResponse(this.explanatoryService.findAllMinorsForIntermediate(documentRef,
-                currIntVersion, 0, count), messageHelper, userHelper);
-    }
-
-    @Override
     public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode) {
         Explanatory memorandum = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.setStructureContext(memorandum.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
@@ -259,7 +230,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.explanatoryService.createVersion(explanatory.getId(), versionType, checkInComment);
-        return this.getVersionsData(documentRef);
+        return this.genericDocumentApiService.getMajorVersionsData(documentRef, 0, 1);
     }
 
     @Override

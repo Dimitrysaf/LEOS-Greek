@@ -83,15 +83,15 @@ public class FinancialStatementControllerTest {
     public void getVersionData() {
         final String TEST_DOC_REF = "testDocRef";
 
-        Mockito.when(this.genericDocumentApiService.getVersionsData(Mockito.anyString()))
+        Mockito.when(this.genericDocumentApiService.getMajorVersionsData(Mockito.anyString(), Mockito.eq(0), Mockito.eq(9999)))
                 .thenReturn(new ArrayList<>());
 
-        List<VersionVO> response = this.financialStatementController.getVersionData(TEST_DOC_REF);
+        List<VersionVO> response = this.financialStatementController.getMajorVersionsData(TEST_DOC_REF, 0, 9999);
 
         Assert.assertNotNull(response);
         Assert.assertTrue(response.isEmpty());
 
-        Mockito.spy(this.genericDocumentApiService).getVersionsData(Mockito.eq(TEST_DOC_REF));
+        Mockito.spy(this.genericDocumentApiService).getMajorVersionsData(Mockito.eq(TEST_DOC_REF), Mockito.eq(0), Mockito.eq(9999));
     }
 
     @Test
@@ -127,14 +127,14 @@ public class FinancialStatementControllerTest {
     public void getRecentChanges() {
         final String TEST_DOC_REF = "testDocRef";
 
-        Mockito.when(this.genericDocumentApiService.getRecentMinorVersions(Mockito.anyString()))
+        Mockito.when(this.genericDocumentApiService.getRecentMinorVersions(Mockito.anyString(), Mockito.eq(0), Mockito.eq(Integer.MAX_VALUE)))
                 .thenReturn(new ArrayList<>());
 
-        List<VersionVO> response = this.financialStatementController.getRecentChanges(TEST_DOC_REF);
+        List<VersionVO> response = this.financialStatementController.getRecentChanges(TEST_DOC_REF, 0, Integer.MAX_VALUE);
 
         Assert.assertNotNull(response);
         Assert.assertTrue(response.isEmpty());
 
-        Mockito.spy(this.genericDocumentApiService).getRecentMinorVersions(Mockito.eq(TEST_DOC_REF));
+        Mockito.spy(this.genericDocumentApiService).getRecentMinorVersions(Mockito.eq(TEST_DOC_REF), Mockito.eq(0), Mockito.eq(Integer.MAX_VALUE));
     }
 }

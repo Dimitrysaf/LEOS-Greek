@@ -44,7 +44,6 @@ import {
 import { NodeValidationResponse } from '../models/drop-response.model';
 import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
-import { convertArticle } from '../utils/toc.utils';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 
 export enum RelevantElements {
@@ -97,6 +96,7 @@ export class DocumentService implements OnDestroy {
   versionSearchResults$: Observable<string[]>;
   versionFilter$: Observable<string>;
   searchResultsCounter$: Observable<number>;
+  totalNumVersion$: Observable<number>;
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
   navigationSidebarCollapsed$: Observable<boolean>;
@@ -169,6 +169,8 @@ export class DocumentService implements OnDestroy {
 
   private destroy$ = new Subject<void>();
 
+  pageSize: number = 10;
+
   constructor(
     private http: HttpClient,
     @Inject(DOCUMENT) private document: Document,
@@ -206,13 +208,14 @@ export class DocumentService implements OnDestroy {
     this.versionSearchParams$ = this.versionSearchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
-    this.versions$ = this.documentRefAndCategory$.pipe(
+    this.totalNumVersion$ = this.documentRefAndCategory$.pipe(
       filter(Boolean),
       switchMap((option) =>
-        this.getDocumentVersionsData(option.category, option.ref),
+        this.countDocumentVersionsData(option.category, option.ref),
       ),
       shareReplay(1),
     );
+    this.updateVersionsData();
 
     this.documentConfig$ = this.documentRefAndCategory$.pipe(
       filter(Boolean),
@@ -231,7 +234,7 @@ export class DocumentService implements OnDestroy {
     this.recentChanges$ = this.documentRefAndCategory$.pipe(
       filter(Boolean),
       switchMap((option) =>
-        this.getDocumentRecentChangesData(option.category, option.ref),
+        this.getDocumentRecentChangesData(option.category, option.ref, 0, 1),
       ),
       shareReplay(1),
     );
@@ -427,8 +430,20 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getIntermediateVersions(version: Version) {
-    return this.getIntermediateDocumentVersionsData(this.documentType, this.documentRef, version);
+  getIntermediateVersions(version: Version, pageIndex, pageSize) {
+    return this.getIntermediateDocumentVersionsData(this.documentType, this.documentRef, version, pageIndex, pageSize);
+  }
+
+  countIntermediateVersions(version: Version) {
+    return this.countIntermediateDocumentVersionsData(this.documentType, this.documentRef, version);
+  }
+
+  getRecentChanges(pageIndex, pageSize) {
+    return this.getDocumentRecentChangesData(this.documentType, this.documentRef, pageIndex, pageSize);
+  }
+
+  countRecentChanges() {
+    return this.countDocumentRecentChangesData(this.documentType, this.documentRef);
   }
 
   compareDocumentsDownloadDocuwrite(
@@ -907,25 +922,59 @@ export class DocumentService implements OnDestroy {
     return this.documentRefAndCategoryBS.value.ref;
   }
 
-  getDocumentVersionsData(documentType: string, documentRef: string) {
+  countDocumentVersionsData(documentType: string, documentRef: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<Version[]>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data`,
+    return this.http.get<number>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/count-version-data`,
     );
   }
 
-  getIntermediateDocumentVersionsData(documentType: string, documentRef: string, version: Version) {
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<Version[]>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/intermediate-version-data?currIntVersion=${version.cmisVersionNumber}`,
+  updateVersionsData() {
+    let self = this;
+    this.versions$ = this.documentRefAndCategory$.pipe(
+      filter(Boolean),
+      switchMap((option) =>
+        this.getDocumentVersionsData(option.category, option.ref, 0, self.pageSize),
+      ),
+      shareReplay(1),
     );
   }
 
-  getDocumentRecentChangesData(documentType: string, documentRef: string) {
+  getDocumentVersionsData(documentType: string, documentRef: string, pageIndex: number, pageSize: number) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    return this.http.get<Version[]>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data?pageIndex=${pageIndex}&pageSize=${pageSize}`,
+    );
+  }
+
+  getIntermediateDocumentVersionsData(documentType: string, documentRef: string, version: Version, pageIndex, pageSize) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    return this.http.get<Version[]>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/intermediate-version-data?currIntVersion=${version.cmisVersionNumber}&pageIndex=${pageIndex}&pageSize=${pageSize}`,
+    );
+  }
+
+  countIntermediateDocumentVersionsData(documentType: string, documentRef: string, version: Version) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    return this.http.get<number>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/count-intermediate-version-data?currIntVersion=${version.cmisVersionNumber}`,
+    );
+  }
+
+  getDocumentRecentChangesData(documentType: string, documentRef: string, pageIndex, pageSize) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http
       .get<Version[]>(
-        `${apiBaseUrl}/secured/${documentType}/${documentRef}/recent-changes`,
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/recent-changes?pageIndex=${pageIndex}&pageSize=${pageSize}`,
+      )
+      .pipe(take(1));
+  }
+
+  countDocumentRecentChangesData(documentType: string, documentRef: string) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    return this.http
+      .get<number>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/count-recent-changes`,
       )
       .pipe(take(1));
   }

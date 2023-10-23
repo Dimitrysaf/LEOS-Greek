@@ -78,9 +78,21 @@ public class FinancialStatementController {
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public List<VersionVO> getVersionData(@PathVariable("documentRef") String documentRef) {
-        List<VersionVO> versions = this.genericDocumentApiService.getVersionsData(documentRef);
-        return versions;
+    public List<VersionVO> getMajorVersionsData(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
+        return this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
+    }
+
+    @GetMapping(value = "/{documentRef}/count-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
+        try {
+            int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
+            return ResponseEntity.ok().body(versions);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting document versioning data - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -94,9 +106,42 @@ public class FinancialStatementController {
     @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public List<VersionVO> getRecentChanges(@PathVariable("documentRef") String documentRef) {
-        List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef);
+    public List<VersionVO> getRecentChanges(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
+        List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex, pageSize);
         return recentMinorVersions;
+    }
+
+    @GetMapping(value = "/{documentRef}/count-recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.OK)
+    public int countRecentChanges(@PathVariable("documentRef") String documentRef) {
+        return this.genericDocumentApiService.countRecentMinorVersions(documentRef);
+    }
+
+    @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion, @RequestParam int pageIndex, @RequestParam int pageSize) {
+        try {
+            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef, currIntVersion, pageIndex, pageSize);
+            return ResponseEntity.ok().body(versions);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+        try {
+            int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
+            return ResponseEntity.ok().body(count);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
     }
 
     // TODO when refactor: the endpoint path should be /version/{id} in order to follow the REST APIs resources naming.

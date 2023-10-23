@@ -40,7 +40,6 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
-import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -112,6 +111,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Autowired
     LegService legService;
     @Autowired
+    GenericDocumentApiService genericDocumentApiService;
+    @Autowired
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
 
     private Provider<BillContextService> context;
@@ -179,37 +180,6 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public List<VersionVO> getRecentMinorVersions(String documentRef) {
-        Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        Integer recentCount = this.memorandumService.findRecentMinorVersionsCount(memorandum.getId(), documentRef);
-        List<Memorandum> memorandums = this.memorandumService.findRecentMinorVersions(memorandum.getId(), documentRef, 0, recentCount);
-        return VersionsUtil.buildVersionResponse(memorandums, messageHelper, userHelper);
-
-    }
-
-    @Override
-    public List<VersionVO> getVersionsData(String documentRef) {
-        Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        List<VersionVO> versions = this.memorandumService.getAllVersions(memorandum.getId(), documentRef);
-        for (VersionVO versionVO : versions) {
-            if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, Memorandum.class);
-                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
-                versionVO.setLegFileName(legDocument.getName());
-            }
-            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-        }
-        return versions;
-    }
-
-    @Override
-    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
-        int count = this.memorandumService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
-        return VersionsUtil.buildVersionResponse(this.memorandumService.findAllMinorsForIntermediate(documentRef,
-                currIntVersion, 0, count), messageHelper, userHelper);
-    }
-
-    @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
@@ -221,7 +191,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         this.memorandumService.createVersion(memorandum.getId(), versionType, checkInComment);
-        return this.memorandumService.getAllVersions(memorandum.getId(), documentRef);
+        return this.memorandumService.getAllVersions(memorandum.getId(), documentRef, 0, 10);
     }
 
     @Override

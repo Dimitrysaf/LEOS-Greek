@@ -34,12 +34,16 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected showMore = false;
   protected showMoreLabel: string;
   protected hasMore = false;
-  protected versions: Observable<Version[]>;
   protected showVersions = false;
   protected isFilteredOut = false;
+  protected displayedVersions: Version[] = [];
   protected versionsSearchExcluded: Version[] = [];
 
+  private totalSubVersions: number = 0;
+
   private filter = 'all';
+  private pageSize=5;
+  private semaphore: boolean = true;
 
   constructor(
     private translate: TranslateService,
@@ -54,7 +58,14 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
       this.onVersionSearchResultsChange(results),
     );
     this.toggleShowMore(false);
+    this.updateSubVersionsCount();
     this.translate.onTranslationChange.subscribe(() => this.updateState());
+    if (!this.majorVersion) {
+      this.docService.recentChanges$.subscribe((recentVersions: Version[]) => {
+        this.subVersions = recentVersions;
+        this.updateState();
+      });
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -63,8 +74,28 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
         changes.majorVersion?.currentValue ||
       changes.subVersions?.previousValue !== changes.subVersions?.currentValue
     ) {
-      this.updateState();
+      this.updateSubVersionsCount();
       this.applyFilter();
+    }
+  }
+
+  private updateSubVersionsCount() {
+    if (this.majorVersion) {
+      this.docService.countIntermediateVersions(this.majorVersion).subscribe((count) => {
+        this.totalSubVersions = count;
+        this.hasMore = this.totalSubVersions > 0;
+      });
+    } else {
+      this.docService.countRecentChanges().subscribe((count) => {
+        this.totalSubVersions = count;
+        this.hasMore = this.totalSubVersions > 1;
+      });
+    }
+  }
+
+  public async onScrollLoadData(){
+    if( this.subVersions.length < this.totalSubVersions && this.semaphore){
+      this.updateState();
     }
   }
 
@@ -176,16 +207,22 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
           ? 'page.editor.versions.modifications-hide'
           : 'page.editor.versions.modifications-show',
       );
-      if (this.showMore && !this.versions) {
-        this.versions = this.docService.getIntermediateVersions(this.majorVersion);
-        this.versions.subscribe({
+      if (this.showMore && this.subVersions.length < this.totalSubVersions) {
+        let self = this;
+        const currentPageIndex = Math.floor(this.subVersions.length / this.pageSize);
+        this.semaphore = false;
+        this.docService.getIntermediateVersions(this.majorVersion, currentPageIndex, this.pageSize).subscribe({
           next(versions) {
-            this.subVersions = versions;
+            self.subVersions = [...self.subVersions, ...versions];
+            self.displayedVersions = self.showMore ? self.subVersions : [];
+            self.semaphore = true;
           }
         })
+      } else {
+        this.displayedVersions = this.showMore ? this.subVersions : [];
       }
       this.showVersions = this.showMore;
-      this.hasMore = true;
+      this.hasMore = this.totalSubVersions > 0;
     } else {
       this.isRecent = true;
       this.showVersions = true;
@@ -194,10 +231,25 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
           ? 'page.editor.versions.show-less'
           : 'page.editor.versions.show-more',
       );
-      this.versions = new Observable((observer) => {
-        observer.next(this.showMore ? this.subVersions : [this.subVersions[0]].filter(Boolean));
-      });
-      this.hasMore = this.subVersions.length > 1;
+      if (this.showMore && this.subVersions.length < this.totalSubVersions) {
+        let self = this;
+        const currentPageIndex = Math.floor(this.subVersions.length / this.pageSize);
+        self.semaphore = false;
+        this.docService.getRecentChanges(currentPageIndex, this.pageSize).subscribe({
+          next(versions) {
+            if (self.subVersions.length === 1) {
+              self.subVersions = [...versions];
+            } else {
+              self.subVersions = [...self.subVersions, ...versions];
+            }
+            self.displayedVersions = self.showMore ? self.subVersions : [self.subVersions[0]];
+            self.semaphore = true;
+          }
+        })
+      } else if (this.subVersions.length > 0) {
+        this.displayedVersions = this.showMore ? this.subVersions : [this.subVersions[0]];
+      }
+      this.hasMore = this.totalSubVersions > 1;
     }
 
     this.title = this.getTitle();

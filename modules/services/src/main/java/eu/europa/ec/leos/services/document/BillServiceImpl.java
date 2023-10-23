@@ -287,9 +287,9 @@ public abstract class BillServiceImpl implements BillService {
     }
     
     @Override
-    public List<VersionVO> getAllVersions(String documentId, String docRef) {
+    public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
         // TODO temporary call. paginated loading will be implemented in the future Story
-        List<Bill> majorVersions = findAllMajors(docRef, 0, 9999);
+        List<Bill> majorVersions = findAllMajors(docRef, pageIndex, pageSize);
         LOG.trace("Found {} majorVersions for [id={}]", majorVersions.size(), documentId);
         
         List<VersionVO> majorVersionsVO = VersionsUtil.buildVersionVO(majorVersions, messageHelper);

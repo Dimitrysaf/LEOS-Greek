@@ -50,7 +50,6 @@ import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
-import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.exception.ImportElementException;
@@ -150,6 +149,8 @@ public class BillApiServiceImpl implements BillApiService {
     @Autowired
     LegService legService;
     @Autowired
+    GenericDocumentApiService genericDocumentApiService;
+    @Autowired
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
 
     private Provider<CloneContext> cloneContext;
@@ -177,7 +178,7 @@ public class BillApiServiceImpl implements BillApiService {
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Bill bill = this.billService.findBillByRef(documentRef);
         billService.createVersion(bill.getId(), versionType, checkInComment);
-        return this.getVersionsData(documentRef);
+        return this.genericDocumentApiService.getMajorVersionsData(documentRef, 0, 1);
     }
 
     @Override
@@ -563,37 +564,6 @@ public class BillApiServiceImpl implements BillApiService {
             throw new Exception("mergeOnElement is null");
         }
         return this.documentViewService.updateDocumentView(bill);
-    }
-
-    @Override
-    public List<VersionVO> getRecentMinorVersions(String documentRef) {
-        Bill bill = this.billService.findBillByRef(documentRef);
-        Integer recentCount = this.billService.findRecentMinorVersionsCount(bill.getId(), documentRef);
-        List<Bill> bills = this.billService.findRecentMinorVersions(bill.getId(), documentRef, 0, recentCount);
-        return VersionsUtil.buildVersionResponse(bills, messageHelper, userHelper);
-    }
-
-    @Override
-    public List<VersionVO> getVersionsData(String documentRef) {
-        Bill bill = this.billService.findBillByRef(documentRef);
-        List<VersionVO> versions = this.billService.getAllVersions(bill.getId(), documentRef);
-        for (VersionVO versionVO : versions) {
-            //TODO : this code should be handled inside document api service
-            if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentRef(bill.getMetadata().get().getRef(), Bill.class);
-                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
-                versionVO.setLegFileName(legDocument.getName());
-            }
-            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-        }
-        return versions;
-    }
-
-    @Override
-    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
-        int count = this.billService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
-        return VersionsUtil.buildVersionResponse(this.billService.findAllMinorsForIntermediate(documentRef,
-                currIntVersion, 0, count), messageHelper, userHelper);
     }
 
     @Override

@@ -21,11 +21,11 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.CouncilExplanatoryApiService;
+import eu.europa.ec.leos.services.api.GenericDocumentApiService;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
-import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
@@ -66,6 +66,8 @@ public class CouncilExplanatoryController {
     private static final String ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION = "Error occurred  while  downloading xml version";
     @Autowired
     private CouncilExplanatoryApiService explanatoryApiService;
+    @Autowired
+    private GenericDocumentApiService genericDocumentApiService;
 
     @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -132,13 +134,25 @@ public class CouncilExplanatoryController {
 
     }
 
-
     @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef) {
+    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> recentMinorVersions = this.explanatoryApiService.getRecentMinorVersions(documentRef);
+            List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex, pageSize);
             return ResponseEntity.ok().body(recentMinorVersions);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting recent changes - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping(value = "/{documentRef}/count-recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> countRecentChanges(@PathVariable("documentRef") String documentRef) {
+        try {
+            int count = this.genericDocumentApiService.countRecentMinorVersions(documentRef);
+            return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -178,9 +192,23 @@ public class CouncilExplanatoryController {
 
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getVersionData(@PathVariable("documentRef") String documentRef) {
+    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex,
+                                                      @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.explanatoryApiService.getVersionsData(documentRef);
+            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
+            return ResponseEntity.ok().body(versions);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting explanatory versioning data - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping(value = "/{documentRef}/count-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
+        try {
+            int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory versioning data - " + e.getMessage());
@@ -191,10 +219,23 @@ public class CouncilExplanatoryController {
 
     @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion, @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.explanatoryApiService.getIntermediateVersionsData(documentRef, currIntVersion);
+            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef, currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+        try {
+            int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
+            return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);

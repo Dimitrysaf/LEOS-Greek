@@ -216,9 +216,8 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     }
     
     @Override
-    public List<VersionVO> getAllVersions(String documentId, String docRef) {
-        // TODO temporary call. paginated loading will be implemented in the future Story
-        List<Memorandum> majorVersions = findAllMajors(docRef, 0, 9999);
+    public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
+        List<Memorandum> majorVersions = findAllMajors(docRef, pageIndex, pageSize);
         LOG.trace("Found {} majorVersions for [id={}]", majorVersions.size(), documentId);
     
         List<VersionVO> majorVersionsVO = VersionsUtil.buildVersionVO(majorVersions, messageHelper);

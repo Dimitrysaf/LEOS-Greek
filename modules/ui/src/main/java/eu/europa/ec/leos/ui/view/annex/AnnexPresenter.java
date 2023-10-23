@@ -500,7 +500,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     private List<VersionVO> getVersionVOS() {
-        return annexService.getAllVersions(documentId, documentRef);
+        return annexService.getAllVersions(documentId, documentRef, 0, 9999);
     }
 
     @Subscribe
