@@ -215,7 +215,7 @@ public class MemorandumContext {
             List<String> milestoneComments = memorandum.getMilestoneComments();
             milestoneComments.add(milestoneComment);
             if (memorandum.getVersionType().equals(VersionType.MAJOR)) {
-                memorandum = memorandumService.updateMemorandumWithMilestoneComments(null, memorandum.getId(), milestoneComments);
+                memorandum = memorandumService.updateMemorandumWithMilestoneComments(memorandum.getMetadata().get().getRef(), memorandum.getId(), milestoneComments);
                 LOG.info("Major version {} already present. Updated only milestoneComment for [memorandum={}]", memorandum.getVersionLabel(), memorandum.getId());
             } else {
                 memorandum = memorandumService.updateMemorandumWithMilestoneComments(memorandum, milestoneComments, VersionType.MAJOR, versionComment);
