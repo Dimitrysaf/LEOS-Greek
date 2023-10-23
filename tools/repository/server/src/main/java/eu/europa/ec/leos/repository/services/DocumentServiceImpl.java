@@ -230,9 +230,8 @@ public class DocumentServiceImpl implements DocumentService {
                 Document doc = documentRepository.findDocumentByRef(docView.get().getRef()).orElseThrow(() ->
                         new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
 
-                String labelVersion = getNextVersionLabel(versionType, docView.get().getVersionLabel());
-
                 Optional<DocumentVersion> latestVersion = documentVersionRepository.findLastVersionByDocumentId(doc.getId());
+                String labelVersion = getNextVersionLabel(versionType, latestVersion.get().getVersionLabel());
                 Optional<DocumentVersion> latestMajorVersion = Optional.empty();
                 if (isMajor) {
                     latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
