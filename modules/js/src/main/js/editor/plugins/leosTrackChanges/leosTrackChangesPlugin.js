@@ -414,6 +414,13 @@ define(function leosTrackChangesPluginModule(require) {
                             return false;
                         }
                         break;
+                    case "cut":
+                        style.apply(editor, deleteTcStyle);
+                        var range = editor.getSelection().getRanges()[0];
+                        range.collapse(false);
+                        range.select();
+                        editor.fire("change");
+                        return false;
                 }
             });
 
