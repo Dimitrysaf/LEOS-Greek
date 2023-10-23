@@ -53,7 +53,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   setMenuState(permissions: Permission[]) {
-    this.canAcceptTrackChanges = permissions.includes('CAN_ACCEPT_CHANGES');
+    this.canAcceptTrackChanges = !this.documentConfig.clonedProposal && permissions.includes('CAN_ACCEPT_CHANGES');
     this.canRejectTrackChanges = permissions.includes('CAN_REJECT_CHANGES');
   }
 
