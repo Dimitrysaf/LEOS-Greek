@@ -311,7 +311,7 @@ public abstract class CollectionContext {
         List<String> milestoneComments = proposal.getMilestoneComments();
         milestoneComments.add(milestoneComment);
         if (proposal.getVersionType().equals(VersionType.MAJOR)) {
-            proposal = proposalService.updateProposalWithMilestoneComments(null, proposal.getId(), milestoneComments);
+            proposal = proposalService.updateProposalWithMilestoneComments(proposal.getMetadata().get().getRef(), proposal.getId(), milestoneComments);
             LOG.info("Major version {} already present. Updated only milestoneComment for [proposal={}]", proposal.getVersionLabel(), proposal.getId());
         } else {
             proposal = proposalService.updateProposalWithMilestoneComments(proposal, milestoneComments, VersionType.MAJOR, versionComment);
