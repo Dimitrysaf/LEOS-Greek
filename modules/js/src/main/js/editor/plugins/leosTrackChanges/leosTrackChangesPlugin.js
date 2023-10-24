@@ -210,13 +210,21 @@ define(function leosTrackChangesPluginModule(require) {
             });
 
             editor.on("handleTrackTraceForEnterDeleted", function (event) {
-                if (isTrackChangesEnabled) {
-                    var element = event.data;
-                    var elementToSetAttribute = element.startContainer;
+                function getElementToSetAttributes(element) {
+                    var elementToSetAttribute = element;
                     if (elementToSetAttribute.type === CKEDITOR.NODE_TEXT) { elementToSetAttribute = elementToSetAttribute.getParent() }
                     while (elementToSetAttribute.getName() !== 'li' && elementToSetAttribute.getName() !== 'p' && elementToSetAttribute.getParent()) {
                         elementToSetAttribute = elementToSetAttribute.getParent();
-                    };
+                    }
+                    if(leosPluginUtils.isListIntroAndFirstSubparaOfPointOrPara(elementToSetAttribute)) {
+                        elementToSetAttribute = getElementToSetAttributes(elementToSetAttribute.getParent());
+                    }
+                    return elementToSetAttribute;
+                }
+                if (isTrackChangesEnabled) {
+                    var element = event.data;
+                    var elementToSetAttribute = getElementToSetAttributes(element.startContainer);
+
                     // Not add the attributes if the attributes are already there
                     if (elementToSetAttribute.getAttribute(core.DATA_AKN_ACTION_ENTER) !== core.DELETE_ACTION) {
                         core.addTrackChangesAttributesForEnter(editor, elementToSetAttribute, core.DELETE_ACTION);
