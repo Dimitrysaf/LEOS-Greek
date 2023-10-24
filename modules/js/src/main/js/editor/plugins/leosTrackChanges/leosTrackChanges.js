@@ -339,7 +339,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         canUserAcceptChanges: function(editor) {
-            return !editor.LEOS.isClonedProposal && editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES") )
+            return !editor.LEOS.isClonedProposal && editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES")
         },
 
         canUserRejectChanges: function(editor) {
