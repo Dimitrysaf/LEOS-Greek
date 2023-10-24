@@ -367,6 +367,7 @@ public class BillProcessorImpl implements BillProcessor {
     public byte[] renumberingAndPostProcessing(byte[] docContent) {
         byte [] updatedContent = numberService.renumberRecitals(docContent);
         updatedContent = numberService.renumberArticles(updatedContent);
+        updatedContent = numberService.renumberParagraph(updatedContent);
         return xmlContentProcessor.doXMLPostProcessing(updatedContent);
     }
 
