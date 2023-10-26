@@ -19,7 +19,6 @@ import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
-import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
@@ -52,7 +51,6 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
-import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportDW;
@@ -126,6 +124,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     DocumentViewService<Annex> documentViewService;
     @Autowired
     TrackChangesProcessor<Annex> trackChangesProcessor;
+    @Autowired
+    GenericDocumentApiService genericDocumentApiService;
     @Autowired
     PackageService packageService;
     @Autowired
@@ -219,37 +219,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public List<VersionVO> getRecentMinorVersions(String documentRef) {
-        Annex annex = this.annexService.findAnnexByRef(documentRef);
-        Integer recentCount = this.annexService.findRecentMinorVersionsCount(annex.getId(), documentRef);
-        List<Annex> annexes = this.annexService.findRecentMinorVersions(annex.getId(), documentRef, 0, recentCount);
-        return VersionsUtil.buildVersionResponse(annexes, messageHelper, userHelper);
-
-    }
-
-    @Override
-    public List<VersionVO> getVersionsData(String documentRef) {
-        Annex annex = this.annexService.findAnnexByRef(documentRef);
-        List<VersionVO> versions = this.annexService.getAllVersions(annex.getId(), documentRef);
-        for (VersionVO versionVO : versions) {
-            if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentRef(annex.getMetadata().get().getRef(), Annex.class);
-                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
-                versionVO.setLegFileName(legDocument.getName());
-            }
-            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-        }
-        return versions;
-    }
-
-    @Override
-    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
-        int count = this.annexService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
-        return VersionsUtil.buildVersionResponse(this.annexService.findAllMinorsForIntermediate(documentRef,
-                currIntVersion, 0, count), messageHelper, userHelper);
-    }
-
-    @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext context = this.structureContext.get();
@@ -277,7 +246,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         populateCloneProposalMetadata(annex);
         this.annexService.createVersion(annex.getId(), versionType, checkInComment);
-        return this.getVersionsData(documentRef);
+        return this.genericDocumentApiService.getMajorVersionsData(documentRef, 0, 1);
     }
 
     @Override

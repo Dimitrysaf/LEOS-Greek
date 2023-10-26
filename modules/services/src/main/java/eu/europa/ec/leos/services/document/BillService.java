@@ -63,7 +63,7 @@ public interface BillService {
 
     List<Bill> findVersions(String id);
     
-    List<VersionVO> getAllVersions(String id, String documentId);
+    List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize);
 
     List<TableOfContentItemVO> getTableOfContent(Bill bill, TocMode mode);
 

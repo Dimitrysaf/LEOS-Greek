@@ -92,7 +92,7 @@ public interface ProposalService {
 
     List<Proposal> findVersions(String id);
 
-    List<VersionVO> getAllVersions(String documentID, String docRef);
+    List<VersionVO> getAllVersions(String documentID, String docRef, int pageIndex, int pageSize);
 
     List<Proposal> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults);
 

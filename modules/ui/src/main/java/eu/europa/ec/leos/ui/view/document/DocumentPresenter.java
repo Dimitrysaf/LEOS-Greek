@@ -434,7 +434,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     }
 
     private List<VersionVO> getVersionVOS() {
-        return billService.getAllVersions(documentId, documentRef);
+        return billService.getAllVersions(documentId, documentRef, 0, 9999);
     }
 
     private Integer countMinorVersionsFn(String currIntVersion) {
@@ -1852,7 +1852,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     @Subscribe
     void updateDocument(DocumentUpdatedEvent event) {
         // 1. Refresh versions
-        final List<VersionVO> allVersions = billService.getAllVersions(documentId, documentRef);
+        final List<VersionVO> allVersions = billService.getAllVersions(documentId, documentRef, 0, 9999);
         documentScreen.refreshVersions(allVersions, comparisonMode);
 
         // 2. show clean version on right pane

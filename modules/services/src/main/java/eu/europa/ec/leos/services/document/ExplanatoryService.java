@@ -46,7 +46,7 @@ public interface ExplanatoryService {
 
     Explanatory findExplanatoryByRef(String ref);
 
-    List<VersionVO> getAllVersions(String id, String documentId);
+    List<VersionVO> getAllVersions(String id, String documentId, int pageIndex, int pageSize);
 
     List<Explanatory> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults);
 

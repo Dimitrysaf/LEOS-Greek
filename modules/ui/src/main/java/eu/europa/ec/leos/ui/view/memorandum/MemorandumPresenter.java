@@ -415,7 +415,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     }
 
     private List<VersionVO> getVersionVOS() {
-        return memorandumService.getAllVersions(documentId, documentRef);
+        return memorandumService.getAllVersions(documentId, documentRef, 0, 9999);
     }
 
     @Subscribe

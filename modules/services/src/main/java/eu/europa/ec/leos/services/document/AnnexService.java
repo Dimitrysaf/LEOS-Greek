@@ -68,7 +68,7 @@ public interface AnnexService {
     
     Annex findAnnexByRef(String ref);
     
-    List<VersionVO> getAllVersions(String id, String documentId);
+    List<VersionVO> getAllVersions(String id, String documentId, int pageIndex, int pageSize);
     
     List<Annex> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults);
     

@@ -361,9 +361,9 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
-    public List<VersionVO> getAllVersions(String documentId, String docRef) {
+    public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
         // TODO temporary call. paginated loading will be implemented in the future Story
-        List<FinancialStatement> majorVersions = findAllMajors(docRef, 0, 9999);
+        List<FinancialStatement> majorVersions = findAllMajors(docRef, pageIndex, pageSize);
         LOG.trace("Found {} majorVersions for [id={}]", majorVersions.size(), documentId);
 
         List<VersionVO> majorVersionsVO = VersionsUtil.buildVersionVO(majorVersions, messageHelper);

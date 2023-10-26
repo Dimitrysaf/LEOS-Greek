@@ -293,12 +293,14 @@ export class DocumentEditorComponent
     this.documentService.cleanVersionView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((cleanVersionView) => {
-        this.setPageMode(PageMode.ViewVersion);
-          this.versionForView = this.cleanupAndSerializeXML(
-            cleanVersionView.editableXml,
-            `doubleCompare-${this.documentRef}`,
-          );
-          this.setVersionForViewHeader(cleanVersionView.versionInfoVO);
+          this.setPageMode(PageMode.ViewVersion);
+          if (!!cleanVersionView && !!cleanVersionView.editableXml) {
+            this.versionForView = this.cleanupAndSerializeXML(
+              cleanVersionView.editableXml,
+              `doubleCompare-${this.documentRef}`,
+            );
+            this.setVersionForViewHeader(cleanVersionView.versionInfoVO);
+          }
       });
 
     this.documentService.compareModeEnabled$
@@ -955,7 +957,8 @@ export class DocumentEditorComponent
     this.milestoneViewData = {
       createdBy: version.createdBy,
       createdDate: version.updatedDate,
-      legDocumentName: version.legFileName,
+      versionedReference: version.versionedReference,
+      legDocumentName: null,
       proposalRef: this.proposalRef,
       title: version.checkinCommentVO.title,
     };

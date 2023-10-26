@@ -194,38 +194,6 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<VersionVO> getRecentMinorVersions(String documentRef) {
-/*
-        Proposal proposal = this.proposalService.findProposalByRef(documentRef)
-        Integer recentCount = this.proposalService.findRecentMinorVersionsCount(proposal.getId(), documentRef)
-*/
-        //        return this.proposalService.findRecentMinorVersions(proposal.getId(), documentRef, 0, recentCount)
-        return null;
-    }
-
-    @Override
-    public List<VersionVO> getVersionsData(String documentRef) {
-        Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        List<VersionVO> versions = this.proposalService.getAllVersions(proposal.getId(), documentRef);
-        for (VersionVO versionVO : versions) {
-            if (versionVO.getVersionType().equals(VersionType.MAJOR)) {
-                LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionVO.getVersionedReference());
-                versionVO.setLegFileName(legDocument.getName());
-            }
-            versionVO.setCreatedBy(userHelper.convertToPresentation(versionVO.getUsername()));
-        }
-        return versions;
-    }
-
-    @Override
-    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion) {
-        int count = this.proposalService.findAllMinorsCountForIntermediate(documentRef, currIntVersion);
-        return VersionsUtil.buildVersionResponse(this.proposalService.findAllMinorsForIntermediate(documentRef,
-                currIntVersion, 0, count), messageHelper, userHelper);
-    }
-
-    @Override
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();

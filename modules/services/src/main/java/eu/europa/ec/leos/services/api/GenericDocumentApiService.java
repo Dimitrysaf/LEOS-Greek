@@ -161,7 +161,7 @@ public class GenericDocumentApiService {
         LeosMetadata metadata = this.getDocMetadata(document);
         byte[] content = this.getDocumentContent(document);
         document = this.leosRepository.updateDocument(document.getId(), metadata, content, versionType, versionComment, XmlDocument.class);
-        return this.getVersionsData(documentRef);
+        return this.getMajorVersionsData(documentRef, 0, 1);
     }
 
     public List<TableOfContentItemVO> getTableOfContent(@NotNull String docRef,
@@ -259,36 +259,41 @@ public class GenericDocumentApiService {
         return cleanVersion;
     }
 
-    public List<VersionVO> getVersionsData(@NotNull String docRef) {
-        XmlDocument document = this.findDocumentByRef(docRef);
-        List<XmlDocument> majorVersions = this.leosRepository.findAllMajors(XmlDocument.class, docRef, 0, Integer.MAX_VALUE);
+    public List<VersionVO> getMajorVersionsData(@NotNull String docRef, int pageIndex, int pageSize) {
+        List<XmlDocument> majorVersions = this.leosRepository.findAllMajors(XmlDocument.class, docRef, pageIndex, pageSize);
         List<VersionVO> versions = VersionsUtil.buildVersionVO(majorVersions, messageHelper);
 
         for (VersionVO version : versions) {
-            this.leosRepository.findAllMinorsCountForIntermediate(XmlDocument.class, docRef, version.getCmisVersionNumber());
-
-            version.setCreatedBy(this.userHelper.convertToPresentation(version.getUsername()));
-            version.setSubVersions(
-                    VersionsUtil.buildVersionResponse(
-                            this.leosRepository.findAllMinorsForIntermediate(XmlDocument.class, docRef, version.getCmisVersionNumber(), 0, Integer.MAX_VALUE),
-                            this.messageHelper,
-                            this.userHelper
-                    )
-            );
-            if (VersionType.MAJOR.equals(version.getVersionType())) {
-                LeosPackage leosPackage = this.packageService.findPackageByDocumentRef(document.getMetadata().get().getRef(), XmlDocument.class);
-                LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), version.getVersionedReference());
-                version.setLegFileName(legDocument.getName());
-            }
+            version.setCreatedBy(userHelper.convertToPresentation(version.getUsername()));
         }
         return versions;
     }
 
-    public List<VersionVO> getRecentMinorVersions(@NotNull String docRef) {
+    public int countMajorVersionsData(@NotNull String docRef) {
+        return this.leosRepository.findAllMajorsCount(XmlDocument.class, docRef);
+    }
+
+    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion, int pageIndex, int pageSize) {
+        return VersionsUtil.buildVersionResponse(this.leosRepository.findAllMinorsForIntermediate(XmlDocument.class, documentRef,
+                currIntVersion, pageIndex, pageSize), messageHelper, userHelper);
+    }
+
+    public int countIntermediateVersionsData(String documentRef, String currIntVersion) {
+        return this.leosRepository.findAllMinorsCountForIntermediate(XmlDocument.class, documentRef, currIntVersion);
+    }
+
+    public List<VersionVO> getRecentMinorVersions(@NotNull String docRef, int pageIndex, int pageSize) {
         XmlDocument document = this.findDocumentByRef(docRef);
         LeosDocument latestVersion = this.leosRepository.findLatestMajorVersionById(XmlDocument.class, document.getId(), docRef);
-        List<XmlDocument> versionDocs = this.leosRepository.findRecentMinorVersions(XmlDocument.class, docRef, latestVersion.getCmisVersionLabel(), 0, Integer.MAX_VALUE);
+        List<XmlDocument> versionDocs = this.leosRepository.findRecentMinorVersions(XmlDocument.class, docRef, latestVersion.getCmisVersionLabel(), pageIndex,
+                pageSize);
         return VersionsUtil.buildVersionResponse(versionDocs, messageHelper, userHelper);
+    }
+
+    public int countRecentMinorVersions(@NotNull String docRef) {
+        XmlDocument document = this.findDocumentByRef(docRef);
+        LeosDocument latestVersion = this.leosRepository.findLatestMajorVersionById(XmlDocument.class, document.getId(), docRef);
+        return this.leosRepository.findRecentMinorVersionsCount(XmlDocument.class, docRef, latestVersion.getCmisVersionLabel());
     }
 
     public DocumentViewResponse restoreToVersion(@NotNull String docRef,

@@ -245,9 +245,9 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     }
 
     @Override
-    public List<VersionVO> getAllVersions(String documentId, String docRef) {
+    public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
         // TODO temporary call. paginated loading will be implemented in the future Story
-        List<Explanatory> majorVersions = findAllMajors(docRef, 0, 9999);
+        List<Explanatory> majorVersions = findAllMajors(docRef, pageIndex, pageSize);
         LOG.trace("Found {} majorVersions for [id={}]", majorVersions.size(), documentId);
 
         List<VersionVO> majorVersionsVO = VersionsUtil.buildVersionVO(majorVersions, messageHelper);

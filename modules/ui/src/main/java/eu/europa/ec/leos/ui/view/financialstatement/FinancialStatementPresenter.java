@@ -461,7 +461,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     }
 
     private List<VersionVO> getVersionVOS() {
-        return financialStatementService.getAllVersions(documentId, documentRef);
+        return financialStatementService.getAllVersions(documentId, documentRef, 0, 9999);
     }
 
     private void populateViewData(FinancialStatement financialStatement, TocMode mode) {

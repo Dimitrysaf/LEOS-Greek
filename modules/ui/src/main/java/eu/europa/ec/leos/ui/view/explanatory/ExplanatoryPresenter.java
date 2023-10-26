@@ -387,7 +387,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     private void populateVersionsData() {
         Explanatory explanatory = getDocument();
         DocumentVO explanatoryVO = createExplanatoryVO(explanatory);
-        final List<VersionVO> allVersions = explanatoryService.getAllVersions(documentId, documentRef);
+        final List<VersionVO> allVersions = explanatoryService.getAllVersions(documentId, documentRef, 0, 9999);
         explanatoryScreen.setDataFunctions(
                 explanatoryVO,
                 allVersions,
@@ -398,7 +398,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void updateVersionsTab(DocumentUpdatedEvent event) {
-        final List<VersionVO> allVersions = explanatoryService.getAllVersions(documentId, documentRef);
+        final List<VersionVO> allVersions = explanatoryService.getAllVersions(documentId, documentRef, 0, 9999);
         explanatoryScreen.refreshVersions(allVersions, comparisonMode);
     }
 

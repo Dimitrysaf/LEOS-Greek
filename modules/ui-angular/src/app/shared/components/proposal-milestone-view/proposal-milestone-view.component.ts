@@ -33,7 +33,7 @@ type MilestoneDocument = {
 
 export type MilestoneDescriptor = Pick<
   Milestone,
-  'createdBy' | 'createdDate' | 'legDocumentName' | 'proposalRef' | 'title'
+  'createdBy' | 'createdDate' | 'legDocumentName' | 'proposalRef' | 'title' | 'versionedReference'
 >;
 
 @Component({
@@ -95,10 +95,17 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   }
 
   exportPdf() {
-    this.milestonesService.exportMilestonePdf(
-      this.milestone.proposalRef,
-      this.milestone.legDocumentName,
-    );
+    if (this.milestone?.legDocumentName) {
+      this.milestonesService.exportMilestonePdf(
+        this.milestone.proposalRef,
+        this.milestone.legDocumentName,
+      );
+    } else {
+      this.milestonesService.exportMilestonePdfFromVersion(
+        this.milestone.proposalRef,
+        this.milestone.versionedReference,
+      );
+    }
   }
 
   onToggleTocPaneCollapsed(isTocPaneCollapsed = !this.isTocPaneCollapsed) {
@@ -117,20 +124,37 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
         ? ['COVERPAGE', 'STAT_FINANC_LEGIS']
         : []),
     ];
-    this.milestonesService
-      .listMilestoneView(
-        this.milestone.proposalRef,
-        this.milestone.legDocumentName,
-      )
-      .subscribe((response) => {
-        this.showPdfExport = response.pdfRenditionsPresent;
+    if (!!this.milestone.legDocumentName) {
+      this.milestonesService
+        .listMilestoneView(
+          this.milestone.proposalRef,
+          this.milestone.legDocumentName,
+        )
+        .subscribe((response) => {
+          this.showPdfExport = response.pdfRenditionsPresent;
 
-        this.documents = response.documents
-          .filter((x) => !hiddenCategories.includes(x.leosCategory))
-          .sort(this.tabOrderComparator)
-          .map((x) => this.viewToDoc(x));
-        this.setActiveTab(0);
-      });
+          this.documents = response.documents
+            .filter((x) => !hiddenCategories.includes(x.leosCategory))
+            .sort(this.tabOrderComparator)
+            .map((x) => this.viewToDoc(x));
+          this.setActiveTab(0);
+        });
+    } else {
+      this.milestonesService
+        .listMilestoneViewFromVersion(
+          this.milestone.proposalRef,
+          this.milestone.versionedReference,
+        )
+        .subscribe((response) => {
+          this.showPdfExport = response.pdfRenditionsPresent;
+
+          this.documents = response.documents
+            .filter((x) => !hiddenCategories.includes(x.leosCategory))
+            .sort(this.tabOrderComparator)
+            .map((x) => this.viewToDoc(x));
+          this.setActiveTab(0);
+        });
+    }
   }
 
   private viewToDoc(item: MilestoneViewItem): MilestoneDocument {

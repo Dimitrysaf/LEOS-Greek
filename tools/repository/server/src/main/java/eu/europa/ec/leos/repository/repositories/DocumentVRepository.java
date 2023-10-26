@@ -67,18 +67,11 @@ public interface DocumentVRepository extends JpaRepository<DocumentV, String> {
     @Query(value = "SELECT * FROM DOCUMENT_V d WHERE d.ref = ?1 AND d.version_label = ?2", nativeQuery = true)
     Optional<DocumentV> findDocumentByVersion(String docRef, String versionLabel);
 
-    @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel < ?2 AND d.versionLabel > ?3 ORDER BY d" +
-            ".createdOn DESC")
-    Page<DocumentV> findAllMinorsForIntermediate(String docRef, String currIntVersion, String previousMajorVersion, Pageable pageable);
-
-    @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.IS_MAJOR_VERSION = 1 and d.REF = ?1 AND d.VERSION_LABEL < ?2 ORDER BY d" +
-            ".DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
+    @Query(value = "SELECT * FROM (SELECT * FROM DOCUMENT_V d WHERE d.IS_MAJOR_VERSION = 1 and d.REF = ?1 AND d.DOC_AUDIT_LAST_M_DATE < (SELECT " +
+            "DOC_AUDIT_LAST_M_DATE FROM DOCUMENT_V WHERE REF = ?1 AND VERSION_LABEL= ?2) ORDER BY d.DOC_AUDIT_LAST_M_DATE DESC) WHERE ROWNUM <= 1", nativeQuery = true)
     Optional<DocumentV> findPreviousMajorVersion(String docRef, String currIntVersion);
 
-    @Query(value = "SELECT COUNT(d) FROM DocumentV d WHERE d.isMajorVersion = false AND d.ref = ?1 AND d.versionLabel < ?2 AND d.versionLabel > ?3")
-    long getAllMinorsCountForIntermediate(String docRef, String currIntVersion, String previousMajorVersion);
-
-    @Query(value = "SELECT COUNT(DISTINCT VERSION_ID) MINORS_COUNT FROM DOCUMENT_V d WHERE IS_MAJOR_VERSION = 1 and d.ref = ?1", nativeQuery = true)
+    @Query(value = "SELECT COUNT(DISTINCT VERSION_ID) FROM DOCUMENT_V d WHERE IS_MAJOR_VERSION = 1 and d.ref = ?1", nativeQuery = true)
     long getAllMajorsCount(String docRef);
 
     @Query(value = "SELECT d FROM DocumentV d WHERE d.isMajorVersion = true AND d.ref = ?1")

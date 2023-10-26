@@ -25,7 +25,6 @@ import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
-import eu.europa.ec.leos.services.dto.response.ShowCleanVersionResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -53,12 +52,6 @@ public interface BaseDocumentService<T extends XmlDocument> {
     DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position);
 
     DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception;
-
-    List<VersionVO> getRecentMinorVersions(String documentRef);
-
-    List<VersionVO> getVersionsData(String documentRef);
-
-    List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion);
 
     List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
 

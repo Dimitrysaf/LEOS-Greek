@@ -407,7 +407,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     }
 
     private List<VersionVO> getVersionVOS() {
-        return proposalService.getAllVersions(documentId, documentRef);
+        return proposalService.getAllVersions(documentId, documentRef, 0, 9999);
     }
 
     @Subscribe

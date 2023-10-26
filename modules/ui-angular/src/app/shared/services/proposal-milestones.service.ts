@@ -30,6 +30,15 @@ export class ProposalMilestonesService {
     );
   }
 
+  listMilestoneViewFromVersion(proposalRef: string, versionedReference: string) {
+    return this.http.get<MilestoneViewResponse>(
+      `${apiBaseUrl}/secured/list-milestones-view-version/${proposalRef}`,
+      {
+        params: { versionedReference },
+      },
+    );
+  }
+
   exportMilestonePdf(documentRef: string, legFileName: string) {
     this.loadingService.setLoading(true);
     return this.http
@@ -37,6 +46,31 @@ export class ProposalMilestonesService {
         `${apiBaseUrl}/secured/list-milestones-view/pdf-export/${documentRef}`,
         {
           params: { legFileName },
+          observe: 'response',
+          responseType: 'blob',
+        },
+      )
+      .subscribe({
+        next: (response) => {
+          const cd = parseContentDisposition(
+            response.headers.get('Content-Disposition'),
+          );
+          const filename = cd.attachment
+            ? cd.filename
+            : `Proposal_${documentRef}.pdf`;
+          downloadBlob(response.body, filename, this.document);
+        },
+        complete: () => this.loadingService.setLoading(false),
+      });
+  }
+
+  exportMilestonePdfFromVersion(documentRef: string, versionedReference: string) {
+    this.loadingService.setLoading(true);
+    return this.http
+      .get(
+        `${apiBaseUrl}/secured/list-milestones-view-version/pdf-export/${documentRef}`,
+        {
+          params: { versionedReference },
           observe: 'response',
           responseType: 'blob',
         },

@@ -421,9 +421,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
         return proposalRepository.findProposalVersions(id, false);
     }
 
-    @Override public List<VersionVO> getAllVersions(String documentId, String docRef) {
-        // TODO temporary call. paginated loading will be implemented in the future Story
-        List<Proposal> majorVersions = findAllMajors(docRef, 0, 9999);
+    @Override public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
+        List<Proposal> majorVersions = findAllMajors(docRef, pageIndex, pageSize);
         LOG.trace("Found {} majorVersions for [id={}]", majorVersions.size(), documentId);
 
         List<VersionVO> majorVersionsVO = VersionsUtil.buildVersionVO(majorVersions, messageHelper);

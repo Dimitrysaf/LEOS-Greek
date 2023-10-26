@@ -314,7 +314,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
         verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED);
-        verify(billService).getAllVersions(any(), any());
+        verify(billService).getAllVersions(any(), any(), Mockito.eq(0), Mockito.eq(9999));
 
         verify(documentScreen).refreshContent(displayableContent, false);
         verify(documentScreen).setDocumentTitle(docName);
@@ -410,7 +410,7 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         verify(documentContentService).getCoverPageContent(leosProposal.getContent().get().getSource().getBytes());
         verify(documentContentService).toEditableContent(any(XmlDocument.class), any(), any(), any());
         verify(billService).getTableOfContent(document, TocMode.SIMPLIFIED);
-        verify(billService).getAllVersions(any(), any());
+        verify(billService).getAllVersions(any(), any(), Mockito.eq(0), Mockito.eq(9999));
 
         verify(documentScreen).refreshContent(displayableContent, false);
         verify(documentScreen).setDocumentTitle(docName);
