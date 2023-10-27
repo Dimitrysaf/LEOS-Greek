@@ -37,7 +37,7 @@
         <nodejs.version>v16.17.0</nodejs.version>
         <mvn.frontend.plugin.version>1.11.2</mvn.frontend.plugin.version>
         <mvn.frontend.plugin.execution.phase>generate-resources</mvn.frontend.plugin.execution.phase>
-        <yarn.build.command>build-dev</yarn.build.command>
+        <yarn.build.command>build-prod-skip-test</yarn.build.command>
         <skipTests>true</skipTests>
         <!-- _CSDR=K1:V1,K2:V2
            We initialize them with `:` (noop key-value pair) so that profiles can
