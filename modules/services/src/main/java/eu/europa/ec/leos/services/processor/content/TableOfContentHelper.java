@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.vo.toc.NumberingType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -154,7 +155,23 @@ public class TableOfContentHelper {
     
     public static String getItemSoftStyle(TableOfContentItemVO tableOfContentItemVO) {
         String itemSoftStyle = EMPTY_STRING;
-        if (tableOfContentItemVO.getSoftActionAttr() != null) {
+        if (tableOfContentItemVO.getTrackChangeAction() != null) {
+            if (hasTocItemTrackChangeAction(tableOfContentItemVO, TrackChangeActionType.DELETE) && hasTocItemSoftAction(tableOfContentItemVO, MOVE_TO)) {
+                itemSoftStyle = "leos-soft-movedto";
+            } else if (hasTocItemTrackChangeAction(tableOfContentItemVO, TrackChangeActionType.ADD) && hasTocItemSoftAction(tableOfContentItemVO,
+                    MOVE_FROM)) {
+                itemSoftStyle = "leos-soft-movedfrom";
+            } else if (hasTocItemTrackChangeAction(tableOfContentItemVO, TrackChangeActionType.ADD)) {
+                itemSoftStyle = "leos-soft-new";
+            } else if (hasTocItemTrackChangeAction(tableOfContentItemVO, TrackChangeActionType.DELETE)) {
+                String initialNum = tableOfContentItemVO.getInitialNum();
+                if (initialNum != null) {
+                    initialNum = initialNum.replace("Article ", "");
+                    tableOfContentItemVO.setNumber(initialNum);
+                }
+                itemSoftStyle = "leos-soft-removed";
+            }
+        } else if (tableOfContentItemVO.getSoftActionAttr() != null) {
             if (hasTocItemSoftAction(tableOfContentItemVO, ADD)) {
                 itemSoftStyle = "leos-soft-new";
             } else if (hasTocItemSoftAction(tableOfContentItemVO, DELETE)) {
@@ -176,6 +193,16 @@ public class TableOfContentHelper {
     public static boolean hasTocItemSoftAction(final TableOfContentItemVO item, SoftActionType actionType) {
         return item != null && item.getSoftActionAttr() != null
                 && (item.getSoftActionAttr().equals(actionType));
+    }
+
+    public static boolean hasTocItemTrackChangeAction(final TableOfContentItemVO item, TrackChangeActionType actionType) {
+        return item != null && item.getTrackChangeAction() != null
+                && (item.getTrackChangeAction().equals(actionType.getTrackChangeAction()));
+    }
+
+    public static boolean hasTocItemTrackChangeAction(final TableOfContentItemVO item, String actionType) {
+        return item != null && item.getTrackChangeAction() != null
+                && (item.getTrackChangeAction().equals(actionType));
     }
 
     public static boolean hasTocItemSoftOrigin(final TableOfContentItemVO item, final String softOriginValue) {

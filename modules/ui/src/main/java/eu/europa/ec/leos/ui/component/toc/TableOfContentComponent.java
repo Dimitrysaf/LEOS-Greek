@@ -57,6 +57,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -129,6 +130,7 @@ import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.getFirstAscendant;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateDepthOfTocItems;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateStyleClassOfTocItems;
@@ -155,6 +157,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     private static final float TOC_MIN_WIDTH = 190F;
     private static final int MAX_CHECKIN_COMMENTS = 15;
     private static final int MAX_DEPTH = 3;
+    private boolean isTrackChangesEnabled = false;
 
     enum POINT_NUMBERING_TYPE {
         BULLET("bullet", NumberingType.BULLET_NUM),
@@ -343,7 +346,8 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 
     @Autowired
     public TableOfContentComponent(final MessageHelper messageHelper, final EventBus eventBus, final SecurityContext securityContext,
-                                   final ConfigurationHelper cfgHelper, final TocEditor tocEditor, Provider<StructureContext> structureContextProvider, TableOfContentProcessor tableOfContentProcessor) {
+                                   final ConfigurationHelper cfgHelper, final TocEditor tocEditor, Provider<StructureContext> structureContextProvider,
+                                   TableOfContentProcessor tableOfContentProcessor) {
         // If the list indentListRadioButtonGroupItemsToEnable is empty, all items will be enabled in method buildIndentListRadioButtonGroup
         this(messageHelper, eventBus, securityContext, cfgHelper, tocEditor, structureContextProvider, tableOfContentProcessor, null);
     }
@@ -369,6 +373,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         this.tableOfContentProcessor = tableOfContentProcessor;
 
         this.indentListRadioButtonGroupItemsToEnable = indentListRadioButtonGroupItemsToEnable;
+        this.isTrackChangesEnabled = isTrackChangesEnabled;
         Design.read(this);
         buildToc();
         this.checkDeleteLastEditingTypeConsumer = new CheckDeleteLastEditingTypeConsumer(tocTree, messageHelper, eventBus);
@@ -384,6 +389,10 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     public void detach() {
         eventBus.unregister(this);
         super.detach();
+    }
+
+    public void setTrackChangesEnabled(boolean trackChangesEnabled) {
+        this.isTrackChangesEnabled = trackChangesEnabled;
     }
 
     private void buildToc() {
@@ -1906,7 +1915,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 
         private void deleteItem(TableOfContentItemVO item) {
             item.setTrackChangeAction(LEOS_TC_DELETE_ACTION);
-            final ActionType actionType = tocEditor.deleteItem(tocTree, item);
+            final ActionType actionType = tocEditor.deleteItem(tocTree, item, isTrackChangesEnabled);
             final CheckinElement checkinElement = new CheckinElement(actionType, item.getId(), item.getTocItem().getAknTag().name());
             final String statusMsg = messageHelper.getMessage("toc.edit.window.delete.message", TableOfContentHelper.getDisplayableTocItem(item.getTocItem(), messageHelper));
             eventBus.post(new TocChangedEvent(statusMsg, TocChangedEvent.Result.SUCCESSFUL, Arrays.asList(checkinElement)));

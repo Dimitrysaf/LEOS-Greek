@@ -7,6 +7,7 @@ import {BlockDocumentEditorService} from "@/features/akn-document/services/block
 import {apiBaseUrl} from "../../../../config";
 import {DocumentService} from "@/shared/services/document.service";
 import {DocumentViewResponse} from "@/shared/models/document-view-response.model";
+import {LEOS_TC_DELETE_ACTION, LEOS_TC_INSERT_ACTION} from "@/shared/constants";
 
 export enum TrackChangeAction {
   ADD,
@@ -48,10 +49,10 @@ export class TrackChangesActionsService{
     let elementType = elementData.elementType == 'akntitle' ? 'title' : elementData.elementType;
     switch (trackChangeAction) {
       case TrackChangeAction.DEL:
-        this.acceptChangeElement({elementId: elementData.elementId, elementType: elementType}, 'del', docService);
+        this.acceptChangeElement({elementId: elementData.elementId, elementType: elementType}, LEOS_TC_DELETE_ACTION, docService);
         break;
       case TrackChangeAction.ADD:
-        this.acceptChangeElement({elementId: elementData.elementId, elementType: elementType}, 'add', docService);
+        this.acceptChangeElement({elementId: elementData.elementId, elementType: elementType}, LEOS_TC_INSERT_ACTION, docService);
         break;
       case TrackChangeAction.MOVED_TO:
         this.acceptChangeElement({elementId: elementData.elementId, elementType: elementType}, 'move_to', docService);
@@ -66,10 +67,10 @@ export class TrackChangesActionsService{
     let elementType = elementData.elementType == 'akntitle' ? 'title' : elementData.elementType;
     switch (trackChangeAction) {
       case TrackChangeAction.DEL:
-        this.rejectChangeElement({elementId: elementData.elementId, elementType: elementType}, 'del', docService);
+        this.rejectChangeElement({elementId: elementData.elementId, elementType: elementType}, LEOS_TC_DELETE_ACTION, docService);
         break;
       case TrackChangeAction.ADD:
-        this.rejectChangeElement({elementId: elementData.elementId, elementType: elementType}, 'add', docService);
+        this.rejectChangeElement({elementId: elementData.elementId, elementType: elementType}, LEOS_TC_INSERT_ACTION, docService);
         break;
       case TrackChangeAction.MOVED_TO:
         this.rejectChangeElement({elementId: elementData.elementId, elementType: elementType}, 'move_to', docService);

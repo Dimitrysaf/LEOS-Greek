@@ -59,6 +59,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.INLINE;
 import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.INTRO;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_AUTO_NUM_OVERWRITE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_CROSSHEADING_TYPE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
@@ -308,6 +309,9 @@ public class XmlContentProcessorHelper {
         //get attribute set to determine if elements auto numbering should be overwritten
         Boolean isAutoNumOverwrite = Boolean.parseBoolean(getAttributeValue(node, LEOS_AUTO_NUM_OVERWRITE));
 
+        //get track changes action
+        String trackChangeAction = getAttributeValue(node, LEOS_ACTION_ATTR);
+
         //get attribute set to determine if article is a definition article
         TocItemTypeName tocItemType = StructureConfigUtils.getTocItemTypeFromTagNameAndAttributes(tocItems, tagName, XercesUtils.getAttributes(node));
 
@@ -320,6 +324,7 @@ public class XmlContentProcessorHelper {
         item.setCrossHeadingInList(isCrossheadingInList);
         item.setInitialNum(initialNumber);
         item.setTocItemType(tocItemType);
+        item.setTrackChangeAction(trackChangeAction);
         return item;
     }
 

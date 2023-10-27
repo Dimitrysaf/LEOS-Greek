@@ -141,7 +141,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
   }
 
   deleteItem(newTree: TableOfContentItemVO[], item: TableOfContentItemVO) {
-    if (!containsItemOfOrigin(item, EC, LS)) {
+    if (!containsItemOfOrigin(item, EC, LS) || !this.documentConfig?.trackChangesEnabled) {
       this.removeNode(newTree, item);
     } else {
       softDeleteItem(newTree, item, LS);

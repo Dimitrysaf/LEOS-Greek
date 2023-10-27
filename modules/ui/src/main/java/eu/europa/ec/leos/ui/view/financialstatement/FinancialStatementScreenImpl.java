@@ -314,6 +314,7 @@ abstract public class FinancialStatementScreenImpl extends VerticalLayout implem
 
     @Override
     public void setContent(String content, boolean trackChangesEnabled) {
+        tableOfContentComponent.setTrackChangesEnabled(trackChangesEnabled);
         if(isClonedProposal()) {
             eventBus.post(new AddChangeDetailsMenuEvent());
             eventBus.post(new AddTrackChangesMenuEvent(false, trackChangesEnabled));
