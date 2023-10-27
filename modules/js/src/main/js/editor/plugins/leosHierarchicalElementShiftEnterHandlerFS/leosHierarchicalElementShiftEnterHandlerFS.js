@@ -215,6 +215,15 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
                     rangeContent.setStart(inlineWrapper, 0);
 
                 var content = rangeContent.extractContents();
+                if(inlineWrapperName === 'li' && inlineWrapper.getChildCount() > 0) {
+                    for(var i = 0; i < inlineWrapper.getChildCount(); i++) {
+                        var child = inlineWrapper.getChildren().getItem(i);
+                        if(child.getName && child.getName() === "span" && leosKeyHandler.isContentEmptyTextNode(child)) {
+                            child.remove();
+                            i--;
+                        }
+                    }
+                }
                 var pElement = new CKEDITOR.dom.element('p');
                 if ((inlineWrapperName === 'th') || (inlineWrapperName === 'td')) {
                     pElement.setAttribute(DATA_AKN_NAME, 'aknParagraph');

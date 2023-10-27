@@ -229,33 +229,33 @@ define(function leosUtilsModule(require) {
                 if (isDocTcStyle) {
                     tcStyle += "paragraph:not(:has(> num > span[leos\\:action])) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:before, " +
                         "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > span[leos\\:action])):before, " +
-                        "level subparagraph[leos\\:action-enter='insert']:before, " +
-                        "paragraph list subparagraph[leos\\:action-enter='insert']:before {" +
+                        "subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before {" +
                         "content: '↵'; margin-left: -20pt; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";
                     tcStyle += "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:before, " +
                         "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:not(:has(> num)):before, " +
-                        "level subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='delete']:before, " +
-                        "paragraph list subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='delete']:before {" +
+                        "subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='delete']:before {" +
                         "content: '↰'; margin-left: -20pt; color: " + userColors[0] + "; " +
                         "float: left; border: 0pt; padding-top: 6pt;" +
                         "}\n";
                 } else {
                     tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
                         "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
-                        "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                        "ol[data-akn-name='aknAnnexList'][data-akn-element='paragraph'] > li > ol[data-akn-name='aknAnnexOrderedList'] > li[data-akn-name='subparagraph'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                        "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > ol[data-akn-name='aknAnnexOrderedList'] > li > p[data-akn-element='subparagraph'][data-akn-action-enter='insert']:not([data-akn-num]):before {" +
+                        "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                        "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                        "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                        "li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before {" +
                         "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                         "float: left !important; text-decoration: none !important;" +
                         "}\n";
                     tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
                         "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
                         "ol > li > p[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
-                        "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > p[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
-                        "ol[data-akn-name='aknAnnexList'][data-akn-element='paragraph'] > li > ol[data-akn-name='aknAnnexOrderedList'] > li[data-akn-name='subparagraph'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
-                        "ol[data-akn-name='aknAnnexList'][data-akn-element='level'] > li > ol[data-akn-name='aknAnnexOrderedList'] > li > p[data-akn-element='subparagraph'][data-akn-action-enter='delete']:not([data-akn-num]):before {" +
+                        "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                        "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                        "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                        "li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before {" +
                         "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
                         "float: left !important; text-decoration: none !important;" +
                         "}\n";

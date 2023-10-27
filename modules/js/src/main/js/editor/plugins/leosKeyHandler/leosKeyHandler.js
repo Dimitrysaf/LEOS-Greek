@@ -64,6 +64,9 @@ define(function leosKeyHandler(require) {
                             (childElement.getText().trim().replace(REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX, '') !== "")) {
                         return false;
                     } else if ((childElement.type !== CKEDITOR.NODE_TEXT) && (childElement.getName().toLowerCase() !== BOGUS)) {
+if(childElement.getName().toLowerCase() === SPAN && isContentEmptyTextNode(childElement)) {
+                            continue;
+                        }
                         return false;
                     }
                 }
