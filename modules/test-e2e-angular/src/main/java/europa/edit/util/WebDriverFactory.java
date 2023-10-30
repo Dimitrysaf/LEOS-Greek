@@ -42,9 +42,11 @@ public class WebDriverFactory {
         switch (mode) {
             case "local":
                 tlDriver.set(localDriver(browser));
+                break;
             case "remote":
                 String gridUrl = configReader.getProperty("grid.url");
                 tlDriver.set(remoteDriver(browser, gridUrl));
+                break;
         }
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Constants.TIMEOUT_DELAY));
         driver.manage().deleteAllCookies();
