@@ -381,9 +381,9 @@
               euiButton
               euiIconButton
               euiSizeS
-              [euiPrimary]="isAsyncScrollEnabled"
-              [euiSecondary]="!isAsyncScrollEnabled"
-              (click)="handleAsyncScroll()"
+              [euiPrimary]="isSyncScrollEnabled$ | async"
+              [euiSecondary]="!(isSyncScrollEnabled$ | async)"
+              (click)="toggleSyncScroll()"
             >
               <span euiSizeS class="eui-icon eui-icon-sync"></span>
             </button>
@@ -441,12 +441,12 @@
                 euiButton
                 euiIconButton
                 euiSizeS
-                [euiPrimary]="isAsyncScrollEnabled"
-                [euiSecondary]="!isAsyncScrollEnabled"
+                [euiPrimary]="isSyncScrollEnabled$ | async"
+                [euiSecondary]="!(isSyncScrollEnabled$ | async)"
                 *ngIf="versionsComparisonForView"
-                (click)="handleAsyncScroll()"
+                (click)="toggleSyncScroll()"
                 [euiTooltip]="
-                  (isAsyncScrollEnabled
+                  ((isSyncScrollEnabled$ | async)
                     ? 'page.editor.versions.compare.actions.synchronous-scrolling.disable'
                     : 'page.editor.versions.compare.actions.synchronous-scrolling.enable'
                   ) | translate
@@ -481,6 +481,9 @@
                 euiPrimary
                 euiSizeS
                 *ngIf="versionsComparisonForView"
+                [disabled]="
+                  navigationAnchorsList.length - 1 === navigationAnchorIndex
+                "
                 (click)="handleNextChange()"
                 [euiTooltip]="
                   'page.editor.versions.compare.actions.next-change' | translate
@@ -666,12 +669,12 @@
                 euiButton
                 euiIconButton
                 euiSizeS
-                [euiPrimary]="isAsyncScrollEnabled"
-                [euiSecondary]="!isAsyncScrollEnabled"
+                [euiPrimary]="isSyncScrollEnabled$ | async"
+                [euiSecondary]="!(isSyncScrollEnabled$ | async)"
                 *ngIf="contributionForView"
-                (click)="handleAsyncScroll()"
+                (click)="toggleSyncScroll()"
                 [euiTooltip]="
-                  (isAsyncScrollEnabled
+                  ((isSyncScrollEnabled$ | async)
                     ? 'page.editor.contribution.view.actions.synchronous-scrolling.disable'
                     : 'page.editor.contribution.view.actions.synchronous-scrolling.enable'
                   ) | translate
