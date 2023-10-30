@@ -1,0 +1,234 @@
+[INFO  - 2023-02-20T17:26:56.290Z] GhostDriver - Main - running on port 37737
+[INFO  - 2023-02-20T17:26:56.590Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-02-20T17:26:56.590Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.customHeaders:  - {}
+[INFO  - 2023-02-20T17:26:56.590Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-02-20T17:26:56.591Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: c6474c80-b143-11ed-a09b-4b77dcd8d90a
+[ERROR - 2023-02-20T17:26:57.787Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T17:26:57.787Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-20T17:26:57.790Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T17:26:57.790Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-20T17:26:57.791Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T17:26:57.791Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-20T17:26:57.792Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T17:26:57.792Z] Session [c6474c80-b143-11ed-a09b-4b77dcd8d90a] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-02-20T17:26:58.355Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-02-20T17:45:25.542Z] GhostDriver - Main - running on port 53168
+[INFO  - 2023-02-20T17:45:26.232Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-02-20T17:45:26.232Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.customHeaders:  - {}
+[INFO  - 2023-02-20T17:45:26.233Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-02-20T17:45:26.233Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 5bad3b20-b146-11ed-9b15-77ec59cc2944
+[ERROR - 2023-02-20T17:45:27.251Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T17:45:27.251Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-20T17:45:27.254Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T17:45:27.254Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-20T17:45:27.254Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T17:45:27.255Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-20T17:45:27.255Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T17:45:27.255Z] Session [5bad3b20-b146-11ed-9b15-77ec59cc2944] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-02-20T17:45:27.913Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-02-20T19:04:43.400Z] GhostDriver - Main - running on port 47801
+[INFO  - 2023-02-20T19:04:44.275Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-02-20T19:04:44.275Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.customHeaders:  - {}
+[INFO  - 2023-02-20T19:04:44.275Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-02-20T19:04:44.275Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 6fb0f9d0-b151-11ed-b5ad-2989dfa99e28
+[ERROR - 2023-02-20T19:04:45.349Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T19:04:45.349Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-20T19:04:45.352Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T19:04:45.352Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-20T19:04:45.353Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T19:04:45.353Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-20T19:04:45.354Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-20T19:04:45.354Z] Session [6fb0f9d0-b151-11ed-b5ad-2989dfa99e28] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-02-20T19:04:45.892Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-02-23T09:31:42.147Z] GhostDriver - Main - running on port 39282
+[INFO  - 2023-02-23T09:31:42.767Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-02-23T09:31:42.767Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.customHeaders:  - {}
+[INFO  - 2023-02-23T09:31:42.768Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-02-23T09:31:42.768Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: e1f3d550-b35c-11ed-8629-a770b964045a
+[ERROR - 2023-02-23T09:31:45.233Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-23T09:31:45.233Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-23T09:31:45.238Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-23T09:31:45.238Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-23T09:31:45.239Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-23T09:31:45.239Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-23T09:31:45.240Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-23T09:31:45.240Z] Session [e1f3d550-b35c-11ed-8629-a770b964045a] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-02-23T09:31:46.209Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-02-23T12:03:37.390Z] GhostDriver - Main - running on port 5774
+[INFO  - 2023-02-23T12:03:37.759Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-02-23T12:03:37.759Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.customHeaders:  - {}
+[INFO  - 2023-02-23T12:03:37.759Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-02-23T12:03:37.759Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 1ae9d890-b372-11ed-ac0c-0fa7777fb37d
+[ERROR - 2023-02-23T12:03:38.823Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-23T12:03:38.824Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-23T12:03:38.827Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-23T12:03:38.827Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-23T12:03:38.828Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-23T12:03:38.828Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-02-23T12:03:38.829Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-02-23T12:03:38.829Z] Session [1ae9d890-b372-11ed-ac0c-0fa7777fb37d] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-02-23T12:03:39.415Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-03-29T15:29:43.970Z] GhostDriver - Main - running on port 50399
+[INFO  - 2023-03-29T15:29:44.657Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-03-29T15:29:44.659Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.customHeaders:  - {}
+[INFO  - 2023-03-29T15:29:44.659Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-03-29T15:29:44.659Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 88309030-ce46-11ed-bf85-5b1463a7b417
+[ERROR - 2023-03-29T15:29:46.806Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-29T15:29:46.806Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-29T15:29:46.810Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-29T15:29:46.810Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-29T15:29:46.811Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-29T15:29:46.811Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-29T15:29:46.812Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-29T15:29:46.812Z] Session [88309030-ce46-11ed-bf85-5b1463a7b417] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-03-29T15:29:47.822Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-03-30T13:17:45.554Z] GhostDriver - Main - running on port 14309
+[INFO  - 2023-03-30T13:17:46.153Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-03-30T13:17:46.153Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.customHeaders:  - {}
+[INFO  - 2023-03-30T13:17:46.153Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-03-30T13:17:46.153Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 42d20020-cefd-11ed-9b04-3ba70a81dbc6
+[ERROR - 2023-03-30T13:17:47.568Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T13:17:47.569Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T13:17:47.572Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T13:17:47.573Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T13:17:47.573Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T13:17:47.573Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T13:17:47.574Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T13:17:47.574Z] Session [42d20020-cefd-11ed-9b04-3ba70a81dbc6] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-03-30T13:17:48.131Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-03-30T13:31:16.104Z] GhostDriver - Main - running on port 58188
+[INFO  - 2023-03-30T13:31:16.728Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-03-30T13:31:16.729Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.customHeaders:  - {}
+[INFO  - 2023-03-30T13:31:16.729Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-03-30T13:31:16.729Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 25f5ee10-ceff-11ed-95e9-0b7ab1878283
+[ERROR - 2023-03-30T13:31:17.939Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T13:31:17.939Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T13:31:17.942Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T13:31:17.943Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T13:31:17.943Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T13:31:17.943Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T13:31:17.945Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T13:31:17.945Z] Session [25f5ee10-ceff-11ed-95e9-0b7ab1878283] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-03-30T13:31:18.570Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-03-30T14:23:35.918Z] GhostDriver - Main - running on port 44355
+[INFO  - 2023-03-30T14:23:36.806Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-03-30T14:23:36.806Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.customHeaders:  - {}
+[INFO  - 2023-03-30T14:23:36.806Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-03-30T14:23:36.806Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 75981d10-cf06-11ed-af23-7f7b5eec7d09
+[ERROR - 2023-03-30T14:23:37.835Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T14:23:37.835Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T14:23:37.838Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T14:23:37.838Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T14:23:37.838Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T14:23:37.839Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T14:23:37.839Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T14:23:37.840Z] Session [75981d10-cf06-11ed-af23-7f7b5eec7d09] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-03-30T14:23:38.511Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-03-30T14:51:22.182Z] GhostDriver - Main - running on port 15973
+[INFO  - 2023-03-30T14:51:22.433Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-03-30T14:51:22.433Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.customHeaders:  - {}
+[INFO  - 2023-03-30T14:51:22.433Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-03-30T14:51:22.433Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 566278b0-cf0a-11ed-bf36-bfcd6a34b73e
+[ERROR - 2023-03-30T14:51:23.570Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T14:51:23.571Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T14:51:23.573Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T14:51:23.574Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T14:51:23.574Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T14:51:23.575Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-03-30T14:51:23.576Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-03-30T14:51:23.576Z] Session [566278b0-cf0a-11ed-bf36-bfcd6a34b73e] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-03-30T14:51:24.060Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-04-04T14:51:35.511Z] GhostDriver - Main - running on port 41886
+[INFO  - 2023-04-04T14:51:36.557Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-04-04T14:51:36.557Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.customHeaders:  - {}
+[INFO  - 2023-04-04T14:51:36.557Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-04-04T14:51:36.558Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 32de5f70-d2f8-11ed-9af2-97c42435044d
+[ERROR - 2023-04-04T14:51:38.254Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-04T14:51:38.254Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-04-04T14:51:38.261Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-04T14:51:38.261Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-04-04T14:51:38.262Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-04T14:51:38.262Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-04-04T14:51:38.263Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-04T14:51:38.263Z] Session [32de5f70-d2f8-11ed-9af2-97c42435044d] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-04-04T14:51:39.534Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-04-05T22:35:55.793Z] GhostDriver - Main - running on port 22792
+[INFO  - 2023-04-05T22:35:56.388Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-04-05T22:35:56.388Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.customHeaders:  - {}
+[INFO  - 2023-04-05T22:35:56.388Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-04-05T22:35:56.388Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 3b091ef0-d402-11ed-ae9b-f9f8ef37a221
+[ERROR - 2023-04-05T22:35:57.367Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-05T22:35:57.367Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-04-05T22:35:57.369Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-05T22:35:57.370Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-04-05T22:35:57.370Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-05T22:35:57.370Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-04-05T22:35:57.371Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-05T22:35:57.371Z] Session [3b091ef0-d402-11ed-ae9b-f9f8ef37a221] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-04-05T22:35:58.031Z] ShutdownReqHand - _handle - About to shutdown
+[INFO  - 2023-04-06T08:07:48.251Z] GhostDriver - Main - running on port 42712
+[INFO  - 2023-04-06T08:07:48.864Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2023-04-06T08:07:48.864Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.customHeaders:  - {}
+[INFO  - 2023-04-06T08:07:48.864Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"windows-10-32bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2023-04-06T08:07:48.864Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 1edbc700-d452-11ed-991f-a71d5104e15f
+[ERROR - 2023-04-06T08:07:50.328Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-06T08:07:50.328Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-04-06T08:07:50.331Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-06T08:07:50.331Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-04-06T08:07:50.332Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-06T08:07:50.332Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.onError - stack:
+  error (:0)
+[ERROR - 2023-04-06T08:07:50.333Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.onError - msg: Not able to uniquely identify config for: ' [object Object] ' . The Conflicting configurations are -  [object Object],[object Object]
+[ERROR - 2023-04-06T08:07:50.333Z] Session [1edbc700-d452-11ed-991f-a71d5104e15f] - page.onError - stack:
+  error (:0)
+[INFO  - 2023-04-06T08:07:50.688Z] ShutdownReqHand - _handle - About to shutdown
