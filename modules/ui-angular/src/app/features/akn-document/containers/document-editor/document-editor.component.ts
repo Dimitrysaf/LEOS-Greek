@@ -64,6 +64,7 @@ import { BlockDocumentEditorService } from '../../services/block-document-editor
 import { CKEditorService } from '../../services/ckeditor.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
+import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
 
 enum PageMode {
   Normal,
@@ -118,15 +119,14 @@ export class DocumentEditorComponent
   tocItems: Array<TocItem> = [];
   dragItems: Array<Partial<TableOfContentItemVO>> = [];
 
+  isSyncScrollEnabled$: Observable<boolean>;
+
   isEditMode = false;
 
   compareChanges: NodeListOf<HTMLElement>;
-  compareIndex = -1;
   navigationAnchorsList: HTMLElement[];
   navigationAnchorIndex = -1;
-  isAsyncScrollEnabled = false;
   arrowClicked = false;
-  isScrollFromButton: boolean;
   tooltipsDelay = 1000;
 
   versionSearchForm = new FormGroup({
@@ -189,7 +189,6 @@ export class DocumentEditorComponent
 
   private unloadStyleSheet?: () => void;
   private destroy$: Subject<any> = new Subject();
-  private scrollables = new Map<Element, () => void>();
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
   private contributionChangesBS = new BehaviorSubject<HTMLElement[]>([]);
 
@@ -212,6 +211,7 @@ export class DocumentEditorComponent
     private domSatinizer: DomSanitizer,
     private tocEditService: TableOfContentEditService,
     private hostElRef: ElementRef,
+    private syncScrollingService: SyncDocumentScrollService,
     @Inject(DOCUMENT) private document: Document,
   ) {
     combineLatest([this.route.params, this.route.data])
@@ -246,6 +246,7 @@ export class DocumentEditorComponent
   ngOnInit(): void {
     this.presenterId = uuidv4();
     this.coEditionWSService.setPresenterId(this.presenterId);
+    this.isSyncScrollEnabled$ = this.syncScrollingService.isSyncScrollEnabled$;
     combineLatest([this.route.params, this.route.data, this.config.config])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([params, data, config]) => {
@@ -347,13 +348,11 @@ export class DocumentEditorComponent
             `marked-${this.documentRef}`,
           );
           setTimeout(() => {
+            this.syncScrollingService.setSyncScroll(true);
             this.handleCompareChanges();
-            this.isAsyncScrollEnabled = false;
-            this.handleAsyncScroll();
           });
         } else {
-          this.isAsyncScrollEnabled = true;
-          this.handleAsyncScroll();
+          this.syncScrollingService.setSyncScroll(false);
           this.clearVersionComparisonView();
         }
       });
@@ -412,6 +411,12 @@ export class DocumentEditorComponent
             life: 6000,
           });
       });
+  }
+
+  toggleSyncScroll() {
+    this.syncScrollingService.setSyncScroll(
+      !this.syncScrollingService.isSyncScrollEnabled,
+    );
   }
 
   downloadXmlFile(v: any) {
@@ -573,21 +578,6 @@ export class DocumentEditorComponent
     }
   }
 
-  handlePrevChange() {
-    if (this.navigationAnchorIndex > -1) {
-      this.isScrollFromButton = true;
-      // const filteredParents = this.getFilteredParents();
-      const prevIndex =
-        this.navigationAnchorIndex - 1 < 0 ? 0 : this.navigationAnchorIndex - 1;
-      this.navigationAnchorsList[prevIndex].scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-      this.navigationAnchorIndex--;
-      this.arrowClicked = true;
-    }
-  }
-
   confirmAnnexStructureChange() {
     const nextAnnexStructure =
       this.documentConfig.documentsMetadata.find(
@@ -613,47 +603,48 @@ export class DocumentEditorComponent
     });
   }
 
+  handlePrevChange() {
+    if (this.navigationAnchorIndex > -1) {
+      // this.isScrollFromButton = true;
+      // const filteredParents = this.getFilteredParents();
+      const prevIndex =
+        this.navigationAnchorIndex - 1 < 0 ? 0 : this.navigationAnchorIndex - 1;
+      const targetElement = this.navigationAnchorsList[prevIndex];
+      requestAnimationFrame(() => {
+        // Scroll the target element into view
+        targetElement.scrollIntoView({
+          block: 'start',
+        });
+      });
+
+      setTimeout(() => {
+        this.syncScrollingService.syncScrollByNavigationChange(targetElement);
+      });
+      this.navigationAnchorIndex--;
+      this.arrowClicked = true;
+    }
+  }
+
   handleNextChange() {
     if (
       this.navigationAnchorIndex !== this.navigationAnchorsList.length - 1 &&
       this.navigationAnchorsList.length > 0
     ) {
-      this.isScrollFromButton = true;
-
-      this.navigationAnchorsList[this.navigationAnchorIndex + 1].scrollIntoView(
-        {
-          behavior: 'smooth',
+      const targetElement =
+        this.navigationAnchorsList[this.navigationAnchorIndex + 1];
+      requestAnimationFrame(() => {
+        // Scroll the target element into view
+        targetElement.scrollIntoView({
           block: 'start',
-        },
-      );
+        });
+      });
+
+      setTimeout(() => {
+        this.syncScrollingService.syncScrollByNavigationChange(targetElement);
+      });
+
       this.navigationAnchorIndex++;
       this.arrowClicked = true;
-    }
-  }
-
-  handleAsyncScroll() {
-    // TODO: rename to toggleAsyncScroll
-    // FIXME: this functionality should get re-applied after pageMode change
-    this.isAsyncScrollEnabled = !this.isAsyncScrollEnabled;
-    if (this.isAsyncScrollEnabled) {
-      this.document
-        .querySelectorAll('.sync-scroll')
-        .forEach((scrollable: Element) => {
-          const handler = this.handleSyncScroll.bind(this);
-          scrollable.addEventListener('scroll', handler);
-          scrollable.classList.add('sync-scroll-enabled');
-          scrollable.classList.remove('sync-scroll-disabled');
-
-          const destroyFn = () => {
-            scrollable.removeEventListener('scroll', handler);
-            scrollable.classList.add('sync-scroll-disabled');
-            scrollable.classList.remove('sync-scroll-enabled');
-            this.scrollables.delete(scrollable);
-          };
-          this.scrollables.set(scrollable, destroyFn);
-        });
-    } else {
-      [...this.scrollables.values()].forEach((destroyFn) => destroyFn());
     }
   }
 
@@ -756,11 +747,10 @@ export class DocumentEditorComponent
 
   clearVersionComparisonView() {
     this.compareChanges = null;
-    this.compareIndex = -1;
+    this.navigationAnchorsList = [];
+    this.navigationAnchorIndex = -1;
     this.removeAllPins();
     this.versionsComparisonForView = null;
-    this.navigationAnchorIndex = -1;
-    this.navigationAnchorsList = null;
   }
 
   handleClose() {
@@ -842,8 +832,7 @@ export class DocumentEditorComponent
       this.contribution.contributionStatus ===
         ContributionStatus.ContributionDone
     ) {
-      this.isAsyncScrollEnabled = true;
-      this.handleAsyncScroll();
+      this.syncScrollingService.setSyncScroll(true);
     }
     this.documentService.handleContributionSelectCount(false, true);
     this.documentService.setContributionViewAndMergeCollapsed(true);
@@ -989,15 +978,13 @@ export class DocumentEditorComponent
       ) {
         this.handleGreyedContribution(contribution, true);
         setTimeout(() => {
-          this.isAsyncScrollEnabled = true;
-          this.handleAsyncScroll();
+          this.syncScrollingService.setSyncScroll(true);
         }, 100);
       } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
         setTimeout(() => {
           this.handleContributionsChanges();
-          this.isAsyncScrollEnabled = false;
-          this.handleAsyncScroll();
+          this.syncScrollingService.setSyncScroll(false);
         }, 100);
       }
     }
@@ -1025,26 +1012,6 @@ export class DocumentEditorComponent
     });
   }
 
-  private handleSyncScroll(event: Event) {
-    if (!this.isAsyncScrollEnabled) {
-      return;
-    }
-    const sender = event.target as HTMLElement;
-    if (sender.matches(':hover') || this.arrowClicked) {
-      setTimeout(() => {
-        const percentage =
-          sender.scrollTop / (sender.scrollHeight - sender.clientHeight);
-        [...this.scrollables.keys()]
-          .filter((scrollable) => scrollable !== sender)
-          .forEach((scrollable) => {
-            scrollable.scrollTop =
-              percentage * (scrollable.scrollHeight - scrollable.clientHeight);
-          });
-        this.arrowClicked = false;
-      }, 100);
-    }
-  }
-
   private handleContributionsChanges() {
     const nodeList =
       this.contributionViewContainerElement.nativeElement?.querySelectorAll(
@@ -1055,6 +1022,7 @@ export class DocumentEditorComponent
   }
 
   private handleCompareChanges() {
+    this.navigationAnchorIndex = -1;
     const nodeListCN = document.querySelectorAll(
       '.leos-content-new-cn:not(num), .leos-content-removed-cn:not(num)',
     );
@@ -1552,6 +1520,8 @@ export class DocumentEditorComponent
             );
           }
         }
+      } else {
+        navigationAnchors.push(elem);
       }
     });
     this.navigationAnchorsList = navigationAnchors;
