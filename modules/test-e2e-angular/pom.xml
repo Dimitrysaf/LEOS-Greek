@@ -31,10 +31,18 @@
     </properties>
     <profiles>
         <profile>
-            <id>DraftingLocal</id>
+            <id>draftingLocal</id>
             <properties>
                 <mode>local</mode>
                 <environment>local</environment>
+                <suiteXmlFile>RegressionTesting_Drafting.xml</suiteXmlFile>
+            </properties>
+        </profile>
+        <profile>
+            <id>devDraftingLocal</id>
+            <properties>
+                <mode>local</mode>
+                <environment>development</environment>
                 <suiteXmlFile>RegressionTesting_Drafting.xml</suiteXmlFile>
             </properties>
         </profile>
