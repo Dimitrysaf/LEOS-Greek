@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XmlHelper;
+import io.atlassian.fugue.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -115,8 +116,12 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
         return moveFromElementContent;
     }
 
-    private byte[] updateElement(byte[] contentBytes, String elementFragment, String elementId, String elementName, boolean updateOrigin) {
+    private byte[] updateElement(byte[] contentBytes, String elementFragment, String elementId, boolean updateOrigin) {
         elementFragment = removeTrackChangesActionOnElement(elementFragment, updateOrigin);
+        Pair<byte[], String> result = xmlContentProcessor.updateSoftMovedElement(contentBytes, elementFragment);
+        if (result.left() != null && result.left().length > 0) {
+            contentBytes = result.left();
+        }
         return xmlContentProcessor.replaceElementById(contentBytes, elementFragment, elementId);
     }
 
@@ -130,20 +135,20 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
                 return xmlContentProcessor.removeElementById(updatedContent, elementId, true);
             case ADD:
                 elementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, elementId);
-                return updateElement(updatedContent, elementFragment, elementId, elementType,  true);
+                return updateElement(updatedContent, elementFragment, elementId, true);
             case MOVE_TO:
                 String movedFromElementId = elementId.replace(SOFT_MOVE_PLACEHOLDER_ID_PREFIX, "");
                 elementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, movedFromElementId);
                 updatedContent = elementProcessor.deleteElement(doc, elementId, elementType, false);
-                return updateElement(updatedContent, elementFragment, movedFromElementId, elementType,  true);
+                return updateElement(updatedContent, elementFragment, movedFromElementId, true);
             case MOVE_FROM:
                 String movedToElementId = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elementId;
                 elementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, elementId);
                 updatedContent = elementProcessor.deleteElement(doc, movedToElementId, elementType, false);
-                return updateElement(updatedContent, elementFragment, elementId, elementType,  true);
+                return updateElement(updatedContent, elementFragment, elementId, true);
             default:
                 throw new UnsupportedOperationException(
-                        "Unsupported track change action"
+                    "Unsupported track change action"
                 );
         }
     }
@@ -157,7 +162,7 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
         switch (trackChangeAction) {
             case DELETE:
                 elementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, elementId);
-                return updateElement(updatedContent, elementFragment, elementId, elementType,  true);
+                return updateElement(updatedContent, elementFragment, elementId, true);
             case ADD:
                 return xmlContentProcessor.removeElementById(updatedContent, elementId, true);
             case MOVE_TO:
@@ -166,17 +171,17 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
                 moveToElementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, elementId);
                 elementFragment = keepOriginalNumValue(moveToElementFragment, elementFragment);
                 updatedContent = elementProcessor.deleteElement(doc, movedFromElementId, elementType, false);
-                return updateElement(updatedContent, elementFragment, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + movedFromElementId, elementType,  true);
+                return updateElement(updatedContent, elementFragment, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + movedFromElementId, true);
             case MOVE_FROM:
                 String movedToElementId = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elementId;
                 elementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, elementId);
                 moveToElementFragment = xmlContentProcessor.getElementByNameAndId(updatedContent, elementType, movedToElementId);
                 elementFragment = keepOriginalNumValue(moveToElementFragment, elementFragment);
                 updatedContent = elementProcessor.deleteElement(doc, elementId, elementType, false);
-                return updateElement(updatedContent, elementFragment, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + elementId, elementType,  true);
+                return updateElement(updatedContent, elementFragment, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + elementId, true);
             default:
                 throw new UnsupportedOperationException(
-                        "Unsupported track change action"
+                    "Unsupported track change action"
                 );
         }
     }

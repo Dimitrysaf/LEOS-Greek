@@ -220,7 +220,7 @@
   "page.collection.drafts.explanatory.table.actions.delete-dialog.desc": "Are you sure you want to delete this explanatory",
   "page.collection.drafts.legal-act": "Legal Act",
   "page.collection.drafts.financial-statement.title": "Financial Statement",
-  "page.collection.drafts.financial-statement.not-fount": "There is no financial statement in this document",
+  "page.collection.drafts.financial-statement.not-found": "There is no financial statement in this document",
   "page.collection.drafts.financial-statement.create.error": "Financial Statement creation failed",
   "page.collection.drafts.financial-statement.delete.error": "Financial Statement deletion failed",
   "page.collection.drafts.financial-statement.delete.confirm-dialog.title": "Financial Statement deletion: confirmation",
