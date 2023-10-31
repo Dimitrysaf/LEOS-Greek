@@ -13,20 +13,13 @@ export class VersionsPaneComponent implements OnInit {
   @Output() exploreMilestone = new EventEmitter<Version>();
 
   protected hasMore: boolean = false;
-  protected showMore: boolean = false;
   protected versions: Version[] = [];
   protected showMoreLabel: string;
   private totalNumVersions: number = 0;
   private semaphore: boolean = true;
 
-  protected toggleShowMore(expanded = !this.showMore) {
-    this.showMore = expanded;
-    this.showMoreLabel = this.translate.instant(
-      this.showMore
-        ? 'page.editor.versions.modifications-hide'
-        : 'page.editor.versions.modifications-show',
-    );
-    if (expanded && this.hasMore && this.semaphore) {
+  protected toggleShowMore() {
+    if (this.hasMore && this.semaphore) {
       this.doc.updateVersionsData();
       this.updateVersions();
     }
@@ -35,6 +28,9 @@ export class VersionsPaneComponent implements OnInit {
   constructor(public doc: DocumentService, private translate: TranslateService) {}
 
   ngOnInit(): void {
+    this.showMoreLabel = this.translate.instant(
+      'page.editor.versions.modifications-show'
+    );
     this.initVersions();
   }
 
@@ -44,13 +40,7 @@ export class VersionsPaneComponent implements OnInit {
     this.doc.versions$.subscribe((recVersions: Version[]) => {
       self.versions = [...recVersions];
       self.hasMore = self.versions.length < self.totalNumVersions;
-      self.showMore = false;
       self.semaphore = true;
-      self.showMoreLabel = self.translate.instant(
-        self.showMore
-          ? 'page.editor.versions.modifications-hide'
-          : 'page.editor.versions.modifications-show',
-      );
       self.doc.totalNumVersion$.subscribe((numVersions: number) => {
         self.totalNumVersions = numVersions;
         self.hasMore = self.versions.length < self.totalNumVersions;

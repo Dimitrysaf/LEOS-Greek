@@ -248,6 +248,8 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
         })
       } else if (this.subVersions.length > 0) {
         this.displayedVersions = this.showMore ? this.subVersions : [this.subVersions[0]];
+      } else {
+        this.displayedVersions = this.subVersions;
       }
       this.hasMore = this.totalSubVersions > 1;
     }
