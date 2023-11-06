@@ -33,6 +33,9 @@ define(function listItemNumberModule(require) {
             name: 'Alphabets',
             generator: function generateSequenceForAlpha(list, item, idx) {
                 return this.prefix+this.format.replace('x', generateAlpha(idx))+this.suffix;
+            },
+            getIndex: function getIndexForAlpha(number) {
+                return generateAlphaIndex(number.replace('(', '').replace(')', ''));
             }
         }, {
             type: "ARABIC_PARENTHESIS",
@@ -43,6 +46,9 @@ define(function listItemNumberModule(require) {
             name: 'Arabic',
             generator: function generateSequenceForArabic(list, item, idx) {
                 return this.prefix+this.format.replace('x', idx + 1)+this.suffix;
+            },
+            getIndex: function getIndexForArabic(number) {
+                return Number(number.replace('(', '').replace(')', ''));
             }
         }, {
             type: "ARABIC_POSTFIXDOT",
@@ -53,6 +59,9 @@ define(function listItemNumberModule(require) {
             name: 'Arabic',
             generator: function generateSequenceForArabic(list, item, idx) {
                 return this.prefix+this.format.replace('x', idx + 1)+this.suffix;
+            },
+            getIndex: function getIndexForArabic(number) {
+                return Number(number.replace('.', ''));
             }
         }, {
             type: "ROMAN_LOWER_PARENTHESIS",
@@ -63,6 +72,9 @@ define(function listItemNumberModule(require) {
             name: 'Roman',
             generator: function generateSequenceForRoman(list, item, idx) {
                 return this.prefix+this.format.replace('x', romanize(idx + 1))+this.suffix;
+            },
+            getIndex: function getIndexForRoman(number) {
+                return getRomanIndex(number.replace('(', '').replace(')', ''));
             }
         }, {
             type: "INDENT",
@@ -73,6 +85,9 @@ define(function listItemNumberModule(require) {
             name: 'IndentDash',
             generator: function generateSequenceForIndent(list, item, idx) {
                 return this.prefix+this.format.replace('x', '-')+this.suffix;
+            },
+            getIndex: function getIndexForIndent(number) {
+                return number;
             }
         }
     ];
@@ -109,6 +124,33 @@ define(function listItemNumberModule(require) {
     }
 
     /*
+     * Returns the index of a roman number
+     */
+    function getRomanIndex(number) {
+        var romanValues = {
+            "i": 1, "ii": 2, "iii": 3, "iv": 4, "v": 5, "vi": 6, "vii": 7, "viii": 8, "ix": 9,
+            "x": 10, "xx": 20, "xxx": 30, "xl": 40, "l": 50, "lx": 60, "lxx": 70, "lxxx": 80, "xc": 90,
+            "c": 100, "cc": 200, "ccc": 300, "cd": 400, "d": 500, "dc": 600, "dcc": 700, "dccc": 800, "cm": 900
+        }
+        var start = 0; var end;
+        var sum = 0;
+        while (start < number.length) {
+            end = start + 3;
+            if (end >= number.length) {
+                end = number.length-1;
+            }
+            var piece = number.substring(start, end+1);
+            while (!romanValues[piece]) {
+                end--;
+                piece = number.substring(start, end+1);
+            }
+            sum += romanValues[piece];
+            start = end + 1;
+        }
+        return sum;
+    }
+
+    /*
      * Returns the array containing literals for alpha points
      */
     function generateAlpha(sequenceNumber) {
@@ -134,6 +176,19 @@ define(function listItemNumberModule(require) {
             sequence.unshift(currentLetter);
         }
         return sequence.join("");
+    }
+
+    /*
+     * Returns the index of an alpha number
+     */
+    function generateAlphaIndex(number) {
+        var mult = 1;
+        var cumulator = 0;
+        for (var idxLetter = number.length-1; idxLetter >= 0; idxLetter--) {
+            cumulator += (number.charCodeAt(idxLetter)-96) * mult;
+            mult *= 26;
+        }
+        return cumulator;
     }
 
     /*
@@ -255,6 +310,7 @@ define(function listItemNumberModule(require) {
 
     function _doProposalNum(orderedList, listItems, sequence) {
         var newIdx = 0;
+        var offset = 0;
         var deleted = "deleted_";
         for (var idx = 0; idx < listItems.length; idx++) {
             if (!(listItems[idx].getAttribute('contenteditable') === "false") && !(listItems[idx].getAttribute('data-akn-num') === '\u2610') && !(listItems[idx].getAttribute('data-akn-num') === '\u2611')) {
@@ -280,6 +336,21 @@ define(function listItemNumberModule(require) {
                     listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, originNumID);
                 }
                 var previousNumber = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                // Original number should be changed
+                if (offset > 0 && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER)
+                    && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) !== leosTrackChanges.core.NEW) {
+                    var originalNumber = listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                    var originalNumberIndex = sequence.getIndex(originalNumber);
+                    listItems[idx].setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(orderedList, listItems[idx], originalNumberIndex+offset-1));
+                }
+                if (sequence.type !== "INDENT" && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_RENUMBER) === leosTrackChanges.core.ACCEPT) {
+                    offset++;
+                    listItems[idx].removeAttribute(leosTrackChanges.core.DATA_AKN_RENUMBER);
+                }
+                if (sequence.type !== "INDENT" && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_RENUMBER) === leosTrackChanges.core.REJECT) {
+                    offset--;
+                    listItems[idx].remove();
+                }
                 if (listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_ENTER) !== leosTrackChanges.core.DELETE_ACTION) {
                     sequence && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM, sequence.generator(orderedList, listItems[idx], newIdx)) && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     ckEditor.fire("handleTcIndent", {data: listItems[idx], previousNumber: previousNumber});

@@ -23,11 +23,12 @@ define(function leosTrackChangesModule(require) {
 
         // Track changes names and element types
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
-        ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
+        ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete", ACCEPT: "accept", REJECT: "reject",
         UID_ATTR: "data-akn-uid",
 
         IS_NEW: "data-akn-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number",
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
+        DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -487,6 +488,28 @@ define(function leosTrackChangesModule(require) {
             } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
                 element.$.outerHTML = element.$.innerHTML;
             }
+        },
+
+        acceptMoveStructuralChange: function(editor, element) {
+            element.removeAttribute("data-akn-attr-softuser");
+            element.removeAttribute("data-akn-attr-softdate");
+            element.removeAttribute("data-akn-attr-softaction");
+            element.removeAttribute("data-akn-attr-softactionroot");
+            element.removeAttribute("data-akn-attr-softmove_label");
+            element.removeAttribute("data-akn-action");
+            element.removeAttribute("data-akn-uid");
+            element.removeAttribute("data-akn-action-number");
+            element.removeAttribute("title-number");
+            element.removeAttribute("data-akn-uid-number");
+            element.removeAttribute("title");
+            element.removeAttribute("data-akn-tc-original-number");
+            //element.removeAttribute("data-akn-attr-softmove_from");
+            element.setAttribute(core.DATA_AKN_RENUMBER, "accept");
+            element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, "accept");
+        },
+
+        rejectMoveStructuralChange: function(editor, element) {
+            element.setAttribute(core.DATA_AKN_RENUMBER, "reject");
         },
 
         acceptRowChange: function(editor, element) {

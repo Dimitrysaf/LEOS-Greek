@@ -53,9 +53,11 @@ define(function hierarchicalElementTransformer(require) {
     var DATA_AKN_TITLE_ENTER = "title-enter";
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
     var DATA_AKN_ACTION_ENTER = "data-akn-action-enter";
+    var DATA_AKN_RENUMBER = "data-akn-renumber";
     var LEOS_ACTION_ENTER = "leos:action-enter";
     var LEOS_UID_ENTER = "leos:uid-enter";
     var LEOS_TITLE_ENTER = "leos:title-enter";
+    var LEOS_MOVE_FROM = "leos:move-from";
     var NEW = "NEW";
     var UNNUMBERED = "UNNUMBERED";
     var DELETE = "delete";
@@ -1393,6 +1395,10 @@ define(function hierarchicalElementTransformer(require) {
                                             }, {
                                                 from: DATA_AKN_ATTR_RENUMBERED,
                                                 to: "leos:renumbered",
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_RENUMBER,
+                                                to: LEOS_MOVE_FROM,
                                                 action: "passAttributeTransformer"
                                             }]
                                         }, {
