@@ -17,4 +17,10 @@ public class SearchEngineFactory {
     public SearchEngine getInstance(byte[] content) {
         return SearchEngineImpl.forContent(content);
     }
+    @Bean
+    @Scope(BeanDefinition.SCOPE_PROTOTYPE)
+    @Cacheable(value = "searchEngineCacheHighlight", key = "T(java.util.Arrays).hashCode(#p0)")
+    public SearchEngine getInstance(byte[] content, Boolean isHighlight) {
+        return SearchEngineImpl.forContent(content, isHighlight);
+    }
 }

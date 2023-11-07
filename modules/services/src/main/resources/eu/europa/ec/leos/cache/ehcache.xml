@@ -76,7 +76,13 @@
            timeToIdleSeconds="600"
            timeToLiveSeconds="3600"
            memoryStoreEvictionPolicy="LFU"/>
-
+    <cache name="searchEngineCacheHighlight"
+           eternal="false"
+           maxElementsInMemory="25"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
     <!-- Reference label target document xml cache policy -->
     <cache name="referenceLabelTargetDocumentCache"
            eternal="false"

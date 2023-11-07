@@ -1770,7 +1770,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         }
         List<SearchMatchVO> matches = Collections.emptyList();
         try {
-            matches = searchService.searchText(getContent(annex), event.getSearchText(), event.matchCase, event.completeWords);
+            matches = searchService.searchTextForHighlight(getContent(annex), event.getSearchText(), event.matchCase, event.completeWords);
         } catch (Exception e) {
             eventBus.post(new NotificationEvent(Type.ERROR, "Error while searching{1}", e.getMessage()));
         }
@@ -1808,7 +1808,8 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 getContent(annexFromSession),
                 event.getSearchText(),
                 event.getReplaceText(),
-                event.getSearchMatchVOs());
+                event.getSearchMatchVOs(),
+                annexFromSession.isTrackChangesEnabled());
 
         Annex annexUpdated = copyIntoNew(annexFromSession, updatedContent);
         httpSession.setAttribute("annex#" + getDocumentRef(), annexUpdated);
@@ -1882,7 +1883,8 @@ class AnnexPresenter extends AbstractLeosPresenter {
                     getContent(annexFromSession),
                     event.getSearchText(),
                     event.getReplaceText(),
-                    Arrays.asList(event.getSearchMatchVO()));
+                    Arrays.asList(event.getSearchMatchVO()),
+                    annexFromSession.isTrackChangesEnabled());
 
             Annex annexUpdated = copyIntoNew(annexFromSession, updatedContent);
             httpSession.setAttribute("annex#" + getDocumentRef(), annexUpdated);

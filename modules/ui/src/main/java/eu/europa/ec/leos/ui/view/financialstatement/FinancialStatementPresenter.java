@@ -886,7 +886,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         }
         List<SearchMatchVO> matches = Collections.emptyList();
         try {
-            matches = searchService.searchText(getContent(financialStatement), event.getSearchText(), event.matchCase, event.completeWords);
+            matches = searchService.searchTextForHighlight(getContent(financialStatement), event.getSearchText(), event.matchCase, event.completeWords);
         } catch (Exception e) {
             eventBus.post(new NotificationEvent(NotificationEvent.Type.ERROR, "Error while searching{1}", e.getMessage()));
         }
@@ -903,7 +903,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 getContent(financialStatement),
                 event.getSearchText(),
                 event.getReplaceText(),
-                event.getSearchMatchVOs());
+                event.getSearchMatchVOs(),
+                financialStatement.isTrackChangesEnabled());
         FinancialStatement financialStatementUpdated = copyIntoNew(financialStatement, updatedContent);
         httpSession.setAttribute("financialStatement#" + getDocumentRef(), financialStatementUpdated);
         financialStatementScreen.setContent(getEditableXml(financialStatementUpdated), financialStatementUpdated.isTrackChangesEnabled());
@@ -987,7 +988,8 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                     getContent(financialStatementFromSession),
                     event.getSearchText(),
                     event.getReplaceText(),
-                    Arrays.asList(event.getSearchMatchVO()));
+                    Arrays.asList(event.getSearchMatchVO()),
+                    financialStatementFromSession.isTrackChangesEnabled());
             FinancialStatement financialStatementUpdated = copyIntoNew(financialStatementFromSession, updatedContent);
             httpSession.setAttribute("financialStatement#" + getDocumentRef(), financialStatementUpdated);
             financialStatementScreen.setContent(getEditableXml(financialStatementUpdated), financialStatementUpdated.isTrackChangesEnabled());
