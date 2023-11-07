@@ -342,6 +342,9 @@ define(function listItemNumberModule(require) {
                     var originalNumberIndex = sequence.getIndex(originalNumber);
                     listItems[idx].setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(orderedList, listItems[idx], originalNumberIndex+offset-1));
                 }
+                if (offset != 0 && !listItems[idx].getAttribute(leosTrackChanges.core.ACTION_ATTR) && !listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER)) {
+                    previousNumber = sequence.generator(orderedList, listItems[idx], newIdx);
+                }
                 if (sequence.type !== "INDENT" && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_RENUMBER) === leosTrackChanges.core.ACCEPT) {
                     offset++;
                     listItems[idx].removeAttribute(leosTrackChanges.core.DATA_AKN_RENUMBER);
@@ -349,8 +352,7 @@ define(function listItemNumberModule(require) {
                 if (sequence.type !== "INDENT" && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_RENUMBER) === leosTrackChanges.core.REJECT) {
                     offset--;
                     listItems[idx].remove();
-                }
-                if (listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_ENTER) !== leosTrackChanges.core.DELETE_ACTION
+                } else if (listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_ENTER) !== leosTrackChanges.core.DELETE_ACTION
                     && !(listItems[idx].getAttribute(leosPluginUtils.ID) && listItems[idx].getAttribute(leosPluginUtils.ID).startsWith(leosPluginUtils.MOVED))) {
                     sequence && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM, sequence.generator(orderedList, listItems[idx], newIdx)) && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     ckEditor.fire("handleTcIndent", {data: listItems[idx], previousNumber: previousNumber});
