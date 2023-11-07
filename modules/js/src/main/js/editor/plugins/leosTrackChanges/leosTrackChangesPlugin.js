@@ -270,7 +270,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Used for CTRL-X, to get the content BEFORE been deleted
                 editable.attachListener(editor.document, "keydown", function(e) {
-                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!CKEDITOR.dialog?.getCurrent() && !core.isInsideTrackedHigherElement(editor, core.getUserId(editor)) && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
                         if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_X) {
                             style.apply(editor, deleteTcStyle);
@@ -285,8 +285,7 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
-
-                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!CKEDITOR.dialog?.getCurrent() && !core.isInsideTrackedHigherElement(editor, core.getUserId(editor)) && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
 
                         var event = new EventWrapper(e);
 
