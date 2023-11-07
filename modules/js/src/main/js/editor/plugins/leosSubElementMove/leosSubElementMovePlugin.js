@@ -52,19 +52,24 @@ define(function leosSubElementMovePluginModule(require) {
             });
 
             editor.contextMenu.addListener(function (element) {
-                if(editor.LEOS.isClonedProposal && ((element.hasAttribute(DATA_ORIGIN) &&
+                if (editor.LEOS.isClonedProposal && ((element.hasAttribute(DATA_ORIGIN) &&
                     element.getAttribute(DATA_ORIGIN) === EC_ORIGIN)) &&
                     element.hasAttribute('data-akn-element') &&
-                    element.getAttribute("data-akn-attr-softaction") !== "move_to") {
+                    element.getAttribute("data-akn-attr-softaction") !== "move_to" &&
+                    element.getAttribute('data-akn-content-id')) {
                     var selection = editor.getSelection();
                     if (selection.isCollapsed()) {
                         editor.getMenuItem("moveTo").label = 'Move this '.concat(element.getAttribute('data-akn-element'))
                             .concat(' to...');
-                        return { moveTo: CKEDITOR.TRISTATE_OFF };
+                        return {moveTo: CKEDITOR.TRISTATE_OFF};
                     }
                 }
             });
         }
+    }
+
+    function containsActionAttribute(element) {
+        return element.getAttribute('data-akn-tc-original-number') && element.getAttribute('data-akn-tc-original-number') === core.NEW;
     }
 
     function addMoveHereMenuItem (editor) {
@@ -92,14 +97,14 @@ define(function leosSubElementMovePluginModule(require) {
             });
 
             editor.contextMenu.addListener(function (element) {
-                if(editor.LEOS.isClonedProposal) {
+                if (editor.LEOS.isClonedProposal) {
                     var movedElement = _getMovedElement();
                     var isMovedElementSibling = ((element.hasClass(MOVED_ELEMENT_CLASS)) ||
                         (element.getNext() && element.getNext().type === CKEDITOR.NODE_ELEMENT && element.getNext().hasClass(MOVED_ELEMENT_CLASS)) ||
                         (element.getPrevious() && element.getPrevious().type === CKEDITOR.NODE_ELEMENT && element.getPrevious().hasClass(MOVED_ELEMENT_CLASS)));
-                    if(movedElement && !isMovedElementSibling) {
+                    if (movedElement && !isMovedElementSibling && containsActionAttribute(element)) {
                         editor.getMenuItem("KeepSourceFormatting").label = 'As ' + element.getAttribute('data-akn-element')
-                        return { moveHere: CKEDITOR.TRISTATE_OFF };
+                        return {moveHere: CKEDITOR.TRISTATE_OFF};
                     }
                 }
             });
@@ -112,8 +117,7 @@ define(function leosSubElementMovePluginModule(require) {
             var element = selection.getStartElement();
             UTILS.setItemInStorage("movedElement", element.getOuterHtml());
             element.setAttribute("class", MOVED_ELEMENT_CLASS);
-            element.setAttribute(core.ACTION_ATTR, core.DELETE_ACTION);
-            element.setAttribute(core.UID_ATTR, editor.LEOS.user.login);
+            //_setTrackChangesElement(element, editor);
         }
     }
 
@@ -184,6 +188,8 @@ define(function leosSubElementMovePluginModule(require) {
             originalMovedElement.setAttribute("data-akn-attr-softactionroot", "true");
             originalMovedElement.setAttribute("data-akn-attr-softmove_to", idAttr);
             originalMovedElement.setAttribute("id", "moved_" + idAttr);
+        } else {
+            originalMovedElement.remove();
         }
 
     }

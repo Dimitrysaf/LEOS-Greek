@@ -728,6 +728,8 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         // When
         byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessing(documentXml);
         String result = squeezeXmlRemovingAttributeAndRemoveAllNS(new String(returnedElement, UTF_8), "leos:title");
+        result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:action");
+        result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:uid");
 
         //Then
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_clonedProposal_ECOrigin_shouldOnlyChangeLabel_expected.xml");
@@ -761,6 +763,8 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         // When
         byte[] returnedElement = xercesXmlContentProcessor.doXMLPostProcessing(documentXml);
         String result = squeezeXmlRemovingAttributeAndRemoveAllNS(new String(returnedElement, UTF_8), "leos:title");
+        result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:action");
+        result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:uid");
 
         //Then
         byte[] expected = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_clonedProposal_noOriginAttribute_expected.xml");

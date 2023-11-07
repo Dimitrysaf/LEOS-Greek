@@ -61,6 +61,8 @@ public class SaveTocBillMoveClonedProposalTest_IT extends SaveTocBillProposalTes
         // Then
         String result = new String(xmlResult);
         result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:title");
+        result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:uid");
+        result = squeezeXmlRemovingAttributeAndRemoveAllNS(result, "leos:action");
         String expected = new String(xmlExpected);
         result = squeezeXmlAndRemoveAllNS(result);
         expected = squeezeXmlAndRemoveAllNS(expected);

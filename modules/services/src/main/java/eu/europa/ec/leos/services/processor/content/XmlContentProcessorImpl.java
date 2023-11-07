@@ -1747,8 +1747,29 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     XercesUtils.getParentId(node), documentNode, attr, sourceDocumentRef);
             if (labelResult != null && labelResult.isOk()) {
                 XercesUtils.addAttribute(node, LEOS_SOFT_MOVED_LABEL_ATTR, labelResult.get());
+                addTrackChangeAttributes(node, attr);
                 createMoveInfoTitle(node);
             }
+        }
+    }
+
+    private void addTrackChangeAttributes(Node node, String attr) {
+        if (cloneContext != null && cloneContext.isClonedProposal()) {
+            String userLogin = securityContext.getUser().getLogin();
+            String leosAction = null;
+            switch (attr) {
+                case LEOS_SOFT_MOVE_TO:
+                    leosAction = "delete";
+                    break;
+                case LEOS_SOFT_MOVE_FROM:
+                    leosAction = "insert";
+                    break;
+                default:
+                    leosAction = null;
+
+            }
+            XercesUtils.addAttribute(node, LEOS_UID_ATTR, userLogin);
+            XercesUtils.addAttribute(node, LEOS_ACTION_ATTR, leosAction);
         }
     }
 
