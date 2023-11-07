@@ -92,6 +92,8 @@ define(function leosPluginUtilsModule(require) {
     var DATA_AKN_NUM_SOFTACTION = "data-akn-num-attr-softaction";
     var DEL = "del";
     var MOVETO = "move_to";
+    var DELETED = "deleted_";
+    var MOVED = "moved_";
 
     var REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX = /\u200B/g;
 
@@ -1533,6 +1535,8 @@ define(function leosPluginUtilsModule(require) {
         LEOS_SOFTACTION: LEOS_SOFTACTION,
         DEL: DEL,
         MOVETO: MOVETO,
+        DELETED: DELETED,
+        MOVED: MOVED,
         REFERS_TO: REFERS_TO,
         DATA_AKN_CONTENT_ID: DATA_AKN_CONTENT_ID,
         CROSSHEADING_LIST_ATTR: CROSSHEADING_LIST_ATTR,

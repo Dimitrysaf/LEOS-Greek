@@ -174,7 +174,7 @@ public class XmlHelper {
     public static final String MOVE_FROM = "move_from";
     public static final String LEOS_SOFT_MOVE_TO = "leos:softmove_to";
     public static final String LEOS_SOFT_MOVE_FROM = "leos:softmove_from";
-    public static final String LEOS_MOVE_FROM = "leos:move-from";
+    public static final String LEOS_RENUMBER_ORIGIN = "leos:renumber-origin";
     public static final String LEOS_SOFT_TRANS_FROM = "leos:softtrans_from";
     public static final String SOFT_MOVE_PLACEHOLDER_ID_PREFIX = "moved_";
     public static final String SOFT_DELETE_PLACEHOLDER_ID_PREFIX = "deleted_";

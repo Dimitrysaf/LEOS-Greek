@@ -311,7 +311,6 @@ define(function listItemNumberModule(require) {
     function _doProposalNum(orderedList, listItems, sequence) {
         var newIdx = 0;
         var offset = 0;
-        var deleted = "deleted_";
         for (var idx = 0; idx < listItems.length; idx++) {
             if (!(listItems[idx].getAttribute('contenteditable') === "false") && !(listItems[idx].getAttribute('data-akn-num') === '\u2610') && !(listItems[idx].getAttribute('data-akn-num') === '\u2611')) {
                 var numID = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
@@ -328,8 +327,8 @@ define(function listItemNumberModule(require) {
 
                 // To keep the num id on indentation and avoid diffing issues
                 var originNumID = listItems[idx].getAttribute(leosPluginUtils.DATA_INDENT_ORIGIN_NUM_ID);
-                if (numID && numID.startsWith(deleted)) {
-                    listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, numID.replaceAll(deleted,''));
+                if (numID && numID.startsWith(leosPluginUtils.DELETED)) {
+                    listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, numID.replaceAll(leosPluginUtils.DELETED,''));
                     listItems[idx].removeAttribute("data-akn-num-attr-softaction");
                 }
                 if (!!originNumID) {
@@ -351,7 +350,8 @@ define(function listItemNumberModule(require) {
                     offset--;
                     listItems[idx].remove();
                 }
-                if (listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_ENTER) !== leosTrackChanges.core.DELETE_ACTION) {
+                if (listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_ENTER) !== leosTrackChanges.core.DELETE_ACTION
+                    && !(listItems[idx].getAttribute(leosPluginUtils.ID) && listItems[idx].getAttribute(leosPluginUtils.ID).startsWith(leosPluginUtils.MOVED))) {
                     sequence && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_NUM, sequence.generator(orderedList, listItems[idx], newIdx)) && listItems[idx].setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.POINT);
                     ckEditor.fire("handleTcIndent", {data: listItems[idx], previousNumber: previousNumber});
                     newIdx++;

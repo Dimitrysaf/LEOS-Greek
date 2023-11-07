@@ -65,7 +65,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DEPTH_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_LIST_TYPE_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_MOVE_FROM;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBER_ORIGIN;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ORIGIN_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
@@ -347,7 +347,8 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     public Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent) {
 
         Document fragmentToCheckDeleted = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
-        NodeList softMovedNodesToCheckDeleted = XercesUtils.getElementsByXPath(fragmentToCheckDeleted, String.format("//*[@%s][@%s='accept']", LEOS_SOFT_MOVE_FROM, LEOS_MOVE_FROM));
+        NodeList softMovedNodesToCheckDeleted = XercesUtils.getElementsByXPath(fragmentToCheckDeleted, String.format("//*[@%s][@%s='accept']", LEOS_SOFT_MOVE_FROM,
+                LEOS_RENUMBER_ORIGIN));
         for (int nodeIdx = 0; nodeIdx < softMovedNodesToCheckDeleted.getLength(); nodeIdx++) {
             String idToDelete = "moved_" + softMovedNodesToCheckDeleted.item(nodeIdx).getAttributes().getNamedItem("xml:id").getNodeValue();
             xmlContent = this.deleteElementById(xmlContent, idToDelete);
