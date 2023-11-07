@@ -116,7 +116,7 @@ public class MandateTocEditor extends AbstractTocEditor {
     }
 
     @Override
-    public ActionType deleteItem(TreeGrid<TableOfContentItemVO> tocTree, TableOfContentItemVO item) {
+    public ActionType deleteItem(TreeGrid<TableOfContentItemVO> tocTree, TableOfContentItemVO item, boolean isTrackChangesEnabled) {
         final ActionType actionType;
         setAffectedAttribute(item, tocTree.getTreeData());
         TableOfContentItemVO parentItem = checkDeleteOnLastItemInList(item);

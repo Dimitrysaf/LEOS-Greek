@@ -16,7 +16,7 @@ import {
   ELEMENTS_TO_REMOVE_FROM_CONTENT,
   HASH_NUM_VALUE,
   INDENT,
-  LEOS_TC_DELETE_ACTION,
+  LEOS_TC_DELETE_ACTION, LEOS_TC_INSERT_ACTION,
   LEVEL,
   LIST,
   MAX_INDENT_LEVEL,
@@ -682,6 +682,11 @@ export const hasTocItemSoftAction = (
   actionType: string,
 ) => item && item.softActionAttr && item.softActionAttr === actionType;
 
+export const hasTocItemTrackChangeAction = (
+  item: TableOfContentItemVO,
+  actionType: string,
+) => item && item.trackChangeAction && item.trackChangeAction === actionType;
+
 export const containsItemOfOrigin = (
   tableOfContentItemVO: TableOfContentItemVO,
   origin: string,
@@ -708,7 +713,7 @@ export const softDeleteItem = (
   elementOrigin: string,
 ) => {
   const wasRoot = isRootElement(item);
-  const wasMoved = item.softActionAttr === MOVE_FROM;
+  const wasMoved = item.softActionAttr && item.softActionAttr === MOVE_FROM;
   softDeleteMovedRootItems(tocTree, item);
 
   let movedTableOfContentItemVO: TableOfContentItemVO = null;
@@ -723,7 +728,7 @@ export const softDeleteItem = (
     // and the item only needs to be deleted
     movedTableOfContentItemVO = transformToSoftDeleted(tocTree, item);
   }
-  if (elementOrigin === item.originAttr) {
+  if (item.originAttr && elementOrigin === item.originAttr) {
     if (movedTableOfContentItemVO != null) {
       removeNode(tocTree, movedTableOfContentItemVO);
     }
@@ -779,12 +784,12 @@ export const softDeleteMovedRootItems = (
   }
 
   if (
-    isRootElement(item) &&
+    isRootElement(item) && item.softActionAttr &&
     MOVE_FROM.toLowerCase() === item.softActionAttr.toLowerCase()
   ) {
     revertMoveAndTransformToSoftDeleted(tocTree, item);
     totalDeletedItems++;
-  } else if (
+  } else if ( item.originAttr &&
     CN === item.originAttr.toLowerCase() &&
     item.softActionAttr == null
   ) {
@@ -982,7 +987,22 @@ export const getItemSoftStyle = (
   tableOfContentItemVO: TableOfContentItemVO,
 ) => {
   let itemSoftStyle = '';
-  if (tableOfContentItemVO.softActionAttr) {
+  if (tableOfContentItemVO.trackChangeAction) {
+    if (hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION) && hasTocItemSoftAction(tableOfContentItemVO, MOVE_TO)) {
+      itemSoftStyle = 'leos-soft-movedto';
+    } else if (hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION) && hasTocItemSoftAction(tableOfContentItemVO, MOVE_FROM)) {
+      itemSoftStyle = 'leos-soft-movedfrom';
+    } else if (hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)) {
+      itemSoftStyle = 'leos-soft-new';
+    } else if (hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION)) {
+      let initialNum = tableOfContentItemVO.initialNum;
+      if (initialNum != null) {
+        initialNum = initialNum.replace('Article ', '');
+        tableOfContentItemVO.number = initialNum;
+      }
+      itemSoftStyle = 'leos-soft-removed';
+    }
+  } else if (tableOfContentItemVO.softActionAttr) {
     if (hasTocItemSoftAction(tableOfContentItemVO, ADD)) {
       itemSoftStyle = 'leos-soft-new';
     } else if (hasTocItemSoftAction(tableOfContentItemVO, DELETE)) {
@@ -1021,7 +1041,7 @@ export const isLastExistingChildElement = (
 ) => parentItem.childItems.length === 1;
 
 export const isDeletedItem = (tableOfContentItemVO: TableOfContentItemVO) =>
-  DELETE === tableOfContentItemVO.softActionAttr;
+  DELETE === tableOfContentItemVO.softActionAttr || LEOS_TC_DELETE_ACTION === tableOfContentItemVO.trackChangeAction;
 
 export const isMoveToItem = (tableOfContentItemVO: TableOfContentItemVO) =>
   MOVE_TO === tableOfContentItemVO.softActionAttr;
@@ -1034,7 +1054,7 @@ export const isUndeletableItem = (
   return (
     parentItem &&
     !isMoveToItem(tableOfContentItemVO) &&
-    DELETE !== parentItem.softActionAttr
+    DELETE !== parentItem.softActionAttr && !hasTocItemTrackChangeAction(parentItem, LEOS_TC_DELETE_ACTION)
   );
 };
 
@@ -1046,7 +1066,7 @@ export const isDeletableItem = (
   const parentItem = findNodeById(treeData, tableOfContentItemVO.parentItem);
   if (process.env.NG_APP_LEOS_INSTANCE === CN)
     return !(
-      (DELETE === tableOfContentItemVO.softActionAttr ||
+      (DELETE === tableOfContentItemVO.softActionAttr || hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION) ||
         MOVE_TO === tableOfContentItemVO.softActionAttr ||
         (PARAGRAPH === elementName &&
           checkOriginParentTocITem(tableOfContentItemVO, CN))) &&

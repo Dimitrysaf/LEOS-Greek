@@ -9,7 +9,7 @@ import {
   combineLatestWith,
   debounceTime,
   distinctUntilChanged,
-  filter,
+  filter, finalize,
   mergeMap,
   Observable,
   of,
@@ -45,6 +45,8 @@ import { NodeValidationResponse } from '../models/drop-response.model';
 import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
+import { LoadingService } from "@/shared/services/loading.service";
+import { TableOfContentService } from "@/features/akn-document/services/table-of-content.service";
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -178,6 +180,8 @@ export class DocumentService implements OnDestroy {
     private appShell: UxAppShellService,
     private translate: TranslateService,
     private coEditionService: CoEditionServiceWS,
+    private loadingService: LoadingService,
+    private tocService: TableOfContentService,
   ) {
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
     this.isContributionDeclinedOrProcessed$ =
@@ -425,8 +429,11 @@ export class DocumentService implements OnDestroy {
 
   getDocumentByRef(ref: string, category: string) {
     category = category === 'coverpage' ? 'coverPage' : category;
+    this.loadingService.setLoading(true);
     return this.http.get<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${category}/${ref}`,
+    ).pipe(
+      finalize(() => this.loadingService.setLoading(false))
     );
   }
 
@@ -774,6 +781,7 @@ export class DocumentService implements OnDestroy {
 
   setDocumentRefAndCategory(ref: string, category: string) {
     this.documentRefAndCategoryBS.next({ ref, category });
+    this.tocService.setDocumentRefAndCategory(ref, category);
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
@@ -857,11 +865,13 @@ export class DocumentService implements OnDestroy {
   }
 
   versionRevert(versionNumber: string) {
+    this.loadingService.setLoading(true);
     this.http
       .get(
         `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/restore/${versionNumber}`,
-      )
-      .subscribe((r) => {
+      ).pipe(
+        finalize(() => this.loadingService.setLoading(false))
+    ).subscribe((r) => {
         this.setDocumentRefAndCategory(this.documentRef, this.documentType);
       });
   }
@@ -985,11 +995,14 @@ export class DocumentService implements OnDestroy {
     data: any,
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    this.loadingService.setLoading(true);
     return this.http.post<Version[]>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/save-version`,
       {
         ...data,
       },
+    ).pipe(
+      finalize(() => this.loadingService.setLoading(false))
     );
   }
 
@@ -1365,10 +1378,13 @@ export class DocumentService implements OnDestroy {
   }
 
   private getDocument(documentRef: string, category: string) {
+    this.loadingService.setLoading(true);
     return this.http
       .get(`${apiBaseUrl}/secured/${category}/${documentRef}`, {
         responseType: 'text',
-      })
+      }).pipe(
+        finalize(() => this.loadingService.setLoading(false))
+      )
       .pipe(take(1));
   }
 

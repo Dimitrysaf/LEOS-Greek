@@ -17,10 +17,10 @@ package eu.europa.ec.leos.model.action;
 import java.util.Arrays;
 
 public enum TrackChangeActionType {
-    ADD("add"),
+    ADD("insert"),
     MOVE_TO("move_to"),
     MOVE_FROM("move_from"),
-    DELETE("del");
+    DELETE("delete");
 
     String trackChangeAction;
 
