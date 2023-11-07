@@ -37,6 +37,7 @@ define(function leosTrackChangesPluginModule(require) {
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
             var deleteTcStyle = new CKEDITOR.style({ element: core.TRACKCHANGES_ELEMENT, attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION) });
             var selectedElement, handleMutations = false;
+            var mousePosition = [], docContainer = document.getElementById("docContainer");
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -161,37 +162,57 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 });
                 editor.contextMenu.addListener(function(element) {
-                    var tcElement = element.$.closest(core.TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR);
-                    if (tcElement) { // Is a track change deleted row
-                        selectedElement = new CKEDITOR.dom.element(tcElement);
-                        return {
-                            acceptRowChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                            rejectRowChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
-                        };
-                    } else if (editor.getSelection().isCollapsed() &&
-                        element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION && element.getAttribute("data-akn-attr-softaction") === "move_from") {
-                        return {
-                            acceptMoveStructuralChange: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                            rejectMoveStructuralChange: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
-                        };
-                    } else if (editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) {
-                        tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
-                        if (tcElement) {
-                            editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
+                    var elementWithPseudoElt = core.getClosestElementWithPseudoElt(element, "before");
+                    if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
+                        && core.isMouseOverPseudoElt(elementWithPseudoElt, mousePosition, "before")) {
+                        if (elementWithPseudoElt.getAttribute(core.DATA_AKN_SOFTACTION_ROOT)) {
+                            editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
                             return {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
                         }
                     } else {
-                        var tcElements = core.findElementsInSelection(editor.getSelection());
-                        if (tcElements.length > 0) {
+                        var tcElement = element.$.closest(core.TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR);
+                        if (tcElement) { // Is a track change deleted row
+                            selectedElement = new CKEDITOR.dom.element(tcElement);
                             return {
-                                acceptSelectedChangesItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                                rejectSelectedChangesItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                                acceptRowChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectRowChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
+                        } else if (editor.getSelection().isCollapsed() &&
+                            element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION && element.getAttribute("data-akn-attr-softaction") === "move_from") {
+                            return {
+                                acceptMoveStructuralChange: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectMoveStructuralChange: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
+                        } else if (editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) {
+                            tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
+                            if (tcElement) {
+                                editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
+                                return {
+                                    acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                    rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                                };
+                            }
+                        } else {
+                            var tcElements = core.findElementsInSelection(editor.getSelection());
+                            if (tcElements.length > 0) {
+                                return {
+                                    acceptSelectedChangesItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                    rejectSelectedChangesItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                                };
+                            }
                         }
                     }
+                });
+                docContainer.addEventListener("mousedown", function(event) {
+                    var posx = 0, posy = 0;
+                    if (event.pageX || event.pageY) {
+                        posx = event.pageX + docContainer.scrollLeft;
+                        posy = event.pageY + docContainer.scrollTop;
+                    }
+                    mousePosition = [posx, posy];
                 });
             }
 
@@ -222,6 +243,7 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
                         core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
+                        element.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
                     }
                 }
             });
@@ -233,7 +255,7 @@ define(function leosTrackChangesPluginModule(require) {
                     var ranges = selection && selection.getRanges();
                     var range = ranges && ranges[0];
                     var el = range && range.startContainer;
-                    if(el) {
+                    if (el) {
                         core.addTrackChangesAttributesForEnter(editor, el, core.INSERT_ACTION);
                     }
                 }
@@ -285,6 +307,7 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("toDataFormat", function(event) {
                 event.data.dataValue = event.data.dataValue.replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\"");
                 event.data.dataValue = event.data.dataValue.replace(/leos:title-number="([\s\S][^:]+?)"/g, "leos:title-number=\"$1 : " + core.getDateFormat() + "\"");
+                event.data.dataValue = event.data.dataValue.replace(/leos:title-enter="([\s\S][^:]+?)"/g, "leos:title-enter=\"$1 : " + core.getDateFormat() + "\"");
             }, null, null, 15);
 
             // Bind events if the Dom is ready!

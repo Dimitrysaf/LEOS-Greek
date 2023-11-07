@@ -23,12 +23,14 @@ define(function leosTrackChangesModule(require) {
 
         // Track changes names and element types
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
-        ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete", ACCEPT: "accept", REJECT: "reject",
+        ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete", ACCEPT: "accept", REJECT: "reject", TRUE: true,
         UID_ATTR: "data-akn-uid",
 
-        IS_NEW: "data-akn-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number",
+        IS_NEW: "data-akn-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
+
+        DATA_AKN_SOFTACTION_ROOT: "data-akn-attr-softactionroot",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -152,7 +154,14 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-softaction-root"];
+            for (var attrName of tcAttributes) {
+                element.removeAttribute(attrName);
+            }
+        },
+
+        removeTrackChangesAttributesForEnter: function(element) {
+            var tcAttributes = ["data-akn-action-enter", "data-akn-uid-enter", "title-enter"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -340,7 +349,8 @@ define(function leosTrackChangesModule(require) {
         },
 
         canUserAcceptChanges: function(editor) {
-            return !editor.LEOS.isClonedProposal && editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES")
+            return true;
+            //return !editor.LEOS.isClonedProposal && editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES")
         },
 
         canUserRejectChanges: function(editor) {
@@ -368,6 +378,35 @@ define(function leosTrackChangesModule(require) {
                     }
                 }
             }
+        },
+
+        getClosestElementWithPseudoElt: function(element, pseudoElt) {
+            do {
+                if (!isNaN(parseInt(window.getComputedStyle(element.$, ":" + pseudoElt).height))) {
+                    return element.$;
+                }
+                element = element.getParent();
+            } while (!element.$.classList.contains("leos-placeholder"));
+            return null;
+        },
+
+        isMouseOverPseudoElt: function(element, mousePosition, pseudoElt) {
+            function getElementPosition(element) {
+                var x = 0, y = 0;
+                do {
+                    x += element.offsetLeft;
+                    y += element.offsetTop;
+                    element = element.offsetParent
+                } while (element);
+                return [x, y];
+            }
+
+            var positionEditor = getElementPosition(element);
+            var top = positionEditor[1], bottom = top + parseInt(window.getComputedStyle(element, ":" + pseudoElt).height);
+            var left = positionEditor[0], right = left + parseInt(window.getComputedStyle(element, ":" + pseudoElt).width);
+            var mouseX = mousePosition[0], mouseY = mousePosition[1];
+
+            return ((mouseX >= left) && (mouseX <= right) && (mouseY >= top) && (mouseY <= bottom));
         }
 
     };
@@ -473,20 +512,34 @@ define(function leosTrackChangesModule(require) {
         },
 
         acceptChange: function(editor, element) {
-            editor.getSelection().fake(element.getParent());
-            if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
-                element.remove();
-            } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
-                element.$.outerHTML = element.$.innerHTML;
+            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER)) {
+                core.removeTrackChangesAttributesForNumbering(element);
+                element.setAttribute(core.DATA_AKN_RENUMBER, "accept");
+                element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, "accept");
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                core.removeTrackChangesAttributesForEnter(element);
+                element.setAttribute(core.DATA_AKN_RENUMBER, "accept");
+                element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, "accept");
+            } else {
+                editor.getSelection().fake(element.getParent());
+                if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                    element.remove();
+                } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && ($(element, editor.getData()).length > 0)) {
+                    element.$.outerHTML = element.$.innerHTML;
+                }
             }
         },
 
         rejectChange: function(editor, element) {
-            editor.getSelection().fake(element.getParent());
-            if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
-                element.remove();
-            } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
-                element.$.outerHTML = element.$.innerHTML;
+            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                element.setAttribute(core.DATA_AKN_RENUMBER, "reject");
+            } else {
+                editor.getSelection().fake(element.getParent());
+                if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                    element.remove();
+                } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
+                    element.$.outerHTML = element.$.innerHTML;
+                }
             }
         },
 
