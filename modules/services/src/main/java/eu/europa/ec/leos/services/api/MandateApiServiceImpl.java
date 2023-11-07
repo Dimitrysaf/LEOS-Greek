@@ -44,6 +44,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
@@ -78,11 +79,11 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
             UpdateInternalReferencesProducer updateInternalReferencesProducer,
             ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
             LegService legService, UserHelper userHelper,
-            LeosRepository leosRepository) {
+            LeosRepository leosRepository, TrackChangesContext trackChangesContext) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
-                applicationProperties, updateInternalReferencesProducer, explanatoryService, exportPackageService, legService, userHelper, leosRepository);
+                applicationProperties, updateInternalReferencesProducer, explanatoryService, exportPackageService, legService, userHelper, leosRepository, trackChangesContext);
     }
 
     @Override
