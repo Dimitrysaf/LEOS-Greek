@@ -1,6 +1,9 @@
 package eu.europa.ec.leos.services.search;
 
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
+import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -9,26 +12,31 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class SearchServiceImpl implements SearchService {
 
     SearchServiceImpl(XmlContentProcessor xmlContentProcessor,
-                      ObjectProvider<SearchEngine> searchEngineProvider){
+                      ObjectProvider<SearchEngine> searchEngineProvider,
+                      SecurityContext securityContext){
         this.xmlContentProcessor = xmlContentProcessor;
         this.searchEngineProvider =searchEngineProvider;
+        this.securityContext = securityContext;
 
     }
     protected final ObjectProvider<SearchEngine> searchEngineProvider;
     protected final XmlContentProcessor xmlContentProcessor;
+    private final SecurityContext securityContext;
     private static final Logger LOG = LoggerFactory.getLogger(SearchServiceImpl.class);
 
     @Override
-    public byte[] replaceText(byte[] xmlContent, String searchText, String replaceText, List<SearchMatchVO> searchMatchVOs) {
+    public byte[] replaceText(byte[] xmlContent, String searchText, String replaceText, List<SearchMatchVO> searchMatchVOs, boolean isTrackChangesEnabled) {
         Validate.notNull(xmlContent, "xml content is required");
         try {
             SearchEngine se = searchEngineProvider.getObject((Object) xmlContent);
-            return se.replace(xmlContent, searchMatchVOs, searchText, replaceText, true);
+            User user = securityContext != null && securityContext.hasAuthenticationInContext() ? securityContext.getUser() : null;
+            return se.replace(xmlContent, searchMatchVOs, searchText, replaceText, true, user, isTrackChangesEnabled);
         } catch (Exception e) {
             LOG.error("Unable to replace", e);
             throw e;
@@ -45,6 +53,17 @@ public class SearchServiceImpl implements SearchService {
         Validate.notNull(xmlContent, "xml content is required");
         try {
             SearchEngine se = searchEngineProvider.getObject((Object) xmlContent);
+            return se.searchText(searchText, caseSensitive, completeWords);
+        } catch (Exception e) {
+            LOG.error("Unable to search", e);
+            throw e;
+        }
+    }
+    @Override
+    public List<SearchMatchVO> searchTextForHighlight(byte[] xmlContent, String searchText, boolean caseSensitive, boolean completeWords) throws Exception {
+        Validate.notNull(xmlContent, "xml content is required");
+        try {
+            SearchEngine se = searchEngineProvider.getObject((Object) xmlContent, Boolean.TRUE);
             return se.searchText(searchText, caseSensitive, completeWords);
         } catch (Exception e) {
             LOG.error("Unable to search", e);

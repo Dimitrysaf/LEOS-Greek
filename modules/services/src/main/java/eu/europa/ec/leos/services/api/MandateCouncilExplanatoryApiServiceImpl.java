@@ -75,6 +75,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -249,7 +250,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         byte[] contentForReplace = getContentForReplaceProcess(tempUpdatedContentXML, explanatory);
         try {
-            matches = searchService.searchText(contentForReplace, searchText, matchCase, completeWords);
+            matches = searchService.searchTextForHighlight(contentForReplace, searchText, matchCase, completeWords);
         } catch (Exception e) {
             LOG.error("couldn't fetch results");
         }
@@ -351,7 +352,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                searchMatchVOS);
+                searchMatchVOS,
+                explanatory.isTrackChangesEnabled());
     }
 
     @Override
@@ -363,14 +365,15 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())),
+                explanatory.isTrackChangesEnabled());
     }
 
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(event.getDocumentRef());
 
-        Explanatory updateAnnex = explanatoryService.updateExplanatory(explanatory, event.getUpdatedContent().getBytes(),
+        Explanatory updateAnnex = explanatoryService.updateExplanatory(explanatory, event.getUpdatedContent().getBytes(StandardCharsets.UTF_8),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         return this.documentViewService.updateDocumentView(updateAnnex);
     }

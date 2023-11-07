@@ -61,6 +61,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -388,7 +389,7 @@ public class GenericDocumentApiService {
         } else {
             targetAnnexBytes = tempUpdatedContentXML.getBytes();
         }
-        List<SearchMatchVO> searchResults = this.searchService.searchText(targetAnnexBytes, searchText, matchCase, completeWords);
+        List<SearchMatchVO> searchResults = this.searchService.searchTextForHighlight(targetAnnexBytes, searchText, matchCase, completeWords);
         return searchResults;
     }
 
@@ -401,7 +402,8 @@ public class GenericDocumentApiService {
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())),
+                document.isTrackChangesEnabled());
     }
 
     public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
@@ -415,7 +417,8 @@ public class GenericDocumentApiService {
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                searchMatchVOS);
+                searchMatchVOS,
+                document.isTrackChangesEnabled());
 
     }
 
@@ -424,7 +427,7 @@ public class GenericDocumentApiService {
         populateCloneProposalMetadata(document);
         document = this.leosRepository.updateDocument(
                 document.getId(),
-                event.getUpdatedContent().getBytes(),
+                event.getUpdatedContent().getBytes(StandardCharsets.UTF_8),
                 VersionType.MINOR,
                 messageHelper.getMessage("operation.search.replace.updated"),
                 XmlDocument.class

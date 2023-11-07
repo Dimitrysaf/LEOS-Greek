@@ -69,6 +69,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -203,7 +204,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         byte[] contentForReplace = getContentForReplaceProcess(tempUpdatedContentXML, memorandum);
-        return searchService.searchText(contentForReplace, searchText, matchCase, completeWords);
+        return searchService.searchTextForHighlight(contentForReplace, searchText, matchCase, completeWords);
     }
 
     @Override
@@ -310,7 +311,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                searchMatchVOS);
+                searchMatchVOS,
+                memorandum.isTrackChangesEnabled());
     }
 
     @Override
@@ -323,13 +325,14 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())),
+                memorandum.isTrackChangesEnabled());
     }
 
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
-        Memorandum updateMemorandum = memorandumService.updateMemorandum(memorandum, event.getUpdatedContent().getBytes(),
+        Memorandum updateMemorandum = memorandumService.updateMemorandum(memorandum, event.getUpdatedContent().getBytes(StandardCharsets.UTF_8),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         return this.documentViewService.updateDocumentView(updateMemorandum);
     }

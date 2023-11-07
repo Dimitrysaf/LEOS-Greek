@@ -75,6 +75,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import javax.transaction.NotSupportedException;
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -214,7 +215,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        return searchService.searchText(getContentForReplaceProcess(tempUpdatedContentXML, proposal), searchText, matchCase, completeWords);
+        return searchService.searchTextForHighlight(getContentForReplaceProcess(tempUpdatedContentXML, proposal), searchText, matchCase, completeWords);
     }
 
     @Override
@@ -308,7 +309,8 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 getContent(proposal),
                 event.getSearchText(),
                 event.getReplaceText(),
-                searchMatchVOS);
+                searchMatchVOS,
+                false);
     }
 
     @Override
@@ -321,13 +323,14 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())),
+                false);
     }
 
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Proposal proposal = this.proposalService.findProposalByRef(event.getDocumentRef());
-        Proposal updateProposal = proposalService.updateProposal(proposal, event.getUpdatedContent().getBytes(), VersionType.MINOR,
+        Proposal updateProposal = proposalService.updateProposal(proposal, event.getUpdatedContent().getBytes(StandardCharsets.UTF_8), VersionType.MINOR,
                 messageHelper.getMessage("operation.search.replace.updated"));
         return documentViewService.updateDocumentView(updateProposal);
     }

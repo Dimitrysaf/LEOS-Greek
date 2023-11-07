@@ -1114,7 +1114,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
         }
 
         byte[] updatedContent = searchService.replaceText(getContent(billFromSession),
-                event.getSearchText(), event.getReplaceText(), event.getSearchMatchVOs());
+                event.getSearchText(), event.getReplaceText(), event.getSearchMatchVOs(),
+                billFromSession.isTrackChangesEnabled());
 
         Bill billUpdated = copyIntoNew(billFromSession, updatedContent);
         httpSession.setAttribute("bill#" + getDocumentRef(), billUpdated);
@@ -1203,7 +1204,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
             }
 
             byte[] updatedContent = searchService.replaceText(getContent(billFromSession),
-                    event.getSearchText(), event.getReplaceText(), Arrays.asList(event.getSearchMatchVO()));
+                    event.getSearchText(), event.getReplaceText(), Arrays.asList(event.getSearchMatchVO()),
+                    billFromSession.isTrackChangesEnabled());
 
             Bill billUpdated = copyIntoNew(billFromSession, updatedContent);
             httpSession.setAttribute("bill#" + getDocumentRef(), billUpdated);
@@ -1222,7 +1224,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         }
         List<SearchMatchVO> matches = Collections.emptyList();
         try {
-            matches = searchService.searchText(getContent(bill), event.getSearchText(), event.matchCase, event.completeWords);
+            matches = searchService.searchTextForHighlight(getContent(bill), event.getSearchText(), event.matchCase, event.completeWords);
         } catch (Exception e) {
             eventBus.post(new NotificationEvent(Type.ERROR, "Error while searching{1}", e.getMessage()));
         }

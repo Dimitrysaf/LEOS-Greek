@@ -2,7 +2,9 @@ package eu.europa.ec.leos.services.search;
 
 import eu.europa.ec.leos.domain.vo.ElementMatchVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl;
+import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,17 +13,22 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.AKOMANTOSO;
 import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
@@ -31,22 +38,37 @@ import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 
 public class SearchEngineImpl implements SearchEngine {
 
-    private static List<String> tagsToExclude = Arrays.asList("meta", "authorialNote");
+    private static final String INSERT_TAG = "ins";
+    private static final String DELETE_TAG = "del";
+    private static List<String> tagsToExclude = Arrays.asList("meta", "authorialNote", DELETE_TAG);
+    private static List<String> tagsToExcludeHighlight = Arrays.asList("meta", "authorialNote");
+    private static List<String> tagsTrackChanges = Arrays.asList(DELETE_TAG);
     private static List<String> customInlineTags = Arrays.asList("authorialNote", "signature", "placeholder", "omissis", "date", "mref");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
 
     private String searchableString;
     private List<Index> indexesForString;
     private Map<String, Element> elementsById;
 
+    private List<Index> indexesForStringHighlight;
+    private Map<String, Element> elementsByIdHighlight;
+
+    private boolean isHighlight;
     public SearchEngineImpl(byte[] content) {
         Document document = createXercesDocument(content);
         indexContent(document);
     }
-
+    public SearchEngineImpl(byte[] content, Boolean isHighlight) {
+        this.isHighlight = isHighlight;
+        Document document = createXercesDocument(content);
+        indexContent(document);
+    }
     public static SearchEngineImpl forContent(byte[] xmlContent) {
         return new SearchEngineImpl(xmlContent);
     }
-
+    public static SearchEngineImpl forContent(byte[] xmlContent, Boolean isHighlight) {
+        return new SearchEngineImpl(xmlContent, isHighlight);
+    }
     static boolean lastCharIsWhitespace(StringBuilder sb) {
         return sb.length() != 0 && sb.charAt(sb.length() - 1) == ' ';
     }
@@ -67,8 +89,14 @@ public class SearchEngineImpl implements SearchEngine {
 
     private int visitNode(Node node, List<Element> elements) {
         String tagName = node.getNodeName();
-        if (tagsToExclude.contains(tagName)) {
-            return 0;
+        if(isHighlight){
+            if (tagsToExcludeHighlight.contains(tagName)) {
+                return 0;
+            }
+        }else {
+            if (tagsToExclude.contains(tagName)) {
+                return 0;
+            }
         }
 
         boolean hasText = XercesUtils.hasChildTextNode(node);
@@ -126,8 +154,10 @@ public class SearchEngineImpl implements SearchEngine {
 
     private void createSearchableString(List<Element> elements) {
         indexesForString = new ArrayList<>();
+        indexesForStringHighlight = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         elementsById = new HashMap<>();
+        elementsByIdHighlight = new HashMap<>();
 
         // Loop to extract the text content of all the elements.
         // They will be concatenated so that later a regular string search can be done.
@@ -138,7 +168,11 @@ public class SearchEngineImpl implements SearchEngine {
                 if (!lastCharIsWhitespace(sb) && !el.content.startsWith(" ")) {
                     sb.append(' ');
                     // for the empty character
-                    indexesForString.add(new Index(null, -1));
+                    if(isHighlight){
+                        indexesForStringHighlight.add(new Index(null, -1));
+                    }else {
+                        indexesForString.add(new Index(null, -1));
+                    }
                 }
             }
 
@@ -148,14 +182,26 @@ public class SearchEngineImpl implements SearchEngine {
             // of the character
             // Ex: a text of 4 chars will add 4 to the list for 0,1,2,3 positions
             for (int i = 0; i < el.content.length(); i++) {
-                indexesForString.add(new Index(el.elementId, i + el.startIndexOfText));
+                if(isHighlight) {
+                    indexesForStringHighlight.add(new Index(el.elementId, i + el.startIndexOfText));
+                }else{
+                    indexesForString.add(new Index(el.elementId, i + el.startIndexOfText));
+                }
             }
 
             // Preserve the element to make a reference to future if it repeats
-            if (elementsById.containsKey(el.elementId)) {
-                elementsById.get(el.elementId).content += el.content;
-            } else {
-                elementsById.put(el.elementId, el);
+            if(isHighlight) {
+                if (elementsByIdHighlight.containsKey(el.elementId)) {
+                    elementsByIdHighlight.get(el.elementId).content += el.content;
+                } else {
+                    elementsByIdHighlight.put(el.elementId, el);
+                }
+            }else{
+                if (elementsById.containsKey(el.elementId)) {
+                    elementsById.get(el.elementId).content += el.content;
+                } else {
+                    elementsById.put(el.elementId, el);
+                }
             }
         });
         searchableString = sb.toString();
@@ -189,17 +235,17 @@ public class SearchEngineImpl implements SearchEngine {
         while (matcher.find()) {
             List<ElementMatchVO> matchedElements = new ArrayList<>();
             for (int i = matcher.start(); i < matcher.end(); i++) {
-                Index idx = indexesForString.get(i);
+                Index idx = isHighlight ? indexesForStringHighlight.get(i) : indexesForString.get(i);
                 if (StringUtils.isEmpty(idx.elementId)) {
                     // do not include manually added spaces in the result
                     continue;
                 }
-                Element element = elementsById.get(idx.elementId);
-                if (element.content.trim().length() == 0) {
-                    // do not include blanks in the result
+                Element element = isHighlight ? elementsByIdHighlight.get(idx.elementId) : elementsById.get(idx.elementId);
+                if (element.content.trim().length() == 0// do not include blanks in the result
+                    || (isHighlight && tagsTrackChanges.contains(element.tag.trim())) // isHighlight. Ignore the del and ins tags
+                ) {
                     continue;
                 }
-
                 ElementMatchVO elementMatchVO;
                 if (matchedElements.size() > 0) {
                     ElementMatchVO lastElement = matchedElements.get(matchedElements.size() - 1);
@@ -224,7 +270,6 @@ public class SearchEngineImpl implements SearchEngine {
         }
         return searchMatchedElements;
     }
-
     private boolean calculateReplaceble(List<ElementMatchVO> matchedElements) {
         boolean replaceable = true;
         for (ElementMatchVO elementMatchVO : matchedElements) {
@@ -237,7 +282,7 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
     @Override
-    public byte[] replace(byte[] docContent, List<SearchMatchVO> searchMatchVOs, String searchText, String replaceText, boolean removeEmptyTags) {
+    public byte[] replace(byte[] docContent, List<SearchMatchVO> searchMatchVOs, String searchText, String replaceText, boolean removeEmptyTags, User user, boolean isTrackChangesEnabled) {
         Document document = createXercesDocument(docContent);
         XercesUtils.sanitize(XercesUtils.getFirstElementByName(document, AKOMANTOSO));
         int replacedContentDiffLength = replaceText.length() - searchText.length();
@@ -246,23 +291,27 @@ public class SearchEngineImpl implements SearchEngine {
             if (!smVO.isReplaceable()) {
             	continue;
             }
-            replace(document, smVO, replaceText, true);
+            replace(document, smVO, replaceText, true, user, isTrackChangesEnabled);
             // update positions of elements that have replaced texts
             List<String> elementIdsReplaced = smVO.getMatchedElements().stream().map(ElementMatchVO::getElementId).collect(Collectors.toList());
             for (int j = i + 1; j < searchMatchVOs.size(); j++) {
                 SearchMatchVO matchesSVO = searchMatchVOs.get(j);
-                matchesSVO.getMatchedElements().stream()
+                Stream<ElementMatchVO> elementMatchVOStream = matchesSVO.getMatchedElements().stream()
                         .filter(matchedElement -> elementIdsReplaced.contains(matchedElement.getElementId())
-                                && (matchedElement.getMatchStartIndex() > 0))
-                        .forEach(matchedElement -> {
-                            matchedElement.setMatchStartIndex(matchedElement.getMatchStartIndex() + replacedContentDiffLength);
-                            matchedElement.setMatchEndIndex(matchedElement.getMatchEndIndex() + replacedContentDiffLength);
-                        });
+                                && (matchedElement.getMatchStartIndex() > 0));
+                Consumer<ElementMatchVO> elementMatchVOConsumer = matchedElement -> {
+                    matchedElement.setMatchStartIndex(matchedElement.getMatchStartIndex() + replacedContentDiffLength);
+                    matchedElement.setMatchEndIndex(matchedElement.getMatchEndIndex() + replacedContentDiffLength);
+                };
+                if(isTrackChangesEnabled){
+                    elementMatchVOStream.findFirst().ifPresent(elementMatchVOConsumer);
+                }else {
+                    elementMatchVOStream.forEach(elementMatchVOConsumer);
+                }
             }
         }
         return nodeToByteArray(document);
     }
-
     /**
      * replaces the given text
      * 1. if the entire text to replace is inside an inline tag, then the replaced text will be inside the inline tag
@@ -276,7 +325,7 @@ public class SearchEngineImpl implements SearchEngine {
      * @param removeEmptyTags
      *
      */
-    private void replace(Document document, SearchMatchVO smVO, String replaceText, boolean removeEmptyTags) {
+    private void replace(Document document, SearchMatchVO smVO, String replaceText, boolean removeEmptyTags, User user, boolean isTrackChangesEnabled) {
             if (StringUtils.isEmpty(replaceText)) {
                 replaceText = "";
             }
@@ -321,7 +370,7 @@ public class SearchEngineImpl implements SearchEngine {
             for (int i = 0; i < smVO.getMatchedElements().size(); i++) {
                 ElementMatchVO eVO = smVO.getMatchedElements().get(i);
                 boolean emptyTag = replaceContent(document, eVO, replaceTextSegments.get(i), removeEmptyTags,
-                        matchedElementsChildContentLength.get(eVO.getElementId()));
+                        matchedElementsChildContentLength.get(eVO.getElementId()), user, isTrackChangesEnabled);
                 if (emptyTag) {
                     emptyElementSet.add(eVO.getElementId());
                 }
@@ -345,7 +394,18 @@ public class SearchEngineImpl implements SearchEngine {
     }
 
     private boolean replaceContent(Document document, ElementMatchVO eVO, String replaceSegmentGlobal, boolean removeEmptyTags,
-            List<Integer> matchedElementChildContentLength) {
+            List<Integer> matchedElementChildContentLength, User user, boolean isTrackChangesEnabled) {
+        if(isTrackChangesEnabled){
+            return this.replaceContentIsTrackChangesEnabled( document,  eVO,  replaceSegmentGlobal,  removeEmptyTags,
+             matchedElementChildContentLength,  user);
+        }else{
+            return this.replaceContentNoTrackChanges(document,  eVO,  replaceSegmentGlobal,  removeEmptyTags,
+                    matchedElementChildContentLength, user);
+        }
+    }
+
+    private boolean replaceContentNoTrackChanges(Document document, ElementMatchVO eVO, String replaceSegmentGlobal, boolean removeEmptyTags,
+                                   List<Integer> matchedElementChildContentLength, User user) {
         boolean containsNonEmptyElement = false;
         boolean containsEmptyTextElement = false;
 
@@ -365,7 +425,7 @@ public class SearchEngineImpl implements SearchEngine {
                 } else {
                     length = matchedElementChildContentLength.get(i);
                 }
-                int indexAtEndOfContent = index + length;
+                int indexAtEndOfContent = index + length; //TODO subtract either the length of the old/new text or difference of
                 if ((node.getNodeType() == Node.TEXT_NODE) && (index < endEVO && indexAtEndOfContent > startEVO)) {
                     String content = node.getTextContent();
                     int minReplaceSegmentLength = Math.min(replaceSegment.length(), indexAtEndOfContent - startEVO);
@@ -375,7 +435,7 @@ public class SearchEngineImpl implements SearchEngine {
                     if (indexAtEndOfContent > endEVO && endEVO > startEVO) {
                         // when there exist search segment that has been replaced somewhere in the middle i.e, startEVO>0
                         // but there is still some content left towards the end i.e, length > endEVO
-                        updatedContent += content.substring(endEVO - Math.min(startEVO, index));
+                        updatedContent += content.substring(endEVO - Math.min(startEVO, index));;
                     }
                     // record an update to be executed later
                     // in case the content is empty and as a result the tag as well, then it can also be deleted
@@ -387,12 +447,14 @@ public class SearchEngineImpl implements SearchEngine {
                         }
                     }
                     node.setTextContent(parseXml(updatedContent));
+
                     lastUpdatedNode = node;
                     replaceSegment = replaceSegment.substring(minReplaceSegmentLength);
                     startEVO = indexAtEndOfContent;
                 } else {
                     containsNonEmptyElement = true;
                 }
+
                 index += length;
             }
             // In case if the replace segment is too large and still some part was remaining,
@@ -402,6 +464,132 @@ public class SearchEngineImpl implements SearchEngine {
             }
         }
         return containsEmptyTextElement && !containsNonEmptyElement;
+    }
+
+    private boolean replaceContentIsTrackChangesEnabled(Document document, ElementMatchVO eVO, String replaceSegmentGlobal, boolean removeEmptyTags,
+                                   List<Integer> matchedElementChildContentLength, User user) {
+        boolean containsNonEmptyElement = false;
+        boolean containsEmptyTextElement = false;
+        // a map containing the modified text node as key and, as value, the list of newly added nodes (del, ins, and
+        // remaining text node after the replaced fragment)
+        Map<Node, List<Node>> nodeMap = new HashMap<>();
+
+        Node node = XercesUtils.getElementById(document, eVO.getElementId());
+        if (node != null) {
+            int index = 0;
+            int startEVO = eVO.getMatchStartIndex();
+            int endEVO = eVO.getMatchEndIndex();
+            String replaceSegment = replaceSegmentGlobal;
+            NodeList nodeList = node.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                node = nodeList.item(i);
+                int length;
+                if(tagsToExclude.contains(node.getNodeName())){
+                    length = 0;
+                } else {
+                    length = matchedElementChildContentLength.get(i);
+                }
+                int indexAtEndOfContent = index + length; //TODO subtract either the length of the old/new text or difference of
+                String deletedContent = "";
+                if ((node.getNodeType() == Node.TEXT_NODE) && (index < endEVO && indexAtEndOfContent > startEVO)) {
+                    String content = node.getTextContent();
+                    int minReplaceSegmentLength = Math.min(replaceSegment.length(), indexAtEndOfContent - startEVO);
+                    // replace from startEVO till length
+                    String substring = content.substring(0, Math.max(startEVO - index, 0));
+                    String updatedContent = substring + replaceSegment.substring(0, minReplaceSegmentLength);
+                    String textBeforeSearchedFragment = substring;
+                    String updatedContentSecondPart = null;
+                    String updatedContentForEmptyTextValidation = updatedContent;
+                    // tail part: if the search segment part falls within the content, then simply append the remaing content
+                    if (indexAtEndOfContent > endEVO && endEVO > startEVO) {
+                        // when there exist search segment that has been replaced somewhere in the middle i.e, startEVO>0
+                        // but there is still some content left towards the end i.e, length > endEVO
+                        updatedContentSecondPart = content.substring(endEVO - Math.min(startEVO, index));
+                        updatedContentForEmptyTextValidation += updatedContentSecondPart;
+                    }
+                    // record an update to be executed later
+                    // in case the content is empty and as a result the tag as well, then it can also be deleted
+                    if (removeEmptyTags) {
+                        if ((startEVO == 0) && StringUtils.isEmpty(updatedContentForEmptyTextValidation)) {
+                            containsEmptyTextElement = true;
+                        } else if (!StringUtils.isEmpty(updatedContentForEmptyTextValidation)) {
+                            containsNonEmptyElement = true;
+                        }
+                    }
+                    if(node.getParentNode().getNodeName().equalsIgnoreCase(INSERT_TAG)){
+                        node.setTextContent(parseXml(updatedContentForEmptyTextValidation));
+                    }else{
+                        try {
+                            deletedContent = content.substring(startEVO - index, endEVO - index);
+                        }catch(Exception e){
+                            //do nothing
+                        }
+                        this.generateTrackChangesNodes(document, deletedContent, replaceSegmentGlobal, user, nodeMap, node, updatedContentSecondPart);
+                        node.setTextContent(parseXml(textBeforeSearchedFragment));
+                    }
+                    replaceSegment = replaceSegment.substring(minReplaceSegmentLength);
+                    startEVO = indexAtEndOfContent;
+                } else {
+                    containsNonEmptyElement = true;
+                }
+
+                index += length;
+            }
+            // insert in correct order the newly created nodes
+            nodeMap.entrySet().forEach(entry -> {
+                Node parentNode = entry.getKey().getParentNode();
+                final Node nodeRefChild = entry.getKey().getNextSibling();
+                entry.getValue().forEach(child -> {
+                    if (nodeRefChild != null) {
+                        parentNode.insertBefore(child, nodeRefChild);
+                    } else {
+                        parentNode.appendChild(child);
+                    }
+                });
+            });
+            nodeMap.clear();
+        }
+        return containsEmptyTextElement && !containsNonEmptyElement;
+    }
+
+    private void generateTrackChangesNodes(Document document, String deletedContent, String replaceSegmentGlobal,
+                      User user, Map<Node, List<Node>> nodeMap,
+                      Node node, String updatedContentSecondPart) {
+        String userLogin = null;
+        String userName = null;
+        if (user != null){
+            userLogin = user.getLogin();
+            userName = user.getName();
+        }
+        String parentId = XercesUtils.getId(node.getParentNode());
+        String prefixId = "akn";
+        if (StringUtils.isNotEmpty(parentId)) {
+            int indexOf_= parentId.lastIndexOf("_");
+            int indexForSearch = indexOf_ > 0 ? indexOf_ : parentId.length() - 1;
+            prefixId = parentId.substring(0, indexForSearch) ;
+        }
+
+// del element
+        org.w3c.dom.Element deleteNode =XercesUtils.createElement(document, DELETE_TAG, IdGenerator.generateId(prefixId) ,  deletedContent);
+// ins element
+        org.w3c.dom.Element  insertElement = XercesUtils.createElement(document, INSERT_TAG, IdGenerator.generateId(prefixId), replaceSegmentGlobal);
+        if(userLogin != null && userName!= null) {
+            XercesUtils.addAttribute(deleteNode, "leos:uid", userLogin);
+            XercesUtils.addAttribute(deleteNode, "leos:title", new StringBuilder(userName).append(" : ").append(DATE_FORMAT.format(new Date())).toString() );
+            XercesUtils.addAttribute(insertElement, "leos:uid", userLogin);
+            XercesUtils.addAttribute(insertElement, "leos:title", new StringBuilder(userName).append(" : ").append(DATE_FORMAT.format(new Date())).toString() );
+        }
+
+        List<Node> addedElementList = new ArrayList<>();
+        addedElementList.add(deleteNode);
+        addedElementList.add(insertElement);
+// second part of text node
+        Node textNodeSecondPart = null;
+        if(updatedContentSecondPart != null){
+            textNodeSecondPart = document.createTextNode(updatedContentSecondPart);
+            addedElementList.add(textNodeSecondPart);
+        }
+        nodeMap.put(node, addedElementList);
     }
 
     private void removeEmptyElementsAndParents(Document document, Set<String> elementIds) {

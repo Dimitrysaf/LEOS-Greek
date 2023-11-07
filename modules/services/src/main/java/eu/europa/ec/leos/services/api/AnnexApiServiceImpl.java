@@ -86,6 +86,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.inject.Provider;
+import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -369,7 +370,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         byte[] contentForReplace = getContentForReplaceProcess(tempUpdatedContentXML, annex);
 
         try {
-            matches = searchService.searchText(contentForReplace, searchText, matchCase, completeWords);
+            matches = searchService.searchTextForHighlight(contentForReplace, searchText, matchCase, completeWords);
         } catch (Exception e) {
             LOG.error("couldn't fetch results");
         }
@@ -388,7 +389,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                searchMatchVOS);
+                searchMatchVOS,
+                annex.isTrackChangesEnabled());
     }
 
     @Override
@@ -401,7 +403,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())),
+                annex.isTrackChangesEnabled());
 
     }
 
@@ -409,7 +412,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Annex annex = this.annexService.findAnnexByRef(event.getDocumentRef());
         populateCloneProposalMetadata(annex);
-        Annex updateAnnex = annexService.updateAnnex(annex, event.getUpdatedContent().getBytes(),
+        Annex updateAnnex = annexService.updateAnnex(annex, event.getUpdatedContent().getBytes(StandardCharsets.UTF_8),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         return this.documentViewService.updateDocumentView(updateAnnex);
     }
