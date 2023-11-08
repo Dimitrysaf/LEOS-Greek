@@ -96,7 +96,7 @@ public abstract class AbstractTocEditor implements TocEditor {
 
     @Override
     public boolean isDeletedItem(TableOfContentItemVO tableOfContentItemVO) {
-        return DELETE.equals(tableOfContentItemVO.getSoftActionAttr()) || hasTocItemTrackChangeAction(tableOfContentItemVO, TrackChangeActionType.DELETE);
+        return DELETE.equals(tableOfContentItemVO.getSoftActionAttr()) || TableOfContentHelper.hasTocItemTrackChangeAction(tableOfContentItemVO, TrackChangeActionType.DELETE);
     }
 
     @Override

@@ -1054,7 +1054,8 @@ export const isUndeletableItem = (
   return (
     parentItem &&
     !isMoveToItem(tableOfContentItemVO) &&
-    DELETE !== parentItem.softActionAttr && !hasTocItemTrackChangeAction(parentItem, LEOS_TC_DELETE_ACTION)
+    DELETE !== parentItem.softActionAttr && !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION)
+    && !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)
   );
 };
 
@@ -1066,7 +1067,7 @@ export const isDeletableItem = (
   const parentItem = findNodeById(treeData, tableOfContentItemVO.parentItem);
   if (process.env.NG_APP_LEOS_INSTANCE === CN)
     return !(
-      (DELETE === tableOfContentItemVO.softActionAttr || hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION) ||
+      (DELETE === tableOfContentItemVO.softActionAttr ||
         MOVE_TO === tableOfContentItemVO.softActionAttr ||
         (PARAGRAPH === elementName &&
           checkOriginParentTocITem(tableOfContentItemVO, CN))) &&
@@ -1075,7 +1076,8 @@ export const isDeletableItem = (
   if (process.env.NG_APP_LEOS_INSTANCE !== CN) {
     return !(PARAGRAPH === elementName
       ? isLastExistingChildElement(tableOfContentItemVO, parentItem)
-      : false);
+      : false) && !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION)
+      && !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION);
   }
 };
 
