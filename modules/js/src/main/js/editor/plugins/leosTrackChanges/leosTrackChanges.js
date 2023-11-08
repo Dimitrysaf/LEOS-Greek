@@ -23,14 +23,16 @@ define(function leosTrackChangesModule(require) {
 
         // Track changes names and element types
         TRACKCHANGES_ELEMENT: "span", TRACKCHANGES_ELEMENT_SELECTOR: "span[data-akn-action]", TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR: "tr[data-akn-action]",
-        ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete", ACCEPT: "accept", REJECT: "reject", TRUE: true,
+        ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
         UID_ATTR: "data-akn-uid",
 
         IS_NEW: "data-akn-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
+        ACCEPT: "accept", REJECT: "reject",
 
-        DATA_AKN_SOFTACTION_ROOT: "data-akn-attr-softactionroot",
+        DATA_AKN_SOFTACTION_ROOT: "data-akn-attr-softactionroot", DATA_AKN_SOFTACTION: "data-akn-attr-softaction",
+        TRUE: true, SOFTACTION_MOVE_FROM: "move_from",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -154,15 +156,23 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-softaction-root"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-attr-softactionroot"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
         },
 
         removeTrackChangesAttributesForEnter: function(element) {
-            var tcAttributes = ["data-akn-action-enter", "data-akn-uid-enter", "title-enter"];
+            var tcAttributes = ["data-akn-action-enter", "data-akn-uid-enter", "title-enter", "data-akn-attr-softactionroot"];
             for (var attrName of tcAttributes) {
+                element.removeAttribute(attrName);
+            }
+        },
+
+        removeSoftAttributes: function(element) {
+            var softAttributes = ["data-akn-attr-softuser", "data-akn-attr-softdate", "data-akn-attr-softaction",
+                "data-akn-attr-softactionroot", "data-akn-attr-softmove_label", "data-akn-attr-softmove_from"];
+            for (var attrName of softAttributes) {
                 element.removeAttribute(attrName);
             }
         },
@@ -349,8 +359,8 @@ define(function leosTrackChangesModule(require) {
         },
 
         canUserAcceptChanges: function(editor) {
-            return true;
-            //return !editor.LEOS.isClonedProposal && editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES")
+            return (!editor.LEOS.isClonedProposal && editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES")) ||
+                (editor.LEOS.user.roles && editor.LEOS.user.roles.includes("SUPPORT"));
         },
 
         canUserRejectChanges: function(editor) {
@@ -512,14 +522,15 @@ define(function leosTrackChangesModule(require) {
         },
 
         acceptChange: function(editor, element) {
-            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER)) {
+            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER) ||
+                ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
+                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
+                core.removeTrackChangesAttributes(element);
                 core.removeTrackChangesAttributesForNumbering(element);
-                element.setAttribute(core.DATA_AKN_RENUMBER, "accept");
-                element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, "accept");
-            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                 core.removeTrackChangesAttributesForEnter(element);
-                element.setAttribute(core.DATA_AKN_RENUMBER, "accept");
-                element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, "accept");
+                core.removeSoftAttributes(element);
+                element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
+                element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
             } else {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
@@ -531,8 +542,10 @@ define(function leosTrackChangesModule(require) {
         },
 
         rejectChange: function(editor, element) {
-            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
-                element.setAttribute(core.DATA_AKN_RENUMBER, "reject");
+            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER) ||
+                ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
+                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
+                element.setAttribute(core.DATA_AKN_RENUMBER, core.REJECT);
             } else {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
@@ -541,28 +554,6 @@ define(function leosTrackChangesModule(require) {
                     element.$.outerHTML = element.$.innerHTML;
                 }
             }
-        },
-
-        acceptMoveStructuralChange: function(editor, element) {
-            element.removeAttribute("data-akn-attr-softuser");
-            element.removeAttribute("data-akn-attr-softdate");
-            element.removeAttribute("data-akn-attr-softaction");
-            element.removeAttribute("data-akn-attr-softactionroot");
-            element.removeAttribute("data-akn-attr-softmove_label");
-            element.removeAttribute("data-akn-action");
-            element.removeAttribute("data-akn-uid");
-            element.removeAttribute("data-akn-action-number");
-            element.removeAttribute("title-number");
-            element.removeAttribute("data-akn-uid-number");
-            element.removeAttribute("title");
-            element.removeAttribute("data-akn-tc-original-number");
-            //element.removeAttribute("data-akn-attr-softmove_from");
-            element.setAttribute(core.DATA_AKN_RENUMBER, "accept");
-            element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, "accept");
-        },
-
-        rejectMoveStructuralChange: function(editor, element) {
-            element.setAttribute(core.DATA_AKN_RENUMBER, "reject");
         },
 
         acceptRowChange: function(editor, element) {

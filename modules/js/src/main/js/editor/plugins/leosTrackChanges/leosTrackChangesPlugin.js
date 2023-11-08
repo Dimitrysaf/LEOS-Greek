@@ -71,18 +71,6 @@ define(function leosTrackChangesPluginModule(require) {
                     command: "rejectOneChange",
                     group: "trackChangesGroup"
                 });
-                editor.addMenuItem("acceptMoveStructuralChange", {
-                    label: "Accept this change",
-                    icon: this.path + "icons/ok.png",
-                    command: "acceptMoveStructuralChange",
-                    group: "trackChangesGroup"
-                });
-                editor.addMenuItem("rejectMoveStructuralChange", {
-                    label: "Reject this change",
-                    icon: this.path + "icons/remove.png",
-                    command: "rejectMoveStructuralChange",
-                    group: "trackChangesGroup"
-                });
                 editor.addMenuItem("acceptSelectedChangesItem", {
                     label: "Accept selected changes",
                     icon: this.path + "icons/ok.png",
@@ -119,18 +107,6 @@ define(function leosTrackChangesPluginModule(require) {
                         actions.rejectChange(editor, editor.getSelection().getStartElement());
                     }
                 });
-                editor.addCommand("acceptMoveStructuralChange", {
-                    canUndo: true,
-                    exec: function(editor) {
-                        actions.acceptMoveStructuralChange(editor, editor.getSelection().getStartElement());
-                    }
-                });
-                editor.addCommand("rejectMoveStructuralChange", {
-                    canUndo: true,
-                    exec: function(editor) {
-                        actions.rejectMoveStructuralChange(editor, editor.getSelection().getStartElement());
-                    }
-                });
                 editor.addCommand("acceptSelectedChanges", {
                     canUndo: true,
                     exec: function(editor) {
@@ -162,9 +138,9 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 });
                 editor.contextMenu.addListener(function(element) {
-                    var elementWithPseudoElt = core.getClosestElementWithPseudoElt(element, "before");
+                    var elementWithPseudoElt = core.getClosestElementWithPseudoElt(element, core.BEFORE);
                     if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
-                        && core.isMouseOverPseudoElt(elementWithPseudoElt, mousePosition, "before")) {
+                        && core.isMouseOverPseudoElt(elementWithPseudoElt, mousePosition, core.BEFORE)) {
                         if (elementWithPseudoElt.getAttribute(core.DATA_AKN_SOFTACTION_ROOT)) {
                             editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
                             return {
@@ -180,11 +156,11 @@ define(function leosTrackChangesPluginModule(require) {
                                 acceptRowChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectRowChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
-                        } else if (editor.getSelection().isCollapsed() &&
-                            element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION && element.getAttribute("data-akn-attr-softaction") === "move_from") {
+                        } else if (editor.getSelection().isCollapsed() && (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION)
+                            && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
                             return {
-                                acceptMoveStructuralChange: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                                rejectMoveStructuralChange: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
                         } else if (editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) {
                             tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
@@ -242,8 +218,8 @@ define(function leosTrackChangesPluginModule(require) {
                             core.removeTrackChangesAttributesForNumbering(element);
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
-                        core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                         element.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
+                        core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                     }
                 }
             });
