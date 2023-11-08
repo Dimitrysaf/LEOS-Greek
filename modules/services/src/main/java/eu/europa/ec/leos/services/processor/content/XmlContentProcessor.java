@@ -27,6 +27,8 @@ import java.util.Map;
 
 public interface XmlContentProcessor {
 
+    byte[] addTrackChangesAttributes(byte[] xmlContent);
+
     byte[] anonymizeTrackChanges(byte[] xmlContent);
 
     byte[] cleanTrackChanges(byte[] xmlContent);
