@@ -23,7 +23,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -32,12 +31,12 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@Transactional
 public class ConfigServiceTests {
     @Autowired
     DocumentService documentService;
 
     @Test
-    @Transactional
     public void test_getConfigStructure() throws RepositoryException {
         Optional<LeosDocument> structure = documentService.findDocumentByName("structure_01");
         assertTrue(structure.isPresent());

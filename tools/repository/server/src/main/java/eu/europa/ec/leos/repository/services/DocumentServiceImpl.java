@@ -132,9 +132,8 @@ public class DocumentServiceImpl implements DocumentService {
 
             // FIRST STEP: get package
             Package pkg = packageRepository.findPackageByName(packageName).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName()));
-            DocumentCategories docCat
-                    =
-                    documentCategoriesRepository.findDocumentCategoriesByCategoryCode((String) metadata.get(PropertiesMetadata.CATEGORY.getLeosName())).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentCategories.class.getName()));
+            DocumentCategories docCat = documentCategoriesRepository.findDocumentCategoriesByCategoryCode((String) metadata.get(PropertiesMetadata.CATEGORY.getLeosName()))
+                    .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentCategories.class.getName()));
 
             Document doc = new Document();
             doc.setName(name);

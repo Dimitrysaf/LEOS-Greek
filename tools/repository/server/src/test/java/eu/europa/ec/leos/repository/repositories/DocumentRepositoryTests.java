@@ -22,14 +22,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -49,14 +48,12 @@ public class DocumentRepositoryTests {
     PackageRepository packageRepository;
 
     @Test
-    @Transactional
     public void test_findAllVersionsByDocumentId() {
         List<DocumentV> docs = documentVRepository.findAllVersionsByDocumentId(new BigDecimal(1));
         assertEquals(docs.size(), 1);
     }
 
     @Test
-    @Transactional
     public void test_findAllVersionsByPackageIdAndCategoryCode() {
         List<DocumentV> docs = documentVRepository.findAllVersionsByPackageIdAndCategoryCode(new BigDecimal(1), "BILL");
         assertEquals(docs.size(), 1);
@@ -65,7 +62,6 @@ public class DocumentRepositoryTests {
     }
 
     @Test
-    @Transactional
     public void test_findVersionByVersionId() {
         Optional<DocumentV> doc = documentVRepository.findVersionByVersionId(new BigDecimal(1));
         assertTrue(doc.isPresent());
@@ -74,7 +70,6 @@ public class DocumentRepositoryTests {
     }
 
     @Test
-    @Transactional
     public void test_findLastVersionByDocumentId() {
         Optional<DocumentV> doc = documentVRepository.findLastVersionByDocumentId(new BigDecimal(1));
         assertTrue(doc.isPresent());
@@ -83,7 +78,6 @@ public class DocumentRepositoryTests {
     }
 
     @Test
-    @Transactional
     public void test_findLastVersionByPackageId() {
         List<DocumentV> docs = documentVRepository.findDocumentsByPackageId(new BigDecimal(1));
         assertEquals(docs.size(), 4);
