@@ -18,6 +18,7 @@ import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,18 +31,18 @@ public interface DocumentService {
     LeosDocument createDocumentFromSource(final String sourceDocumentId, final String packageName, final String name, Map<String, ?> metadata,
                                         final String labelVersion, int versionType, String comments, String userId) throws RepositoryException;
 
-    LeosDocument updateDocument(final String versionId, Map<String, ?> properties,
-            VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception;
+    LeosDocument updateDocument(final BigDecimal versionId, Map<String, ?> properties,
+                                VersionType versionType, String category, byte[] contentBytes, String comments, String userId) throws Exception;
 
-    LeosDocument updateDocument(String ref, final String versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception;
+    LeosDocument updateDocument(String ref, final BigDecimal versionId, Map<String, ?> metadata, String userId, boolean latest) throws Exception;
 
     LeosDocument archiveDocument(final String ref, String userId) throws Exception;
 
-    void deleteDocumentById(String id) throws RepositoryException;
+    void deleteDocumentById(BigDecimal id) throws RepositoryException;
 
     void deleteDocumentByRef(String ref) throws RepositoryException;
 
-    LeosDocument findDocumentById(final String id, String category, final boolean latest) throws RepositoryException;
+    LeosDocument findDocumentById(final BigDecimal id, String category, final boolean latest) throws RepositoryException;
 
     LeosDocument findLatestMajorVersionByRef(final String docRef);
 
@@ -63,7 +64,7 @@ public interface DocumentService {
 
     long getRecentMinorVersionsCount(final String docRef, final String versionLabel);
 
-    List<LeosDocument> findDocumentsByUserId(final String userId, final String role, String category);
+    List<LeosDocument> findDocumentsByUserId(final String userName, final String role, String category);
 
     Optional<LeosDocument> findDocumentByRef(final String ref, String category);
 

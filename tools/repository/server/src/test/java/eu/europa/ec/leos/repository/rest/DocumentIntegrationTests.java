@@ -204,7 +204,7 @@ public class DocumentIntegrationTests {
         xmlDoc.setUpdatedBy(USER);
         xmlDoc.setUpdatedOn(currentTimeStamp);
         xmlDoc.setVersionLabel("0.1.0");
-        xmlDoc.setVersionId("6");
+        xmlDoc.setVersionId(new BigDecimal("6"));
         xmlDoc.setRef(DOC_REF);
         xmlDoc.setVersionType(VersionType.MAJOR);
     }
@@ -336,15 +336,15 @@ public class DocumentIntegrationTests {
         updateDocumentRequest.setContent(DOC_CONTENT.getBytes(StandardCharsets.UTF_8));
         String json = mapper.writeValueAsString(updateDocumentRequest);
         String docSource = mapper.writeValueAsString(DOC_CONTENT.getBytes(StandardCharsets.UTF_8)).replace("\"", "");
-        when(documentService.updateDocument(ArgumentMatchers.eq(xmlDoc.getRef()),
+        when(documentService.updateDocument(ArgumentMatchers.eq(xmlDoc.getVersionId()),
                 anyMap(),
                 ArgumentMatchers.eq(updateDocumentRequest.getVersionType()),
                 ArgumentMatchers.eq(updateDocumentRequest.getCategory()), ArgumentMatchers.eq(updateDocumentRequest.getContent()),
                 ArgumentMatchers.eq(updateDocumentRequest.getComments()), ArgumentMatchers.eq(updateDocumentRequest.getUserId()))).thenReturn(xmlDoc);
 
-        mockMvc.perform(put("/document/update-content/{docRef}", xmlDoc.getRef()).contentType(MediaType.APPLICATION_JSON)
-                        .content(json)
-                        .accept(MediaType.APPLICATION_JSON))
+        mockMvc.perform(put("/document/update-content/{versionId}", xmlDoc.getVersionId()).contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.ref", is(xmlDoc.getRef())))
                 .andExpect(jsonPath("$.name", is(xmlDoc.getName())))
                 .andExpect(jsonPath("$.createdBy", is(USER)))

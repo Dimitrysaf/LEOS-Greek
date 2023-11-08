@@ -4,7 +4,6 @@ import eu.europa.ec.leos.repository.controllers.requests.QueryFilter;
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
-import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
@@ -12,25 +11,28 @@ import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.repositories.MilestoneVRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static eu.europa.ec.leos.repository.controllers.requests.QueryFilter.formSortClause;
-import static eu.europa.ec.leos.repository.controllers.requests.QueryFilter.getWhereClauseFromQueryFilter;
-
 @Service
 public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(MilestoneDocumentServiceImpl.class);
 
     @Autowired
     private MilestoneVRepository milestoneVRepository;
@@ -63,6 +65,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         }
         return listDocs;
     }
+
     @Override
     public Optional<LeosDocument> findMilestoneByRef(final String ref) {
         Optional<MilestoneV> doc = milestoneVRepository.findMilestonesByRef(ref);
@@ -70,7 +73,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
     }
 
     @Override
-    public Optional<LeosDocument> findMilestoneById(String id) {
+    public Optional<LeosDocument> findMilestoneById(BigDecimal id) {
         Optional<MilestoneV> doc = milestoneVRepository.findMilestonesById(id);
         return doc.map(milestoneV -> ConversionUtils.buildLegDocument(milestoneV, documentMilestoneListRepository, documentMilestoneRepository, true));
     }
@@ -93,9 +96,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
     }
 
     @Override
-    public LeosDocument updateMilestoneMetadata(final String milestoneId, Map<String, ?> metadata, String userId) throws RepositoryException {
+    public LeosDocument updateMilestoneMetadata(final BigDecimal milestoneId, Map<String, ?> metadata, String userId) throws RepositoryException {
         try {
-            DocumentMilestone docMilestone = documentMilestoneRepository.findById(new BigDecimal(Long.parseLong(milestoneId))).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentMilestone.class.getName()));
+            DocumentMilestone docMilestone = documentMilestoneRepository.findById(milestoneId).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentMilestone.class.getName()));
             docMilestone.setAuditLastMBy(userId);
             docMilestone.setAuditLastMDate(LocalDateTime.now());
             docMilestone = updateMilestoneComments(docMilestone, metadata);
@@ -217,71 +220,137 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
     @Override
     public List<LeosDocument> findMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter,
                                                         final int startIndex, final int maxResults, final boolean fetchContent) {
-        //Build query
-        StringBuilder queryBuild = new StringBuilder("SELECT m FROM MilestoneV m WHERE ");
-        if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" m.packageName = '%s'", packageName));
-        }
-
-        StringBuilder queryFilterBuild = new StringBuilder();
-        buildQueryWithFilterQuery(queryFilterBuild, categories, queryFilter, true);
-        if (queryFilterBuild.length() > 0 && !packageName.equals("%")) {
-            queryBuild.append(" AND ");
-        }
-        queryBuild.append(queryFilterBuild);
-
-        List<MilestoneV> docs = entityManager.createQuery(queryBuild.toString()).setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
+        StringBuilder queryBuild = new StringBuilder("SELECT m ");
+        queryBuild.append(" FROM MilestoneV m");
+        Query query = createQuery(queryBuild, packageName, categories, queryFilter, true);
+        List<MilestoneV> docs = query.setFirstResult(startIndex).setMaxResults(maxResults).getResultList();
         return ConversionUtils.buildLegDocuments(docs, documentMilestoneRepository, documentMilestoneListRepository, fetchContent);
     }
 
     @Override
     public long countMilestonesUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter) {
-        //Build query
-        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(m) FROM MilestoneV m WHERE");
-        if (!packageName.equals("%")) {
-            queryBuild.append(String.format(" m.packageName = '%s'", packageName));
-        }
-        StringBuilder queryFilterBuild = new StringBuilder();
-        buildQueryWithFilterQuery(queryFilterBuild, categories, queryFilter, false);
-        if (queryFilterBuild.length() > 0 && !packageName.equals("%")) {
-            queryBuild.append(" AND ");
-        }
-        queryBuild.append(queryFilterBuild);
-
-        return (long) entityManager.createQuery(queryBuild.toString()).getSingleResult();
+        StringBuilder queryBuild = new StringBuilder("SELECT COUNT(m) ");
+        queryBuild.append(" FROM MilestoneV m");
+        Query query = createQuery(queryBuild, packageName, categories, queryFilter, false);
+        long count = (long) query.getSingleResult();
+        return count;
     }
 
-    private void buildQueryWithFilterQuery(StringBuilder queryBuild, final Set<String> categories, final QueryFilter queryFilter, boolean orderBy) {
-        if (!categories.isEmpty()) {
-            String categoryStr = categories.stream()
-                    .map(a -> "'" + a + "'")
-                    .collect(Collectors.joining(","));
-            queryBuild.append(String.format(" m.categoryCode IN (%s)",
-                    categoryStr));
+    private Query createQuery(StringBuilder queryBuild, String packageName, Set<String> categories, QueryFilter queryFilter, boolean orderBy) {
+        final List<QueryFilter.Filter> filters = queryFilter.getFilters();
+        final Class objectClass = MilestoneV.class;
+        queryBuild.append(" WHERE 1 = 1");
+        if (!packageName.equals("%")) {
+            queryBuild.append(" AND m.packageName = :packageName");
         }
-        String whereFiltersClause = getWhereClauseFromQueryFilter(queryFilter, MilestoneV.class);
-        if (!StringUtils.isBlank(whereFiltersClause)) {
-            if (!categories.isEmpty()) {
-                queryBuild.append(" AND ");
+        if (!categories.isEmpty()) {
+            queryBuild.append(" AND m.categoryCode IN (:categoryList)");
+        }
+        enrichQueryWithProcedureTypeAndTemplate(queryBuild, filters, objectClass);
+        Optional<QueryFilter.Filter> docsFilter = enrichQueryWithDocumentMilestone(queryBuild, filters);
+        if(orderBy) {
+            enrichOrderBy(queryFilter, objectClass, queryBuild);
+        }
+
+        Query query = entityManager.createQuery(queryBuild.toString());
+
+        if (!packageName.equals("%")) {
+            query.setParameter("packageName", packageName);
+        }
+        if (!categories.isEmpty()) {
+            query.setParameter("categoryList", categories);
+        }
+        setParametersForProcedureTypeAndTemplate(query, filters, objectClass);
+        setParametersForDocumentMilestone(query, docsFilter);
+        return query;
+    }
+
+    private Optional<QueryFilter.Filter> enrichQueryWithDocumentMilestone(StringBuilder queryBuild, List<QueryFilter.Filter> filters) {
+        Optional<QueryFilter.Filter> docsFilter = filters.stream().filter(f -> f.key.equals("containedDocuments")).findFirst();
+        if (docsFilter.isPresent()) {
+            queryBuild.append(" AND m.milestoneId IN (");
+            queryBuild.append("     SELECT l.milestone.id");
+            queryBuild.append("     FROM DocumentMilestoneList l ");
+            queryBuild.append("     WHERE l.containedDocuments IN (:docsFilter)");
+            queryBuild.append(" )");
+        }
+        return docsFilter;
+    }
+
+    private void setParametersForDocumentMilestone(Query query, Optional<QueryFilter.Filter> docsFilter) {
+        if (docsFilter.isPresent()) {
+            query.setParameter("docsFilter", Arrays.asList(docsFilter.get().value));
+        }
+    }
+
+    private void enrichQueryWithProcedureTypeAndTemplate(StringBuilder queryBuild, List<QueryFilter.Filter> filters, Class objectClass) {
+        for (int i = 0; i < filters.size(); i++) {
+            QueryFilter.Filter filter = filters.get(i);
+            try {
+                final String columnName = QueryFilter.FilterType.getColumnName(filter.key);
+                Field field = objectClass.getDeclaredField(columnName);
+                if (QueryFilter.FilterType.isComplex(filter.key)) {
+                    continue;
+                }
+                if (filter.nullCheck) {
+                    queryBuild.append(" AND ( ");
+                    queryBuild.append(columnName + " IS NULL OR " + columnName + " = '-' ");
+                }
+                if ("IN".equalsIgnoreCase(filter.operator)) {
+                    queryBuild.append(" OR ");
+                    queryBuild.append(columnName + " IN ( ");
+                    queryBuild.append(":valueList_" + i);
+                    queryBuild.append(")");
+                } else {
+                    queryBuild.append(" OR " + columnName + " :op_" + i + " :keyValue_" + i);
+                }
+                if (filter.nullCheck) {
+                    queryBuild.append(")");
+                }
+            } catch (NoSuchFieldException e) {
+                continue;
             }
-            Optional<QueryFilter.Filter> docsFilter = queryFilter.getFilters().stream().filter(f -> f.key.equals("containedDocuments")).findFirst();
-            if (docsFilter.isPresent()) {
-                StringBuilder value = new StringBuilder("'");
-                value.append(StringUtils.join(docsFilter.get().value, "', '"));
-                value.append("'");
-                queryBuild.append(String.format("m.milestoneId IN (SELECT l.milestone.id FROM DocumentMilestoneList l WHERE l.containedDocuments IN (%s))",
-                        value));
-                queryFilter.removeFilter("containedDocuments");
-                if (!queryFilter.getFilters().isEmpty()) {
-                    queryBuild.append(" AND ");
+            break;
+        }
+    }
+
+    private void setParametersForProcedureTypeAndTemplate(Query query, List<QueryFilter.Filter> filters, Class objectClass) {
+        for (int i = 0; i < filters.size(); i++) {
+            QueryFilter.Filter filter = filters.get(i);
+            try {
+                objectClass.getDeclaredField(QueryFilter.FilterType.getColumnName(filter.key));//to fail if not present
+                if (QueryFilter.FilterType.isComplex(filter.key)) {
+                    continue;
+                }
+                if ("IN".equalsIgnoreCase(filter.operator)) {
+                    query.setParameter("valueList_" + i, Arrays.asList(filter.value));
+                } else {
+                    query.setParameter("op_" + i, filter.operator);
+                    query.setParameter("valueList_" + i, Arrays.asList(filter.value));
+                }
+            } catch (NoSuchFieldException e) {
+                continue;
+            }
+            break;
+        }
+    }
+
+    private void enrichOrderBy(QueryFilter queryFilter, Class objectClass, StringBuilder queryBuild) {
+        if (queryFilter.getSortOrders().size() > 0) {
+            queryBuild.append(" ORDER BY ");
+            for (int i = 0; i < queryFilter.getSortOrders().size(); i++) {
+                QueryFilter.SortOrder sortOrder = queryFilter.getSortOrders().get(i);
+                try {
+                    Field field = objectClass.getDeclaredField(QueryFilter.FilterType.getColumnName(sortOrder.key));
+                    queryBuild.append(QueryFilter.FilterType.getColumnName(sortOrder.key) + " " + sortOrder.direction);
+                    if (i < queryFilter.getSortOrders().size() - 1) {
+                        queryBuild.append(" ,");
+                    }
+                } catch (NoSuchFieldException e) {
+                    continue;
                 }
             }
-            queryBuild.append(whereFiltersClause);
-        }
-        String formSortClause = formSortClause(queryFilter, DocumentV.class);
-        if (orderBy && !formSortClause.isEmpty()) {
-            queryBuild.append(" ORDER BY ");
-            queryBuild.append(formSortClause);
+
         }
     }
 

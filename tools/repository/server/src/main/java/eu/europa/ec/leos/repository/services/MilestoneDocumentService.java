@@ -5,6 +5,7 @@ import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,14 +18,14 @@ public interface MilestoneDocumentService {
 
     Optional<LeosDocument> findMilestoneByRef(final String Ref);
 
-    Optional<LeosDocument> findMilestoneById(final String id);
+    Optional<LeosDocument> findMilestoneById(final BigDecimal id);
 
     List<LeosDocument> findMilestoneByPackageId(final String pkgId, final boolean fetchContent) throws RepositoryException;
 
     LeosDocument createMilestoneFromContent(final Document doc, Map<String, ?> metadata,
                                             byte[] contentBytes, final String userId) throws RepositoryException;
 
-    LeosDocument updateMilestoneMetadata(final String milestoneId, Map<String, ?> properties, String userId) throws RepositoryException;
+    LeosDocument updateMilestoneMetadata(final BigDecimal milestoneId, Map<String, ?> properties, String userId) throws RepositoryException;
 
     LeosDocument updateMilestone(final Document doc, byte[] content, Map<String, ?> properties, String userId) throws RepositoryException;
 
