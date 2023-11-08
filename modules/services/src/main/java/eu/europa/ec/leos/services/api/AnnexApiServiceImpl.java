@@ -522,7 +522,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext context = structureContext.get();
-        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         populateCloneProposalMetadata(annex);
         List<String> elementAncestorsIds = null;
         if (CollectionUtils.isNotEmpty(elementIds)) {

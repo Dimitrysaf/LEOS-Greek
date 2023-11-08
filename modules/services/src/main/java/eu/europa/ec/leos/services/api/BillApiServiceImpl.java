@@ -309,7 +309,6 @@ public class BillApiServiceImpl implements BillApiService {
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), bill);
 
         populateCloneProposalMetadata(bill);
-        boolean isTrackChangesEnabled = bill.isTrackChangesEnabled();
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
                 contentForReplace,

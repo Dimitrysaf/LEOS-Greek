@@ -38,6 +38,7 @@ import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.vo.toc.TocItemType;
 import org.apache.http.MethodNotSupportedException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
         if (updatedContentXML == null || updatedContentXML.isEmpty()) {
             return getContent(document);
         }
-        return updatedContentXML.getBytes();
+        return updatedContentXML.getBytes(StandardCharsets.UTF_8);
     }
 
     default byte[] getContent(XmlDocument document) {

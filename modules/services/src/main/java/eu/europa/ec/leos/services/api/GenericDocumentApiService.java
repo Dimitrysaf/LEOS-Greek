@@ -389,8 +389,7 @@ public class GenericDocumentApiService {
         } else {
             targetAnnexBytes = tempUpdatedContentXML.getBytes();
         }
-        List<SearchMatchVO> searchResults = this.searchService.searchTextForHighlight(targetAnnexBytes, searchText, matchCase, completeWords);
-        return searchResults;
+        return this.searchService.searchTextForHighlight(targetAnnexBytes, searchText, matchCase, completeWords);
     }
 
     public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
