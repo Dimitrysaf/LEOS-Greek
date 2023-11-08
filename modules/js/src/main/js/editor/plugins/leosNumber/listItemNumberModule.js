@@ -347,6 +347,8 @@ define(function listItemNumberModule(require) {
                 }
                 if (sequence.type !== "INDENT" && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_RENUMBER) === leosTrackChanges.core.ACCEPT) {
                     offset++;
+                    previousNumber = sequence.generator(orderedList, listItems[idx], newIdx);
+                    listItems[idx].setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, previousNumber);
                     listItems[idx].removeAttribute(leosTrackChanges.core.DATA_AKN_RENUMBER);
                 }
                 if (sequence.type !== "INDENT" && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_RENUMBER) === leosTrackChanges.core.REJECT) {

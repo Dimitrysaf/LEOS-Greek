@@ -1257,6 +1257,10 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_AKN_ACTION_ENTER,
                                                 to: "leos:action-enter",
                                                 action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_RENUMBER_ORIGIN,
+                                                to: LEOS_RENUMBER_ORIGIN,
+                                                action: "passAttributeTransformer"
                                             }]
                                         }, {
                                             toPath: [rootsElementsPathForFrom, "num"].join("/"),
