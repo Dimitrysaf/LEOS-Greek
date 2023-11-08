@@ -3,6 +3,7 @@ package eu.europa.ec.leos.repository.services;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ConfigService {
@@ -10,5 +11,5 @@ public interface ConfigService {
 
     LeosDocument findConfigById(final String id) throws RepositoryException;
 
-    LeosDocument findConfigByVersionId(final String id) throws RepositoryException;
+    LeosDocument findConfigByVersionId(final BigDecimal id) throws RepositoryException;
 }

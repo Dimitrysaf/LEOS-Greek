@@ -193,7 +193,7 @@ public class PackageIntegrationTests {
         xmlDoc.setComments("First Version");
         xmlDoc.setCreatedBy(USER);
         xmlDoc.setCreatedOn(currentTimeStamp);
-        xmlDoc.setVersionId(DOC_ID.toString());
+        xmlDoc.setVersionId(DOC_ID);
         xmlDoc.setRef(DOC_REF.toString());
         xmlDoc.setLatestVersion(true);
         xmlDoc.setMetadata((Map<String, Object>) DOC_PROPERTIES);
@@ -270,12 +270,11 @@ public class PackageIntegrationTests {
                 .collect(Collectors.toSet()));
         String json = mapper.writeValueAsString(findDocumentsRequest);
         List<LeosDocument> listDocs = Arrays.asList(xmlDoc);
-        String PKG_ID_STR = PKG_ID.toString();
 
-        when(packageService.findDocumentsByPackageId(PKG_ID_STR, findDocumentsRequest.getCategories(), false, false))
+        when(packageService.findDocumentsByPackageId(PKG_ID, findDocumentsRequest.getCategories(), false, false))
                 .thenReturn(listDocs);
 
-        mockMvc.perform(post("/package/find-by-id/{id}/documents", PKG_ID_STR).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/package/find-by-id/{id}/documents", PKG_ID).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))

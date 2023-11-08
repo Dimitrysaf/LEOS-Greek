@@ -89,11 +89,11 @@ public class CollaboratorsServiceImpl implements CollaboratorsService {
         }
     }
 
-    public List<String> findDocumentsByUserId(final String userId, final String role) {
-        List<String> packageIdsList = new ArrayList<>();
+    public List<BigDecimal> findDocumentsByCollaboratorName(final String userId, final String role) {
+        List<BigDecimal> packageIdsList = new ArrayList<>();
         List<BigDecimal> packageIdsListBD = packageCollaboratorsRepository.findPackageIdByCollaboratorNameAndRole(userId, role);
         for (BigDecimal packageIdBD : packageIdsListBD) {
-            packageIdsList.add(packageIdBD.toString());
+            packageIdsList.add(packageIdBD);
         }
         return packageIdsList;
     }

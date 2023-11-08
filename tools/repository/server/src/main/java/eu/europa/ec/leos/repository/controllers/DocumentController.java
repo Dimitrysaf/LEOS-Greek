@@ -39,6 +39,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.util.List;
 
@@ -92,7 +93,7 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document deleted", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity deleteDocumentById(@PathVariable("versionId") String versionId) throws RepositoryException {
+    public ResponseEntity deleteDocumentById(@PathVariable("versionId") BigDecimal versionId) throws RepositoryException {
         documentService.deleteDocumentById(versionId);
         return ResponseEntity.ok().build();
     }
@@ -114,7 +115,7 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document Updated", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> updateDocument(@PathVariable("versionId") String versionId,
+    public ResponseEntity<Object> updateDocument(@PathVariable("versionId") BigDecimal versionId,
                                                  @Validated(OnUpdateWithContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest)
             throws Exception {
         LeosDocument xmlDoc = documentService.updateDocument(versionId, updateDocumentRequest.getMetadata(), updateDocumentRequest.getVersionType(),
@@ -129,7 +130,7 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document Updated", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> updateDocumentMetadata(@PathVariable("versionId") String versionId, @PathVariable("docRef") String docRef,
+    public ResponseEntity<Object> updateDocumentMetadata(@PathVariable("versionId") BigDecimal versionId, @PathVariable("docRef") String docRef,
                                                          @Validated(OnUpdateWithoutContent.class) @Valid @RequestBody UpdateDocumentRequest updateDocumentRequest,
                                                             @RequestParam("latest") Boolean latest)
             throws Exception {
@@ -145,21 +146,21 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Moved", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
     public ResponseEntity<Object> archiveDocument(@PathVariable("docRef") String docRef,
-                                               @RequestParam("userId") String userId) throws Exception {
-        LeosDocument xmlDoc = documentService.archiveDocument(docRef, userId);
+                                               @RequestParam("userId") String userName) throws Exception {
+        LeosDocument xmlDoc = documentService.archiveDocument(docRef, userName);
         return ResponseEntity.ok(RestPreconditions.checkFound(xmlDoc, HttpStatus.NOT_FOUND, "No documents found"));
     }
 
-    @GetMapping(path = "/documents/find-by-collaborator/{userId}",
+    @GetMapping(path = "/documents/find-by-collaborator/{userName}",
             consumes = {},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Find Xml documents by collaborator")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity findDocumentsByUserId(@RequestParam("role") String role, @RequestParam(value = "category", defaultValue = "") String category,
-                                                @PathVariable("userId") String userId) {
-        List<LeosDocument> xmlDocs = documentService.findDocumentsByUserId(userId, role, category);
+    public ResponseEntity findDocumentsByUserName(@RequestParam("role") String role, @RequestParam(value = "category", defaultValue = "") String category,
+                                                  @PathVariable("userName") String userName) {
+        List<LeosDocument> xmlDocs = documentService.findDocumentsByUserId(userName, role, category);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
@@ -169,7 +170,7 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Document Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> findDocumentById(@PathVariable("versionId") String versionId,
+    public ResponseEntity<Object> findDocumentById(@PathVariable("versionId") BigDecimal versionId,
                                                     @RequestParam("category") String category,
                                                    @RequestParam("latest") Boolean latest)
             throws RepositoryException {

@@ -271,7 +271,7 @@ public class DocumentServiceTests {
                 "PROP_ACT-clilif9gy0000ro28zt8al0yh-en.leg", properties, "0.1.1", 3,
                 content, "First version", USER_ID);
         assertNotNull(doc);
-        Optional<DocumentMilestone> docMilestone = documentMilestoneRepository.findById(new BigDecimal(Long.parseLong(doc.getVersionId())));
+        Optional<DocumentMilestone> docMilestone = documentMilestoneRepository.findById(doc.getVersionId());
         assertTrue(docMilestone.isPresent());
         List<DocumentMilestoneList> milestonesDocuments =
                 documentMilestoneListRepository.findDocumentMilestoneListsByMilestone(docMilestone.get());
@@ -412,9 +412,9 @@ public class DocumentServiceTests {
         filter.addSortOrder(new QueryFilter.SortOrder(QueryFilter.FilterType.lastModificationDate.name(), QueryFilter.SORT_DESCENDING));
 
         List<LeosDocument> docs = documentService.findDocumentsUsingFilter("%", categories, filter, 0, 5, false);
-        assertEquals(docs.size(), 1);
-        assertEquals(docs.get(0).getMetadata().get("procedureType"), "ORDINARY_LEGISLATIVE_PROC");
-        assertEquals(docs.get(0).getCategory(), "PROPOSAL");
+        assertEquals(1, docs.size());
+        assertEquals("ORDINARY_LEGISLATIVE_PROC", docs.get(0).getMetadata().get("procedureType"));
+        assertEquals("PROPOSAL", docs.get(0).getCategory());
     }
 
     @Test
@@ -719,7 +719,7 @@ public class DocumentServiceTests {
     @Test
     public void test_findDocumentsByRef() throws Exception {
         LeosDocument doc = docCreation();
-        String firstVersionId = doc.getVersionId();
+        BigDecimal firstVersionId = doc.getVersionId();
         Map<String, Object> properties = new HashMap<>();
         properties.putAll(doc.getMetadata());
         List<Collaborator> collaborators = (List<Collaborator>) doc.getMetadata().get("collaborators");

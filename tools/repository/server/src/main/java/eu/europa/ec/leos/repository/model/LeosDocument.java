@@ -35,6 +35,7 @@ import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class LeosDocument {
     private String comments;
 
     private String ref;
-    private String versionId;
+    private BigDecimal versionId;
 
     private String packageId;
 
@@ -78,7 +79,7 @@ public class LeosDocument {
         this.updatedBy = doc.getUpdatedBy();
         this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
         this.setRef(doc.getRef());
-        this.setVersionId(doc.getVersionId().toString());
+        this.setVersionId(doc.getVersionId());
 
         this.isLatestVersion = doc.isLatestVersion();
         this.versionLabel = doc.getVersionLabel();
@@ -104,7 +105,7 @@ public class LeosDocument {
         this.updatedOn = doc.getUpdatedOn() != null ? Date.from(doc.getUpdatedOn().atZone(ZoneId.systemDefault()).toInstant()) : null;
         this.source = content.getContent().getBytes(StandardCharsets.UTF_8);
         this.setRef(doc.getRef());
-        this.setVersionId(doc.getVersionId().toString());
+        this.setVersionId(doc.getVersionId());
 
         this.isLatestVersion = doc.isLatestVersion();
         this.versionLabel = doc.getVersionLabel();
@@ -134,7 +135,7 @@ public class LeosDocument {
                 null;
         this.source = docContent.getContent().getBytes(StandardCharsets.UTF_8);
         this.setRef(doc.getRef());
-        this.setVersionId(docVersion.getId().toString());
+        this.setVersionId(docVersion.getId());
 
         this.isLatestVersion = docVersion.isLatestVersion();
         this.versionLabel = docVersion.getVersionLabel();
@@ -153,7 +154,7 @@ public class LeosDocument {
 
     public LeosDocument(Config doc, ConfigContent configContent) {
         if (doc != null) {
-            this.setVersionId(configContent.getVersionId().getId().toString());
+            this.setVersionId(configContent.getVersionId().getId());
             this.setCreatedBy(doc.getAuditCBy());
             this.setCreatedOn(Date.from(doc.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
             this.setUpdatedBy(configContent.getVersionId().getAuditLastMBy());
@@ -181,7 +182,7 @@ public class LeosDocument {
             this.setUpdatedOn(documentMilestoneV.getAuditLastMDate() != null ?
                     Date.from(documentMilestoneV.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
             this.setRef(documentMilestoneV.getRef());
-            this.setVersionId(documentMilestoneV.getMilestoneId().toString());
+            this.setVersionId(documentMilestoneV.getMilestoneId());
             this.setPackageId(documentMilestoneV.getPackageId().toString());
             this.setCategory(documentMilestoneV.getCategoryCode());
 
@@ -218,7 +219,7 @@ public class LeosDocument {
                     Date.from(documentMilestoneV.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
             this.setSource(content.getContent());
             this.setRef(documentMilestoneV.getRef());
-            this.setVersionId(documentMilestoneV.getMilestoneId().toString());
+            this.setVersionId(documentMilestoneV.getMilestoneId());
             this.setPackageId(documentMilestoneV.getPackageId().toString());
             this.setCategory(documentMilestoneV.getCategoryCode());
 
@@ -256,7 +257,7 @@ public class LeosDocument {
                     Date.from(milestone.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
             this.setSource(milestone.getContent());
             this.setRef(document.getRef());
-            this.setVersionId(milestone.getId().toString());
+            this.setVersionId(milestone.getId());
             this.setPackageId(document.getPackageId().getId().toString());
             this.setCategory(document.getCategoryId().getCategoryCode());
 
@@ -373,11 +374,11 @@ public class LeosDocument {
         this.ref = ref;
     }
 
-    public String getVersionId() {
+    public BigDecimal getVersionId() {
         return versionId;
     }
 
-    public void setVersionId(String versionId) {
+    public void setVersionId(BigDecimal versionId) {
         this.versionId = versionId;
     }
 

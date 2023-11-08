@@ -29,7 +29,7 @@ public interface CollaboratorsService {
 
     void updateCollaborators(String pkgId, List<Collaborator> collaboratorList, String userId);
 
-    List<String> findDocumentsByUserId(final String userId, final String role);
+    List<BigDecimal> findDocumentsByCollaboratorName(final String userId, final String role);
 
     void removeCollaborator(final String userId, final String entity, final String role) throws RepositoryException;
 

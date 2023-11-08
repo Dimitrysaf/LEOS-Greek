@@ -15,6 +15,7 @@ package eu.europa.ec.leos.repository.controllers;
 
 import static com.sun.jndi.toolkit.url.UrlUtil.decode;
 
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 
 import javax.validation.Valid;
@@ -151,7 +152,7 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") String id,
+    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") BigDecimal id,
                                                            @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
                                                                      @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
                                                                 @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) {
@@ -166,7 +167,7 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") String id, @RequestParam(value = "fetchContent", required = false,
+    public ResponseEntity<LeosDocumentList> findDocumentsByPackageId(@PathVariable("id") BigDecimal id, @RequestParam(value = "fetchContent", required = false,
             defaultValue = "false") Boolean fetchContent) {
         LeosDocumentList xmlDocs = new LeosDocumentList(packageService.findDocumentsByPackageId(id, null,  false, fetchContent));
         xmlDocs =  RestPreconditions.checkFound(xmlDocs, HttpStatus.NOT_FOUND ,"No documents found");
