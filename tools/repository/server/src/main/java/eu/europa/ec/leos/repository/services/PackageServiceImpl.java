@@ -25,6 +25,8 @@ import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepositor
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Lazy;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -42,6 +45,9 @@ import java.util.Set;
 
 @Service
 public class PackageServiceImpl implements PackageService {
+
+    private static final Logger LOG = LoggerFactory.getLogger(PackageServiceImpl.class);
+
     private final DocumentVRepository documentVRepository;
     private final PackageRepository packageRepository;
     private final DocumentPropertyValuesRepository documentPropertyValuesRepository;
@@ -72,14 +78,14 @@ public class PackageServiceImpl implements PackageService {
 
     @Transactional(rollbackFor = Exception.class)
     public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName, final String userId) {
-            Package pkg = new Package();
-            pkg.setObjectId(new BigDecimal(0));
-            pkg.setName(name);
-            pkg.setAuditCBy(userId);
-            pkg.setAuditCDate(LocalDateTime.now());
-            pkg.setAuditLastMBy(userId);
-            pkg.setAuditLastMDate(LocalDateTime.now());
-            return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
+        Package pkg = new Package();
+        pkg.setObjectId(new BigDecimal(0));
+        pkg.setName(name);
+        pkg.setAuditCBy(userId);
+        pkg.setAuditCDate(LocalDateTime.now());
+        pkg.setAuditLastMBy(userId);
+        pkg.setAuditLastMDate(LocalDateTime.now());
+        return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
     }
 
     @Cacheable(cacheNames = "getPackageByName", key = "{#name}")
@@ -137,22 +143,31 @@ public class PackageServiceImpl implements PackageService {
     public List<LeosDocument> findDocumentsByPackageName(String packageName, final Set<String> categories,
                                                          final boolean descendants, boolean fetchContent) {
         StringBuilder docQuery = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.isLatestVersion = true");
-        StringBuilder milestoneQuery = new StringBuilder("SELECT d FROM MilestoneV d WHERE");
+        StringBuilder milestoneQuery = new StringBuilder("SELECT d FROM MilestoneV d WHERE 1 = 1");
         if (!descendants) {
-            docQuery.append(String.format(" AND d.packageName = '%s'", packageName));
-            milestoneQuery.append(String.format(" d.packageName = '%s'", packageName));
-        }
-        docQuery.append(" AND");
-        if (!descendants && categories != null) {
-            milestoneQuery.append(" AND");
+            docQuery.append(" AND d.packageName = :packageName");
+            milestoneQuery.append(" AND d.packageName = :packageName");
         }
         if (categories != null) {
-            docQuery.append(" ").append(buildQueryFromCategories(categories));
-            milestoneQuery.append(" ").append(buildQueryFromCategories(categories));
+            docQuery.append(" AND d.categoryCode IN (:categories)");
+            milestoneQuery.append(" AND d.categoryCode IN (:categories)");
         }
 
-        List<DocumentV> docs = entityManager.createQuery(docQuery.toString()).getResultList();
-        List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery.toString()).getResultList();
+        Query queryDocs = entityManager.createQuery(docQuery.toString());
+        Query queryMilestone = entityManager.createQuery(milestoneQuery.toString());
+
+        if (!descendants) {
+            queryDocs.setParameter("packageName", packageName);
+            queryMilestone.setParameter("packageName", packageName);
+        }
+        if (categories != null) {
+            queryDocs.setParameter("categories", categories);
+            queryMilestone.setParameter("categories", categories);
+        }
+
+        List<DocumentV> docs  = queryDocs.getResultList();
+        List<MilestoneV> milestones = queryMilestone.getResultList();
+
         List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
                         Collections.emptyList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()), documentContentRepository, docs
                 , fetchContent);
@@ -160,39 +175,37 @@ public class PackageServiceImpl implements PackageService {
         return xmlDocs;
     }
 
-    public List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories,
-                                                      final boolean allVersion, boolean fetchContent) {
-        StringBuilder docQuery = new StringBuilder(String.format("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.packageId = %s", packageId));
+    public List<LeosDocument> findDocumentsByPackageId(final BigDecimal packageId, final Set<String> categories,
+                                                       final boolean allVersion, boolean fetchContent) {
+        StringBuilder docQuery = new StringBuilder("SELECT d FROM DocumentV d WHERE (d.isArchived IS NULL OR d.isArchived = false) AND d.packageId = :packageId");
+        StringBuilder milestoneQuery = new StringBuilder("SELECT d FROM MilestoneV d WHERE d.packageId = :packageId");
         if (!allVersion && categories != null) {
             docQuery.append(" AND d.isLatestVersion = true");
         }
-        StringBuilder milestoneQuery = new StringBuilder(String.format("SELECT d FROM MilestoneV d WHERE d.packageId = %s", packageId));
-        if (categories!=null) {
-            docQuery.append(" AND ").append(buildQueryFromCategories(categories));
-            milestoneQuery.append(" AND ").append(buildQueryFromCategories(categories));
+        if (categories != null) {
+            docQuery.append(" AND d.categoryCode IN (:categories)");
+            milestoneQuery.append(" AND d.categoryCode IN (:categories)");
         }
 
-        List<DocumentV> docs = entityManager.createQuery(docQuery.toString()).getResultList();
-        List<MilestoneV> milestones = entityManager.createQuery(milestoneQuery.toString()).getResultList();
+        Query queryDocs = entityManager.createQuery(docQuery.toString());
+        Query queryMilestone = entityManager.createQuery(milestoneQuery.toString());
+
+        queryDocs.setParameter("packageId", packageId);
+        queryMilestone.setParameter("packageId", packageId);
+        if (categories != null) {
+            queryDocs.setParameter("categories", categories);
+            queryMilestone.setParameter("categories", categories);
+        }
+
+        List<DocumentV> docs  = queryDocs.getResultList();
+        List<MilestoneV> milestones = queryMilestone.getResultList();
+
         List<LeosDocument> xmlDocs = ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docs.isEmpty() ?
                         Collections.emptyList() : ConversionUtils.fetchCollaborators(collaboratorsService, docs.get(0).getPackageId()),
                 documentContentRepository, docs
                 , fetchContent);
         xmlDocs.addAll(ConversionUtils.buildLegDocuments(milestones, documentMilestoneRepository, documentMilestoneListRepository, fetchContent));
         return xmlDocs;
-    }
-
-    private StringBuilder buildQueryFromCategories(final Set<String> categories) {
-        StringBuilder query = new StringBuilder("d.categoryCode IN (");
-        Iterator<String> iterator = categories.iterator();
-        while (iterator.hasNext()) {
-            String categoryCode = iterator.next();
-            query.append("'").append(categoryCode).append("'");
-            if (iterator.hasNext()) {
-                query.append(",");
-            }
-        }
-        return query.append(")");
     }
 
     public long getDocumentCountByPackageName(final String packageName, final Set<String> categories) {

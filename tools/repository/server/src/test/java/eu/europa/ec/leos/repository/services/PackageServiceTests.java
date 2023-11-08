@@ -28,6 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,9 +66,9 @@ public class PackageServiceTests {
     @Test
     @Transactional(readOnly = true)
     public void test_documentsByPackageId() {
-        List<LeosDocument> docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "BILL"), false, false);
+        List<LeosDocument> docs = packageService.findDocumentsByPackageId(BigDecimal.valueOf(1), Sets.set("PROPOSAL", "BILL"), false, false);
         assertEquals(2, docs.size());
-        docs = packageService.findDocumentsByPackageId("1", Sets.set("PROPOSAL", "ANNEX"), false, false);
+        docs = packageService.findDocumentsByPackageId(BigDecimal.valueOf(1), Sets.set("PROPOSAL", "ANNEX"), false, false);
         assertEquals(2, docs.size());
     }
 

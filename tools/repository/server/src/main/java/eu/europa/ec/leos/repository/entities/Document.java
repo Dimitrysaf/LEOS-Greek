@@ -283,8 +283,8 @@ public class Document implements Serializable {
         return auditLastMBy;
     }
 
-    public void setAuditLastMBy(String auditLastMBy) {
-        this.auditLastMBy = auditLastMBy;
+    public void setAuditLastMBy(String userName) {
+        this.auditLastMBy = userName;
     }
 
     public Package getPackageId() {

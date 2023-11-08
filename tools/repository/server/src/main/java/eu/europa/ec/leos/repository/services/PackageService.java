@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.services;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public interface PackageService {
     List<LeosDocument> findDocumentsByPackageName(final String packageName, final Set<String> categories,
                                                   final boolean descendants, boolean fetchContent) throws RepositoryException;
 
-    List<LeosDocument> findDocumentsByPackageId(final String packageId, final Set<String> categories, final boolean allVersion, boolean fetchContent);
+    List<LeosDocument> findDocumentsByPackageId(final BigDecimal packageId, final Set<String> categories, final boolean allVersion, boolean fetchContent);
 
     long getDocumentCountByPackageName(final String packageName, Set<String> categories);
 

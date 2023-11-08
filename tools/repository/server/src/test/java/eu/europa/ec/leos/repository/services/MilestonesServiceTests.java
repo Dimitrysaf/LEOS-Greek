@@ -79,7 +79,7 @@ public class MilestonesServiceTests {
                 MILESTONE_NAME, properties, "0.1.1", 3,
                 content, "First version", "jane");
         assertNotNull(milestone);
-        Optional<DocumentMilestone> docMilestone = documentMilestoneRepository.findById(new BigDecimal(Long.parseLong(milestone.getVersionId())));
+        Optional<DocumentMilestone> docMilestone = documentMilestoneRepository.findById(milestone.getVersionId());
         assertTrue(docMilestone.isPresent());
         List<DocumentMilestoneList> milestonesDocuments =
                 documentMilestoneListRepository.findDocumentMilestoneListsByMilestone(docMilestone.get());
