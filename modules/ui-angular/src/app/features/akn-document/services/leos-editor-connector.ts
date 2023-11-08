@@ -15,7 +15,7 @@ import {
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { countOccurrencesOfTextInString } from '@/shared/utils/string.utils';
-import { isNodeLastElement } from '@/shared/utils/toc.utils';
+import { isNodeLastElement, getInstanceType } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
@@ -152,9 +152,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
                 response.elementTagName,
                 response.element,
                 documentType.toUpperCase(),
-                process.env.NG_APP_LEOS_INSTANCE === 'cn'
-                  ? 'COUNCIL'
-                  : 'COMISSION',
+                getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
                 response.alternatives,
                 JSON.stringify(response.levelItem),
                 response.clonedProposal,
@@ -188,7 +186,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
             response.elementTagName,
             response.element,
             documentType.toUpperCase(),
-            'OS',
+            getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
             response.alternatives,
             JSON.stringify(response.levelItem),
             response.clonedProposal,

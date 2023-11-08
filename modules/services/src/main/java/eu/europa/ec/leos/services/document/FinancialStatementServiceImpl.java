@@ -8,6 +8,7 @@ import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
@@ -31,6 +32,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.lang3.Validate;
@@ -78,6 +80,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     private final PackageService packageService;
     private final Provider<FinancialStatementContextService> financialStatementContextProvider;
     private final UpdateInternalReferencesProducer updateInternalReferencesProducer;
+    private TrackChangesContext trackChangesContext;
 
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
@@ -98,7 +101,8 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                                   Provider<CollectionContextService> proposalContextProvider,
                                   PackageService packageService,
                                   Provider<FinancialStatementContextService> financialStatementContextProvider,
-                                  UpdateInternalReferencesProducer updateInternalReferencesProducer) {
+                                  UpdateInternalReferencesProducer updateInternalReferencesProducer,
+                                  TrackChangesContext trackChangesContext) {
         this.financialStatementRepository = financialStatementRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -115,6 +119,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         this.packageService = packageService;
         this.financialStatementContextProvider = financialStatementContextProvider;
         this.updateInternalReferencesProducer = updateInternalReferencesProducer;
+        this.trackChangesContext = trackChangesContext;
     }
 
     @Override
@@ -150,6 +155,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                 .build();
         FinancialStatement FinancialStatement = financialStatementRepository.createClonedFinancialStatement(templateId, path, fileName, metadata, cloneDocumentMetadataVO);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(FinancialStatement) : content, metadata);
+        updatedBytes = xmlContentProcessor.addTrackChangesAttributes(updatedBytes);
         return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
     }
 
@@ -173,6 +179,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     public void createFinancialStatementFromProposal(String proposalRef) {
         Objects.requireNonNull(proposalRef);
         Proposal proposal = Objects.requireNonNull(this.proposalService.findProposalByRef(proposalRef));
+        populateTrackChangesContext(proposal);
         ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is required!");
         CollectionContextService context = proposalContextProvider.get();
         String template = "FS-001";
@@ -427,5 +434,9 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         String docName = xmlContentProcessor.getDocReference(content);
         return docName.concat(DOC_FILE_NAME_SEPARATOR).concat(Cuid.createCuid())
                 .concat(DOC_FILE_NAME_SEPARATOR).concat(language.toLowerCase());
+    }
+
+    private void populateTrackChangesContext(XmlDocument document) {
+        this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
     }
 }

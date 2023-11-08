@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -44,7 +43,6 @@ public class CollaboratorsRepositoryTests {
     PackageRepository packageRepository;
 
     @Test
-    @Transactional
     public void test_getCollaboratorsFromPackageId() {
         List<PackageCollaborators> collaboratorsList = packageCollaboratorsRepository.findCollaboratorsByPackageId(new BigDecimal(1));
         assertEquals(collaboratorsList.size(), 1);
@@ -53,7 +51,6 @@ public class CollaboratorsRepositoryTests {
     }
 
     @Test
-    @Transactional
     public void test_getCollaboratorsFromPackage() {
         Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
         assertTrue(pkg.isPresent());
@@ -64,7 +61,6 @@ public class CollaboratorsRepositoryTests {
     }
 
     @Test
-    @Transactional
     public void test_findPackageIdByCollaboratorNameAndByRole() {
         List<BigDecimal> packagesList = packageCollaboratorsRepository.findPackageIdByCollaboratorNameAndRole("demo", "OWNER");
         assertEquals(packagesList.size(), 1);

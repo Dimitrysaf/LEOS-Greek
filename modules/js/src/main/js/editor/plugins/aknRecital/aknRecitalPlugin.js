@@ -75,9 +75,11 @@ define(function aknRecitalPluginModule(require) {
     }
 
     var _handleClickEvent = function _handleClickEvent(event) {
-        var range = event.data[0].getSelection().getRanges()[0];
-        if(range.collapsed) {
-            range.checkEndOfBlock(true);
+        if(event.data[0].getSelection()) {
+            var range = event.data[0].getSelection().getRanges()[0];
+            if(range.collapsed) {
+                range.checkEndOfBlock(true);
+            }
         }
     }
 

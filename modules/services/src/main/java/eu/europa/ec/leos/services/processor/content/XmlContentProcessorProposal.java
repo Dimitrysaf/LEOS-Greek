@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.processor.content;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -49,6 +50,8 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
 import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
@@ -73,7 +76,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_TO_ORIGIN_ACTION;
@@ -137,7 +139,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         appendChildIfNotNull(numNode, node);
 
         if (!(ELEMENTS_WITHOUT_CONTENT.contains(tocVo.getTocItem().getAknTag().value().toLowerCase()) &&
-                tocVo.getTrackChangeAction().equals(LEOS_TC_DELETE_ACTION) &&
+                TableOfContentHelper.hasTocItemTrackChangeAction(tocVo, TrackChangeActionType.DELETE) &&
                 tocVo.getId().startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX))) {
             appendChildIfNotNull(headingNode, node);
             appendChildIfNotNull(introNode, node);
@@ -202,14 +204,14 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     private void addTrackChangeAttributes(TableOfContentItemVO tocVo, Node node, Node numNode, boolean isTrackChangesEnabled) {
         if (isTrackChangesEnabled && securityContext.getUser() != null && StringUtils.isNotEmpty(tocVo.getTrackChangeAction())) {
-            if (!tocVo.getTrackChangeAction().equals(LEOS_TC_MOVE_TO_ORIGIN_ACTION)) {
+            if (!hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_TO_ORIGIN_ACTION)) {
                 ZonedDateTime localDateTime = ZonedDateTime.now();
                 Node nodeToAddOrRemoveAttribute = node;
-                if (numNode != null && tocVo.getTrackChangeAction().equals(LEOS_TC_MOVE_ACTION)) {
+                if (numNode != null && hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION)) {
                     nodeToAddOrRemoveAttribute = numNode;
                 }
                 String action = tocVo.getTrackChangeAction();
-                if (action.equals(LEOS_TC_MOVE_ACTION)) {
+                if (hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION)) {
                     action = LEOS_TC_INSERT_ACTION;
                 }
                 addAttribute(nodeToAddOrRemoveAttribute, LEOS_ACTION_ATTR, action);

@@ -57,6 +57,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -155,6 +156,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     private static final float TOC_MIN_WIDTH = 190F;
     private static final int MAX_CHECKIN_COMMENTS = 15;
     private static final int MAX_DEPTH = 3;
+    private boolean isTrackChangesEnabled = false;
 
     enum POINT_NUMBERING_TYPE {
         BULLET("bullet", NumberingType.BULLET_NUM),
@@ -343,7 +345,8 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 
     @Autowired
     public TableOfContentComponent(final MessageHelper messageHelper, final EventBus eventBus, final SecurityContext securityContext,
-                                   final ConfigurationHelper cfgHelper, final TocEditor tocEditor, Provider<StructureContext> structureContextProvider, TableOfContentProcessor tableOfContentProcessor) {
+                                   final ConfigurationHelper cfgHelper, final TocEditor tocEditor, Provider<StructureContext> structureContextProvider,
+                                   TableOfContentProcessor tableOfContentProcessor) {
         // If the list indentListRadioButtonGroupItemsToEnable is empty, all items will be enabled in method buildIndentListRadioButtonGroup
         this(messageHelper, eventBus, securityContext, cfgHelper, tocEditor, structureContextProvider, tableOfContentProcessor, null);
     }
@@ -384,6 +387,10 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
     public void detach() {
         eventBus.unregister(this);
         super.detach();
+    }
+
+    public void setTrackChangesEnabled(boolean trackChangesEnabled) {
+        this.isTrackChangesEnabled = trackChangesEnabled;
     }
 
     private void buildToc() {
@@ -1376,7 +1383,8 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                         // If toc item is configured to be deletable, then check:
                         // - if the item has already been deleted => check if it can be undelete
                         // - if has not been deleted => check if it can be deleted (Ex: when mixed EC/CN element are present)
-                        isDeleteButtonEnabled = tocItem.isDeletable() &&
+                        isDeleteButtonEnabled = tocItem.isDeletable() && !TableOfContentHelper.hasTocItemTrackChangeAction(item,
+                                TrackChangeActionType.ADD) &&
                                 (isDeletedItem ? tocEditor.isUndeletableItem(item) : tocEditor.isDeletableItem(tocTree.getTreeData(), item));
                         if ((item.getNode() != null && item.getNode().getAttributes() != null && item.getNode().getAttributes().getNamedItem("leos:action") != null)
                                 || (item.getNode() != null && item.getNode().getFirstChild() != null && item.getNode().getFirstChild().getAttributes() != null
@@ -1906,7 +1914,7 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
 
         private void deleteItem(TableOfContentItemVO item) {
             item.setTrackChangeAction(LEOS_TC_DELETE_ACTION);
-            final ActionType actionType = tocEditor.deleteItem(tocTree, item);
+            final ActionType actionType = tocEditor.deleteItem(tocTree, item, isTrackChangesEnabled);
             final CheckinElement checkinElement = new CheckinElement(actionType, item.getId(), item.getTocItem().getAknTag().name());
             final String statusMsg = messageHelper.getMessage("toc.edit.window.delete.message", TableOfContentHelper.getDisplayableTocItem(item.getTocItem(), messageHelper));
             eventBus.post(new TocChangedEvent(statusMsg, TocChangedEvent.Result.SUCCESSFUL, Arrays.asList(checkinElement)));

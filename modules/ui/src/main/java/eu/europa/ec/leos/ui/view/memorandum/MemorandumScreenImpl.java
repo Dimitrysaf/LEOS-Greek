@@ -254,6 +254,7 @@ abstract class MemorandumScreenImpl extends VerticalLayout implements Memorandum
 
     @Override
     public void setContent(String content, boolean trackChangesEnabled) {
+        tableOfContentComponent.setTrackChangesEnabled(trackChangesEnabled);
         if(isClonedProposal()) {
             eventBus.post(new AddChangeDetailsMenuEvent());
             eventBus.post(new AddTrackChangesMenuEvent(false, trackChangesEnabled));

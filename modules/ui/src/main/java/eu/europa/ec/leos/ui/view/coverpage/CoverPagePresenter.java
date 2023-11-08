@@ -1179,7 +1179,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         }
         List<SearchMatchVO> matches = Collections.emptyList();
         try {
-            matches = searchService.searchText(getContent(coverpage), event.getSearchText(), event.matchCase, event.completeWords);
+            matches = searchService.searchTextForHighlight(getContent(coverpage), event.getSearchText(), event.matchCase, event.completeWords);
         } catch (Exception e) {
             eventBus.post(new NotificationEvent(Type.ERROR, "Error while searching{1}", e.getMessage()));
         }
@@ -1198,7 +1198,8 @@ class CoverPagePresenter extends AbstractLeosPresenter {
                 getContent(proposalFromSession),
                 event.getSearchText(),
                 event.getReplaceText(),
-                event.getSearchMatchVOs());
+                event.getSearchMatchVOs(),
+                proposalFromSession.isTrackChangesEnabled());
 
         Proposal proposalUpdated = copyIntoNew(proposalFromSession, updatedContent);
         httpSession.setAttribute("proposal#" + getDocumentRef(), proposalUpdated);
@@ -1293,7 +1294,8 @@ class CoverPagePresenter extends AbstractLeosPresenter {
                     getContent(proposalFromSession),
                     event.getSearchText(),
                     event.getReplaceText(),
-                    Arrays.asList(event.getSearchMatchVO()));
+                    Arrays.asList(event.getSearchMatchVO()),
+                    proposalFromSession.isTrackChangesEnabled());
 
             Proposal proposalUpdated = copyIntoNew(proposalFromSession, updatedContent);
             httpSession.setAttribute("proposal#" + getDocumentRef(), proposalUpdated);

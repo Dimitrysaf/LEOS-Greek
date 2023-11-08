@@ -32,6 +32,7 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.toc.Attribute;
@@ -129,6 +130,24 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected XPathCatalog xPathCatalog;
     @Autowired
     protected UserService userService;
+    @Autowired
+    protected TrackChangesContext trackChangesContext;
+
+    @Override
+    public byte[] addTrackChangesAttributes(byte[] xmlContent) {
+        if(!trackChangesContext.isTrackChangesEnabled()) {
+            return  xmlContent;
+        }
+        Document document = createXercesDocument(xmlContent);
+        List<Node> nodeList = XercesUtils.getDescendants(document, ELEMENTS_IN_TOC);
+        for (int i = 0; i < nodeList.size(); i++) {
+            final Node node = nodeList.get(i);
+            addAttribute(node, LEOS_UID, securityContext.getUser().getLogin());
+            addAttribute(node, LEOS_TITLE, getTitleValue(securityContext));
+            addAttribute(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
+        }
+        return nodeToByteArray(document);
+    }
 
     @Override
     public byte[] anonymizeTrackChanges(byte[] xmlContent) {

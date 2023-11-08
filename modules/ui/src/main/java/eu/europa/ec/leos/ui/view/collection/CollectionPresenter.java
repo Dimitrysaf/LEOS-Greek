@@ -83,6 +83,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.ui.event.CloneProposalRequestEvent;
@@ -249,6 +250,8 @@ class CollectionPresenter extends AbstractLeosPresenter {
     private final ComparisonDelegate comparisonDelegate;
     private final static SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 
+    private TrackChangesContext trackChangesContext;
+
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
 
@@ -272,7 +275,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                         UpdateInternalReferencesProducer updateInternalReferencesProducer, CreateCollectionService createCollectionService, CollaboratorService collaboratorService, UserService userService,
                         ExportPackageService exportPackageService, ArchiveService archiveService, CloneContext cloneContext, UserAuthentication userAuthentication,
                         DocumentContentService documentContentService, ComparisonDelegate comparisonDelegate,
-                        ProposalConverterService proposalConverterService, XmlContentProcessor xmlContentProcessor, ConfigurationHelper cfgHelper) {
+                        ProposalConverterService proposalConverterService, XmlContentProcessor xmlContentProcessor, ConfigurationHelper cfgHelper, TrackChangesContext trackChangesContext) {
 
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
 
@@ -307,6 +310,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
         this.proposalConverterService = proposalConverterService;
         this.xmlContentProcessor = xmlContentProcessor;
         this.cfgHelper = cfgHelper;
+        this.trackChangesContext = trackChangesContext;
     }
 
     @Override
@@ -334,6 +338,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                         proposal.getContent().get().getSource().getBytes() :
                         new byte[0];
                 isClonedProposal = proposal.isClonedProposal();
+                populateTrackChangesContext(proposal);
             }
         }
         if (isClonedProposal) {
@@ -848,6 +853,10 @@ class CollectionPresenter extends AbstractLeosPresenter {
     void createAnnex(CreateAnnexRequest event) {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            if (proposal != null) {
+                populateTrackChangesContext(proposal);
+            }
             LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
             Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
             BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
@@ -1075,11 +1084,14 @@ class CollectionPresenter extends AbstractLeosPresenter {
             Stopwatch stopwatch = Stopwatch.createStarted();
             LeosPackage leosPackage = packageService.findPackageByDocumentId(proposalId);
             Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
-            ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is required!");
             CollectionContextService context = proposalContextProvider.get();
             String template = "FS-001";
             context.useTemplate(template);
-            context.usePurpose(metadata.getPurpose());
+            if (proposal != null) {
+                populateTrackChangesContext(proposal);
+                ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is required!");
+                context.usePurpose(metadata.getPurpose());
+            }
             context.useProposalId(proposalId);
             context.useCloneProposal((cloneProposalMetadataVO != null) && (cloneProposalMetadataVO.isClonedProposal()));
             String actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
@@ -1649,5 +1661,9 @@ class CollectionPresenter extends AbstractLeosPresenter {
 
     private boolean isCurrentInfoId(String versionSeriesId) {
         return docVersionSeriesIds.contains(versionSeriesId);
+    }
+
+    private void populateTrackChangesContext(Proposal proposal) {
+        this.trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
     }
 }

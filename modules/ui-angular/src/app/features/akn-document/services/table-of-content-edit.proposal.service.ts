@@ -141,10 +141,10 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
   }
 
   deleteItem(newTree: TableOfContentItemVO[], item: TableOfContentItemVO) {
-    if (!containsItemOfOrigin(item, EC, LS)) {
-      this.removeNode(newTree, item);
-    } else {
+    if (this.documentConfig?.trackChangesEnabled) {
       softDeleteItem(newTree, item, LS);
+    } else {
+      this.removeNode(newTree, item);
     }
     const parent = findNodeById(newTree, item.parentItem);
     this.updateDepthOfTocItems(parent.childItems);

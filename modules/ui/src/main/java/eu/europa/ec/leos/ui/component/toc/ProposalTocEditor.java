@@ -22,6 +22,7 @@ import com.vaadin.ui.TreeGrid;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.ActionType;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
@@ -35,6 +36,7 @@ import static eu.europa.ec.leos.model.action.SoftActionType.DELETE;
 import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_FROM;
 import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.resetUserInfo;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
@@ -65,13 +67,13 @@ public class ProposalTocEditor extends AbstractTocEditor {
     }
 
     @Override
-    public ActionType deleteItem(TreeGrid<TableOfContentItemVO> tocTree, TableOfContentItemVO tableOfContentItemVO) {
+    public ActionType deleteItem(TreeGrid<TableOfContentItemVO> tocTree, TableOfContentItemVO tableOfContentItemVO, boolean isTrackChangesEnabled) {
         final ActionType actionType;
-            if (!containsItemOfOrigin(tableOfContentItemVO, EC, LS)) {
-                actionType = hardDeleteFromTree(tocTree, tableOfContentItemVO);
-            } else {
+            if (isTrackChangesEnabled) {
                 softDeleteItem(tocTree, tableOfContentItemVO, LS);
                 actionType = ActionType.SOFTDELETED;
+            } else {
+                actionType = hardDeleteFromTree(tocTree, tableOfContentItemVO);
             }
         updateDepthOfTocItems(tocTree.getTreeData().getChildren(tableOfContentItemVO.getParentItem()));
         tocTree.getDataProvider().refreshAll();
@@ -128,7 +130,7 @@ public class ProposalTocEditor extends AbstractTocEditor {
         if ((moveFromItem.getOriginAttr() != null && moveFromItem.getOriginAttr().equals(EC)) &&
                 ((moveFromItem.getSoftActionAttr() == null) || ((!hasTocItemSoftAction(moveFromItem, MOVE_FROM)) &&
                         (!hasTocItemSoftAction(moveFromItem, MOVE_TO)) && (!hasTocItemSoftAction(moveFromItem, ADD))
-                        && (!hasTocItemSoftAction(moveFromItem, DELETE))))) {
+                        && (!hasTocItemSoftAction(moveFromItem, DELETE)) && (!TableOfContentHelper.hasTocItemTrackChangeAction(moveFromItem, TrackChangeActionType.DELETE))))) {
 
             TableOfContentItemVO moveToTemp = copyMovingItemToTemp(moveFromItem, Boolean.TRUE, tocTree);
 

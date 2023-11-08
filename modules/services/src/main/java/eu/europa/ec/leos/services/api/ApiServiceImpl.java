@@ -83,6 +83,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
@@ -164,6 +165,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private LegService legService;
     private final UserHelper userHelper;
     private LeosRepository leosRepository;
+    private TrackChangesContext trackChangesContext;
 
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
@@ -193,7 +195,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           ValidationService validationService, Properties applicationProperties,
                           UpdateInternalReferencesProducer updateInternalReferencesProducer, ExplanatoryService explanatoryService,
                           ExportPackageService exportPackageService, LegService legService,
-                          UserHelper userHelper, LeosRepository leosRepository) {
+                          UserHelper userHelper, LeosRepository leosRepository, TrackChangesContext trackChangesContext) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -221,6 +223,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.exportPackageService = exportPackageService;
         this.legService = legService;
         this.leosRepository = leosRepository;
+        this.trackChangesContext = trackChangesContext;
     }
 
     @Override
@@ -732,6 +735,7 @@ public abstract class ApiServiceImpl implements ApiService {
             String proposalId = proposal.getId();
             boolean isClonedProposal = proposal.isClonedProposal();
             try {
+                populateTrackChangesContext(proposal);
                 LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
                 Bill bill = billService.findBillByPackagePath(leosPackage.getPath());
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
@@ -1103,6 +1107,10 @@ public abstract class ApiServiceImpl implements ApiService {
             LOG.error("Exception occurred while reading the file", e);
         }
         return fileData;
+    }
+
+    private void populateTrackChangesContext(XmlDocument document) {
+        this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
     }
 
 }

@@ -1182,7 +1182,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         }
         List<SearchMatchVO> matches = Collections.emptyList();
         try {
-            matches = searchService.searchText(getContent(memorandum), event.getSearchText(), event.matchCase, event.completeWords);
+            matches = searchService.searchTextForHighlight(getContent(memorandum), event.getSearchText(), event.matchCase, event.completeWords);
         } catch (Exception e) {
             eventBus.post(new NotificationEvent(Type.ERROR, "Error while searching{1}", e.getMessage()));
         }
@@ -1201,7 +1201,8 @@ class MemorandumPresenter extends AbstractLeosPresenter {
                 getContent(memorandumFromSession),
                 event.getSearchText(),
                 event.getReplaceText(),
-                event.getSearchMatchVOs());
+                event.getSearchMatchVOs(),
+                memorandumFromSession.isTrackChangesEnabled());
 
         Memorandum memorandumUpdated = copyIntoNew(memorandumFromSession, updatedContent);
         httpSession.setAttribute("memorandum#" + getDocumentRef(), memorandumUpdated);
@@ -1289,7 +1290,8 @@ class MemorandumPresenter extends AbstractLeosPresenter {
                     getContent(memorandumFromSession),
                     event.getSearchText(),
                     event.getReplaceText(),
-                    Arrays.asList(event.getSearchMatchVO()));
+                    Arrays.asList(event.getSearchMatchVO()),
+                    memorandumFromSession.isTrackChangesEnabled());
 
             Memorandum memorandumUpdated = copyIntoNew(memorandumFromSession, updatedContent);
             httpSession.setAttribute("memorandum#" + getDocumentRef(), memorandumUpdated);

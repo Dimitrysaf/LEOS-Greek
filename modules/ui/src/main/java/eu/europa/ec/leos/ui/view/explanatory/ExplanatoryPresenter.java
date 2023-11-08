@@ -1410,7 +1410,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         }
         List<SearchMatchVO> matches = Collections.emptyList();
         try {
-            matches = searchService.searchText(getContent(explanatory), event.getSearchText(), event.matchCase, event.completeWords);
+            matches = searchService.searchTextForHighlight(getContent(explanatory), event.getSearchText(), event.matchCase, event.completeWords);
         } catch (Exception e) {
             eventBus.post(new NotificationEvent(Type.ERROR, "Error while searching{1}", e.getMessage()));
         }
@@ -1448,7 +1448,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                 getContent(explanatoryFromSession),
                 event.getSearchText(),
                 event.getReplaceText(),
-                event.getSearchMatchVOs());
+                event.getSearchMatchVOs(),
+                explanatoryFromSession.isTrackChangesEnabled());
 
         Explanatory explanatoryUpdated = copyIntoNew(explanatoryFromSession, updatedContent);
         httpSession.setAttribute("explanatory#" + getDocumentRef(), explanatoryUpdated);
@@ -1518,7 +1519,8 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                     getContent(explanatoryFromSession),
                     event.getSearchText(),
                     event.getReplaceText(),
-                    Arrays.asList(event.getSearchMatchVO()));
+                    Arrays.asList(event.getSearchMatchVO()),
+                    explanatoryFromSession.isTrackChangesEnabled());
 
             Explanatory explanatoryUpdated = copyIntoNew(explanatoryFromSession, updatedContent);
             httpSession.setAttribute("explanatory#" + getDocumentRef(), explanatoryUpdated);

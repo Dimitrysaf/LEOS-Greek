@@ -197,7 +197,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         byte[] contentForReplace = getContentForReplaceProcess(tempUpdatedContentXML, bill);
 
-        return searchService.searchText(contentForReplace, searchText, matchCase, completeWords);
+        return searchService.searchTextForHighlight(contentForReplace, searchText, matchCase, completeWords);
     }
 
     @Override
@@ -309,13 +309,14 @@ public class BillApiServiceImpl implements BillApiService {
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), bill);
 
         populateCloneProposalMetadata(bill);
-
+        boolean isTrackChangesEnabled = bill.isTrackChangesEnabled();
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                searchMatchVOS);
+                searchMatchVOS,
+                bill.isTrackChangesEnabled());
 
     }
 
@@ -324,21 +325,21 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(event.getDocumentRef());
 
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), bill);
-
         populateCloneProposalMetadata(bill);
         List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
                 event.getReplaceText(),
-                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())));
+                Arrays.asList(searchMatchVOS.get(event.getMatchIndex())),
+                bill.isTrackChangesEnabled());
     }
 
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Bill bill = this.billService.findBillByRef(event.getDocumentRef());
         String comment = messageHelper.getMessage("operation.search.replace.updated");
-        Bill updateBill = billService.updateBill(bill, event.getUpdatedContent().getBytes(), comment);
+        Bill updateBill = billService.updateBill(bill, event.getUpdatedContent().getBytes(StandardCharsets.UTF_8), comment);
         return this.documentViewService.updateDocumentView(updateBill);
     }
 

@@ -19,6 +19,7 @@ import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.ui.TreeGrid;
 import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.vo.toc.AknTag;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
@@ -40,6 +41,7 @@ import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
 import static eu.europa.ec.leos.model.action.SoftActionType.UNDELETE;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.getTocItemChildPosition;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLAUSE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
@@ -94,7 +96,7 @@ public abstract class AbstractTocEditor implements TocEditor {
 
     @Override
     public boolean isDeletedItem(TableOfContentItemVO tableOfContentItemVO) {
-        return DELETE.equals(tableOfContentItemVO.getSoftActionAttr());
+        return DELETE.equals(tableOfContentItemVO.getSoftActionAttr()) || TableOfContentHelper.hasTocItemTrackChangeAction(tableOfContentItemVO, TrackChangeActionType.DELETE);
     }
 
     @Override
@@ -104,12 +106,12 @@ public abstract class AbstractTocEditor implements TocEditor {
 
     @Override
     public boolean isUndeletableItem(TableOfContentItemVO tableOfContentItemVO) {
-        return ((tableOfContentItemVO.getParentItem() != null) && !isMoveToItem(tableOfContentItemVO) && !(DELETE.equals(tableOfContentItemVO.getParentItem().getSoftActionAttr())));
+        return ((tableOfContentItemVO.getParentItem() != null) && !isMoveToItem(tableOfContentItemVO) && !(isDeletedItem(tableOfContentItemVO.getParentItem())));
     }
 
     private TableOfContentItemVO copyDeletedItemToTempForUndelete(TableOfContentItemVO originalItem){
         TableOfContentItemVO tempDeletedItem;
-        if (DELETE.equals(originalItem.getSoftActionAttr())) {
+        if (isDeletedItem(originalItem)) {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + originalItem.getId().replace(SOFT_DELETE_PLACEHOLDER_ID_PREFIX, ""),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
                     EC, originalItem.getHeading(),
@@ -821,7 +823,7 @@ public abstract class AbstractTocEditor implements TocEditor {
     private TableOfContentItemVO copyDeletedItemToTemp(TableOfContentItemVO originalItem, Boolean isSoftActionRoot) {
         TableOfContentItemVO tempDeletedItem;
 
-        if (!MOVE_TO.equals(originalItem.getSoftActionAttr()) && !DELETE.equals(originalItem.getSoftActionAttr())) {
+        if (!MOVE_TO.equals(originalItem.getSoftActionAttr()) && !isDeletedItem(originalItem)) {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_DELETE_PLACEHOLDER_ID_PREFIX + originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
                     EC, originalItem.getHeading(), originalItem.getNode(),

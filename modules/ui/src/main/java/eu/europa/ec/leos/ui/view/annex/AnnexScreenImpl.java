@@ -285,6 +285,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
 
     @Override
     public void setContent(String content, boolean trackChangesEnabled) {
+        tableOfContentComponent.setTrackChangesEnabled(trackChangesEnabled);
         if(isClonedProposal()) {
             eventBus.post(new AddChangeDetailsMenuEvent());
             eventBus.post(new AddTrackChangesMenuEvent(false, trackChangesEnabled));
@@ -295,7 +296,8 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
     
     void init() {
     	List<String> indentListRadioButtonGroupItemsToEnable = Arrays.asList(NumberingType.POINT_NUM.name());
-        tableOfContentComponent = new TableOfContentComponent(messageHelper, eventBus, securityContext, cfgHelper, tocEditor, structureContextProvider, tableOfContentProcessor, indentListRadioButtonGroupItemsToEnable);
+        tableOfContentComponent = new TableOfContentComponent(messageHelper, eventBus, securityContext, cfgHelper, tocEditor, structureContextProvider,
+                tableOfContentProcessor, indentListRadioButtonGroupItemsToEnable);
         accordion.addTab(tableOfContentComponent, messageHelper.getMessage("toc.title"), VaadinIcons.CHEVRON_DOWN);
         accordion.addTab(versionsTab, messageHelper.getMessage("document.accordion.versions"), VaadinIcons.CHEVRON_RIGHT);
         

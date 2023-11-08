@@ -323,6 +323,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Annex annex = annexRepository.createClonedAnnex(templateId, path, ref + XML_DOC_EXT, metadata, cloneDocumentMetadataVO);
         LOG.info("Created Annex with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(annex) : content, metadata);
+        updatedBytes = xmlContentProcessor.addTrackChangesAttributes(updatedBytes);
         return annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
     }
 

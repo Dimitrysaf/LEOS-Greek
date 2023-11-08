@@ -13,9 +13,11 @@
  */
 package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.repositories.DocumentRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import org.assertj.core.util.Sets;
 import org.junit.Test;
@@ -42,6 +44,8 @@ public class PackageServiceTests {
     private PackageService packageService;
     @Autowired
     private PackageRepository packageRepository;
+    @Autowired
+    private DocumentRepository documentRepository;
 
     @Test
     @Transactional
@@ -80,4 +84,21 @@ public class PackageServiceTests {
         docs = packageService.findDocumentsByPackageName( "package_leos", Sets.set("PROPOSAL", "ANNEX"), false, false);
         assertEquals(2, docs.size());
     }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void test_findPackageByName() {
+        Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
+        assertTrue(pkg.isPresent());
+    }
+
+    @Test
+    @Transactional(readOnly = true)
+    public void test_findDocumentsByPackageName() {
+        Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
+        assertTrue(pkg.isPresent());
+        List<Document> docs = documentRepository.findAllDocumentsByPackageId(pkg.get());
+        assertEquals(docs.size(), 4);
+    }
+
 }
