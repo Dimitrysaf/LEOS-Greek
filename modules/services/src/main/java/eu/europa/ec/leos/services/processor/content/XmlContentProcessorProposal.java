@@ -51,6 +51,7 @@ import java.util.Map;
 
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
 import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
@@ -74,7 +75,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_TO_ORIGIN_ACTION;
@@ -138,7 +138,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         appendChildIfNotNull(numNode, node);
 
         if (!(ELEMENTS_WITHOUT_CONTENT.contains(tocVo.getTocItem().getAknTag().value().toLowerCase()) &&
-                hasTocItemTrackChangeAction(tocVo, TrackChangeActionType.DELETE) &&
+                TableOfContentHelper.hasTocItemTrackChangeAction(tocVo, TrackChangeActionType.DELETE) &&
                 tocVo.getId().startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX))) {
             appendChildIfNotNull(headingNode, node);
             appendChildIfNotNull(introNode, node);

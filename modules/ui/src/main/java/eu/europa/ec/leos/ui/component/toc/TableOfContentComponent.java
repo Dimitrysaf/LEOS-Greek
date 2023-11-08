@@ -130,7 +130,6 @@ import static eu.europa.ec.leos.model.action.SoftActionType.MOVE_TO;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.getFirstAscendant;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemSoftAction;
-import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateDepthOfTocItems;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateStyleClassOfTocItems;
@@ -373,7 +372,6 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
         this.tableOfContentProcessor = tableOfContentProcessor;
 
         this.indentListRadioButtonGroupItemsToEnable = indentListRadioButtonGroupItemsToEnable;
-        this.isTrackChangesEnabled = isTrackChangesEnabled;
         Design.read(this);
         buildToc();
         this.checkDeleteLastEditingTypeConsumer = new CheckDeleteLastEditingTypeConsumer(tocTree, messageHelper, eventBus);
@@ -1385,7 +1383,8 @@ public class TableOfContentComponent extends VerticalLayout implements ContentPa
                         // If toc item is configured to be deletable, then check:
                         // - if the item has already been deleted => check if it can be undelete
                         // - if has not been deleted => check if it can be deleted (Ex: when mixed EC/CN element are present)
-                        isDeleteButtonEnabled = tocItem.isDeletable() &&
+                        isDeleteButtonEnabled = tocItem.isDeletable() && !TableOfContentHelper.hasTocItemTrackChangeAction(item,
+                                TrackChangeActionType.ADD) &&
                                 (isDeletedItem ? tocEditor.isUndeletableItem(item) : tocEditor.isDeletableItem(tocTree.getTreeData(), item));
                         if ((item.getNode() != null && item.getNode().getAttributes() != null && item.getNode().getAttributes().getNamedItem("leos:action") != null)
                                 || (item.getNode() != null && item.getNode().getFirstChild() != null && item.getNode().getFirstChild().getAttributes() != null

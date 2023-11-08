@@ -69,11 +69,11 @@ public class ProposalTocEditor extends AbstractTocEditor {
     @Override
     public ActionType deleteItem(TreeGrid<TableOfContentItemVO> tocTree, TableOfContentItemVO tableOfContentItemVO, boolean isTrackChangesEnabled) {
         final ActionType actionType;
-            if (!containsItemOfOrigin(tableOfContentItemVO, EC, LS) || !isTrackChangesEnabled) {
-                actionType = hardDeleteFromTree(tocTree, tableOfContentItemVO);
-            } else {
+            if (isTrackChangesEnabled) {
                 softDeleteItem(tocTree, tableOfContentItemVO, LS);
                 actionType = ActionType.SOFTDELETED;
+            } else {
+                actionType = hardDeleteFromTree(tocTree, tableOfContentItemVO);
             }
         updateDepthOfTocItems(tocTree.getTreeData().getChildren(tableOfContentItemVO.getParentItem()));
         tocTree.getDataProvider().refreshAll();
@@ -130,7 +130,7 @@ public class ProposalTocEditor extends AbstractTocEditor {
         if ((moveFromItem.getOriginAttr() != null && moveFromItem.getOriginAttr().equals(EC)) &&
                 ((moveFromItem.getSoftActionAttr() == null) || ((!hasTocItemSoftAction(moveFromItem, MOVE_FROM)) &&
                         (!hasTocItemSoftAction(moveFromItem, MOVE_TO)) && (!hasTocItemSoftAction(moveFromItem, ADD))
-                        && (!hasTocItemSoftAction(moveFromItem, DELETE)) && (!hasTocItemTrackChangeAction(moveFromItem, TrackChangeActionType.DELETE))))) {
+                        && (!hasTocItemSoftAction(moveFromItem, DELETE)) && (!TableOfContentHelper.hasTocItemTrackChangeAction(moveFromItem, TrackChangeActionType.DELETE))))) {
 
             TableOfContentItemVO moveToTemp = copyMovingItemToTemp(moveFromItem, Boolean.TRUE, tocTree);
 
