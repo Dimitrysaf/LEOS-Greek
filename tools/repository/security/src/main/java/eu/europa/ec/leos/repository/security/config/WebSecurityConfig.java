@@ -124,6 +124,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		// Not needed CSRF
 		httpSecurity.csrf().disable();
+		httpSecurity.headers().frameOptions().disable();
 
 		if (jwtAuthEnabled) {
 			// Not authenticate this particular request

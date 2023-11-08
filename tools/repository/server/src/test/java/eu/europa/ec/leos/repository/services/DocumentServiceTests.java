@@ -22,6 +22,7 @@ import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentMilestoneList;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
+import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
@@ -38,6 +39,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -747,7 +749,7 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_findLatestMajorVersionById() throws RepositoryException {
-        LeosDocument doc = documentService.findLatestMajorVersionByRef("annex_test");
+        LeosDocument doc = documentService.findLatestMajorVersionByRef("annex_1");
         assertEquals(doc.getVersionLabel(), "1.0.0");
         assertNotNull(doc);
         doc = documentService.findLatestMajorVersionByRef("dummy");
@@ -757,7 +759,7 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_findFirstVersion() throws RepositoryException {
-        LeosDocument doc = documentService.findFirstVersion("annex_test");
+        LeosDocument doc = documentService.findFirstVersion("annex_1");
         assertEquals(doc.getVersionLabel(), "1.0.0");
         assertNotNull(doc);
     }
@@ -765,9 +767,9 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_findDocumentByVersion() throws RepositoryException {
-        LeosDocument doc = documentService.findDocumentByVersion("annex_test","1.0.0");
+        LeosDocument doc = documentService.findDocumentByVersion("annex_1","1.0.0");
         assertNotNull(doc);
-        doc = documentService.findDocumentByVersion("annex_test","1.2.0");
+        doc = documentService.findDocumentByVersion("annex_1","1.2.0");
         assertNull(doc);
     }
 
@@ -875,7 +877,7 @@ public class DocumentServiceTests {
 
     @Test
     public void test_getAllMajorsCount() throws RepositoryException {
-        long majorsCount = documentService.getAllMajorsCount("annex_test");
+        long majorsCount = documentService.getAllMajorsCount("annex_1");
         assertEquals(majorsCount, 1);
     }
 
@@ -919,7 +921,7 @@ public class DocumentServiceTests {
     @Test
     @Transactional
     public void test_findAllMajors() throws RepositoryException {
-        List<LeosDocument> docs = documentService.findAllMajors("annex_test",0,10);
+        List<LeosDocument> docs = documentService.findAllMajors("annex_1",0,10);
         assertEquals(docs.size(), 1);
     }
 
@@ -961,5 +963,27 @@ public class DocumentServiceTests {
                 categories,
                 filter);
         assertEquals(count, 1);
+    }
+
+    @Test
+    public void test_findAllVersionsOfDocument() {
+        List<DocumentV> docs = documentVRepository.findAllVersionsByDocumentId(new BigDecimal(1));
+        assertEquals(docs.size(), 1);
+    }
+
+    @Test
+    public void test_findProposalByDocumentId() {
+        List<DocumentV> docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "PROPOSAL");
+        assertEquals(docs.size(), 1);
+        docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "BILL");
+        assertEquals(docs.size(), 1);
+        docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "ANNEX");
+        assertEquals(docs.size(), 1);
+        docs = documentVRepository.findDocumentsByPackageIdAndCategory(new BigDecimal(1), "MEMORANDUM");
+        assertEquals(docs.size(), 1);
+        Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
+        Assertions.assertTrue(pkg.isPresent());
+        docs = documentVRepository.findAllVersionsByPackageIdAndCategoryCode(pkg.get().getId(), "MEMORANDUM");
+        assertEquals(docs.size(), 1);
     }
 }

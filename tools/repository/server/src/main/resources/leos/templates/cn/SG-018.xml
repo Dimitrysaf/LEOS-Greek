@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="renditions/html/css/annex.css"?>
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <doc name="ANNEX">
+        <meta>
+            <identification source="~_COM">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="true"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="en"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                		<akn4eu:akn4euVersion value="4.0.0.0"/>
+                	</preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~_COM">
+                <TLCOrganization xml:id="_COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCRole xml:id="_PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
+                <TLCReference xml:id="_ANNEX" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/ANNEX"  showAs="Annex"/>
+                <TLCReference xml:id="_language" name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
+            </references>
+            <proprietary source="~_leos">
+                <leos:templateVersion>3.1.0</leos:templateVersion>
+                <leos:docVersion>0.1.0</leos:docVersion>
+                <leos:template>SG-017</leos:template>
+                <leos:docTemplate>SG-018</leos:docTemplate>
+            </proprietary>
+        </meta>
+        <preface xml:id="_preface">
+            <container name="headerOfAnnex" xml:id="_preface__container">
+                <block name="num" xml:id="_preface__container__block__num">ANNEX</block>
+                <block name="heading" xml:id="_preface__container__block__heading"></block>
+            </container>
+        </preface>
+        <mainBody xml:id="_body">
+            <article xml:id="_art_1" leos:editable="true"
+                     leos:deletable="true">
+                <num xml:id="_art_1__num" leos:editable="false">Article 1</num>
+                <heading xml:id="_art_1__heading">Article 1 heading</heading>
+                <paragraph xml:id="_art_1__para_1">
+                    <num xml:id="_art_1__para_1__num">1.</num>
+                    <content xml:id="_art_1__para_1__content">
+                        <p xml:id="_art_1__para_1__content__p">Text...</p>
+                    </content>
+                </paragraph>
+            </article>
+        </mainBody>
+    </doc>
+</akomaNtoso>
