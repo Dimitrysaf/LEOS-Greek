@@ -213,7 +213,7 @@ define(function leosHierarchicalElementSubparagraphAfterLastPointModule(require)
                 return true;
             }
             el = el.getParent();
-        } while (el.getAscendant(elementType, true) != null);
+        } while (el != null && el.getAscendant(elementType, true) != null);
         return false;
     }
     

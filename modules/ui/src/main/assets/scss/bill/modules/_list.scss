@@ -90,6 +90,22 @@ $LIST_SPACING: 40px;
                 min-width: $LIST_SPACING;
                 float: left;
             }
+
+            &[data-akn-attr-softmove_label]:not([data-akn-action-enter='delete']):before {
+                content: attr(data-akn-num) ' ' attr(data-akn-attr-softmove_label);
+                margin-right: 10px;
+                background-color: #808080 !important;
+                padding: 2px 5px;
+                height: 18px;
+                font-size: 15px;
+                font-style: normal;
+                line-height: 1;
+                border-radius: 4px;
+                display: inline-block;
+                text-decoration: none !important;
+                color: #FFFFFF !important;
+            }
+
         }
 
         & > li[data-akn-num-id*="deleted"] {
