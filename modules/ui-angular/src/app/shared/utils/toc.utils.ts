@@ -1398,3 +1398,13 @@ export const isTocItemFirstChild = (
       ) === 0
     : item.childItems.indexOf(child) === 0;
 };
+
+export const getInstanceType = (instance: string) => {
+  if(instance === EC) {
+    return 'COMMISSION';
+  } else if( instance === CN) {
+    return 'COUNCIL';
+  } else {
+    return 'OS';
+  }
+}
