@@ -192,7 +192,7 @@ define(function leosTrackChangesPluginModule(require) {
                 });
             }
 
-            editor.on('change', _handleEnterInTrackChange, null, null, 100);
+            editor.on("change", actions.handleEnterInTrackChanges, null, null, 100);
 
             editor.on("handleTcIndent", function (event) {
                 if (isTrackChangesEnabled) {
@@ -244,7 +244,7 @@ define(function leosTrackChangesPluginModule(require) {
                     while (elementToSetAttribute.getName() !== 'li' && elementToSetAttribute.getName() !== 'p' && elementToSetAttribute.getParent()) {
                         elementToSetAttribute = elementToSetAttribute.getParent();
                     }
-                    if(leosPluginUtils.isListIntroAndFirstSubparaOfPointOrPara(elementToSetAttribute)) {
+                    if (leosPluginUtils.isListIntroAndFirstSubparaOfPointOrPara(elementToSetAttribute)) {
                         elementToSetAttribute = getElementToSetAttributes(elementToSetAttribute.getParent());
                     }
                     return elementToSetAttribute;
@@ -634,10 +634,6 @@ define(function leosTrackChangesPluginModule(require) {
                 }
             });
         }
-    }
-
-    function _handleEnterInTrackChange(event) {
-        trackChanges.actions.handleEnterInTrackChanges(event);
     }
 
     var EventWrapper = function(_event) {

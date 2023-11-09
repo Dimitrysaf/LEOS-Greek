@@ -317,12 +317,13 @@ define(function listItemNumberModule(require) {
                 var number = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM);
 
                 var previousItem = listItems[idx-1];
-                if(!!previousItem && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) === numID && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM) === number) {
+                if (!!previousItem && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) === numID && previousItem.getAttribute(leosPluginUtils.DATA_AKN_NUM) === number) {
                     listItems[idx].removeAttribute("data-akn-num");
                     listItems[idx].removeAttribute("data-akn-num-id");
                     listItems[idx].removeAttribute("data-akn-content-id");
                     listItems[idx].removeAttribute("data-akn-mp-id");
                     listItems[idx].removeAttribute("data-akn-tc-original-number");
+                    listItems[idx].removeAttribute("data-akn-tc-is-new");
                 }
 
                 // To keep the num id on indentation and avoid diffing issues
