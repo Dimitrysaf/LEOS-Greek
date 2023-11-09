@@ -241,7 +241,7 @@ define(function aknLevelNumPluginModule(require) {
            akn : "xml:id",
            html : "data-akn-num-id"
        }, {
-           html : "contenteditable=false"
+           html : "contenteditable=true"
        }, {
            html: "data-akn-name=aknLevelNum"
        } ],

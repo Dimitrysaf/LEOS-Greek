@@ -53,8 +53,8 @@ define(function leosTextHighlightPluginModule(require) {
 
     function _resolveOverlappedSpans(evt) {
         var editedElement = evt.editor.element.getChildren().toArray()
-            .find((element) => element.getAttribute('data-akn-element') === evt.editor.LEOS.elementType
-                || element.getAttribute('data-akn-name') === evt.editor.LEOS.elementType);
+            .find((element) => element && element.getAttribute && (element.getAttribute('data-akn-element') === evt.editor.LEOS.elementType
+                || element.getAttribute('data-akn-name') === evt.editor.LEOS.elementType));
         var highlightedSpans = editedElement && $(editedElement.$).find('span[data-akn-style]').toArray();
         if (highlightedSpans) {
             for (let i = 0; i < highlightedSpans.length; i++) {
