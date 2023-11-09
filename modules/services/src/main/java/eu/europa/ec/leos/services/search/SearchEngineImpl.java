@@ -13,8 +13,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -40,11 +41,14 @@ public class SearchEngineImpl implements SearchEngine {
 
     private static final String INSERT_TAG = "ins";
     private static final String DELETE_TAG = "del";
-    private static List<String> tagsToExclude = Arrays.asList("meta", "authorialNote", DELETE_TAG);
-    private static List<String> tagsToExcludeHighlight = Arrays.asList("meta", "authorialNote");
+    private static final String AUTHORIAL_NOTE = "authorialNote";
+    private static final String META = "meta";
+    private static final String DELETED_START_ID_VALUE = "deleted";
+    private static List<String> tagsToExclude = Arrays.asList(META, AUTHORIAL_NOTE, DELETE_TAG);
+    private static List<String> tagsToExcludeHighlight = Arrays.asList(META, AUTHORIAL_NOTE);
     private static List<String> tagsTrackChanges = Arrays.asList(DELETE_TAG);
-    private static List<String> customInlineTags = Arrays.asList("authorialNote", "signature", "placeholder", "omissis", "date", "mref");
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
+    private static List<String> customInlineTags = Arrays.asList(AUTHORIAL_NOTE, "signature", "placeholder", "omissis", "date", "mref");
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX").withZone(ZoneId.systemDefault());
 
     private String searchableString;
     private List<Index> indexesForString;
@@ -89,14 +93,11 @@ public class SearchEngineImpl implements SearchEngine {
 
     private int visitNode(Node node, List<Element> elements) {
         String tagName = node.getNodeName();
-        if(isHighlight){
-            if (tagsToExcludeHighlight.contains(tagName)) {
-                return 0;
-            }
-        }else {
-            if (tagsToExclude.contains(tagName)) {
-                return 0;
-            }
+        String nodeId = XercesUtils.getId(node);
+        boolean isNodeIdStartsWithDeleted = (nodeId != null && nodeId.startsWith(DELETED_START_ID_VALUE));
+        if((isHighlight ? tagsToExcludeHighlight : tagsToExclude).contains(tagName)
+                ||  isNodeIdStartsWithDeleted){
+            return 0;
         }
 
         boolean hasText = XercesUtils.hasChildTextNode(node);
@@ -168,11 +169,7 @@ public class SearchEngineImpl implements SearchEngine {
                 if (!lastCharIsWhitespace(sb) && !el.content.startsWith(" ")) {
                     sb.append(' ');
                     // for the empty character
-                    if(isHighlight){
-                        indexesForStringHighlight.add(new Index(null, -1));
-                    }else {
-                        indexesForString.add(new Index(null, -1));
-                    }
+                    (isHighlight ? indexesForStringHighlight : indexesForString).add(new Index(null, -1));
                 }
             }
 
@@ -182,26 +179,15 @@ public class SearchEngineImpl implements SearchEngine {
             // of the character
             // Ex: a text of 4 chars will add 4 to the list for 0,1,2,3 positions
             for (int i = 0; i < el.content.length(); i++) {
-                if(isHighlight) {
-                    indexesForStringHighlight.add(new Index(el.elementId, i + el.startIndexOfText));
-                }else{
-                    indexesForString.add(new Index(el.elementId, i + el.startIndexOfText));
-                }
+                (isHighlight ? indexesForStringHighlight : indexesForString).add(new Index(el.elementId, i + el.startIndexOfText));
             }
 
             // Preserve the element to make a reference to future if it repeats
-            if(isHighlight) {
-                if (elementsByIdHighlight.containsKey(el.elementId)) {
-                    elementsByIdHighlight.get(el.elementId).content += el.content;
-                } else {
-                    elementsByIdHighlight.put(el.elementId, el);
-                }
-            }else{
-                if (elementsById.containsKey(el.elementId)) {
-                    elementsById.get(el.elementId).content += el.content;
-                } else {
-                    elementsById.put(el.elementId, el);
-                }
+            Map<String, Element> elemById = isHighlight ? elementsByIdHighlight : elementsById;
+            if (elemById.containsKey(el.elementId)) {
+                elemById.get(el.elementId).content += el.content;
+            } else {
+                elemById.put(el.elementId, el);
             }
         });
         searchableString = sb.toString();
@@ -236,23 +222,30 @@ public class SearchEngineImpl implements SearchEngine {
             List<ElementMatchVO> matchedElements = new ArrayList<>();
             for (int i = matcher.start(); i < matcher.end(); i++) {
                 Index idx = isHighlight ? indexesForStringHighlight.get(i) : indexesForString.get(i);
+                Element element = null;
+                boolean doContinue = false;
                 if (StringUtils.isEmpty(idx.elementId)) {
                     // do not include manually added spaces in the result
-                    continue;
+                    doContinue = true;
+                }else {
+                    element = isHighlight ? elementsByIdHighlight.get(idx.elementId) : elementsById.get(idx.elementId);
+                    if (element.content.trim().length() == 0// do not include blanks in the result
+                            || (isHighlight && tagsTrackChanges.contains(element.tag.trim())) // isHighlight. Ignore the del and ins tags
+                    ) {
+                        doContinue = true;
+                    }
                 }
-                Element element = isHighlight ? elementsByIdHighlight.get(idx.elementId) : elementsById.get(idx.elementId);
-                if (element.content.trim().length() == 0// do not include blanks in the result
-                    || (isHighlight && tagsTrackChanges.contains(element.tag.trim())) // isHighlight. Ignore the del and ins tags
-                ) {
+                if(doContinue){
                     continue;
                 }
                 ElementMatchVO elementMatchVO;
-                if (matchedElements.size() > 0) {
+                if (!matchedElements.isEmpty()) {
                     ElementMatchVO lastElement = matchedElements.get(matchedElements.size() - 1);
                     if (lastElement.getElementId().equals(element.elementId)) {
                         elementMatchVO = lastElement;
                     } else {
                         elementMatchVO = new ElementMatchVO(element.elementId, idx.indexInTag, element.isEditable);
+
                         matchedElements.add(elementMatchVO);
                     }
                 } else {
@@ -264,7 +257,7 @@ public class SearchEngineImpl implements SearchEngine {
             }
 
             // calculate the isReplaceable based on the attributes of the matched elements and if the matched elements are cross-tags
-            if (matchedElements.size() > 0) {
+            if (!matchedElements.isEmpty()) {
                 searchMatchedElements.add(new SearchMatchVO(matchedElements, calculateReplaceble(matchedElements)));
             }
         }
@@ -329,7 +322,8 @@ public class SearchEngineImpl implements SearchEngine {
             if (StringUtils.isEmpty(replaceText)) {
                 replaceText = "";
             }
-            int startIndex = 0, replaceLength = replaceText.length();
+            int startIndex = 0;
+            int replaceLength = replaceText.length();
             List<String> replaceTextSegments = new ArrayList<>();
             // split the search text into as many segments as elementmatchVOs.
             // At the same time, also make corresponding replace segments for a search segment (criteria is length)
@@ -400,12 +394,12 @@ public class SearchEngineImpl implements SearchEngine {
              matchedElementChildContentLength,  user);
         }else{
             return this.replaceContentNoTrackChanges(document,  eVO,  replaceSegmentGlobal,  removeEmptyTags,
-                    matchedElementChildContentLength, user);
+                    matchedElementChildContentLength);
         }
     }
 
     private boolean replaceContentNoTrackChanges(Document document, ElementMatchVO eVO, String replaceSegmentGlobal, boolean removeEmptyTags,
-                                   List<Integer> matchedElementChildContentLength, User user) {
+                                   List<Integer> matchedElementChildContentLength) {
         boolean containsNonEmptyElement = false;
         boolean containsEmptyTextElement = false;
 
@@ -425,7 +419,7 @@ public class SearchEngineImpl implements SearchEngine {
                 } else {
                     length = matchedElementChildContentLength.get(i);
                 }
-                int indexAtEndOfContent = index + length; //TODO subtract either the length of the old/new text or difference of
+                int indexAtEndOfContent = index + length;
                 if ((node.getNodeType() == Node.TEXT_NODE) && (index < endEVO && indexAtEndOfContent > startEVO)) {
                     String content = node.getTextContent();
                     int minReplaceSegmentLength = Math.min(replaceSegment.length(), indexAtEndOfContent - startEVO);
@@ -435,7 +429,7 @@ public class SearchEngineImpl implements SearchEngine {
                     if (indexAtEndOfContent > endEVO && endEVO > startEVO) {
                         // when there exist search segment that has been replaced somewhere in the middle i.e, startEVO>0
                         // but there is still some content left towards the end i.e, length > endEVO
-                        updatedContent += content.substring(endEVO - Math.min(startEVO, index));;
+                        updatedContent += content.substring(endEVO - Math.min(startEVO, index));
                     }
                     // record an update to be executed later
                     // in case the content is empty and as a result the tag as well, then it can also be deleted
@@ -489,7 +483,7 @@ public class SearchEngineImpl implements SearchEngine {
                 } else {
                     length = matchedElementChildContentLength.get(i);
                 }
-                int indexAtEndOfContent = index + length; //TODO subtract either the length of the old/new text or difference of
+                int indexAtEndOfContent = index + length;
                 String deletedContent = "";
                 if ((node.getNodeType() == Node.TEXT_NODE) && (index < endEVO && indexAtEndOfContent > startEVO)) {
                     String content = node.getTextContent();
@@ -564,8 +558,8 @@ public class SearchEngineImpl implements SearchEngine {
         String parentId = XercesUtils.getId(node.getParentNode());
         String prefixId = "akn";
         if (StringUtils.isNotEmpty(parentId)) {
-            int indexOf_= parentId.lastIndexOf("_");
-            int indexForSearch = indexOf_ > 0 ? indexOf_ : parentId.length() - 1;
+            int indexOfUnderline = parentId.lastIndexOf("_");
+            int indexForSearch = indexOfUnderline > 0 ? indexOfUnderline : parentId.length() - 1;
             prefixId = parentId.substring(0, indexForSearch) ;
         }
 
@@ -575,9 +569,11 @@ public class SearchEngineImpl implements SearchEngine {
         org.w3c.dom.Element  insertElement = XercesUtils.createElement(document, INSERT_TAG, IdGenerator.generateId(prefixId), replaceSegmentGlobal);
         if(userLogin != null && userName!= null) {
             XercesUtils.addAttribute(deleteNode, "leos:uid", userLogin);
-            XercesUtils.addAttribute(deleteNode, "leos:title", new StringBuilder(userName).append(" : ").append(DATE_FORMAT.format(new Date())).toString() );
+            XercesUtils.addAttribute(deleteNode, "leos:title",
+                    new StringBuilder(userName).append(" : ").append(DATE_FORMAT.format(new Date().toInstant())).toString() );
             XercesUtils.addAttribute(insertElement, "leos:uid", userLogin);
-            XercesUtils.addAttribute(insertElement, "leos:title", new StringBuilder(userName).append(" : ").append(DATE_FORMAT.format(new Date())).toString() );
+            XercesUtils.addAttribute(insertElement, "leos:title",
+                    new StringBuilder(userName).append(" : ").append(DATE_FORMAT.format(new Date().toInstant())).toString() );
         }
 
         List<Node> addedElementList = new ArrayList<>();

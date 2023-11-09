@@ -836,6 +836,7 @@ export class DocumentService implements OnDestroy {
     this.toggleSubject(this.searchPaneOpenBS, open);
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
     this.setSearchResultsCounter(0);
+    this.updatedContentToSaveAfterReplace = null;
   }
 
   toggleVersionsSearchPane(open?: boolean) {
