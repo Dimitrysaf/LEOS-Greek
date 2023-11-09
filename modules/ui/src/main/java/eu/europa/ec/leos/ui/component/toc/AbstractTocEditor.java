@@ -823,7 +823,7 @@ public abstract class AbstractTocEditor implements TocEditor {
     private TableOfContentItemVO copyDeletedItemToTemp(TableOfContentItemVO originalItem, Boolean isSoftActionRoot) {
         TableOfContentItemVO tempDeletedItem;
 
-        if (!MOVE_TO.equals(originalItem.getSoftActionAttr()) && !DELETE.equals(originalItem.getSoftActionAttr())) {
+        if (!MOVE_TO.equals(originalItem.getSoftActionAttr()) && !isDeletedItem(originalItem)) {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + SOFT_DELETE_PLACEHOLDER_ID_PREFIX + originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
                     EC, originalItem.getHeading(), originalItem.getNode(),
@@ -832,7 +832,6 @@ public abstract class AbstractTocEditor implements TocEditor {
                     DELETE, isSoftActionRoot, null, null, originalItem.getSoftMoveFrom(),
                     originalItem.getSoftMoveTo(), originalItem.getSoftTransFrom(), originalItem.isUndeleted(),
                     originalItem.getNumSoftActionAttr(), originalItem.getTrackChangeAction());
-            tempDeletedItem.setTrackChangeAction(LEOS_TC_DELETE_ACTION);
         } else {
             tempDeletedItem = new TableOfContentItemVO(originalItem.getTocItem(), TEMP_PREFIX + originalItem.getId(),
                     originalItem.getOriginAttr(), originalItem.getNumber(),
