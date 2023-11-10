@@ -16,8 +16,8 @@ import { SharedModule } from '@/shared/shared.module';
 
 import { AknRouteReUseStrategy } from './akn-route-strategy';
 import { ActionsToolbarComponent } from './components/actions-toolbar/actions-toolbar.component';
-import { AnnexActionsDropdownComponent } from './components/annex-actions-dropdown/annex-actions-dropdown.component';
-import { AnnexDocumentComponent } from './components/annex-document/annex-document.component';
+import { DocumentActionsDropdownComponent } from './components/document-actions-dropdown/document-actions-dropdown.component';
+import { DocumentComponent } from './components/annex-document/document.component';
 import { DocumentSearchComponent } from './components/document-search/document-search.component';
 import { ImportFromJournalDialogComponent } from './components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { NodeTocActionsComponent } from './components/node-toc-actions/node-toc-actions.component';
@@ -44,8 +44,8 @@ import {DocumentService} from "@/shared/services/document.service";
 
 @NgModule({
   declarations: [
-    AnnexActionsDropdownComponent,
-    AnnexDocumentComponent,
+    DocumentActionsDropdownComponent,
+    DocumentComponent,
     ActionsToolbarComponent,
     DocumentSearchComponent,
     VersionActionsDropdownComponent,

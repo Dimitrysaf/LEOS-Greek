@@ -22,12 +22,12 @@ import { DocumentService } from '@/shared/services/document.service';
 import {TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
 
 @Component({
-  selector: 'app-annex-document',
-  templateUrl: './annex-document.component.html',
-  styleUrls: ['./annex-document.component.scss'],
+  selector: 'app-document',
+  templateUrl: './document.component.html',
+  styleUrls: ['./document.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnnexDocumentComponent
+export class DocumentComponent
   implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
   @Input() containerId: string;

@@ -385,7 +385,7 @@ export class CKEditorService implements OnDestroy {
     });
   }
 
-  // called from annex-actions-dropdown.component.html
+  // called from document-actions-dropdown.component.html
   toggleUserGuidance() {
     this.documentService.seeUserGuidance().subscribe((userGuidance) => {
       if (!userGuidance) {

@@ -1,19 +1,19 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AnnexActionsDropdownComponent } from './annex-actions-dropdown.component';
+import { DocumentActionsDropdownComponent } from './document-actions-dropdown.component';
 
 describe('AnnexActionsDropdownComponent', () => {
-  let component: AnnexActionsDropdownComponent;
-  let fixture: ComponentFixture<AnnexActionsDropdownComponent>;
+  let component: DocumentActionsDropdownComponent;
+  let fixture: ComponentFixture<DocumentActionsDropdownComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      declarations: [AnnexActionsDropdownComponent],
+      declarations: [DocumentActionsDropdownComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AnnexActionsDropdownComponent);
+    fixture = TestBed.createComponent(DocumentActionsDropdownComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
