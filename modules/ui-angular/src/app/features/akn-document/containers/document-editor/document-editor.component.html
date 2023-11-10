@@ -12,9 +12,9 @@
   </eui-page-breadcrumb>
   <eui-page-header class="" [label]="pageTitle">
     <eui-page-header-action-items>
-      <app-annex-actions-dropdown
+      <app-document-actions-dropdown
         (annexChangeStructure)="confirmAnnexStructureChange()"
-      ></app-annex-actions-dropdown>
+      ></app-document-actions-dropdown>
       <button
         *ngIf="documentConfig?.proposalMetadata"
         class="mt-1"
@@ -342,7 +342,7 @@
             </ul>
           </div>
           <!-- Document with editor -->
-          <app-annex-document
+          <app-document
             [containerId]="containerId"
             [xml]="xml"
             [reloadTrigger]="reloadTrigger"
@@ -355,7 +355,7 @@
               'sync-scroll': true,
               'toc-edit-mode': isEditMode
             }"
-          ></app-annex-document>
+          ></app-document>
         </eui-page-column-body>
       </eui-page-column>
 
@@ -403,7 +403,7 @@
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
         >
-          <app-annex-document
+          <app-document
             containerId="versionContainer"
             [xml]="versionForView"
             [containerClass]="{
@@ -411,7 +411,7 @@
               'leos-marked-content': !isCNInstance,
               'sync-scroll': true
             }"
-          ></app-annex-document>
+          ></app-document>
         </eui-page-column-body>
       </eui-page-column>
 
@@ -579,7 +579,7 @@
           class="eui-u-flex eui-u-flex-column align-items-center"
           style="position: relative; overflow: auto"
         >
-          <app-annex-document
+          <app-document
             containerId="versionComparisonContainer"
             [xml]="versionsComparisonForView"
             [containerClass]="{
@@ -590,7 +590,7 @@
                 isCNInstance &&
                 (documentService.versionCompareIds$ | async)?.length === 2
             }"
-          ></app-annex-document>
+          ></app-document>
         </eui-page-column-body>
       </eui-page-column>
 
@@ -827,7 +827,7 @@
           class="eui-u-flex eui-u-flex-column align-items-center"
           style="position: relative; overflow: auto"
         >
-          <app-annex-document
+          <app-document
             #contributionViewContainer
             containerId="contributionViewContainer"
             [xml]="contributionForView"
@@ -837,7 +837,7 @@
               'contribution-disabled-mode': processed
             }"
           >
-          </app-annex-document>
+          </app-document>
         </eui-page-column-body>
       </eui-page-column>
 

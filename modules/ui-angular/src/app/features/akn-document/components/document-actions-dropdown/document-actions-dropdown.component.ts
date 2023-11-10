@@ -21,12 +21,12 @@ import {DocumentConfig, Permission} from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
-  selector: 'app-annex-actions-dropdown',
-  templateUrl: './annex-actions-dropdown.component.html',
-  styleUrls: ['./annex-actions-dropdown.component.scss'],
+  selector: 'app-document-actions-dropdown',
+  templateUrl: './document-actions-dropdown.component.html',
+  styleUrls: ['./document-actions-dropdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
+export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   @Output() annexChangeStructure = new EventEmitter<void>();
 
   documentConfig: DocumentConfig;
@@ -110,7 +110,7 @@ export class AnnexActionsDropdownComponent implements OnInit, OnDestroy {
 
   setMenuState(config: DocumentConfig, permissions: Permission[]) {
     this.documentConfig = config;
-    const isClonedProposal = this.documentConfig.clonedProposal;
+    const isClonedProposal = this.documentConfig?.clonedProposal;
 
     const isCN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
     const isAnnex = this.doc.documentType === 'annex';

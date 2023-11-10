@@ -1,19 +1,19 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AnnexDocumentComponent } from './annex-document.component';
+import { DocumentComponent } from './document.component';
 
 describe('AnnexDocumentComponent', () => {
-  let component: AnnexDocumentComponent;
-  let fixture: ComponentFixture<AnnexDocumentComponent>;
+  let component: DocumentComponent;
+  let fixture: ComponentFixture<DocumentComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      declarations: [AnnexDocumentComponent],
+      declarations: [DocumentComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AnnexDocumentComponent);
+    fixture = TestBed.createComponent(DocumentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
