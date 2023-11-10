@@ -162,8 +162,9 @@ public class LegalTextPaneComponent extends CustomComponent {
         legalTextPane.setExpandRatio(tocSplitter, 1.0f);
     }
 
-    public void populateContent(final String docContent) {
+    public void populateContent(final String docContent, boolean isTrackChangesEnabled) {
         legalTextComponent.populateContent(docContent);
+        tableOfContentComponent.setTrackChangesEnabled(isTrackChangesEnabled);
     }
 
     public LeosDisplayField getContent() {
