@@ -113,7 +113,7 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
             eventBus.post(new AddChangeDetailsMenuEvent());
             eventBus.post(new AddTrackChangesMenuEvent(false, trackChangesEnabled));
         }
-        legalTextPaneComponent.populateContent(documentContent);
+        legalTextPaneComponent.populateContent(documentContent, trackChangesEnabled);
     }
 
     @Override
