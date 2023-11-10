@@ -323,7 +323,6 @@ define(function listItemNumberModule(require) {
                     listItems[idx].removeAttribute("data-akn-content-id");
                     listItems[idx].removeAttribute("data-akn-mp-id");
                     listItems[idx].removeAttribute("data-akn-tc-original-number");
-                    listItems[idx].removeAttribute("data-akn-tc-is-new");
                 }
 
                 // To keep the num id on indentation and avoid diffing issues
