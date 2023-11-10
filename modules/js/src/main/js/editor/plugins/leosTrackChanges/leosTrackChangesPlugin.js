@@ -197,18 +197,17 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("handleTcIndent", function (event) {
                 if (isTrackChangesEnabled) {
                     var element = event.data.data;
-                    var previousNumber = event.data.previousNumber;
-                    core.setOriginalNumber(element, previousNumber);
-                    if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED
-                        && element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW
+                    core.setOriginalNumber(element, event.data.previousNumber);
+                    if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
+                        && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
                         && element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                         if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                             core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                         } else {
                             core.removeTrackChangesAttributesForNumbering(element);
                         }
-                    } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED
-                        && element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW
+                    } else if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
+                        && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
                         && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                         core.addTrackChangesAttributesForNumbering(editor, element, core.DELETE_ACTION);
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.UNNUMBERED) {
@@ -284,6 +283,7 @@ define(function leosTrackChangesPluginModule(require) {
                 event.data.dataValue = event.data.dataValue.replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\"");
                 event.data.dataValue = event.data.dataValue.replace(/leos:title-number="([\s\S][^:]+?)"/g, "leos:title-number=\"$1 : " + core.getDateFormat() + "\"");
                 event.data.dataValue = event.data.dataValue.replace(/leos:title-enter="([\s\S][^:]+?)"/g, "leos:title-enter=\"$1 : " + core.getDateFormat() + "\"");
+                event.data.dataValue = event.data.dataValue.replace(/xml:id="temp_([\s\S][^:]+?)"/g, "");
             }, null, null, 15);
 
             // Bind events if the Dom is ready!

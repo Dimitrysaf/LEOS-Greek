@@ -27,7 +27,7 @@ define(function leosTrackChangesModule(require) {
         LEOS_ACTION_ATTR: "leos:action", ACTION_ATTR: "data-akn-action", INSERT_ACTION: "insert", DELETE_ACTION: "delete",
         LEOS_UID_ATTR: "leos:uid", UID_ATTR: "data-akn-uid",
 
-        DATA_AKN_TC_IS_NEW: "data-akn-tc-is-new", DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
+        DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
         ACCEPT: "accept", REJECT: "reject",
@@ -383,7 +383,7 @@ define(function leosTrackChangesModule(require) {
 
         canUserAcceptChanges: function(editor) {
             return editor.LEOS.user.permissions && editor.LEOS.user.permissions.includes("CAN_ACCEPT_CHANGES") &&
-                (!editor.LEOS.isClonedProposal || (editor.LEOS.user.roles && editor.LEOS.user.roles.includes("SUPPORT")));
+                (!editor.LEOS.isClonedProposal || (editor.LEOS.isClonedProposal && editor.LEOS.user.roles && editor.LEOS.user.roles.includes("SUPPORT")));
         },
 
         canUserRejectChanges: function(editor) {
@@ -401,10 +401,10 @@ define(function leosTrackChangesModule(require) {
 
         setOriginalNumber: function(element, previousNumber) {
             if (!element.getAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER)) {
-                if (!element.getAttribute(leosPluginUtils.ID) && !element.getAttribute(core.DATA_AKN_TC_IS_NEW)) {
+                if (!element.getAttribute(leosPluginUtils.ID)) {
                     element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, core.NEW);
-                } else {
-                    element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, previousNumber ? previousNumber : core.UNNUMBERED);
+                } else if (previousNumber) {
+                    element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, previousNumber);
                 }
             }
         },
@@ -435,7 +435,7 @@ define(function leosTrackChangesModule(require) {
             var left = positionEditor[0], right = left + parseInt(window.getComputedStyle(element, ":" + pseudoElt).width);
             var mouseX = mousePosition[0], mouseY = mousePosition[1];
 
-            return ((mouseX >= left) && (mouseX <= right) && (mouseY >= top) && (mouseY <= bottom));
+            return ((mouseX >= (left - 5)) && (mouseX <= (right + 5)) && (mouseY >= (top - 5)) && (mouseY <= (bottom + 5)));
         }
 
     };
@@ -549,10 +549,12 @@ define(function leosTrackChangesModule(require) {
                 core.removeTrackChangesAttributesForEnter(element);
                 core.removeSoftAttributes(element);
                 element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
-                element.setAttribute(core.DATA_AKN_TC_IS_NEW, core.TRUE);
                 if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
                     element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
+                }
+                if (!element.getAttribute(leosPluginUtils.ID)) {
+                    element.setAttribute(leosPluginUtils.ID, "temp_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
                 }
             } else {
                 editor.getSelection().fake(element.getParent());
@@ -569,6 +571,9 @@ define(function leosTrackChangesModule(require) {
                 ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
                 element.setAttribute(core.DATA_AKN_RENUMBER, core.REJECT);
+                if (!element.getAttribute(leosPluginUtils.ID)) {
+                    element.setAttribute(leosPluginUtils.ID, "temp_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                }
             } else {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
