@@ -30,9 +30,11 @@ define(function leosTrackChangesModule(require) {
         DATA_AKN_TC_ORIGINAL_NUMBER: "data-akn-tc-original-number", DATA_AKN_ACTION_NUMBER: "data-akn-action-number",
         UNNUMBERED: "UNNUMBERED", NEW: "NEW", DATA_AKN_ACTION_ENTER: "data-akn-action-enter",
         DATA_AKN_RENUMBER: "data-akn-renumber", DATA_AKN_RENUMBER_ORIGIN: "data-akn-renumber-origin",
+        DATA_AKN_ID_TO_BE_REMOVED: "data-akn-id-to-be-removed", DATA_AKN_ID_TO_BE_RESTORED: "data-akn-id-to-be-restored",
         ACCEPT: "accept", REJECT: "reject",
 
         DATA_AKN_SOFTACTION_ROOT: "data-akn-attr-softactionroot", DATA_AKN_SOFTACTION: "data-akn-attr-softaction",
+        DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
         TRUE: true, SOFTACTION_MOVE_FROM: "move_from",
 
         // Caret definitions
@@ -544,10 +546,12 @@ define(function leosTrackChangesModule(require) {
             if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER) ||
                 ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
+                var idToBeRemoved = element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM);
                 core.removeTrackChangesAttributes(element);
                 core.removeTrackChangesAttributesForNumbering(element);
                 core.removeTrackChangesAttributesForEnter(element);
                 core.removeSoftAttributes(element);
+                element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, idToBeRemoved);
                 element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
                 if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
@@ -570,7 +574,9 @@ define(function leosTrackChangesModule(require) {
             if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER) ||
                 ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
-                element.setAttribute(core.DATA_AKN_RENUMBER, core.REJECT);
+                var idToBeRestored = element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM);
+                element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, idToBeRestored);
+                element.remove();
                 if (!element.getAttribute(leosPluginUtils.ID)) {
                     element.setAttribute(leosPluginUtils.ID, "temp_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
                 }
