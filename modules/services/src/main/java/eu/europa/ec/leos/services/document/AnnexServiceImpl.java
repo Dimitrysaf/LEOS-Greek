@@ -14,12 +14,11 @@
 package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
-import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
@@ -111,7 +110,12 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex Xml Content... [id={}]", annex.getId());
 
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, versionType, comment);
-
+        try {
+            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedAnnexContent));
 
