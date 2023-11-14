@@ -172,7 +172,7 @@
     z-index: 10;
   }
 
-  @include eui-scrollbars();
+  @include eui-scrollbars($size: 0px);
 }
 
 app-document {
