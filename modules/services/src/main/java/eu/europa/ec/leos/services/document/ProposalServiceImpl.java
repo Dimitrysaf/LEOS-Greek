@@ -163,8 +163,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
     @Override
     @Async("delegatingSecurityContextAsyncTaskExecutor")
-    public void updateProposalAsync(String documentId, String comment) {
-        LeosPackage leosPackage = packageRepository.findPackageByDocumentId(documentId);
+    public void updateProposalAsync(String documentRef, String comment) {
+        LeosPackage leosPackage = packageRepository.findPackageByDocumentRef(documentRef, Proposal.class);
         Proposal proposal = this.findProposalByPackagePath(leosPackage.getPath());
         if (proposal != null) {
             Option<ProposalMetadata> metadataOption = proposal.getMetadata();

@@ -4,6 +4,7 @@ import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Collaborator;
@@ -19,6 +20,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.test.support.LeosTest;
@@ -33,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.leos.cmis.support.RepositoryUtil.updateDocumentProperties;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -40,6 +43,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -56,6 +60,8 @@ public class AnnexServiceImplTest extends LeosTest {
     private XmlNodeProcessor xmlNodeProcessor;
     @Mock
     private XmlContentProcessor xmlContentProcessor;
+    @Mock
+    private XmlDocumentService xmlDocumentService;
     @Mock
     private NumberService numberService;
     @Mock
@@ -83,14 +89,16 @@ public class AnnexServiceImplTest extends LeosTest {
         annexRepository = new CmisAnnexRepositoryImpl(leosRepository);
 
         annexService = new AnnexServiceMandateImpl(annexRepository, xmlNodeProcessor,
-                xmlContentProcessor, numberService, xmlNodeConfigProcessor, validationService,
+                xmlContentProcessor, xmlDocumentService, numberService, xmlNodeConfigProcessor, validationService,
                 documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog);
 
     }
 
     @Test
-    public void test_updateBaseVersionId() {
-        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithBaseVersionId());
+    public void test_updateBaseVersionId() throws Exception {
+        Annex mockedAnnex = getMockedAnnexWithBaseVersionId();
+        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(mockedAnnex);
+        when(xmlDocumentService.updateInternalReferences(mockedAnnex)).thenReturn(mockedAnnex);
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), baseVersionId);
         Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);
@@ -98,8 +106,10 @@ public class AnnexServiceImplTest extends LeosTest {
     }
 
     @Test
-    public void test_enableLiveDiffing() {
-        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithLiveDiffing());
+    public void test_enableLiveDiffing() throws Exception {
+        Annex mockedAnnex = getMockedAnnexWithLiveDiffing();
+        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(mockedAnnex);
+        when(xmlDocumentService.updateInternalReferences(mockedAnnex)).thenReturn(mockedAnnex);
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), true);
         Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);
@@ -108,8 +118,10 @@ public class AnnexServiceImplTest extends LeosTest {
     }
 
     @Test
-    public void test_disableLiveDiffing() {
-        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedAnnexWithoutLiveDiffing());
+    public void test_disableLiveDiffing() throws Exception {
+        Annex mockedAnnex = getMockedAnnexWithoutLiveDiffing();
+        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(mockedAnnex);
+        when(xmlDocumentService.updateInternalReferences(mockedAnnex)).thenReturn(mockedAnnex);
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), false);
         Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);

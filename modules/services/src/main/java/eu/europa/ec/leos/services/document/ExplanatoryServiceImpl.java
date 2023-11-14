@@ -4,6 +4,7 @@ import com.google.common.base.Stopwatch;
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -16,6 +17,7 @@ import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
@@ -51,6 +53,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     private final PackageRepository packageRepository;
     private final XmlNodeProcessor xmlNodeProcessor;
     private final XmlContentProcessor xmlContentProcessor;
+    private final XmlDocumentService xmlDocumentService;
     private final NumberService numberService;
     private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
     private final DocumentVOProvider documentVOProvider;
@@ -63,6 +66,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     @Autowired
     ExplanatoryServiceImpl(ExplanatoryRepository explanatoryRepository, PackageRepository packageRepository,
                            XmlNodeProcessor xmlNodeProcessor, XmlContentProcessor xmlContentProcessor,
+                            XmlDocumentService xmlDocumentService,
                            NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
                            ValidationService validationService, DocumentVOProvider documentVOProvider,
                            TableOfContentProcessor tableOfContentProcessor, MessageHelper messageHelper,
@@ -71,6 +75,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.xmlDocumentService = xmlDocumentService;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
         this.validationService = validationService;
         this.documentVOProvider = documentVOProvider;
@@ -155,7 +160,12 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         updatedExplanatoryContent = updateDataInXml(updatedExplanatoryContent, metadata);
 
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, updatedExplanatoryContent, versionType, comment);
-
+        try {
+            explanatory = (Explanatory) xmlDocumentService.updateInternalReferences(explanatory);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(explanatory, updatedExplanatoryContent));
 
@@ -168,6 +178,12 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Updating Explanatory... [id={}, updatedMetadata={} , comment={}]", explanatory.getId(), updatedExplanatoryContent, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedExplanatoryContent, VersionType.MINOR, comment);
+        try {
+            explanatory = (Explanatory) xmlDocumentService.updateInternalReferences(explanatory);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
         LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return explanatory;
     }
@@ -177,13 +193,26 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Updating Explanatory... [id={}, milestoneComments={}, versionType={}, comment={}]", explanatory.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(explanatory);
         explanatory = explanatoryRepository.updateMilestoneComments(explanatory.getId(), milestoneComments, updatedBytes, versionType, comment);
+        try {
+            explanatory = (Explanatory) xmlDocumentService.updateInternalReferences(explanatory);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
         return explanatory;
     }
 
     @Override
     public Explanatory updateExplanatoryWithMilestoneComments(String ref, String explanatoryId, List<String> milestoneComments){
         LOG.trace("Updating Explanatory... [id={}, milestoneComments={}]", explanatoryId, milestoneComments);
-        return explanatoryRepository.updateMilestoneComments(ref, explanatoryId, milestoneComments);
+        Explanatory explanatory = explanatoryRepository.updateMilestoneComments(ref, explanatoryId, milestoneComments);
+        try {
+            explanatory = (Explanatory) xmlDocumentService.updateInternalReferences(explanatory);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
+        return explanatory;
     }
 
     @Override

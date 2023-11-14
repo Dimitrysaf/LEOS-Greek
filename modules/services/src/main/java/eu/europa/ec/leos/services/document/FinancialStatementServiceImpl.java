@@ -23,7 +23,6 @@ import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.collection.document.FinancialStatementContextService;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
-import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -79,7 +78,6 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     private final TableOfContentProcessor tableOfContentProcessor;
     private final PackageService packageService;
     private final Provider<FinancialStatementContextService> financialStatementContextProvider;
-    private final UpdateInternalReferencesProducer updateInternalReferencesProducer;
     private TrackChangesContext trackChangesContext;
 
     @Value("${leos.clone.originRef}")
@@ -101,7 +99,6 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                                   Provider<CollectionContextService> proposalContextProvider,
                                   PackageService packageService,
                                   Provider<FinancialStatementContextService> financialStatementContextProvider,
-                                  UpdateInternalReferencesProducer updateInternalReferencesProducer,
                                   TrackChangesContext trackChangesContext) {
         this.financialStatementRepository = financialStatementRepository;
         this.packageRepository = packageRepository;
@@ -118,7 +115,6 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         this.proposalContextProvider = proposalContextProvider;
         this.packageService = packageService;
         this.financialStatementContextProvider = financialStatementContextProvider;
-        this.updateInternalReferencesProducer = updateInternalReferencesProducer;
         this.trackChangesContext = trackChangesContext;
     }
 

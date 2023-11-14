@@ -26,6 +26,7 @@ import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.compare.processor.LeosPostDiffingProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,10 +48,9 @@ public class DocumentContentServiceMandateImpl extends DocumentContentServiceImp
                                              ContentComparatorService compareService, AnnexService annexService, BillService billService,
                                              MemorandumService memorandumService, ExplanatoryService explanatoryService,
                                              ProposalService proposalService, FinancialStatementService financialStatementService,
-                                             XmlContentProcessor xmlContentProcessor, XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog) {
+                                             XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService, XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog) {
         super(transformationService, compareService, annexService, billService, memorandumService, explanatoryService, financialStatementService,
-                proposalService,
-                xmlContentProcessor, xmlNodeProcessor, xPathCatalog);
+                proposalService, xmlContentProcessor, xmlDocumentService, xmlNodeProcessor, xPathCatalog);
     }
 
     @Override

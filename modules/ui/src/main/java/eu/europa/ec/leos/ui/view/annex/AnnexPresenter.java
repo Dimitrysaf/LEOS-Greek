@@ -17,10 +17,11 @@ import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
-import eu.europa.ec.leos.repository.domain.ContentImpl;
-import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
 import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
+import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
@@ -33,9 +34,6 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.common.InstanceType;
-import eu.europa.ec.leos.domain.common.Result;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
@@ -50,9 +48,10 @@ import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.event.ExportPackageCreatedEvent;
 import eu.europa.ec.leos.model.event.UpdateUserInfoEvent;
-import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.repository.domain.ContentImpl;
+import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
@@ -73,7 +72,6 @@ import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
-import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AnnexProcessor;
@@ -274,7 +272,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private final Provider<StructureContext> structureContextProvider;
     private final ReferenceLabelService referenceLabelService;
     private final Provider<AnnexContext> annexContextProvider;
-    private final UpdateInternalReferencesProducer updateInternalReferencesProducer;
     private final TransformationService transformationService;
     private final LegService legService;
     private final ProposalService proposalService;
@@ -319,7 +316,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                    MessageHelper messageHelper, ConfigurationHelper cfgHelper, Provider<CollectionContext> proposalContextProvider,
                    CoEditionHelper coEditionHelper, EventBus leosApplicationEventBus, UuidHelper uuidHelper,
                    Provider<StructureContext> structureContextProvider, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
-                   UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService,
+                   TransformationService transformationService, LegService legService,
                    ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService, AnnotateService annotateService,
                    NotificationService notificationService, CommonDelegate<Annex> commonDelegate, CloneContext cloneContext,
                    AttachmentProcessor attachmentProcessor, InstanceTypeResolver instanceTypeResolver, NumberService numberService,
@@ -347,7 +344,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
         this.annexContextProvider = annexContextProvider;
         this.structureContextProvider = structureContextProvider;
         this.referenceLabelService = referenceLabelService;
-        this.updateInternalReferencesProducer = updateInternalReferencesProducer;
         this.transformationService = transformationService;
         this.legService = legService;
         this.proposalService = proposalService;
@@ -725,7 +721,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
 
         updateAnnexContent(annex, newXmlContent, checkinCommentJson, "document.renumbered");
-        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));
         LOG.info("Renumbering document executed, in {} milliseconds ({} sec)", stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
 
     }
@@ -1027,7 +1022,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
                 eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-                updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));
                 LOG.info("Element '{}' in Annex {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
 
             }
@@ -1049,7 +1043,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-            updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));
             LOG.info("New Element of type '{}' inserted in Annex {} id {}, in {} milliseconds ({} sec)", tagName, annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
 
         }
@@ -1554,7 +1547,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(annex.getId(), annex.getMetadata().get().getRef(), id));
         LOG.info("Toc saved in Annex {} id {}, in {} milliseconds ({} sec)", annex.getName(), annex.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
 

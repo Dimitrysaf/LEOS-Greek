@@ -17,8 +17,10 @@ import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.server.VaadinServletService;
-import eu.europa.ec.leos.repository.domain.ContentImpl;
-import eu.europa.ec.leos.repository.domain.SourceImpl;
+import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
+import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
+import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
@@ -31,8 +33,6 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.common.Result;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -46,9 +46,10 @@ import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.event.ExportPackageCreatedEvent;
 import eu.europa.ec.leos.model.event.UpdateUserInfoEvent;
 import eu.europa.ec.leos.model.explanatory.ExplanatoryStructureType;
-import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.repository.domain.ContentImpl;
+import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
@@ -65,10 +66,10 @@ import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
-import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.ExplanatoryProcessor;
+import eu.europa.ec.leos.services.request.DownloadExportRequest;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
@@ -77,6 +78,7 @@ import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.ui.component.ComparisonComponent;
 import eu.europa.ec.leos.ui.event.ChangeBaseVersionEvent;
 import eu.europa.ec.leos.ui.event.CloseBrowserRequestEvent;
@@ -109,11 +111,8 @@ import eu.europa.ec.leos.ui.event.toc.InlineTocEditRequestEvent;
 import eu.europa.ec.leos.ui.event.toc.RefreshTocEvent;
 import eu.europa.ec.leos.ui.event.toc.SaveTocRequestEvent;
 import eu.europa.ec.leos.ui.event.view.DownloadXmlFilesRequestEvent;
-import eu.europa.ec.leos.domain.annotation.AnnotateMetadata;
-import eu.europa.ec.leos.domain.annotation.AnnotationStatus;
 import eu.europa.ec.leos.ui.support.CoEditionHelper;
 import eu.europa.ec.leos.ui.support.ConfirmDialogHelper;
-import eu.europa.ec.leos.services.request.DownloadExportRequest;
 import eu.europa.ec.leos.ui.view.AbstractLeosPresenter;
 import eu.europa.ec.leos.ui.view.CommonDelegate;
 import eu.europa.ec.leos.ui.view.ComparisonDelegate;
@@ -175,7 +174,6 @@ import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.UuidHelper;
 import eu.europa.ec.leos.web.support.cfg.ConfigurationHelper;
 import eu.europa.ec.leos.web.support.log.LogUtil;
-import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.support.xml.DownloadStreamResource;
 import eu.europa.ec.leos.web.ui.navigation.Target;
 import eu.europa.ec.leos.web.ui.screen.document.ColumnPosition;
@@ -239,7 +237,6 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     private final Provider<BillContext> billContextProvider;
     private final Provider<StructureContext> structureContextProvider;
     private final ReferenceLabelService referenceLabelService;
-    private final UpdateInternalReferencesProducer updateInternalReferencesProducer;
     private final TransformationService transformationService;
     private final LegService legService;
     private final ProposalService proposalService;
@@ -273,7 +270,7 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                          MessageHelper messageHelper, ConfigurationHelper cfgHelper, Provider<CollectionContext> proposalContextProvider,
                          CoEditionHelper coEditionHelper, EventBus leosApplicationEventBus, UuidHelper uuidHelper,
                          Provider<StructureContext> structureContextProvider, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
-                         UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService, LegService legService,
+                         TransformationService transformationService, LegService legService,
                          ProposalService proposalService, SearchService searchService, ExportPackageService exportPackageService,
                          NotificationService notificationService, CommonDelegate<Explanatory> commonDelegate,
                          TemplateConfigurationService templateConfigurationService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
@@ -294,7 +291,6 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
         this.billContextProvider = billContextProvider;
         this.structureContextProvider = structureContextProvider;
         this.referenceLabelService = referenceLabelService;
-        this.updateInternalReferencesProducer = updateInternalReferencesProducer;
         this.transformationService = transformationService;
         this.legService = legService;
         this.proposalService = proposalService;
@@ -826,7 +822,6 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
                 eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-                updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(explanatory.getId(), explanatory.getMetadata().get().getRef(), id));
                 LOG.info("Element '{}' in Explanatory {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(), explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
             }
         } catch (Exception ex){
@@ -855,7 +850,6 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-            updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(explanatory.getId(), explanatory.getMetadata().get().getRef(), id));
             LOG.info("New Element of type '{}' inserted in Explanatory {} id {}, in {} milliseconds ({} sec)", tagName, explanatory.getName(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         }
     }
@@ -1200,7 +1194,6 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
 
         eventBus.post(new DocumentUpdatedEvent());
         leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(explanatory.getId(), explanatory.getMetadata().get().getRef(), id));
         LOG.info("Toc saved in Explanatory {} id {}, in {} milliseconds ({} sec)", explanatory.getName(), explanatory.getId(),
                 stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }

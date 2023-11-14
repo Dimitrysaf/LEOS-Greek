@@ -119,10 +119,6 @@
                                     <sourceFile>${project.output.directory}/message.properties</sourceFile>
                                     <destinationFile>${project.output.directory}/message_leos.properties</destinationFile>
                                 </fileSet>
-                                <fileSet>
-                                    <sourceFile>${project.output.directory}/broker.xml</sourceFile>
-                                    <destinationFile>${project.output.directory}/broker_leos.xml</destinationFile>
-                                </fileSet>
                             </fileSets>
                         </configuration>
                     </execution>

@@ -13,6 +13,8 @@
  */
 package eu.europa.ec.leos.ui.view.document;
 
+import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.Content.Source;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
@@ -23,8 +25,6 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
-import eu.europa.ec.leos.domain.common.Result;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Collaborator;
@@ -33,21 +33,21 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
-import eu.europa.ec.leos.services.label.ReferenceLabelService;
-import eu.europa.ec.leos.services.template.TemplateStructureService;
-import eu.europa.ec.leos.services.processor.BillProcessor;
-import eu.europa.ec.leos.services.document.DocumentContentService;
-import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ContributionService;
+import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.importoj.ImportService;
-import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
-import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.label.ref.Ref;
+import eu.europa.ec.leos.services.processor.BillProcessor;
+import eu.europa.ec.leos.services.processor.ElementProcessor;
+import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.toc.StructureServiceImpl;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
+import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import eu.europa.ec.leos.test.support.web.presenter.LeosPresenterTest;
 import eu.europa.ec.leos.ui.event.search.ShowConfirmDialogEvent;
@@ -75,7 +75,6 @@ import eu.europa.ec.leos.web.model.SearchCriteriaVO;
 import eu.europa.ec.leos.web.support.SessionAttribute;
 import eu.europa.ec.leos.web.support.UrlBuilder;
 import eu.europa.ec.leos.web.support.UuidHelper;
-import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.web.ui.navigation.Target;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.StringUtils;
@@ -90,7 +89,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.w3c.dom.Document;
 
 import javax.inject.Provider;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Instant;
@@ -102,7 +100,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATIONS;
@@ -195,9 +192,6 @@ public class DocumentPresenterTest extends LeosPresenterTest {
 
     @Mock
     private PackageService packageService;
-
-    @Mock
-    private UpdateInternalReferencesProducer updateInternalReferencesProducer;
 
     @Mock
     private ProposalService proposalService;

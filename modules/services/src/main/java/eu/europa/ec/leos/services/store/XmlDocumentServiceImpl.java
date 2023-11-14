@@ -27,16 +27,15 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
         this.messageHelper = messageHelper;
     }
     
-    public boolean updateInternalReferences(XmlDocument xmlDocument) throws Exception {
+    public XmlDocument updateInternalReferences(XmlDocument xmlDocument) throws Exception {
         byte[] content = xmlDocument.getContent().get().getSource().getBytes();
         byte[] newContent = xmlContentProcessor.updateReferences(content);
-    
         boolean updated = ((newContent != null) && !Arrays.equals(newContent,content));
         if(updated) {
             String message = messageHelper.getMessage("internal.ref.checkinComment");
-            leosRepository.updateDocument(xmlDocument.getId(), newContent, (Map<String, Object>) updateDocumentProperties(xmlDocument.getMetadata().get()), VersionType.MINOR,
+            xmlDocument = leosRepository.updateDocument(xmlDocument.getId(), newContent, (Map<String, Object>) updateDocumentProperties(xmlDocument.getMetadata().get()), VersionType.MINOR,
                     message, XmlDocument.class);
         }
-        return updated;
+        return xmlDocument;
     }
 }

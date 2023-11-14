@@ -11,6 +11,7 @@ import eu.europa.ec.leos.repository.document.BillRepository;
 import eu.europa.ec.leos.repository.document.BillRepositoryImpl;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
@@ -47,6 +48,8 @@ import java.util.List;
 import static eu.europa.ec.leos.services.TestVOCreatorUtils.getJohnTestUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -54,12 +57,14 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
 
-public class BillServiceImpTest {
+public class BillServiceImplTest {
 
     @Mock PackageRepository packageRepository;
     @Mock XmlNodeProcessor xmlNodeProcessor;
     @Mock
     XmlContentProcessor xmlContentProcessor;
+    @Mock
+    XmlDocumentService xmlDocumentService;
     @Mock
     XmlNodeConfigProcessor xmlNodeConfigProcessor;
     @Mock AttachmentProcessor attachmentProcessor;
@@ -97,8 +102,8 @@ public class BillServiceImpTest {
         docTemplate = "BL-023";
         MockitoAnnotations.initMocks(this); //without this you will get NPE
         billRepository =  new BillRepositoryImpl(leosRepository);
-        billService = new BillServiceProposalImpl(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor
-            ,attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper,
+        billService = new BillServiceProposalImpl(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService,
+                xmlNodeConfigProcessor, attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper,
                 tableOfContentProcessor, xPathCatalog);
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
@@ -113,7 +118,7 @@ public class BillServiceImpTest {
    	}
 
     @Test
-    public void test_saveTableOfContent_shouldbe_calling_correctNumberOfProcessors() {
+    public void test_saveTableOfContent_shouldbe_calling_correctNumberOfProcessors() throws Exception {
         // Given
         Content content = mock(Content.class);
         Content.Source source = mock(Content.Source.class);
@@ -125,6 +130,8 @@ public class BillServiceImpTest {
 
         when(source.getBytes()).thenReturn(byteContent);
         when(content.getSource()).thenReturn(source);
+        when(leosRepository.updateDocument(anyString(), eq(billMetadata), eq(byteContent), eq(VersionType.MINOR), anyString(), any())).thenReturn(bill);
+        when(xmlDocumentService.updateInternalReferences(bill)).thenReturn(bill);
         when(xmlContentProcessor.createDocumentContentWithNewTocList(any(), any(), any(), anyBoolean())).thenReturn(byteContent);
         when(numberService.renumberArticles(any(), eq(true))).thenReturn(byteContent);
         when(numberService.renumberRecitals(any())).thenReturn(byteContent);

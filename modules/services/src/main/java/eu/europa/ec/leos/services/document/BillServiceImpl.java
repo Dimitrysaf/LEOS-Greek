@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.BillRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
@@ -31,6 +32,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.validation.ValidationService;
@@ -59,6 +61,7 @@ public abstract class BillServiceImpl implements BillService {
     protected final PackageRepository packageRepository;
     protected final XmlNodeProcessor xmlNodeProcessor;
     protected final XmlContentProcessor xmlContentProcessor;
+    private final XmlDocumentService xmlDocumentService;
     protected final XmlNodeConfigProcessor xmlNodeConfigProcessor;
     protected final AttachmentProcessor attachmentProcessor;
     protected final ValidationService validationService;
@@ -71,6 +74,7 @@ public abstract class BillServiceImpl implements BillService {
     @Autowired
     BillServiceImpl(BillRepository billRepository, PackageRepository packageRepository,
                     XmlNodeProcessor xmlNodeProcessor, XmlContentProcessor xmlContentProcessor,
+                    XmlDocumentService xmlDocumentService,
                     XmlNodeConfigProcessor xmlNodeConfigProcessor, AttachmentProcessor attachmentProcessor,
                     ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
                     MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
@@ -79,6 +83,7 @@ public abstract class BillServiceImpl implements BillService {
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.xmlDocumentService = xmlDocumentService;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
         this.attachmentProcessor = attachmentProcessor;
         this.validationService = validationService;
@@ -119,7 +124,12 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Updating Bill Xml Content... [id={}]", bill.getId());
         final BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
         bill = billRepository.updateBill(bill.getId(), metadata, updatedBillContent, VersionType.MINOR, comments);
-        
+        try {
+            bill = (Bill) xmlDocumentService.updateInternalReferences(bill);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, updatedBillContent));
         
@@ -129,13 +139,27 @@ public abstract class BillServiceImpl implements BillService {
     @Override
     public Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Bill metadata properties... [id={}]", id);
-        return billRepository.updateBill(ref, id, properties, latest);
+        Bill bill = billRepository.updateBill(ref, id, properties, latest);
+        try {
+            bill = (Bill) xmlDocumentService.updateInternalReferences(bill);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
+        return bill;
     }
 
     @Override
     public Bill updateBill(String id, byte[] updatedContent) {
         LOG.trace("Updating Bill content... [id={}]", id);
-        return billRepository.updateBill(id, updatedContent);
+        Bill bill = billRepository.updateBill(id, updatedContent);
+        try {
+            bill = (Bill) xmlDocumentService.updateInternalReferences(bill);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
+        return bill;
     }
 
     @Override
@@ -145,7 +169,12 @@ public abstract class BillServiceImpl implements BillService {
         byte[] updatedBytes = updateDataInXml(getContent(bill), updatedMetadata); //FIXME: Do we need latest data again??
         
         bill = billRepository.updateBill(bill.getId(), updatedMetadata, updatedBytes, versionType, comment);
-        
+        try {
+            bill = (Bill) xmlDocumentService.updateInternalReferences(bill);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, updatedBytes));
         

@@ -29,6 +29,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 
@@ -65,6 +66,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     protected FinancialStatementService financialStatementService;
     protected ProposalService proposalService;
     protected XmlContentProcessor xmlContentProcessor;
+    private final XmlDocumentService xmlDocumentService;
     protected XmlNodeProcessor xmlNodeProcessor;
     protected final XPathCatalog xPathCatalog;
 
@@ -73,7 +75,8 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                                       ContentComparatorService compareService, AnnexService annexService,
                                       BillService billService, MemorandumService memorandumService, ExplanatoryService explanatoryService,
                                       FinancialStatementService financialStatementService, ProposalService proposalService,
-                                      XmlContentProcessor xmlContentProcessor, XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog) {
+                                      XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
+                                        XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog) {
         this.transformationService = transformationService;
         this.compareService = compareService;
         this.annexService = annexService;
@@ -82,6 +85,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         this.explanatoryService = explanatoryService;
         this.proposalService = proposalService;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.xmlDocumentService = xmlDocumentService;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xPathCatalog = xPathCatalog;
         this.financialStatementService = financialStatementService;
@@ -567,6 +571,12 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             default:
                 throw new UnsupportedOperationException("Invalid Document Type");
         }
+        try {
+            document = xmlDocumentService.updateInternalReferences(document);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", document.getMetadata().get().getRef());
         return document;
     }
 }
