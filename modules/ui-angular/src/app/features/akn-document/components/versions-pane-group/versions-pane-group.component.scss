@@ -6,7 +6,8 @@
   align-items: center;
   display: flex;
   gap: var(--eui-base-spacing-xs);
-
+  overflow-y: hidden;
+  
   &:hover {
     background: rgb(0 0 0 / 5%);
   }
@@ -15,7 +16,6 @@
 .subversion > .title {
   flex-grow: 1;
   flex-shrink: 1;
-  overflow-x: hidden;
   text-overflow: ellipsis;
 }
 
