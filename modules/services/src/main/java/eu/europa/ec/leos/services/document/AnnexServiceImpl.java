@@ -17,6 +17,7 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
@@ -31,6 +32,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.validation.ValidationService;
@@ -57,6 +59,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
     protected final AnnexRepository annexRepository;
     protected final XmlNodeProcessor xmlNodeProcessor;
     protected final XmlContentProcessor xmlContentProcessor;
+    private final XmlDocumentService xmlDocumentService;
     protected final NumberService numberService;
     protected final XmlNodeConfigProcessor xmlNodeConfigProcessor;
     protected final DocumentVOProvider documentVOProvider;
@@ -67,12 +70,14 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
     @Autowired
     AnnexServiceImpl(AnnexRepository annexRepository, XmlNodeProcessor xmlNodeProcessor,
-                     XmlContentProcessor xmlContentProcessor, NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
+                     XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
+                     NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
                      ValidationService validationService, DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
                      MessageHelper messageHelper, XPathCatalog xPathCatalog) {
         this.annexRepository = annexRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.xmlDocumentService = xmlDocumentService;
         this.numberService = numberService;
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
         this.validationService = validationService;
@@ -118,14 +123,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={}, versionType={}, comment={}]", annex.getId(), updatedMetadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         byte[] updatedBytes = updateDataInXml(getContent(annex), updatedMetadata);
-
-        annex = annexRepository.updateAnnex(annex.getId(), updatedMetadata, updatedBytes, versionType, comment);
-
-        //call validation on document with updated content
-        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedBytes));
-
-        LOG.trace("Updated Annex ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return annex;
+        return updateAnnex(annex, updatedMetadata, updatedBytes, versionType, comment, stopwatch);
     }
 
     @Override
@@ -133,11 +131,19 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={}, versionType={}, comment={}]", annex.getId(), metadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         updatedAnnexContent = updateDataInXml(updatedAnnexContent, metadata);
+        return updateAnnex(annex, metadata, updatedAnnexContent, versionType, comment, stopwatch);
+    }
 
-        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedAnnexContent, versionType, comment);
-
+    private Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, byte[] updatedBytes, VersionType versionType, String comment, Stopwatch stopwatch) {
+        annex = annexRepository.updateAnnex(annex.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        try {
+            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
         //call validation on document with updated content
-        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedAnnexContent));
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedBytes));
 
         LOG.trace("Updated Annex ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return annex;
@@ -148,6 +154,12 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={} , comment={}]", annex.getId(), updatedAnnexContent, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, VersionType.MINOR, comment);
+        try {
+            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
         LOG.trace("Updated Annex ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return annex;
     }
@@ -155,13 +167,27 @@ public abstract class AnnexServiceImpl implements AnnexService {
     @Override
     public Annex updateAnnex(String id, byte[] updatedAnnexContent) {
         LOG.trace("Updating Annex content ... [id={}]", id);
-        return annexRepository.updateAnnex(id, updatedAnnexContent, VersionType.MINOR, "Content updated.");
+        Annex annex = annexRepository.updateAnnex(id, updatedAnnexContent, VersionType.MINOR, "Content updated.");
+        try {
+            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
+        return annex;
     }
 
     @Override
     public Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Annex metadata properties... [id={}]", id);
-        return annexRepository.updateAnnex(ref, id, properties, latest);
+        Annex annex = annexRepository.updateAnnex(ref, id, properties, latest);
+        try {
+            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
+        return annex;
     }
 
     @Override

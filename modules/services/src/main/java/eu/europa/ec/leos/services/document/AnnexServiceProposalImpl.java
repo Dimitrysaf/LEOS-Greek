@@ -25,6 +25,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,11 @@ public class AnnexServiceProposalImpl extends AnnexServiceImpl {
 
     @Autowired
     AnnexServiceProposalImpl(AnnexRepository annexRepository, XmlNodeProcessor xmlNodeProcessor,
-                             XmlContentProcessor xmlContentProcessor, NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
+                             XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
+                             NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
                              ValidationService validationService, DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
                              MessageHelper messageHelper, XPathCatalog xPathCatalog) {
-        super(annexRepository, xmlNodeProcessor, xmlContentProcessor, numberService, xmlNodeConfigProcessor,
+        super(annexRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, numberService, xmlNodeConfigProcessor,
                 validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog);
     }
 

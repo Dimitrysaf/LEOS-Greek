@@ -14,8 +14,8 @@
 
 package eu.europa.ec.leos.services.api;
 
-import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -35,9 +35,8 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
-import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.ArchiveService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
@@ -76,14 +75,13 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             ProposalConverterService proposalConverterService,
             PostProcessingDocumentService postProcessingDocumentService,
             ValidationService validationService, Properties applicationProperties,
-            UpdateInternalReferencesProducer updateInternalReferencesProducer,
             ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
             LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
-                applicationProperties, updateInternalReferencesProducer, explanatoryService, exportPackageService, legService, userHelper, leosRepository, trackChangesContext);
+                applicationProperties, explanatoryService, exportPackageService, legService, userHelper, leosRepository, trackChangesContext);
     }
 
     @Override

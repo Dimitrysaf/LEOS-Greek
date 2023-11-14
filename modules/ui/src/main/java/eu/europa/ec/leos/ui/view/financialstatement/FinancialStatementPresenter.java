@@ -26,7 +26,10 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.*;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -37,7 +40,6 @@ import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
-import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
@@ -59,7 +61,6 @@ import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
-import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
@@ -170,7 +171,14 @@ import javax.inject.Provider;
 import javax.servlet.http.HttpSession;
 import java.io.ByteArrayInputStream;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
@@ -210,7 +218,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private final Provider<StructureContext> structureContextProvider;
     private final ReferenceLabelService referenceLabelService;
     private final Provider<FinancialStatementContextService> financialStatementContextProvider;
-    private final UpdateInternalReferencesProducer updateInternalReferencesProducer;
     private final TransformationService transformationService;
     private final LegService legService;
     private final ProposalService proposalService;
@@ -250,7 +257,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                                           Provider<CollectionContext> proposalContextProvider, CoEditionHelper coEditionHelper,
                                           ExportService exportService, Provider<StructureContext> structureContextProvider,
                                           ReferenceLabelService referenceLabelService, Provider<FinancialStatementContextService> financialStatementContextProvider,
-                                          UpdateInternalReferencesProducer updateInternalReferencesProducer, TransformationService transformationService,
+                                          TransformationService transformationService,
                                           LegService legService, ProposalService proposalService, SearchService searchService,
                                           ExportPackageService exportPackageService, NotificationService notificationService,
                                           CloneContext cloneContext, AttachmentProcessor attachmentProcessor,
@@ -275,7 +282,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         this.structureContextProvider = structureContextProvider;
         this.referenceLabelService = referenceLabelService;
         this.financialStatementContextProvider = financialStatementContextProvider;
-        this.updateInternalReferencesProducer = updateInternalReferencesProducer;
         this.transformationService = transformationService;
         this.legService = legService;
         this.proposalService = proposalService;
@@ -725,7 +731,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
             eventBus.post(new RefreshDocumentEvent());
             eventBus.post(new DocumentUpdatedEvent());
             leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-            updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(financialStatement.getId(), financialStatement.getMetadata().get().getRef(), id));
         }
         LOG.info("New Element of type '{}' inserted in Financial statement {} id {}, in {} milliseconds ({} sec)", tagName,
                 financialStatement.getName(), financialStatement.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS),
@@ -778,8 +783,6 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                 eventBus.post(new RefreshDocumentEvent());
                 eventBus.post(new DocumentUpdatedEvent());
                 leosApplicationEventBus.post(new DocumentUpdatedByCoEditorEvent(user, strDocumentVersionSeriesId, id));
-                updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(financialStatement.getId(),
-                        financialStatement.getMetadata().get().getRef(), id));
             }
             LOG.info("Element '{}' in FinancialStatement {} id {}, deleted in {} milliseconds ({} sec)", event.getElementId(),
                     financialStatement.getName(), financialStatement.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS),

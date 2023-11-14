@@ -73,7 +73,6 @@ import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
 import eu.europa.ec.leos.services.export.ExportService;
-import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -89,8 +88,8 @@ import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
-import io.micrometer.core.instrument.util.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,7 +157,6 @@ public abstract class ApiServiceImpl implements ApiService {
     private ProposalConverterService proposalConverterService;
     private PostProcessingDocumentService postProcessingDocumentService;
     private ValidationService validationService;
-    private UpdateInternalReferencesProducer updateInternalReferencesProducer;
     private ExplanatoryService explanatoryService;
     private ExportPackageService exportPackageService;
     private NotificationService notificationService;
@@ -193,7 +191,7 @@ public abstract class ApiServiceImpl implements ApiService {
                           ProposalConverterService proposalConverterService,
                           PostProcessingDocumentService postProcessingDocumentService,
                           ValidationService validationService, Properties applicationProperties,
-                          UpdateInternalReferencesProducer updateInternalReferencesProducer, ExplanatoryService explanatoryService,
+                          ExplanatoryService explanatoryService,
                           ExportPackageService exportPackageService, LegService legService,
                           UserHelper userHelper, LeosRepository leosRepository, TrackChangesContext trackChangesContext) {
         this.templateService = templateService;
@@ -381,7 +379,6 @@ public abstract class ApiServiceImpl implements ApiService {
         collectionContext.useActionMessage(ContextActionService.EXPLANATORY_METADATA_UPDATED, messageHelper.getMessage("collection.block.explanatory.metadata.updated"));
         collectionContext.useActionMessage(ContextActionService.EXPLANATORY_DELETED, messageHelper.getMessage("collection.block.explanatory.removed"));
         collectionContext.executeRemoveExplanatory();
-//        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(proposal.getId(), explanatory.getMetadata().get().getRef(), id))
         LOG.info("Deleted explanatory {} id {}, in {} milliseconds ({} sec)", explanatory.getMetadata().get().getRef(), explanatory.getId(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
     }
 

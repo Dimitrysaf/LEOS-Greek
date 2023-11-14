@@ -16,6 +16,7 @@ package eu.europa.ec.leos.ui.view.collection;
 import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
@@ -34,7 +35,6 @@ import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
-import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
@@ -46,7 +46,6 @@ import eu.europa.ec.leos.model.event.ExportPackageUpdatedEvent;
 import eu.europa.ec.leos.model.event.MilestoneCreatedEvent;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.event.UpdateUserInfoEvent;
-import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.permissions.Role;
 import eu.europa.ec.leos.repository.RepositoryContext;
@@ -74,7 +73,6 @@ import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportLeos;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
-import eu.europa.ec.leos.services.messaging.UpdateInternalReferencesProducer;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -225,7 +223,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
     private final CoEditionHelper coEditionHelper;
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
     private final ProposalService proposalService;
-    private final UpdateInternalReferencesProducer updateInternalReferencesProducer;
     private final CreateCollectionService createCollectionService;
     private final CollaboratorService collaboratorService;
     private UserService userService;
@@ -272,7 +269,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                         NotificationService notificationService, MessageHelper messageHelper,
                         TemplateService templateService, CoEditionHelper coEditionHelper,
                         LeosPermissionAuthorityMapHelper authorityMapHelper, UuidHelper uuidHelper, ProposalService proposalService, WorkspaceService workspaceService,
-                        UpdateInternalReferencesProducer updateInternalReferencesProducer, CreateCollectionService createCollectionService, CollaboratorService collaboratorService, UserService userService,
+                        CreateCollectionService createCollectionService, CollaboratorService collaboratorService, UserService userService,
                         ExportPackageService exportPackageService, ArchiveService archiveService, CloneContext cloneContext, UserAuthentication userAuthentication,
                         DocumentContentService documentContentService, ComparisonDelegate comparisonDelegate,
                         ProposalConverterService proposalConverterService, XmlContentProcessor xmlContentProcessor, ConfigurationHelper cfgHelper, TrackChangesContext trackChangesContext) {
@@ -297,7 +294,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
         this.coEditionHelper = coEditionHelper;
         this.authorityMapHelper = authorityMapHelper;
         this.proposalService = proposalService;
-        this.updateInternalReferencesProducer = updateInternalReferencesProducer;
         this.createCollectionService = createCollectionService;
         this.collaboratorService = collaboratorService;
         this.userService = userService;
@@ -957,7 +953,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
         billContext.useActionMessage(ContextAction.ANNEX_DELETED, messageHelper.getMessage("collection.block.annex.removed"));
         archiveService.archiveDocument(event.getAnnex(), Annex.class, leosPackage.getPath());
         billContext.executeRemoveBillAnnex();
-        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(proposalId, event.getAnnex().getMetadata().getInternalRef(), id));
         eventBus.post(new DocumentUpdatedEvent());
         // 2. update ui
         populateData();
@@ -998,7 +993,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
         financialStatementContext.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_METADATA_UPDATED, messageHelper.getMessage("collection.block.financial.statement.metadata.updated"));
         financialStatementContext.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_DELETED, messageHelper.getMessage("collection.block.financial.statement.deleted"));
         financialStatementContext.executeDeleteFinancialStatement();
-        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(proposalId, event.getFinancialStatement().getMetadata().getInternalRef(), id));
         eventBus.post(new DocumentUpdatedEvent());
         // 2. update ui
         populateData();
@@ -1144,7 +1138,6 @@ class CollectionPresenter extends AbstractLeosPresenter {
         collectionContext.useActionMessage(ContextActionService.EXPLANATORY_METADATA_UPDATED, messageHelper.getMessage("collection.block.explanatory.metadata.updated"));
         collectionContext.useActionMessage(ContextActionService.EXPLANATORY_DELETED, messageHelper.getMessage("collection.block.explanatory.removed"));
         collectionContext.executeRemoveExplanatory();
-        updateInternalReferencesProducer.send(new UpdateInternalReferencesMessage(proposalId, event.getExplanatory().getMetadata().getInternalRef(), id));
         eventBus.post(new DocumentUpdatedEvent());
         // 2. update ui
         populateData();
