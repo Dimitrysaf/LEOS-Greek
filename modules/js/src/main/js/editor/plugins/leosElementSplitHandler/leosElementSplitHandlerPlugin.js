@@ -107,7 +107,11 @@ define(function leosElementSplitHandlerPluginModule(require) {
         var newEl = jqEditor.find("li")[0];
         if(newEl == null){
             newEl = jqEditor.find("p")[0];
-            newEl = newEl.parentElement; //in case of CONTENT, we apply the observer to div.leos-placeholder
+            if(newEl == null){
+                newEl = editor.editable().$
+            } else {
+                newEl = newEl.parentElement; //in case of CONTENT, we apply the observer to div.leos-placeholder
+            }
         }
         return new CKEDITOR.dom.node(newEl);
     }

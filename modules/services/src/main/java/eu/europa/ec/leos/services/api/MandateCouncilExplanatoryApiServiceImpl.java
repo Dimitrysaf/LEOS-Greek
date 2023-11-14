@@ -293,7 +293,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         boolean isClonedProposal = proposal.isClonedProposal();
 
         try {
-            String element = this.elementProcessor.getElement(explanatory, elementTagName, elementId);
+            String aknTagName = elementTagName.equalsIgnoreCase("cross_heading") ? "crossHeading" : elementTagName;
+            String element = this.elementProcessor.getElement(explanatory, aknTagName, elementId);
             return new EditElementResponse(user, permissions,
                     elementId, elementTagName, element, jsonAlternatives, isClonedProposal);
         } catch (Exception ex) {
