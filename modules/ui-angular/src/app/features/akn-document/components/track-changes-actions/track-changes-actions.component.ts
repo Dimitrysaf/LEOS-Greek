@@ -6,10 +6,12 @@ import {
 } from "@angular/core";
 import {TrackChangeAction, TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
 import {DocumentService} from "@/shared/services/document.service";
-import {DocumentConfig, Permission} from "@/shared";
+import {DocumentConfig, LeosConfig, Permission} from "@/shared";
 import {Subject, takeUntil} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {CKEditorService} from "@/features/akn-document/services/ckeditor.service";
+import {AppConfigService} from "@/core/services/app-config.service";
+import {appConfig} from "../../../../../config";
 
 @Component({
   selector:'app-track-changes-actions',
@@ -22,6 +24,7 @@ import {CKEditorService} from "@/features/akn-document/services/ckeditor.service
 })
 export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   documentConfig: DocumentConfig;
+  leosConfig: LeosConfig;
 
   isShown = false;
   trackChangesDr: NodeListOf<Element>;
@@ -36,7 +39,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
 
   private mouseLocation :{left:number,top:number} = {left:0, top:0};
 
-  constructor(private http: HttpClient, private doc: DocumentService, private ref: ChangeDetectorRef, private trackChangesActionsService:TrackChangesActionsService, private ckEditorService: CKEditorService){
+  constructor(private http: HttpClient, private doc: DocumentService, private ref: ChangeDetectorRef, private trackChangesActionsService:TrackChangesActionsService, private ckEditorService: CKEditorService, private appConfigService: AppConfigService){
     trackChangesActionsService.show.subscribe(trackChanges => {
       this.trackChangesDr = trackChanges.trackChanges;
       this.addTrackChangesEvents();
@@ -50,10 +53,16 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
       .subscribe((config) => {
         this.documentConfig = config;
       });
+    this.appConfigService.config
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((config) => {
+        this.leosConfig = config;
+      });
   }
 
   setMenuState(permissions: Permission[]) {
-    this.canAcceptTrackChanges = !this.documentConfig?.clonedProposal && permissions.includes('CAN_ACCEPT_CHANGES');
+    this.canAcceptTrackChanges = permissions.includes('CAN_ACCEPT_CHANGES') &&
+      (!this.documentConfig?.clonedProposal || (this.documentConfig?.clonedProposal && this.leosConfig?.user.roles.includes("SUPPORT")));
     this.canRejectTrackChanges = permissions.includes('CAN_REJECT_CHANGES');
   }
 
@@ -62,18 +71,14 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   addTrackChangesEvents() {
-    if (!!this.trackChangesDr) {
-      if (!!this.trackChangesDr) {
-        this.trackChangesDr.forEach(tc => {
-          tc.addEventListener("contextmenu", e => {
-            if (this.seeTrackChanges()) {
-              e.preventDefault();
-              this.showMenu(e);
-            }
-          })
-        });
-      }
-    }
+    this.trackChangesDr?.forEach(tc => {
+      tc.addEventListener("contextmenu", e => {
+        if (this.seeTrackChanges()) {
+          e.preventDefault();
+          this.showMenu(e);
+        }
+      })
+    });
   }
 
   get locationCss() {
