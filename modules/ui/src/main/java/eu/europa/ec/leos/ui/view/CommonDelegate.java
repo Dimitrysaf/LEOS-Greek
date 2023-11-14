@@ -83,7 +83,12 @@ public class CommonDelegate<T extends XmlDocument> {
         resultXmlContent = getContent(document);
 
         listOfSuggestions.forEach(suggestionMergeEvent -> {
-            byte[] lastEditedContent = xmlContentProcessor.replaceTextInElement(resultXmlContent, suggestionMergeEvent.getOrigText(), suggestionMergeEvent.getNewText(), suggestionMergeEvent.getElementId(), suggestionMergeEvent.getStartOffset(), suggestionMergeEvent.getEndOffset());
+            byte[] lastEditedContent = xmlContentProcessor.replaceTextInElement(resultXmlContent, suggestionMergeEvent.getOrigText(),
+                    suggestionMergeEvent.getNewText(),
+                    suggestionMergeEvent.getElementId(),
+                    suggestionMergeEvent.getStartOffset(),
+                    suggestionMergeEvent.getEndOffset(),
+                    document.isTrackChangesEnabled());
             JsonObject suggestion = Json.createObject();
             suggestion.put("origText", suggestionMergeEvent.getOrigText());
             suggestion.put("newText", suggestionMergeEvent.getNewText());
