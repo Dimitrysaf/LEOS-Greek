@@ -1,20 +1,22 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, shareReplay } from 'rxjs';
+import {map, Observable, shareReplay} from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
-import { LeosAppConfig, LeosConfig } from '@/shared';
+import {LeosAppConfig, LeosConfig, Permission} from '@/shared';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AppConfigService {
-  config = this.http
-    .get<LeosConfig>(`${apiBaseUrl}/secured/config`)
-    .pipe(map(createLeosAppConfig))
-    .pipe(shareReplay(1));
+  config: Observable<LeosConfig & { userAppPermissions: Permission[]; leosBuildDate: string; leosBuildTimestamp: string; leosBuildVersion: string; leosSourceRevision: string }>;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.config = this.http
+      .get<LeosConfig>(`${apiBaseUrl}/secured/config`)
+      .pipe(map(createLeosAppConfig))
+      .pipe(shareReplay(1));
+  }
 }
 
 const createLeosAppConfig = (config: LeosConfig): LeosAppConfig => ({

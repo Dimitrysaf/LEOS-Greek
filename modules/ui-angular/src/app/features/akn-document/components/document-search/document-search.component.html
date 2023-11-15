@@ -78,8 +78,10 @@
         euiInputCheckBox
         id="matchCase"
         formControlName="matchCase"
-        [label]="'page.editor.search.matchCase.label' | translate"
       />
+      <label euiLabel for="matchCase">{{
+        'page.editor.search.matchCase.label' | translate
+        }}</label>
     </div>
 
     <div class="checkbox-input-group">
@@ -87,8 +89,10 @@
         euiInputCheckBox
         id="wholeWords"
         formControlName="completeWords"
-        [label]="'page.editor.search.wholeWords.label' | translate"
       />
+      <label euiLabel for="wholeWords">{{
+        'page.editor.search.completeWords.label' | translate
+        }}</label>
     </div>
 
     <button

@@ -34,7 +34,7 @@
     <properties>
         <sonar.sources>src/app</sonar.sources>
         <yarn.version>v1.22.19</yarn.version>
-        <nodejs.version>v16.17.0</nodejs.version>
+        <nodejs.version>v18.18.2</nodejs.version>
         <mvn.frontend.plugin.version>1.11.2</mvn.frontend.plugin.version>
         <mvn.frontend.plugin.execution.phase>generate-resources</mvn.frontend.plugin.execution.phase>
         <yarn.build.command>build-prod-skip-test</yarn.build.command>

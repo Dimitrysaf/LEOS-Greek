@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators, ɵElement} from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,7 +23,7 @@ export class ImportFromJournalDialogComponent implements OnInit {
   @ViewChild('docContainer') docContainer: ElementRef<HTMLDivElement>;
   types: DocType[] = ['REGULATION', 'DIRECTIVE', 'DECISION'];
   years = this.getYearsSince(1980);
-  searchForm = this.createFormGroup();
+  searchForm: FormGroup<{ [K in keyof { number: FormControl<string | null>; year: FormControl<number | null>; type: FormControl<"REGULATION" | "DIRECTIVE" | "DECISION" | null> }]: ɵElement<{ number: FormControl<string | null>; year: FormControl<number | null>; type: FormControl<"REGULATION" | "DIRECTIVE" | "DECISION" | null> }[K], null> }>;
   importManager: ImportManager;
   docLoaded = false;
   allArticlesSelected = false;
@@ -42,7 +42,9 @@ export class ImportFromJournalDialogComponent implements OnInit {
     private tableOfContentService: TableOfContentService,
     private uxAppShellService: UxAppShellService,
     private translateService: TranslateService,
-  ) {}
+  ) {
+    this.searchForm = this.createFormGroup();
+  }
 
   ngOnInit() {}
 

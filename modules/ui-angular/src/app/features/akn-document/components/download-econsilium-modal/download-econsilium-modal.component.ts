@@ -14,6 +14,7 @@ import {
   DownloadEConsiliumOptions,
   RelevantElements,
 } from '@/shared/services/document.service';
+import { ɵElement } from '@angular/forms';
 
 @Component({
   selector: 'app-download-econsilium-modal',
@@ -22,14 +23,18 @@ import {
 })
 export class DownloadEconsiliumModalComponent implements OnInit {
   @ViewChild('dialog') dialog: EuiDialogComponent;
-  includeRecitals = this.doc.documentType === 'bill';
-  includeEnactingTerms = this.doc.documentType === 'bill';
-  form = this.createFormGroup();
+  includeRecitals: boolean;
+  includeEnactingTerms: boolean;
+  form: FormGroup<{ [K in keyof { relevantElements: FormGroup<{ all: FormControl<boolean | null>; recitals: FormControl<boolean | null>; annotations: FormControl<boolean | null>; enactingTerms: FormControl<boolean | null> }>; cleanVersion: FormControl<"false" | "true" | null>; title: FormControl<string | null> }]: ɵElement<{ relevantElements: FormGroup<{ all: FormControl<boolean | null>; recitals: FormControl<boolean | null>; annotations: FormControl<boolean | null>; enactingTerms: FormControl<boolean | null> }>; cleanVersion: FormControl<"false" | "true" | null>; title: FormControl<string | null> }[K], null> }>;
   dialogOpen = false;
 
   private versionsData: any;
 
-  constructor(private formBuilder: FormBuilder, public doc: DocumentService) {}
+  constructor(private formBuilder: FormBuilder, public doc: DocumentService) {
+    this.includeRecitals = this.doc.documentType === 'bill';
+    this.includeEnactingTerms = this.doc.documentType === 'bill';
+    this.form = this.createFormGroup();
+  }
 
   ngOnInit() {
     type Field = 'all' | 'recitals' | 'enactingTerms';
