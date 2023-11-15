@@ -21,6 +21,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { LoadingService } from '@/shared/services/loading.service';
 
 import {
+  CatalogItem,
   CreateDraftBody,
   CreateDraftResponse,
   CreateExplanatoryDocument,
@@ -111,12 +112,9 @@ export class ProposalService {
   page$: Observable<number>;
   proposals$: Observable<Document[]>;
   totalResults$: Observable<number>;
-  templateCatalog$ = this.http
-    .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getTemplates`)
-    .pipe(shareReplay(1));
+  templateCatalog$: Observable<CatalogItem[]>;
 
-  private defaultLanguage =
-    this.globalConfig.i18n.i18nService.defaultLanguage.toUpperCase();
+  private defaultLanguage: string;
   private userLang: string;
   private filtersBS = new BehaviorSubject<ProposalFilter>(initialFilters);
   private sortOrderBS = new BehaviorSubject(DEFAULT_SORT_ORDER);
@@ -131,9 +129,15 @@ export class ProposalService {
     @Inject(GLOBAL_CONFIG_TOKEN) protected globalConfig: GlobalConfig,
     private i18nService: I18nService,
   ) {
+    this.defaultLanguage =
+      this.globalConfig.i18n.i18nService.defaultLanguage.toUpperCase();
     i18nService.getState().subscribe((state) => {
       this.userLang = state.activeLang.toUpperCase();
     });
+    this.templateCatalog$ = this.http
+      .get<GetTemplatesResponse>(`${apiBaseUrl}/secured/getTemplates`)
+      .pipe(shareReplay(1));
+
     this.filters$ = this.filtersBS.pipe(
       distinctUntilChanged(ProposalService.eqFilters),
     );

@@ -13,7 +13,8 @@ import {
 import { EuiBreadcrumbService } from '@eui/components/layout';
 import { ProcedureType } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
-import { combineLatest, distinctUntilChanged, map, take } from 'rxjs';
+import { Document } from '@/shared/models/document.model';
+import {combineLatest, distinctUntilChanged, map, Observable, take} from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 
@@ -42,11 +43,11 @@ type ProposalsState = {
 })
 export class ProposalsComponent implements OnInit, AfterViewInit {
   isFilterCollapsed = false;
-  filters$ = this.proposalService.filters$;
-  page$ = this.proposalService.page$;
-  limit$ = this.proposalService.limit$;
-  proposals$ = this.proposalService.proposals$;
-  totalResults$ = this.proposalService.totalResults$;
+  filters$: Observable<ProposalFilter>;
+  page$: Observable<number>;
+  limit$: Observable<number>;
+  proposals$: Observable<Document[]>;
+  totalResults$: Observable<number>;
   sortOrder = DEFAULT_SORT_ORDER;
   canCreateDraft = false;
   canCreateMandate = false;
@@ -67,7 +68,13 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
     private appConfig: AppConfigService,
     public breadcrumbService: EuiBreadcrumbService,
     public translateService: TranslateService,
-  ) {}
+  ) {
+    this.filters$ = this.proposalService.filters$;
+    this.page$ = this.proposalService.page$;
+    this.limit$ = this.proposalService.limit$;
+    this.proposals$ = this.proposalService.proposals$;
+    this.totalResults$ = this.proposalService.totalResults$;
+  }
 
   ngAfterViewInit(): void {
     // Sync service.page$ -> paginator

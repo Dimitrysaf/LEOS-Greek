@@ -47,7 +47,7 @@
   },
   "private": true,
   "dependencies": {
-    "@eui/deps-base": "14.0.7",
+    "@eui/deps-base": "14.0.12",
     "@ngx-env/core": "^15.0.1",
     "content-disposition-attachment": "0.3.1",
     "net": "^1.0.2",
