@@ -11,6 +11,15 @@
     [originRef]="originRef"
     class="eui-u-ml-s"
   ></app-proposal-actions-dropdown>
+  <button
+    class="eui-u-ml-s"
+    euiButton
+    euiSizeS
+    euiPrimary
+    translate="global.actions.close"
+    *ngIf="collectionCloseButtonEnabled"
+    (click)="handleClose()"
+  ></button>
 </header>
 <header
   *ngIf="isClonedProposal"
