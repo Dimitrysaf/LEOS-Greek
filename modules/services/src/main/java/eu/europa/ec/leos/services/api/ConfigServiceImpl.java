@@ -65,6 +65,7 @@ public class ConfigServiceImpl implements ConfigService {
         String annotateHostUrl = applicationProperties.getProperty("annotate.server.url");
         String annotateJwtIssuerClientId = applicationProperties.getProperty("annotate.jwt.issuer.client.id");
         String annotatePopupDefaultStatus = applicationProperties.getProperty("annotate.popup.default.status");
+        boolean collectionCloseButtonEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.collection.close.button.enabled"));
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -84,6 +85,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setAnnotateHostUrl(annotateHostUrl);
         appConfigResponse.setAnnotateJwtIssuerClientId(annotateJwtIssuerClientId);
         appConfigResponse.setAnnotatePopupDefaultStatus(annotatePopupDefaultStatus);
+        appConfigResponse.setCollectionCloseButtonEnabled(collectionCloseButtonEnabled);
 
         return appConfigResponse;
     }
