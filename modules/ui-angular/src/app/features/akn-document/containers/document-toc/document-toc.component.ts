@@ -22,7 +22,7 @@ import {
   BehaviorSubject,
   debounceTime,
   distinctUntilChanged,
-  filter,
+  filter, Observable,
   Subject,
   take,
   takeUntil,
@@ -127,11 +127,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   private resizeObserver: ResizeObserver;
   private cancelPendingPersistTreeHeight: () => void;
   private destroy$: Subject<any> = new Subject();
-  private zoneOnStable$ = this.zone.onStable.pipe(
-    takeUntil(this.destroy$),
-    debounceTime(100),
-    take(1),
-  );
+  private zoneOnStable$: Observable<any>;
 
   constructor(
     private documentService: DocumentService,
@@ -144,6 +140,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     @Inject(DOCUMENT) private document: Document,
     private zone: NgZone,
   ) {
+    this.zoneOnStable$ = this.zone.onStable.pipe(
+      takeUntil(this.destroy$),
+      debounceTime(100),
+      take(1),
+    );
     this.treeControl = new NestedTreeControl<TableOfContentItemVO>(
       this.getChildren,
     );

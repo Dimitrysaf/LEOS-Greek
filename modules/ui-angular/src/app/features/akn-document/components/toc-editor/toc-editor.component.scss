@@ -3,12 +3,12 @@
 }
 
 .toc-editor-label {
-  font-size: var(--eui-base-font-size-s);
+  font-size: var(--eui-base-font-size-s) !important;
 }
 
 .toc-editor-input {
-  font-size: var(--eui-base-font-size-s);
-  padding: 0.3rem;
+  font-size: var(--eui-base-font-size-s) !important;
+  padding: 0;
 }
 
 .card-header-title {

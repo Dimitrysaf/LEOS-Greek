@@ -14,12 +14,13 @@ import { ImportConnector } from './import-connector';
 export class ImportManager {
   count$: Observable<number>;
 
-  private connector = this.createConnector();
+  private connector: ImportConnector;
   private destroy$ = new Subject<void>();
   private selectedElementsCb = new Set<(elementIds: string[]) => void>();
   private countSubj = new BehaviorSubject(0);
 
   constructor(private leos: LeosLegacyService, private parentElement: Element) {
+    this.connector = this.createConnector();
     this.count$ = this.countSubj.asObservable();
     this.getImportExtension().subscribe((importExtension) => {
       importExtension.init(this.connector);

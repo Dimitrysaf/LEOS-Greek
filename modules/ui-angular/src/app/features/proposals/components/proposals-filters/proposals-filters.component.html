@@ -3,7 +3,7 @@
     <!-- Search Title Row -->
 
     <div class="filters-search-input eui-u-shadow-z-depth-0 eui-u-pb-xs">
-      <div euiInputGroup class="row">
+      <div euiInputGroup class="eui-u-mv-none row">
         <div class="col-md-3">
           <label
             euiLabel
@@ -48,13 +48,12 @@
         >
           <input
             euiInputCheckBox
-            class="eui-u-display-hidden"
             [id]="filterOption.id"
             [name]="filterOption.fieldName"
             [formControlName]="filterOption.fieldName"
           />
           <label
-            class="align-items-start"
+            class="eui-u-mv-none align-items-start"
             [for]="filterOption.id"
             [euiTooltip]="filterOption.tooltip"
             [position]="

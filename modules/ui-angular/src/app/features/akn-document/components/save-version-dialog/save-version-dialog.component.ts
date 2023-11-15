@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators, ɵElement} from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 
 import { DocumentService } from '@/shared/services/document.service';
@@ -13,10 +13,12 @@ import { noWhitespaceValidator } from '@/shared/utils/validators';
 export class SaveVersionDialogComponent implements OnInit {
   @ViewChild('dialog') dialog: EuiDialogComponent;
 
-  protected form = this.createFormGroup();
+  protected form: FormGroup<{ [K in keyof { description: FormControl<string | null>; title: FormControl<string | null> }]: ɵElement<{ description: FormControl<string | null>; title: FormControl<string | null> }[K], null> }>;
   protected dialogOpen = false;
 
-  constructor(private formBuilder: FormBuilder, private doc: DocumentService) {}
+  constructor(private formBuilder: FormBuilder, private doc: DocumentService) {
+    this.form = this.createFormGroup();
+  }
 
   ngOnInit() {}
 
