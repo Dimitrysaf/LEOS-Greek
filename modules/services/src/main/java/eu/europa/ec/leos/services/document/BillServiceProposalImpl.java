@@ -31,6 +31,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +46,12 @@ public class BillServiceProposalImpl extends BillServiceImpl {
     @Autowired
     BillServiceProposalImpl(BillRepository billRepository, PackageRepository packageRepository,
                             XmlNodeProcessor xmlNodeProcessor, XmlContentProcessor xmlContentProcessor,
-                            XmlNodeConfigProcessor xmlNodeConfigProcessor, AttachmentProcessor attachmentProcessor,
-                            ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
+                            XmlDocumentService xmlDocumentService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
+                            AttachmentProcessor attachmentProcessor, ValidationService validationService,
+                            DocumentVOProvider documentVOProvider, NumberService numberService,
                             MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
                             XPathCatalog xPathCatalog) {
-        super(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor,xmlNodeConfigProcessor,
+        super(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, xmlNodeConfigProcessor,
                 attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper, tableOfContentProcessor,
                 xPathCatalog);
     }

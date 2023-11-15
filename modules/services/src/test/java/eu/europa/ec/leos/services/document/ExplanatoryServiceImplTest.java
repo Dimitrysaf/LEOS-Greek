@@ -18,6 +18,7 @@ import java.util.Map;
 
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -57,6 +58,8 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 	@Mock
 	private XmlContentProcessor xmlContentProcessor;
 	@Mock
+	private XmlDocumentService xmlDocumentService;
+	@Mock
 	private NumberService numberService;
 	@Mock
 	private XmlNodeConfigProcessor xmlNodeConfigProcessor;
@@ -83,7 +86,7 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 		explanatoryRepository = new ExplanatoryRepositoryImpl(leosRepository);
 		
 		explanatoryService = new ExplanatoryServiceImpl(explanatoryRepository, 
-				packageRepository, xmlNodeProcessor, xmlContentProcessor, numberService, 
+				packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, numberService,
 				xmlNodeConfigProcessor, validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog);
 	}
 	

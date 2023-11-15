@@ -4,6 +4,6 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 
 public interface XmlDocumentService {
     
-    boolean updateInternalReferences(XmlDocument xmlDocument) throws Exception;
+    XmlDocument updateInternalReferences(XmlDocument xmlDocument) throws Exception;
     
 }
