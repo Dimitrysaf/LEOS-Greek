@@ -359,7 +359,7 @@ define(function actionManagerExtensionModule(require) {
             };
             var topic = "actions." + action + ".element";
             if (action == 'edit') {
-                if (_elementUnderEditionExists(connector) && connector.getState().isAngularUI) {
+                if (connector.getState().isAngularUI && _elementUnderEditionExists(connector)) {
                     return;
                 }
                 var id = setInterval(function() {
