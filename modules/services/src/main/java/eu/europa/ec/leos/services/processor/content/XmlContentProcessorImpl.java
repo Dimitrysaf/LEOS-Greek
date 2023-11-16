@@ -55,11 +55,13 @@ import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -113,7 +115,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     public static final String NBSP = "\u00a0";
     public static final String[] NUMBERED_AND_LEVEL_ITEMS = {PARAGRAPH, POINT, LEVEL, INDENT};
-
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX").withZone(ZoneId.systemDefault());
     @Autowired
     private CloneContext cloneContext;
     @Autowired
@@ -1244,7 +1246,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public byte[] replaceTextInElement(byte[] xmlContent, String origText, String newText, String elementId, int startOffset, int endOffset) {
+    public byte[] replaceTextInElement(byte[] xmlContent, String origText, String newText, String elementId, int startOffset, int endOffset, boolean isTrackChangesEnabled) {
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getElementById(document, elementId);
         byte[] newElement = null;
@@ -1256,7 +1258,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             if (matchingText.equals(origText)
                     || matchingText.replace(NON_BREAKING_SPACE, WHITESPACE).equals(escapeXml10(origText.replace(NON_BREAKING_SPACE, WHITESPACE)))
                     || normalizeSpace(matchingText).replace(NON_BREAKING_SPACE, WHITESPACE).equals(escapeXml10(origText.replace(NON_BREAKING_SPACE, WHITESPACE)))) {
-                eltContent.replace(result.middle, result.right, escapeXml10(normalizeNewText(origText, newText)));
+                String newElements;
+                if (isTrackChangesEnabled){
+                    newElements = generateTrackChangesText(origText, newText, node);
+                }else{
+                    newElements = escapeXml10(normalizeNewText(origText, newText));
+                }
+                eltContent.replace(result.middle, result.right, newElements);
                 Node newNode = XercesUtils.createNodeFromXmlFragment(document, eltContent.toString().getBytes(UTF_8), false);
                 XercesUtils.replaceElement(newNode, node);
                 newElement = nodeToByteArray(document);
@@ -1265,6 +1273,49 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
         }
         return newElement;
+    }
+
+    private String generateTrackChangesText(String origText, String newText, Node node) {
+        String userLogin = null;
+        String userName = null;
+        User user = securityContext != null && securityContext.hasAuthenticationInContext() ? securityContext.getUser() : null;
+        if (user != null){
+            userLogin = user.getLogin();
+            userName = user.getName();
+        }
+
+        String parentId = XercesUtils.getId(node.getParentNode());
+        String prefixId = "akn";
+        if (StringUtils.isNotEmpty(parentId)) {
+            int indexOfUnderline = parentId.lastIndexOf("_");
+            int indexForSearch = indexOfUnderline > 0 ? indexOfUnderline : parentId.length() - 1;
+            prefixId = parentId.substring(0, indexForSearch) ;
+        }
+        String uid = "";
+        String title = "";
+        if(userLogin != null && userName!= null) {
+             uid =  new StringBuilder(" leos:uid=\"").append(userLogin).append("\"").toString();
+             title =   new StringBuilder(" leos:title=\"").append(userName).append(" : ")
+                    .append(DATE_FORMAT.format(new Date().toInstant())).append("\"").toString();
+        }
+
+        String elementToAdd = new StringBuilder("<del ") //delete tag added
+                .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append("\"") //id
+                .append(uid)
+                .append(title)
+                .append(">")
+                .append(escapeXml10(normalizeSpace(origText)))
+                .append("</del>")
+                // insert tag added
+                .append("<ins ")
+                .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append("\"") //id
+                .append(uid)
+                .append(title)
+                .append(">")
+                .append(escapeXml10(normalizeSpace(newText)))
+                .append("</ins>").toString();
+        LOG.info("Element to add {}", elementToAdd);
+        return elementToAdd;
     }
 
     @Override

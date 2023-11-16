@@ -278,7 +278,7 @@ define(function annotateExtensionModule(require) {
             "ignoredTags": ["div"],
             "allowedSelectorTags": "a.ref2link-generated, span.leos-content-soft-new",
             "editableSelector": "[leos\\:editable=true],article,heading,recitals,citations,level,paragraph,coverpage docpurpose",
-            "notAllowedSuggestSelector": "num:not([leos\\:origin='cn']), guidance, heading:contains('Entry into force'), [leos\\:editable=false]",
+            "notAllowedSuggestSelector": "num:not([leos\\:origin='cn']), guidance, del, heading:contains('Entry into force'), [leos\\:editable=false]",
             "displayMetadataCondition": {"ISCReference": "Consultation Reference", "responseVersion": "Response Version", "responseId": "Consulted Unit"},
             "oauthClientId": `${annotateState.oauthClientId}`,
             "assetRoot": `${annotateState.anotClient}`,

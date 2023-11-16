@@ -172,7 +172,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
         Validate.notNull(newText, "New Text is required");
         
         byte[] byteXmlContent = getContent(document);
-        byteXmlContent = xmlContentProcessor.replaceTextInElement(byteXmlContent, origText, newText, elementId, startOffset, endOffset);
+        byteXmlContent = xmlContentProcessor.replaceTextInElement(byteXmlContent, origText, newText, elementId, startOffset, endOffset, document.isTrackChangesEnabled());
         return byteXmlContent;
     }
 

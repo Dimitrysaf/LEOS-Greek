@@ -488,7 +488,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 "<p xml:id=\"ElementId\">This is an example <i xml:id=\"testEltId\">of the replacement</i> text</p>" +
                 "</bill>";
 
-        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xmlContent.getBytes(), origText, newText, eltId, start, end);
+        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xmlContent.getBytes(), origText, newText, eltId, start, end, false);
 
         // Then
         assertEquals(squeezeXmlAndRemoveAllNS(expectedXmlContent), squeezeXmlAndRemoveAllNS(new String(result, UTF_8)));
@@ -506,7 +506,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         int start = 0;
         int end = 7;
 
-        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xml, origText, newText, eltId, start, end);
+        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xml, origText, newText, eltId, start, end, false);
 
         // Then
         assertNotNull(result);
@@ -525,7 +525,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         int start = 76;
         int end = 81;
 
-        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xml, origText, newText, eltId, start, end);
+        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xml, origText, newText, eltId, start, end, false);
 
         // Then
         assertNotNull(result);
@@ -544,7 +544,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         int start = 80;
         int end = 85;
 
-        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xml, origText, newText, eltId, start, end);
+        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xml, origText, newText, eltId, start, end, false);
 
         // Then
         assertNotNull(result);
@@ -566,7 +566,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                 "<p xml:id=\"cit_5__p\">Having regard to the opinion of the Committee of the Countries<authorialNote marker=\"1\" placement=\"bottom\" xml:id=\"authorialnote_2\"><p xml:id=\"authorialNote_2__p\">OJ C [...], [...], p. [...]</p></authorialNote>,</p>" +
                 "</bill>";
 
-        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xmlContent.getBytes(), origText, newText, eltId, start, end);
+        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xmlContent.getBytes(), origText, newText, eltId, start, end, false);
 
         // Then
         assertEquals(squeezeXmlAndRemoveAllNS(expectedXmlContent), squeezeXmlAndRemoveAllNS(new String(result, UTF_8)));
@@ -583,7 +583,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         int start = 32;
         int end = 60;
 
-        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xmlContent.getBytes(), origText, newText, eltId, start, end);
+        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xmlContent.getBytes(), origText, newText, eltId, start, end, false);
 
         // Then
         assertNull(result);
@@ -600,7 +600,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         int start = 32;
         int end = 60;
 
-        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xmlContent.getBytes(), origText, newText, eltId, start, end);
+        byte[] result = xercesXmlContentProcessor.replaceTextInElement(xmlContent.getBytes(), origText, newText, eltId, start, end, false);
 
         // Then
         assertTrue(result == null);

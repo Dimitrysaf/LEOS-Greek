@@ -152,7 +152,7 @@ public interface XmlContentProcessor {
      * @param endOffset
      * @return: On success returns updated content. On failure throws exception.
      */
-    byte[] replaceTextInElement(byte[] xmlContent, String origText, String newText, String elementId, int startOffset, int endOffset);
+    byte[] replaceTextInElement(byte[] xmlContent, String origText, String newText, String elementId, int startOffset, int endOffset, boolean isTrackChangesEnabled);
 
     /**
      * adding and attribute {@param attributeName} on all children of an XML element {@param parentTag}.
