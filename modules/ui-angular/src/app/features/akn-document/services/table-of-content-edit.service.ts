@@ -308,12 +308,15 @@ export abstract class TableOfContentEditService {
         targetItem.tocItem.numberingType.toUpperCase(),
       ].join('_');
       const targetTocAllowedItems = this.documentConfig.tocRules[targetRules];
+      if (actualTargetItem.tocItem.aknTag !== targetItem.tocItem.aknTag && position === 'AS_CHILDREN'
+        && !(targetTocAllowedItems != null && targetTocAllowedItems.find(i => i.aknTag === sourceItem.tocItem.aknTag))) {
+        position = 'AFTER';
+      }
       if ((LEVEL === targetItem.tocItem.aknTag &&
           LEVEL !== sourceItem.tocItem.aknTag &&
           targetTocAllowedItems != null &&
           targetTocAllowedItems.length > 0 &&
-          targetTocAllowedItems.includes(sourceItem.tocItem)) ||
-        [PART, TITLE, CHAPTER, SECTION].includes(targetItem.tocItem.aknTag)) {
+          targetTocAllowedItems.includes(sourceItem.tocItem))) {
         /*
          * This if is when we add level as child or after a Part, Title, Chapter or Section,
          * because in this case the actualTargetItem is equal to targetItem, and we need to set
