@@ -54,6 +54,10 @@ define(function hierarchicalElementTransformer(require) {
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
     var DATA_AKN_ACTION_ENTER = "data-akn-action-enter";
     var DATA_AKN_RENUMBER_ORIGIN = "data-akn-renumber-origin";
+    var LEOS_ID_TO_BE_REMOVED = "leos:id-to-be-removed";
+    var LEOS_ID_TO_BE_RESTORED = "leos:id-to-be-restored";
+    var DATA_AKN_ID_TO_BE_REMOVED = "data-akn-id-to-be-removed";
+    var DATA_AKN_ID_TO_BE_RESTORED = "data-akn-id-to-be-restored";
     var LEOS_ACTION_ENTER = "leos:action-enter";
     var LEOS_UID_ENTER = "leos:uid-enter";
     var LEOS_TITLE_ENTER = "leos:title-enter";
@@ -1261,6 +1265,14 @@ define(function hierarchicalElementTransformer(require) {
                                                 from: DATA_AKN_RENUMBER_ORIGIN,
                                                 to: LEOS_RENUMBER_ORIGIN,
                                                 action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_ID_TO_BE_REMOVED,
+                                                to: LEOS_ID_TO_BE_REMOVED,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_ID_TO_BE_RESTORED,
+                                                to: LEOS_ID_TO_BE_RESTORED,
+                                                action: "passAttributeTransformer"
                                             }]
                                         }, {
                                             toPath: [rootsElementsPathForFrom, "num"].join("/"),
@@ -1403,6 +1415,14 @@ define(function hierarchicalElementTransformer(require) {
                                             }, {
                                                 from: DATA_AKN_RENUMBER_ORIGIN,
                                                 to: LEOS_RENUMBER_ORIGIN,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_ID_TO_BE_REMOVED,
+                                                to: LEOS_ID_TO_BE_REMOVED,
+                                                action: "passAttributeTransformer"
+                                            }, {
+                                                from: DATA_AKN_ID_TO_BE_RESTORED,
+                                                to: LEOS_ID_TO_BE_RESTORED,
                                                 action: "passAttributeTransformer"
                                             }]
                                         }, {

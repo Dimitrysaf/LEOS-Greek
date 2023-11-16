@@ -67,6 +67,14 @@ public class NumberConfigRoman extends NumberConfigAbstract implements NumberCon
         setValue(num);
     }
 
+    public int getNumberIndex(String numAsString) {
+        return romanToInteger(numAsString.replace(this.prefix, "").replace(this.suffix, ""));
+    }
+
+    public String getNumberFromIndex(int index) {
+        return this.prefix + getRoman(index) + this.suffix;
+    }
+
     public static int romanToInteger(String roman) {
         roman = roman.toUpperCase();
         Map<Character, Integer> numbersMap = new HashMap<>();

@@ -9,6 +9,9 @@ public interface NumberConfig {
     void setValue(int value);
     void parseInitialValue(String numAsString);
 
+    int getNumberIndex(String numAsString);
+    String getNumberFromIndex(int index);
+
     String getPrefix();
     String getSuffix();
 

@@ -34,6 +34,14 @@ public class NumberConfigArabic extends NumberConfigAbstract implements NumberCo
         setValue(num);
     }
 
+    public int getNumberIndex(String numAsString) {
+        return stringToInteger(numAsString.replace(this.prefix, "").replace(this.suffix, ""));
+    }
+
+    public String getNumberFromIndex(int index) {
+        return this.prefix + index + this.suffix;
+    }
+
     public int stringToInteger(String numAsString) {
         int num;
         try {
