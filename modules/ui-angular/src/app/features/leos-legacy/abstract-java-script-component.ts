@@ -43,7 +43,7 @@ export abstract class AbstractJavaScriptComponent<
     AbstractJavaScriptComponent._instances.add(this);
   }
 
-  private _parentId = `${++parentIdCounter}}`;
+  private _parentId = `${++parentIdCounter}`;
 
   private _stateChanged = debounce(
     () => this.onStateChange?.(this, 'onStateChange'),
@@ -56,7 +56,7 @@ export abstract class AbstractJavaScriptComponent<
   // getConnectorId(): string; // unused
 
   getParentId(connectorId?: string) {
-    console.warn('stub:', 'getParentId', connectorId); // FIXME
+    //console.warn('stub:', 'getParentId', connectorId); // FIXME
     return this._parentId;
   }
 
