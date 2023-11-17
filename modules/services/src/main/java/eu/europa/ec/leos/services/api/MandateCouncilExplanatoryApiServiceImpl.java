@@ -84,6 +84,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
+import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
+import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
+import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
+import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
+import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
+import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 
 @Service("mandateExplanatoryService")
 @Instance(InstanceType.COUNCIL)
@@ -240,6 +247,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         ExplanatoryStructureType structureType = getStructureType(structureContext1);
+        setBlockOrCrossHeading(toc);
         Explanatory updatedAnnex = explanatoryService.saveTableOfContent(explanatory, toc, structureType, messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
         return this.explanatoryService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
     }
@@ -293,8 +301,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         boolean isClonedProposal = proposal.isClonedProposal();
 
         try {
-            String aknTagName = elementTagName.equalsIgnoreCase("cross_heading") ? "crossHeading" : elementTagName;
-            String element = this.elementProcessor.getElement(explanatory, aknTagName, elementId);
+            String element = this.elementProcessor.getElement(explanatory, elementTagName, elementId);
             return new EditElementResponse(user, permissions,
                     elementId, elementTagName, element, jsonAlternatives, isClonedProposal);
         } catch (Exception ex) {
@@ -483,5 +490,43 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(explanatory.getMetadata().get().getRef(),
                 TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, ctxt.getNumberingConfigs());
+    }
+
+    private void setBlockOrCrossHeading(List<TableOfContentItemVO> toc) {
+        for(TableOfContentItemVO tocVO : toc) {
+            setBlockOrCrossHeading(tocVO);
+            if(tocVO.getChildItems() != null) {
+                setBlockOrCrossHeading(tocVO.getChildItems());
+            }
+        }
+    }
+
+    private void setBlockOrCrossHeading(TableOfContentItemVO sourceItem) {
+        boolean iscrossHeading = getTagValueFromTocItemVo(sourceItem).equalsIgnoreCase(CROSSHEADING) || getTagValueFromTocItemVo(sourceItem).equalsIgnoreCase(BLOCK);
+        if (iscrossHeading && MAIN_BODY.equals(sourceItem.getParentItem().getTocItem().getAknTag().value())) {
+            sourceItem.setBlock(true);
+        } else if (iscrossHeading) {
+            sourceItem.setCrossHeading(true);
+        }
+        if (iscrossHeading && isInList(sourceItem)) {
+            sourceItem.setCrossHeadingInList(true);
+        }
+    }
+
+    private boolean isInList(TableOfContentItemVO sourceItem) {
+        TableOfContentItemVO parent = sourceItem.getParentItem();
+        if (parent != null) {
+            if (getTagValueFromTocItemVo(parent).equalsIgnoreCase(LIST)) {
+                return true;
+            }
+            for (TableOfContentItemVO item : parent.getChildItemsView()) {
+                if (getTagValueFromTocItemVo(item).equalsIgnoreCase(POINT)
+                        || getTagValueFromTocItemVo(item).equalsIgnoreCase(INDENT)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
