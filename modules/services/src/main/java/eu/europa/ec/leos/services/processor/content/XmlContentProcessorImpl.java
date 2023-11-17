@@ -116,6 +116,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public static final String NBSP = "\u00a0";
     public static final String[] NUMBERED_AND_LEVEL_ITEMS = {PARAGRAPH, POINT, LEVEL, INDENT};
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX").withZone(ZoneId.systemDefault());
+    private static final String INSERT_TAG = "ins";
     @Autowired
     private CloneContext cloneContext;
     @Autowired
@@ -1259,7 +1260,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     || matchingText.replace(NON_BREAKING_SPACE, WHITESPACE).equals(escapeXml10(origText.replace(NON_BREAKING_SPACE, WHITESPACE)))
                     || normalizeSpace(matchingText).replace(NON_BREAKING_SPACE, WHITESPACE).equals(escapeXml10(origText.replace(NON_BREAKING_SPACE, WHITESPACE)))) {
                 String newElements;
-                if (isTrackChangesEnabled){
+                if (isTrackChangesEnabled && !INSERT_TAG.equalsIgnoreCase(node.getNodeName())){
                     newElements = generateTrackChangesText(origText, newText, node);
                 }else{
                     newElements = escapeXml10(normalizeNewText(origText, newText));
