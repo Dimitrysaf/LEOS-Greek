@@ -232,6 +232,7 @@ define(function leosTrackChangesPluginModule(require) {
                     var el = range && range.startContainer;
                     if (el) {
                         core.addTrackChangesAttributesForEnter(editor, el, core.INSERT_ACTION);
+                        el.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
                     }
                 }
             });
@@ -260,6 +261,7 @@ define(function leosTrackChangesPluginModule(require) {
                         } else {
                             elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, core.UNNUMBERED);
                         }
+                        elementToSetAttribute.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
                         editor.fire("change");
                     }
                 }
@@ -457,23 +459,28 @@ define(function leosTrackChangesPluginModule(require) {
                         range.select();
                         editor.fire("change");
                         return false;
+                    case "indent":
+                    case "outdent":
+                        selectedElement = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
                 }
             });
 
             editor.on('afterCommandExec', function(event) {
-                if (event.data.name === 'enter') {
-                    var elementToRemoveAttribute = event.editor.getSelection().getStartElement();
-                    if (elementToRemoveAttribute.type === CKEDITOR.NODE_TEXT) { elementToRemoveAttribute = elementToRemoveAttribute.getParent() }
-                    while (elementToRemoveAttribute.getName() !== 'li' && elementToRemoveAttribute.getParent()) {
-                        elementToRemoveAttribute = elementToRemoveAttribute.getParent();
-                    };
-                    if (elementToRemoveAttribute.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                switch (event.data.name) {
+                    case "enter":
+                        var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                    }
-                    if (elementToRemoveAttribute.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
-                    }
-                    event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                        event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                        break;
+                    case "indent":
+                    case "outdent":
+                        var selectedElementAfterCommand = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
+                        if (selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== selectedElementAfterCommand.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                            // Indent or outdent operation performed
+                            selectedElementAfterCommand.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
+                        }
+                        break;
                 }
             }, null, null, 15);
 
