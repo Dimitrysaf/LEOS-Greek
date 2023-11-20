@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.services.Annotate;
+package eu.europa.ec.leos.services.annotate;
 
 import java.net.URI;
 import java.util.List;

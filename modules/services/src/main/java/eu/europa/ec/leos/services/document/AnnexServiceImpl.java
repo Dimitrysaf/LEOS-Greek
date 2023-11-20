@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.annex.AnnexStructureType;
+import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.AnnexRepository;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
@@ -105,17 +106,24 @@ public abstract class AnnexServiceImpl implements AnnexService {
         return annexRepository.findAnnexById(id, Annex.class, false);
     }
 
+    private Annex updateInternalReferencesAsync(Annex annex) {
+        try {
+            xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(annex.getId(),
+                    annex.getMetadata().get().getRef()));
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
+        //fetch updated version
+        return findAnnexByRef(annex.getMetadata().get().getRef());
+    }
+
     @Override
     public Annex updateAnnex(Annex annex, byte[] updatedAnnexContent, VersionType versionType, String comment) {
         LOG.trace("Updating Annex Xml Content... [id={}]", annex.getId());
 
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, versionType, comment);
-        try {
-            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
+        annex = updateInternalReferencesAsync(annex);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedAnnexContent));
 
@@ -140,12 +148,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
 
     private Annex updateAnnex(Annex annex, AnnexMetadata updatedMetadata, byte[] updatedBytes, VersionType versionType, String comment, Stopwatch stopwatch) {
         annex = annexRepository.updateAnnex(annex.getId(), updatedMetadata, updatedBytes, versionType, comment);
-        try {
-            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
+        annex = updateInternalReferencesAsync(annex);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(annex, updatedBytes));
 
@@ -158,12 +161,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex... [id={}, updatedMetadata={} , comment={}]", annex.getId(), updatedAnnexContent, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         annex = annexRepository.updateAnnex(annex.getId(), updatedAnnexContent, VersionType.MINOR, comment);
-        try {
-            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
+        annex = updateInternalReferencesAsync(annex);
         LOG.trace("Updated Annex ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return annex;
     }
@@ -172,26 +170,14 @@ public abstract class AnnexServiceImpl implements AnnexService {
     public Annex updateAnnex(String id, byte[] updatedAnnexContent) {
         LOG.trace("Updating Annex content ... [id={}]", id);
         Annex annex = annexRepository.updateAnnex(id, updatedAnnexContent, VersionType.MINOR, "Content updated.");
-        try {
-            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
-        return annex;
+        return updateInternalReferencesAsync(annex);
     }
 
     @Override
     public Annex updateAnnex(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Annex metadata properties... [id={}]", id);
         Annex annex = annexRepository.updateAnnex(ref, id, properties, latest);
-        try {
-            annex = (Annex) xmlDocumentService.updateInternalReferences(annex);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
-        return annex;
+        return updateInternalReferencesAsync(annex);
     }
 
     @Override
