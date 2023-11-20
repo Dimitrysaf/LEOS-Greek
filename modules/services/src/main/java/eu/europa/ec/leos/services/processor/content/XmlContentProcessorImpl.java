@@ -1818,7 +1818,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     XercesUtils.getParentId(node), documentNode, attr, sourceDocumentRef);
             if (labelResult != null && labelResult.isOk()) {
                 XercesUtils.addAttribute(node, LEOS_SOFT_MOVED_LABEL_ATTR, labelResult.get());
-                addTrackChangeAttributes(node, attr);
+                if (!Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE).contains(node.getNodeName())) {
+                    addTrackChangeAttributes(node, attr);
+                }
                 createMoveInfoTitle(node);
             }
         }

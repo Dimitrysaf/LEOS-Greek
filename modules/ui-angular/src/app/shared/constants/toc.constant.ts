@@ -9,6 +9,7 @@ export const DELETE = 'DELETE';
 export const UNDELETE = 'UNDELETE';
 export const LEOS_TC_INSERT_ACTION = 'insert';
 export const LEOS_TC_DELETE_ACTION = 'delete';
+export const LEOS_TC_MOVE_ACTION = 'move';
 export const LS = 'ls';
 export const EC = 'ec';
 export const CN = 'cn';
