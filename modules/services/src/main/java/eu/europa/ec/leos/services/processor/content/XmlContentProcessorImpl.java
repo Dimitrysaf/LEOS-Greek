@@ -753,6 +753,19 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return null;
     }
 
+    public byte[] removeAttributeForAllChildren(byte[] xmlContent, String parentTag, List<String> elementTags, String attributeName) {
+        Document document = createXercesDocument(xmlContent);
+        NodeList nodeList = XercesUtils.getElementsByName(document, parentTag);
+        for (int nodeIndex = 0; nodeIndex < nodeList.getLength(); nodeIndex++) {
+            Node node = nodeList.item(nodeIndex);
+            List<Node> children = getChildren(node);
+            for (int childIndex = 0; childIndex < children.size(); childIndex++) {
+                removeAttributeFromNode(children.get(childIndex), elementTags, attributeName);
+            }
+        }
+        return nodeToByteArray(document);
+    }
+
     @Override
     public byte[] setAttributeForAllChildren(byte[] xmlContent, String parentTag, List<String> elementTags, String attributeName, String value) {
         Document document = createXercesDocument(xmlContent);
@@ -765,6 +778,22 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
         }
         return nodeToByteArray(document);
+    }
+
+    private static void removeAttributeFromNode(Node node, List<String> elementTags, String attrName) {
+        String tagName = node.getNodeName();
+        if (tagName.equals(META)) {
+            return;
+        }
+
+        if (elementTags.contains(tagName) || elementTags.isEmpty()) {
+            XercesUtils.removeAttribute(node, attrName);
+        }
+
+        List<Node> children = getChildren(node);
+        for (int i = 0; i < children.size(); i++) {
+            removeAttributeFromNode(children.get(i), elementTags, attrName);
+        }
     }
 
     private static void setAttribute(Node node, List<String> elementTags, String attrName, String attrValue) {

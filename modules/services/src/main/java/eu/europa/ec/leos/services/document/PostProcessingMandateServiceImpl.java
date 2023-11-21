@@ -25,6 +25,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATIONS;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.EC;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
+import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
 
 @Service
@@ -58,6 +60,7 @@ public class PostProcessingMandateServiceImpl extends PostProcessingDocumentServ
                             for (DocumentVO annex : doc.getChildDocuments()) {
                                 byte[] annexContent = annex.getSource();
                                 byte[] updatedDocContentAnnex = xmlContentProcessor.setAttributeForAllChildren(annexContent, DOC, Collections.emptyList(), LEOS_ORIGIN_ATTR, EC);
+                                updatedDocContentAnnex = xmlContentProcessor.removeAttributeForAllChildren(updatedDocContentAnnex, LEVEL, Arrays.asList(NUM), LEOS_EDITABLE_ATTR);
                                 updatedDocContentAnnex = preserveDocumentReference(updatedDocContentAnnex);
                                 annex.setSource(updatedDocContentAnnex);
                             }
