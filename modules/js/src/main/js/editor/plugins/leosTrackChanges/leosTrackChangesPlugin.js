@@ -489,7 +489,7 @@ define(function leosTrackChangesPluginModule(require) {
                                 } else {
                                     selectedElementAfterCommand.removeAttribute(core.DATA_AKN_SOFTACTION_ROOT);
                                     selectedElementAfterCommand.removeAttribute(core.DATA_AKN_TC_INDENT_LEVEL);
-                                    var childElementTracked = element.findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
+                                    //var childElementTracked = element.findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
                                 }
                             }
                         }
