@@ -552,7 +552,7 @@ define(function leosTrackChangesModule(require) {
                 core.removeSoftAttributes(element);
                 element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
                 if (!element.getAttribute(leosPluginUtils.ID)) {
-                    element.setAttribute(leosPluginUtils.ID, "temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                    element.setAttribute(leosPluginUtils.ID, "_temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
                 }
                 if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
@@ -567,7 +567,7 @@ define(function leosTrackChangesModule(require) {
                     core.removeSoftAttributes(element);
                     element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
                     if (!element.getAttribute(leosPluginUtils.ID)) {
-                        element.setAttribute(leosPluginUtils.ID, "temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                        element.setAttribute(leosPluginUtils.ID, "_temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
                     }
                     element = element.findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
                 } while (element);
