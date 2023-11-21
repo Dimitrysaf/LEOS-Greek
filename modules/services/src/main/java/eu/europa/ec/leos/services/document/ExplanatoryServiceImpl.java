@@ -135,7 +135,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         }
         LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
         //fetch updated version
-        return findExplanatoryByRef(explanatory.getMetadata().get().getRef());
+        return findExplanatory(explanatory.getId());
     }
 
     @Override

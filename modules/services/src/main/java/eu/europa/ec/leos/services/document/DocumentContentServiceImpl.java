@@ -589,6 +589,6 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         }
         LOG.debug("updateInternalReferences processed for {}: ", document.getMetadata().get().getRef());
         //fetch updated version
-        return getDocumentByRef(document.getMetadata().get().getRef(), category);
+        return getDocumentById(document.getId(), category);
     }
 }
