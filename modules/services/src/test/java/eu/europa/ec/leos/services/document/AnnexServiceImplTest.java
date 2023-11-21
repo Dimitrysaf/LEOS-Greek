@@ -99,7 +99,7 @@ public class AnnexServiceImplTest extends LeosTest {
     public void test_updateBaseVersionId() throws Exception {
         Annex mockedAnnex = getMockedAnnexWithBaseVersionId();
         when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(mockedAnnex);
-        when(annexService.findAnnexByRef(mockedAnnex.getMetadata().get().getRef())).thenReturn(mockedAnnex);
+        when(annexService.findAnnex(mockedAnnex.getId(), true)).thenReturn(mockedAnnex);
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), baseVersionId);
         Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);
@@ -110,7 +110,7 @@ public class AnnexServiceImplTest extends LeosTest {
     public void test_enableLiveDiffing() throws Exception {
         Annex mockedAnnex = getMockedAnnexWithLiveDiffing();
         when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(mockedAnnex);
-        when(annexService.findAnnexByRef(mockedAnnex.getMetadata().get().getRef())).thenReturn(mockedAnnex);
+        when(annexService.findAnnex(mockedAnnex.getId(), true)).thenReturn(mockedAnnex);
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), true);
         Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);
@@ -121,7 +121,7 @@ public class AnnexServiceImplTest extends LeosTest {
     public void test_disableLiveDiffing() throws Exception {
         Annex mockedAnnex = getMockedAnnexWithoutLiveDiffing();
         when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(mockedAnnex);
-        when(annexService.findAnnexByRef(mockedAnnex.getMetadata().get().getRef())).thenReturn(mockedAnnex);
+        when(annexService.findAnnex(mockedAnnex.getId(), true)).thenReturn(mockedAnnex);
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), false);
         Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);

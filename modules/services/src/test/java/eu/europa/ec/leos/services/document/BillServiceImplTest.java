@@ -131,7 +131,7 @@ public class BillServiceImplTest {
         when(source.getBytes()).thenReturn(byteContent);
         when(content.getSource()).thenReturn(source);
         when(leosRepository.updateDocument(anyString(), eq(billMetadata), eq(byteContent), eq(VersionType.MINOR), anyString(), any())).thenReturn(bill);
-        when(billService.findBillByRef(bill.getMetadata().get().getRef())).thenReturn(bill);
+        when(billService.findBill(bill.getId(), true)).thenReturn(bill);
         when(xmlContentProcessor.createDocumentContentWithNewTocList(any(), any(), any(), anyBoolean())).thenReturn(byteContent);
         when(numberService.renumberArticles(any(), eq(true))).thenReturn(byteContent);
         when(numberService.renumberRecitals(any())).thenReturn(byteContent);
