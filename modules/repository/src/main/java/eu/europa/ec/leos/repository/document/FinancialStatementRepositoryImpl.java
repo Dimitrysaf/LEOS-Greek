@@ -138,14 +138,14 @@ public class FinancialStatementRepositoryImpl implements FinancialStatementRepos
 
     @Override
     public List<FinancialStatement> findRecentMinorVersions(String documentId, String documentRef, int startIndex, int maxResults) {
-        final FinancialStatement FinancialStatement = leosRepository.findLatestMajorVersionById(FinancialStatement.class, documentId, documentRef);
-        return leosRepository.findRecentMinorVersions(FinancialStatement.class, documentRef, FinancialStatement.getCmisVersionLabel(), startIndex, maxResults);
+        final FinancialStatement financialStatement = leosRepository.findLatestMajorVersionById(FinancialStatement.class, documentId, documentRef);
+        return leosRepository.findRecentMinorVersions(FinancialStatement.class, documentRef, financialStatement.getCmisVersionLabel(), startIndex, maxResults);
     }
 
     @Override
     public Integer findRecentMinorVersionsCount(String documentId, String documentRef) {
-        final FinancialStatement FinancialStatement = leosRepository.findLatestMajorVersionById(FinancialStatement.class, documentId, documentRef);
-        return leosRepository.findRecentMinorVersionsCount(FinancialStatement.class, documentRef, FinancialStatement.getCmisVersionLabel());
+        final FinancialStatement financialStatement = leosRepository.findLatestMajorVersionById(FinancialStatement.class, documentId, documentRef);
+        return leosRepository.findRecentMinorVersionsCount(FinancialStatement.class, documentRef, financialStatement.getCmisVersionLabel());
     }
 
     @Override

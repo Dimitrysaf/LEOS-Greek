@@ -15,7 +15,6 @@ package eu.europa.ec.leos.services.document;
 
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.InstanceType;
-import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.repository.document.AnnexRepository;

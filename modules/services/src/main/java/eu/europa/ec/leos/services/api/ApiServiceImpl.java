@@ -729,7 +729,6 @@ public abstract class ApiServiceImpl implements ApiService {
         LOG.trace("Creating annex...");
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
-            String proposalId = proposal.getId();
             boolean isClonedProposal = proposal.isClonedProposal();
             try {
                 populateTrackChangesContext(proposal);
@@ -757,7 +756,7 @@ public abstract class ApiServiceImpl implements ApiService {
         }
     }
 
-    private boolean identifyContributionChanges(String clonedProposalRef, String clonedLegFileName, String proposalId) {
+    private boolean identifyContributionChanges(String clonedProposalRef, String clonedLegFileName) {
         Validate.notNull(clonedProposalRef, "Cloned proposal ref should not be null");
         Validate.notNull(clonedLegFileName, "Cloned leg file name should not be null");
         Proposal proposal = proposalService.getProposalByRef(clonedProposalRef);
@@ -855,7 +854,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 milestoneVO.setClone(true);
                 if (cpmVo.getRevisionStatus().equalsIgnoreCase(
                         messageHelper.getMessage("clone.proposal.status.contribution.done")) &&
-                        identifyContributionChanges(cpmVo.getCloneProposalRef(), cpmVo.getLegFileName(), proposalId)) {
+                        identifyContributionChanges(cpmVo.getCloneProposalRef(), cpmVo.getLegFileName())) {
                     milestoneVO.setContributionChanged(true);
                 }
                 clonedMilestonesVOS.add(milestoneVO);
@@ -872,7 +871,6 @@ public abstract class ApiServiceImpl implements ApiService {
         DocumentVO annexVO = createAnnexVO(annexService.findAnnexByRef(annexRef));
 
         if (proposal != null) {
-            String proposalId = proposal.getId();
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
             BillContextService billContext = billContextProvider.get();
             billContext.useAnnexwithRef(annexRef);
@@ -894,7 +892,6 @@ public abstract class ApiServiceImpl implements ApiService {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
         if (proposal != null) {
             for (int i = 0; i < timesToMove; i++) {
-                String proposalId = proposal.getId();
                 LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
                 BillContextService billContext = billContextProvider.get();
                 billContext.useAnnexwithRef(annexRef);

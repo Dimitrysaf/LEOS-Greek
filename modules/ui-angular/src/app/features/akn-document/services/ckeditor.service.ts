@@ -18,7 +18,7 @@ import { TrackChangesConnector } from '@/features/akn-document/services/track-ch
 import { UserGuidanceConnector } from '@/features/akn-document/services/user-guidance-connector';
 import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
-import { DocumentConfig, LeosConfig } from '@/shared/models';
+import { DocumentConfig } from '@/shared/models';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
@@ -516,7 +516,6 @@ export class CKEditorService implements OnDestroy {
     config['isTrackChangesShowed'] = oldConfig.trackChangesShowed;
     config['isTrackChangesEnabled'] = oldConfig.trackChangesEnabled;
     config['permissions'] = oldConfig.userAppPermissions;
-    // config['isClonedProposal'] = oldConfig.isClonedProposal;
 
     if (!oldConfig.spellCheckerServiceUrl) {
       config.spellCheckerServiceUrl =

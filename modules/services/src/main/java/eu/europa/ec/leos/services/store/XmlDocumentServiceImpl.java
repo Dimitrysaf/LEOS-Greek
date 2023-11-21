@@ -1,20 +1,17 @@
 package eu.europa.ec.leos.services.store;
 
-import com.google.common.eventbus.EventBus;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
-import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -31,19 +28,17 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     private final XmlContentProcessor xmlContentProcessor;
     private final PackageService packageService;
     private final WorkspaceService workspaceService;
-    private final EventBus leosApplicationEventBus;
     private final MessageHelper messageHelper;
 
     private static final List<LeosCategory> DOCUMENTS_TO_IGNORE = Arrays.asList(LeosCategory.PROPOSAL, LeosCategory.MEMORANDUM);
 
     @Autowired
     public XmlDocumentServiceImpl(LeosRepository leosRepository, XmlContentProcessor xmlContentProcessor, PackageService packageService,
-            WorkspaceService workspaceService, EventBus leosApplicationEventBus, MessageHelper messageHelper) {
+            WorkspaceService workspaceService, MessageHelper messageHelper) {
         this.leosRepository = leosRepository;
         this.xmlContentProcessor = xmlContentProcessor;
         this.packageService = packageService;
         this.workspaceService = workspaceService;
-        this.leosApplicationEventBus = leosApplicationEventBus;
         this.messageHelper = messageHelper;
     }
 
@@ -51,7 +46,6 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     @Async("delegatingSecurityContextAsyncTaskExecutor")
     public void updateInternalReferencesAsync(UpdateInternalReferencesMessage message) {
         LOG.debug("Processing internal references for document {}", message.getDocumentRef());
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         LeosPackage leosPackage = packageService.findPackageByDocumentId(message.getDocumentId());
         List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
         for (XmlDocument document : documents) {
@@ -76,7 +70,7 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
         boolean updated = ((newContent != null) && !Arrays.equals(newContent,content));
         if(updated) {
             String message = messageHelper.getMessage("internal.ref.checkinComment");
-            xmlDocument = leosRepository.updateDocument(xmlDocument.getId(), newContent,
+            leosRepository.updateDocument(xmlDocument.getId(), newContent,
                     (Map<String, Object>) updateDocumentProperties(xmlDocument.getMetadata().get()), VersionType.MINOR,
                     message, XmlDocument.class);
         }
