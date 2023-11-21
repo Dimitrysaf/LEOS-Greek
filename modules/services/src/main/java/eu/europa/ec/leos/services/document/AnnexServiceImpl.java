@@ -115,7 +115,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         }
         LOG.debug("updateInternalReferences processed for {}: ", annex.getMetadata().get().getRef());
         //fetch updated version
-        return findAnnexByRef(annex.getMetadata().get().getRef());
+        return findAnnex(annex.getId(), true);
     }
 
     @Override

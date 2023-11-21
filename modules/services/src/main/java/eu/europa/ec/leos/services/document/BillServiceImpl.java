@@ -168,7 +168,7 @@ public abstract class BillServiceImpl implements BillService {
         }
         LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
         //fetch updated version
-        return findBillByRef(bill.getMetadata().get().getRef());
+        return findBill(bill.getId(), true);
     }
 
     @Override
