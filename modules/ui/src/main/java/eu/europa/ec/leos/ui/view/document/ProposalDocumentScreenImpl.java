@@ -178,7 +178,7 @@ public class ProposalDocumentScreenImpl extends DocumentScreenImpl {
 
     private void initRevisionComponent() {
         if (revisionComponent == null) {
-            revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext, permissionsForRevision, permissionsForOriginal);
+            revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext, permissionsForRevision);
         }
     }
 

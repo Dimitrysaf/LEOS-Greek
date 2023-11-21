@@ -78,7 +78,7 @@ public class MergeContributionExtension<T extends AbstractField<V>, V> extends L
     @Subscribe
     public void populateTocItemList(TocItemListResponseEvent event) {
         LOG.trace("Calling populateTocItemList");
-        getState().tocItemsJsonArray = toJsonString(event.getTocItemList());
+        getState().setTocItemsJsonArray(toJsonString(event.getTocItemList()));
         callFunction("populateTocItemList");
     }
 
