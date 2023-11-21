@@ -36,6 +36,7 @@ define(function leosTrackChangesModule(require) {
         DATA_AKN_SOFTACTION_ROOT: "data-akn-attr-softactionroot", DATA_AKN_SOFTACTION: "data-akn-attr-softaction",
         DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
         TRUE: true, SOFTACTION_MOVE_FROM: "move_from",
+        DATA_AKN_TC_INDENT_LEVEL: "data-akn-tc-indent-level",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -417,7 +418,7 @@ define(function leosTrackChangesModule(require) {
                     return element.$;
                 }
                 element = element.getParent();
-            } while (!element.$.classList.contains("leos-placeholder"));
+            } while (element && !element.$.classList.contains("leos-placeholder"));
             return null;
         },
 
@@ -543,23 +544,33 @@ define(function leosTrackChangesModule(require) {
         },
 
         acceptChange: function(editor, element) {
-            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER) ||
-                ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
+            if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) || ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
-                var idToBeRemoved = element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM);
                 core.removeTrackChangesAttributes(element);
                 core.removeTrackChangesAttributesForNumbering(element);
                 core.removeTrackChangesAttributesForEnter(element);
                 core.removeSoftAttributes(element);
-                element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, idToBeRemoved);
                 element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
+                if (!element.getAttribute(leosPluginUtils.ID)) {
+                    element.setAttribute(leosPluginUtils.ID, "temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                }
                 if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
+                    element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
                     element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
                 }
-                if (!element.getAttribute(leosPluginUtils.ID)) {
-                    element.setAttribute(leosPluginUtils.ID, "temp_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
-                }
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER)) {
+                do {
+                    core.removeTrackChangesAttributes(element);
+                    core.removeTrackChangesAttributesForNumbering(element);
+                    core.removeTrackChangesAttributesForEnter(element);
+                    core.removeSoftAttributes(element);
+                    element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
+                    if (!element.getAttribute(leosPluginUtils.ID)) {
+                        element.setAttribute(leosPluginUtils.ID, "temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                    }
+                    element = element.findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
+                } while (element);
             } else {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
@@ -571,17 +582,14 @@ define(function leosTrackChangesModule(require) {
         },
 
         rejectChange: function(editor, element) {
-            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER) ||
-                ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
-                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
-                var idToBeRestored = element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM);
-                element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, idToBeRestored);
+            editor.getSelection().fake(element.getParent());
+            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                 element.remove();
-                if (!element.getAttribute(leosPluginUtils.ID)) {
-                    element.setAttribute(leosPluginUtils.ID, "temp_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
-                }
+            } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
+                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
+                element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
+                element.remove();
             } else {
-                editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                     element.remove();
                 } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {

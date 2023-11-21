@@ -285,7 +285,7 @@ define(function leosTrackChangesPluginModule(require) {
                 event.data.dataValue = event.data.dataValue.replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\"");
                 event.data.dataValue = event.data.dataValue.replace(/leos:title-number="([\s\S][^:]+?)"/g, "leos:title-number=\"$1 : " + core.getDateFormat() + "\"");
                 event.data.dataValue = event.data.dataValue.replace(/leos:title-enter="([\s\S][^:]+?)"/g, "leos:title-enter=\"$1 : " + core.getDateFormat() + "\"");
-                event.data.dataValue = event.data.dataValue.replace(/xml:id="temp_([\s\S][^:]+?)"/g, "");
+                event.data.dataValue = event.data.dataValue.replace(/xml:id="temp_tc_([\s\S][^:]+?)"/g, "");
             }, null, null, 15);
 
             // Bind events if the Dom is ready!
@@ -461,11 +461,13 @@ define(function leosTrackChangesPluginModule(require) {
                         return false;
                     case "indent":
                     case "outdent":
-                        selectedElement = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
+                        if (isTrackChangesEnabled) {
+                            selectedElement = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
+                        }
                 }
             });
 
-            editor.on('afterCommandExec', function(event) {
+            editor.on("afterCommandExec", function(event) {
                 switch (event.data.name) {
                     case "enter":
                         var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
@@ -475,10 +477,21 @@ define(function leosTrackChangesPluginModule(require) {
                         break;
                     case "indent":
                     case "outdent":
-                        var selectedElementAfterCommand = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
-                        if (selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== selectedElementAfterCommand.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
-                            // Indent or outdent operation performed
-                            selectedElementAfterCommand.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
+                        if (isTrackChangesEnabled) {
+                            var selectedElementAfterCommand = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
+                            if (selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== selectedElementAfterCommand.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                                // Indent or outdent operation performed
+                                if (selectedElementAfterCommand.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                                    selectedElementAfterCommand.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
+                                    var indentLevel = selectedElement.getAttribute(core.DATA_AKN_TC_INDENT_LEVEL) ?? 0;
+                                    selectedElementAfterCommand.setAttribute(core.DATA_AKN_TC_INDENT_LEVEL, (event.data.name === "indent") ?
+                                        parseInt(indentLevel) + 1 : parseInt(indentLevel) - 1);
+                                } else {
+                                    selectedElementAfterCommand.removeAttribute(core.DATA_AKN_SOFTACTION_ROOT);
+                                    selectedElementAfterCommand.removeAttribute(core.DATA_AKN_TC_INDENT_LEVEL);
+                                    //var childElementTracked = element.findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
+                                }
+                            }
                         }
                         break;
                 }
