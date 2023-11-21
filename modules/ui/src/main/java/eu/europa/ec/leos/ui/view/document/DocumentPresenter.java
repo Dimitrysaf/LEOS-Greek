@@ -55,7 +55,7 @@ import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.Annotate.AnnotateService;
+import eu.europa.ec.leos.services.annotate.AnnotateService;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.services.document.BillService;

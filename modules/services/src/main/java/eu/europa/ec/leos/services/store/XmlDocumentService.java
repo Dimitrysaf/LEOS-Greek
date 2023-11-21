@@ -1,9 +1,7 @@
 package eu.europa.ec.leos.services.store;
 
-import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 
 public interface XmlDocumentService {
-    
-    XmlDocument updateInternalReferences(XmlDocument xmlDocument) throws Exception;
-    
+    void updateInternalReferencesAsync(UpdateInternalReferencesMessage message) throws Exception;
 }

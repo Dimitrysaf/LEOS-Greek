@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Strings;
 import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
@@ -24,6 +25,7 @@ import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
@@ -572,11 +574,23 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 throw new UnsupportedOperationException("Invalid Document Type");
         }
         try {
-            document = xmlDocumentService.updateInternalReferences(document);
+            document = updateInternalReferencesAsync(document, LeosCategoryClass.caseInsensitiveValueOf(document.getCategory().name()));
         } catch (Exception e) {
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", document.getMetadata().get().getRef());
         return document;
+    }
+
+    private XmlDocument updateInternalReferencesAsync(XmlDocument document, LeosCategoryClass category) {
+        try {
+            xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(document.getId(),
+                    document.getMetadata().get().getRef()));
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", document.getMetadata().get().getRef());
+        //fetch updated version
+        return getDocumentByRef(document.getMetadata().get().getRef(), category);
     }
 }

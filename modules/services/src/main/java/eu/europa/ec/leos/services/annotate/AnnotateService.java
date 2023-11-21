@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.services.Annotate;
+package eu.europa.ec.leos.services.annotate;
 
 import eu.europa.ec.leos.security.LeosPermission;
 import org.springframework.stereotype.Service;

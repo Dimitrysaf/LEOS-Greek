@@ -118,7 +118,7 @@ public class BillServiceImplTest {
    	}
 
     @Test
-    public void test_saveTableOfContent_shouldbe_calling_correctNumberOfProcessors() throws Exception {
+    public void test_saveTableOfContent_should_call_correctNumberOfProcessors() throws Exception {
         // Given
         Content content = mock(Content.class);
         Content.Source source = mock(Content.Source.class);
@@ -131,7 +131,7 @@ public class BillServiceImplTest {
         when(source.getBytes()).thenReturn(byteContent);
         when(content.getSource()).thenReturn(source);
         when(leosRepository.updateDocument(anyString(), eq(billMetadata), eq(byteContent), eq(VersionType.MINOR), anyString(), any())).thenReturn(bill);
-        when(xmlDocumentService.updateInternalReferences(bill)).thenReturn(bill);
+        when(billService.findBillByRef(bill.getMetadata().get().getRef())).thenReturn(bill);
         when(xmlContentProcessor.createDocumentContentWithNewTocList(any(), any(), any(), anyBoolean())).thenReturn(byteContent);
         when(numberService.renumberArticles(any(), eq(true))).thenReturn(byteContent);
         when(numberService.renumberRecitals(any())).thenReturn(byteContent);

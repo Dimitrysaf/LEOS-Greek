@@ -29,7 +29,7 @@ import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.repository.store.WorkspaceRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.Annotate.AnnotateService;
+import eu.europa.ec.leos.services.annotate.AnnotateService;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.compare.LeosTextComparatorImpl;

@@ -36,7 +36,7 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.repository.store.WorkspaceRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
-import eu.europa.ec.leos.services.Annotate.AnnotateService;
+import eu.europa.ec.leos.services.annotate.AnnotateService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.compare.processor.LeosPostDiffingProcessor;
