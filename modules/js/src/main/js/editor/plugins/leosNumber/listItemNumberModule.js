@@ -336,9 +336,9 @@ define(function listItemNumberModule(require) {
                 }
                 var previousNumber = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM);
                 // Original number should be changed
-                if (offset > 0 && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER)
-                    && listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) !== leosTrackChanges.core.NEW) {
-                    var originalNumber = listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                var originalNumber = listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                var indentLevel = listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_INDENT_LEVEL);
+                if (offset > 0 && originalNumber && originalNumber !== leosTrackChanges.core.NEW && (!indentLevel || indentLevel !== 0)) {
                     var originalNumberIndex = sequence.getIndex(originalNumber);
                     listItems[idx].setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(orderedList, listItems[idx], originalNumberIndex+offset-1));
                 }
