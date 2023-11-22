@@ -60,6 +60,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -183,9 +185,10 @@ public class DocumentServiceImpl implements DocumentService {
             if (type.contains("zip")) {
                 return milestoneDocumentService.createMilestoneFromContent(doc, metadata, contentBytes, userName);
             } else {
-                Pair<DocumentContent, DocumentVersion> docs = createDocument(doc, metadata, labelVersion, versionType, contentBytes, comments, userName);
-                updateDocumentProperties(doc, docs.getValue(), (Map<String, Object>) metadata, userName);
-                return ConversionUtils.buildXmlDocument(doc, docs.getValue(), docs.getKey(), collaboratorsService, documentPropertyValuesRepository);
+                Map<DocumentContent, DocumentVersion> docs = createDocument(doc, metadata, labelVersion, versionType, contentBytes, comments, userName);
+                DocumentVersion documentVersion = docs.values().stream().findFirst().get();
+                updateDocumentProperties(doc, documentVersion, (Map<String, Object>) metadata, userName);
+                return ConversionUtils.buildXmlDocument(doc, documentVersion, docs.keySet().stream().findFirst().get(), collaboratorsService, documentPropertyValuesRepository);
             }
         } catch (RepositoryException e) {
             throw e;
@@ -233,8 +236,8 @@ public class DocumentServiceImpl implements DocumentService {
                     latestMajorVersion = documentVersionRepository.findLastMajorVersionByDocumentId(doc.getId());
                 }
 
-                Pair<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId);
-                doc = updateDocumentMetadata(doc, docs.getValue(), (Map<String, Object>) metadata, userId);
+                Map<DocumentContent, DocumentVersion> docs = updateDocument(doc, metadata, labelVersion, versionType.value(), contentBytes, comments, userId);
+                doc = updateDocumentMetadata(doc, docs.values().stream().findFirst().get(), (Map<String, Object>) metadata, userId);
 
                 if (latestVersion.isPresent()) {
                     latestVersion.get().setIsLatestVersion(false);
@@ -245,7 +248,8 @@ public class DocumentServiceImpl implements DocumentService {
                     documentVersionRepository.save(latestMajorVersion.get());
                 }
 
-                return ConversionUtils.buildXmlDocument(doc, docs.getValue(), docs.getKey(), collaboratorsService, documentPropertyValuesRepository);
+                return ConversionUtils.buildXmlDocument(doc, docs.values().stream().findFirst().get(),
+                        docs.keySet().stream().findFirst().get(), collaboratorsService, documentPropertyValuesRepository);
         }
 
     }
@@ -263,10 +267,11 @@ public class DocumentServiceImpl implements DocumentService {
             Document doc =
                     documentRepository.findById(docVersion.getDocumentId()).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
                             Document.class.getName()));
-            Pair<DocumentContent, DocumentVersion> docs = updateDocumentContentMetadataAndVersionComments(docVersion, metadata, userId);
-            doc = updateDocumentMetadata(doc, docs.getValue(), (Map<String, Object>) metadata, userId);
+            Map<DocumentContent, DocumentVersion> docs = updateDocumentContentMetadataAndVersionComments(docVersion, metadata, userId);
+            DocumentVersion documentVersion = docs.values().stream().findFirst().get();
+            doc = updateDocumentMetadata(doc, documentVersion, (Map<String, Object>) metadata, userId);
 
-            return ConversionUtils.buildXmlDocument(doc, docs.getValue(), docs.getKey(), collaboratorsService, documentPropertyValuesRepository);
+            return ConversionUtils.buildXmlDocument(doc, documentVersion, docs.keySet().stream().findFirst().get(), collaboratorsService, documentPropertyValuesRepository);
         } else {
             return milestoneDocumentService.updateMilestoneMetadata(versionId, metadata, userId);
         }
@@ -826,29 +831,27 @@ public class DocumentServiceImpl implements DocumentService {
         }
     }
 
-    private Pair<DocumentContent, DocumentVersion> createDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
+    private Map<DocumentContent, DocumentVersion> createDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
                                                                   int versionType, byte[] contentBytes, String comments, String userId) throws RepositoryException {
         DocumentVersion docVersion = updateDocumentVersion(doc, userId, versionType, labelVersion, comments);
         DocumentContent docContent = updateDocumentContent(docVersion, null, userId, new String(contentBytes, StandardCharsets.UTF_8), metadata);
-        return new Pair<>(docContent, docVersion);
+        return Collections.singletonMap(docContent, docVersion);
     }
 
-    private Pair<DocumentContent, DocumentVersion> updateDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
+    private Map<DocumentContent, DocumentVersion> updateDocument(final Document doc, Map<String, ?> metadata, final String labelVersion,
                                                                   int versionType, byte[] contentBytes, String comments, String userId) throws RepositoryException {
         Optional<DocumentV> docView = documentVRepository.findLastVersionByDocumentId(doc.getId());
 
         if (docView.isPresent()) {
             DocumentVersion docVersion = updateDocumentVersion(doc, userId, versionType, labelVersion, comments);
             DocumentContent docContent = updateDocumentContent(docVersion, docView.get(), userId, new String(contentBytes, StandardCharsets.UTF_8), metadata);
-            return new Pair(docContent, docVersion);
+            return Collections.singletonMap(docContent, docVersion);
         } else {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentV.class.getName());
         }
     }
 
-    private Pair<DocumentContent, DocumentVersion> updateDocumentContentMetadataAndVersionComments(DocumentVersion version,
-                                                                                                   Map<String, ?> metadata,
-                                                                                                   String userId) throws Exception {
+    private Map<DocumentContent, DocumentVersion> updateDocumentContentMetadataAndVersionComments(DocumentVersion version,
         version = updateDocumentVersionComments(version, userId, metadata);
         DocumentContent content =
                 documentContentRepository.findDocumentContentByVersionId(version.getId()).orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentContent.class.getName()));
@@ -875,7 +878,7 @@ public class DocumentServiceImpl implements DocumentService {
             content.setCategoryCode((String) metadata.get(PropertiesMetadata.CATEGORY.getLeosName()));
         }
         content = documentContentRepository.save(content);
-        return new Pair(content, version);
+        return Collections.singletonMap(content, version);
     }
 
     private DocumentVersion updateDocumentVersionComments(DocumentVersion version, String updatedBy, Map<String, ?> metadata) throws Exception {
