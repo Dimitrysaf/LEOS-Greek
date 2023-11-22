@@ -355,8 +355,7 @@ define(function listItemNumberModule(require) {
                 var previousNumber = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM);
                 // Original number should be changed
                 var originalNumber = listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                var indentLevel = listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_INDENT_LEVEL);
-                if (offset > 0 && originalNumber && originalNumber !== leosTrackChanges.core.NEW && !indentLevel) {
+                if (offset > 0 && originalNumber && originalNumber !== leosTrackChanges.core.NEW) {
                     var originalNumberIndex = sequence.getIndex(originalNumber);
                     if (originalNumberIndex >= 0) {
                         listItems[idx].setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(orderedList, listItems[idx], originalNumberIndex+offset-1));
