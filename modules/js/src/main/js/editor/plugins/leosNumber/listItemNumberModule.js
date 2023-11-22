@@ -285,7 +285,7 @@ define(function listItemNumberModule(require) {
             (UTILS.getElementOrigin(orderedList) && UTILS.getElementOrigin(orderedList) === 'ec' &&
               ckEditor.LEOS.instanceType === UTILS.COUNCIL_INSTANCE)
                 ? _doMandateNum(listItems, sequence)
-                : _doProposalNum(orderedList, listItems, sequence, currentNestingLevel);
+                : _doProposalNum(orderedList, listItems, sequence);
         }
     }
 
@@ -326,7 +326,7 @@ define(function listItemNumberModule(require) {
         }
     }
 
-    function _doProposalNum(orderedList, listItems, sequence, currentNestingLevel) {
+    function _doProposalNum(orderedList, listItems, sequence) {
         var newIdx = 0;
         var offset = 0;
         for (var idx = 0; idx < listItems.length; idx++) {
