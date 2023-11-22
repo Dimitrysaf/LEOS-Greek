@@ -192,7 +192,9 @@ define(function leosTrackChangesPluginModule(require) {
                 });
             }
 
-            editor.on("change", actions.handleEnterInTrackChanges, null, null, 100);
+            editor.on("change", function(event) {
+                actions.handleEnterInTrackChanges(event.editor);
+            }, null, null, 100);
 
             editor.on("handleTcIndent", function (event) {
                 if (isTrackChangesEnabled) {
@@ -489,7 +491,10 @@ define(function leosTrackChangesPluginModule(require) {
                                 } else {
                                     selectedElementAfterCommand.removeAttribute(core.DATA_AKN_SOFTACTION_ROOT);
                                     selectedElementAfterCommand.removeAttribute(core.DATA_AKN_TC_INDENT_LEVEL);
-                                    //var childElementTracked = element.findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
+                                    var firstChildTcElement = (new CKEDITOR.dom.element(selectedElementAfterCommand)).findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
+                                    if (firstChildTcElement) {
+                                        firstChildTcElement.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
+                                    }
                                 }
                             }
                         }

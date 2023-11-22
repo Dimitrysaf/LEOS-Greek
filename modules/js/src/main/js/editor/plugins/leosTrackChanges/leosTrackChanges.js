@@ -162,7 +162,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-attr-softactionroot"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-attr-softactionroot", "data-akn-tc-indent-level"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -445,8 +445,8 @@ define(function leosTrackChangesModule(require) {
 
     var actions = {
 
-        handleEnterInTrackChanges: function (event) {
-            var selection = event.editor.getSelection();
+        handleEnterInTrackChanges: function(editor) {
+            var selection = editor.getSelection();
             var ranges = selection && selection.getRanges();
             var range = ranges && ranges[0];
             var el = range && range.startContainer;
@@ -560,6 +560,10 @@ define(function leosTrackChangesModule(require) {
                     element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
                 }
             } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER)) {
+                // Accept parent
+                if (element.getAttribute(core.DATA_AKN_TC_INDENT_LEVEL) && (parseInt(element.getAttribute(core.DATA_AKN_TC_INDENT_LEVEL)) > 0)) {
+                }
+                // Accept children
                 do {
                     core.removeTrackChangesAttributes(element);
                     core.removeTrackChangesAttributesForNumbering(element);
