@@ -48,7 +48,11 @@ define(function listItemNumberModule(require) {
                 return this.prefix+this.format.replace('x', idx + 1)+this.suffix;
             },
             getIndex: function getIndexForArabic(number) {
-                return Number(number.replace('(', '').replace(')', ''));
+                number = number.replace('(', '').replace(')', '');
+                if (isNaN(number)) {
+                    return -1;
+                }
+                return Number(number);
             }
         }, {
             type: "ARABIC_POSTFIXDOT",
@@ -61,7 +65,11 @@ define(function listItemNumberModule(require) {
                 return this.prefix+this.format.replace('x', idx + 1)+this.suffix;
             },
             getIndex: function getIndexForArabic(number) {
-                return Number(number.replace('.', ''));
+                number = number.replace('.', '');
+                if (isNaN(number)) {
+                    return -1;
+                }
+                return Number(number);
             }
         }, {
             type: "ROMAN_LOWER_PARENTHESIS",
@@ -87,7 +95,7 @@ define(function listItemNumberModule(require) {
                 return this.prefix+this.format.replace('x', '-')+this.suffix;
             },
             getIndex: function getIndexForIndent(number) {
-                return number;
+                return -1;
             }
         }
     ];
@@ -134,6 +142,12 @@ define(function listItemNumberModule(require) {
         }
         var start = 0; var end;
         var sum = 0;
+        for (var indexLetter = 0; indexLetter < number.length; indexLetter++) {
+            var letter = number.substring(indexLetter, indexLetter+1);
+            if ("ivxlcdm".indexOf(letter) < 0) {
+                return -1;
+            }
+        }
         while (start < number.length) {
             end = start + 3;
             if (end >= number.length) {
@@ -185,7 +199,11 @@ define(function listItemNumberModule(require) {
         var mult = 1;
         var cumulator = 0;
         for (var idxLetter = number.length-1; idxLetter >= 0; idxLetter--) {
-            cumulator += (number.charCodeAt(idxLetter)-96) * mult;
+            var letterValue = number.charCodeAt(idxLetter)-96;
+            if (letterValue <= 0 || letterValue >= 27) {
+                return -1;
+            }
+            cumulator += (letterValue) * mult;
             mult *= 26;
         }
         return cumulator;
@@ -337,10 +355,11 @@ define(function listItemNumberModule(require) {
                 var previousNumber = listItems[idx].getAttribute(leosPluginUtils.DATA_AKN_NUM);
                 // Original number should be changed
                 var originalNumber = listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                var indentLevel = listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_TC_INDENT_LEVEL);
-                if (offset > 0 && originalNumber && originalNumber !== leosTrackChanges.core.NEW && (!indentLevel || indentLevel !== 0)) {
+                if (offset > 0 && originalNumber && originalNumber !== leosTrackChanges.core.NEW) {
                     var originalNumberIndex = sequence.getIndex(originalNumber);
-                    listItems[idx].setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(orderedList, listItems[idx], originalNumberIndex+offset-1));
+                    if (originalNumberIndex >= 0) {
+                        listItems[idx].setAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(orderedList, listItems[idx], originalNumberIndex+offset-1));
+                    }
                 }
                 if (offset != 0 && !listItems[idx].getAttribute(leosTrackChanges.core.ACTION_ATTR) && !listItems[idx].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER)) {
                     previousNumber = sequence.generator(orderedList, listItems[idx], newIdx);
