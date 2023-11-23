@@ -18,7 +18,7 @@ import { TrackChangesConnector } from '@/features/akn-document/services/track-ch
 import { UserGuidanceConnector } from '@/features/akn-document/services/user-guidance-connector';
 import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
-import { DocumentConfig, LeosConfig } from '@/shared/models';
+import { DocumentConfig } from '@/shared/models';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
@@ -30,6 +30,7 @@ import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './table-of-content.service';
 import {LeosAppConfig} from "@/shared/models/leos.model";
+import {LoadingService} from "@/shared/services/loading.service";
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -61,6 +62,7 @@ export class CKEditorService implements OnDestroy {
     private dialogService: EuiDialogService,
     private translateService: TranslateService,
     private tableOfContentService: TableOfContentService,
+    private loadingService: LoadingService,
     @Inject(DOCUMENT) private domDocument: Document,
     private blockDocumentEditorService: BlockDocumentEditorService,
   ) {}
@@ -198,6 +200,7 @@ export class CKEditorService implements OnDestroy {
       this.dialogService,
       this.translateService,
       this.tableOfContentService,
+      this.loadingService,
       (state: EditorOpenState) => {
         this.openStateSubj.next(state);
       },
@@ -513,7 +516,6 @@ export class CKEditorService implements OnDestroy {
     config['isTrackChangesShowed'] = oldConfig.trackChangesShowed;
     config['isTrackChangesEnabled'] = oldConfig.trackChangesEnabled;
     config['permissions'] = oldConfig.userAppPermissions;
-    // config['isClonedProposal'] = oldConfig.isClonedProposal;
 
     if (!oldConfig.spellCheckerServiceUrl) {
       config.spellCheckerServiceUrl =

@@ -2,26 +2,26 @@ package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Stopwatch;
 import cool.graph.cuid.Cuid;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.explanatory.ExplanatoryStructureType;
+import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.ExplanatoryRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.numbering.NumberService;
+import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.store.XmlDocumentService;
-import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
-import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -37,9 +37,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
-import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 
 @Service
 public class ExplanatoryServiceImpl implements ExplanatoryService {
@@ -126,12 +126,24 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         return explanatoryRepository.findExplanatoryById(id, Explanatory.class, false);
     }
 
+    private Explanatory updateInternalReferencesAsync(Explanatory explanatory) {
+        try {
+            xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(explanatory.getId(),
+                    explanatory.getMetadata().get().getRef()));
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
+        //fetch updated version
+        return findExplanatory(explanatory.getId());
+    }
+
     @Override
     public Explanatory updateExplanatory(Explanatory explanatory, byte[] updatedExplanatoryContent, VersionType versionType, String comment) {
         LOG.trace("Updating Explanatory Xml Content... [id={}]", explanatory.getId());
 
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedExplanatoryContent, versionType, comment);
-
+        explanatory = updateInternalReferencesAsync(explanatory);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(explanatory, updatedExplanatoryContent));
 
@@ -145,7 +157,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         byte[] updatedBytes = updateDataInXml(getContent(explanatory), updatedMetadata);
 
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedMetadata, updatedBytes, versionType, comment);
-
+        explanatory = updateInternalReferencesAsync(explanatory);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(explanatory, updatedBytes));
 
@@ -160,12 +172,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         updatedExplanatoryContent = updateDataInXml(updatedExplanatoryContent, metadata);
 
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, updatedExplanatoryContent, versionType, comment);
-        try {
-            explanatory = (Explanatory) xmlDocumentService.updateInternalReferences(explanatory);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
+        explanatory = updateInternalReferencesAsync(explanatory);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(explanatory, updatedExplanatoryContent));
 
@@ -178,12 +185,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Updating Explanatory... [id={}, updatedMetadata={} , comment={}]", explanatory.getId(), updatedExplanatoryContent, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedExplanatoryContent, VersionType.MINOR, comment);
-        try {
-            explanatory = (Explanatory) xmlDocumentService.updateInternalReferences(explanatory);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
+        explanatory = updateInternalReferencesAsync(explanatory);
         LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         return explanatory;
     }
@@ -193,26 +195,14 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Updating Explanatory... [id={}, milestoneComments={}, versionType={}, comment={}]", explanatory.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(explanatory);
         explanatory = explanatoryRepository.updateMilestoneComments(explanatory.getId(), milestoneComments, updatedBytes, versionType, comment);
-        try {
-            explanatory = (Explanatory) xmlDocumentService.updateInternalReferences(explanatory);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
-        return explanatory;
+        return updateInternalReferencesAsync(explanatory);
     }
 
     @Override
     public Explanatory updateExplanatoryWithMilestoneComments(String ref, String explanatoryId, List<String> milestoneComments){
         LOG.trace("Updating Explanatory... [id={}, milestoneComments={}]", explanatoryId, milestoneComments);
         Explanatory explanatory = explanatoryRepository.updateMilestoneComments(ref, explanatoryId, milestoneComments);
-        try {
-            explanatory = (Explanatory) xmlDocumentService.updateInternalReferences(explanatory);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", explanatory.getMetadata().get().getRef());
-        return explanatory;
+        return updateInternalReferencesAsync(explanatory);
     }
 
     @Override

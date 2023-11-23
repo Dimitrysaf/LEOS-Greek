@@ -40,6 +40,7 @@ public class AppConfigResponse {
     private String annotateHostUrl;
     private String annotateJwtIssuerClientId;
     private String annotatePopupDefaultStatus;
+    private boolean collectionCloseButtonEnabled;
 
     public AppConfigResponse() {
     }
@@ -196,5 +197,13 @@ public class AppConfigResponse {
 
     public void setAnnotatePopupDefaultStatus(String annotatePopupDefaultStatus) {
         this.annotatePopupDefaultStatus = annotatePopupDefaultStatus;
+    }
+
+    public boolean isCollectionCloseButtonEnabled() {
+        return collectionCloseButtonEnabled;
+    }
+
+    public void setCollectionCloseButtonEnabled(boolean collectionCloseButtonEnabled) {
+        this.collectionCloseButtonEnabled = collectionCloseButtonEnabled;
     }
 }

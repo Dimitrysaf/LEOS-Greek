@@ -192,7 +192,9 @@ define(function leosTrackChangesPluginModule(require) {
                 });
             }
 
-            editor.on("change", actions.handleEnterInTrackChanges, null, null, 100);
+            editor.on("change", function(event) {
+                actions.handleEnterInTrackChanges(event.editor);
+            }, null, null, 100);
 
             editor.on("handleTcIndent", function (event) {
                 if (isTrackChangesEnabled) {
@@ -232,6 +234,7 @@ define(function leosTrackChangesPluginModule(require) {
                     var el = range && range.startContainer;
                     if (el) {
                         core.addTrackChangesAttributesForEnter(editor, el, core.INSERT_ACTION);
+                        el.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
                     }
                 }
             });
@@ -260,6 +263,7 @@ define(function leosTrackChangesPluginModule(require) {
                         } else {
                             elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, core.UNNUMBERED);
                         }
+                        elementToSetAttribute.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
                         editor.fire("change");
                     }
                 }
@@ -283,7 +287,7 @@ define(function leosTrackChangesPluginModule(require) {
                 event.data.dataValue = event.data.dataValue.replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\"");
                 event.data.dataValue = event.data.dataValue.replace(/leos:title-number="([\s\S][^:]+?)"/g, "leos:title-number=\"$1 : " + core.getDateFormat() + "\"");
                 event.data.dataValue = event.data.dataValue.replace(/leos:title-enter="([\s\S][^:]+?)"/g, "leos:title-enter=\"$1 : " + core.getDateFormat() + "\"");
-                event.data.dataValue = event.data.dataValue.replace(/xml:id="temp_([\s\S][^:]+?)"/g, "");
+                event.data.dataValue = event.data.dataValue.replace(/xml:id="_temp_tc_([\s\S][^:]+?)"/g, "");
             }, null, null, 15);
 
             // Bind events if the Dom is ready!
@@ -457,23 +461,44 @@ define(function leosTrackChangesPluginModule(require) {
                         range.select();
                         editor.fire("change");
                         return false;
+                    case "indent":
+                    case "outdent":
+                        if (isTrackChangesEnabled) {
+                            selectedElement = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
+                        }
                 }
             });
 
-            editor.on('afterCommandExec', function(event) {
-                if (event.data.name === 'enter') {
-                    var elementToRemoveAttribute = event.editor.getSelection().getStartElement();
-                    if (elementToRemoveAttribute.type === CKEDITOR.NODE_TEXT) { elementToRemoveAttribute = elementToRemoveAttribute.getParent() }
-                    while (elementToRemoveAttribute.getName() !== 'li' && elementToRemoveAttribute.getParent()) {
-                        elementToRemoveAttribute = elementToRemoveAttribute.getParent();
-                    };
-                    if (elementToRemoveAttribute.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+            editor.on("afterCommandExec", function(event) {
+                switch (event.data.name) {
+                    case "enter":
+                        var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                    }
-                    if (elementToRemoveAttribute.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
-                    }
-                    event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                        event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                        break;
+                    case "indent":
+                    case "outdent":
+                        if (isTrackChangesEnabled) {
+                            var selectedElementAfterCommand = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
+                            if (selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== selectedElementAfterCommand.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                                // Indent or outdent operation performed
+                                if (selectedElementAfterCommand.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                                    selectedElementAfterCommand.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
+                                    var indentLevel = selectedElement.getAttribute(core.DATA_AKN_TC_INDENT_LEVEL) ?? 0;
+                                    selectedElementAfterCommand.setAttribute(core.DATA_AKN_TC_INDENT_LEVEL, (event.data.name === "indent") ?
+                                        parseInt(indentLevel) + 1 : parseInt(indentLevel) - 1);
+                                } else {
+                                    selectedElementAfterCommand.removeAttribute(core.DATA_AKN_SOFTACTION_ROOT);
+                                    selectedElementAfterCommand.removeAttribute(core.DATA_AKN_TC_INDENT_LEVEL);
+                                    var firstChildTcElement = (new CKEDITOR.dom.element(selectedElementAfterCommand)).findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
+                                    if (firstChildTcElement) {
+                                        firstChildTcElement.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
+                                    }
+                                }
+                            }
+                        }
+                        break;
                 }
             }, null, null, 15);
 

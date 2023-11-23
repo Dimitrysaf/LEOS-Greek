@@ -43,6 +43,7 @@ export type LeosConfig = {
   annotateHostUrl: string;
   annotateJwtIssuerClientId: string;
   annotatePopupDefaultStatus: 'ON' | 'OFF';
+  collectionCloseButtonEnabled: boolean;
 };
 
 export type LeosAppConfig = LeosConfig & {

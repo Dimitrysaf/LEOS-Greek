@@ -17,7 +17,6 @@ import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
-import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;

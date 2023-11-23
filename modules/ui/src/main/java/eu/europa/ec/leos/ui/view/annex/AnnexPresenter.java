@@ -56,7 +56,7 @@ import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.Annotate.AnnotateService;
+import eu.europa.ec.leos.services.annotate.AnnotateService;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.services.document.AnnexService;
@@ -1915,7 +1915,6 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     void toggleLiveDiffingRequired(ToggleLiveDiffingRequiredEvent event) {
-
         boolean liveDiffingRequired = event.isLiveDiffingRequired();
         Annex updatedAnnex = updateLiveDiffingRequired(liveDiffingRequired);
 
@@ -1951,15 +1950,13 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private Annex updateBaseVersion(String documentId, String versionLabel, String versionTitle) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionTitle);
-        Annex updatedExplanatory = annexService.updateAnnex(getDocumentRef(), documentId, properties, true);
-        return updatedExplanatory;
+        return annexService.updateAnnex(getDocumentRef(), documentId, properties, true);
     }
 
     private Annex updateLiveDiffingRequired(boolean liveDiffingRequired) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), liveDiffingRequired);
-        Annex updatedAnnex = annexService.updateAnnex(getDocumentRef(), documentId, properties, true);
-        return updatedAnnex;
+        return annexService.updateAnnex(getDocumentRef(), documentId, properties, true);
     }
 
     @Subscribe

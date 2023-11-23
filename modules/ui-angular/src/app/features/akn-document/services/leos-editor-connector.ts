@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { distinctUntilChanged, filter, take, tap, withLatestFrom } from 'rxjs';
+import {distinctUntilChanged, filter, finalize, take, tap, withLatestFrom} from 'rxjs';
 
 import { EditElementResponse } from '@/features/akn-document/models/ckeditor';
 import type { EditorOpenState } from '@/features/akn-document/services/ckeditor.service';
@@ -19,6 +19,7 @@ import { isNodeLastElement, getInstanceType } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
+import {LoadingService} from "@/shared/services/loading.service";
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
@@ -75,6 +76,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     private dialogService: EuiDialogService,
     private translateService: TranslateService,
     private tableOfContentService: TableOfContentService,
+    private loadingService: LoadingService,
     private setEditorOpenState: (state: EditorOpenState) => void,
   ) {
     super(
@@ -109,7 +111,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
 
     promise.then(() => {
       if (data.elementType === 'crossheading') {
-        data.elementType = 'cross_heading';
+        data.elementType = 'crossHeading';
       }
       this.handleEdit(data);
     });
@@ -223,14 +225,16 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
     documentRef: string;
   }) {
+    this.loadingService.setLoading(true);
     this.documentService
       .requestElement(
         data.elementId,
         data.elementType.toLowerCase(),
         data.documentRef,
       )
-      .pipe(take(1))
-      .subscribe((response) => {
+      .pipe(take(1)).pipe(
+        finalize(() => this.loadingService.setLoading(false))
+      ).subscribe((response) => {
         this.receiveElement(
           response.elementId,
           response.elementTagName,
@@ -260,6 +264,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
+    this.loadingService.setLoading(true);
     this.saveDocumentElement(
       documentRef,
       elemData.elementId,
@@ -267,9 +272,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       elemData.elementFragment,
       elemData.isSplit,
       documentType,
+    ).pipe(
+      finalize(() => this.loadingService.setLoading(false))
     ).subscribe((response) => {
       this.isElementSaved = true;
-      this.documentService.setIsEditorOpen(false);
       this.tableOfContentService.reload();
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
       this.refreshElement(
@@ -283,6 +289,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           elemData.elementFragment,
         ) === 4
       ) {
+        this.isElementSaved = false;
         this.openEditorInNewElementAfterSoftEnter(
           response.elementId,
           response.elementTagName,
@@ -292,15 +299,18 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }
 
   // leosEditorExtension > elementEditor
-  releaseElement() {
+  releaseElement(elemData: {
+    elementId: string;
+    elementType: string;
+  }) {
     this.coEditionService.removeElementCoEditInfo(
       this.documentService.documentRef,
       this.elementUnderEdit,
     );
     if (!this.isElementSaved) {
-      //   this.documentService.reloadDocument();
-      // } else {
       this.documentService.resetDocument();
+    } else {
+      this.documentService.reloadDocument();
     }
     this.isElementSaved = false;
     this.setEditorOpenState('CLOSE');
@@ -354,7 +364,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           'page.editor.element-delete-dialog.body',
         ),
         accept: confirmDeletion,
-        dismiss: () => this.releaseElement(),
+        dismiss: () => this.releaseElement({elementId: elementData.elementId, elementType: elementData.elementType}),
       });
     }
   }

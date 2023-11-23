@@ -17,6 +17,8 @@ import { Permission } from '@/shared';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
+import {Router} from "@angular/router";
+import {AppConfigService} from "@/core/services/app-config.service";
 
 @Component({
   selector: 'app-proposal-header',
@@ -32,12 +34,15 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
   title: string;
   createForm: FormGroup;
   permissions: Permission[];
+  collectionCloseButtonEnabled: boolean;
 
   private destroy$: Subject<void> = new Subject();
 
   constructor(
     private fb: FormBuilder,
     private proposalDetailsService: ProposalDetailsService,
+    private router: Router,
+    private appConfig: AppConfigService
   ) {}
 
   ngOnDestroy(): void {
@@ -55,5 +60,14 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
     this.proposalDetailsService.permissions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((perms) => (this.permissions = perms));
+    this.appConfig.config.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe((config) => {
+      this.collectionCloseButtonEnabled = config.collectionCloseButtonEnabled;
+    })
+  }
+
+  handleClose() {
+    this.router.navigate([`/workspace`]);
   }
 }

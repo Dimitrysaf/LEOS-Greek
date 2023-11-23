@@ -14,14 +14,14 @@
 package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
-import eu.europa.ec.leos.model.event.DocumentUpdatedByCoEditorEvent;
+import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.document.BillRepository;
 import eu.europa.ec.leos.repository.store.PackageRepository;
@@ -124,15 +124,9 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Updating Bill Xml Content... [id={}]", bill.getId());
         final BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
         bill = billRepository.updateBill(bill.getId(), metadata, updatedBillContent, VersionType.MINOR, comments);
-        try {
-            bill = (Bill) xmlDocumentService.updateInternalReferences(bill);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
+        bill = updateInternalReferencesAsync(bill);
         //call validation on document with updated content
-        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, updatedBillContent));
-        
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
         return bill;
     }
 
@@ -140,46 +134,41 @@ public abstract class BillServiceImpl implements BillService {
     public Bill updateBill(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Bill metadata properties... [id={}]", id);
         Bill bill = billRepository.updateBill(ref, id, properties, latest);
-        try {
-            bill = (Bill) xmlDocumentService.updateInternalReferences(bill);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
-        return bill;
+        return updateInternalReferencesAsync(bill);
     }
 
     @Override
     public Bill updateBill(String id, byte[] updatedContent) {
         LOG.trace("Updating Bill content... [id={}]", id);
         Bill bill = billRepository.updateBill(id, updatedContent);
-        try {
-            bill = (Bill) xmlDocumentService.updateInternalReferences(bill);
-        } catch (Exception e) {
-            LOG.error("Error while updating internal references", e);
-        }
-        LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
-        return bill;
+        return updateInternalReferencesAsync(bill);
     }
 
     @Override
     public Bill updateBill(Bill bill, BillMetadata updatedMetadata, VersionType versionType, String comment) {
         LOG.trace("Updating Bill... [id={}, updatedMetadata={}]", bill.getId(), updatedMetadata);
         Stopwatch stopwatch = Stopwatch.createStarted();
-        byte[] updatedBytes = updateDataInXml(getContent(bill), updatedMetadata); //FIXME: Do we need latest data again??
+        byte[] updatedBytes = updateDataInXml(getContent(bill), updatedMetadata);
         
         bill = billRepository.updateBill(bill.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        bill = updateInternalReferencesAsync(bill);
+        //call validation on document with updated content
+        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, bill.getContent().get().getSource().getBytes()));
+        
+        LOG.trace("Updated Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        return bill;
+    }
+
+    private Bill updateInternalReferencesAsync(Bill bill) {
         try {
-            bill = (Bill) xmlDocumentService.updateInternalReferences(bill);
+            xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(bill.getId(),
+                    bill.getMetadata().get().getRef()));
         } catch (Exception e) {
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", bill.getMetadata().get().getRef());
-        //call validation on document with updated content
-        validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(bill, updatedBytes));
-        
-        LOG.trace("Updated Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return bill;
+        //fetch updated version
+        return findBill(bill.getId(), true);
     }
 
     @Override

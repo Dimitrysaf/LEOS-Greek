@@ -30,15 +30,23 @@ public class NumberConfigAlpha extends NumberConfigAbstract implements NumberCon
     }
 
     @Override
-    public void parseInitialValue(String numAsString){
+    public void parseInitialValue(String numAsString) {
         int num = charToInteger(numAsString);
         setInitialValue(num);
     }
 
     @Override
-    public void parseValue(String numAsString){
+    public void parseValue(String numAsString) {
         int num = charToInteger(numAsString);
         setValue(num);
+    }
+
+    public int getNumberIndex(String numAsString) {
+        return charToInteger(numAsString.replace(this.prefix, "").replace(this.suffix, ""));
+    }
+
+    public String getNumberFromIndex(int index) {
+        return this.prefix + getAlphaNumber(index) + this.suffix;
     }
 
     public int charToInteger(String numAsString) {

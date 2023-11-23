@@ -21,6 +21,8 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
+import eu.europa.ec.leos.services.numbering.config.NumberConfig;
+import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
@@ -55,6 +57,7 @@ import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
 import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
@@ -67,16 +70,21 @@ import static eu.europa.ec.leos.services.support.XmlHelper.INTRO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DEPTH_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ID_TO_BE_REMOVED;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ID_TO_BE_RESTORED;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_LIST_TYPE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBER_ORIGIN;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ORIGIN_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_DELETE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_DATE_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVED_LABEL_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_MOVE_TO_ORIGIN_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
@@ -118,6 +126,9 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Autowired
     private NumberProcessorHandler numberProcessorHandler;
+
+    @Autowired
+    protected NumberConfigFactory numberConfigFactory;
 
     public Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
                                     Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled) {
@@ -349,11 +360,85 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     public Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent) {
 
         Document fragmentToCheckDeleted = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
-        NodeList softMovedNodesToCheckDeleted = XercesUtils.getElementsByXPath(fragmentToCheckDeleted, String.format("//*[@%s][@%s='accept']", LEOS_SOFT_MOVE_FROM,
+        NodeList softMovedNodesToCheckDeleted = XercesUtils.getElementsByXPath(fragmentToCheckDeleted, String.format("//*[@%s][@%s='accept']", LEOS_ID_TO_BE_REMOVED,
                 LEOS_RENUMBER_ORIGIN));
         for (int nodeIdx = 0; nodeIdx < softMovedNodesToCheckDeleted.getLength(); nodeIdx++) {
-            String idToDelete = "moved_" + softMovedNodesToCheckDeleted.item(nodeIdx).getAttributes().getNamedItem("xml:id").getNodeValue();
+            String idToDelete = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + softMovedNodesToCheckDeleted.item(nodeIdx).getAttributes().getNamedItem(XMLID).getNodeValue();
+            Document document = createXercesDocument(xmlContent);
+            Node nodeToDelete = XercesUtils.getElementById(document, idToDelete);
+            if (nodeToDelete != null && nodeToDelete.getParentNode() != null) {
+                List<Node> children = XercesUtils.getChildren(nodeToDelete.getParentNode(), Arrays.asList(INDENT, POINT));
+                Node firstElement = children.get(0);
+                int elementDepth = XercesUtils.getPointDepth(firstElement);
+                String elementName = firstElement.getNodeName();
+                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement);
+                boolean changeOffset = false;
+                for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
+                    Node node = children.get(nodeListCount);
+                    if (changeOffset) {
+                        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+                        Node delNode = getFirstChild(numNode, LEOS_SOFT_ACTION_DELETE);
+                        int index = numberConfig.getNumberIndex(delNode.getTextContent()) - 1;
+                        delNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                    }
+                    if (nodeToDelete == node) {
+                        changeOffset = true;
+                    }
+                }
+            }
+            xmlContent = nodeToByteArray(document);
             xmlContent = this.deleteElementById(xmlContent, idToDelete);
+            document = createXercesDocument(xmlContent);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
+            xmlContent = nodeToByteArray(document);
+        }
+
+        Document fragmentToCheckRestore = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
+        NodeList softMovedNodesToRestore = XercesUtils.getElementsByXPath(fragmentToCheckRestore, String.format("//*[@%s]", LEOS_ID_TO_BE_RESTORED));
+        for (int nodeIdx = 0; nodeIdx < softMovedNodesToRestore.getLength(); nodeIdx++) {
+            String idToRestore = softMovedNodesToRestore.item(nodeIdx).getAttributes().getNamedItem(LEOS_ID_TO_BE_RESTORED).getNodeValue();
+            Document document = createXercesDocument(xmlContent);
+            Node nodeToRestore = XercesUtils.getElementById(document, idToRestore);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_USER_ATTR);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_DATE_ATTR);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_ACTION_ATTR);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_ACTION_ROOT_ATTR);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_MOVED_LABEL_ATTR);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_MOVE_TO);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_ACTION_ATTR);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_TITLE);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_UID);
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_EDITABLE_ATTR);
+            XercesUtils.addAttribute(nodeToRestore, XMLID, XercesUtils.getAttributeValue(nodeToRestore, XMLID).replace(SOFT_MOVE_PLACEHOLDER_ID_PREFIX, ""));
+            Node numNode = getFirstChild(nodeToRestore, getNumTag(nodeToRestore.getNodeName()));
+            XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
+            XercesUtils.removeAttribute(numNode, LEOS_TITLE);
+            XercesUtils.removeAttribute(numNode, LEOS_UID);
+
+            if (nodeToRestore.getParentNode() != null) {
+                List<Node> children = XercesUtils.getChildren(nodeToRestore.getParentNode(), Arrays.asList(INDENT, POINT));
+                Node firstElement = children.get(0);
+                int elementDepth = XercesUtils.getPointDepth(firstElement);
+                String elementName = firstElement.getNodeName();
+                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement);
+                boolean changeOffset = false;
+                for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
+                    Node node = children.get(nodeListCount);
+                    if (changeOffset) {
+                        numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+                        Node insNode = getFirstChild(numNode, LEOS_TC_INSERT_ELEMENT_NAME);
+                        int index = numberConfig.getNumberIndex(insNode.getTextContent()) + 1;
+                        insNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                    }
+                    if (nodeToRestore == node) {
+                        changeOffset = true;
+                    }
+                }
+            }
+            xmlContent = nodeToByteArray(document);
+            document = createXercesDocument(xmlContent);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
+            xmlContent = nodeToByteArray(document);
 
         }
 

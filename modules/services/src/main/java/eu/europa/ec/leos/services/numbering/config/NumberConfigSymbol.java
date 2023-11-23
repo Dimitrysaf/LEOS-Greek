@@ -23,6 +23,14 @@ public class NumberConfigSymbol extends NumberConfigAbstract implements NumberCo
     @Override
     public void parseValue(String numAsString) { }
 
+    public int getNumberIndex(String numAsString) {
+        return -1;
+    }
+
+    public String getNumberFromIndex(int index) {
+        return this.prefix + this.numberToShow + this.suffix;
+    }
+
     @Override
     protected String getImplName() {
         return this.getClass().getSimpleName();

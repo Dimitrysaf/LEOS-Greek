@@ -24,6 +24,7 @@ import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
@@ -32,7 +33,6 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.util.VersionComparator;
@@ -48,9 +48,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
-import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
 @Service
 public abstract class DocumentContentServiceImpl implements DocumentContentService {
@@ -572,11 +572,23 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 throw new UnsupportedOperationException("Invalid Document Type");
         }
         try {
-            document = xmlDocumentService.updateInternalReferences(document);
+            document = updateInternalReferencesAsync(document, LeosCategoryClass.caseInsensitiveValueOf(document.getCategory().name()));
         } catch (Exception e) {
             LOG.error("Error while updating internal references", e);
         }
         LOG.debug("updateInternalReferences processed for {}: ", document.getMetadata().get().getRef());
         return document;
+    }
+
+    private XmlDocument updateInternalReferencesAsync(XmlDocument document, LeosCategoryClass category) {
+        try {
+            xmlDocumentService.updateInternalReferencesAsync(new UpdateInternalReferencesMessage(document.getId(),
+                    document.getMetadata().get().getRef()));
+        } catch (Exception e) {
+            LOG.error("Error while updating internal references", e);
+        }
+        LOG.debug("updateInternalReferences processed for {}: ", document.getMetadata().get().getRef());
+        //fetch updated version
+        return getDocumentById(document.getId(), category);
     }
 }
