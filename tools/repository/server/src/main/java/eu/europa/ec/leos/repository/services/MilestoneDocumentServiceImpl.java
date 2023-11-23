@@ -294,15 +294,23 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                 }
                 if (filter.nullCheck) {
                     queryBuild.append(" AND ( ");
-                    queryBuild.append(columnName + " IS NULL OR " + columnName + " = '-' ");
+                    queryBuild.append(columnName);
+                    queryBuild.append(" IS NULL OR ");
+                    queryBuild.append(columnName);
+                    queryBuild.append(" = '-' ");
                 }
                 if ("IN".equalsIgnoreCase(filter.operator)) {
                     queryBuild.append(" OR ");
-                    queryBuild.append(columnName + " IN ( ");
-                    queryBuild.append(":valueList_" + i);
+                    queryBuild.append(columnName);
+                    queryBuild.append(" IN ( ");
+                    queryBuild.append(":valueList_");
+                    queryBuild.append(i);
                     queryBuild.append(")");
                 } else {
-                    queryBuild.append(" OR " + columnName + " :op_" + i + " :keyValue_" + i);
+                    queryBuild.append(" OR ");
+                    queryBuild.append(columnName);
+                    queryBuild.append(" :op_").append(i);
+                    queryBuild.append(" :keyValue_").append(i);
                 }
                 if (filter.nullCheck) {
                     queryBuild.append(")");
@@ -342,7 +350,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                 QueryFilter.SortOrder sortOrder = queryFilter.getSortOrders().get(i);
                 try {
                     Field field = objectClass.getDeclaredField(QueryFilter.FilterType.getColumnName(sortOrder.key));
-                    queryBuild.append(QueryFilter.FilterType.getColumnName(sortOrder.key) + " " + sortOrder.direction);
+                    queryBuild.append(QueryFilter.FilterType.getColumnName(sortOrder.key));
+                    queryBuild.append(" ");
+                    queryBuild.append(sortOrder.direction);
                     if (i < queryFilter.getSortOrders().size() - 1) {
                         queryBuild.append(" ,");
                     }

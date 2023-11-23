@@ -61,7 +61,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -69,7 +68,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.StringJoiner;
 
 @Service
 public class DocumentServiceImpl implements DocumentService {
@@ -721,18 +719,22 @@ public class DocumentServiceImpl implements DocumentService {
                 }
                 if (filter.nullCheck) {
                     queryBuild.append(" AND ( ");
-                    queryBuild.append(columnName + " IS NULL OR " + columnName + " = '-' ");
+                    queryBuild.append(columnName);
+                    queryBuild.append(" IS NULL OR ");
+                    queryBuild.append(columnName);
+                    queryBuild.append(" = '-' ");
                 }
                 if ("IN".equalsIgnoreCase(filter.operator)) {
                     queryBuild.append(" OR ");
-                    queryBuild.append(columnName + " IN ( ");
-                    StringJoiner joiner = new StringJoiner(", ");
-                    for (int j = 0; j < filter.value.length; j++) {
-                        joiner.add(":val_" + j);
-                    }
-                    queryBuild.append(joiner + ")");
+                    queryBuild.append(columnName);
+                    queryBuild.append(" IN ( ");
+                    queryBuild.append(":valueList_").append(i);
+                    queryBuild.append(")");
                 } else {
-                    queryBuild.append(" OR " + columnName + " :op_" + i + " :keyValue_" + i);
+                    queryBuild.append(" OR ");
+                    queryBuild.append(columnName);
+                    queryBuild.append(" :op_").append(i);
+                    queryBuild.append(" :keyValue_").append(i);
                 }
                 if (filter.nullCheck) {
                     queryBuild.append(")");
@@ -753,14 +755,10 @@ public class DocumentServiceImpl implements DocumentService {
                     continue;
                 }
                 if ("IN".equalsIgnoreCase(filter.operator)) {
-                    for (int j = 0; j < filter.value.length; j++) {
-                        query.setParameter("val_" + j, filter.value[j]);
-                    }
+                    query.setParameter("valueList_" + i, Arrays.asList(filter.value));
                 } else {
                     query.setParameter("op_" + i, filter.operator);
-                    for (int j = 0; j < filter.value.length; j++) {
-                        query.setParameter("val_" + j, filter.value[j]);
-                    }
+                    query.setParameter("valueList_" + i, Arrays.asList(filter.value));
                 }
             } catch (NoSuchFieldException e) {
                 continue;
@@ -778,14 +776,14 @@ public class DocumentServiceImpl implements DocumentService {
                 String value = values[i];
                 String[] valueAttrs = value.split("::");
                 if (valueAttrs.length == 1) {
-                    queryBuild.append("(p.collaborator.collaboratorName = :collaboratorName_" + i + ")");
+                    queryBuild.append("(p.collaborator.collaboratorName = :collaboratorName_").append(i).append(")");
                 } else if (valueAttrs.length == 2) {
-                    queryBuild.append("(p.collaborator.collaboratorName = :collaboratorName_" + i);
-                    queryBuild.append(" AND p.collaborator.role = :collaboratorRole_" + i + ")");
+                    queryBuild.append("(p.collaborator.collaboratorName = :collaboratorName_").append(i);
+                    queryBuild.append(" AND p.collaborator.role = :collaboratorRole_").append(i).append(")");
                 } else if (valueAttrs.length == 3) {
-                    queryBuild.append("(p.collaborator.collaboratorName = :collaboratorName_" + i);
-                    queryBuild.append(" AND p.collaborator.role = :collaboratorRole_" + i);
-                    queryBuild.append(" AND p.collaborator.organization = :collaboratorOrganization_" + i + ")");
+                    queryBuild.append("(p.collaborator.collaboratorName = :collaboratorName_").append(i);
+                    queryBuild.append(" AND p.collaborator.role = :collaboratorRole_").append(i);
+                    queryBuild.append(" AND p.collaborator.organization = :collaboratorOrganization_").append(i).append(")");
                 }
                 if (i < values.length - 1) {
                     queryBuild.append(" OR ");
@@ -823,7 +821,9 @@ public class DocumentServiceImpl implements DocumentService {
                 QueryFilter.SortOrder sortOrder = queryFilter.getSortOrders().get(i);
                 try {
                     Field field = objectClass.getDeclaredField(QueryFilter.FilterType.getColumnName(sortOrder.key));
-                    queryBuild.append(QueryFilter.FilterType.getColumnName(sortOrder.key) + " " + sortOrder.direction);
+                    queryBuild.append(QueryFilter.FilterType.getColumnName(sortOrder.key));
+                    queryBuild.append(" ");
+                    queryBuild.append(sortOrder.direction);
                     if (i < queryFilter.getSortOrders().size() - 1) {
                         queryBuild.append(" ,");
                     }
@@ -897,7 +897,7 @@ public class DocumentServiceImpl implements DocumentService {
         return Collections.singletonMap(content, version);
     }
 
-    private DocumentVersion updateDocumentVersionComments(DocumentVersion version, String updatedBy, Map<String, ?> metadata) throws Exception {
+    private DocumentVersion updateDocumentVersionComments(DocumentVersion version, String updatedBy, Map<String, ?> metadata) {
         version.setAuditLastMBy(updatedBy);
         version.setAuditLastMDate(LocalDateTime.now());
         try {
