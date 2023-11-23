@@ -546,6 +546,11 @@ define(function leosTrackChangesModule(require) {
         acceptChange: function(editor, element) {
             if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) || ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
+                if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
+                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
+                    element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
+                    element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
+                }
                 core.removeTrackChangesAttributes(element);
                 core.removeTrackChangesAttributesForNumbering(element);
                 core.removeTrackChangesAttributesForEnter(element);
@@ -553,11 +558,6 @@ define(function leosTrackChangesModule(require) {
                 element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
                 if (!element.getAttribute(leosPluginUtils.ID)) {
                     element.setAttribute(leosPluginUtils.ID, "_temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
-                }
-                if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
-                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
-                    element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
-                    element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
                 }
             } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER)) {
                 // Accept parent
@@ -587,11 +587,11 @@ define(function leosTrackChangesModule(require) {
 
         rejectChange: function(editor, element) {
             editor.getSelection().fake(element.getParent());
-            if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
-                element.remove();
-            } else if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
-                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
+            if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
+                (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
                 element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
+                element.remove();
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                 element.remove();
             } else {
                 if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
