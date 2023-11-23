@@ -129,7 +129,6 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     this.saveVersionVisible = !isMandateMemorandum && CAN_UPDATE;
     this.exportVersionVisible = !isMandateExplanatory && !isMandateMemorandum;
     this.exportVersionWithAnnotationsVisible = !isMandateMemorandum;
-    this.exportCleanVersionVisible = isCN || isClonedProposal;
     this.exportEConsiliumVisible = isCN && !isMandateMemorandum && CAN_WORK_WITH_EXPORT_PACKAGE;
     this.importVisible = isDocument && CAN_UPDATE;
     this.toggleUserGuidanceVisible = true;
@@ -138,7 +137,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     this.renumberDocumentVisible = (isMandateAnnex || isMandateDocument) && CAN_RENUMBER;
     this.seeTrackChanges = this.documentConfig.trackChangesShowed;
     this.canActivateTrackChanges = !isClonedProposal && CAN_ACTIVATE_TRACK_CHANGES;
-    this.exportCleanVersionVisible = isCN || isClonedProposal;
-    this.showCleanVersionVisible = isCN || isClonedProposal;
+    this.exportCleanVersionVisible = (isCN || isClonedProposal) && !isMandateMemorandum;
+    this.showCleanVersionVisible = (isCN || isClonedProposal) && !isMandateMemorandum;
   }
 }
