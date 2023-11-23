@@ -14,6 +14,7 @@ import {
 } from '@/shared/constants';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
+import { HASH_NUM_VALUE } from '@/shared/constants/toc.constant';
 import {
   containsItemOfOrigin,
   findNodeById,
@@ -137,6 +138,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     originalItem.trackChangeAction = LEOS_TC_MOVE_ACTION;
     originalItem.softMoveFrom =
       SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
+    originalItem.number = HASH_NUM_VALUE;
     return moveToItem;
   }
 
