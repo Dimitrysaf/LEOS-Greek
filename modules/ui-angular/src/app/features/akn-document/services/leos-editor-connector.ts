@@ -289,6 +289,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           elemData.elementFragment,
         ) === 4
       ) {
+        this.isElementSaved = false;
         this.openEditorInNewElementAfterSoftEnter(
           response.elementId,
           response.elementTagName,
