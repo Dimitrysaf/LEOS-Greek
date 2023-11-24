@@ -141,13 +141,10 @@ define(function leosTrackChangesPluginModule(require) {
                     var elementWithPseudoElt = core.getClosestElementWithPseudoElt(element, core.BEFORE);
                     if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
                         && core.isMouseOverPseudoElt(elementWithPseudoElt, mousePosition, core.BEFORE)) {
-                        if (elementWithPseudoElt.getAttribute(core.DATA_AKN_SOFTACTION_ROOT)) {
-                            editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
-                            return {
-                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
-                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
-                            };
-                        }
+                        editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
+                        return {
+                            acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                        };
                     } else {
                         var tcElement = element.$.closest(core.TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR);
                         if (tcElement) { // Is a track change deleted row
@@ -219,7 +216,6 @@ define(function leosTrackChangesPluginModule(require) {
                             core.removeTrackChangesAttributesForNumbering(element);
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
-                        element.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
                         core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                     }
                 }
@@ -234,7 +230,6 @@ define(function leosTrackChangesPluginModule(require) {
                     var el = range && range.startContainer;
                     if (el) {
                         core.addTrackChangesAttributesForEnter(editor, el, core.INSERT_ACTION);
-                        el.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
                     }
                 }
             });
@@ -263,7 +258,6 @@ define(function leosTrackChangesPluginModule(require) {
                         } else {
                             elementToSetAttribute.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, core.UNNUMBERED);
                         }
-                        elementToSetAttribute.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
                         editor.fire("change");
                     }
                 }
@@ -461,11 +455,6 @@ define(function leosTrackChangesPluginModule(require) {
                         range.select();
                         editor.fire("change");
                         return false;
-                    case "indent":
-                    case "outdent":
-                        if (isTrackChangesEnabled) {
-                            selectedElement = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
-                        }
                 }
             });
 
@@ -476,28 +465,6 @@ define(function leosTrackChangesPluginModule(require) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
                         event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
-                        break;
-                    case "indent":
-                    case "outdent":
-                        if (isTrackChangesEnabled) {
-                            var selectedElementAfterCommand = event.editor.getSelection().getStartElement().$.closest("li:not([refersto])");
-                            if (selectedElement.getAttribute(leosPluginUtils.DATA_AKN_NUM) !== selectedElementAfterCommand.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
-                                // Indent or outdent operation performed
-                                if (selectedElementAfterCommand.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
-                                    selectedElementAfterCommand.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
-                                    var indentLevel = selectedElement.getAttribute(core.DATA_AKN_TC_INDENT_LEVEL) ?? 0;
-                                    selectedElementAfterCommand.setAttribute(core.DATA_AKN_TC_INDENT_LEVEL, (event.data.name === "indent") ?
-                                        parseInt(indentLevel) + 1 : parseInt(indentLevel) - 1);
-                                } else {
-                                    selectedElementAfterCommand.removeAttribute(core.DATA_AKN_SOFTACTION_ROOT);
-                                    selectedElementAfterCommand.removeAttribute(core.DATA_AKN_TC_INDENT_LEVEL);
-                                    var firstChildTcElement = (new CKEDITOR.dom.element(selectedElementAfterCommand)).findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
-                                    if (firstChildTcElement) {
-                                        firstChildTcElement.setAttribute(core.DATA_AKN_SOFTACTION_ROOT, core.TRUE);
-                                    }
-                                }
-                            }
-                        }
                         break;
                 }
             }, null, null, 15);
