@@ -142,9 +142,17 @@ define(function leosTrackChangesPluginModule(require) {
                     if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
                         && core.isMouseOverPseudoElt(elementWithPseudoElt, mousePosition, core.BEFORE)) {
                         editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
-                        return {
-                            acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
-                        };
+                        if ((elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_NUM))
+                            || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                            return {
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
+                                rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
+                        } else {
+                            return {
+                                acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
+                            };
+                        }
                     } else {
                         var tcElement = element.$.closest(core.TRACKCHANGES_TABLE_ROW_ELEMENT_SELECTOR);
                         if (tcElement) { // Is a track change deleted row

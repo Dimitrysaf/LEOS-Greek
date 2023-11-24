@@ -542,8 +542,8 @@ define(function leosTrackChangesModule(require) {
         },
 
         acceptChange: function(editor, element) {
-            if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) || ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
-                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
+            if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) || (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) ||
+                ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
                 if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                     (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
                     element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
@@ -551,6 +551,7 @@ define(function leosTrackChangesModule(require) {
                 }
                 core.removeTrackChangesAttributes(element);
                 core.removeTrackChangesAttributesForEnter(element);
+                core.removeTrackChangesAttributesForNumbering(element);
                 core.removeSoftAttributes(element);
                 element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
                 if (!element.getAttribute(leosPluginUtils.ID)) {
@@ -583,6 +584,9 @@ define(function leosTrackChangesModule(require) {
             if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                 (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
                 element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
+                element.remove();
+            } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))
+                || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                 element.remove();
             } else {
                 if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
