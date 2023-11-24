@@ -117,6 +117,11 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     public static final String[] NUMBERED_AND_LEVEL_ITEMS = {PARAGRAPH, POINT, LEVEL, INDENT};
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX").withZone(ZoneId.systemDefault());
     private static final String INSERT_TAG = "ins";
+    private static final String LEOS_UID_PREFIX = " leos:uid=\"";
+    private static final String LEOS_TITLE_PREFIX = " leos:title=\"";
+    private static final String INS_END_TAG = "</ins>";
+    private static final String INS_START_TAG = "<ins ";
+    private static final String BACKSLASH_QUOTE = "\"";
     @Autowired
     private CloneContext cloneContext;
     @Autowired
@@ -1288,21 +1293,148 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             if (matchingText.equals(origText)
                     || matchingText.replace(NON_BREAKING_SPACE, WHITESPACE).equals(escapeXml10(origText.replace(NON_BREAKING_SPACE, WHITESPACE)))
                     || normalizeSpace(matchingText).replace(NON_BREAKING_SPACE, WHITESPACE).equals(escapeXml10(origText.replace(NON_BREAKING_SPACE, WHITESPACE)))) {
-                String newElements;
-                if (isTrackChangesEnabled && !INSERT_TAG.equalsIgnoreCase(node.getNodeName())){
-                    newElements = generateTrackChangesText(origText, newText, node);
+                String newElementsForReplacement = null;
+                boolean isTrackChangesInInsertTag = false;
+                if (isTrackChangesEnabled){
+                    if(INSERT_TAG.equalsIgnoreCase(node.getNodeName())){
+                        newElement = generateModifiedTrackChangesDocument(origText, newText, node,result, eltContent, document);
+                        isTrackChangesInInsertTag = true;
+                    }else {
+                        newElementsForReplacement = generateTrackChangesText(origText, newText, node);
+                    }
                 }else{
-                    newElements = escapeXml10(normalizeNewText(origText, newText));
+                    newElementsForReplacement = escapeXml10(normalizeNewText(origText, newText));
                 }
-                eltContent.replace(result.middle, result.right, newElements);
-                Node newNode = XercesUtils.createNodeFromXmlFragment(document, eltContent.toString().getBytes(UTF_8), false);
-                XercesUtils.replaceElement(newNode, node);
-                newElement = nodeToByteArray(document);
+                if(!isTrackChangesInInsertTag) {
+                    newElement = getDocumentWithReplacedNewElement(document, node, eltContent, result, newElementsForReplacement);
+                }
             } else {
                 LOG.debug("Text not matching {}, original text:{}, matched text:{}", elementId, origText, matchingText);
             }
         }
         return newElement;
+    }
+
+    private static byte[] getDocumentWithReplacedNewElement(Document document, Node node, StringBuilder eltContent, ImmutableTriple<String, Integer, Integer> result, String newElements) {
+        eltContent.replace(result.middle, result.right, newElements);
+        Node newNode = XercesUtils.createNodeFromXmlFragment(document, eltContent.toString().getBytes(UTF_8), false);
+        XercesUtils.replaceElement(newNode, node);
+        return nodeToByteArray(document);
+    }
+
+    /**
+     * Generate the document for the case when a new suggestion is accepted on an already newly inserted text.
+     *
+     * This method generates additional Nodes (del and ins) appended to the already ins node.
+     *
+     * It splits the original ins node and inserts the new nodes replacing the text for which
+     * the suggestion was accepted
+     *
+     * @param origText
+     * @param newText
+     * @param node
+     * @param result
+     * @param eltContent
+     * @param document
+     * @return
+     */
+    private byte[] generateModifiedTrackChangesDocument(String origText, String newText, Node node, ImmutableTriple<String, Integer, Integer> result, StringBuilder eltContent, Document document) {
+
+        String userLogin = null;
+        String userName = null;
+        User user = securityContext != null && securityContext.hasAuthenticationInContext() ? securityContext.getUser() : null;
+        if (user != null){
+            userLogin = user.getLogin();
+            userName = user.getName();
+        }
+        String oldLogin = XercesUtils.getAttributeValue(node,"leos:uid");
+        if(StringUtils.equals(userLogin, oldLogin)){
+            return getDocumentWithReplacedNewElement(document, node, eltContent, result, escapeXml10(normalizeNewText(origText, newText)));
+        }
+        String prefixId = getPrefixId(node.getParentNode());
+        String uid = "";
+        String title = "";
+        if(userLogin != null && userName!= null) {
+            uid =  new StringBuilder(LEOS_UID_PREFIX).append(userLogin).append(BACKSLASH_QUOTE).toString();
+            title =   new StringBuilder(LEOS_TITLE_PREFIX).append(userName).append(" : ")
+                    .append(DATE_FORMAT.format(new Date().toInstant())).append(BACKSLASH_QUOTE).toString();
+        }
+
+        String newNodeContentFromExisting = new  StringBuilder(eltContent.substring(0,result.middle)).append(INS_END_TAG).toString();
+
+        Node newNodeFromExisting = XercesUtils.createNodeFromXmlFragment(document, newNodeContentFromExisting.getBytes(UTF_8), false);
+        XercesUtils.replaceElement(newNodeFromExisting, node);
+
+        String deleteTagContent = new StringBuilder("<del ") //delete tag added
+                .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append(BACKSLASH_QUOTE) //id
+                .append(uid)
+                .append(title)
+                .append(">")
+                .append(escapeXml10(normalizeSpace(origText)))
+                .append("</del>").toString();
+
+
+        Node deleteTagNode = appendNodeFromContent(document, newNodeFromExisting, deleteTagContent);
+
+        String insertTagContent =  new StringBuilder(INS_START_TAG) // insert tag added
+                .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append(BACKSLASH_QUOTE) //id
+                .append(uid)
+                .append(title)
+                .append(">")
+                .append(escapeXml10(normalizeSpace(newText)))
+                .append(INS_END_TAG).toString();
+
+
+        Node insertTagNode = appendNodeFromContent(document, deleteTagNode, insertTagContent);
+
+        String oldUid;
+        if(oldLogin == null) {
+            oldUid = uid;
+        }else{
+            oldUid =  new StringBuilder(LEOS_UID_PREFIX).append(oldLogin).append(BACKSLASH_QUOTE).toString();
+        }
+        String oldTitle = XercesUtils.getAttributeValue(node,"leos:title");
+        if(oldTitle == null) {
+            oldTitle = title;
+        }else{
+            oldTitle =  new StringBuilder(LEOS_TITLE_PREFIX).append(oldTitle).append(BACKSLASH_QUOTE).toString();
+        }
+        String lastFragmentOfPreviousNode = new StringBuilder(INS_START_TAG)
+                .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append(BACKSLASH_QUOTE) //id
+                .append(oldUid)
+                .append(oldTitle)
+                .append(">")
+                .append(eltContent.substring(result.right))
+                .toString();
+
+        appendNodeFromContent(document, insertTagNode, lastFragmentOfPreviousNode);
+
+        return nodeToByteArray(document);
+    }
+
+    private static Node appendNodeFromContent(Document document, Node currentNode, String tagContent) {
+        Node parentNode = currentNode.getParentNode();
+        Node createdNode = XercesUtils.createNodeFromXmlFragment(document, tagContent.getBytes(UTF_8), false);
+        // insert of deleted tag
+        Node nextSibling = currentNode.getNextSibling();
+
+        if(nextSibling != null){
+            parentNode.insertBefore(createdNode, nextSibling);
+        }else{
+            parentNode.appendChild(createdNode);
+        }
+        return createdNode;
+    }
+
+    private static String getPrefixId(Node node) {
+        String nodeId = XercesUtils.getId(node);
+        String prefixId = "akn";
+        if (StringUtils.isNotEmpty(nodeId)) {
+            int indexOfUnderline = nodeId.lastIndexOf("_");
+            int indexForSearch = indexOfUnderline > 0 ? indexOfUnderline : nodeId.length() - 1;
+            prefixId = nodeId.substring(0, indexForSearch) ;
+        }
+        return prefixId;
     }
 
     private String generateTrackChangesText(String origText, String newText, Node node) {
@@ -1314,36 +1446,30 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             userName = user.getName();
         }
 
-        String parentId = XercesUtils.getId(node.getParentNode());
-        String prefixId = "akn";
-        if (StringUtils.isNotEmpty(parentId)) {
-            int indexOfUnderline = parentId.lastIndexOf("_");
-            int indexForSearch = indexOfUnderline > 0 ? indexOfUnderline : parentId.length() - 1;
-            prefixId = parentId.substring(0, indexForSearch) ;
-        }
+        String prefixId = getPrefixId(node);
         String uid = "";
         String title = "";
         if(userLogin != null && userName!= null) {
-             uid =  new StringBuilder(" leos:uid=\"").append(userLogin).append("\"").toString();
-             title =   new StringBuilder(" leos:title=\"").append(userName).append(" : ")
-                    .append(DATE_FORMAT.format(new Date().toInstant())).append("\"").toString();
+             uid =  new StringBuilder(LEOS_UID_PREFIX).append(userLogin).append(BACKSLASH_QUOTE).toString();
+             title =   new StringBuilder(LEOS_TITLE_PREFIX).append(userName).append(" : ")
+                    .append(DATE_FORMAT.format(new Date().toInstant())).append(BACKSLASH_QUOTE).toString();
         }
 
         String elementToAdd = new StringBuilder("<del ") //delete tag added
-                .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append("\"") //id
+                .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append(BACKSLASH_QUOTE) //id
                 .append(uid)
                 .append(title)
                 .append(">")
                 .append(escapeXml10(normalizeSpace(origText)))
                 .append("</del>")
                 // insert tag added
-                .append("<ins ")
-                .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append("\"") //id
+                .append(INS_START_TAG)
+                .append(XMLID).append("=\"").append(IdGenerator.generateId(prefixId)).append(BACKSLASH_QUOTE) //id
                 .append(uid)
                 .append(title)
                 .append(">")
                 .append(escapeXml10(normalizeSpace(newText)))
-                .append("</ins>").toString();
+                .append(INS_END_TAG).toString();
         LOG.info("Element to add {}", elementToAdd);
         return elementToAdd;
     }
