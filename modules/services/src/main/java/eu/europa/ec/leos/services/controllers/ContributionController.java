@@ -2,11 +2,13 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
+import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.ContributionApiService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +38,9 @@ public class ContributionController {
 
     @Autowired
     ContributionApiService contributionApiService;
+
+    @Autowired
+    ApiService apiService;
 
     @PostMapping(value = "/create-clone-proposal/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -104,5 +110,17 @@ public class ContributionController {
                                                   @PathVariable("documentType") String documentType) {
         this.contributionApiService.markContributionAsProcessed(contributionVersionRef);
         return ResponseEntity.ok().build();
+    }
+
+    @RequestMapping(value = "/milestones/{proposalRef}/viewContribution/{legFileName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getClonedMilestoneContribution(@PathVariable("proposalRef") String proposalRef,
+                                                                 @PathVariable("legFileName") String legFileName){
+        try {
+            MilestoneViewResponse milestoneView = apiService.listContributionsView(proposalRef, legFileName);
+            return new ResponseEntity<>(milestoneView, HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting milestone contribution views - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while milestone contribution view", HttpStatus.INTERNAL_SERVER_ERROR);
+        }                                                              
     }
 }

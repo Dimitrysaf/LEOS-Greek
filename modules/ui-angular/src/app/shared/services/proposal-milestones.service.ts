@@ -10,11 +10,15 @@ import type {
 } from '@/features/proposal-view/models/milestone.model';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProposalMilestonesService {
+  private readyToMergeStatusSource = new BehaviorSubject<string>('');
+  readyToMergeStatus$ = this.readyToMergeStatusSource.asObservable();
+  
   constructor(
     private http: HttpClient,
     private loadingService: LoadingService,
@@ -38,6 +42,12 @@ export class ProposalMilestonesService {
       },
     );
   }
+
+  listContributionsView(proposalRef: string, legFileName: string) {
+    return this.http.get<MilestoneViewResponse>(
+      `${apiBaseUrl}/secured/contribution/milestones/${proposalRef}/viewContribution/${legFileName}`
+    );
+}
 
   exportMilestonePdf(documentRef: string, legFileName: string) {
     this.loadingService.setLoading(true);
@@ -111,5 +121,13 @@ export class ProposalMilestonesService {
         },
         complete: () => this.loadingService.setLoading(false),
       });
+  }
+
+  updateReadyToMergeStatus(status: string): void {
+    this.readyToMergeStatusSource.next(status);
+  }
+
+  resetReadyToMergeStatus(): void {
+    this.readyToMergeStatusSource.next(''); 
   }
 }

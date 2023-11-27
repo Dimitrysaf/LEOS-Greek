@@ -42,6 +42,8 @@ public class AppConfigResponse {
     private String annotatePopupDefaultStatus;
     private boolean collectionCloseButtonEnabled;
 
+    private boolean showRevisionEnabled;
+    
     public AppConfigResponse() {
     }
 
@@ -205,5 +207,13 @@ public class AppConfigResponse {
 
     public void setCollectionCloseButtonEnabled(boolean collectionCloseButtonEnabled) {
         this.collectionCloseButtonEnabled = collectionCloseButtonEnabled;
+    }
+    
+    public boolean isShowRevisionEnabled() {
+        return showRevisionEnabled;
+    }
+
+    public void setShowRevisionEnabled(boolean showRevisionEnabled) {
+        this.showRevisionEnabled = showRevisionEnabled;
     }
 }
