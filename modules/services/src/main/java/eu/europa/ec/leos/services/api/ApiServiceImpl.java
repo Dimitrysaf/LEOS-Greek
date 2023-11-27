@@ -968,6 +968,15 @@ public abstract class ApiServiceImpl implements ApiService {
         return doListMilestoneDocuments(legDocument);
     }
 
+    @Override
+    public MilestoneViewResponse listContributionsView(String proposalRef, String legFilename) throws IOException {
+        Proposal proposal = this.proposalService.getProposalByRef(proposalRef);
+
+        LeosPackage clonedLeosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LegDocument clonedLegDocument = getLegDocument(legFilename, clonedLeosPackage);
+        return doListMilestoneDocuments(clonedLegDocument);
+    }
+
     private MilestoneViewResponse doListMilestoneDocuments(LegDocument legDocument) throws IOException {
         File legFileTemp = File.createTempFile(MILESTONE, ".leg");
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);

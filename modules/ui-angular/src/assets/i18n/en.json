@@ -121,6 +121,7 @@
   "page.collection.milestone-view-dialog.export-button": "Export",
   "page.collection.milestones.add-dialog.title": "Add milestone",
   "page.collection.milestones.actions.view-milestone": "View",
+  "page.collection.milestones.actions.view-contribution": "View Contribution",
   "page.collection.milestones.actions.send-copy-for-contribution": "Send a copy for contribution",
   "page.collection.milestones.send-copy-for-contribution-dialog.title": "Send a copy of the milestone for contribution",
   "page.collection.milestones.send-copy-for-contribution-dialog.target-user": "Target user",
