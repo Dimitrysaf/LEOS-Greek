@@ -254,7 +254,7 @@ public class DocumentServiceTests {
     }
 
     @Test
-   
+    @Transactional
     public void test_createDocumentMilestoneFromContent() throws RepositoryException {
         Map<String, ?> properties = new HashMap() {{
             put("status", "IN_PREPARATION");

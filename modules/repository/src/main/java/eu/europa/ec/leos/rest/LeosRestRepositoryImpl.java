@@ -928,7 +928,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         logger.trace("Updating Export document status... [id=" + id + ", status=" + comments + ']');
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS), String.join( ",", comments));
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS), comments);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(ref, id, properties,
                 securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
