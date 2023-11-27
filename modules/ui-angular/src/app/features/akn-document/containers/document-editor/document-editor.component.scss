@@ -36,6 +36,8 @@
 
   .eui-page-header {
     padding: var(--eui-base-spacing-xs);
+    flex-direction: initial;
+    justify-content: center;
   }
 
   .eui-page-column__header-left-content-body {

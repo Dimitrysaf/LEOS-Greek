@@ -10,7 +10,7 @@
       </eui-breadcrumb-item>
     </eui-breadcrumb>
   </eui-page-breadcrumb>
-  <eui-page-header class="" [label]="pageTitle">
+  <eui-page-header class="" [innerHTML]="pageTitle">
     <eui-page-header-action-items>
       <app-document-actions-dropdown
         (annexChangeStructure)="confirmAnnexStructureChange()"
