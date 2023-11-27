@@ -7,6 +7,8 @@ import {
   Inject,
   OnDestroy,
   OnInit,
+  Renderer2,
+  SecurityContext,
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -212,6 +214,7 @@ export class DocumentEditorComponent
     private tocEditService: TableOfContentEditService,
     private hostElRef: ElementRef,
     private syncScrollingService: SyncDocumentScrollService,
+    private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document,
   ) {
     combineLatest([this.route.params, this.route.data])
@@ -1315,15 +1318,16 @@ export class DocumentEditorComponent
       });
   }
 
-  private setPageTitle() {
+  public setPageTitle() {
     this.pageTitle = [
       this.documentConfig.proposalMetadata.stage,
       this.documentConfig.proposalMetadata.type,
-      this.documentConfig.proposalMetadata.purpose,
+      this.documentConfig.proposalMetadata.purpose
     ]
-      .filter(Boolean)
-      .join(' ');
-  }
+    .filter(Boolean)
+    .join(' ');
+    this.pageTitle = this.domSatinizer.sanitize(SecurityContext.HTML, this.pageTitle) || '';
+}
 
   private setVersionForViewHeader(versionInfo: VersionInfoVO) {
     this.translate
