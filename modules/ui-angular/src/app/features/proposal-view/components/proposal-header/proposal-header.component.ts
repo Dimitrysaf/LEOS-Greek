@@ -30,6 +30,7 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
   @Input() editableTitle: string;
   @Input() isClonedProposal: boolean;
   @Input() originRef: string | null;
+  @Input() proposalState: string;
 
   title: string;
   createForm: FormGroup;

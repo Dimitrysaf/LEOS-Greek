@@ -11,8 +11,9 @@
 </eui-page-breadcrumb>
 
 <section [ngSwitch]="proposalState" class="eui-u-mh-m">
-  <ng-container *ngSwitchCase="'done'">
+  <ng-container *ngSwitchCase="['done', 'active'].includes(proposalState) ? proposalState : ''">
     <app-proposal-header
+      [proposalState]="this.proposalState"
       [nonEditablePartOfTitle]="proposalTitleNonEditablePart"
       [editableTitle]="proposalTitleEditablePart"
       [isClonedProposal]="isClonedProposal"
@@ -30,7 +31,7 @@
           'page.collection.tabs.drafts' | translate
         }}</eui-tab-label>
         <eui-tab-content>
-          <app-proposal-drafts [proposal]="proposal"></app-proposal-drafts>
+          <app-proposal-drafts [proposal]="proposal" [proposalState]="this.proposalState" (proposalStateChange)="updateStateLoading($event)"></app-proposal-drafts>
         </eui-tab-content>
       </eui-tab>
       <eui-tab>
