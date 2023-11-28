@@ -53,6 +53,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,8 +74,6 @@ class ProposalCoverPageScreenImpl extends CoverPageScreenImpl {
     protected RevisionComponent<Proposal> revisionComponent;
     protected ContributionsTab<Proposal> contributionsTab;
     private CloneContext cloneContext;
-    private List<LeosPermission> permissionsForRevision;
-    private List<LeosPermission> permissionsForOriginal;
 
     @Autowired
     ProposalCoverPageScreenImpl(SecurityContext securityContext, EventBus eventBus, MessageHelper messageHelper,
@@ -128,19 +127,18 @@ class ProposalCoverPageScreenImpl extends CoverPageScreenImpl {
 
     @Override
     public void showRevision(String versionContent, ContributionVO contributionVO, List<TocItem> tocItemList, List<LeosPermission> permissionsForRevision) {
-        this.permissionsForRevision = permissionsForRevision;
-        initRevisionComponent();
+        initRevisionComponent(permissionsForRevision);
         revisionComponent.populateRevisionContent(versionContent, LeosCategory.PROPOSAL, contributionVO);
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, revisionComponent));
     }
 
     @Override
     public void disableMergePane() {
-        initRevisionComponent();
+        initRevisionComponent(Collections.emptyList());
         revisionComponent.disableMergePane();
     }
 
-    private void initRevisionComponent() {
+    private void initRevisionComponent(List<LeosPermission> permissionsForRevision) {
         if (revisionComponent == null) {
             revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext, permissionsForRevision);
         }
