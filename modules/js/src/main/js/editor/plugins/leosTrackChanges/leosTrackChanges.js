@@ -541,11 +541,33 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
-        acceptChange: function(editor, element) {
+        acceptChange: function(editor, element, numberModule) {
             if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) || (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) ||
                 ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
+                var toBeProcessedInBackend = true;
+                var nodeInSameEditorSession = editor.container.findOne("[id='" + element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM) + "']");
+                if (nodeInSameEditorSession) {
+                    var nodeList = nodeInSameEditorSession.getParent().find("> li[data-akn-element='point']");
+                    var changeOffset = false;
+                    for (var nodeListCount = 0; nodeListCount < nodeList.count(); nodeListCount++) {
+                        var node = nodeList.getItem(nodeListCount);
+                        if (changeOffset) {
+                            var sequence = numberModule.getSequence(nodeInSameEditorSession.getParent().$);
+                            var originalNumber = node.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                            var originalNumberIndex = sequence.getIndex(originalNumber);
+                            if (originalNumberIndex >= 0) {
+                                node.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(nodeInSameEditorSession.getParent().$, node, originalNumberIndex-2));
+                            }
+                        }
+                        if (nodeInSameEditorSession.$ === node.$) {
+                            changeOffset = true;
+                        }
+                    }
+                    nodeInSameEditorSession.remove();
+                    toBeProcessedInBackend = false;
+                }
                 if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
-                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
+                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM) && toBeProcessedInBackend) {
                     element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
                     element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
                 }

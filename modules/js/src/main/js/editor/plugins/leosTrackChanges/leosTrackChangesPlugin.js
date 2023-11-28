@@ -22,6 +22,7 @@ define(function leosTrackChangesPluginModule(require) {
     var trackChanges = require("./leosTrackChanges"), trackChangesStyle = require("./leosTrackChangesStyle"),
         trackChangesTable = require("./leosTrackChangesTable");
     var UTILS = require("core/leosUtils");
+    var numberModule = require("plugins/leosNumber/listItemNumberModule");
 
     var pluginName = "leosTrackChanges";
 
@@ -98,7 +99,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editor.addCommand("acceptOneChange", {
                     canUndo: true,
                     exec: function(editor) {
-                        actions.acceptChange(editor, editor.getSelection().getStartElement());
+                        actions.acceptChange(editor, editor.getSelection().getStartElement(), numberModule);
                     }
                 });
                 editor.addCommand("rejectOneChange", {
@@ -112,7 +113,7 @@ define(function leosTrackChangesPluginModule(require) {
                     exec: function(editor) {
                         var tcElements = core.findElementsInSelection(editor.getSelection());
                         for (var i = tcElements.length - 1; i >= 0; i--) {
-                            actions.acceptChange(editor, tcElements[i]);
+                            actions.acceptChange(editor, tcElements[i], numberModule);
                         }
                     }
                 });
