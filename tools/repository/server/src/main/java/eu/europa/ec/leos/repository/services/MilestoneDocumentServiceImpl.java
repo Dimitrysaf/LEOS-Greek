@@ -11,6 +11,7 @@ import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.repositories.MilestoneVRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
