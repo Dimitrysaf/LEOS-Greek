@@ -45,9 +45,6 @@
         class="subversion"
         title="{{ version.updatedDate }} {{ version.createdBy }}"
         *ngFor="let version of this.displayedVersions; trackByProperty: 'cmisVersionNumber'"
-        [ngClass]="{
-          'version-search-excluded': versionsSearchExcluded.includes(version)
-        }"
       >
         <div>{{ formatVersionNumber(version) }}</div>
         <div class="title">{{ formatTitle(version) }}</div>

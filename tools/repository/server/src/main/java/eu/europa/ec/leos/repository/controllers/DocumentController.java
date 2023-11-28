@@ -179,6 +179,19 @@ public class DocumentController {
         return ResponseEntity.ok(xmlDoc);
     }
 
+    @PostMapping(path = "/document/search-versions/{ref}",
+            produces = {MediaType.APPLICATION_JSON_VALUE})
+    @Operation(summary = "Search versions of Xml document")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Versions of the Document Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
+    public ResponseEntity<Object> searchVersions(@PathVariable("ref") String docRef,
+                                                   @RequestParam("versionType") String versionType,
+                                                   @RequestBody List<String> logins) {
+        List<LeosDocument> xmlDocs = documentService.searchVersionsByRef(docRef, logins, versionType);
+        return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
+    }
+
     @GetMapping(path = "/document/all-versions/{docRef}")
     @Operation(summary = "Find all versions of Xml Document by reference")
     @ApiResponses(value = {

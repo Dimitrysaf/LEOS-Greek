@@ -1,0 +1,57 @@
+.minor-version {
+  max-height: 100px;
+}
+
+.minor-version {
+  align-items: center;
+  display: flex;
+  gap: var(--eui-base-spacing-xs);
+  overflow-y: hidden;
+  font-size: var(--eui-base-font-size-s);
+  padding-left: 5%;
+
+  &:hover {
+    background: rgb(0 0 0 / 5%);
+  }
+}
+
+.minor-version > .title {
+  flex-grow: 1;
+  flex-shrink: 1;
+  text-overflow: ellipsis;
+}
+
+.major-version {
+  display: flex;
+  border: 0px;
+}
+
+.major-version-title {
+  font-size: var(--eui-base-font-size-s);
+}
+
+.major-version-subtitle {
+  font-size: var(--eui-base-font-size-xs);
+}
+
+.eui-input-checkbox--button-sizing {
+  // eui-button--size-s height & width
+  $euiButtonSSize: calc(2 * var(--eui-base-spacing-m));
+  // eui-input-checkbox height & width
+  $euiCheckboxSize: calc(
+    var(--eui-base-spacing-m) + var(--eui-base-spacing-2xs)
+  );
+
+  display: inline-block;
+  margin: calc(($euiButtonSSize - $euiCheckboxSize) / 2);
+  position: relative !important;
+
+  &::before {
+    margin: 0 !important;
+  }
+}
+
+.eui-card-header__title-container-title,
+.eui-card-header__title-container-subtitle {
+  white-space: normal;
+}
