@@ -229,12 +229,6 @@ export class DocumentEditorComponent
           this.documentType,
         );
       });
-    this.versionSearchForm.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        const values = this.getFormValues();
-        this.documentService.setVersionSearchParams(values);
-      });
 
     this.documentService.reloadTrigger$
       .pipe(takeUntil(this.destroy$))
@@ -414,6 +408,11 @@ export class DocumentEditorComponent
             life: 6000,
           });
       });
+  }
+
+  onSearch() {
+    const values = this.versionSearchForm.value;
+    this.documentService.setVersionSearchParams(values);
   }
 
   toggleSyncScroll() {

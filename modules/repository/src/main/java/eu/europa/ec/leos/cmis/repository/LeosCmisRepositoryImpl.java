@@ -51,6 +51,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.inject.Provider;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -704,6 +705,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         Map<String, String> oldVersions = repositoryContextProvider.get().getVersionsWithoutVersionLabel();
         return documents.map(doc -> CmisDocumentExtensions.toLeosDocument(doc, type, false, oldVersions))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public <D extends LeosDocument> List<D> searchVersions(Class<? extends D> type, String docRef, List<String> logins, String versionType) {
+        return new ArrayList<>();
     }
 
     @Override

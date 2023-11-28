@@ -74,6 +74,8 @@ public interface DocumentService {
 
     List<LeosDocument> findAllDocumentsByPackageId(final String packageId) throws RepositoryException;
 
+    List<LeosDocument> searchVersionsByRef(final String ref, final List<String> logins, final String versionType);
+
     List<LeosDocument> findAllVersionsByRef(final String ref);
 
     List<LeosDocument> findDocumentsUsingFilter(final String packageName, final Set<String> categories, final QueryFilter queryFilter, final int startIndex, final int maxResults, final boolean fetchContent);

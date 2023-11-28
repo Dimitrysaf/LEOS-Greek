@@ -775,6 +775,14 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    public <D extends LeosDocument> List<D> searchVersions(Class<? extends D> type, String docRef, List<String> logins, String versionType) {
+        logger.trace("Finding versions. [docRef={}, versionType={}]", docRef, versionType);
+        LeosDocumentList docs = repository.searchVersions(docRef, logins, versionType);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
+    }
+
+    @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findAllMinorsForIntermediate(Class<? extends D> type, String docRef, String currIntVersion, int startIndex, int maxResults) {
         logger.trace("Finding all minors for intermediate. [docRef={}, currIntVersion={}, startIndex={}, maxResults={}]",docRef, currIntVersion, startIndex, maxResults);
 

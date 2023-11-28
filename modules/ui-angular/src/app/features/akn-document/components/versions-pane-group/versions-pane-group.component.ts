@@ -37,7 +37,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected showVersions = false;
   protected isFilteredOut = false;
   protected displayedVersions: Version[] = [];
-  protected versionsSearchExcluded: Version[] = [];
+  protected versionsSearchResult: Version[] = [];
 
   private totalSubVersions: number = 0;
 
@@ -54,9 +54,10 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     this.docService.versionFilter$.subscribe((filter) =>
       this.applyFilter(filter),
     );
-    this.docService.versionSearchResults$.subscribe((results) =>
-      this.onVersionSearchResultsChange(results),
-    );
+    this.docService.versionSearchResults$.subscribe((results) => {
+      this.docService.setVersionSearchResultsIsEmpty(results.length > 0);
+      this.onVersionSearchResultsChange(results);
+    });
     this.toggleShowMore(false);
     this.updateSubVersionsCount();
     this.translate.onTranslationChange.subscribe(() => this.updateState());
@@ -179,19 +180,8 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
     this.updateState();
   }
 
-  private onVersionSearchResultsChange(results: string[]) {
-    if (!Array.isArray(results)) {
-      this.versionsSearchExcluded = [];
-      return;
-    }
-
-    const versions = [...(this.subVersions ?? [])];
-    if (this.majorVersion) {
-      versions.push(this.majorVersion);
-    }
-    this.versionsSearchExcluded = versions.filter(
-      (v) => !results.includes(v.cmisVersionNumber),
-    );
+  private onVersionSearchResultsChange(results: Version[]) {
+    this.versionsSearchResult = results;
   }
 
   private updateState() {
