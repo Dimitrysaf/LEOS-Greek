@@ -28,9 +28,6 @@ define(function leosTrackChangesPluginModule(require) {
     var pluginDefinition = {
         init: function init(editor) {
             // Plugin only allowed for cloned proposals
-            if (!editor.LEOS.isClonedProposal) {
-                return;
-            }
 
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
