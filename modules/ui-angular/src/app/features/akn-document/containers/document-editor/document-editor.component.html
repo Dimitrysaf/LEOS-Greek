@@ -10,29 +10,28 @@
       </eui-breadcrumb-item>
     </eui-breadcrumb>
   </eui-page-breadcrumb>
-  <eui-page-header class="" [innerHTML]="pageTitle">
-    <eui-page-header-action-items>
-      <app-document-actions-dropdown
-        (annexChangeStructure)="confirmAnnexStructureChange()"
-      ></app-document-actions-dropdown>
-      <button
-        *ngIf="documentConfig?.proposalMetadata"
-        class="mt-1"
-        euiButton
-        euiSizeS
-        euiPrimary
-        translate="global.actions.close"
-        (click)="handleClose()"
-      ></button>
-    </eui-page-header-action-items>
-  </eui-page-header>
-
   <eui-page-content
     [ngClass]="{
       'eui-page-content--blocked':
         blockDocumentEditorService.isDocumentEditorBlocked$ | async
     }"
   >
+    <header class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-xs eui-page-header ">
+      <h4 class="flex-grow-1 eui-u-font-2xl" [innerHTML]="pageTitle"></h4>
+      <app-document-actions-dropdown
+        (annexChangeStructure)="confirmAnnexStructureChange()"
+        class="eui-u-ml-s"
+      ></app-document-actions-dropdown>
+      <button
+        *ngIf="documentConfig?.proposalMetadata"
+        class="eui-u-ml-s"
+        euiButton
+        euiSizeS
+        euiPrimary
+        translate="global.actions.close"
+        (click)="handleClose()"
+      ></button>
+    </header>
     <eui-page-columns>
       <!-- ToC -->
       <eui-page-column
