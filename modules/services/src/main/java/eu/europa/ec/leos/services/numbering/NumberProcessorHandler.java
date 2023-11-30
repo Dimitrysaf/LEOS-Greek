@@ -224,7 +224,7 @@ public abstract class NumberProcessorHandler {
                     if(hasAttributeWithValue(node, "leos:action", "delete")) {
                         // Remove track changes for num node as the parent node is already deleted.
                         Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
-                        if(getFirstChild(numNode, "del") != null && getFirstChild(numNode, "ins") != null) {
+                        if(numNode != null && getFirstChild(numNode, "del") != null && getFirstChild(numNode, "ins") != null) {
                             numNode.setTextContent(getFirstChild(numNode, "del").getTextContent());
                         }
                     }
