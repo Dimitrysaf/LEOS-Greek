@@ -16,10 +16,11 @@ package eu.europa.ec.leos.services.processor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import org.apache.commons.lang3.Validate;
 import org.apache.jena.sparql.util.RomanNumeral;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -31,23 +32,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XmlHelper.HREF;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_SHOW_AS;
 import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XmlHelper.HREF;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
-import static eu.europa.ec.leos.services.support.XmlHelper.XML_SHOW_AS;
-
 @Service
 public class AttachmentProcessorImpl implements AttachmentProcessor {
     private XmlContentProcessor xmlContentProcessor;
 
-
+    private static final Logger LOG = LoggerFactory.getLogger(AttachmentProcessorImpl.class);
     private XPathCatalog xPathCatalog;
 
     @Autowired
@@ -132,9 +127,13 @@ public class AttachmentProcessorImpl implements AttachmentProcessor {
     public byte[] updateAttachmentsInBill(byte[] xmlContent, HashMap<String, String> attachmentsElements) {
 
         for (String elementRef : attachmentsElements.keySet()) {
-            String elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPathCatalog.getXPathDocumentRefByHrefAttr(elementRef));
-            String updatedElement = createDocumentRefTag(elementId, elementRef, attachmentsElements.get(elementRef));
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, updatedElement, elementId);
+            try {
+                String elementId = xmlContentProcessor.getElementIdByPath(xmlContent, xPathCatalog.getXPathDocumentRefByHrefAttr(elementRef));
+                String updatedElement = createDocumentRefTag(elementId, elementRef, attachmentsElements.get(elementRef));
+                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, updatedElement, elementId);
+            } catch (Exception e) {
+                LOG.debug("Updating attachments: didn't find this attachment");
+            }
         }
 
         return sortAttributesByAnnexRoman(xmlContent);

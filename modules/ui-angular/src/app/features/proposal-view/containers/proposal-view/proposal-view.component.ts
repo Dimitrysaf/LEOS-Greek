@@ -18,7 +18,7 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
 })
 export class ProposalViewComponent implements OnDestroy, OnInit {
   proposal: Document | null = null;
-  proposalState: 'loading' | 'done' | 'error' = 'loading';
+  proposalState: 'loading' | 'done' | 'error' | 'active' = 'loading';
   proposalError: unknown = null;
   proposalErrorCode: number | null = null;
   proposalTitleEditablePart: string;
@@ -75,6 +75,14 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  updateStateLoading(value: string) {
+    if (value === 'loading' || value === 'done' || value === 'error' || value === 'active') {
+      this.proposalState = value;
+    } else {
+      this.proposalState = 'done';
+    }
   }
 
   private loadProposal(id: string) {

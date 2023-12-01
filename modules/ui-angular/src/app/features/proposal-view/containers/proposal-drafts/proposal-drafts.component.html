@@ -294,6 +294,8 @@
             class="eui-u-ml-l"
             euiButton
             euiPrimary
+            [euiDisabled]="this.proposalState === 'active'"
+            [disabled]="this.proposalState === 'active'"
             (click)="onFinancialStatementCreate()"
           >
             {{ 'global.actions.add' | translate }}
@@ -307,6 +309,8 @@
             euiButton
             euiDanger
             euiOutline
+            [euiDisabled]="this.proposalState === 'active'"
+            [disabled]="this.proposalState === 'active'"
             (click)="onFinancialStatementDelete()"
           >
             {{ 'global.actions.delete' | translate }}
@@ -336,6 +340,8 @@
             class="eui-u-ml-l"
             euiButton
             euiPrimary
+            [euiDisabled]="this.proposalState === 'active'"
+            [disabled]="this.proposalState === 'active'"
             (click)="handleAnnexAdd()"
           >
             {{ 'global.actions.add' | translate }}
@@ -347,6 +353,8 @@
             euiButton
             euiPrimary
             euiOutline
+            [euiDisabled]="this.proposalState === 'active'"
+            [disabled]="this.proposalState === 'active'"
             (click)="handleAnnexReorder()"
           >
             {{ 'page.collection.drafts.annex.table.re-order' | translate }}
@@ -458,6 +466,8 @@
                           class="eui-u-p-s"
                           euiListItem
                           translate="page.collection.drafts.annex.table.tr.actions.dropdown.edit-title"
+                          [euiDisabled]="this.proposalState === 'active'"
+                          [disabled]="this.proposalState === 'active'"
                           (click)="handleAnnexEditTitle(row)"
                         ></button>
                       </ng-container>
@@ -467,6 +477,8 @@
                           euiListItem
                           euiDanger
                           translate="global.actions.delete"
+                          [euiDisabled]="this.proposalState === 'active'"
+                          [disabled]="this.proposalState === 'active'"
                           (click)="handleAnnexDelete(row)"
                         ></button>
                       </ng-container>

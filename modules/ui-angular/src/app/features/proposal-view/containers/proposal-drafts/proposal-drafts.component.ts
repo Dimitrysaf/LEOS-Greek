@@ -1,11 +1,11 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
   AfterViewInit,
-  Component,
+  Component, EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
+  OnInit, Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -34,6 +34,8 @@ export class ProposalDraftsComponent
   implements OnInit, OnChanges, AfterViewInit, OnDestroy
 {
   @Input() proposal: Document;
+  @Input() proposalState: string;
+  @Output() proposalStateChange: EventEmitter<string> = new EventEmitter<string>();
   coverpage: Document | null = null;
   explanatories: Document[] | null = null;
   memorandum: Document | null = null;
@@ -105,7 +107,10 @@ export class ProposalDraftsComponent
   }
 
   handleAnnexAdd() {
-    this.proposalDetailsService.createAnnex();
+    if (this.proposalState != 'loading' && this.proposalState != 'active') {
+      this.proposalStateChange.emit('active');
+      this.proposalDetailsService.createAnnex();
+    }
   }
 
   handleAnnexReorder() {
@@ -126,11 +131,17 @@ export class ProposalDraftsComponent
   }
 
   handleConfirmationDelete() {
-    if (!this.annexToDelete) return;
-    this.proposalDetailsService.deleteAnnex(
-      this.annexToDelete.metadata.internalRef,
-    );
-    this.annexToDelete = null;
+    if (!this.annexToDelete) {
+      this.proposalStateChange.emit('done');
+      return;
+    }
+    if (this.proposalState != 'loading' && this.proposalState != 'active') {
+      this.proposalStateChange.emit('active');
+      this.proposalDetailsService.deleteAnnex(
+        this.annexToDelete.metadata.internalRef,
+      );
+      this.annexToDelete = null;
+    }
   }
 
   handleConfirmationDeleteExpl(expl: Document) {
@@ -153,6 +164,7 @@ export class ProposalDraftsComponent
   }
 
   handleSave() {
+    this.proposalStateChange.emit('done');
     this.editAnnexTitleDialog.closeDialog();
     this.proposalDetailsService.updateAnnexTitle(
       this.activeAnnexId,
