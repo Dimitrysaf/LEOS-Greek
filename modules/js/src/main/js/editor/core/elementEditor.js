@@ -287,6 +287,7 @@ define(function elementEditorModule(require) {
         var editor = event.editor;
         // set read-only to prevent changes
         editor.setReadOnly(true);
+        var newContent = editor._.data.replaceAll("<p", "<aknp").replaceAll("</p", "</aknp").replaceAll("xml:id=", "id");
 
         var rootElement = UTILS.getParentElement(connector);
         var placeholder = _getEditorPlaceholder(rootElement, elementId);
@@ -297,14 +298,14 @@ define(function elementEditorModule(require) {
         // release the element being edited
         var data = {
             elementId: elementId,
-            elementType: elementType
+            elementType: elementType,
+            elementFragment: newContent
         };
         connector.releaseElement(data);
         // destroy editor instance, without updating DOM
-        if (placeholder != null) {
-            placeholder.innerHTML = null; //used to avoid flickering text
-        }
-        editor.destroy(true);
+        placeholder.outerHTML = newContent;
+
+        editor.destroy(false);
 
         if (connector.editorChannel) {
             connector.editorChannel.publish('editor.close', {elementId: elementId});

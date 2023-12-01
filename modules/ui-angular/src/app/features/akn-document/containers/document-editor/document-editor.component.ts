@@ -382,7 +382,7 @@ export class DocumentEditorComponent
         if (shouldReload) {
           const ckeditorOpen =
             this.document.querySelectorAll('.cke_editable').length > 0;
-          if (!ckeditorOpen) {
+          if (!ckeditorOpen && shouldReload.presenterId !== this.presenterId) {
             this.documentService.reloadDocument();
             this.tableOfContentService.reload();
           }
