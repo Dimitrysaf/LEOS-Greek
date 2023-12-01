@@ -15,6 +15,7 @@ import { Subject } from 'rxjs';
 import {
   Milestone,
   MilestoneViewItem,
+  MilestoneViewResponse,
 } from '@/features/proposal-view/models/milestone.model';
 import { MilestoneTocItem } from '@/features/proposal-view/models/milestone-toc-item.model';
 import { DocumentServiceAnnotationsStub } from '@/shared/components/proposal-milestone-view/document-service-annotations-stub';
@@ -55,14 +56,23 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   documentPaneElement: ElementRef;
   @ViewChild('annotationsPane', { read: ElementRef })
   annotationsPaneElement: ElementRef;
-
+  status: string;
+  
   documents: MilestoneDocument[] = [];
   containerId = 'view-container-id';
   activeTabIndex: number;
   showPdfExport = false;
 
+  readyToMergeMessage : string;
+
   isTocPaneCollapsed = false;
   isAnnotationsPaneCollapsed = false;
+
+  hiddenCategories = [
+    ...(process.env.NG_APP_LEOS_INSTANCE !== 'ec'
+      ? ['COVERPAGE', 'STAT_FINANC_LEGIS']
+      : []),
+  ];
 
   private destroy$: Subject<any> = new Subject();
 
@@ -73,7 +83,21 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.loadDocuments();
+    this.milestonesService.readyToMergeStatus$.subscribe(status => {
+      this.status = status;
+    });
+
+    this.readyToMergeMessage = this.translateService.instant(
+      'page.workspace.proposal-item.ready-status',
+    );
+
+
+    if(this.status === this.readyToMergeMessage) {
+      this.loadContribution(this.hiddenCategories);
+    }
+    else {
+      this.loadDocuments(this.hiddenCategories);
+    }
   }
 
   ngOnDestroy() {
@@ -118,12 +142,19 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
   }
 
-  private loadDocuments() {
-    const hiddenCategories = [
-      ...(process.env.NG_APP_LEOS_INSTANCE !== 'ec'
-        ? ['COVERPAGE', 'STAT_FINANC_LEGIS']
-        : []),
-    ];
+  private loadContribution(hiddenCategories) {
+    this.milestonesService
+        .listContributionsView(
+          this.milestone.proposalRef,
+          this.milestone.legDocumentName,
+        )
+        .subscribe((response) => {
+          this.handleMilestoneExplorerDocuments(response, hiddenCategories);
+        });
+        this.milestonesService.resetReadyToMergeStatus();
+  }
+
+  private loadDocuments(hiddenCategories: string[]) {
     if (!!this.milestone.legDocumentName) {
       this.milestonesService
         .listMilestoneView(
@@ -131,13 +162,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           this.milestone.legDocumentName,
         )
         .subscribe((response) => {
-          this.showPdfExport = response.pdfRenditionsPresent;
-
-          this.documents = response.documents
-            .filter((x) => !hiddenCategories.includes(x.leosCategory))
-            .sort(this.tabOrderComparator)
-            .map((x) => this.viewToDoc(x));
-          this.setActiveTab(0);
+          this.handleMilestoneExplorerDocuments(response, hiddenCategories);
         });
     } else {
       this.milestonesService
@@ -146,17 +171,21 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           this.milestone.versionedReference,
         )
         .subscribe((response) => {
-          this.showPdfExport = response.pdfRenditionsPresent;
-
-          this.documents = response.documents
-            .filter((x) => !hiddenCategories.includes(x.leosCategory))
-            .sort(this.tabOrderComparator)
-            .map((x) => this.viewToDoc(x));
-          this.setActiveTab(0);
+          this.handleMilestoneExplorerDocuments(response, hiddenCategories);
         });
     }
   }
 
+  private handleMilestoneExplorerDocuments(response: MilestoneViewResponse, hiddenCategories: string[]) {
+    this.showPdfExport = response.pdfRenditionsPresent;
+
+    this.documents = response.documents
+      .filter((x) => !hiddenCategories.includes(x.leosCategory))
+      .sort(this.tabOrderComparator)
+      .map((x) => this.viewToDoc(x));
+    this.setActiveTab(0);
+  }
+  
   private viewToDoc(item: MilestoneViewItem): MilestoneDocument {
     return {
       ref: item.contentFileName,

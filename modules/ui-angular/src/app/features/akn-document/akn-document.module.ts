@@ -41,6 +41,7 @@ import { ValidateTocService } from './services/validate-node-drop.service';
 import { SyncDocumentScrollService } from './services/sync-document-scroll.service';
 import {TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
 import {DocumentService} from "@/shared/services/document.service";
+import {SearchVersionsPaneComponent} from "@/features/akn-document/components/search-versions-pane/search-versions-pane.component";
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import {DocumentService} from "@/shared/services/document.service";
     VersionActionsDropdownComponent,
     VersionsPaneComponent,
     VersionsPaneGroupComponent,
+    SearchVersionsPaneComponent,
     DocumentEditorComponent,
     DownloadEconsiliumModalComponent,
     ImportFromJournalDialogComponent,

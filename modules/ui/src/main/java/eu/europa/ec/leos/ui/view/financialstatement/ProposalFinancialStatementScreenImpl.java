@@ -60,6 +60,7 @@ import org.springframework.beans.factory.annotation.Value;
 import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,8 +80,6 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     private RevisionComponent<FinancialStatement> revisionComponent;
     protected ContributionsTab<FinancialStatement> contributionsTab;
     private CloneContext cloneContext;
-    private List<LeosPermission> permissionsForRevision;
-    private List<LeosPermission> permissionsForOriginal;
 
     @Value("${leos.coverpage.separated}")
     private boolean coverPageSeparated;
@@ -152,9 +151,7 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
     @Override
     public void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList,
                              List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
-        this.permissionsForRevision = permissionsForRevision;
-        this.permissionsForOriginal = permissionsForOriginal;
-        initRevisionComponent();
+        initRevisionComponent(permissionsForRevision, permissionsForOriginal);
         revisionComponent.populateRevisionContent(content, LeosCategory.STAT_FINANC_LEGIS, contributionVO);
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, revisionComponent));
     }
@@ -171,11 +168,11 @@ public class ProposalFinancialStatementScreenImpl extends FinancialStatementScre
 
     @Override
     public void disableMergePane() {
-        initRevisionComponent();
+        initRevisionComponent(Collections.emptyList(), Collections.emptyList());
         revisionComponent.disableMergePane();
     }
 
-    private void initRevisionComponent() {
+    private void initRevisionComponent(List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
         if (revisionComponent == null) {
             revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext, permissionsForRevision);
         }

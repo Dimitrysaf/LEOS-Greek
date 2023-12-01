@@ -95,7 +95,7 @@ export class DocumentService implements OnDestroy {
   focusedSearchResult: any | null;
   currentSearchResults: Array<SearchMatchVO>;
   versionSearchParams$: Observable<VersionSearchParams>;
-  versionSearchResults$: Observable<string[]>;
+  versionSearchResults$: Observable<Version[]>;
   versionFilter$: Observable<string>;
   searchResultsCounter$: Observable<number>;
   totalNumVersion$: Observable<number>;
@@ -141,8 +141,7 @@ export class DocumentService implements OnDestroy {
     type: 'all',
     author: '',
   });
-  private versionSearchResultsBS$ = new BehaviorSubject<string[] | null>(null);
-
+  private versionSearchResultsIsEmpty: Boolean = true;
   private versionFilterBS = new BehaviorSubject<string>('All');
   private searchAndReplaceTextBS = new BehaviorSubject<string>('');
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
@@ -209,9 +208,7 @@ export class DocumentService implements OnDestroy {
     this.searchParams$ = this.searchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
-    this.versionSearchParams$ = this.versionSearchParamsBS.pipe(
-      distinctUntilChanged(DocumentService.searchStateComparator),
-    );
+    this.versionSearchParams$ = this.versionSearchParamsBS.asObservable();
     this.totalNumVersion$ = this.documentRefAndCategory$.pipe(
       filter(Boolean),
       switchMap((option) =>
@@ -318,16 +315,13 @@ export class DocumentService implements OnDestroy {
     this.userGuidanceVisible$ = this.userGuidanceVisibleBS.asObservable();
     this.reloadTrigger$ = this.reloadTriggerBS.asObservable();
 
-    this.versionSearchParams$
-      .pipe(
-        takeUntil(this.destroy$),
-        skip(1),
-        combineLatestWith(this.versions$, this.recentChanges$),
-      )
-      .subscribe(([searchParams, versions, recentChanges]) =>
-        this.onVersionSearchParamChange(searchParams, versions, recentChanges),
-      );
-    this.versionSearchResults$ = this.versionSearchResultsBS$.asObservable();
+    this.versionSearchResults$ = this.versionSearchParams$.pipe(
+      filter(Boolean),
+      switchMap((searchParams) =>
+        this.searchVersion(this.documentType, this.documentRef, searchParams.type, searchParams.author),
+      ),
+      shareReplay(1),
+    );
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
     this.processed$ = this.processedBS.asObservable();
     this.contributionViewAndMerge$ = this.contributionViewAndMergeBS.pipe(
@@ -429,11 +423,8 @@ export class DocumentService implements OnDestroy {
 
   getDocumentByRef(ref: string, category: string) {
     category = category === 'coverpage' ? 'coverPage' : category;
-    this.loadingService.setLoading(true);
     return this.http.get<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${category}/${ref}`,
-    ).pipe(
-      finalize(() => this.loadingService.setLoading(false))
     );
   }
 
@@ -781,7 +772,6 @@ export class DocumentService implements OnDestroy {
 
   setDocumentRefAndCategory(ref: string, category: string) {
     this.documentRefAndCategoryBS.next({ ref, category });
-    this.tocService.setDocumentRefAndCategory(ref, category);
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
@@ -802,7 +792,7 @@ export class DocumentService implements OnDestroy {
 
   setVersionSearchParams(values: Partial<VersionSearchParams>) {
     this.versionSearchParamsBS.pipe(take(1)).subscribe((oldVal) => {
-      this.versionSearchParamsBS.next({ ...oldVal, ...values });
+      this.versionSearchParamsBS.next({...oldVal, ...values});
     });
   }
 
@@ -933,6 +923,14 @@ export class DocumentService implements OnDestroy {
     return this.documentRefAndCategoryBS.value.ref;
   }
 
+  getVersionSearchResultsIsEmpty() {
+    return this.versionSearchResultsIsEmpty;
+  }
+
+  setVersionSearchResultsIsEmpty(value: Boolean) {
+    this.versionSearchResultsIsEmpty = value;
+  }
+
   countDocumentVersionsData(documentType: string, documentRef: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<number>(
@@ -990,20 +988,36 @@ export class DocumentService implements OnDestroy {
       .pipe(take(1));
   }
 
+  searchVersion(documentType: string, documentRef: string, versionType: string, authorKey: string) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    let vType = versionType == "milestone" ? "MAJOR" : versionType == "save" ? "INTERMEDIATE" : "";
+    if (this.versionSearchOpenBS.getValue()) {
+      this.loadingService.setLoading(true);
+      return this.http
+        .get<Version[]>(
+          `${apiBaseUrl}/secured/${documentType}/${documentRef}/search-versions?authorKey=${authorKey}&type=${vType}`,
+        ).pipe(
+          finalize(() => this.loadingService.setLoading(false))
+        );
+    } else {
+      return new Observable<Version[]>(observer => {
+        observer.next([]);
+        observer.complete();
+      });
+    }
+  }
+
   saveDocumentVersionWithData(
     documentType: string,
     documentRef: string,
     data: any,
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    this.loadingService.setLoading(true);
     return this.http.post<Version[]>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/save-version`,
       {
         ...data,
       },
-    ).pipe(
-      finalize(() => this.loadingService.setLoading(false))
     );
   }
 
@@ -1379,13 +1393,10 @@ export class DocumentService implements OnDestroy {
   }
 
   private getDocument(documentRef: string, category: string) {
-    this.loadingService.setLoading(true);
     return this.http
       .get(`${apiBaseUrl}/secured/${category}/${documentRef}`, {
         responseType: 'text',
-      }).pipe(
-        finalize(() => this.loadingService.setLoading(false))
-      )
+      })
       .pipe(take(1));
   }
 
@@ -1517,32 +1528,6 @@ export class DocumentService implements OnDestroy {
       targetElement.classList.remove('search-result');
       targetElement.classList.add('focused-search-result');
       targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }
-
-  private onVersionSearchParamChange(
-    searchParams: VersionSearchParams,
-    versions: Version[],
-    recentChanges: Version[],
-  ): void {
-    const author = searchParams?.author?.toLowerCase() ?? '';
-    const type = searchParams?.type ?? 'all';
-
-    this.setVersionFilter(type);
-    if (!author) {
-      this.versionSearchResultsBS$.next(null);
-    } else {
-      const searchResult = [];
-      [
-        ...recentChanges,
-        ...versions,
-        ...versions.flatMap((ver) => ver.subVersions),
-      ].forEach((version) => {
-        if (version.createdBy?.toLowerCase()?.includes(author)) {
-          searchResult.push(version.cmisVersionNumber);
-        }
-      });
-      this.versionSearchResultsBS$.next(searchResult);
     }
   }
 

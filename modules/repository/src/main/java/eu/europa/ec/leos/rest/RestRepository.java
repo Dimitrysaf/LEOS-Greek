@@ -35,6 +35,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -114,6 +115,8 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestFindPackageByDocumentRefURI;
     @Value("${leos.rest.repository.archive.document}")
     private String leosRestArchiveDocumentURI;
+    @Value("${leos.rest.repository.find.document.search.versions}")
+    private String leosRestSearchVersionsURI;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -343,6 +346,11 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
+    LeosDocumentList searchVersions(String docRef, List<String> logins, String versionType) {
+        LOGGER.trace("Search in all versions. [docRef={}, logins={}, versionType={}]", docRef, logins, versionType);
+        String url = getUrl(leosRestSearchVersionsURI);
+        return postEntity(url, logins, LeosDocumentList.class, docRef, versionType);
+    }
 
     LeosDocumentList findAllMajors(String docRef, int startIndex, int maxResults) {
         LOGGER.trace("Finding all majors. [docRef={}, startIndex={}, maxResults={}]", docRef, startIndex, maxResults);

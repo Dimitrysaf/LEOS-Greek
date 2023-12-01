@@ -230,7 +230,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
 
             byte[] exportedBytes = exportService.createExportPackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
             exportDocument = exportPackageService.createExportDocument(proposalId, exportOptions.getComments(), exportedBytes);
-            exportPackageService.updateExportDocument(null, exportDocument.getId(), LeosExportStatus.NOTIFIED);
+            exportPackageService.updateExportDocument(exportDocument.getExportRef(), exportDocument.getId(), LeosExportStatus.NOTIFIED);
             notificationService.sendNotification(proposalRef, exportDocument.getId());
             processedStatus = LeosExportStatus.PROCESSED_OK;
             LOG.info("Export Package {} for proposal {} created in {} milliseconds ({} sec)", exportDocument.getName(), proposalRef,
@@ -244,7 +244,7 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
                 exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
             }
             if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
-                exportDocument = exportPackageService.updateExportDocument(null, exportDocument.getId(), processedStatus);
+                exportDocument = exportPackageService.updateExportDocument(exportDocument.getExportRef(), exportDocument.getId(), processedStatus);
                 //TO DO: Send notification to the client
             }
         }

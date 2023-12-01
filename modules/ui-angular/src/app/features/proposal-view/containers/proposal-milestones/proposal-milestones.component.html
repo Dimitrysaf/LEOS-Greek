@@ -163,7 +163,28 @@
         >
           {{ clonedMilestone.status }}
         </td>
-        <td></td>
+        <td
+      >
+        <eui-dropdown *ngIf="isReadyToMerge(clonedMilestone.status) && viewContribution">
+          <button euiButton euiBasicButton="true">
+            <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+          </button>
+          <eui-dropdown-content>
+            <ul euiList>
+              <li euiListItem>
+                <button 
+                euiListItem 
+                (click)="updateReadyToMergeStatus(clonedMilestone)">
+                  {{
+                    'page.collection.milestones.actions.view-contribution'
+                      | translate
+                  }}
+                </button>
+              </li>
+            </ul>
+          </eui-dropdown-content>
+        </eui-dropdown>
+      </td>
       </tr>
     </ng-template>
     <ng-template euiTemplate="emptyMessage">

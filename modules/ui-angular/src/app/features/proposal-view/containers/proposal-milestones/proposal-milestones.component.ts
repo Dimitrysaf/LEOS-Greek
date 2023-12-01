@@ -10,7 +10,7 @@ import {
   MilestoneStatus,
 } from '@/features/proposal-view/models/milestone.model';
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
-import { Document, Permission } from '@/shared';
+import { Document, LeosAppConfig, Permission } from '@/shared';
 import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
@@ -18,9 +18,9 @@ import {
 
 import { ProposalMilestoneSendCopyDialogComponent } from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
 import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
+import { AppConfigService } from '@/core/services/app-config.service';
 
 const MILESTONE_RELOAD_INTERVAL = 10000;
-
 @Component({
   selector: 'app-proposal-milestones',
   templateUrl: './proposal-milestones.component.html',
@@ -35,6 +35,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   openMilestoneViewDialogVisible = false;
   sendCopyDialogVisible = false;
   annotationWarningDialogVisible = false;
+  viewContribution= true;
   @ViewChild('milestoneViewDialog')
   milestoneViewDialog: ProposalMilestoneViewComponent;
   @ViewChild('sendMilestoneCopyForContributionDialog')
@@ -58,11 +59,17 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     protected proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
     private uxAppService: UxAppShellService,
-    private proposalMilestonesService: ProposalMilestonesService
+    private proposalMilestonesService: ProposalMilestonesService,
+    private appConfigService: AppConfigService,
   ) {}
 
   ngOnInit(): void {
     let firstLoad = true;
+
+    this.appConfigService.config.subscribe((config: LeosAppConfig) => {
+      this.viewContribution = config.showRevisionEnabled;
+    });
+   
     this.proposalDetailsService.milestones$
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -168,6 +175,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         return this.translateService.instant(
           'page.workspace.milestones.status.in-preparation',
         );
+      case MilestoneStatus.ReadyToMerge:
+        return this.translateService.instant(
+          'page.workspace.proposal-item.ready-status'
+        );
       default:
         return status;
     }
@@ -239,5 +250,15 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     ).getTime();
 
     return clonedMilestone;
+  }
+
+  updateReadyToMergeStatus(milestone: Milestone): void {
+    this.proposalMilestonesService.updateReadyToMergeStatus(milestone.status);
+    this.openMilestoneViewDialog(milestone);
+  }
+
+  isReadyToMerge(status: MilestoneStatus): boolean {
+    const readyToMergeTranslation = this.translateService.instant('page.workspace.proposal-item.ready-status');
+    return this.getStatus(status) === readyToMergeTranslation;
   }
 }

@@ -36,6 +36,8 @@
 
   .eui-page-header {
     padding: var(--eui-base-spacing-xs);
+    flex-direction: initial;
+    justify-content: left;
   }
 
   .eui-page-column__header-left-content-body {
@@ -179,6 +181,11 @@ app-document {
   border-top: 1px solid var(--eui-base-color-grey-15);
 }
 
+.search-versions-result {
+  max-height: 200px;
+  overflow: scroll;
+}
+
 .tree-drag-content {
   background-color: var(--eui-app-body-bg-color);
   border-radius: 1rem;
@@ -214,6 +221,31 @@ app-document {
 
 .version-search-form-author-label {
   width: 26%;
+}
+
+.version-search-form-author-label > label {
+  font-size: var(--eui-base-font-size-s);
+}
+
+.version-search-form-type-label {
+  font-size: var(--eui-base-font-size-s) !important;
+}
+
+.version-search-form-author-label label {
+  font-size: var(--eui-base-font-size-s) !important;
+}
+
+.search-version-pane {
+  background-color: #E7F6EC !important;
+  border: solid green 2px;
+}
+
+.search-version-pane > eui-card {
+  background-color: #E7F6EC !important;
+}
+
+.search-version-pane > eui-card > eui-card-content {
+  background-color: #E7F6EC !important;
 }
 
 .processed-span,

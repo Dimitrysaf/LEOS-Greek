@@ -376,4 +376,6 @@ public interface LeosRepository {
     Object createFolder(String path, String name);
 
     Object findFolderByPath(String path);
+
+    <D extends LeosDocument> List<D> searchVersions(Class<? extends D> type, String docRef, List<String> logins, String versionType);
 }

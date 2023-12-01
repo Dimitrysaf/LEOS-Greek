@@ -159,6 +159,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         Set<LeosCategory> cats = LeosMapper.leosCategories(type);
         if (!cats.isEmpty()) {
             properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), cats.iterator().next());
+            properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
         }
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromSource(templateId, path, name, properties,
@@ -775,6 +776,14 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    public <D extends LeosDocument> List<D> searchVersions(Class<? extends D> type, String docRef, List<String> logins, String versionType) {
+        logger.trace("Finding versions. [docRef={}, versionType={}]", docRef, versionType);
+        LeosDocumentList docs = repository.searchVersions(docRef, logins, versionType);
+        return toLeosDocuments(docs.getLeosDocumentList(), type, false);
+    }
+
+    @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> findAllMinorsForIntermediate(Class<? extends D> type, String docRef, String currIntVersion, int startIndex, int maxResults) {
         logger.trace("Finding all minors for intermediate. [docRef={}, currIntVersion={}, startIndex={}, maxResults={}]",docRef, currIntVersion, startIndex, maxResults);
 
@@ -928,7 +937,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         logger.trace("Updating Export document status... [id=" + id + ", status=" + comments + ']');
 
         Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS), String.join( ",", comments));
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.COMMENTS), comments);
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.updateDocument(ref, id, properties,
                 securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);

@@ -289,6 +289,13 @@ define(function listItemNumberModule(require) {
         }
     }
 
+    function _getSequence(orderedList) {
+        var currentNestingLevel = getNestingLevelForOl(orderedList);
+        var listItems = _removeCrossHeadingsFromListItems(orderedList.children);
+        var sequence = identifySequence(listItems, currentNestingLevel);
+        return sequence;
+    }
+
     function _removeCrossHeadingsFromListItems(listItems) {
         var sortedListItems = [];
         for (var i=0; i<listItems.length; i++) {
@@ -395,6 +402,7 @@ define(function listItemNumberModule(require) {
         init: _initialize,
         getSequences: _getSequences,
         updateNumbers: _updateNumbers,
-        updateNumbersByDefault: _updateNumbersByDefault
+        updateNumbersByDefault: _updateNumbersByDefault,
+        getSequence: _getSequence
     };
 });

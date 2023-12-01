@@ -59,6 +59,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,8 +79,6 @@ public class ProposalAnnexScreenImpl extends AnnexScreenImpl {
     private RevisionComponent<Annex> revisionComponent;
     protected ContributionsTab<Annex> contributionsTab;
     private CloneContext cloneContext;
-    private List<LeosPermission> permissionsForRevision;
-    private List<LeosPermission> permissionsForOriginal;
 
     @Autowired
     ProposalAnnexScreenImpl(MessageHelper messageHelper, EventBus eventBus, SecurityContext securityContext, UserHelper userHelper,
@@ -147,9 +146,7 @@ public class ProposalAnnexScreenImpl extends AnnexScreenImpl {
     @Override
     public void showRevision(String content, ContributionVO contributionVO, List<TocItem> tocItemList,
                              List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
-        this.permissionsForRevision = permissionsForRevision;
-        this.permissionsForOriginal = permissionsForOriginal;
-        initRevisionComponent();
+        initRevisionComponent(permissionsForRevision, permissionsForOriginal);
         revisionComponent.populateRevisionContent(content, LeosCategory.ANNEX, contributionVO);
         changePosition(new LayoutChangeRequestEvent(ColumnPosition.DEFAULT, ComparisonComponent.class, revisionComponent));
     }
@@ -166,11 +163,11 @@ public class ProposalAnnexScreenImpl extends AnnexScreenImpl {
 
     @Override
     public void disableMergePane() {
-        initRevisionComponent();
+        initRevisionComponent(Collections.emptyList(), Collections.emptyList());
         revisionComponent.disableMergePane();
     }
 
-    private void initRevisionComponent() {
+    private void initRevisionComponent(List<LeosPermission> permissionsForRevision, List<LeosPermission> permissionsForOriginal) {
         if (revisionComponent == null) {
             revisionComponent = new RevisionComponent<>(eventBus, messageHelper, securityContext, permissionsForRevision);
         }

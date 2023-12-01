@@ -12,6 +12,7 @@ import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -47,6 +48,7 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
+import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
@@ -59,11 +61,13 @@ import io.atlassian.fugue.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 public class GenericDocumentApiService {
@@ -103,6 +107,7 @@ public class GenericDocumentApiService {
     private final DocumentVOProvider documentVOProvider;
     private final ComparisonDelegateAPI<XmlDocument> comparisonDelegate;
     private final ExportService exportService;
+    private final UserService userService;
 
     public GenericDocumentApiService(@NotNull LeosRepository leosRepository,
                                      @NotNull TableOfContentProcessor tableOfContentProcessor,
@@ -125,7 +130,8 @@ public class GenericDocumentApiService {
                                      @NotNull LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper,
                                      @NotNull DocumentVOProvider documentVOProvider,
                                      @NotNull ComparisonDelegateAPI<XmlDocument> comparisonDelegate,
-                                     @NotNull ExportService exportService) {
+                                     @NotNull ExportService exportService,
+                                     @NotNull UserService userService) {
         this.leosRepository = Objects.requireNonNull(leosRepository);
         this.tableOfContentProcessor = Objects.requireNonNull(tableOfContentProcessor);
         this.elementProcessor = Objects.requireNonNull(elementProcessor);
@@ -148,6 +154,7 @@ public class GenericDocumentApiService {
         this.documentVOProvider = Objects.requireNonNull(documentVOProvider);
         this.comparisonDelegate = Objects.requireNonNull(comparisonDelegate);
         this.exportService = exportService;
+        this.userService = userService;
     }
 
     public DocumentViewResponse getDocumentByRef(@NotNull String docRef) throws NotFoundException {
@@ -263,6 +270,21 @@ public class GenericDocumentApiService {
     public List<VersionVO> getMajorVersionsData(@NotNull String docRef, int pageIndex, int pageSize) {
         List<XmlDocument> majorVersions = this.leosRepository.findAllMajors(XmlDocument.class, docRef, pageIndex, pageSize);
         List<VersionVO> versions = VersionsUtil.buildVersionVO(majorVersions, messageHelper);
+
+        for (VersionVO version : versions) {
+            version.setCreatedBy(userHelper.convertToPresentation(version.getUsername()));
+        }
+        return versions;
+    }
+
+    public List<VersionVO> searchVersions(@NotNull String docRef, String authorKey, String versionType) {
+        List<String> authorLogins = new ArrayList<>();
+        if (StringUtils.hasText(authorKey)) {
+            List<UserJSON> users = userService.searchUsersByKey(authorKey);
+            authorLogins = users.stream().map(user -> user.getLogin()).collect(Collectors.toList());
+        }
+        List<XmlDocument> foundVersions = this.leosRepository.searchVersions(XmlDocument.class, docRef, authorLogins, versionType);
+        List<VersionVO> versions = VersionsUtil.buildVersionVO(foundVersions, messageHelper);
 
         for (VersionVO version : versions) {
             version.setCreatedBy(userHelper.convertToPresentation(version.getUsername()));

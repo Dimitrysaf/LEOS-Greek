@@ -7,6 +7,8 @@ import {
   Inject,
   OnDestroy,
   OnInit,
+  Renderer2,
+  SecurityContext,
   ViewChild,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -212,6 +214,7 @@ export class DocumentEditorComponent
     private tocEditService: TableOfContentEditService,
     private hostElRef: ElementRef,
     private syncScrollingService: SyncDocumentScrollService,
+    private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document,
   ) {
     combineLatest([this.route.params, this.route.data])
@@ -225,12 +228,6 @@ export class DocumentEditorComponent
           this.documentRef,
           this.documentType,
         );
-      });
-    this.versionSearchForm.valueChanges
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        const values = this.getFormValues();
-        this.documentService.setVersionSearchParams(values);
       });
 
     this.documentService.reloadTrigger$
@@ -385,7 +382,7 @@ export class DocumentEditorComponent
         if (shouldReload) {
           const ckeditorOpen =
             this.document.querySelectorAll('.cke_editable').length > 0;
-          if (!ckeditorOpen) {
+          if (!ckeditorOpen && shouldReload.presenterId !== this.presenterId) {
             this.documentService.reloadDocument();
             this.tableOfContentService.reload();
           }
@@ -411,6 +408,11 @@ export class DocumentEditorComponent
             life: 6000,
           });
       });
+  }
+
+  onSearch() {
+    const values = this.versionSearchForm.value;
+    this.documentService.setVersionSearchParams(values);
   }
 
   toggleSyncScroll() {
@@ -1315,15 +1317,16 @@ export class DocumentEditorComponent
       });
   }
 
-  private setPageTitle() {
+  public setPageTitle() {
     this.pageTitle = [
       this.documentConfig.proposalMetadata.stage,
       this.documentConfig.proposalMetadata.type,
-      this.documentConfig.proposalMetadata.purpose,
+      this.documentConfig.proposalMetadata.purpose
     ]
-      .filter(Boolean)
-      .join(' ');
-  }
+    .filter(Boolean)
+    .join(' ');
+    this.pageTitle = this.domSatinizer.sanitize(SecurityContext.HTML, this.pageTitle) || '';
+}
 
   private setVersionForViewHeader(versionInfo: VersionInfoVO) {
     this.translate

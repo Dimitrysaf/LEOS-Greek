@@ -935,26 +935,29 @@ public class XercesUtils {
     public static String getNodeNumExcludingContentRemoved(Node node) {
         Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
         if (numNode != null) {
-        	NodeList children = numNode.getChildNodes();
-        	StringBuilder content = new StringBuilder();
-        	for (int i = 0; i < children.getLength(); i++) {
-        		if(content.length() > 0) {
-        			content.append(" ");
-        		}
+            if (getFirstChild(numNode, "ins") != null && getFirstChild(numNode, "del") != null) {
+                numNode = getFirstChild(numNode, "ins");
+            }
+            NodeList children = numNode.getChildNodes();
+            StringBuilder content = new StringBuilder();
+            for (int i = 0; i < children.getLength(); i++) {
+                if(content.length() > 0) {
+                    content.append(" ");
+                }
                 Node child = children.item(i);
                 String childContent = null;
                 if(hasAttributeWithValue(child, CLASS_ATTR, CONTENT_REMOVED_CLASS)) {
-                	if(!hasChildContainsAttributeValue(numNode, CLASS_ATTR, CONTENT_NEW_CLASS)) {
-                		childContent = child.getTextContent();
-                	}
+                    if(!hasChildContainsAttributeValue(numNode, CLASS_ATTR, CONTENT_NEW_CLASS)) {
+                        childContent = child.getTextContent();
+                    }
                 } else {
-                	childContent = child.getTextContent();
+                    childContent = child.getTextContent();
                 }
-            	if(StringUtils.isNotBlank(childContent)) {
-            		content.append(childContent);
-            	}
+                if(StringUtils.isNotBlank(childContent)) {
+                    content.append(childContent);
+                }
             }
-        	return content.length() > 0 ? content.toString() : null;
+            return content.length() > 0 ? content.toString() : null;
         }
         return null;
     }

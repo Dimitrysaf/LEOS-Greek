@@ -170,30 +170,30 @@ public abstract class ApiServiceImpl implements ApiService {
 
     @Autowired
     public ApiServiceImpl(TemplateService templateService,
-                          WorkspaceService workspaceService,
-                          UserService userService,
-                          CreateCollectionService createCollectionService,
-                          ProposalService proposalService,
-                          SecurityContext securityContext,
-                          LeosPermissionAuthorityMap authorityMap,
-                          ExportService exportService,
-                          Provider<CollectionContextService> collectionContextProvider,
-                          DocumentContentService documentContentService,
-                          MessageHelper messageHelper,
-                          Provider<BillContextService> billContextProvider,
-                          PackageService packageService,
-                          BillService billService,
-                          XmlContentProcessor xmlContentProcessor,
-                          ArchiveService archiveService,
-                          AnnexService annexService,
-                          CloneContext cloneContext,
-                          MilestoneService milestoneService,
-                          ProposalConverterService proposalConverterService,
-                          PostProcessingDocumentService postProcessingDocumentService,
-                          ValidationService validationService, Properties applicationProperties,
-                          ExplanatoryService explanatoryService,
-                          ExportPackageService exportPackageService, LegService legService,
-                          UserHelper userHelper, LeosRepository leosRepository, TrackChangesContext trackChangesContext) {
+            WorkspaceService workspaceService,
+            UserService userService,
+            CreateCollectionService createCollectionService,
+            ProposalService proposalService,
+            SecurityContext securityContext,
+            LeosPermissionAuthorityMap authorityMap,
+            ExportService exportService,
+            Provider<CollectionContextService> collectionContextProvider,
+            DocumentContentService documentContentService,
+            MessageHelper messageHelper,
+            Provider<BillContextService> billContextProvider,
+            PackageService packageService,
+            BillService billService,
+            XmlContentProcessor xmlContentProcessor,
+            ArchiveService archiveService,
+            AnnexService annexService,
+            CloneContext cloneContext,
+            MilestoneService milestoneService,
+            ProposalConverterService proposalConverterService,
+            PostProcessingDocumentService postProcessingDocumentService,
+            ValidationService validationService, Properties applicationProperties,
+            ExplanatoryService explanatoryService,
+            ExportPackageService exportPackageService, NotificationService notificationService, LegService legService,
+            UserHelper userHelper, LeosRepository leosRepository, TrackChangesContext trackChangesContext) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -219,6 +219,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.userHelper = userHelper;
         this.explanatoryService = explanatoryService;
         this.exportPackageService = exportPackageService;
+        this.notificationService = notificationService;
         this.legService = legService;
         this.leosRepository = leosRepository;
         this.trackChangesContext = trackChangesContext;
@@ -425,7 +426,7 @@ public abstract class ApiServiceImpl implements ApiService {
             if (exportDocument != null) {
                 exportDocument = exportPackageService.findExportDocumentById(exportDocument.getId(), true);
                 if ((exportDocument != null) && (!exportDocument.getStatus().equals(LeosExportStatus.FILE_READY))) {
-                    exportDocument = exportPackageService.updateExportDocument(null, exportDocument.getId(), processedStatus);
+                    exportDocument = exportPackageService.updateExportDocument(exportDocument.getExportRef(), exportDocument.getId(), processedStatus);
                 }
             }
         }
@@ -966,6 +967,15 @@ public abstract class ApiServiceImpl implements ApiService {
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
         return doListMilestoneDocuments(legDocument);
+    }
+
+    @Override
+    public MilestoneViewResponse listContributionsView(String proposalRef, String legFilename) throws IOException {
+        Proposal proposal = this.proposalService.getProposalByRef(proposalRef);
+
+        LeosPackage clonedLeosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        LegDocument clonedLegDocument = getLegDocument(legFilename, clonedLeosPackage);
+        return doListMilestoneDocuments(clonedLegDocument);
     }
 
     private MilestoneViewResponse doListMilestoneDocuments(LegDocument legDocument) throws IOException {

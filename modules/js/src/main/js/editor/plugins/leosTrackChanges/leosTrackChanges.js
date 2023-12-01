@@ -33,10 +33,8 @@ define(function leosTrackChangesModule(require) {
         DATA_AKN_ID_TO_BE_REMOVED: "data-akn-id-to-be-removed", DATA_AKN_ID_TO_BE_RESTORED: "data-akn-id-to-be-restored",
         ACCEPT: "accept", REJECT: "reject",
 
-        DATA_AKN_SOFTACTION_ROOT: "data-akn-attr-softactionroot", DATA_AKN_SOFTACTION: "data-akn-attr-softaction",
-        DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
-        TRUE: true, SOFTACTION_MOVE_FROM: "move_from",
-        DATA_AKN_TC_INDENT_LEVEL: "data-akn-tc-indent-level",
+        DATA_AKN_SOFTACTION: "data-akn-attr-softaction", DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
+        SOFTACTION_MOVE_FROM: "move_from",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -162,14 +160,14 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributesForNumbering: function(element) {
-            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number", "data-akn-attr-softactionroot", "data-akn-tc-indent-level"];
+            var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
         },
 
         removeTrackChangesAttributesForEnter: function(element) {
-            var tcAttributes = ["data-akn-action-enter", "data-akn-uid-enter", "title-enter", "data-akn-attr-softactionroot"];
+            var tcAttributes = ["data-akn-action-enter", "data-akn-uid-enter", "title-enter"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -543,38 +541,56 @@ define(function leosTrackChangesModule(require) {
             return true;
         },
 
-        acceptChange: function(editor, element) {
-            if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) || ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
-                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
+        acceptChange: function(editor, element, numberModule) {
+            if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) || (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) ||
+                ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
+                var toBeProcessedInBackend = true;
+                var nodeInSameEditorSession = editor.container.findOne("[id='" + element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM) + "']");
+                if (nodeInSameEditorSession) {
+                    var nodeList = nodeInSameEditorSession.getParent().find("> li[data-akn-element='point']");
+                    var changeOffset = false;
+                    for (var nodeListCount = 0; nodeListCount < nodeList.count(); nodeListCount++) {
+                        var node = nodeList.getItem(nodeListCount);
+                        if (changeOffset) {
+                            var sequence = numberModule.getSequence(nodeInSameEditorSession.getParent().$);
+                            var originalNumber = node.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                            var originalNumberIndex = sequence.getIndex(originalNumber);
+                            if (originalNumberIndex >= 0) {
+                                node.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(nodeInSameEditorSession.getParent().$, node, originalNumberIndex-2));
+                            }
+                        }
+                        if (nodeInSameEditorSession.$ === node.$) {
+                            changeOffset = true;
+                        }
+                    }
+                    nodeInSameEditorSession.remove();
+                    toBeProcessedInBackend = false;
+                }
                 if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
-                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
+                    (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM) && toBeProcessedInBackend) {
                     element.setAttribute(core.DATA_AKN_ID_TO_BE_REMOVED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
                     element.setAttribute(core.DATA_AKN_RENUMBER_ORIGIN, core.ACCEPT);
                 }
                 core.removeTrackChangesAttributes(element);
-                core.removeTrackChangesAttributesForNumbering(element);
                 core.removeTrackChangesAttributesForEnter(element);
+                core.removeTrackChangesAttributesForNumbering(element);
                 core.removeSoftAttributes(element);
                 element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
                 if (!element.getAttribute(leosPluginUtils.ID)) {
                     element.setAttribute(leosPluginUtils.ID, "_temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
                 }
             } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER)) {
-                // Accept parent
-                if (element.getAttribute(core.DATA_AKN_TC_INDENT_LEVEL) && (parseInt(element.getAttribute(core.DATA_AKN_TC_INDENT_LEVEL)) > 0)) {
-                }
-                // Accept children
-                do {
-                    core.removeTrackChangesAttributes(element);
-                    core.removeTrackChangesAttributesForNumbering(element);
-                    core.removeTrackChangesAttributesForEnter(element);
-                    core.removeSoftAttributes(element);
-                    element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
-                    if (!element.getAttribute(leosPluginUtils.ID)) {
-                        element.setAttribute(leosPluginUtils.ID, "_temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                for (var elementSibling of element.getParent().$.children) {
+                    if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                        core.removeTrackChangesAttributes(elementSibling);
+                        core.removeTrackChangesAttributesForNumbering(elementSibling);
+                        core.removeSoftAttributes(elementSibling);
+                        elementSibling.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
+                        if (!elementSibling.getAttribute(leosPluginUtils.ID)) {
+                            elementSibling.setAttribute(leosPluginUtils.ID, "_temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                        }
                     }
-                    element = element.findOne("ol > li[" + core.DATA_AKN_ACTION_NUMBER + "]:not([" + core.DATA_AKN_SOFTACTION_ROOT + "])");
-                } while (element);
+                }
             } else {
                 editor.getSelection().fake(element.getParent());
                 if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
@@ -591,7 +607,8 @@ define(function leosTrackChangesModule(require) {
                 (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
                 element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
                 element.remove();
-            } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
+            } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))
+                || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                 element.remove();
             } else {
                 if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {

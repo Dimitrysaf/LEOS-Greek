@@ -36,6 +36,7 @@ import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
+import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.ArchiveService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
@@ -76,12 +77,12 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             PostProcessingDocumentService postProcessingDocumentService,
             ValidationService validationService, Properties applicationProperties,
             ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
-            LegService legService, UserHelper userHelper,
+            NotificationService notificationService, LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
-                applicationProperties, explanatoryService, exportPackageService, legService, userHelper, leosRepository, trackChangesContext);
+                applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext);
     }
 
     @Override

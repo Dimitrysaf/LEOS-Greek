@@ -38,7 +38,6 @@ import eu.europa.ec.leos.repository.repositories.DocumentVersionRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
-import javafx.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.tika.Tika;
@@ -336,6 +335,34 @@ public class DocumentServiceImpl implements DocumentService {
 
     public List<LeosDocument> findAllVersionsByRef(final String ref) {
         List<DocumentV> docViews = documentVRepository.findAllVersionsByRef(ref);
+        return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docViews.isEmpty() ?
+                Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
+                docViews.get(0).getPackageId()), documentContentRepository, docViews, false);
+    }
+
+    public List<LeosDocument> searchVersionsByRef(final String ref, final List<String> logins, final String versionType) {
+        StringBuilder queryBuild = new StringBuilder("SELECT d FROM DocumentV d");
+        queryBuild.append(" WHERE 1 = 1");
+        queryBuild.append(" AND d.ref = :ref");
+        if (!logins.isEmpty()) {
+            queryBuild.append(" AND d.updatedBy IN (:loginsList)");
+        }
+        if (!StringUtils.isBlank(versionType)) {
+            queryBuild.append(" AND d.versionType = :versionType");
+        }
+        queryBuild.append(" ORDER BY d.updatedOn DESC");
+
+        Query query = entityManager.createQuery(queryBuild.toString());
+
+        query.setParameter("ref", ref);
+        if (!logins.isEmpty()) {
+            query.setParameter("loginsList", logins);
+        }
+        if (!StringUtils.isBlank(versionType)) {
+            query.setParameter("versionType", String.valueOf(VersionType.valueOf(versionType).value()));
+        }
+
+        List<DocumentV> docViews = query.getResultList();
         return ConversionUtils.buildXmlDocument(documentPropertyValuesRepository, docViews.isEmpty() ?
                 Arrays.asList() : ConversionUtils.fetchCollaborators(collaboratorsService,
                 docViews.get(0).getPackageId()), documentContentRepository, docViews, false);
