@@ -239,8 +239,13 @@ export class DocumentEditorComponent
     this.documentService.refreshConnectors$
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => {
-        if (data) {
-          this.cdkEditor.refreshStateAllAvailableConnectors();
+        if (data && data.elementId && data.elementType && data.elementFragment) {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(this.xml, "text/html");
+          let elt = doc.getElementById(data.elementId);
+          elt.outerHTML = data.elementFragment;
+          this.xml = doc.documentElement.outerHTML;
+          this.documentService.resetDocument();
         }
       });
     this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
