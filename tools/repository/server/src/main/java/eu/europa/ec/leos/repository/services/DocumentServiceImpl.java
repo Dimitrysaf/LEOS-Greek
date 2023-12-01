@@ -767,7 +767,6 @@ public class DocumentServiceImpl implements DocumentService {
                 if ("IN".equalsIgnoreCase(filter.operator)) {
                     query.setParameter("valueList_" + i, Arrays.asList(filter.value));
                 } else {
-                    //query.setParameter("op_" + i, filter.operator);
                     query.setParameter("keyValue_" + i, Arrays.asList(filter.value));
                 }
             } catch (NoSuchFieldException e) {
