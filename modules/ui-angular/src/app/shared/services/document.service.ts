@@ -104,6 +104,7 @@ export class DocumentService implements OnDestroy {
   navigationSidebarCollapsed$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
+  refreshConnectors$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
   currentIndex: number;
@@ -149,6 +150,7 @@ export class DocumentService implements OnDestroy {
   private navigationSidebarCollapsedBS = new BehaviorSubject<boolean>(false);
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
+  private refreshConnectorsBS = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string}>({elementId: null, elementType: null, elementFragment: null});
   private documentRefAndCategoryBS =
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
   private updatedContentToSaveAfterReplace: string = null;
@@ -314,6 +316,7 @@ export class DocumentService implements OnDestroy {
       this.navigationSidebarCollapsedBS.asObservable();
     this.userGuidanceVisible$ = this.userGuidanceVisibleBS.asObservable();
     this.reloadTrigger$ = this.reloadTriggerBS.asObservable();
+    this.refreshConnectors$ = this.refreshConnectorsBS.asObservable();
 
     this.versionSearchResults$ = this.versionSearchParams$.pipe(
       filter(Boolean),
@@ -538,13 +541,17 @@ export class DocumentService implements OnDestroy {
 
   reloadDocument() {
     this.setDidDocumentLoadAndRender(false);
-    this.coEditionService.setShouldReloadAfterUpdate();
+    //this.coEditionService.setShouldReloadAfterUpdate();
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
     this.setSearchResultsCounter(0);
   }
 
   resetDocument() {
     this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
+  }
+
+  reloadConnectors(data: {elementId: string, elementType: string, elementFragment: string}) {
+    this.refreshConnectorsBS.next(data);
   }
 
   saveVersion(requestBody: any) {

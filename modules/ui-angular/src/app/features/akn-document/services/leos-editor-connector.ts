@@ -248,6 +248,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
     elementFragment: string;
     isSplit: boolean;
+    isSaveAndClose: boolean;
   }) {
     //! this is needed
     if (
@@ -261,6 +262,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
+    this.refreshElement(
+      elemData.elementId,
+      elemData.elementType,
+      elemData.elementFragment,
+    );
     this.saveDocumentElement(
       documentRef,
       elemData.elementId,
@@ -271,11 +277,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     ).subscribe((response) => {
       this.isElementSaved = true;
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
-      this.refreshElement(
-        response.elementId,
-        response.elementTagName,
-        response.elementFragment,
-      );
       if (
         countOccurrencesOfTextInString(
           elemData.elementType,
@@ -297,15 +298,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
     elementFragment: string,
   }) {
+    this.documentService.reloadConnectors(elemData);
     this.coEditionService.removeElementCoEditInfo(
       this.documentService.documentRef,
       this.elementUnderEdit,
     );
-    if (!this.isElementSaved) {
-      this.documentService.resetDocument();
-    } else {
-      this.documentService.reloadDocument();
-    }
     this.isElementSaved = false;
     this.setEditorOpenState('CLOSE');
     this.documentService.setIsEditorOpen(false);

@@ -49,7 +49,7 @@ define(function leosInlineSavePluginModule(require) {
                 exec: function(editor) {
                     if (this.state != TRISTATE_DISABLED) {
                         editor.fire("save", {
-                            data: editor.getData()
+                            data: editor.getData(),
                         });
                     }
                 }

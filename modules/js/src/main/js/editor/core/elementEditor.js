@@ -287,7 +287,7 @@ define(function elementEditorModule(require) {
         var editor = event.editor;
         // set read-only to prevent changes
         editor.setReadOnly(true);
-        var newContent = editor._.data.replaceAll("<p", "<aknp").replaceAll("</p", "</aknp").replaceAll("xml:id=", "id");
+        var newContent = editor._.data.replaceAll("<p", "<aknp").replaceAll("</p", "</aknp").replaceAll("xml:id=", "id=");
 
         var rootElement = UTILS.getParentElement(connector);
         var placeholder = _getEditorPlaceholder(rootElement, elementId);

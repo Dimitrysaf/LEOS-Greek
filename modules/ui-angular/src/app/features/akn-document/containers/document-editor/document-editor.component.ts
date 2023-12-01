@@ -236,6 +236,13 @@ export class DocumentEditorComponent
         this.reloadTrigger = trigger;
         this.cdkEditor.refreshStateAllAvailableConnectors();
       });
+    this.documentService.refreshConnectors$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        if (data) {
+          this.cdkEditor.refreshStateAllAvailableConnectors();
+        }
+      });
     this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
   }
