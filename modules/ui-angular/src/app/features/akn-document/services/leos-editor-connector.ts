@@ -225,16 +225,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
     documentRef: string;
   }) {
-    this.loadingService.setLoading(true);
     this.documentService
       .requestElement(
         data.elementId,
         data.elementType.toLowerCase(),
         data.documentRef,
       )
-      .pipe(take(1)).pipe(
-        finalize(() => this.loadingService.setLoading(false))
-      ).subscribe((response) => {
+      .pipe(take(1)).subscribe((response) => {
         this.receiveElement(
           response.elementId,
           response.elementTagName,
@@ -264,7 +261,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
-    this.loadingService.setLoading(true);
+    this.coEditionService.sendUpdateDocumentEvent(documentRef);
     this.saveDocumentElement(
       documentRef,
       elemData.elementId,
@@ -272,12 +269,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       elemData.elementFragment,
       elemData.isSplit,
       documentType,
-    ).pipe(
-      finalize(() => this.loadingService.setLoading(false))
     ).subscribe((response) => {
       this.isElementSaved = true;
-      this.tableOfContentService.reload();
-      this.coEditionService.sendUpdateDocumentEvent(documentRef);
       this.refreshElement(
         response.elementId,
         response.elementTagName,
@@ -302,6 +295,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   releaseElement(elemData: {
     elementId: string;
     elementType: string;
+    elementFragment: string,
   }) {
     this.coEditionService.removeElementCoEditInfo(
       this.documentService.documentRef,
@@ -364,7 +358,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           'page.editor.element-delete-dialog.body',
         ),
         accept: confirmDeletion,
-        dismiss: () => this.releaseElement({elementId: elementData.elementId, elementType: elementData.elementType}),
+        dismiss: () => this.releaseElement({elementId: elementData.elementId, elementType: elementData.elementType, elementFragment: null}),
       });
     }
   }

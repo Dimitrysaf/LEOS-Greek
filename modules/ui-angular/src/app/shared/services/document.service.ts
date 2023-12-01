@@ -423,11 +423,8 @@ export class DocumentService implements OnDestroy {
 
   getDocumentByRef(ref: string, category: string) {
     category = category === 'coverpage' ? 'coverPage' : category;
-    this.loadingService.setLoading(true);
     return this.http.get<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${category}/${ref}`,
-    ).pipe(
-      finalize(() => this.loadingService.setLoading(false))
     );
   }
 
@@ -775,7 +772,6 @@ export class DocumentService implements OnDestroy {
 
   setDocumentRefAndCategory(ref: string, category: string) {
     this.documentRefAndCategoryBS.next({ ref, category });
-    this.tocService.setDocumentRefAndCategory(ref, category);
   }
 
   setSearchParams(values: Partial<DocumentSearchParams>) {
@@ -1017,24 +1013,18 @@ export class DocumentService implements OnDestroy {
     data: any,
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    this.loadingService.setLoading(true);
     return this.http.post<Version[]>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/save-version`,
       {
         ...data,
       },
-    ).pipe(
-      finalize(() => this.loadingService.setLoading(false))
     );
   }
 
   getDocumentVersion(documentType: string, versionId: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    this.loadingService.setLoading(true);
     return this.http.get<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${documentType}/${versionId}/show-version`,
-    ).pipe(
-      finalize(() => this.loadingService.setLoading(false))
     );
   }
 
@@ -1051,7 +1041,6 @@ export class DocumentService implements OnDestroy {
       process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
       intermediateVersion !== null
     ) {
-      this.loadingService.setLoading(true);
       return this.http.post<string>(
         `${apiBaseUrl}/secured/document/double-compare/${documentType}/${documentRef}`,
         {
@@ -1061,8 +1050,6 @@ export class DocumentService implements OnDestroy {
           currentId: this.getVersionReferenceString(newVersion),
         },
         { responseType: 'text' as 'json' },
-      ).pipe(
-        finalize(() => this.loadingService.setLoading(false))
       );
     }
   }
@@ -1075,12 +1062,9 @@ export class DocumentService implements OnDestroy {
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     //TODO : We should split logic for CN instnaces on services to DocumentServiceMandate (Council) && DocumentServiceProposal (Commision) see the proposed MR for more
-    this.loadingService.setLoading(true);
     return this.http.get<string>(
       `${apiBaseUrl}/secured/${documentType}/${newVersion.documentId}/compare/${oldVersion.documentId}`,
       { responseType: 'text' as 'json' },
-    ).pipe(
-      finalize(() => this.loadingService.setLoading(false))
     );
   }
 
@@ -1409,13 +1393,10 @@ export class DocumentService implements OnDestroy {
   }
 
   private getDocument(documentRef: string, category: string) {
-    this.loadingService.setLoading(true);
     return this.http
       .get(`${apiBaseUrl}/secured/${category}/${documentRef}`, {
         responseType: 'text',
-      }).pipe(
-        finalize(() => this.loadingService.setLoading(false))
-      )
+      })
       .pipe(take(1));
   }
 
