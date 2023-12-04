@@ -105,7 +105,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editor.addCommand("rejectOneChange", {
                     canUndo: true,
                     exec: function(editor) {
-                        actions.rejectChange(editor, editor.getSelection().getStartElement());
+                        actions.rejectChange(editor, editor.getSelection().getStartElement(), numberModule);
                     }
                 });
                 editor.addCommand("acceptSelectedChanges", {
@@ -122,7 +122,7 @@ define(function leosTrackChangesPluginModule(require) {
                     exec: function(editor) {
                         var tcElements = core.findElementsInSelection(editor.getSelection());
                         for (var i = tcElements.length - 1; i >= 0; i--) {
-                            actions.rejectChange(editor, tcElements[i]);
+                            actions.rejectChange(editor, tcElements[i], numberModule);
                         }
                     }
                 });

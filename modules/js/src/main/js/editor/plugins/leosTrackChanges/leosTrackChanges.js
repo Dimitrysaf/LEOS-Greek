@@ -548,15 +548,20 @@ define(function leosTrackChangesModule(require) {
                 var nodeInSameEditorSession = editor.container.findOne("[id='" + element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM) + "']");
                 if (nodeInSameEditorSession) {
                     var nodeList = nodeInSameEditorSession.getParent().find("> li[data-akn-element='point']");
+                    if (nodeList.count() === 0) {
+                        nodeList = nodeInSameEditorSession.getParent().find("> li[data-akn-element='paragraph']");
+                    }
                     var changeOffset = false;
                     for (var nodeListCount = 0; nodeListCount < nodeList.count(); nodeListCount++) {
                         var node = nodeList.getItem(nodeListCount);
                         if (changeOffset) {
                             var sequence = numberModule.getSequence(nodeInSameEditorSession.getParent().$);
                             var originalNumber = node.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                            var originalNumberIndex = sequence.getIndex(originalNumber);
-                            if (originalNumberIndex >= 0) {
-                                node.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(nodeInSameEditorSession.getParent().$, node, originalNumberIndex-2));
+                            if (originalNumber) {
+                                var originalNumberIndex = sequence.getIndex(originalNumber);
+                                if (originalNumberIndex >= 0) {
+                                    node.setAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER, sequence.generator(nodeInSameEditorSession.getParent().$, node, originalNumberIndex - 2));
+                                }
                             }
                         }
                         if (nodeInSameEditorSession.$ === node.$) {
@@ -601,11 +606,44 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        rejectChange: function(editor, element) {
+        rejectChange: function(editor, element, numberModule) {
             editor.getSelection().fake(element.getParent());
             if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
                 (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)) {
-                element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
+                var toBeProcessedInBackend = true;
+                var nodeInSameEditorSession = editor.container.findOne("[id='" + element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM) + "']");
+                if (nodeInSameEditorSession) {
+                    var nodeList = nodeInSameEditorSession.getParent().find("> li[data-akn-element='point']");
+                    if (nodeList.count() === 0) {
+                        nodeList = nodeInSameEditorSession.getParent().find("> li[data-akn-element='paragraph']");
+                    }
+                    var changeOffset = false;
+                    for (var nodeListCount = 0; nodeListCount < nodeList.count(); nodeListCount++) {
+                        var node = nodeList.getItem(nodeListCount);
+                        if (changeOffset) {
+                            var sequence = numberModule.getSequence(nodeInSameEditorSession.getParent().$);
+                            if (node.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER)) {
+                                var numberIndex = sequence.getIndex(node.getAttribute(leosPluginUtils.DATA_AKN_NUM));
+                                if (numberIndex >= 0) {
+                                    node.setAttribute(leosPluginUtils.DATA_AKN_NUM, sequence.generator(nodeInSameEditorSession.getParent().$, node, numberIndex));
+                                }
+                            }
+                        }
+                        if (nodeInSameEditorSession.$ === node.$) {
+                            changeOffset = true;
+                        }
+                    }
+                    core.removeTrackChangesAttributes(nodeInSameEditorSession);
+                    core.removeTrackChangesAttributesForEnter(nodeInSameEditorSession);
+                    core.removeTrackChangesAttributesForNumbering(nodeInSameEditorSession);
+                    core.removeSoftAttributes(nodeInSameEditorSession);
+                    nodeInSameEditorSession.removeAttribute("data-akn-attr-softmove_to");
+                    nodeInSameEditorSession.setAttribute("id", nodeInSameEditorSession.getAttribute("id").replace("moved_", ""));
+                    toBeProcessedInBackend = false;
+                }
+                if (toBeProcessedInBackend) {
+                    element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
+                }
                 element.remove();
             } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))
                 || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {

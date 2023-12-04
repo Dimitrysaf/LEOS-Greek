@@ -293,6 +293,9 @@ define(function listItemNumberModule(require) {
         var currentNestingLevel = getNestingLevelForOl(orderedList);
         var listItems = _removeCrossHeadingsFromListItems(orderedList.children);
         var sequence = identifySequence(listItems, currentNestingLevel);
+        if (currentNestingLevel === 0) {
+            sequence = _getSequences('Paragraph');
+        }
         return sequence;
     }
 
