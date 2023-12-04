@@ -471,9 +471,11 @@ define(function leosTrackChangesPluginModule(require) {
                 switch (event.data.name) {
                     case "enter":
                         var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
-                        elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                        elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
-                        event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                        if (elementToRemoveAttribute) {
+                            elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                            elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
+                            event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                        }
                         break;
                 }
             }, null, null, 15);
