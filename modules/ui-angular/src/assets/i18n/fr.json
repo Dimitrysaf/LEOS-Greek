@@ -545,5 +545,7 @@
   "dialog.import-from-journal.notifications.inserted-recitalsAndArticles": "[FR] The selected elements have been inserted at the end of the preamble and enacting terms",
   "editor.annex-structure-change-title": "[FR] Switch Annex Structure",
   "editor-switch-annex-structure-to-article-content": "[FR] You are about to change the Annex structure into one based on Article. <br> <span style=\"color: red;\"> This action will delete all content that may already exists in Annex </span> <br> Are you sure you want to switch current structure to the Article type?",
-  "editor-switch-annex-structure-to-level-content": "[FR] You are about to change the Annex structure into one based on Level. <br> <span style=\"color: red;\"> This action will delete all content that may already exists in Annex </span> <br> Are you sure you want to switch current structure to the Level type?"
+  "editor-switch-annex-structure-to-level-content": "[FR] You are about to change the Annex structure into one based on Level. <br> <span style=\"color: red;\"> This action will delete all content that may already exists in Annex </span> <br> Are you sure you want to switch current structure to the Level type?",
+  "task.saving.ongoing": "Sauvegarde du document en cours...",
+  "task.refresh.ongoing": "Mise à jour du document en cours..."
 }

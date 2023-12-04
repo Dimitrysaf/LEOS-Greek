@@ -544,4 +544,6 @@
   "editor.annex-structure-change-title": "Switch Annex Structure",
   "editor-switch-annex-structure-to-article-content": "You are about to change the Annex structure into one based on Article. <br> <span style=\"color: red;\"> This action will delete all content that may already exists in Annex </span> <br> Are you sure you want to switch current structure to the Article type?",
   "editor-switch-annex-structure-to-level-content": "You are about to change the Annex structure into one based on Level. <br> <span style=\"color: red;\"> This action will delete all content that may already exists in Annex </span> <br> Are you sure you want to switch current structure to the Level type?"
+  "task.saving.ongoing": "Saving document...",
+  "task.refresh.ongoing": "Refreshing document..."
 }

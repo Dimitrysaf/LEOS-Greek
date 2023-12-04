@@ -58,10 +58,10 @@ define(function leosInlineSavePluginModule(require) {
             var saveCloseCommand = editor.addCommand(SAVE_CLOSE_CMD_NAME, {
                 exec: function(editor) {
                     if (this.state != TRISTATE_DISABLED) {
+                        editor.once("receiveData", _doClose);
                         editor.fire("save", {
                             data: editor.getData()
                         });
-                        editor.once("receiveData", _doClose);
                     }
                 }
             });

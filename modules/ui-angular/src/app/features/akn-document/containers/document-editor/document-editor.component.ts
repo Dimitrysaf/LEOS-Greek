@@ -67,6 +67,7 @@ import { CKEditorService } from '../../services/ckeditor.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
 import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
+import {LoadingService} from "@/shared/services/loading.service";
 
 enum PageMode {
   Normal,
@@ -151,6 +152,7 @@ export class DocumentEditorComponent
   contributionIndex = 0;
   contributionTemporaryDataId?: string;
   contributionTemporaryDataDocument?: string;
+  tasksOngoing: {name: string, key: string}[] = [];
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -209,6 +211,7 @@ export class DocumentEditorComponent
     private appShellService: UxAppShellService,
     public breadcrumbService: EuiBreadcrumbService,
     public environmentService: EnvironmentService,
+    private loadingService: LoadingService,
     private tableOfContentService: TableOfContentService,
     private domSatinizer: DomSanitizer,
     private tocEditService: TableOfContentEditService,
@@ -239,14 +242,8 @@ export class DocumentEditorComponent
     this.documentService.refreshConnectors$
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => {
-        if (data && data.elementId && data.elementType && data.elementFragment) {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(this.xml, "text/html");
-          let elt = doc.getElementById(data.elementId);
-          elt.outerHTML = data.elementFragment;
-          this.xml = doc.documentElement.outerHTML;
-          this.documentService.resetDocument();
-        }
+        this.updateElementContent(data);
+        this.documentService.resetDocument();
       });
     this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
@@ -285,6 +282,22 @@ export class DocumentEditorComponent
         this.tocItems = tocItems;
         if (tocItems?.length > 0)
           this.dragItems = this.buildTocItemToTOC(tocItems);
+      });
+
+    this.documentService.getElementContent$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        this.documentService.getElementContentResponse$ = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string}>(this.getElementContent(data)).asObservable();
+      });
+
+    this.documentService.updateElementContent$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        const ckeditorOpen =
+          this.document.querySelectorAll('.cke_editable').length > 0;
+        if (!ckeditorOpen) {
+          this.updateElementContent(data);
+        }
       });
 
     this.documentService.versionView$
@@ -419,6 +432,39 @@ export class DocumentEditorComponent
             )}`,
             life: 6000,
           });
+      });
+    this.loadingService.task$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((latestTask) => {
+        if (latestTask.ongoing) {
+          if (!this.tasksOngoing.some(i => i.name === latestTask.taskName && i.key === latestTask.key)) {
+            this.tasksOngoing.push({name: latestTask.taskName, key: latestTask.key});
+          }
+        } else if (this.tasksOngoing.some(i => i.name === latestTask.taskName && i.key === latestTask.key)) {
+          this.tasksOngoing = this.tasksOngoing.filter(item => item.name !== latestTask.taskName && item.key !== latestTask.key);
+        }
+        let target = '';
+        this.tasksOngoing.filter((value, index, array) => index == array.findIndex(item => item.name == value.name)).forEach(
+          (c) =>
+            (target =
+              target +
+              " " + this.translate.instant("task." + c.name + ".ongoing") + " "),
+        );
+        if (this.tasksOngoing.length > 0) {
+          this.appShellService.growl({
+            severity: 'info',
+            summary: 'Tasks ongoing',
+            detail: target,
+            sticky: true,
+          });
+        } else {
+          this.appShellService.growl({
+            severity: 'info',
+            summary: 'Tasks over',
+            detail: target,
+            life: 1,
+          });
+        }
       });
   }
 
@@ -1082,10 +1128,50 @@ export class DocumentEditorComponent
   private reloadComponent() {
     // TODO: reload document and services without page reload
     const currentUrl = this.router.url;
-    // this.loadingService.setLoading(true);
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate([currentUrl]);
     });
+  }
+
+  private updateElementContent(data: {elementId: string, elementType: string, elementFragment: string}) {
+    if (data && data.elementId && data.elementType && data.elementFragment) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(this.xml, "text/html");
+      let elt = doc.getElementById(data.elementId);
+      elt.outerHTML = this.cleanForView(data.elementFragment);
+      this.xml = doc.documentElement.outerHTML;
+    }
+  }
+
+  private getElementContent(data: {elementId: string, elementType: string}): {elementId: string, elementType: string, elementFragment: string} {
+    if (data && data.elementId && data.elementType) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(this.xml, "text/html");
+      let elt = doc.getElementById(data.elementId);
+      return { elementId: data.elementId,
+        elementType: data.elementType,
+        elementFragment: this.cleanForTransformation(elt.outerHTML)
+      };
+    }
+    return { elementId: data.elementId,
+      elementType: data.elementType,
+      elementFragment: null};
+  }
+
+  private cleanForTransformation(content: string): string {
+    return content.replaceAll("<aknp ", "<p ")
+      .replaceAll("</aknp>", "</p>")
+      .replaceAll(" id=", " xml:id=")
+      .replaceAll("<akntitle ", "<title ")
+      .replaceAll("</akntitle>", "</title>");
+  }
+
+  private cleanForView(content: string): string {
+    return content.replaceAll("<p ", "<aknp ")
+      .replaceAll("</p>", "</aknp>")
+      .replaceAll(" xml:id=", " id=")
+      .replaceAll("<title ", "<akntitle ")
+      .replaceAll("</title>", "</akntitle>");
   }
 
   private addPins(

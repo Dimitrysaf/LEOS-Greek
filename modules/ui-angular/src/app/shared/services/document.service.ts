@@ -118,6 +118,9 @@ export class DocumentService implements OnDestroy {
   isClonedProposal$: Observable<boolean>;
   isContributionDeclinedOrProcessed$: Observable<boolean>;
   isEditorOpen$: Observable<boolean>;
+  updateElementContent$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
+  getElementContent$: Observable<{elementId: string, elementType: string}>;
+  getElementContentResponse$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -168,6 +171,8 @@ export class DocumentService implements OnDestroy {
     false,
   );
   private isEditorOpenBS = new BehaviorSubject<boolean>(false);
+  private getElementContentBS = new BehaviorSubject<{elementId: string, elementType: string}>({elementId: null, elementType: null});
+  private updateElementContentBS = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string}>({elementId: null, elementType: null, elementFragment: null});
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -335,6 +340,8 @@ export class DocumentService implements OnDestroy {
       this.contributionViewAndMergeCollapsedBS.asObservable();
     this.isEditorOpen$ = this.isEditorOpenBS.asObservable();
     this.cleanVersionView$ = this.cleanVersionViewBS.asObservable();
+    this.getElementContent$ = this.getElementContentBS.asObservable();
+    this.updateElementContent$ = this.updateElementContentBS.asObservable();
   }
 
   ngOnDestroy() {
@@ -541,7 +548,7 @@ export class DocumentService implements OnDestroy {
 
   reloadDocument() {
     this.setDidDocumentLoadAndRender(false);
-    //this.coEditionService.setShouldReloadAfterUpdate();
+    this.coEditionService.setShouldReloadAfterUpdate();
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
     this.setSearchResultsCounter(0);
   }
@@ -759,6 +766,22 @@ export class DocumentService implements OnDestroy {
         },
       },
     );
+  }
+
+  updateElementContent(
+    elementId: string,
+    elementTagName: string,
+    elementFragment: string
+  ) {
+    this.updateElementContentBS.next({elementId: elementId, elementType: elementTagName, elementFragment: elementFragment});
+  }
+
+  getElementContent(
+    elementId: string,
+    elementTagName: string,
+  ) {
+    this.getElementContentBS.next({elementId: elementId, elementType: elementTagName});
+    return this.getElementContentResponse$;
   }
 
   requestElement(
@@ -1344,7 +1367,7 @@ export class DocumentService implements OnDestroy {
   ) {
     const foundElement = document.getElementById(prevElementId);
 
-    const nextSibling = foundElement.nextElementSibling;
+    const nextSibling = foundElement?.nextElementSibling;
     if (nextSibling && nextSibling.tagName.toLowerCase() === elementType) {
       return nextSibling.getAttribute('id');
     } else {
