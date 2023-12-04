@@ -56,7 +56,8 @@ define(function leosSubElementMovePluginModule(require) {
                     element.getAttribute(DATA_ORIGIN) === EC_ORIGIN)) &&
                     element.hasAttribute('data-akn-element') &&
                     element.getAttribute("data-akn-attr-softaction") !== "move_to" &&
-                    element.getAttribute('data-akn-content-id')) {
+                    element.getAttribute('data-akn-content-id') &&
+                    element.getAttribute('data-akn-element') !== 'subparagraph') {
                     var selection = editor.getSelection();
                     if (selection.isCollapsed()) {
                         editor.getMenuItem("moveTo").label = 'Move this '.concat(element.getAttribute('data-akn-element'))
