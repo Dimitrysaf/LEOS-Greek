@@ -12,6 +12,8 @@ export interface RefreshElementResponse {
   elementFragment: string;
   elementId: string;
   elementTagName: string;
+  elementToEditAfterClose: Element;
+  splittedContentIsEmpty: boolean;
 }
 
 export interface FetchElementResponse {

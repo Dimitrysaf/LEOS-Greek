@@ -7,7 +7,6 @@ import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
-import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
@@ -54,7 +53,6 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
-import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
@@ -63,6 +61,7 @@ import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
@@ -76,6 +75,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
+import java.rmi.UnexpectedException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -165,10 +165,17 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
+    public RefreshElementResponse saveElement(String documentRef, String elementName, String elementFragment, String elementId, boolean isSplit) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
+        if (explanatory == null) {
+            throw new UnexpectedException("Explanatory not found");
+        }
+
         this.setStructureContext(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         byte[] updatedXmlContent = explanatoryProcessor.updateElement(explanatory, elementId, elementName, elementFragment);
+        if (updatedXmlContent == null) {
+            throw new UnexpectedException("Error updating explanatory");
+        }
 
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage("operation.checkin.minor");
@@ -176,9 +183,24 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
                 new CheckinElement(ActionType.UPDATED, elementId, elementName, updatedLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+        Element elementToEditAfterClose = null;
+        boolean splittedContentIsEmpty = false;
+        Pair<byte[], Element> splittedContent = null;
+        if (isSplit && checkIfCloseElementEditor(elementName, elementFragment)) {
+            splittedContent = explanatoryProcessor.getSplittedElement(updatedXmlContent, elementFragment, elementName, elementId);
+            if (splittedContent != null) {
+                elementToEditAfterClose = splittedContent.right();
+                if (splittedContent.left() != null) {
+                    updatedXmlContent = splittedContent.left();
+                }
+            }
+        }
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
         String newContent = elementProcessor.getElement(explanatory, elementName, elementId);
-        return new RefreshElementResponse(elementId, elementName, newContent);
+        if (splittedContent == null) {
+            splittedContentIsEmpty = true;
+        }
+        return new RefreshElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
     }
 
     @Override
@@ -498,9 +520,9 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     private void setBlockOrCrossHeading(List<TableOfContentItemVO> toc) {
-        for(TableOfContentItemVO tocVO : toc) {
+        for (TableOfContentItemVO tocVO : toc) {
             setBlockOrCrossHeading(tocVO);
-            if(tocVO.getChildItems() != null) {
+            if (tocVO.getChildItems() != null) {
                 setBlockOrCrossHeading(tocVO.getChildItems());
             }
         }

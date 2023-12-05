@@ -103,9 +103,10 @@ public class MemorandumController {
                                                         @PathVariable("elementName") String elementName,
                                                         @PathVariable("elementId") String elementId,
                                                         @RequestHeader("presenterId") String presenterId,
+                                                        @RequestParam(required = false) boolean isSplit,
                                                         @RequestBody String elementContent) {
         try {
-            RefreshElementResponse updatedElement = this.memorandumApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            RefreshElementResponse updatedElement = this.memorandumApiService.saveElement(documentRef, elementName, elementContent, elementId, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {

@@ -72,7 +72,6 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
-import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
@@ -82,6 +81,7 @@ import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +90,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
+import java.rmi.UnexpectedException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -187,17 +188,41 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementContent) {
+    public RefreshElementResponse saveElement(String documentRef, String elementName, String elementContent, String elementId, boolean isSplit) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
+
+        if (annex == null) {
+            throw new UnexpectedException("Annex not found");
+        }
+
         this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
-        populateCloneProposalMetadata(annex);
-        Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
-        populateCloneProposalMetadata(proposal);
+        this.populateCloneProposalMetadata(annex);
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
-        //TO DO add splitted content functionality since
-        Annex updatedAnnex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
-        String newContent = elementProcessor.getElement(updatedAnnex, elementName, elementId);
-        return new RefreshElementResponse(elementId, elementName, newContent);
+        if (updatedXmlContent == null) {
+            throw new UnexpectedException("Error updating bill");
+        }
+
+        boolean splittedContentIsEmpty = false;
+        Element elementToEditAfterClose = null;
+        Pair<byte[], Element> splittedContent = null;
+
+        if (isSplit && checkIfCloseElementEditor(elementName, elementContent)) {
+            splittedContent = annexProcessor.getSplittedElement(updatedXmlContent, elementContent, elementName, elementId);
+            if (splittedContent != null) {
+                elementToEditAfterClose = splittedContent.right();
+                if (splittedContent.left() != null) {
+                    updatedXmlContent = splittedContent.left();
+                }
+            }
+        }
+        annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
+        String newContent = elementProcessor.getElement(annex, elementName, elementId);
+        if (splittedContent == null) {
+            splittedContentIsEmpty = true;
+        }
+
+
+        return new RefreshElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
     }
 
     @Override
@@ -511,7 +536,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception {
         String op = "rejected";
         String msg = "operation.element.annex.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
 
