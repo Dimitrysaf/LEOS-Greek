@@ -377,9 +377,13 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                     Node node = children.get(nodeListCount);
                     if (changeOffset) {
                         Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
-                        Node delNode = getFirstChild(numNode, LEOS_SOFT_ACTION_DELETE);
-                        int index = numberConfig.getNumberIndex(delNode.getTextContent()) - 1;
-                        delNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                        if (numNode != null) {
+                            Node delNode = getFirstChild(numNode, LEOS_SOFT_ACTION_DELETE);
+                            if (delNode != null) {
+                                int index = numberConfig.getNumberIndex(delNode.getTextContent()) - 1;
+                                delNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                            }
+                        }
                     }
                     if (nodeToDelete == node) {
                         changeOffset = true;
@@ -426,9 +430,13 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                     Node node = children.get(nodeListCount);
                     if (changeOffset) {
                         numNode = getFirstChild(node, getNumTag(node.getNodeName()));
-                        Node insNode = getFirstChild(numNode, LEOS_TC_INSERT_ELEMENT_NAME);
-                        int index = numberConfig.getNumberIndex(insNode.getTextContent()) + 1;
-                        insNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                        if (numNode != null) {
+                            Node insNode = getFirstChild(numNode, LEOS_TC_INSERT_ELEMENT_NAME);
+                            if (insNode != null) {
+                                int index = numberConfig.getNumberIndex(insNode.getTextContent()) + 1;
+                                insNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                            }
+                        }
                     }
                     if (nodeToRestore == node) {
                         changeOffset = true;
