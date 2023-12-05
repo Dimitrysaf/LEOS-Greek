@@ -709,10 +709,10 @@ define(function leosTrackChangesPluginModule(require) {
                 if (isTrackChangesEnabled) {
                     if (editor.LEOS.isSpellCheckerEnabled) {
                         setTimeout(function() {
-                            var spellCheckerContextMenuRootElement = $("div.wsc-contextmenu");
-                            if (spellCheckerContextMenuRootElement && !spellCheckerContextMenuRootElement.get(0).mutationObserver) {
-                                spellCheckerContextMenuRootElement.get(0).mutationObserver = new MutationObserver(processSpellCheckerMutationsOnContextMenu);
-                                spellCheckerContextMenuRootElement.get(0).mutationObserver.observe(spellCheckerContextMenuRootElement.get(0),
+                            var spellCheckerContextMenuRootElement = $("div.wsc-contextmenu").get(0);
+                            if (spellCheckerContextMenuRootElement && !spellCheckerContextMenuRootElement.mutationObserver) {
+                                spellCheckerContextMenuRootElement.mutationObserver = new MutationObserver(processSpellCheckerMutationsOnContextMenu);
+                                spellCheckerContextMenuRootElement.mutationObserver.observe(spellCheckerContextMenuRootElement,
                                     { childList: true, subtree: true });
                             }
                         }, 2500);
