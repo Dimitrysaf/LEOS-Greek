@@ -33,6 +33,7 @@ define(function leosSpellCheckerPluginModule(require) {
                     enableGrammar: true,
                     disableDictionariesPreferences: true,
                     lang: 'en_GB',
+                    ignoreAttributes: ['data-wsc-ignore-checking'],
                     serviceProtocol: '${serviceUrl.protocol.substring(0, serviceUrl.protocol.length - 1)}',
                     serviceHost: '${serviceUrl.hostname}',
                     servicePort: '${serviceUrl.port}',

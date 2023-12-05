@@ -1,6 +1,9 @@
 <div class="eui-dropdown-button">
   <eui-dropdown>
-    <button euiButton euiSizeS euiPrimary>
+    <button euiButton euiSizeS euiPrimary
+            [euiDisabled]="this.proposalState === 'active'"
+            [disabled]="this.proposalState === 'active'"
+    >
       <span euiLabel>Actions</span>
       <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
     </button>

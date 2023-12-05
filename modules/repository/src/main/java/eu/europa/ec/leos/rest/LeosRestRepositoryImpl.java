@@ -159,7 +159,6 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         Set<LeosCategory> cats = LeosMapper.leosCategories(type);
         if (!cats.isEmpty()) {
             properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), cats.iterator().next());
-            properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), true);
         }
 
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.createDocumentFromSource(templateId, path, name, properties,

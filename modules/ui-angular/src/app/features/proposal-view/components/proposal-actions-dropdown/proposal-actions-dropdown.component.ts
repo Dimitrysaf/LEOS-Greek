@@ -23,6 +23,7 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
   @Input() editableTitle: string;
   @Input() isClonedProposal: boolean;
   @Input() originRef: string | null;
+  @Input() proposalState: string;
 
   mailtoHeader = 'mailto:?';
   subjectProp = 'subject=';

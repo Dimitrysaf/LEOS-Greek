@@ -29,12 +29,16 @@ define(function leosTrackChangesPluginModule(require) {
     var pluginDefinition = {
         init: function init(editor) {
             // Plugin only allowed for cloned proposals
+            if (!editor.LEOS.isClonedProposal) {
+                return;
+            }
 
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
             var deleteTcStyle = new CKEDITOR.style({ element: core.TRACKCHANGES_ELEMENT, attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION) });
             var selectedElement, handleMutations = false;
+            var handleMutationsDoneBySpellChecker = false, spellCheckerOriginalText, spellCheckerReplacementText;
             var mousePosition = [], docContainer = document.getElementById("docContainer");
 
             // Add toggle display
@@ -102,7 +106,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editor.addCommand("rejectOneChange", {
                     canUndo: true,
                     exec: function(editor) {
-                        actions.rejectChange(editor, editor.getSelection().getStartElement());
+                        actions.rejectChange(editor, editor.getSelection().getStartElement(), numberModule);
                     }
                 });
                 editor.addCommand("acceptSelectedChanges", {
@@ -119,7 +123,7 @@ define(function leosTrackChangesPluginModule(require) {
                     exec: function(editor) {
                         var tcElements = core.findElementsInSelection(editor.getSelection());
                         for (var i = tcElements.length - 1; i >= 0; i--) {
-                            actions.rejectChange(editor, tcElements[i]);
+                            actions.rejectChange(editor, tcElements[i], numberModule);
                         }
                     }
                 });
@@ -185,13 +189,17 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                     }
                 });
-                docContainer.addEventListener("mousedown", function(event) {
+                var calculateMousePosition = function(event) {
                     var posx = 0, posy = 0;
                     if (event.pageX || event.pageY) {
                         posx = event.pageX + docContainer.scrollLeft;
                         posy = event.pageY + docContainer.scrollTop;
                     }
                     mousePosition = [posx, posy];
+                };
+                docContainer.addEventListener("mousedown", calculateMousePosition);
+                editor.on("destroy", function() {
+                    docContainer.removeEventListener("mousedown", calculateMousePosition);
                 });
             }
 
@@ -468,9 +476,11 @@ define(function leosTrackChangesPluginModule(require) {
                 switch (event.data.name) {
                     case "enter":
                         var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
-                        elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                        elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
-                        event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                        if (elementToRemoveAttribute) {
+                            elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                            elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
+                            event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                        }
                         break;
                 }
             }, null, null, 15);
@@ -581,6 +591,18 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                     }
                 }
+                function findFirstDiffPos(original, modified, replacementWord) {
+                    if (original === modified) return -1;
+                    for (var diffPos = 0; original[diffPos] == modified[diffPos]; diffPos++) {}
+                    var maxBackwardPos = diffPos - replacementWord.length;
+                    while ((diffPos >= 0) && !modified.substring(diffPos).startsWith(replacementWord)) {
+                        if (diffPos <= maxBackwardPos) {
+                            return -1;
+                        }
+                        diffPos--;
+                    }
+                    return diffPos;
+                }
                 function processMutations(mutations) {
                     if (handleMutations) {
                         handleMutations = false;
@@ -620,14 +642,86 @@ define(function leosTrackChangesPluginModule(require) {
                                 break;
                             }
                         }
+                    } else if (handleMutationsDoneBySpellChecker) {
+                        handleMutationsDoneBySpellChecker = false;
+                        for (var mutation of mutations) {
+                            if ((mutation.type === "characterData") && mutation.target.parentElement) {
+                                var parentElement = mutation.target.parentElement;
+                                var targetTextNode = new CKEDITOR.dom.text(mutation.target);
+                                editor.getSelection().selectElement(targetTextNode);
+                                if (!core.isInsideTrackChangeElement(editor)) {
+                                    if (mutation.oldValue) {
+                                        var diffPos = findFirstDiffPos(mutation.oldValue, mutation.target.data, spellCheckerReplacementText);
+                                        if (diffPos >= 0) {
+                                            var startTextNode = new CKEDITOR.dom.text(mutation.target.data.substring(0, diffPos));
+                                            startTextNode.insertBefore(targetTextNode);
+                                            var finalTextNode = new CKEDITOR.dom.text(mutation.target.data.substring(diffPos + spellCheckerReplacementText.length));
+                                            finalTextNode.insertAfter(targetTextNode);
+                                        }
+                                        var originalTextNode = new CKEDITOR.dom.text(spellCheckerOriginalText);
+                                        originalTextNode.insertBefore(targetTextNode);
+                                        editor.getSelection().selectElement(originalTextNode);
+                                        style.apply(editor, deleteTcStyle);
+                                        if (diffPos >= 0) {
+                                            core.setToEditablePosition(editor, originalTextNode, core.CARET_END);
+                                            if (actions.insertNewData(editor, spellCheckerReplacementText)) {
+                                                targetTextNode.remove();
+                                            }
+                                        }
+                                    } else {
+                                        var originalTextNode = new CKEDITOR.dom.text(spellCheckerOriginalText);
+                                        originalTextNode.insertBefore(targetTextNode);
+                                        editor.getSelection().selectElement(originalTextNode);
+                                        style.apply(editor, deleteTcStyle);
+                                        core.setToEditablePosition(editor, originalTextNode, core.CARET_END);
+                                        if (actions.insertNewData(editor, spellCheckerReplacementText)) {
+                                            targetTextNode.remove();
+                                        }
+                                    }
+                                }
+                                editor.getSelection().fake(new CKEDITOR.dom.element(parentElement));
+                                break;
+                            }
+                        }
+                    }
+                }
+                function processSpellCheckerMutationsOnContextMenu(mutations) {
+                    for (var mutation of mutations) {
+                        if (mutation.type === "childList") {
+                            for (var node of mutation.addedNodes) {
+                                var menuButton = $(node).children("button").first();
+                                if (menuButton) {
+                                    menuButton.on("click", function() {
+                                        handleMutationsDoneBySpellChecker = true;
+                                        spellCheckerReplacementText = this.getAttribute("title");
+                                    });
+                                    menuButton.on("mouseenter", function() {
+                                        handleMutationsDoneBySpellChecker = false;
+                                        editor.getSelection().getStartElement().$.normalize(); // If user clicks on the text several text nodes are created causing several character data mutations
+                                        var selectedSpellCheckerProblemElement = $("div.wsc-contenteditable-mirror").find(".wsc-problem-text--active:first").get(0);
+                                        spellCheckerOriginalText = selectedSpellCheckerProblemElement.getAttribute("data-spelling-word") ?? selectedSpellCheckerProblemElement.getAttribute("data-grammar-phrase");
+                                    });
+                                }
+                            }
+                        }
                     }
                 }
                 if (isTrackChangesEnabled) {
+                    if (editor.LEOS.isSpellCheckerEnabled) {
+                        setTimeout(function() {
+                            var spellCheckerContextMenuRootElement = $("div.wsc-contextmenu").get(0);
+                            if (spellCheckerContextMenuRootElement && !spellCheckerContextMenuRootElement.mutationObserver) {
+                                spellCheckerContextMenuRootElement.mutationObserver = new MutationObserver(processSpellCheckerMutationsOnContextMenu);
+                                spellCheckerContextMenuRootElement.mutationObserver.observe(spellCheckerContextMenuRootElement,
+                                    { childList: true, subtree: true });
+                            }
+                        }, 2500);
+                    }
                     var rootElement = editor.editable().$.firstChild;
                     if (rootElement && !rootElement.mutationObserver) {
                         rootElement.mutationObserver = new MutationObserver(processMutations);
                         rootElement.mutationObserver.observe(rootElement, { childList: true, subtree: true,
-                            attributes: true, attributeFilter: [ "data-cke-widget-data" ] });
+                            attributes: true, attributeFilter: [ "data-cke-widget-data" ], characterData: true, characterDataOldValue: true });
                     }
                 }
             });

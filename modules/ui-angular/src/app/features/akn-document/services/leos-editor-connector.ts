@@ -261,7 +261,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
-    this.coEditionService.sendUpdateDocumentEvent(documentRef);
     this.saveDocumentElement(
       documentRef,
       elemData.elementId,
@@ -271,6 +270,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       documentType,
     ).subscribe((response) => {
       this.isElementSaved = true;
+      this.coEditionService.sendUpdateDocumentEvent(documentRef);
       this.refreshElement(
         response.elementId,
         response.elementTagName,
