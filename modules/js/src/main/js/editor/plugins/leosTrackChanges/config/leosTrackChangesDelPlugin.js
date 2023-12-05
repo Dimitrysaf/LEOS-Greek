@@ -36,6 +36,8 @@ define(function leosTrackChangesDelPluginModule(require) {
         }, {
             html : "data-akn-action=delete"
         }, {
+            html : "data-wsc-ignore-checking=true"
+        }, {
             akn : "leos:uid",
             html : "data-akn-uid"
         }, {
