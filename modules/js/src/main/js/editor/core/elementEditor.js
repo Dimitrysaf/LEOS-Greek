@@ -303,9 +303,11 @@ define(function elementEditorModule(require) {
         };
         connector.releaseElement(data);
         // destroy editor instance, without updating DOM
-        placeholder.outerHTML = newContent;
+        if (placeholder != null) {
+            placeholder.innerHTML = null; //used to avoid flickering text
+        }
 
-        editor.destroy(false);
+        editor.destroy(true);
 
         if (connector.editorChannel) {
             connector.editorChannel.publish('editor.close', {elementId: elementId});
