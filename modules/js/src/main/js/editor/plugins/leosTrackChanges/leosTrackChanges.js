@@ -129,6 +129,9 @@ define(function leosTrackChangesModule(require) {
                 "data-akn-uid": user[1],
                 "title": user[0]
             };
+            if (action === core.DELETE_ACTION) {
+                tcAttributes["data-wsc-ignore-checking"] = true;
+            }
             return tcAttributes;
         },
 
@@ -153,7 +156,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         removeTrackChangesAttributes: function(element) {
-            var tcAttributes = ["data-akn-action", "data-akn-uid", "title"];
+            var tcAttributes = ["data-akn-action", "data-akn-uid", "title", "data-wsc-ignore-checking"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
