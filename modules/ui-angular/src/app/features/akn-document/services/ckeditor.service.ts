@@ -146,6 +146,10 @@ export class CKEditorService implements OnDestroy {
     this.trackChangesConnector.$triggerStateChange();
   }
 
+  changeEnableTrackChangesState(isTrackChangesShowed) {
+    this.leosEditorConnector.getState().isTrackChangesEnabled = isTrackChangesShowed;
+  }
+
   getSeeTrackChangesState() {
     return this.trackChangesConnector.getState().isTrackChangesShowed;
   }

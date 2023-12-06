@@ -396,6 +396,18 @@ export class DocumentService implements OnDestroy {
     ).subscribe((resp) => this.cleanVersionViewBS.next(resp));
   }
 
+
+  async toggleTrackChangesEnabled(trackChangedEnabled) {
+    const documentRef = this.documentRef;
+    const documentType = this.documentType
+    return this.http.post(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/toggle-trackchange-enabled`,
+      {
+        trackChangedEnabled,
+      }
+    ).subscribe((resp) => resp);
+  }
+
   async downloadEConsilium(options: DownloadEConsiliumOptions) {
     const documentType = this.documentType.toUpperCase();
     const documentRef = this.documentRef;

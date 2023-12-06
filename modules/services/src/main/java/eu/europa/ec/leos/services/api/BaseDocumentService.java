@@ -122,4 +122,6 @@ public interface BaseDocumentService<T extends XmlDocument> {
         final Content content = document.getContent().getOrError(() -> "Document content is required!");
         return content.getSource().getBytes();
     }
+
+    boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef);
 }

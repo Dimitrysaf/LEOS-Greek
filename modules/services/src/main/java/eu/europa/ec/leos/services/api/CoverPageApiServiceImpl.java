@@ -30,6 +30,8 @@ import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -59,6 +61,7 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -75,7 +78,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service("coverPage")
@@ -114,6 +119,10 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     LegService legService;
     @Autowired
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
+    @Autowired
+    RepositoryPropertiesMapper repositoryPropertiesMapper;
+    @Autowired
+    TrackChangesContext trackChangesContext;
 
     private Provider<CloneContext> cloneContext;
     private Provider<BillContextService> context;
@@ -361,6 +370,16 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception {
         throw new UnsupportedOperationException("Accept change isn't supported for cover page");
+    }
+
+    @Override
+    public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), isTrackChangeEnabled);
+        String documentId = this.proposalService.findProposalByRef(documentRef).getId();
+        Proposal proposal = proposalService.updateProposal(documentRef, documentId, properties, false);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return true;
     }
 
     private String getVersionInfoAsString(XmlDocument document) {

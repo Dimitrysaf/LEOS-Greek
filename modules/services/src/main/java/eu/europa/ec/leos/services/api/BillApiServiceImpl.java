@@ -34,6 +34,8 @@ import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -72,7 +74,6 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
-import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
@@ -96,6 +97,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -152,6 +154,8 @@ public class BillApiServiceImpl implements BillApiService {
     GenericDocumentApiService genericDocumentApiService;
     @Autowired
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
+    @Autowired
+    RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     private Provider<CloneContext> cloneContext;
     protected Provider<BillContextService> contex;
@@ -404,6 +408,17 @@ public class BillApiServiceImpl implements BillApiService {
 
         return documentViewService.updateDocumentView(bill);
     }
+
+    @Override
+    public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), isTrackChangeEnabled);
+        String documentId = billService.findBillByRef(documentRef).getId();
+        Bill bill = billService.updateBill(documentRef, documentId, properties, false);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        return true;
+    }
+
 
     @Override
     public String searchForImport(Integer number, Integer year, DocType type) {

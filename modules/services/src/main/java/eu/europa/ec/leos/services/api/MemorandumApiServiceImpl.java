@@ -28,6 +28,8 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -58,6 +60,7 @@ import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -73,7 +76,9 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service("memorandum")
@@ -115,6 +120,10 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     GenericDocumentApiService genericDocumentApiService;
     @Autowired
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
+    @Autowired
+    RepositoryPropertiesMapper repositoryPropertiesMapper;
+    @Autowired
+    TrackChangesContext trackChangesContext;
 
     private Provider<BillContextService> context;
 
@@ -368,6 +377,16 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,TrackChangeActionType trackChangeAction) throws Exception {
         throw new UnsupportedOperationException("Accept change isn't supported for memorandum");
+    }
+
+    @Override
+    public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), isTrackChangeEnabled);
+        String documentId = memorandumService.findMemorandumByRef(documentRef).getId();
+        Memorandum memorandum = memorandumService.updateMemorandum(documentRef, documentId, properties, false);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return true;
     }
 
     private byte[] doDownloadVersion(String documentRef, boolean isWithFilteredAnnotations, String annotations) {

@@ -421,6 +421,11 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         throw new UnsupportedOperationException("Reject change isn't supported for council explanatory");
     }
 
+    @Override
+    public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
+        return false;
+    }
+
     private void setStructureContext(String docTemplate) {
         this.structureContext.get().useDocumentTemplate(docTemplate);
     }

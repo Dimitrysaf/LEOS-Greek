@@ -26,6 +26,7 @@ export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   documentRef?: string;
   isAngularUI?: boolean;
   isTrackChangesShowed: boolean;
+  isTrackChangesEnabled: boolean;
 };
 
 export type LeosEditorConnectorInitialState = Omit<
