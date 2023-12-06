@@ -149,16 +149,18 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
               this.getState()['permissions'] =
                 this.documentService.getUserPermissions();
               this.setEditorOpenState('OPEN');
-              this.editElement(
-                response.elementId,
-                response.elementTagName,
-                response.element,
-                documentType.toUpperCase(),
-                getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
-                response.alternatives,
-                JSON.stringify(response.levelItem),
-                response.clonedProposal,
-              );
+              this.documentService.getElementContent(data.elementId, data.elementType).subscribe((data) => {
+                this.editElement(
+                  response.elementId,
+                  response.elementTagName,
+                  data.elementFragment,
+                  documentType.toUpperCase(),
+                  getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
+                  response.alternatives,
+                  JSON.stringify(response.levelItem),
+                  response.clonedProposal,
+                );
+              });
               this.coEditionService.joinElementCoEditInfo(
                 documentRef,
                 response.elementId,
@@ -183,16 +185,18 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           this.getState()['permissions'] =
             this.documentService.getUserPermissions();
           this.setEditorOpenState('OPEN');
-          this.editElement(
-            response.elementId,
-            response.elementTagName,
-            response.element,
-            documentType.toUpperCase(),
-            getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
-            response.alternatives,
-            JSON.stringify(response.levelItem),
-            response.clonedProposal,
-          );
+          this.documentService.getElementContent(data.elementId, data.elementType).subscribe((data) => {
+            this.editElement(
+              response.elementId,
+              response.elementTagName,
+              data.elementFragment,
+              documentType.toUpperCase(),
+              getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
+              response.alternatives,
+              JSON.stringify(response.levelItem),
+              response.clonedProposal,
+            );
+          });
           this.coEditionService.joinElementCoEditInfo(
             documentRef,
             response.elementId,
@@ -261,6 +265,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
+    this.refreshElement(
+      elemData.elementId,
+      elemData.elementType,
+      elemData.elementFragment,
+    );
+    let milliseconds = new Date().getTime();
+    this.loadingService.setTaskOngoing('saving', String(milliseconds));
     this.saveDocumentElement(
       documentRef,
       elemData.elementId,
@@ -271,11 +282,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     ).subscribe((response) => {
       this.isElementSaved = true;
       this.coEditionService.sendUpdateDocumentEvent(documentRef);
-      this.refreshElement(
-        response.elementId,
-        response.elementTagName,
-        response.elementFragment,
-      );
+      this.coEditionService.setShouldReloadAfterUpdate();
+      this.documentService.updateElementContent(response.elementId, response.elementTagName, response.elementFragment);
+      this.loadingService.setTaskOver('saving', String(milliseconds));
       if (
         countOccurrencesOfTextInString(
           elemData.elementType,
@@ -297,15 +306,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
     elementFragment: string,
   }) {
+    this.documentService.reloadConnectors(elemData);
     this.coEditionService.removeElementCoEditInfo(
       this.documentService.documentRef,
       this.elementUnderEdit,
     );
-    if (!this.isElementSaved) {
-      this.documentService.resetDocument();
-    } else {
-      this.documentService.reloadDocument();
-    }
     this.isElementSaved = false;
     this.setEditorOpenState('CLOSE');
     this.documentService.setIsEditorOpen(false);
