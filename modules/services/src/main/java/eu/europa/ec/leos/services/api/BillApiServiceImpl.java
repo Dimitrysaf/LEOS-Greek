@@ -588,6 +588,7 @@ public class BillApiServiceImpl implements BillApiService {
         boolean splittedContentIsEmpty = false;
         Element elementToEditAfterClose = null;
 
+        newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent, true);
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
         final String elementLabel = generateLabel(elementId, bill);

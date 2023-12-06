@@ -39,7 +39,6 @@ import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BILL;
-import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLAUSE;
 import static eu.europa.ec.leos.services.support.XmlHelper.ID_PLACEHOLDER;
@@ -50,13 +49,10 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
-import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
-import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
-import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static org.apache.commons.lang3.StringUtils.replaceAll;
 
 @Service
@@ -303,7 +299,7 @@ public class BillProcessorImpl implements BillProcessor {
             updatedContent = xmlContentProcessor.indentElement(contentBytes, elementName, elementId, elementContent, toc);
             if (updatedContent != null) {
                 updatedContent = numberService.renumberRecitals(updatedContent);
-                updatedContent = numberService.renumberArticles(updatedContent);
+                updatedContent = numberService.renumberArticles(updatedContent, true);
                 updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
             }
         } else {
@@ -365,8 +361,16 @@ public class BillProcessorImpl implements BillProcessor {
 
     @Override
     public byte[] renumberingAndPostProcessing(byte[] docContent) {
+        return renumberAndProcess(docContent, false);
+    }
+    @Override
+    public byte[] renumberingAndPostProcessing(byte[] docContent, boolean renumberChildElements) {
+        return renumberAndProcess(docContent, renumberChildElements);
+    }
+
+    private byte[] renumberAndProcess(byte[] docContent, boolean renumberChildElements) {
         byte [] updatedContent = numberService.renumberRecitals(docContent);
-        updatedContent = numberService.renumberArticles(updatedContent);
+        updatedContent = numberService.renumberArticles(updatedContent, renumberChildElements);
         updatedContent = numberService.renumberParagraph(updatedContent);
         return xmlContentProcessor.doXMLPostProcessing(updatedContent);
     }
