@@ -128,6 +128,7 @@ public class ElementProcessorImpl<T extends XmlDocument> implements ElementProce
             Pair<byte[], String> result = xmlContentProcessor.updateSoftMovedElement(contentBytes, elementContent);
             if(result.left() != null && result.left().length > 0) {
                 contentBytes = result.left();
+                elementContent = result.right();
             }
             // TODO:
             // Trackchanges: Comparison removed because of trackchanges. Remove this line when we clean up after finish track changes

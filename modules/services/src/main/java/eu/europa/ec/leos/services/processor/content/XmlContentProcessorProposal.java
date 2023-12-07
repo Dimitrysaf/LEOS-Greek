@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -359,48 +360,48 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     @Override
     public Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent) {
 
-        Document fragmentToCheckDeleted = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
-        NodeList softMovedNodesToCheckDeleted = XercesUtils.getElementsByXPath(fragmentToCheckDeleted, String.format("//*[@%s][@%s='accept']", LEOS_ID_TO_BE_REMOVED,
-                LEOS_RENUMBER_ORIGIN));
-        for (int nodeIdx = 0; nodeIdx < softMovedNodesToCheckDeleted.getLength(); nodeIdx++) {
-            String idToDelete = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + softMovedNodesToCheckDeleted.item(nodeIdx).getAttributes().getNamedItem(XMLID).getNodeValue();
-            Document document = createXercesDocument(xmlContent);
-            Node nodeToDelete = XercesUtils.getElementById(document, idToDelete);
-            if (nodeToDelete != null && nodeToDelete.getParentNode() != null) {
-                List<Node> children = XercesUtils.getChildren(nodeToDelete.getParentNode(), Arrays.asList(INDENT, POINT));
-                Node firstElement = children.get(0);
-                int elementDepth = XercesUtils.getPointDepth(firstElement);
-                String elementName = firstElement.getNodeName();
-                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement);
-                boolean changeOffset = false;
-                for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
-                    Node node = children.get(nodeListCount);
-                    if (changeOffset) {
-                        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
-                        if (numNode != null) {
-                            Node delNode = getFirstChild(numNode, LEOS_SOFT_ACTION_DELETE);
-                            if (delNode != null) {
-                                int index = numberConfig.getNumberIndex(delNode.getTextContent()) - 1;
-                                delNode.setTextContent(numberConfig.getNumberFromIndex(index));
-                            }
-                        }
-                    }
-                    if (nodeToDelete == node) {
-                        changeOffset = true;
+        Pair<byte[], String> resultFromRemoveSoftElement = removeSoftMovedElementMarkedWithAttribute(xmlContent, elementContent);
+        xmlContent = resultFromRemoveSoftElement.left();
+        elementContent = resultFromRemoveSoftElement.right();
+
+        Pair<byte[], String> resultFromRestoreSoftElement = restoreSoftMovedElementMarkedWithAttribute(xmlContent, elementContent);
+        xmlContent = resultFromRestoreSoftElement.left();
+        elementContent = resultFromRestoreSoftElement.right();
+
+        Document fragment = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
+        NodeList softMovedNodes = XercesUtils.getElementsByXPath(fragment, String.format("//*[@%s]", LEOS_SOFT_MOVE_FROM));
+
+        Pair<byte[], String> result = new Pair<>(xmlContent, elementContent); //default result
+        Document document = createXercesDocument(xmlContent);
+        for (int nodeIdx = 0; nodeIdx < softMovedNodes.getLength(); nodeIdx++) {
+            Node node = softMovedNodes.item(nodeIdx);
+            String idAttrVal = XercesUtils.getAttributeValue(node, XMLID);
+            if (idAttrVal != null && idAttrVal.indexOf("temp_") != -1) {
+                String updatedIdAttrVal = idAttrVal.replace("temp_", EMPTY_STRING);
+                String xPath = "//*[@xml:id = '" + updatedIdAttrVal + "']";
+                NodeList sourceNodes = XercesUtils.getElementsByXPath(fragment, xPath);
+                if (sourceNodes != null && sourceNodes.getLength() > 0) { //If moved within article
+                    insertSoftMovedAttributesAndRenumber(updatedIdAttrVal, sourceNodes.item(0), document);
+                    result = new Pair<>(nodeToByteArray(document), nodeToString(fragment.getFirstChild().getFirstChild()));
+                } else { //If moved between articles
+                    sourceNodes = XercesUtils.getElementsByXPath(document, xPath);
+                    if (sourceNodes != null && sourceNodes.getLength() > 0) {
+                        insertSoftMovedAttributesAndRenumber(updatedIdAttrVal, sourceNodes.item(0), document);
+                        result = new Pair<>(nodeToByteArray(document), elementContent);
                     }
                 }
             }
-            xmlContent = nodeToByteArray(document);
-            xmlContent = this.deleteElementById(xmlContent, idToDelete);
-            document = createXercesDocument(xmlContent);
-            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
-            xmlContent = nodeToByteArray(document);
         }
+        return result;
+    }
 
+    private Pair<byte[], String> restoreSoftMovedElementMarkedWithAttribute(byte[] xmlContent, String elementContent) {
         Document fragmentToCheckRestore = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
         NodeList softMovedNodesToRestore = XercesUtils.getElementsByXPath(fragmentToCheckRestore, String.format("//*[@%s]", LEOS_ID_TO_BE_RESTORED));
         for (int nodeIdx = 0; nodeIdx < softMovedNodesToRestore.getLength(); nodeIdx++) {
-            String idToRestore = softMovedNodesToRestore.item(nodeIdx).getAttributes().getNamedItem(LEOS_ID_TO_BE_RESTORED).getNodeValue();
+            NamedNodeMap attributesOfRejectedNode = softMovedNodesToRestore.item(nodeIdx).getAttributes();
+            String idToRestore = attributesOfRejectedNode.getNamedItem(LEOS_ID_TO_BE_RESTORED).getNodeValue();
+            attributesOfRejectedNode.removeNamedItem(LEOS_ID_TO_BE_RESTORED);
             Document document = createXercesDocument(xmlContent);
             Node nodeToRestore = XercesUtils.getElementById(document, idToRestore);
             XercesUtils.removeAttribute(nodeToRestore, LEOS_SOFT_USER_ATTR);
@@ -449,32 +450,51 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             xmlContent = nodeToByteArray(document);
 
         }
+        return new Pair<>(xmlContent, nodeToString(fragmentToCheckRestore.getFirstChild().getFirstChild()));
+    }
 
-        Document fragment = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
-        NodeList softMovedNodes = XercesUtils.getElementsByXPath(fragment, String.format("//*[@%s]", LEOS_SOFT_MOVE_FROM));
-
-        Pair<byte[], String> result = new Pair<>(xmlContent, new String()); //default result
-        Document document = createXercesDocument(xmlContent);
-        for (int nodeIdx = 0; nodeIdx < softMovedNodes.getLength(); nodeIdx++) {
-            Node node = softMovedNodes.item(nodeIdx);
-            String idAttrVal = XercesUtils.getAttributeValue(node, XMLID);
-            if (idAttrVal != null && idAttrVal.indexOf("temp_") != -1) {
-                String updatedIdAttrVal = idAttrVal.replace("temp_", EMPTY_STRING);
-                String xPath = "//*[@xml:id = '" + updatedIdAttrVal + "']";
-                NodeList sourceNodes = XercesUtils.getElementsByXPath(fragment, xPath);
-                if (sourceNodes != null && sourceNodes.getLength() > 0) { //If moved within article
-                    insertSoftMovedAttributesAndRenumber(updatedIdAttrVal, sourceNodes.item(0), document);
-                    result = new Pair<>(nodeToByteArray(document), nodeToString(fragment.getFirstChild().getFirstChild()));
-                } else { //If moved between articles
-                    sourceNodes = XercesUtils.getElementsByXPath(document, xPath);
-                    if (sourceNodes != null && sourceNodes.getLength() > 0) {
-                        insertSoftMovedAttributesAndRenumber(updatedIdAttrVal, sourceNodes.item(0), document);
-                        result = new Pair<>(nodeToByteArray(document), new String());
+    private Pair<byte[], String> removeSoftMovedElementMarkedWithAttribute(byte[] xmlContent, String elementContent) {
+        Document fragmentToCheckDeleted = createXercesDocument(wrapXmlFragment(elementContent).getBytes(StandardCharsets.UTF_8));
+        NodeList softMovedNodesToCheckDeleted = XercesUtils.getElementsByXPath(fragmentToCheckDeleted, String.format("//*[@%s][@%s='accept']", LEOS_ID_TO_BE_REMOVED,
+                LEOS_RENUMBER_ORIGIN));
+        for (int nodeIdx = 0; nodeIdx < softMovedNodesToCheckDeleted.getLength(); nodeIdx++) {
+            NamedNodeMap attributesOfAcceptedNode = softMovedNodesToCheckDeleted.item(nodeIdx).getAttributes();
+            attributesOfAcceptedNode.removeNamedItem(LEOS_ID_TO_BE_REMOVED);
+            attributesOfAcceptedNode.removeNamedItem(LEOS_RENUMBER_ORIGIN);
+            String idToDelete = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + attributesOfAcceptedNode.getNamedItem(XMLID).getNodeValue();
+            Document document = createXercesDocument(xmlContent);
+            Node nodeToDelete = XercesUtils.getElementById(document, idToDelete);
+            if (nodeToDelete != null && nodeToDelete.getParentNode() != null) {
+                List<Node> children = XercesUtils.getChildren(nodeToDelete.getParentNode(), Arrays.asList(INDENT, POINT));
+                Node firstElement = children.get(0);
+                int elementDepth = XercesUtils.getPointDepth(firstElement);
+                String elementName = firstElement.getNodeName();
+                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement);
+                boolean changeOffset = false;
+                for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
+                    Node node = children.get(nodeListCount);
+                    if (changeOffset) {
+                        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+                        if (numNode != null) {
+                            Node delNode = getFirstChild(numNode, LEOS_SOFT_ACTION_DELETE);
+                            if (delNode != null) {
+                                int index = numberConfig.getNumberIndex(delNode.getTextContent()) - 1;
+                                delNode.setTextContent(numberConfig.getNumberFromIndex(index));
+                            }
+                        }
+                    }
+                    if (nodeToDelete == node) {
+                        changeOffset = true;
                     }
                 }
             }
+            xmlContent = nodeToByteArray(document);
+            xmlContent = this.deleteElementById(xmlContent, idToDelete);
+            document = createXercesDocument(xmlContent);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
+            xmlContent = nodeToByteArray(document);
         }
-        return result;
+        return new Pair<>(xmlContent, nodeToString(fragmentToCheckDeleted.getFirstChild().getFirstChild()));
     }
 
     private void insertSoftMovedAttributesAndRenumber(String idAttrVal, Node sourceNode, Node document) {

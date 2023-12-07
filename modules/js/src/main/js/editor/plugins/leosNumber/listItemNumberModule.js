@@ -299,6 +299,20 @@ define(function listItemNumberModule(require) {
         return sequence;
     }
 
+    function _isFistElement(orderedList, number) {
+        var currentNestingLevel = getNestingLevelForOl(orderedList);
+        var listItems = _removeCrossHeadingsFromListItems(orderedList.children);
+        var sequence = identifySequence(listItems, currentNestingLevel);
+        if (currentNestingLevel === 0) {
+            sequence = _getSequences('Paragraph');
+        }
+        var index = sequence.getIndex(number);
+        if (currentNestingLevel === 0 && index === 1) {
+            return true;
+        }
+        return false;
+    }
+
     function _removeCrossHeadingsFromListItems(listItems) {
         var sortedListItems = [];
         for (var i=0; i<listItems.length; i++) {
@@ -406,6 +420,7 @@ define(function listItemNumberModule(require) {
         getSequences: _getSequences,
         updateNumbers: _updateNumbers,
         updateNumbersByDefault: _updateNumbersByDefault,
-        getSequence: _getSequence
+        getSequence: _getSequence,
+        isFistElement: _isFistElement
     };
 });

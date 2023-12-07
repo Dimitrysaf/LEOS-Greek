@@ -949,7 +949,7 @@ define(function leosAnnexListPluginModule(require) {
                         }
 
                         if ( joinWith ) {
-                            if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(range) && !leosTrackChanges.core.isCreatedByEnterKey(range)) {
+                            if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(range) && !leosTrackChanges.core.isCreatedByEnterKey(range) && (!range.startContainer.$.attributes || !range.startContainer.$.attributes['data-akn-empty'])) {
                                 editor.fire("handleTrackTraceForEnterDeleted", range);
                                 evt.cancel();
                                 return;
@@ -1111,7 +1111,7 @@ define(function leosAnnexListPluginModule(require) {
                                     }
                                 }
 
-                                if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(nextLine)) {
+                                if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(nextLine) && (!range.startContainer.$.attributes || !range.startContainer.$.attributes['data-akn-empty'])) {
                                     editor.fire("handleTrackTraceForEnterDeleted", nextLine);
                                     evt.cancel();
                                     return;
