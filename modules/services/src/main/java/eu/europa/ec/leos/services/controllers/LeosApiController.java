@@ -43,6 +43,8 @@ import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.vo.token.JsonTokenReponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +66,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.w3c.dom.Document;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -81,6 +84,7 @@ import java.util.Properties;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
 @RestController
 @RequestMapping
@@ -208,11 +212,14 @@ public class LeosApiController {
                     .formatToHtml(new ByteArrayInputStream(secondContent.getBytes()), baseContextPath, null)
                     .replaceAll("(?i)(href|onClick)=\".*?\"", "");
             if (mode == SINGLE_COLUMN_MODE) {
-                return new ResponseEntity<>(new String[]{comparatorService.compareContents(new ContentComparatorContext.Builder(firstContentHtml, secondContentHtml)
+                String comparedContent = comparatorService.compareContents(new ContentComparatorContext.Builder(firstContentHtml, secondContentHtml)
                         .withAttrName(ATTR_NAME)
                         .withRemovedValue(CONTENT_REMOVED_CLASS)
                         .withAddedValue(CONTENT_ADDED_CLASS)
-                        .build())}, HttpStatus.OK);
+                        .build());
+                Document document = XercesUtils.createXercesDocument(comparedContent.getBytes(UTF_8));
+                comparedContent = new String(LeosXercesUtils.wrapWithPageOrientationDivs(document), UTF_8);
+                return new ResponseEntity<>(new String[]{comparedContent}, HttpStatus.OK);
             }
             return new ResponseEntity<>(comparatorService.twoColumnsCompareContents(new ContentComparatorContext.Builder(firstContentHtml, secondContentHtml).build()), HttpStatus.OK);
         } catch (Exception ex) {
