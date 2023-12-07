@@ -1,7 +1,5 @@
 <header class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-xs">
-  <h1 class="flex-grow-1 eui-u-font-2xl">
-    {{ nonEditablePartOfTitle }} {{ editableTitle }}
-  </h1>
+  <h1 class="flex-grow-1 eui-u-font-2xl" [innerHTML]="title"></h1>
 
   <app-proposal-actions-dropdown
     [proposalState]="this.proposalState"

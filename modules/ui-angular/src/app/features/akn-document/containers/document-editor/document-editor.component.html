@@ -10,13 +10,32 @@
       </eui-breadcrumb-item>
     </eui-breadcrumb>
   </eui-page-breadcrumb>
+  <eui-page-header class="" [innerHTML]="pageTitle">
+    <eui-page-header-action-items>
+      <app-document-actions-dropdown
+        (annexChangeStructure)="confirmAnnexStructureChange()"
+      ></app-document-actions-dropdown>
+      <button
+        *ngIf="documentConfig?.proposalMetadata"
+        class="mt-1"
+        euiButton
+        euiSizeS
+        euiPrimary
+        translate="global.actions.close"
+        (click)="handleClose()"
+      ></button>
+    </eui-page-header-action-items>
+  </eui-page-header>
+
   <eui-page-content
     [ngClass]="{
       'eui-page-content--blocked':
         blockDocumentEditorService.isDocumentEditorBlocked$ | async
     }"
   >
-    <header class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-xs eui-page-header ">
+    <header
+      class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-xs eui-page-header"
+    >
       <h4 class="flex-grow-1 eui-u-font-2xl" [innerHTML]="pageTitle"></h4>
       <app-document-actions-dropdown
         (annexChangeStructure)="confirmAnnexStructureChange()"
@@ -181,10 +200,10 @@
               <eui-card euiNoShadow>
                 <eui-card-content>
                   <form [formGroup]="versionSearchForm">
-                    <div class="row g-0 ">
+                    <div class="row g-0">
                       <div class="col-md-3 version-search-form-type-label">
                         {{
-                        'page.editor.versions.search.form.type' | translate
+                          'page.editor.versions.search.form.type' | translate
                         }}:
                       </div>
                       <div class="col-md-7 no-g">
@@ -222,7 +241,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="col-md-2" style="text-align: right;">
+                      <div class="col-md-2" style="text-align: right">
                         <button
                           type="button"
                           class="eui-button eui-button--basic eui-button--icon-only eui-button--rounded eui-button--size-s ng-star-inserted"
@@ -260,13 +279,18 @@
                   </form>
                 </eui-card-content>
               </eui-card>
-              <eui-card *ngIf="documentService.getVersionSearchResultsIsEmpty()" class="search-versions-result" euiNoShadow>
+              <eui-card
+                *ngIf="documentService.getVersionSearchResultsIsEmpty()"
+                class="search-versions-result"
+                euiNoShadow
+              >
                 <eui-card-content>
                   <app-search-versions-pane
                     class="eui-u-display-block eui-u-width-100"
                     *ngFor="
-                            let version of (documentService.versionSearchResults$ | async);
-                            trackByProperty: 'cmisVersionNumber'
+                      let version of documentService.versionSearchResults$
+                        | async;
+                      trackByProperty: 'cmisVersionNumber'
                     "
                     [version]="version"
                     (exploreMilestone)="exploreMilestone($event)"

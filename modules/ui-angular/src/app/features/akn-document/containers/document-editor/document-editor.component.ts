@@ -67,7 +67,7 @@ import { CKEditorService } from '../../services/ckeditor.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
 import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
-import {LoadingService} from "@/shared/services/loading.service";
+import { LoadingService } from '@/shared/services/loading.service';
 
 enum PageMode {
   Normal,
@@ -152,7 +152,7 @@ export class DocumentEditorComponent
   contributionIndex = 0;
   contributionTemporaryDataId?: string;
   contributionTemporaryDataDocument?: string;
-  tasksOngoing: {name: string, key: string}[] = [];
+  tasksOngoing: { name: string; key: string }[] = [];
 
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
@@ -287,7 +287,11 @@ export class DocumentEditorComponent
     this.documentService.getElementContent$
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => {
-        this.documentService.getElementContentResponse$ = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string}>(this.getElementContent(data)).asObservable();
+        this.documentService.getElementContentResponse$ = new BehaviorSubject<{
+          elementId: string;
+          elementType: string;
+          elementFragment: string;
+        }>(this.getElementContent(data)).asObservable();
       });
 
     this.documentService.updateElementContent$
@@ -316,14 +320,14 @@ export class DocumentEditorComponent
     this.documentService.cleanVersionView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((cleanVersionView) => {
-          this.setPageMode(PageMode.ViewVersion);
-          if (!!cleanVersionView && !!cleanVersionView.editableXml) {
-            this.versionForView = this.cleanupAndSerializeXML(
-              cleanVersionView.editableXml,
-              `doubleCompare-${this.documentRef}`,
-            );
-            this.setVersionForViewHeader(cleanVersionView.versionInfoVO);
-          }
+        this.setPageMode(PageMode.ViewVersion);
+        if (!!cleanVersionView && !!cleanVersionView.editableXml) {
+          this.versionForView = this.cleanupAndSerializeXML(
+            cleanVersionView.editableXml,
+            `doubleCompare-${this.documentRef}`,
+          );
+          this.setVersionForViewHeader(cleanVersionView.versionInfoVO);
+        }
       });
 
     this.documentService.compareModeEnabled$
@@ -437,19 +441,40 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((latestTask) => {
         if (latestTask.ongoing) {
-          if (!this.tasksOngoing.some(i => i.name === latestTask.taskName && i.key === latestTask.key)) {
-            this.tasksOngoing.push({name: latestTask.taskName, key: latestTask.key});
+          if (
+            !this.tasksOngoing.some(
+              (i) => i.name === latestTask.taskName && i.key === latestTask.key,
+            )
+          ) {
+            this.tasksOngoing.push({
+              name: latestTask.taskName,
+              key: latestTask.key,
+            });
           }
-        } else if (this.tasksOngoing.some(i => i.name === latestTask.taskName && i.key === latestTask.key)) {
-          this.tasksOngoing = this.tasksOngoing.filter(item => item.name !== latestTask.taskName && item.key !== latestTask.key);
+        } else if (
+          this.tasksOngoing.some(
+            (i) => i.name === latestTask.taskName && i.key === latestTask.key,
+          )
+        ) {
+          this.tasksOngoing = this.tasksOngoing.filter(
+            (item) =>
+              item.name !== latestTask.taskName && item.key !== latestTask.key,
+          );
         }
         let target = '';
-        this.tasksOngoing.filter((value, index, array) => index == array.findIndex(item => item.name == value.name)).forEach(
-          (c) =>
-            (target =
-              target +
-              " " + this.translate.instant("task." + c.name + ".ongoing") + " "),
-        );
+        this.tasksOngoing
+          .filter(
+            (value, index, array) =>
+              index == array.findIndex((item) => item.name == value.name),
+          )
+          .forEach(
+            (c) =>
+              (target =
+                target +
+                ' ' +
+                this.translate.instant('task.' + c.name + '.ongoing') +
+                ' '),
+          );
         if (this.tasksOngoing.length > 0) {
           this.appShellService.growl({
             severity: 'info',
@@ -1133,45 +1158,58 @@ export class DocumentEditorComponent
     });
   }
 
-  private updateElementContent(data: {elementId: string, elementType: string, elementFragment: string}) {
+  private updateElementContent(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
     if (data && data.elementId && data.elementType && data.elementFragment) {
       const parser = new DOMParser();
-      const doc = parser.parseFromString(this.xml, "text/html");
+      const doc = parser.parseFromString(this.xml, 'text/html');
       let elt = doc.getElementById(data.elementId);
       elt.outerHTML = this.cleanForView(data.elementFragment);
       this.xml = doc.documentElement.outerHTML;
     }
   }
 
-  private getElementContent(data: {elementId: string, elementType: string}): {elementId: string, elementType: string, elementFragment: string} {
+  private getElementContent(data: { elementId: string; elementType: string }): {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  } {
     if (data && data.elementId && data.elementType) {
       const parser = new DOMParser();
-      const doc = parser.parseFromString(this.xml, "text/html");
+      const doc = parser.parseFromString(this.xml, 'text/html');
       let elt = doc.getElementById(data.elementId);
-      return { elementId: data.elementId,
+      return {
+        elementId: data.elementId,
         elementType: data.elementType,
-        elementFragment: this.cleanForTransformation(elt.outerHTML)
+        elementFragment: this.cleanForTransformation(elt.outerHTML),
       };
     }
-    return { elementId: data.elementId,
+    return {
+      elementId: data.elementId,
       elementType: data.elementType,
-      elementFragment: null};
+      elementFragment: null,
+    };
   }
 
   private cleanForTransformation(content: string): string {
-    return content.replaceAll("<aknp ", "<p ")
-      .replaceAll("</aknp>", "</p>")
-      .replaceAll(" id=", " xml:id=")
-      .replaceAll("<akntitle ", "<title ")
-      .replaceAll("</akntitle>", "</title>");
+    return content
+      .replaceAll('<aknp ', '<p ')
+      .replaceAll('</aknp>', '</p>')
+      .replaceAll(' id=', ' xml:id=')
+      .replaceAll('<akntitle ', '<title ')
+      .replaceAll('</akntitle>', '</title>');
   }
 
   private cleanForView(content: string): string {
-    return content.replaceAll("<p ", "<aknp ")
-      .replaceAll("</p>", "</aknp>")
-      .replaceAll(" xml:id=", " id=")
-      .replaceAll("<title ", "<akntitle ")
-      .replaceAll("</title>", "</akntitle>");
+    return content
+      .replaceAll('<p ', '<aknp ')
+      .replaceAll('</p>', '</aknp>')
+      .replaceAll(' xml:id=', ' id=')
+      .replaceAll('<title ', '<akntitle ')
+      .replaceAll('</title>', '</akntitle>');
   }
 
   private addPins(
@@ -1419,12 +1457,13 @@ export class DocumentEditorComponent
     this.pageTitle = [
       this.documentConfig.proposalMetadata.stage,
       this.documentConfig.proposalMetadata.type,
-      this.documentConfig.proposalMetadata.purpose
+      this.documentConfig.proposalMetadata.purpose,
     ]
-    .filter(Boolean)
-    .join(' ');
-    this.pageTitle = this.domSatinizer.sanitize(SecurityContext.HTML, this.pageTitle) || '';
-}
+      .filter(Boolean)
+      .join(' ');
+    this.pageTitle =
+      this.domSatinizer.sanitize(SecurityContext.HTML, this.pageTitle) || '';
+  }
 
   private setVersionForViewHeader(versionInfo: VersionInfoVO) {
     this.translate

@@ -4,6 +4,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
+  SecurityContext,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -17,8 +18,9 @@ import { Permission } from '@/shared';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
-import {Router} from "@angular/router";
-import {AppConfigService} from "@/core/services/app-config.service";
+import { Router } from '@angular/router';
+import { AppConfigService } from '@/core/services/app-config.service';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-proposal-header',
@@ -43,7 +45,8 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private proposalDetailsService: ProposalDetailsService,
     private router: Router,
-    private appConfig: AppConfigService
+    private appConfig: AppConfigService,
+    private domSanitizer: DomSanitizer,
   ) {}
 
   ngOnDestroy(): void {
@@ -52,7 +55,7 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.title = this.editableTitle;
+    this.setPageTitle();
     this.createForm = this.fb.group({
       docPurpose: new FormControl(this.title, {
         validators: [Validators.required, noWhitespaceValidator],
@@ -61,11 +64,20 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
     this.proposalDetailsService.permissions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((perms) => (this.permissions = perms));
-    this.appConfig.config.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe((config) => {
+    this.appConfig.config.pipe(takeUntil(this.destroy$)).subscribe((config) => {
       this.collectionCloseButtonEnabled = config.collectionCloseButtonEnabled;
-    })
+    });
+  }
+
+  private setPageTitle() {
+    this.title = [this.nonEditablePartOfTitle, this.editableTitle]
+      .filter(Boolean)
+      .join(' ');
+
+    this.title =
+      this.domSanitizer.sanitize(SecurityContext.HTML, this.title) || '';
+
+    console.log(this.title);
   }
 
   handleClose() {

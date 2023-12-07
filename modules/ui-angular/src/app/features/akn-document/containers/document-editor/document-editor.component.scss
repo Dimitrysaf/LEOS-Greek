@@ -37,7 +37,7 @@
   .eui-page-header {
     padding: var(--eui-base-spacing-xs);
     flex-direction: initial;
-    justify-content: left;
+    justify-content: center;
   }
 
   .eui-page-column__header-left-content-body {
@@ -236,16 +236,16 @@ app-document {
 }
 
 .search-version-pane {
-  background-color: #E7F6EC !important;
+  background-color: #e7f6ec !important;
   border: solid green 2px;
 }
 
 .search-version-pane > eui-card {
-  background-color: #E7F6EC !important;
+  background-color: #e7f6ec !important;
 }
 
 .search-version-pane > eui-card > eui-card-content {
-  background-color: #E7F6EC !important;
+  background-color: #e7f6ec !important;
 }
 
 .processed-span,
