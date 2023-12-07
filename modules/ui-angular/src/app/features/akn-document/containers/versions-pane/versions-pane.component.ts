@@ -20,7 +20,6 @@ export class VersionsPaneComponent implements OnInit {
 
   protected toggleShowMore() {
     if (this.hasMore && this.semaphore) {
-      this.doc.updateVersionsData();
       this.updateVersions();
     }
   }

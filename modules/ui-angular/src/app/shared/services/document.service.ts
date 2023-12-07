@@ -97,6 +97,7 @@ export class DocumentService implements OnDestroy {
   versionSearchParams$: Observable<VersionSearchParams>;
   versionSearchResults$: Observable<Version[]>;
   versionFilter$: Observable<string>;
+  versionLatest$: Observable<Version>;
   searchResultsCounter$: Observable<number>;
   totalNumVersion$: Observable<number>;
   collaborators$: Observable<Collaborator[]>;
@@ -138,6 +139,10 @@ export class DocumentService implements OnDestroy {
     wholeWords: false,
     matchCase: false,
   });
+  private documentConfigBS = new BehaviorSubject<DocumentConfig>(null);
+  private recentChangesBS = new BehaviorSubject<Version[]>([]);
+  private totalNumVersionBS = new BehaviorSubject<number>(0);
+  private versionLatestBS = new BehaviorSubject<Version>(null);
   private versionSearchOpenBS = new BehaviorSubject(false);
   private versionIdBS = new BehaviorSubject<string | null>(null);
   private versionCompareIdsBS = new BehaviorSubject<Version[]>([]);
@@ -198,7 +203,12 @@ export class DocumentService implements OnDestroy {
       .pipe(filter(Boolean), distinctUntilChanged());
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
-      tap((res) => res.category !== 'coverpage' && this.getContributions()),
+      tap((res) =>{
+        res.category !== 'coverpage' && this.getContributions();
+        this.getRecentChanges(res.category, res.ref, 0, 1);
+        this.countDocumentVersionsData(res.category, res.ref);
+        this.getDocumentConfig(res.ref, res.category);
+      }),
       filter(Boolean),
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
       shareReplay(1),
@@ -209,6 +219,10 @@ export class DocumentService implements OnDestroy {
     this.contributionModeEnabled$ =
       this.contributionModeEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
+    this.documentConfig$ = this.documentConfigBS.asObservable().pipe(filter(Boolean));
+    this.recentChanges$ = this.recentChangesBS.asObservable();
+    this.totalNumVersion$ = this.totalNumVersionBS.asObservable();
+    this.versionLatest$ = this.versionLatestBS.asObservable().pipe(filter(Boolean));
     this.versionId$ = this.versionIdBS.asObservable();
     this.versionCompareIds$ = this.versionCompareIdsBS.asObservable();
     this.versionFilter$ = this.versionFilterBS.asObservable();
@@ -216,36 +230,14 @@ export class DocumentService implements OnDestroy {
       distinctUntilChanged(DocumentService.searchStateComparator),
     );
     this.versionSearchParams$ = this.versionSearchParamsBS.asObservable();
-    this.totalNumVersion$ = this.documentRefAndCategory$.pipe(
-      filter(Boolean),
-      switchMap((option) =>
-        this.countDocumentVersionsData(option.category, option.ref),
-      ),
-      shareReplay(1),
-    );
     this.updateVersionsData();
 
-    this.documentConfig$ = this.documentRefAndCategory$.pipe(
-      filter(Boolean),
-      switchMap((option) =>
-        this.getDocumentConfig(option.ref, option.category),
-      ),
-      shareReplay(1),
-    );
     this.documentConfig$.subscribe((config) => {
       this.annexDocNumber =
         config.documentsMetadata
           .filter((d) => d.category === 'ANNEX')
           .findIndex((d) => d.ref === this.documentRef) + 1;
     });
-
-    this.recentChanges$ = this.documentRefAndCategory$.pipe(
-      filter(Boolean),
-      switchMap((option) =>
-        this.getDocumentRecentChangesData(option.category, option.ref, 0, 1),
-      ),
-      shareReplay(1),
-    );
 
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
 
@@ -446,8 +438,13 @@ export class DocumentService implements OnDestroy {
     return this.countIntermediateDocumentVersionsData(this.documentType, this.documentRef, version);
   }
 
-  getRecentChanges(pageIndex, pageSize) {
-    return this.getDocumentRecentChangesData(this.documentType, this.documentRef, pageIndex, pageSize);
+  getRecentChanges(documentType, documentRef, pageIndex, pageSize) {
+    this.getDocumentRecentChangesData(documentType, documentRef, pageIndex, pageSize).subscribe(
+      versions => {
+        this.recentChangesBS.next(versions)
+        this.versionLatestBS.next(versions[0])
+      }
+    );
   }
 
   countRecentChanges() {
@@ -550,6 +547,12 @@ export class DocumentService implements OnDestroy {
     this.setDidDocumentLoadAndRender(false);
     this.coEditionService.setShouldReloadAfterUpdate();
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
+    this.setSearchResultsCounter(0);
+  }
+
+  reloadView() {
+    this.getRecentChanges(this.documentType, this.documentRef, 0, 1);
+    this.countDocumentVersionsData(this.documentType, this.documentRef);
     this.setSearchResultsCounter(0);
   }
 
@@ -965,6 +968,8 @@ export class DocumentService implements OnDestroy {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<number>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/count-version-data`,
+    ).subscribe(
+      count => this.totalNumVersionBS.next(count)
     );
   }
 
@@ -1390,6 +1395,8 @@ export class DocumentService implements OnDestroy {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<DocumentConfig>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
+    ).subscribe(
+      config => this.documentConfigBS.next(config)
     );
   }
 

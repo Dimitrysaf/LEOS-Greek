@@ -51,7 +51,12 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
       documentType,
     ).subscribe((response) => {
       this.tableOfContentService.reload();
-      this.coEditionService.sendUpdateDocumentEvent(documentRef);
+      this.coEditionService.sendUpdateDocumentEvent(
+        documentRef,
+        elemData.elementId,
+        elemData.elementType,
+        elemData.elementFragment
+      );
       this.documentService.reloadDocument();
       this.blockDocumentEditorService.setIsDocumentEditorBlocked(false);
     });

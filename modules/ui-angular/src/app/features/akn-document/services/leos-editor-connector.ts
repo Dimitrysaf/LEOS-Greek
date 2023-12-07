@@ -265,11 +265,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.documentService.setDidDocumentLoadAndRender(false);
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
-    this.refreshElement(
-      elemData.elementId,
-      elemData.elementType,
-      elemData.elementFragment,
-    );
     let milliseconds = new Date().getTime();
     this.loadingService.setTaskOngoing('saving', String(milliseconds));
     this.saveDocumentElement(
@@ -281,9 +276,18 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       documentType,
     ).subscribe((response) => {
       this.isElementSaved = true;
-      this.coEditionService.sendUpdateDocumentEvent(documentRef);
+      this.coEditionService.sendUpdateDocumentEvent(
+        documentRef,
+        elemData.elementId,
+        elemData.elementType,
+        elemData.elementFragment
+      );
       this.coEditionService.setShouldReloadAfterUpdate();
-      this.documentService.updateElementContent(response.elementId, response.elementTagName, response.elementFragment);
+      this.refreshElement(
+        elemData.elementId,
+        elemData.elementType,
+        elemData.elementFragment,
+      );
       this.loadingService.setTaskOver('saving', String(milliseconds));
       if (
         countOccurrencesOfTextInString(

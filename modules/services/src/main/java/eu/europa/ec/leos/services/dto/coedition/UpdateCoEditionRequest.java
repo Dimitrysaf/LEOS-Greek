@@ -17,6 +17,9 @@ package eu.europa.ec.leos.services.dto.coedition;
 public class UpdateCoEditionRequest {
     private String userId;
     private String documentId;
+    private String elementId;
+    private String elementTagName;
+    private String elementFragment;
     private String presenterId;
 
     public String getUserId() {
@@ -41,5 +44,29 @@ public class UpdateCoEditionRequest {
 
     public void setPresenterId(String presenterId) {
         this.presenterId = presenterId;
+    }
+
+    public String getElementId() {
+        return elementId;
+    }
+
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
+    }
+
+    public String getElementTagName() {
+        return elementTagName;
+    }
+
+    public void setElementTagName(String elementTagName) {
+        this.elementTagName = elementTagName;
+    }
+
+    public String getElementFragment() {
+        return elementFragment;
+    }
+
+    public void setElementFragment(String elementFragment) {
+        this.elementFragment = elementFragment;
     }
 }

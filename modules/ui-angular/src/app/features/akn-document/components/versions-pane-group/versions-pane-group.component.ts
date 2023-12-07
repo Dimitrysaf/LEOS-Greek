@@ -225,7 +225,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
         let self = this;
         const currentPageIndex = Math.floor(this.subVersions.length / this.pageSize);
         self.semaphore = false;
-        this.docService.getRecentChanges(currentPageIndex, this.pageSize).subscribe({
+        this.docService.getDocumentRecentChangesData(this.docService.documentType, this.docService.documentRef, currentPageIndex, this.pageSize).subscribe({
           next(versions) {
             if (self.subVersions.length === 1) {
               self.subVersions = [...versions];
