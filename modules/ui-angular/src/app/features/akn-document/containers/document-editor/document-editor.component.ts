@@ -425,7 +425,9 @@ export class DocumentEditorComponent
     this.coEditionWSService.latestMessage
       .pipe(takeUntil(this.destroy$))
       .subscribe((latestMessage) => {
-        if (latestMessage.info.presenterId !== presenterId)
+        if (latestMessage.info?.sessionId !== null &&
+          latestMessage.info.presenterId !== presenterId &&
+          latestMessage.info.documentId === this.documentRef) {
           this.appShellService.growl({
             severity: 'info',
             summary: 'Co Edition update',
@@ -436,7 +438,9 @@ export class DocumentEditorComponent
             )}`,
             life: 6000,
           });
+        }
       });
+
     this.loadingService.task$
       .pipe(takeUntil(this.destroy$))
       .subscribe((latestTask) => {
@@ -567,6 +571,7 @@ export class DocumentEditorComponent
   ngOnDestroy() {
     //remove every session related actions from the user and clean the document relaod if it is present
     this.coEditionWSService.setShouldReloadAfterUpdate();
+    this.coEditionWSService.removeDocumentCoEditInfo(this.documentRef);
     this.coEditionWSService.removeSession();
     this.reloadTrigger = 0;
     this.closeVersionView();
