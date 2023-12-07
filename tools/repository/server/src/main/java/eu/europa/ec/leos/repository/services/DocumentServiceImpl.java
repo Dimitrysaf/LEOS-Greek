@@ -752,15 +752,25 @@ public class DocumentServiceImpl implements DocumentService {
                     queryBuild.append(" = '-' ");
                 }
                 if ("IN".equalsIgnoreCase(filter.operator)) {
-                    queryBuild.append(" OR ");
+                    if (filter.nullCheck) {
+                        queryBuild.append(" OR ");
+                    }
+                    else {
+                        queryBuild.append(" AND ");
+                    }
                     queryBuild.append(columnName);
                     queryBuild.append(" IN ( ");
                     queryBuild.append(":valueList_").append(i);
                     queryBuild.append(")");
                 } else {
-                    queryBuild.append(" OR ");
+                    if (filter.nullCheck) {
+                        queryBuild.append(" OR ");
+                    }
+                    else {
+                        queryBuild.append(" AND ");
+                    }
                     queryBuild.append(columnName);
-                    queryBuild.append(" :op_").append(i);
+                    queryBuild.append(" ").append(filter.operator).append(" ");
                     queryBuild.append(" :keyValue_").append(i);
                 }
                 if (filter.nullCheck) {
@@ -784,8 +794,7 @@ public class DocumentServiceImpl implements DocumentService {
                 if ("IN".equalsIgnoreCase(filter.operator)) {
                     query.setParameter("valueList_" + i, Arrays.asList(filter.value));
                 } else {
-                    query.setParameter("op_" + i, filter.operator);
-                    query.setParameter("valueList_" + i, Arrays.asList(filter.value));
+                    query.setParameter("keyValue_" + i, Arrays.asList(filter.value));
                 }
             } catch (NoSuchFieldException e) {
                 continue;
