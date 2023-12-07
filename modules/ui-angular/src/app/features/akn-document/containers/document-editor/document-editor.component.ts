@@ -423,9 +423,13 @@ export class DocumentEditorComponent
           const ckeditorOpen =
             this.document.querySelectorAll('.cke_editable').length > 0;
           if (!ckeditorOpen) {
-            this.documentService.updateElementContent(shouldReload.elementId, shouldReload.elementTagName, shouldReload.elementFragment);
-            this.documentService.reloadView();
-            this.tableOfContentService.reload();
+            if(shouldReload.elementFragment) {
+              this.documentService.updateElementContent(shouldReload.elementId, shouldReload.elementTagName, shouldReload.elementFragment);
+              this.documentService.reloadView();
+              this.tableOfContentService.reload();
+            } else {
+              this.documentService.reloadDocument();
+            }
           }
         }
       });

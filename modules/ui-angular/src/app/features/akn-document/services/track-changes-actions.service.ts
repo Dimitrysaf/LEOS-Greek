@@ -103,7 +103,6 @@ export class TrackChangesActionsService{
         elemData.elementType,
         null
       );
-      docService.reloadDocument();
       this.blockDocumentEditorService.setIsDocumentEditorBlocked(false);
     });
   }
@@ -130,7 +129,6 @@ export class TrackChangesActionsService{
         elemData.elementType,
         null
       );
-      docService.reloadDocument();
       this.blockDocumentEditorService.setIsDocumentEditorBlocked(false);
     });
   }
