@@ -29,6 +29,7 @@ define(function leosPluginUtilsModule(require) {
     var DATA_AKN_ELEMENT = "data-akn-element";
     var DATA_AKN_NAME = "data-akn-name";
     var DATA_AKN_ID = "data-akn-id";
+    var DATA_AKN_EMPTY = "data-akn-empty";
     var ID = "id";
     var REGULAR = "REGULAR";
     var CROSSHEADING_LIST_ATTR = "data-akn-crossheading-type";
@@ -1523,6 +1524,7 @@ define(function leosPluginUtilsModule(require) {
         DATA_AKN_NAME: DATA_AKN_NAME,
         DATA_AKN_ELEMENT: DATA_AKN_ELEMENT,
         DATA_AKN_ID: DATA_AKN_ID,
+        DATA_AKN_EMPTY: DATA_AKN_EMPTY,
         ID: ID,
         EC: EC,
         CN: CN,

@@ -6,6 +6,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
+
 public class LeosPreDiffingProcessor {
 
     private XPathCatalog xPathCatalog = new XPathCatalog();
@@ -16,10 +20,10 @@ public class LeosPreDiffingProcessor {
         NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
         for (int countElements = 0; countElements < elements.getLength(); countElements++) {
             Node element = elements.item(countElements);
-            if(XercesUtils.getAttributeValue(element, "leos:action") != null){
-                if (XercesUtils.getAttributeValue(element, "leos:action").equals("delete")) {
+            if(XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null){
+                if (XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_DELETE_ACTION)) {
                     element.getParentNode().removeChild(element);
-                } else if (XercesUtils.getAttributeValue(element, "leos:action").equals("insert")) {
+                } else if (XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION)) {
                     for(int countChildren = 0; countChildren < element.getChildNodes().getLength(); countChildren++) {
                         Node child = element.getChildNodes().item(countChildren);
                         element.getParentNode().insertBefore(child, element);

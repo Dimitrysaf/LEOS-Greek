@@ -1034,7 +1034,7 @@ define(function leosArticleListPluginModule(require) {
                         if ( joinWith ) {
                             if (editor.LEOS.isTrackChangesEnabled) {
                                 var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(range);
-                                if (!isNewTrackChangeNumber) {
+                                if (!isNewTrackChangeNumber && (!range.startContainer.$.attributes || !range.startContainer.$.attributes['data-akn-empty'])) {
                                     editor.fire("handleTrackTraceForEnterDeleted", range);
                                     evt.cancel();
                                     return;
@@ -1199,7 +1199,8 @@ define(function leosArticleListPluginModule(require) {
 
                                 if (editor.LEOS.isTrackChangesEnabled) {
                                     var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(nextLine);
-                                    if (!isNewTrackChangeNumber) {
+                                    
+                                    if (!isNewTrackChangeNumber && (!range.startContainer.$.attributes || !range.startContainer.$.attributes['data-akn-empty'])) {
                                         editor.fire("handleTrackTraceForEnterDeleted", nextLine);
                                         evt.cancel();
                                         return;
