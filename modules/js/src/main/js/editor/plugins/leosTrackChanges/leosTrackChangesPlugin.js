@@ -343,23 +343,33 @@ define(function leosTrackChangesPluginModule(require) {
                                 if(elementToDelete.type === CKEDITOR.NODE_TEXT && elementToDelete.$.textContent.replace(/\u200B/g,'') === '' && elementToDelete.getParent().getAttribute(core.DATA_AKN_ACTION_ENTER) === 'insert') {
                                     return;
                                 }
-                            } 
-                            
-                            if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
-
-                                editor.fire("saveSnapshot");
-
-                                style.apply(editor, deleteTcStyle);
-
-                                range = editor.getSelection().getRanges()[0];
-                                range.collapse(!deleteKey);
-                                range.select();
-
-                                editor.fire("change");
                             }
 
-                            event.getInstance().data.domEvent.preventDefault();
-                            event.getInstance().stop();
+                            var originalBackspace = false;
+                            if (range.collapsed && range.startContainer.$.attributes && range.startContainer.$.attributes[leosPluginUtils.DATA_REJECT_INSERTED_ENTER]) {
+                                originalBackspace = true;
+                                range.startContainer.$.textContent = " " + range.startContainer.$.textContent;
+                            }
+
+                            if (!originalBackspace) {
+
+                                if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
+
+                                    editor.fire("saveSnapshot");
+
+                                    style.apply(editor, deleteTcStyle);
+
+                                    range = editor.getSelection().getRanges()[0];
+                                    range.collapse(!deleteKey);
+                                    range.select();
+
+                                    editor.fire("change");
+                                }
+
+                                event.getInstance().data.domEvent.preventDefault();
+                                event.getInstance().stop();
+
+                            }
 
                         }
                     }

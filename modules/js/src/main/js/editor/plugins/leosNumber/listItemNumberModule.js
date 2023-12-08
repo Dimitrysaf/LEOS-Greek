@@ -306,11 +306,7 @@ define(function listItemNumberModule(require) {
         if (currentNestingLevel === 0) {
             sequence = _getSequences('Paragraph');
         }
-        var index = sequence.getIndex(number);
-        if (currentNestingLevel === 0 && index === 1) {
-            return true;
-        }
-        return false;
+        return (currentNestingLevel === 0 && sequence.getIndex(number) === 1);
     }
 
     function _removeCrossHeadingsFromListItems(listItems) {
