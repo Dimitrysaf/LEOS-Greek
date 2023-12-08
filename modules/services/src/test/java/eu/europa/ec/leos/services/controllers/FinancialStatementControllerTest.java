@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.services.api.FinancialStatementApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
@@ -25,6 +26,8 @@ public class FinancialStatementControllerTest {
 
     @Mock
     private GenericDocumentApiService genericDocumentApiService;
+    @Mock
+    private FinancialStatementApiService financialStatementApiService;
     @InjectMocks
     private FinancialStatementController financialStatementController;
 
