@@ -328,7 +328,6 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             } catch (NoSuchFieldException e) {
                 continue;
             }
-            break;
         }
     }
 
@@ -348,7 +347,6 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             } catch (NoSuchFieldException e) {
                 continue;
             }
-            break;
         }
     }
 
