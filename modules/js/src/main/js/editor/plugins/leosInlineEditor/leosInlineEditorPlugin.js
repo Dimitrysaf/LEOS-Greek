@@ -89,7 +89,8 @@ define(function leosInlineEditorPluginModule(require) {
                 	if (_isMouseOutsideEditor(evt.editor.container.$) && !_isMouseOnDocumentScrollbar()) {
                         if (evt.editor.checkDirty()) {
                             var isSaved = editor.fire("save", {
-                                data: editor.getData()
+                                data: editor.getData(),
+                                isSaveAndClose: true
                             });
 
                             if (isSaved) {

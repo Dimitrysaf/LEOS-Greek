@@ -79,7 +79,6 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
 
   handleReload() {
     this.doc.reloadDocument();
-    this.tableOfContentService.reload();
   }
 
   /**

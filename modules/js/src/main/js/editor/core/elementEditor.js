@@ -303,11 +303,17 @@ define(function elementEditorModule(require) {
         };
         connector.releaseElement(data);
         // destroy editor instance, without updating DOM
-        if (placeholder != null) {
-            placeholder.innerHTML = null; //used to avoid flickering text
-        }
+        if (editor.LEOS.instanceType !== 'COUNCIL' && connector.getState().isAngularUI) {
+            placeholder.outerHTML = newContent;
 
-        editor.destroy(true);
+            editor.destroy(false);
+        } else {
+            if (placeholder != null) {
+                placeholder.innerHTML = null;
+            }
+
+            editor.destroy(true);
+        }
 
         if (connector.editorChannel) {
             connector.editorChannel.publish('editor.close', {elementId: elementId});
@@ -330,7 +336,8 @@ define(function elementEditorModule(require) {
                     elementId: elementId,
                     elementType: elementType,
                     elementFragment: event.data.data,
-                    isSplit: event.data.origin === "split" ? true : false
+                    isSplit: event.data.origin === "split" ? true : false,
+                    isSaveAndClose: !!event.data.isSaveAndClose ? true : false,
                 };
                 editor.LEOS.saveCmdExecuted = true;
                 connector.saveElement(data);

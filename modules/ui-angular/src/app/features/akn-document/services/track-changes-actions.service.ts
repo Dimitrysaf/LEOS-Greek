@@ -19,7 +19,9 @@ export enum TrackChangeAction {
 @Injectable()
 export class TrackChangesActionsService{
   public LEOS_UID_ATTR = "leos\\:uid";
-  public LEOS_SOFT_ACTION_ROOT = "leos\\:action";
+  public LEOS_TRACK_ACTION = "leos\\:action";
+  public LEOS_SOFT_ACTION = "leos\\:softaction";
+  public MOVE_FROM = "move_from";
   private ALLOWED_TAGS = ["article", "citation", "recital", ":not(article) paragraph", "level", "chapter", "akntitle", "part", "section"];
   private selector: string;
 
@@ -34,7 +36,7 @@ export class TrackChangesActionsService{
     this.selector = '';
     for (let i = 0; i < this.ALLOWED_TAGS.length; i++) {
       let allowedTag = this.ALLOWED_TAGS[i];
-      this.selector += allowedTag + '[' + this.LEOS_UID_ATTR + '][' + this.LEOS_SOFT_ACTION_ROOT + ']';
+      this.selector += allowedTag + '[' + this.LEOS_UID_ATTR + '][' + this.LEOS_TRACK_ACTION + '], ' + allowedTag + '[' + this.LEOS_SOFT_ACTION + '=' + this.MOVE_FROM + ']';
       if (i < this.ALLOWED_TAGS.length-1) {
         this.selector += ', ';
       }
@@ -96,7 +98,6 @@ export class TrackChangesActionsService{
       documentType,
       trackChangeAction,
     ).subscribe((response) => {
-      this.tableOfContentService.reload();
       this.coEditionService.sendUpdateDocumentEvent(
         documentRef,
         elemData.elementId,
@@ -122,7 +123,6 @@ export class TrackChangesActionsService{
       documentType,
       trackChangeAction,
     ).subscribe((response) => {
-      this.tableOfContentService.reload();
       this.coEditionService.sendUpdateDocumentEvent(
         documentRef,
         elemData.elementId,

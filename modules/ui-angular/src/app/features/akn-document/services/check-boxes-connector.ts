@@ -72,13 +72,12 @@ export class CheckBoxesConnector extends AbstractJavaScriptComponent<CheckBoxesC
     )
       .pipe(
         switchMap(() => {
-          this.tableOfContentService.reload();
           this.coEditionService.sendUpdateDocumentEvent(
             documentRef,
             elemData.elementId,
             elemData.elementType,
             elemData.elementFragment);
-          this.documentService.reloadDocument();
+          this.documentService.reloadConnectors(elemData);
           return of(null);
         }),
         takeUntil(this.cancelSaveElement$),

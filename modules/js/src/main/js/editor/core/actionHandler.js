@@ -58,7 +58,8 @@ define(function actionHandlerModule(require) {
             } else {
                 currentInstance.readOnly = false;
                 var isSaved = currentInstance.fire("save", {
-                    data: currentInstance.getData()
+                    data: currentInstance.getData(),
+                    isSaveAndClose: true
                 });
                 if (isSaved) {
                     currentInstance.fire("close");

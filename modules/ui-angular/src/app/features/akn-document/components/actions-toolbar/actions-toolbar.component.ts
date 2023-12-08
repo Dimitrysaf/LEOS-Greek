@@ -40,6 +40,5 @@ export class ActionsToolbarComponent implements AfterViewInit, OnDestroy {
   }
   handleReload() {
     this.doc.reloadDocument();
-    this.tableOfContentService.reload();
   }
 }
