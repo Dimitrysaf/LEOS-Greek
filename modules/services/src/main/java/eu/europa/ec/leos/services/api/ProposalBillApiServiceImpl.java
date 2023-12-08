@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service("proposalBill")
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})

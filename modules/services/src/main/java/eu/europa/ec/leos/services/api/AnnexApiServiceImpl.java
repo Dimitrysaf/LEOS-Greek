@@ -35,6 +35,8 @@ import eu.europa.ec.leos.model.annex.AnnexStructureType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -74,6 +76,7 @@ import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
@@ -91,6 +94,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -143,6 +147,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     TemplateConfigurationService templateConfigurationService;
     @Autowired
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
+    @Autowired
+    RepositoryPropertiesMapper repositoryPropertiesMapper;
+    @Autowired
+    TrackChangesContext trackChangesContext;
     @Autowired
     @Qualifier("applicationProperties")
     private Properties applicationProperties;
@@ -536,6 +544,16 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(annex.getMetadata().get().getRef(),
                 TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, context.getNumberingConfigs());
+    }
+
+    @Override
+    public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), isTrackChangeEnabled);
+        String documentId = annexService.findAnnexByRef(documentRef).getId();
+        Annex annex = annexService.updateAnnex(documentRef, documentId, properties, false);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return true;
     }
 
 

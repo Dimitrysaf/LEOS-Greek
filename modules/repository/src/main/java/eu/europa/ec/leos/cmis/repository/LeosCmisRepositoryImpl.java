@@ -112,6 +112,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         long startTimeNanos = System.nanoTime();
         Map<String, Object> properties = new HashMap<>();
         properties.put(PropertyIds.NAME, name);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), false);
         setDocumentCollaboratorProperties(metadata, properties);
 
         Document doc = repository.createDocumentFromSource(templateId, path, properties);

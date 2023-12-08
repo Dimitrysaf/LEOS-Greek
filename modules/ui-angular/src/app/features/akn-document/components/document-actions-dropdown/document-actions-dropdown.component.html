@@ -121,7 +121,6 @@
         <li
             euiListItem
             (click)="toggleTrackChangesEnabled()"
-            *ngIf="documentConfig?.clonedProposal"
         >
           <button euiListItem [disabled]="!canActivateTrackChanges">
             <eui-icon
@@ -139,7 +138,6 @@
         <li
           euiListItem
           (click)="toggleSeeTrackChanges()"
-          *ngIf="documentConfig?.clonedProposal"
         >
           <button euiListItem>
             <eui-icon

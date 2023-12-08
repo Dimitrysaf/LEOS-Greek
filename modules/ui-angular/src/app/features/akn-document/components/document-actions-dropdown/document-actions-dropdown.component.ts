@@ -45,6 +45,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   canActivateTrackChanges = true;
   isTrackChangesEnabled = true;
   seeTrackChanges = true;
+  isClonedProposal = false;
 
   @ViewChild('createVersionDialog') createVersionDialog: EuiDialogComponent;
   @ViewChild('eConsiliumModal')
@@ -89,7 +90,8 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
 
   toggleTrackChangesEnabled() {
     this.isTrackChangesEnabled = !this.isTrackChangesEnabled;
-    // call the service
+    this.ckEditorService.changeEnableTrackChangesState(this.isTrackChangesEnabled);
+    this.doc.toggleTrackChangesEnabled(this.isTrackChangesEnabled);
   }
 
   onApplyContinuousNumberingSelect() {
@@ -111,6 +113,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   setMenuState(config: DocumentConfig, permissions: Permission[]) {
     this.documentConfig = config;
     const isClonedProposal = this.documentConfig?.clonedProposal;
+    const isTCEnabled = this.documentConfig?.trackChangesEnabled;
 
     const isCN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
     const isAnnex = this.doc.documentType === 'annex';
@@ -139,5 +142,11 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     this.canActivateTrackChanges = !isClonedProposal && CAN_ACTIVATE_TRACK_CHANGES;
     this.exportCleanVersionVisible = (isCN || isClonedProposal) && !isMandateMemorandum;
     this.showCleanVersionVisible = (isCN || isClonedProposal) && !isMandateMemorandum;
+    this.isClonedProposal = isClonedProposal;
+    this.isTrackChangesEnabled = isTCEnabled;
   }
+  setTrackChangesEnabled() {
+
+  }
+
 }

@@ -3,8 +3,10 @@ package eu.europa.ec.leos.services.controllers;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.services.api.FinancialStatementApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
+import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
@@ -17,6 +19,7 @@ import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -43,10 +46,13 @@ import java.util.Objects;
 public class FinancialStatementController {
     private static final Logger LOG = LoggerFactory.getLogger(FinancialStatementController.class);
 
+    private FinancialStatementApiService financialStatementApiService;
+
     private GenericDocumentApiService genericDocumentApiService;
 
-    public FinancialStatementController(GenericDocumentApiService genericDocumentApiService) {
+    public FinancialStatementController(GenericDocumentApiService genericDocumentApiService, FinancialStatementApiService financialStatementApiService) {
         this.genericDocumentApiService = Objects.requireNonNull(genericDocumentApiService);
+        this.financialStatementApiService = Objects.requireNonNull(financialStatementApiService);
     }
 
     @GetMapping(value = "/{reference}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -321,6 +327,21 @@ public class FinancialStatementController {
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for financial statement " + e.getMessage());
             return new ResponseEntity<>("Error occurred  while trying to get clean version for financial statement", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/{documentRef}/toggle-trackchange-enabled", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> toggleTrackChangeEnabled(@PathVariable("documentRef") String documentRef,
+                                                           @RequestBody ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest
+    ) {
+        try {
+            boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
+            boolean response = financialStatementApiService.toggleTrackChangeEnabled(isTrackChangesEnabled, documentRef);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred while toggling Track change enabled- " + e);
+            return new ResponseEntity<>("Unexpected error occurred while toggling Track change enabled", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
