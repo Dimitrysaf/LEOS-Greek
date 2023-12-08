@@ -935,7 +935,7 @@ public class DocumentServiceTests {
         filter.addFilter(new QueryFilter.Filter("role", "IN", false, "demo::OWNER::DGT.R.3"
                 , "demo::CONTRIBUTOR::DGT.R.3", "demo::REVIEWER::DGT.R.3", "demo::OWNER"
                 , "demo::CONTRIBUTOR", "demo::REVIEWER"));
-        filter.addFilter(new QueryFilter.Filter("title", "LIKE", false, "TRACK"));
+        filter.addFilter(new QueryFilter.Filter("title", "LIKE", false, "%Test%"));
         filter.addSortOrder(new QueryFilter.SortOrder("lastModificationDate", "DESC"));
         Set<String> categories = Sets.set("PROPOSAL");
         int startIndex = 0;

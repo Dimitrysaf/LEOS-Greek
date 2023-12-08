@@ -779,7 +779,6 @@ public class DocumentServiceImpl implements DocumentService {
             } catch (NoSuchFieldException e) {
                 continue;
             }
-            break;
         }
     }
 
@@ -799,7 +798,6 @@ public class DocumentServiceImpl implements DocumentService {
             } catch (NoSuchFieldException e) {
                 continue;
             }
-            break;
         }
     }
 
