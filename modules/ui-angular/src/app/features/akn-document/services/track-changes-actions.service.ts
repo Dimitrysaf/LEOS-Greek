@@ -97,8 +97,12 @@ export class TrackChangesActionsService{
       trackChangeAction,
     ).subscribe((response) => {
       this.tableOfContentService.reload();
-      this.coEditionService.sendUpdateDocumentEvent(documentRef);
-      docService.reloadDocument();
+      this.coEditionService.sendUpdateDocumentEvent(
+        documentRef,
+        elemData.elementId,
+        elemData.elementType,
+        null
+      );
       this.blockDocumentEditorService.setIsDocumentEditorBlocked(false);
     });
   }
@@ -119,8 +123,12 @@ export class TrackChangesActionsService{
       trackChangeAction,
     ).subscribe((response) => {
       this.tableOfContentService.reload();
-      this.coEditionService.sendUpdateDocumentEvent(documentRef);
-      docService.reloadDocument();
+      this.coEditionService.sendUpdateDocumentEvent(
+        documentRef,
+        elemData.elementId,
+        elemData.elementType,
+        null
+      );
       this.blockDocumentEditorService.setIsDocumentEditorBlocked(false);
     });
   }

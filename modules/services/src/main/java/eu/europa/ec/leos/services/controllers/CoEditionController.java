@@ -114,7 +114,7 @@ public class CoEditionController {
         SimpMessageHeaderAccessor.wrap(message);
         User user = this.userService.getUser(event.getUserId());
         simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT_SLASH + event.getDocumentId(),
-                new UpdateCoEditionResponse(user, event.getPresenterId(), event.getDocumentId(), InfoType.DOCUMENT_UPDATED));
+                new UpdateCoEditionResponse(user, event.getPresenterId(), event.getDocumentId(), event.getElementId(), event.getElementTagName(), event.getElementFragment(), InfoType.DOCUMENT_UPDATED));
     }
 
 

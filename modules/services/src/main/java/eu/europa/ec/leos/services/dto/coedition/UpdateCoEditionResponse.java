@@ -21,12 +21,18 @@ public class UpdateCoEditionResponse {
     private User user;
     private String presenterId;
     private String documentId;
+    private String elementId;
+    private String elementTagName;
+    private String elementFragment;
     private InfoType infoType;
 
-    public UpdateCoEditionResponse(User user, String presenterId, String documentId, InfoType infoType) {
+    public UpdateCoEditionResponse(User user, String presenterId, String documentId, String elementId, String elementTagName, String elementFragment, InfoType infoType) {
         this.user = user;
         this.presenterId = presenterId;
         this.documentId = documentId;
+        this.elementId = elementId;
+        this.elementTagName = elementTagName;
+        this.elementFragment = elementFragment;
         this.infoType = infoType;
     }
 
@@ -60,5 +66,29 @@ public class UpdateCoEditionResponse {
 
     public void setInfoType(InfoType infoType) {
         this.infoType = infoType;
+    }
+
+    public String getElementId() {
+        return elementId;
+    }
+
+    public void setElementId(String elementId) {
+        this.elementId = elementId;
+    }
+
+    public String getElementTagName() {
+        return elementTagName;
+    }
+
+    public void setElementTagName(String elementTagName) {
+        this.elementTagName = elementTagName;
+    }
+
+    public String getElementFragment() {
+        return elementFragment;
+    }
+
+    public void setElementFragment(String elementFragment) {
+        this.elementFragment = elementFragment;
     }
 }

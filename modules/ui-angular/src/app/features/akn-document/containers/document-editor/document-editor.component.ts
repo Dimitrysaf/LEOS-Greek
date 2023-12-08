@@ -26,6 +26,7 @@ import {
   BehaviorSubject,
   combineLatest,
   combineLatestWith,
+  debounceTime,
   distinctUntilChanged,
   map,
   merge,
@@ -272,7 +273,7 @@ export class DocumentEditorComponent
       .subscribe((documentView) => {
         this.documentService.setDidDocumentLoadAndRender(true);
         this.loadDocument(documentView.editableXml);
-        this.setPageSubTitle(documentView.versionInfoVO);
+        this.setPageSubTitle(documentView.versionInfoVO.documentVersion, `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`, documentView.versionInfoVO.lastModificationInstant);
         this.proposalRef = documentView.proposalRef;
       });
 
@@ -405,15 +406,30 @@ export class DocumentEditorComponent
         }
       });
 
+    this.documentService.versionLatest$.subscribe(
+      version => {
+        version && this.setPageSubTitle(
+          this.formatVersionNumber(version),
+          version.createdBy,
+          version.updatedDate
+        );
+      }
+    );
+    
     this.coEditionWSService.shouldReloadAfterUpdate
       .pipe(takeUntil(this.destroy$))
       .subscribe((shouldReload) => {
         if (shouldReload) {
           const ckeditorOpen =
             this.document.querySelectorAll('.cke_editable').length > 0;
-          if (!ckeditorOpen && shouldReload.presenterId !== this.presenterId) {
-            this.documentService.reloadDocument();
-            this.tableOfContentService.reload();
+          if (!ckeditorOpen) {
+            if(shouldReload.elementFragment) {
+              this.documentService.updateElementContent(shouldReload.elementId, shouldReload.elementTagName, shouldReload.elementFragment);
+              this.documentService.reloadView();
+              this.tableOfContentService.reload();
+            } else {
+              this.documentService.reloadDocument();
+            }
           }
         }
       });
@@ -442,7 +458,10 @@ export class DocumentEditorComponent
       });
 
     this.loadingService.task$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        debounceTime(500)
+      )
       .subscribe((latestTask) => {
         if (latestTask.ongoing) {
           if (
@@ -1445,12 +1464,12 @@ export class DocumentEditorComponent
     return akomantosoEl.outerHTML;
   }
 
-  private setPageSubTitle(versionInfo: VersionInfoVO) {
+  private setPageSubTitle(documentVersion, updatedBy, updatedDate) {
     this.translate
       .get('page.editor.subtitle', {
-        version: versionInfo.documentVersion,
-        updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
-        updatedOn: versionInfo.lastModificationInstant,
+        version: documentVersion,
+        updatedByFull: updatedBy,
+        updatedOn: updatedDate,
       })
       .pipe(takeUntil(this.destroy$), take(1))
       .subscribe((subTitle: string) => {
