@@ -359,9 +359,6 @@ define(function actionManagerExtensionModule(require) {
             };
             var topic = "actions." + action + ".element";
             if (action == 'edit') {
-                if (connector.getState().isAngularUI && _elementUnderEditionExists(connector)) {
-                    return;
-                }
                 var id = setInterval(function() {
                     if (!connector.semaphoreInitEditorOngoing) {
                         CKEDITOR.fire("editorInitOngoing");
@@ -501,10 +498,6 @@ define(function actionManagerExtensionModule(require) {
 
         template.push('</div>');
         return template.join('');
-    }
-
-    function _elementUnderEditionExists(connector){
-        return connector.editedElementsIdList.length !== 0;
     }
 
     return {
