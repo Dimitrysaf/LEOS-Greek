@@ -650,6 +650,23 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
+        rejectInsertedEnter: function (element, editor) {
+            var keyCodeToUse = 8;
+            var ckEditorEvent = new CKEDITOR.dom.event(
+                new KeyboardEvent('key', {
+                    keyCode: keyCodeToUse,
+                    ctrlKey: false,
+                    shiftKey: false,
+                    getKey: function () {
+                        return keyCode;
+                    }
+                })
+            );
+            element.setAttribute(leosPluginUtils.DATA_REJECT_INSERTED_ENTER, 'true');
+            core.setToPosition(editor, element, CKEDITOR.POSITION_AFTER_START);
+            editor.fire('key', {keyCode: ckEditorEvent.getKey(), domEvent: ckEditorEvent});
+        },
+
         rejectChange: function(editor, element, numberModule) {
             editor.getSelection().fake(element.getParent());
             if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
@@ -658,15 +675,15 @@ define(function leosTrackChangesModule(require) {
                     element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
                 }
                 element.remove();
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION && element.getName() === leosPluginUtils.HTML_SUB_POINT) {
+                this.rejectInsertedEnter(element, editor);
             } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))
                 || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                 element.remove();
-            } else {
-                if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
-                    element.remove();
-                } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
-                    element.$.outerHTML = element.$.innerHTML;
-                }
+            } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
+                element.remove();
+            } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
+                element.$.outerHTML = element.$.innerHTML;
             }
         },
 
