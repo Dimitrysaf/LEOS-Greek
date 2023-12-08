@@ -85,7 +85,6 @@ export class ImportFromJournalDialogComponent implements OnInit {
     this.importService.importElements(params).subscribe({
       next: () => {
         this.documentService.reloadDocument();
-        this.tableOfContentService.reload();
         this.showSuccessMessage(elementIds);
         this.close();
       },

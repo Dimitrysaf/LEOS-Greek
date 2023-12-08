@@ -106,6 +106,7 @@ export class DocumentService implements OnDestroy {
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
   refreshConnectors$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
+  refreshView$: Observable<DocumentViewResponse>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
   currentIndex: number;
@@ -159,6 +160,7 @@ export class DocumentService implements OnDestroy {
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
   private refreshConnectorsBS = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string}>({elementId: null, elementType: null, elementFragment: null});
+  private refreshViewBS = new BehaviorSubject<DocumentViewResponse>(null);
   private documentRefAndCategoryBS =
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
   private updatedContentToSaveAfterReplace: string = null;
@@ -205,6 +207,7 @@ export class DocumentService implements OnDestroy {
     this.documentView$ = this.documentRefAndCategory$.pipe(
       tap((res) =>{
         res.category !== 'coverpage' && this.getContributions();
+        this.tocService.reload();
         this.getRecentChanges(res.category, res.ref, 0, 1);
         this.countDocumentVersionsData(res.category, res.ref);
         this.getDocumentConfig(res.ref, res.category);
@@ -314,6 +317,7 @@ export class DocumentService implements OnDestroy {
     this.userGuidanceVisible$ = this.userGuidanceVisibleBS.asObservable();
     this.reloadTrigger$ = this.reloadTriggerBS.asObservable();
     this.refreshConnectors$ = this.refreshConnectorsBS.asObservable();
+    this.refreshView$ = this.refreshViewBS.asObservable();
 
     this.versionSearchResults$ = this.versionSearchParams$.pipe(
       filter(Boolean),
@@ -437,6 +441,7 @@ export class DocumentService implements OnDestroy {
 
   getDocumentByRef(ref: string, category: string) {
     category = category === 'coverpage' ? 'coverPage' : category;
+    this.loadingService.setTaskOngoing("refresh", ref);
     return this.http.get<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${category}/${ref}`,
     );
@@ -574,6 +579,10 @@ export class DocumentService implements OnDestroy {
 
   reloadConnectors(data: {elementId: string, elementType: string, elementFragment: string}) {
     this.refreshConnectorsBS.next(data);
+  }
+
+  refreshView(data: DocumentViewResponse) {
+    this.refreshViewBS.next(data);
   }
 
   saveVersion(requestBody: any) {
@@ -1384,16 +1393,24 @@ export class DocumentService implements OnDestroy {
   ) {
     const foundElement = document.getElementById(prevElementId);
 
-    const nextSibling = foundElement?.nextElementSibling;
+    let nextSibling = foundElement?.nextElementSibling;
     if (nextSibling && nextSibling.tagName.toLowerCase() === elementType) {
       return nextSibling.getAttribute('id');
-    } else {
+    } else if (nextSibling && nextSibling.tagName.toLowerCase() === "list") {
+      nextSibling = nextSibling.firstElementChild;
+      return nextSibling?.getAttribute('id');
+    } else if (nextSibling) {
       const secondLevelSibling = nextSibling.nextElementSibling;
       if (
         secondLevelSibling &&
         secondLevelSibling.tagName.toLowerCase() === elementType
       ) {
         return secondLevelSibling.getAttribute('id');
+      }
+    } else {
+      nextSibling = foundElement?.parentElement?.nextElementSibling;
+      if (nextSibling && nextSibling.tagName.toLowerCase() === elementType) {
+        return nextSibling.getAttribute('id');
       }
     }
     return null;

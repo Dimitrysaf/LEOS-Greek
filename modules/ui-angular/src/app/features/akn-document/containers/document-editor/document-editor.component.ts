@@ -271,10 +271,22 @@ export class DocumentEditorComponent
     this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
+        this.loadingService.setTaskOver("refresh", this.documentRef);
         this.documentService.setDidDocumentLoadAndRender(true);
         this.loadDocument(documentView.editableXml);
         this.setPageSubTitle(documentView.versionInfoVO.documentVersion, `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`, documentView.versionInfoVO.lastModificationInstant);
         this.proposalRef = documentView.proposalRef;
+      });
+
+    this.documentService.refreshView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((documentView) => {
+        if (documentView) {
+          this.documentService.setDidDocumentLoadAndRender(true);
+          this.loadDocument(documentView.editableXml);
+          this.setPageSubTitle(documentView.versionInfoVO.documentVersion, `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`, documentView.versionInfoVO.lastModificationInstant);
+          this.proposalRef = documentView.proposalRef;
+        }
       });
 
     this.tableOfContentService.tocItems$
@@ -415,7 +427,7 @@ export class DocumentEditorComponent
         );
       }
     );
-    
+
     this.coEditionWSService.shouldReloadAfterUpdate
       .pipe(takeUntil(this.destroy$))
       .subscribe((shouldReload) => {
@@ -425,6 +437,7 @@ export class DocumentEditorComponent
           if (!ckeditorOpen) {
             if(shouldReload.elementFragment) {
               this.documentService.updateElementContent(shouldReload.elementId, shouldReload.elementTagName, shouldReload.elementFragment);
+              this.documentService.setDidDocumentLoadAndRender(true);
               this.documentService.reloadView();
               this.tableOfContentService.reload();
             } else {
@@ -769,7 +782,6 @@ export class DocumentEditorComponent
           this.documentTocComponent.clearSelectedNode();
           this.tocEditService.resetTreeHistory();
           this.documentService.reloadDocument();
-          this.tableOfContentService.reload();
         },
         error: (err) => {},
       });
