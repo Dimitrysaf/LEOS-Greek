@@ -694,6 +694,7 @@ define(function leosTrackChangesPluginModule(require) {
                                     menuButton.on("click", function() {
                                         handleMutationsDoneBySpellChecker = true;
                                         spellCheckerReplacementText = this.getAttribute("title");
+                                        editor.fire("change"); // To enable ckeditor save buttons for spellchecker text replacement
                                     });
                                     menuButton.on("mouseenter", function() {
                                         handleMutationsDoneBySpellChecker = false;
@@ -706,17 +707,17 @@ define(function leosTrackChangesPluginModule(require) {
                         }
                     }
                 }
+                if (editor.LEOS.isSpellCheckerEnabled) {
+                    setTimeout(function() {
+                        var spellCheckerContextMenuRootElement = $("div.wsc-contextmenu").get(0);
+                        if (spellCheckerContextMenuRootElement && !spellCheckerContextMenuRootElement.mutationObserver) {
+                            spellCheckerContextMenuRootElement.mutationObserver = new MutationObserver(processSpellCheckerMutationsOnContextMenu);
+                            spellCheckerContextMenuRootElement.mutationObserver.observe(spellCheckerContextMenuRootElement,
+                                { childList: true, subtree: true });
+                        }
+                    }, 2500);
+                }
                 if (isTrackChangesEnabled) {
-                    if (editor.LEOS.isSpellCheckerEnabled) {
-                        setTimeout(function() {
-                            var spellCheckerContextMenuRootElement = $("div.wsc-contextmenu").get(0);
-                            if (spellCheckerContextMenuRootElement && !spellCheckerContextMenuRootElement.mutationObserver) {
-                                spellCheckerContextMenuRootElement.mutationObserver = new MutationObserver(processSpellCheckerMutationsOnContextMenu);
-                                spellCheckerContextMenuRootElement.mutationObserver.observe(spellCheckerContextMenuRootElement,
-                                    { childList: true, subtree: true });
-                            }
-                        }, 2500);
-                    }
                     var rootElement = editor.editable().$.firstChild;
                     if (rootElement && !rootElement.mutationObserver) {
                         rootElement.mutationObserver = new MutationObserver(processMutations);
