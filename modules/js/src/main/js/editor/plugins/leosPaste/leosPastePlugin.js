@@ -23,6 +23,7 @@ define(function leosPastePluginModule(require) {
     var pluginTools = require('plugins/pluginTools');
     var pluginName = 'leosPaste';
     var REF = "ref";
+    var MREF = "mref";
 
     var pluginDefinition = {
         init: function init(editor) {
@@ -66,7 +67,7 @@ define(function leosPastePluginModule(require) {
                 delete element.attributes.style;
                 delete element.attributes.class;
 
-                if (numberingRegex.test(element.getHtml()) && element.name !== REF && element.parent) {
+                if (numberingRegex.test(element.getHtml()) && element.name !== REF && element.name !== MREF && element.parent) {
                     return false;
                 }
 
@@ -182,13 +183,16 @@ define(function leosPastePluginModule(require) {
     }
 
     function _processPaste(editor, fragment, type) {
-        if(_isWidgetPresent(fragment)) {
-            let child = fragment.children[1].getFirst(); //get first child after widget <span>
-            fragment.children[1].replaceWith(child);
+        //Check for <span> as widget and extract its child to be added as first child
+        var idx = _isWidgetPresent(fragment);
+        if(idx != -1) {
+            let child = fragment.children[idx].getFirst(); //get first child as widget
+            fragment.children[idx].replaceWith(child);
         }
         if (type === 'html') {
-            fragment.filter(htmlFilter);//clean using filter for html and text
+            fragment.filter(htmlFilter); //clean using filter for html and text
             _convertToAknXmlFragment(editor, fragment);
+            _wrapUnderMref(fragment);
         }
         else if (type === 'text') {
 			if(_hasElementNodes(fragment)) {
@@ -202,13 +206,32 @@ define(function leosPastePluginModule(require) {
 
     function _isWidgetPresent(fragment) {
         if(!fragment || !fragment.children || fragment.children.length <= 0) {
-            return false;
+            return -1;
         }
         for ( var idx = 0, len = fragment.children.length; idx < len; idx++ ) {
             if(fragment.children[idx].type == CKEDITOR.NODE_ELEMENT) {
                 return fragment.children[idx].attributes && fragment.children[idx].attributes.class &&
-                    fragment.children[idx].attributes.class.includes('cke_widget_wrapper');
+                    fragment.children[idx].attributes.class.includes('cke_widget_wrapper') ? idx : -1;
             }
+        }
+    }
+
+    function _wrapUnderMref(fragment) {
+
+        let refChildren = fragment.children.filter(function (child) {
+            return child.name === REF;
+        });
+        if(refChildren && refChildren.length > 0) {
+            // Create a new mref node
+            let mref = new CKEDITOR.htmlParser.element('mref');
+            //add existing children to mref
+            fragment.children.forEach(function (child) {
+                mref.add(child);
+            });
+            //clear the exising children
+            fragment.children = [];
+            //add the new mref node to fragment
+            fragment.add(mref);
         }
     }
 
@@ -239,15 +262,6 @@ define(function leosPastePluginModule(require) {
                     }
                 );
         }//else let it be text
-    }
-
-    function _getElementWithCursor(editor) {
-        var element = editor.getSelection().getStartElement();
-        //Check to avoid nested inline elements
-        while (!element.isBlockBoundary()) {
-            element = element.getParent();
-        }
-        return element;
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
