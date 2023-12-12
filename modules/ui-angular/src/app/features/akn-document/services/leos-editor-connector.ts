@@ -10,7 +10,9 @@ import {
 import type { EditorOpenState } from '@/features/akn-document/services/ckeditor.service';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
-import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import {
+  CoEditionDetectedDialogComponent
+} from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import {
   DocumentViewResponse,
   RefreshElementResponse,
@@ -22,6 +24,7 @@ import { isNodeLastElement, getInstanceType } from '@/shared/utils/toc.utils';
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
 import { LoadingService } from '@/shared/services/loading.service';
+import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
@@ -67,7 +70,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   receiveRefLabel?: (references: any, documentRef: any) => void;
   closeElement?: () => void;
 
-  public isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+  public isCNInstance;
 
   private elementUnderEdit = null;
   private isElementSaved = false;
@@ -84,6 +87,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     private translateService: TranslateService,
     private tableOfContentService: TableOfContentService,
     private loadingService: LoadingService,
+    private environmentService: EnvironmentService,
     private setEditorOpenState: (state: EditorOpenState) => void,
   ) {
     super(
@@ -95,6 +99,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       },
       options.rootElement,
     );
+    this.isCNInstance = this.environmentService.getInstanceName();
   }
 
   //leosEditorExtension > requestToc
@@ -311,7 +316,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       this.documentService.documentType,
       this.coEditionService.presenterId
     ).subscribe((response) => {
-      this.handleActionsAfterSave(response, elemData);
+      this.handleActionsAfterSave(response, elemData, String(milliseconds));
       if (!response.splittedContentIsEmpty) {
         this.closeElement();
       }
@@ -321,6 +326,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   private handleActionsAfterSave(
     response: RefreshElementResponse,
     elemData: SaveElementAction,
+    taskId: string,
   ) {
     this.isElementSaved = true;
     this.elementToEditAfterClose = response.elementToEditAfterClose;
@@ -345,13 +351,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       );
     }
     this.coEditionService.setShouldReloadAfterUpdate();
-    this.documentService.updateElementContent(
-      response.elementId,
-      response.elementTagName,
-      response.elementFragment,
+    this.documentService.updateElementContent({
+        elementId: response.elementId,
+        elementType: response.elementTagName,
+        elementFragment: response.elementFragment,
+      }
     );
-    let milliseconds = new Date().getTime();
-    this.loadingService.setTaskOver('saving', String(milliseconds));
+    this.loadingService.setTaskOver('saving', taskId);
   }
 
   // leosEditorExtension > elementEditor
@@ -498,7 +504,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       ),
       acceptLabel: this.translateService.instant('global.actions.continue'),
       accept: onConfirm,
-      dismiss: () => {},
+      dismiss: () => {
+      },
     });
   }
 
