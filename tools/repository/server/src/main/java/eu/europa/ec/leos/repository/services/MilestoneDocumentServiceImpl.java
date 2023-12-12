@@ -317,9 +317,9 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
                     else {
                         queryBuild.append(" AND ");
                     }
-                    queryBuild.append(columnName);
+                    queryBuild.append("LOWER(").append(columnName).append(")");
                     queryBuild.append(" ").append(filter.operator).append(" ");
-                    queryBuild.append(" :keyValue_").append(i);
+                    queryBuild.append("LOWER(:keyValue_").append(i).append(")");
                 }
                 if (filter.nullCheck) {
                     queryBuild.append(")");
