@@ -5,6 +5,7 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.FinancialStatementApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -49,6 +51,8 @@ public class FinancialStatementController {
     private FinancialStatementApiService financialStatementApiService;
 
     private GenericDocumentApiService genericDocumentApiService;
+    @Autowired
+    private CoEditionContext coEditionContext;
 
     public FinancialStatementController(GenericDocumentApiService genericDocumentApiService, FinancialStatementApiService financialStatementApiService) {
         this.genericDocumentApiService = Objects.requireNonNull(genericDocumentApiService);
@@ -208,9 +212,11 @@ public class FinancialStatementController {
     public ResponseEntity<Object> saveElement(@PathVariable("documentRef") String documentRef,
                                               @PathVariable("elementName") String elementName,
                                               @PathVariable("elementId") String elementId,
+                                              @RequestHeader("presenterId") String presenterId,
                                               @RequestBody String elementContent) throws Exception {
         try {
             RefreshElementResponse response = this.genericDocumentApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            coEditionContext.sendUpdatedElements(documentRef, presenterId, response);
             return ResponseEntity.ok(response);
         } catch (CmisBaseException cmisBaseException) {
             LOG.error("---[FINANCIAL STATEMENT] [CMIS EXCEPTION] --- Error saving element : {} ", cmisBaseException.getMessage());

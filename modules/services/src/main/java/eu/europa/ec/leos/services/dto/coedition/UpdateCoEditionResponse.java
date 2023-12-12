@@ -15,25 +15,25 @@
 package eu.europa.ec.leos.services.dto.coedition;
 
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.vo.coedition.InfoType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class UpdateCoEditionResponse {
     private User user;
     private String presenterId;
     private String documentId;
-    private String elementId;
-    private String elementTagName;
-    private String elementFragment;
     private InfoType infoType;
+    private List<Element> updatedElements;
 
-    public UpdateCoEditionResponse(User user, String presenterId, String documentId, String elementId, String elementTagName, String elementFragment, InfoType infoType) {
+    public UpdateCoEditionResponse(User user, String presenterId, String documentId, InfoType infoType, List<Element> updatedElements) {
         this.user = user;
         this.presenterId = presenterId;
         this.documentId = documentId;
-        this.elementId = elementId;
-        this.elementTagName = elementTagName;
-        this.elementFragment = elementFragment;
         this.infoType = infoType;
+        this.updatedElements = updatedElements;
     }
 
     public User getUser() {
@@ -68,27 +68,11 @@ public class UpdateCoEditionResponse {
         this.infoType = infoType;
     }
 
-    public String getElementId() {
-        return elementId;
+    public List<Element> getUpdatedElements() {
+        return updatedElements;
     }
 
-    public void setElementId(String elementId) {
-        this.elementId = elementId;
-    }
-
-    public String getElementTagName() {
-        return elementTagName;
-    }
-
-    public void setElementTagName(String elementTagName) {
-        this.elementTagName = elementTagName;
-    }
-
-    public String getElementFragment() {
-        return elementFragment;
-    }
-
-    public void setElementFragment(String elementFragment) {
-        this.elementFragment = elementFragment;
+    public void setUpdatedElements(List<Element> updatedElements) {
+        this.updatedElements = updatedElements;
     }
 }

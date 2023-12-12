@@ -1,4 +1,4 @@
-<eui-page *ngIf="xml" euiNoContentPadding>
+<eui-page *ngIf="loadDocument" euiNoContentPadding>
   <eui-page-breadcrumb euiNoContentPadding class="p-0">
     <eui-breadcrumb>
       <eui-breadcrumb-item
@@ -400,8 +400,7 @@
           <!-- Document with editor -->
           <app-document
             [containerId]="containerId"
-            [xml]="xml"
-            [reloadTrigger]="reloadTrigger"
+            [documentType]="documentType"
             [readonly]="
               environmentService.isCouncil() &&
               documentService.documentType === 'memorandum'

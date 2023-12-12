@@ -23,6 +23,10 @@ export interface CoEditionUpdate {
   presenterId: string;
   user: User;
   documentId: string;
+  updatedElements: Element[];
+}
+
+export interface Element {
   elementId: string;
   elementTagName: string;
   elementFragment: string;

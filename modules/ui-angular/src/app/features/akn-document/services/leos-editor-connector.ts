@@ -314,6 +314,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       elemData.elementFragment,
       elemData.isSplit,
       documentType,
+      this.coEditionService.presenterId
     ).subscribe((response) => {
       this.isElementSaved = true;
       if (isCNInstance) {
@@ -327,13 +328,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           elemData.elementId,
           elemData.elementType,
           null
-        );
-      } else {
-        this.coEditionService.sendUpdateDocumentEvent(
-          documentRef,
-          response.elementId,
-          response.elementTagName,
-          response.elementFragment
         );
       }
       this.coEditionService.setShouldReloadAfterUpdate();
@@ -507,12 +501,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementFragment: string,
     isSplit: boolean,
     documentType: string,
+    presenterId: string
   ) {
     const cleanedHtml = this.cleanElementFromCoEditInfo(elementFragment);
     return this.http.put<RefreshElementResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
       cleanedHtml,
-      { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
+      { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'presenterId': presenterId } },
     );
   }
 

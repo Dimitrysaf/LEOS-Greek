@@ -13,13 +13,14 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import {TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
+import { TableOfContentService } from '../../services/table-of-content.service';
 
 @Component({
   selector: 'app-document',
@@ -28,12 +29,12 @@ import {TrackChangesActionsService} from "@/features/akn-document/services/track
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DocumentComponent
-  implements OnInit, AfterViewInit, OnDestroy, OnChanges
+  implements OnInit, AfterViewInit, OnDestroy
 {
   @Input() containerId: string;
   @Input() containerClass: NgClass['ngClass'] = '';
+  @Input() documentType: string;
   @Input() xml: string;
-  @Input() reloadTrigger: number;
   @Input() readonly = true;
   @ViewChild('container', { static: true })
   containerElRef: ElementRef<HTMLDivElement>;
@@ -50,6 +51,7 @@ export class DocumentComponent
     private coEditionWSService: CoEditionServiceWS,
     private translate: TranslateService,
     private trackChangesActionsService:TrackChangesActionsService,
+    private tableOfContentService: TableOfContentService,
   ) {}
 
   ngOnDestroy(): void {
@@ -60,22 +62,70 @@ export class DocumentComponent
 
   ngOnInit(): void {
     this.currentXml = this.xml;
-  }
+    
+    this.documentService.documentView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((documentView) => {
+        this.loadDocument(documentView.editableXml);
+      });
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if ('xml' in changes && changes.xml.currentValue !== undefined) {
-      this.xml = changes.xml.currentValue;
-      this.containerElRef.nativeElement.innerHTML = this.xml;
-      this.documentService.setDidDocumentLoadAndRender(true);
-      this.initTrackChangesActions();
-    }
-    if (
-      'reloadTrigger' in changes &&
-      changes.reloadTrigger.currentValue !== 0
-    ) {
-      this.containerElRef.nativeElement.innerHTML = this.xml;
-      this.initTrackChangesActions();
-    }
+    this.documentService.refreshView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((documentView) => {
+        if (documentView) {
+          this.loadDocument(documentView.editableXml);
+        }
+      });
+
+    this.documentService.updateElementContent$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((data) => {
+      const ckeditorOpen =
+        this.document.querySelectorAll('.cke_editable').length > 0;
+      if (!ckeditorOpen) {
+        this.updateElementContent(data);
+      }
+    });
+
+    this.documentService.getElementContent$
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((data) => {
+      this.documentService.getElementContentResponse$ = new BehaviorSubject<{
+        elementId: string;
+        elementType: string;
+        elementFragment: string;
+      }>(this.getElementContent(data)).asObservable();
+    });
+
+    this.documentService.reloadTrigger$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((trigger) => {
+        trigger !== 0 && this.loadDocument(this.xml);
+      });
+    
+    this.coEditionWSService.shouldReloadAfterUpdate
+    .pipe(takeUntil(this.destroy$))
+    .subscribe((coEditionUpdate) => {
+      if (coEditionUpdate) {
+        if(coEditionUpdate.updatedElements && coEditionUpdate.updatedElements.length > 0) {
+          coEditionUpdate.updatedElements.forEach(element => {
+            if(element.elementFragment) {
+              console.log(`${element.elementTagName}: ${element.elementId}`)
+              this.updateElementContent({
+                elementId: element.elementId,
+                elementType: element.elementTagName,
+                elementFragment: element.elementFragment
+              });
+            }
+          });          
+          this.documentService.setDidDocumentLoadAndRender(true);
+          this.documentService.reloadView();
+          this.tableOfContentService.reload();
+        } else {
+          this.documentService.reloadDocument();
+        }        
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -113,6 +163,92 @@ export class DocumentComponent
           )} <br>`),
     );
     return target;
+  }
+
+  private loadDocument(xml: string) {
+    this.xml = this.cleanupAndSerializeXML(xml);
+    this.containerElRef.nativeElement.innerHTML = this.xml;
+    this.documentService.setDidDocumentLoadAndRender(true);
+    this.initTrackChangesActions();
+    this.ckeditorService.refreshStateAllAvailableConnectors();
+  }
+
+  private cleanupAndSerializeXML(xml: string, akomantosoId?: string) {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(xml, 'text/html');
+    const akomantosoEl = xmlDoc.querySelector('akomantoso');
+
+    if (this.documentType !== 'coverPage') {
+      akomantosoEl
+        .querySelectorAll('meta, coverPage')
+        .forEach((el) => el.remove());
+    }
+
+    if (akomantosoId) {
+      akomantosoEl.id = akomantosoId;
+    }
+    return akomantosoEl.outerHTML;
+  }
+
+  private updateElementContent(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    if (data && data.elementId && data.elementType && data.elementFragment) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(this.xml, 'text/html');
+      let xmlElement = doc.getElementById(data.elementId);
+      if(xmlElement) {
+        xmlElement.outerHTML = this.cleanForView(data.elementFragment);
+        this.xml = doc.documentElement.outerHTML;
+      }
+
+      let htmlElement = this.document.getElementById(data.elementId);
+      if(htmlElement) {
+        htmlElement.outerHTML = this.cleanForView(data.elementFragment);
+      }
+    }
+  }
+
+  private getElementContent(data: { elementId: string; elementType: string }): {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  } {
+    if (data && data.elementId && data.elementType) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(this.xml, 'text/html');
+      let elt = doc.getElementById(data.elementId);
+      return {
+        elementId: data.elementId,
+        elementType: data.elementType,
+        elementFragment: this.cleanForTransformation(elt.outerHTML),
+      };
+    }
+    return {
+      elementId: data.elementId,
+      elementType: data.elementType,
+      elementFragment: null,
+    };
+  }
+
+  private cleanForTransformation(content: string): string {
+    return content
+      .replaceAll('<aknp ', '<p ')
+      .replaceAll('</aknp>', '</p>')
+      .replaceAll(' id=', ' xml:id=')
+      .replaceAll('<akntitle ', '<title ')
+      .replaceAll('</akntitle>', '</title>');
+  }
+
+  private cleanForView(content: string): string {
+    return content
+      .replaceAll('<p ', '<aknp ')
+      .replaceAll('</p>', '</aknp>')
+      .replaceAll(' xml:id=', ' id=')
+      .replaceAll('<title ', '<akntitle ')
+      .replaceAll('</title>', '</akntitle>');
   }
 
   private showElementsBeingEdited(coEdits: Record<string, CoEditionVO[]>) {

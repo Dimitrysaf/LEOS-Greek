@@ -23,6 +23,7 @@ import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
@@ -35,6 +36,7 @@ import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
+import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.toc.Attribute;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
@@ -140,6 +142,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected UserService userService;
     @Autowired
     protected TrackChangesContext trackChangesContext;
+    @Autowired
+    protected CoEditionContext coEditionContext;
 
     @Override
     public byte[] addTrackChangesAttributes(byte[] xmlContent) {
@@ -1973,6 +1977,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     XercesUtils.getParentId(node), documentNode, attr, sourceDocumentRef);
             if (labelResult != null && labelResult.isOk()) {
                 XercesUtils.addAttribute(node, LEOS_SOFT_MOVED_LABEL_ATTR, labelResult.get());
+                coEditionContext.addUpdatedElement(getId(node), node.getNodeName(), nodeToString(node));
                 if (!Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE).contains(node.getNodeName())) {
                     addTrackChangeAttributes(node, attr);
                 }

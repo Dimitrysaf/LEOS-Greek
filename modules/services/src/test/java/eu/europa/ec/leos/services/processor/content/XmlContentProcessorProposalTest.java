@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandlerProposal;
 import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
@@ -73,6 +74,8 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     List<NumberProcessor> numberProcessors;
     @Mock
     NumberProcessor numberProcessor;
+    @Mock
+    CoEditionContext coEditionContext;
 
     TrackChangesContext trackChangesContext = new TrackChangesContext();
     @InjectMocks

@@ -792,12 +792,8 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  updateElementContent(
-    elementId: string,
-    elementTagName: string,
-    elementFragment: string
-  ) {
-    this.updateElementContentBS.next({elementId: elementId, elementType: elementTagName, elementFragment: elementFragment});
+  updateElementContent(data: {elementId: string, elementType: string, elementFragment: string}) {
+    this.updateElementContentBS.next(data);
   }
 
   getElementContent(

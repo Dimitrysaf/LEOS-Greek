@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.coedition.CoEditionService;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionRequest;
 import eu.europa.ec.leos.services.dto.coedition.UpdateCoEditionRequest;
@@ -35,6 +36,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -113,8 +116,12 @@ public class CoEditionController {
         LOG.info("Received message from user {} on documentId {} for update ", event.getUserId(), event.getDocumentId());
         SimpMessageHeaderAccessor.wrap(message);
         User user = this.userService.getUser(event.getUserId());
+        List<Element> elements = new ArrayList<Element>();
+        if(event.getElementFragment() != null) {
+            elements.add(new Element(event.getElementId(), event.getElementTagName(), event.getElementFragment()));
+        }
         simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT_SLASH + event.getDocumentId(),
-                new UpdateCoEditionResponse(user, event.getPresenterId(), event.getDocumentId(), event.getElementId(), event.getElementTagName(), event.getElementFragment(), InfoType.DOCUMENT_UPDATED));
+                new UpdateCoEditionResponse(user, event.getPresenterId(), event.getDocumentId(), InfoType.DOCUMENT_UPDATED, elements));
     }
 
 
