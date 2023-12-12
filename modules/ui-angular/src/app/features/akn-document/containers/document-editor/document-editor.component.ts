@@ -104,7 +104,7 @@ export class DocumentEditorComponent
   pageSubTitle: string;
   proposalRef: string;
   showStatusFilter: boolean;
-  xml: string;
+  loadDocument: boolean;
   isCollapseToc = false;
   versionForView: string;
   versionForViewHeaderTitle: string;
@@ -118,7 +118,6 @@ export class DocumentEditorComponent
   isContributionAnnotationsPaneCollapsed = true;
   isVersionsPaneCollapsed = true;
   isViewContributionPaneCollapsed = true;
-  reloadTrigger: number;
   applyActionDisabled$: Observable<boolean>;
   tocItems: Array<TocItem> = [];
   dragItems: Array<Partial<TableOfContentItemVO>> = [];
@@ -234,18 +233,13 @@ export class DocumentEditorComponent
         );
       });
 
-    this.documentService.reloadTrigger$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((trigger) => {
-        this.reloadTrigger = trigger;
-        this.cdkEditor.refreshStateAllAvailableConnectors();
-      });
     this.documentService.refreshConnectors$
       .pipe(takeUntil(this.destroy$))
       .subscribe((data) => {
-        this.updateElementContent(data);
-        this.documentService.resetDocument();
+        this.documentService.updateElementContent(data);
+        this.cdkEditor.refreshStateAllAvailableConnectors();
       });
+
     this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
   }
@@ -273,7 +267,7 @@ export class DocumentEditorComponent
       .subscribe((documentView) => {
         this.loadingService.setTaskOver("refresh", this.documentRef);
         this.documentService.setDidDocumentLoadAndRender(true);
-        this.loadDocument(documentView.editableXml);
+        this.loadDocument = true;
         this.setPageSubTitle(documentView.versionInfoVO.documentVersion, `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`, documentView.versionInfoVO.lastModificationInstant);
         this.proposalRef = documentView.proposalRef;
       });
@@ -283,7 +277,7 @@ export class DocumentEditorComponent
       .subscribe((documentView) => {
         if (documentView) {
           this.documentService.setDidDocumentLoadAndRender(true);
-          this.loadDocument(documentView.editableXml);
+          this.loadDocument = true;
           this.setPageSubTitle(documentView.versionInfoVO.documentVersion, `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`, documentView.versionInfoVO.lastModificationInstant);
           this.proposalRef = documentView.proposalRef;
         }
@@ -295,26 +289,6 @@ export class DocumentEditorComponent
         this.tocItems = tocItems;
         if (tocItems?.length > 0)
           this.dragItems = this.buildTocItemToTOC(tocItems);
-      });
-
-    this.documentService.getElementContent$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data) => {
-        this.documentService.getElementContentResponse$ = new BehaviorSubject<{
-          elementId: string;
-          elementType: string;
-          elementFragment: string;
-        }>(this.getElementContent(data)).asObservable();
-      });
-
-    this.documentService.updateElementContent$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data) => {
-        const ckeditorOpen =
-          this.document.querySelectorAll('.cke_editable').length > 0;
-        if (!ckeditorOpen) {
-          this.updateElementContent(data);
-        }
       });
 
     this.documentService.versionView$
@@ -427,25 +401,6 @@ export class DocumentEditorComponent
         );
       }
     );
-
-    this.coEditionWSService.shouldReloadAfterUpdate
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((shouldReload) => {
-        if (shouldReload) {
-          const ckeditorOpen =
-            this.document.querySelectorAll('.cke_editable').length > 0;
-          if (!ckeditorOpen) {
-            if(shouldReload.elementFragment) {
-              this.documentService.updateElementContent(shouldReload.elementId, shouldReload.elementTagName, shouldReload.elementFragment);
-              this.documentService.setDidDocumentLoadAndRender(true);
-              this.documentService.reloadView();
-              this.tableOfContentService.reload();
-            } else {
-              this.documentService.reloadDocument();
-            }
-          }
-        }
-      });
   }
 
   ngAfterViewInit(): void {
@@ -605,7 +560,6 @@ export class DocumentEditorComponent
     this.coEditionWSService.setShouldReloadAfterUpdate();
     this.coEditionWSService.removeDocumentCoEditInfo(this.documentRef);
     this.coEditionWSService.removeSession();
-    this.reloadTrigger = 0;
     this.closeVersionView();
     this.closeVersionComparisonView();
     this.closeContributionsView();
@@ -1194,60 +1148,6 @@ export class DocumentEditorComponent
     });
   }
 
-  private updateElementContent(data: {
-    elementId: string;
-    elementType: string;
-    elementFragment: string;
-  }) {
-    if (data && data.elementId && data.elementType && data.elementFragment) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(this.xml, 'text/html');
-      let elt = doc.getElementById(data.elementId);
-      elt.outerHTML = this.cleanForView(data.elementFragment);
-      this.xml = doc.documentElement.outerHTML;
-    }
-  }
-
-  private getElementContent(data: { elementId: string; elementType: string }): {
-    elementId: string;
-    elementType: string;
-    elementFragment: string;
-  } {
-    if (data && data.elementId && data.elementType) {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(this.xml, 'text/html');
-      let elt = doc.getElementById(data.elementId);
-      return {
-        elementId: data.elementId,
-        elementType: data.elementType,
-        elementFragment: this.cleanForTransformation(elt.outerHTML),
-      };
-    }
-    return {
-      elementId: data.elementId,
-      elementType: data.elementType,
-      elementFragment: null,
-    };
-  }
-
-  private cleanForTransformation(content: string): string {
-    return content
-      .replaceAll('<aknp ', '<p ')
-      .replaceAll('</aknp>', '</p>')
-      .replaceAll(' id=', ' xml:id=')
-      .replaceAll('<akntitle ', '<title ')
-      .replaceAll('</akntitle>', '</title>');
-  }
-
-  private cleanForView(content: string): string {
-    return content
-      .replaceAll('<p ', '<aknp ')
-      .replaceAll('</p>', '</aknp>')
-      .replaceAll(' xml:id=', ' id=')
-      .replaceAll('<title ', '<akntitle ')
-      .replaceAll('</title>', '</akntitle>');
-  }
-
   private addPins(
     target: HTMLElement,
     pinContainer: HTMLElement,
@@ -1425,11 +1325,6 @@ export class DocumentEditorComponent
       }
     }
     return dragItems;
-  }
-
-  private loadDocument(xml: string) {
-    this.xml = this.cleanupAndSerializeXML(xml);
-    this.cdkEditor.refreshStateAllAvailableConnectors();
   }
 
   private loadStyleSheet() {

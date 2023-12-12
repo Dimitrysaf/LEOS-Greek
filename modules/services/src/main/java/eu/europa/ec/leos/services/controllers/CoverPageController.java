@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.CoverPageApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
@@ -56,6 +57,8 @@ public class CoverPageController {
     CoverPageApiService coverPageApiService;
     @Autowired
     private GenericDocumentApiService genericDocumentApiService;
+    @Autowired
+    private CoEditionContext coEditionContext;
 
     @GetMapping(value = "/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -103,9 +106,11 @@ public class CoverPageController {
     public ResponseEntity<Object> saveCoverPageElement(@PathVariable("documentRef") String documentRef,
                                                        @PathVariable("elementName") String elementName,
                                                        @PathVariable("elementId") String elementId,
+                                                       @RequestHeader("presenterId") String presenterId,
                                                        @RequestBody String elementContent) {
         try {
             RefreshElementResponse updatedElement = this.coverPageApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting coverPage element - " + e.getMessage());

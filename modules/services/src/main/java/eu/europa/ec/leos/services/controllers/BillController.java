@@ -20,6 +20,7 @@ import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.BillApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
@@ -49,6 +50,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -67,15 +69,19 @@ public class BillController {
     private BillApiService billApiService;
     @Autowired
     private GenericDocumentApiService genericDocumentApiService;
+    @Autowired
+    private CoEditionContext coEditionContext;
 
     @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveBillElement(@PathVariable("documentRef") String documentRef,
                                                   @PathVariable("elementName") String elementName,
                                                   @PathVariable("elementId") String elementId,
+                                                  @RequestHeader("presenterId") String presenterId,
                                                   @RequestBody String elementContent) {
         try {
             RefreshElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill element - " + e.getMessage());

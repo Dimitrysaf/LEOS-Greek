@@ -19,6 +19,7 @@ import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.label.ReferenceLabelServiceImplMandate;
 import eu.europa.ec.leos.services.label.ref.*;
@@ -90,6 +91,8 @@ public class ElementProcessorTest_IT extends LeosTest {
     protected TemplateStructureService templateStructureService;
     @Mock
     protected CloneContext cloneContext;
+    @Mock
+    protected CoEditionContext coEditionContext;
 
     protected TrackChangesContext trackChangesContext = new TrackChangesContext();
 

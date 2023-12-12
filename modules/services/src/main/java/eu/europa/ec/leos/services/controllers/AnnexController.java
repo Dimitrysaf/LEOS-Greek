@@ -21,6 +21,7 @@ import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.AnnexApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
@@ -52,6 +53,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 
@@ -67,15 +69,19 @@ public class AnnexController {
     private AnnexApiService annexAPIService;
     @Autowired
     private GenericDocumentApiService genericDocumentApiService;
+    @Autowired
+    private CoEditionContext coEditionContext;
 
     @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/save-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> saveAnnexElement(@PathVariable("documentRef") String documentRef,
                                                    @PathVariable("elementName") String elementName,
                                                    @PathVariable("elementId") String elementId,
+                                                   @RequestHeader("presenterId") String presenterId,
                                                    @RequestBody String elementContent) {
         try {
             RefreshElementResponse newElement = this.annexAPIService.saveElement(documentRef, elementId, elementName, elementContent);
+            coEditionContext.sendUpdatedElements(documentRef, presenterId, newElement);
             return ResponseEntity.ok().body(newElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex element - " + e.getMessage());

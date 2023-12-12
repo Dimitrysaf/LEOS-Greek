@@ -1,5 +1,6 @@
 package integration.saveToc.proposal;
 
+import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.label.ReferenceLabelServiceImplMandate;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
@@ -53,6 +54,8 @@ public abstract class SaveTocProposalTest_IT extends SaveTocTest_IT {
     protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerProposal();
     @Mock
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
+    @Mock
+    private CoEditionContext coEditionContext;
 
     private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
     private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);

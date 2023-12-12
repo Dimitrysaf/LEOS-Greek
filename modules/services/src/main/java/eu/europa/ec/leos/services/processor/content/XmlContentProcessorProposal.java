@@ -546,6 +546,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         addAttribute(sourceNode, LEOS_SOFT_MOVE_TO, idAttrVal);
         //Add leos:editable=false to make this element read-only inside CKE
         addAttribute(sourceNode, LEOS_EDITABLE_ATTR, "false");
+        coEditionContext.addUpdatedElement(idAttrVal, sourceNode.getNodeName(), nodeToString(sourceNode));
     }
 
     private boolean containsSoftActionAttributes(Node node) {
@@ -562,6 +563,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             if (tempIdNodeVal != null && tempIdNodeVal.indexOf("temp_") != -1) {
                 String updatedIdAttrVal = tempIdNodeVal.replace("temp_", EMPTY_STRING);
                 XercesUtils.addAttribute(tempIdNode, XMLID, updatedIdAttrVal);
+                coEditionContext.addUpdatedElement(tempIdNodeVal, tempIdNode.getNodeName(), nodeToString(tempIdNode));
             }
         }
     }
