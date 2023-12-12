@@ -285,6 +285,9 @@ define(function elementEditorModule(require) {
     function _destroyEditor(connector, elementId, elementType, event) {
         log.debug("Destroying element editor...");
         var editor = event.editor;
+        if (_isEmptyContentInElement(elementId)) {
+            return;
+        }
         // set read-only to prevent changes
         editor.setReadOnly(true);
         var newContent = editor._.data.replaceAll("<p ", "<aknp ").replaceAll("</p>", "</aknp>").replaceAll(" xml:id=", " id=");
@@ -386,6 +389,16 @@ define(function elementEditorModule(require) {
     }
 
     function _isEmptyElement(elementId, editor) {
+        if (_isEmptyContentInElement(elementId)) {
+            pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
+            var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
+            dialogCommand.exec();
+            return true;
+        }
+        return false;
+    }
+
+    function _isEmptyContentInElement(elementId) {
         var bogus = $("#" + elementId).find(leosPluginUtils.BOGUS);
         var sibling;
         if (bogus && bogus[0]) {
@@ -394,9 +407,6 @@ define(function elementEditorModule(require) {
         var emptyElements = $("#" + elementId + ", p[data-akn-id='" + elementId + "'], h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
         if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
             || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
-            pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
-            var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
-            dialogCommand.exec();
             return true;
         }
         return false;
