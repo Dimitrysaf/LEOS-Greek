@@ -285,7 +285,7 @@ define(function elementEditorModule(require) {
     function _destroyEditor(connector, elementId, elementType, event) {
         log.debug("Destroying element editor...");
         var editor = event.editor;
-        if (_isEmptyElementInElement(elementId)) {
+        if (_isEmptyContentInElement(elementId)) {
             return;
         }
         // set read-only to prevent changes
