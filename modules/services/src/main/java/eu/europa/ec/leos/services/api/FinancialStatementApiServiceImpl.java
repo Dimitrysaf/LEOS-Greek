@@ -60,7 +60,7 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
+    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment, boolean isSplit) throws Exception {
         return null;
     }
 
