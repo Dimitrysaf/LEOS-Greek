@@ -302,6 +302,14 @@ define(function leosArticleIndentListPluginModule(require) {
         while ((range = iterator.getNextRange())) {
             range.endContainer = leosPluginUtils.manageListIntro(range.endContainer);
             range.startContainer = leosPluginUtils.manageListIntro(range.startContainer);
+
+            if (!this.isIndent && range.startContainer.type == CKEDITOR.NODE_ELEMENT && range.startContainer.getName() in context) {
+                range.startContainer = range.startContainer.getParent();
+            }
+            if (!this.isIndent && range.endContainer.type == CKEDITOR.NODE_ELEMENT && range.endContainer.getName() in context) {
+                range.endContainer = range.endContainer.getParent();
+            }
+
             var nearestListBlock = range.getCommonAncestor();
 
             while ( nearestListBlock && !( nearestListBlock.type == CKEDITOR.NODE_ELEMENT && context[ nearestListBlock.getName() ] ) ) {
