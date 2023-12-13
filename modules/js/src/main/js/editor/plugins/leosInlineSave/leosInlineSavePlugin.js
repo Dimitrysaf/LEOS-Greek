@@ -48,9 +48,11 @@ define(function leosInlineSavePluginModule(require) {
             var saveCommand = editor.addCommand(SAVE_CMD_NAME, {
                 exec: function(editor) {
                     if (this.state != TRISTATE_DISABLED) {
-                        editor.fire("save", {
-                            data: editor.getData(),
-                        });
+                        if (editor.fire("canBeSaved")) {
+                            editor.fire("save", {
+                                data: editor.getData(),
+                            });
+                        }
                     }
                 }
             });
@@ -58,11 +60,13 @@ define(function leosInlineSavePluginModule(require) {
             var saveCloseCommand = editor.addCommand(SAVE_CLOSE_CMD_NAME, {
                 exec: function(editor) {
                     if (this.state != TRISTATE_DISABLED) {
-                        editor.fire("save", {
-                            data: editor.getData(),
-                            isSaveAndClose: true
-                        });
-                        editor.once("receiveData", _doClose());
+                        if (editor.fire("canBeSaved")) {
+                            editor.fire("save", {
+                                data: editor.getData(),
+                                isSaveAndClose: true
+                            });
+                            editor.once("receiveData", _doClose());
+                        }
                     }
                 }
             });

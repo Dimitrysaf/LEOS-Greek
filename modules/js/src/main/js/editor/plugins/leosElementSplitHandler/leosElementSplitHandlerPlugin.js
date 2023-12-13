@@ -87,10 +87,12 @@ define(function leosElementSplitHandlerPluginModule(require) {
                 }
                 CKEDITOR.fire("editorInitOngoing");
                 var editor = CKEDITOR.currentInstance;
-                editor.fire("save", {
-                    data: editor.getData(),
-                    origin: "split"
-                });
+                if (editor.fire("canBeSaved")) {
+                    editor.fire("save", {
+                        data: editor.getData(),
+                        origin: "split"
+                    });
+                }
             }
         } else if (rootElement != null) { // Element not inserted
             var rootElementTables = rootElement.find("> table");
