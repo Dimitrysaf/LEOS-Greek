@@ -827,10 +827,12 @@ public class XercesUtils {
     public static String getNodeContent(Node node) {
         String nodeContent = null;
         if(node.hasChildNodes()) {
-            if (getFirstChild(node, "ins") != null) {
-                nodeContent = getFirstChild(node, "ins").getTextContent();
-            } else if(getFirstChild(node, "span") != null && getChildContainingAttributeValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION) != null) {
-                nodeContent = getChildContainingAttributeValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION).getTextContent();
+            Node insNode = getFirstChild(node, "ins");
+            Node nodeWithInsertAttribute = getChildContainingAttributeValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
+            if (insNode != null) {
+                nodeContent = insNode.getTextContent();
+            } else if(getFirstChild(node, "span") != null && nodeWithInsertAttribute != null) {
+                nodeContent = nodeWithInsertAttribute.getTextContent();
             } else {
                 nodeContent = node.getTextContent();
             }
