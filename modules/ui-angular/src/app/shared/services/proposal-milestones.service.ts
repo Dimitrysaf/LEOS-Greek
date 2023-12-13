@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
+import { BehaviorSubject } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
 import type {
@@ -10,7 +11,6 @@ import type {
 } from '@/features/proposal-view/models/milestone.model';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
-import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',

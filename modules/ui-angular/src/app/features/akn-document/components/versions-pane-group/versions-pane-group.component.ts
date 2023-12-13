@@ -39,11 +39,11 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected displayedVersions: Version[] = [];
   protected versionsSearchResult: Version[] = [];
 
-  private totalSubVersions: number = 0;
+  private totalSubVersions = 0;
 
   private filter = 'all';
   private pageSize=5;
-  private semaphore: boolean = true;
+  private semaphore = true;
 
   constructor(
     private translate: TranslateService,
@@ -198,7 +198,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
           : 'page.editor.versions.modifications-show',
       );
       if (this.showMore && this.subVersions.length < this.totalSubVersions) {
-        let self = this;
+        const self = this;
         const currentPageIndex = Math.floor(this.subVersions.length / this.pageSize);
         this.semaphore = false;
         this.docService.getIntermediateVersions(this.majorVersion, currentPageIndex, this.pageSize).subscribe({
@@ -222,7 +222,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
           : 'page.editor.versions.show-more',
       );
       if (this.showMore && this.subVersions.length < this.totalSubVersions) {
-        let self = this;
+        const self = this;
         const currentPageIndex = Math.floor(this.subVersions.length / this.pageSize);
         self.semaphore = false;
         this.docService.getDocumentRecentChangesData(this.docService.documentType, this.docService.documentRef, currentPageIndex, this.pageSize).subscribe({

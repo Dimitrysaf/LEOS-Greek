@@ -26,7 +26,7 @@ import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
@@ -81,12 +81,14 @@ public class BillController {
                                                   @RequestParam(required = false) boolean isSplit,
                                                   @RequestBody String elementContent) {
         try {
-            RefreshElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementName, elementContent, elementId, isSplit);
+            SaveElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName,
+                    elementContent);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occured while getting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occured while getting bill element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -100,7 +102,8 @@ public class BillController {
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill  element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while deleting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while deleting bill element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -111,11 +114,13 @@ public class BillController {
                                                     @PathVariable("elementId") String elementId,
                                                     @RequestBody InsertElementRequest request) {
         try {
-            DocumentViewResponse bill = this.billApiService.insertElement(documentRef, elementName, elementId, request.getPosition());
+            DocumentViewResponse bill = this.billApiService.insertElement(documentRef, elementName, elementId,
+                    request.getPosition());
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while inserting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while inserting bill element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -127,24 +132,29 @@ public class BillController {
                                                    @PathVariable("elementId") String elementId,
                                                    @RequestBody String elementContent) {
         try {
-            DocumentViewResponse bill = this.billApiService.mergeElement(documentRef, elementContent, elementTag, elementId);
+            DocumentViewResponse bill = this.billApiService.mergeElement(documentRef, elementContent, elementTag,
+                    elementId);
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
             LOG.error("Error occurred while getting trying to merge on bill - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while merging bill elements ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while merging bill elements ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
+                                                   @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex, pageSize);
+            List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef,
+                    pageIndex, pageSize);
             return ResponseEntity.ok().body(recentMinorVersions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -153,11 +163,12 @@ public class BillController {
     @ResponseBody
     public ResponseEntity<Object> countRecentChanges(@PathVariable("documentRef") String documentRef) {
         try {
-            int count= this.genericDocumentApiService.countRecentMinorVersions(documentRef);
+            int count = this.genericDocumentApiService.countRecentMinorVersions(documentRef);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -168,11 +179,13 @@ public class BillController {
                                                   @RequestBody SaveIntermediateVersionRequest saveEvent
     ) {
         try {
-            List<VersionVO> versions = this.billApiService.saveDocument(documentRef, saveEvent.getCheckinComment(), saveEvent.getVersionType());
+            List<VersionVO> versions = this.billApiService.saveDocument(documentRef, saveEvent.getCheckinComment(),
+                    saveEvent.getVersionType());
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -183,24 +196,29 @@ public class BillController {
                                           @RequestBody SaveTocRequestEvent saveTocRequestEvent
     ) {
         try {
-            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs());
+            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef,
+                    saveTocRequestEvent.getTableOfContentItemVOs());
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while saving toc - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while saving toc recent", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while saving toc recent",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex,
-                                                      @RequestParam int pageSize) {
+    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
+                                                       @RequestParam int pageIndex,
+                                                       @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
+                    pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -213,47 +231,56 @@ public class BillController {
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                             @RequestParam String currIntVersion,
+                                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef, currIntVersion, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef,
+                    currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                             @RequestParam String currIntVersion) {
         try {
             int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef, @RequestParam(required = false, defaultValue = "") String authorKey,
+    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
+                                                    @RequestParam(required = false, defaultValue = "") String authorKey,
                                                     @RequestParam(required = false, defaultValue = "") String type) {
         try {
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -268,7 +295,8 @@ public class BillController {
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill toc items - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting bill toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting bill toc items",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -280,7 +308,8 @@ public class BillController {
             return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill toc items - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting bill toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting bill toc items",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -294,7 +323,8 @@ public class BillController {
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill document - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting bill document", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting bill document",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -307,11 +337,13 @@ public class BillController {
                                                    @RequestParam boolean completeWords,
                                                    @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
-            List<SearchMatchVO> bill = this.billApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords, tempUpdatedContentXML);
+            List<SearchMatchVO> bill = this.billApiService.searchTextInDocument(documentRef, searchText, matchCase,
+                    completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill search results - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while fetching search results for bill ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while fetching search results for bill ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -324,7 +356,8 @@ public class BillController {
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill version {} , error {}: - ", versionId, e.getMessage());
-            return new ResponseEntity<>("Unexpected error while trying to get bill version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to get bill version as html ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -338,7 +371,8 @@ public class BillController {
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while comparing old :{} with new {} versions ", oldVersionId, newVersionId);
-            return new ResponseEntity<>("Unexpected error while trying to get bill version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to get bill version as html ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -352,7 +386,8 @@ public class BillController {
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to restore version ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -367,7 +402,8 @@ public class BillController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting bill element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error while getting bill element ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while getting bill element ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -379,7 +415,8 @@ public class BillController {
                                                @RequestParam("trackChangeAction") String trackChangeAction) {
         try {
             TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
-            DocumentViewResponse response = this.billApiService.acceptChange(documentRef, elementId, elementTagName, trackChangeActionType);
+            DocumentViewResponse response = this.billApiService.acceptChange(documentRef, elementId, elementTagName,
+                    trackChangeActionType);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while accepting change - " + e.getMessage());
@@ -395,7 +432,8 @@ public class BillController {
                                                @RequestParam("trackChangeAction") String trackChangeAction) {
         try {
             TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
-            DocumentViewResponse response = this.billApiService.rejectChange(documentRef, elementId, elementTagName, trackChangeActionType);
+            DocumentViewResponse response = this.billApiService.rejectChange(documentRef, elementId, elementTagName,
+                    trackChangeActionType);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while rejecting change - " + e.getMessage());
@@ -412,7 +450,8 @@ public class BillController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while getting downloading version", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while getting downloading version",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -464,7 +503,8 @@ public class BillController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while saving after replace all - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred while saving after replace all", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred while saving after replace all",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -476,7 +516,8 @@ public class BillController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting document config  - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while getting document config ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while getting document config ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -485,11 +526,13 @@ public class BillController {
     public ResponseEntity<Object> searchForImportFromJournal(@PathVariable("documentRef") String documentRef,
                                                              @RequestBody SearchForImportCriteriaRequest searchForImportCriteriaRequest) {
         try {
-            String view = this.billApiService.searchForImport(searchForImportCriteriaRequest.getNumber(), searchForImportCriteriaRequest.getYear(), searchForImportCriteriaRequest.getType());
+            String view = this.billApiService.searchForImport(searchForImportCriteriaRequest.getNumber(),
+                    searchForImportCriteriaRequest.getYear(), searchForImportCriteriaRequest.getType());
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to search from journal bill " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to search from journal bill", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to search from journal bill",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -501,7 +544,8 @@ public class BillController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to renumber bill " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to renumber bill ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to renumber bill ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -513,7 +557,8 @@ public class BillController {
             return ResponseEntity.ok().body(userGuidance);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get user guidance for annex " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get user guidance for annex", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get user guidance for annex",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -529,7 +574,8 @@ public class BillController {
             return new ResponseEntity<>(cleanVersion, headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to download clean version for bill " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to download clean version for bill ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to download clean version for bill ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -541,7 +587,8 @@ public class BillController {
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for bill " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get clean version for bill", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get clean version for bill",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -556,13 +603,15 @@ public class BillController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred while toggling Track change enabled- " + e);
-            return new ResponseEntity<>("Unexpected error occurred while toggling Track change enabled", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while toggling Track change enabled",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @PutMapping(value = "/{documentRef}/import-elements", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> importElements(@PathVariable("documentRef") String documentRef, @RequestBody ImportElementRequest request) {
+    public ResponseEntity<Object> importElements(@PathVariable("documentRef") String documentRef,
+                                                 @RequestBody ImportElementRequest request) {
         DocumentViewResponse view = this.billApiService.importElements(documentRef, request);
         return ResponseEntity.ok().body(view);
     }
@@ -576,7 +625,8 @@ public class BillController {
             return ResponseEntity.ok().body(tocAncestors);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get toc ancestors for bill " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for bill", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for bill",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

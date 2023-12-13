@@ -1,12 +1,12 @@
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
+import {Permission} from "@/shared";
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import {
   MergeActionItem,
   MergeActionVO,
 } from '@/shared/models/merge-action-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
-import {Permission} from "@/shared";
 
 export type MergeContributionConnectorState = LeosJavaScriptExtensionState & {
   tocItemsJsonArray: string; // json

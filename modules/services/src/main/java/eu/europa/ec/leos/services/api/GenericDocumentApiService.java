@@ -5,7 +5,6 @@ import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
-import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
@@ -16,7 +15,6 @@ import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
-import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -27,7 +25,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.exception.NotFoundException;
 
@@ -161,7 +159,8 @@ public class GenericDocumentApiService {
     public DocumentViewResponse getDocumentByRef(@NotNull String docRef) throws NotFoundException {
         return Optional.ofNullable(this.findDocumentByRef(XmlDocument.class, docRef))
                 .map(doc -> this.documentViewService.getDocumentView(doc))
-                .orElseThrow(() -> new NotFoundException(String.format("Not found document with %s reference", docRef)));
+                .orElseThrow(
+                        () -> new NotFoundException(String.format("Not found document with %s reference", docRef)));
     }
 
     public List<VersionVO> saveDocument(String documentRef, VersionType versionType, String versionComment) {
@@ -169,7 +168,8 @@ public class GenericDocumentApiService {
         document = this.leosRepository.findDocumentById(document.getId(), XmlDocument.class, true);
         LeosMetadata metadata = this.getDocMetadata(document);
         byte[] content = this.getDocumentContent(document);
-        document = this.leosRepository.updateDocument(document.getId(), metadata, content, versionType, versionComment, XmlDocument.class);
+        document = this.leosRepository.updateDocument(document.getId(), metadata, content, versionType, versionComment,
+                XmlDocument.class);
         return this.getMajorVersionsData(documentRef, 0, 1);
     }
 
@@ -179,7 +179,8 @@ public class GenericDocumentApiService {
         String docTemplate = this.getDocTemplate(document);
         byte[] content = this.getDocumentContent(document);
         String startingNode = Optional.ofNullable(DOCUMENT_TOC_STARTING_NODE.get(document.getCategory()))
-                .orElseThrow(() -> new RuntimeException(String.format("Starting node not found for document %s", docRef)));
+                .orElseThrow(
+                        () -> new RuntimeException(String.format("Starting node not found for document %s", docRef)));
 
         this.getStructureContext().useDocumentTemplate(docTemplate);
         List<TableOfContentItemVO> toc = this.tableOfContentProcessor.buildTableOfContent(startingNode, content, mode);
@@ -233,7 +234,8 @@ public class GenericDocumentApiService {
 
     public DocumentViewResponse showCleanVersion(String documentRef) {
         final XmlDocument document = this.findDocumentByRef(documentRef);
-        final String versionContent = documentContentService.getCleanDocumentAsHtml(document, "", securityContext.getPermissions(document));
+        final String versionContent = documentContentService.getCleanDocumentAsHtml(document, "",
+                securityContext.getPermissions(document));
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(document);
         return new DocumentViewResponse(versionContent, versionInfoVO);
     }
@@ -247,8 +249,10 @@ public class GenericDocumentApiService {
         CloneContext cloneContext = getCloneContext();
         if (cloneContext != null && cloneContext.isClonedProposal()) {
             try {
-                final String jobFileName = PROPOSAL + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".docx";
-                ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, FinancialStatement.class, false, true);
+                final String jobFileName =
+                        PROPOSAL + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".docx";
+                ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, FinancialStatement.class, false,
+                        true);
                 exportOptions.setExportVersions(new ExportVersions(null, document));
                 exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
             } catch (Exception e) {
@@ -256,20 +260,26 @@ public class GenericDocumentApiService {
             }
         } else {
             try {
-                final String jobFileName = PROPOSAL + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
-                ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, FinancialStatement.class, false, true);
+                final String jobFileName =
+                        PROPOSAL + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
+                ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, FinancialStatement.class, false,
+                        true);
                 exportOptions.setExportVersions(new ExportVersions<FinancialStatement>(null, document));
-                cleanVersion = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
+                cleanVersion = exportService.createDocuWritePackage(
+                        FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while using ExportService", e);
             }
         }
-        LOG.info("The actual version of CLEANED FinancialStatement for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        LOG.info(
+                "The actual version of CLEANED FinancialStatement for proposal {}, downloaded in {} milliseconds ({} sec)",
+                proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         return cleanVersion;
     }
 
     public List<VersionVO> getMajorVersionsData(@NotNull String docRef, int pageIndex, int pageSize) {
-        List<XmlDocument> majorVersions = this.leosRepository.findAllMajors(XmlDocument.class, docRef, pageIndex, pageSize);
+        List<XmlDocument> majorVersions = this.leosRepository.findAllMajors(XmlDocument.class, docRef, pageIndex,
+                pageSize);
         List<VersionVO> versions = VersionsUtil.buildVersionVO(majorVersions, messageHelper);
 
         for (VersionVO version : versions) {
@@ -284,7 +294,8 @@ public class GenericDocumentApiService {
             List<UserJSON> users = userService.searchUsersByKey(authorKey);
             authorLogins = users.stream().map(user -> user.getLogin()).collect(Collectors.toList());
         }
-        List<XmlDocument> foundVersions = this.leosRepository.searchVersions(XmlDocument.class, docRef, authorLogins, versionType);
+        List<XmlDocument> foundVersions = this.leosRepository.searchVersions(XmlDocument.class, docRef, authorLogins,
+                versionType);
         List<VersionVO> versions = VersionsUtil.buildVersionVO(foundVersions, messageHelper);
 
         for (VersionVO version : versions) {
@@ -297,9 +308,11 @@ public class GenericDocumentApiService {
         return this.leosRepository.findAllMajorsCount(XmlDocument.class, docRef);
     }
 
-    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion, int pageIndex, int pageSize) {
-        return VersionsUtil.buildVersionResponse(this.leosRepository.findAllMinorsForIntermediate(XmlDocument.class, documentRef,
-                currIntVersion, pageIndex, pageSize), messageHelper, userHelper);
+    public List<VersionVO> getIntermediateVersionsData(String documentRef, String currIntVersion, int pageIndex,
+                                                       int pageSize) {
+        return VersionsUtil.buildVersionResponse(
+                this.leosRepository.findAllMinorsForIntermediate(XmlDocument.class, documentRef,
+                        currIntVersion, pageIndex, pageSize), messageHelper, userHelper);
     }
 
     public int countIntermediateVersionsData(String documentRef, String currIntVersion) {
@@ -308,16 +321,20 @@ public class GenericDocumentApiService {
 
     public List<VersionVO> getRecentMinorVersions(@NotNull String docRef, int pageIndex, int pageSize) {
         XmlDocument document = this.findDocumentByRef(docRef);
-        LeosDocument latestVersion = this.leosRepository.findLatestMajorVersionById(XmlDocument.class, document.getId(), docRef);
-        List<XmlDocument> versionDocs = this.leosRepository.findRecentMinorVersions(XmlDocument.class, docRef, latestVersion.getCmisVersionLabel(), pageIndex,
+        LeosDocument latestVersion = this.leosRepository.findLatestMajorVersionById(XmlDocument.class, document.getId(),
+                docRef);
+        List<XmlDocument> versionDocs = this.leosRepository.findRecentMinorVersions(XmlDocument.class, docRef,
+                latestVersion.getCmisVersionLabel(), pageIndex,
                 pageSize);
         return VersionsUtil.buildVersionResponse(versionDocs, messageHelper, userHelper);
     }
 
     public int countRecentMinorVersions(@NotNull String docRef) {
         XmlDocument document = this.findDocumentByRef(docRef);
-        LeosDocument latestVersion = this.leosRepository.findLatestMajorVersionById(XmlDocument.class, document.getId(), docRef);
-        return this.leosRepository.findRecentMinorVersionsCount(XmlDocument.class, docRef, latestVersion.getCmisVersionLabel());
+        LeosDocument latestVersion = this.leosRepository.findLatestMajorVersionById(XmlDocument.class, document.getId(),
+                docRef);
+        return this.leosRepository.findRecentMinorVersionsCount(XmlDocument.class, docRef,
+                latestVersion.getCmisVersionLabel());
     }
 
     public DocumentViewResponse restoreToVersion(@NotNull String docRef,
@@ -334,7 +351,8 @@ public class GenericDocumentApiService {
                 XmlDocument.class
         );
         //call validation on document with updated content
-        this.validationService.validateDocumentAsync(this.documentVOProvider.createDocumentVO(document, restoreContent));
+        this.validationService.validateDocumentAsync(
+                this.documentVOProvider.createDocumentVO(document, restoreContent));
 
         return this.documentViewService.updateDocumentView(document);
     }
@@ -348,17 +366,18 @@ public class GenericDocumentApiService {
 
     // -------------- ELEMENT METHODS
     // This will work only for Financial Statement
-    public RefreshElementResponse saveElement(String documentRef,
-                                              String elementId,
-                                              String elementName,
-                                              String elementContent) throws Exception {
+    public SaveElementResponse saveElement(String documentRef,
+                                           String elementId,
+                                           String elementName,
+                                           String elementContent) throws Exception {
         XmlDocument document = this.findDocumentByRef(documentRef);
         this.populateCloneProposalMetadata(document);
 
         StructureContext structure = this.getStructureContext();
         structure.useDocumentTemplate(this.getDocTemplate(document));
 
-        byte[] newXmlContent = this.elementProcessor.updateElement(document, elementContent, elementName, elementId, true);
+        byte[] newXmlContent = this.elementProcessor.updateElement(document, elementContent, elementName, elementId,
+                true);
         newXmlContent = this.xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
         document = this.leosRepository.updateDocument(
@@ -369,7 +388,7 @@ public class GenericDocumentApiService {
                 XmlDocument.class
         );
         String newContent = this.elementProcessor.getElement(document, elementName, elementId);
-        return new RefreshElementResponse(elementId, elementName, newContent);
+        return new SaveElementResponse(elementId, elementName, newContent);
     }
 
     public EditElementResponse getElement(String documentRef, String elementId, String elementTagName) {
@@ -419,7 +438,8 @@ public class GenericDocumentApiService {
         XmlDocument document = findDocumentByRef(event.getDocumentRef());
 
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), document);
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
+                event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
@@ -434,7 +454,8 @@ public class GenericDocumentApiService {
 
         populateCloneProposalMetadata(document);
 
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
+                event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
@@ -484,14 +505,16 @@ public class GenericDocumentApiService {
                 .map(metadata -> this.packageService.findPackageByDocumentRef(metadata.get().getRef(),
                         XmlDocument.class))
                 .map(pack -> this.proposalService.findProposalByPackagePath(pack.getPath()))
-                .orElseThrow(() -> new RuntimeException(String.format("Not found proposal for document %s", document.getId())));
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("Not found proposal for document %s", document.getId())));
     }
 
     private void populateCloneProposalMetadata(@NotNull XmlDocument document) {
         Proposal proposal = this.getDocProposal(document);
         if (proposal.isClonedProposal()) {
             byte[] xmlContent = this.getDocumentContent(proposal);
-            CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(xmlContent);
+            CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
+                    xmlContent);
             this.getCloneContext().setCloneProposalMetadataVO(cloneProposalMetadataVO);
         }
     }
@@ -502,7 +525,8 @@ public class GenericDocumentApiService {
                 .map(Maybe::get)
                 .map(Content::getSource)
                 .map(Content.Source::getBytes)
-                .orElseThrow(() -> new RuntimeException(String.format("Document %s is missing content", document.getId())));
+                .orElseThrow(
+                        () -> new RuntimeException(String.format("Document %s is missing content", document.getId())));
     }
 
     private String getDocTemplate(XmlDocument document) {
@@ -510,7 +534,8 @@ public class GenericDocumentApiService {
                 .map(XmlDocument::getMetadata)
                 .map(Maybe::get)
                 .map(meta -> meta.getDocTemplate())
-                .orElseThrow(() -> new RuntimeException(String.format("Document %s is missing docTemplate", document.getId())));
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("Document %s is missing docTemplate", document.getId())));
     }
 
     private String getDocReference(XmlDocument document) {
@@ -544,7 +569,8 @@ public class GenericDocumentApiService {
     private <T extends XmlDocument> T findDocumentByRef(@NotNull Class<T> docClass,
                                                         @NotNull String docRef) throws NotFoundException {
         return Optional.ofNullable(this.leosRepository.findDocumentByRef(docRef, docClass))
-                .orElseThrow(() -> new NotFoundException(String.format("Not found document with %s reference", docRef)));
+                .orElseThrow(
+                        () -> new NotFoundException(String.format("Not found document with %s reference", docRef)));
     }
 
     private XmlDocument findDocumentByRef(@NotNull String docRef) throws NotFoundException {

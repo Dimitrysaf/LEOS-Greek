@@ -26,7 +26,7 @@ import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
@@ -81,12 +81,14 @@ public class AnnexController {
                                                    @RequestHeader("presenterId") String presenterId,
                                                    @RequestBody String elementContent) {
         try {
-            RefreshElementResponse newElement = this.annexAPIService.saveElement(documentRef, elementName, elementContent, elementId, isSplit);
+            SaveElementResponse newElement = this.annexAPIService.saveElement(documentRef, elementId, elementName,
+                    elementContent);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, newElement);
             return ResponseEntity.ok().body(newElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occured while getting annex element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occured while getting annex element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -101,7 +103,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
-            return new ResponseEntity<>("Unexpcted error occured while getting annex element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpcted error occured while getting annex element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
@@ -115,11 +118,13 @@ public class AnnexController {
                                                      @PathVariable("elementId") String elementId,
                                                      @RequestBody InsertElementRequest request) {
         try {
-            DocumentViewResponse annexXml = this.annexAPIService.insertElement(documentRef, elementName, elementId, request.getPosition());
+            DocumentViewResponse annexXml = this.annexAPIService.insertElement(documentRef, elementName, elementId,
+                    request.getPosition());
             return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
-            return new ResponseEntity<>("Unexpcted error occured while getting annex element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpcted error occured while getting annex element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -131,24 +136,29 @@ public class AnnexController {
                                                     @PathVariable("elementId") String elementId,
                                                     @RequestBody String elementContent) {
         try {
-            DocumentViewResponse annexXml = this.annexAPIService.mergeElement(documentRef, elementContent, elementTag, elementId);
+            DocumentViewResponse annexXml = this.annexAPIService.mergeElement(documentRef, elementContent, elementTag,
+                    elementId);
             return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting trying to merge on bill - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while merging elements ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while merging elements ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
+                                                   @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex, pageSize);
+            List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef,
+                    pageIndex, pageSize);
             return ResponseEntity.ok().body(recentMinorVersions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -161,7 +171,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -172,11 +183,13 @@ public class AnnexController {
                                                    @RequestBody SaveIntermediateVersionRequest saveEvent
     ) {
         try {
-            List<VersionVO> versions = this.annexAPIService.saveDocument(documentRef, saveEvent.getCheckinComment(), saveEvent.getVersionType());
+            List<VersionVO> versions = this.annexAPIService.saveDocument(documentRef, saveEvent.getCheckinComment(),
+                    saveEvent.getVersionType());
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while saving annex version - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while saving annex version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while saving annex version ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -187,38 +200,45 @@ public class AnnexController {
                                           @RequestBody SaveTocRequestEvent saveTocRequestEvent
     ) {
         try {
-            List<TableOfContentItemVO> toc = this.annexAPIService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs());
+            List<TableOfContentItemVO> toc = this.annexAPIService.saveToC(documentRef,
+                    saveTocRequestEvent.getTableOfContentItemVOs());
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while saving toc ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while saving toc ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
+                                                       @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
+                    pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String authorKey,
+    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
+                                                    @RequestParam String authorKey,
                                                     @RequestParam String type) {
         try {
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -231,34 +251,40 @@ public class AnnexController {
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion,
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                             @RequestParam String currIntVersion,
                                                              @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef, currIntVersion, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef,
+                    currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                               @RequestParam String currIntVersion) {
         try {
             int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -273,7 +299,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex toc items - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting annex toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting annex toc items",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -286,7 +313,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex toc items - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting annex toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting annex toc items",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -300,7 +328,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex document - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting annex document", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting annex document",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -313,11 +342,13 @@ public class AnnexController {
                                                    @RequestParam boolean completeWords,
                                                    @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
-            List<SearchMatchVO> annex = this.annexAPIService.searchTextInDocument(documentRef, searchText, matchCase, completeWords, tempUpdatedContentXML);
+            List<SearchMatchVO> annex = this.annexAPIService.searchTextInDocument(documentRef, searchText, matchCase,
+                    completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex search results - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while fetching search results for annex ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while fetching search results for annex ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -330,7 +361,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex version {} , error {}: - ", versionId, e.getMessage());
-            return new ResponseEntity<>("Unexpected error while trying to get annex version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to get annex version as html ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -344,7 +376,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while comparing old :{} with new {} versions ", oldVersionId, newVersionId);
-            return new ResponseEntity<>("Unexpected error while trying to get annex version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to get annex version as html ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -358,7 +391,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
-            return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to restore version ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -373,7 +407,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting annex element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error while getting annex element ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while getting annex element ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -386,7 +421,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while getting downloading version", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while getting downloading version",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -438,7 +474,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while saving after replace all - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred while saving after replace all", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred while saving after replace all",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -450,7 +487,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting document config  - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while getting document config ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while getting document config ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -462,7 +500,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to switch annex structure" + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to switch annex ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to switch annex ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -474,7 +513,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to renumber annex " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to renumber annex ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to renumber annex ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -486,7 +526,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(userGuidance);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get user guidance for annex " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get user guidance for annex", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get user guidance for annex",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -502,7 +543,8 @@ public class AnnexController {
             return new ResponseEntity<>(cleanVersion, headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to download clean version for annex " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to download clean version for annex", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to download clean version for annex",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -514,7 +556,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for annex " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get clean version for annex", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get clean version for annex",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -527,7 +570,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(tocAncestors);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get toc ancestors for annex " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for annex", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for annex",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -540,7 +584,8 @@ public class AnnexController {
                                                @RequestParam("trackChangeAction") String trackChangeAction) {
         try {
             TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
-            DocumentViewResponse response = this.annexAPIService.acceptChange(documentRef, elementId, elementTagName, trackChangeActionType);
+            DocumentViewResponse response = this.annexAPIService.acceptChange(documentRef, elementId, elementTagName,
+                    trackChangeActionType);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while accepting change - " + e.getMessage());
@@ -556,7 +601,8 @@ public class AnnexController {
                                                @RequestParam("trackChangeAction") String trackChangeAction) {
         try {
             TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
-            DocumentViewResponse response = this.annexAPIService.rejectChange(documentRef, elementId, elementTagName, trackChangeActionType);
+            DocumentViewResponse response = this.annexAPIService.rejectChange(documentRef, elementId, elementTagName,
+                    trackChangeActionType);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while rejecting change - " + e.getMessage());
@@ -575,7 +621,8 @@ public class AnnexController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred while toggling Track change enabled- " + e);
-            return new ResponseEntity<>("Unexpected error occurred while toggling Track change enabled", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while toggling Track change enabled",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -24,10 +24,10 @@ export class LoadingService {
   }
 
   setTaskOngoing(taskName: string, key: string) {
-    this.taskBS.next({taskName: taskName, key: key, ongoing: true});
+    this.taskBS.next({taskName, key, ongoing: true});
   }
 
   setTaskOver(taskName: string, key: string) {
-    this.taskBS.next({taskName: taskName, key: key, ongoing: false});
+    this.taskBS.next({taskName, key, ongoing: false});
   }
 }

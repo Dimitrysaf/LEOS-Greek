@@ -16,10 +16,11 @@ import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
+import { TrackChangesActionsService } from '@/features/akn-document/services/track-changes-actions.service';
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
-import {TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
+
 import { TableOfContentService } from '../../services/table-of-content.service';
 
 @Component({
@@ -28,9 +29,7 @@ import { TableOfContentService } from '../../services/table-of-content.service';
   styleUrls: ['./document.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocumentComponent
-  implements OnInit, AfterViewInit, OnDestroy
-{
+export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() containerId: string;
   @Input() containerClass: NgClass['ngClass'] = '';
   @Input() documentType: string;
@@ -48,7 +47,7 @@ export class DocumentComponent
     private documentService: DocumentService,
     private coEditionWSService: CoEditionServiceWS,
     private translate: TranslateService,
-    private trackChangesActionsService:TrackChangesActionsService,
+    private trackChangesActionsService: TrackChangesActionsService,
     private tableOfContentService: TableOfContentService,
   ) {}
 
@@ -74,53 +73,56 @@ export class DocumentComponent
       });
 
     this.documentService.updateElementContent$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((data) => {
-      const ckeditorOpen =
-        this.document.querySelectorAll('.cke_editable').length > 0;
-      if (!ckeditorOpen) {
-        this.updateElementContent(data);
-      }
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        const ckeditorOpen =
+          this.document.querySelectorAll('.cke_editable').length > 0;
+        if (!ckeditorOpen) {
+          this.updateElementContent(data);
+        }
+      });
 
     this.documentService.getElementContent$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((data) => {
-      this.documentService.getElementContentResponse$ = new BehaviorSubject<{
-        elementId: string;
-        elementType: string;
-        elementFragment: string;
-      }>(this.getElementContent(data)).asObservable();
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((data) => {
+        this.documentService.getElementContentResponse$ = new BehaviorSubject<{
+          elementId: string;
+          elementType: string;
+          elementFragment: string;
+        }>(this.getElementContent(data)).asObservable();
+      });
 
     this.documentService.reloadTrigger$
       .pipe(takeUntil(this.destroy$))
       .subscribe((trigger) => {
         trigger !== 0 && this.loadDocument(this.xml);
       });
-    
+
     this.coEditionWSService.shouldReloadAfterUpdate
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((coEditionUpdate) => {
-      if (coEditionUpdate) {
-        if(coEditionUpdate.updatedElements && coEditionUpdate.updatedElements.length > 0) {
-          coEditionUpdate.updatedElements.forEach(element => {
-            if(element.elementFragment) {
-              this.updateElementContent({
-                elementId: element.elementId,
-                elementType: element.elementTagName,
-                elementFragment: element.elementFragment
-              });
-            }
-          });          
-          this.documentService.setDidDocumentLoadAndRender(true);
-          this.documentService.reloadView();
-          this.tableOfContentService.reload();
-        } else {
-          this.documentService.reloadDocument();
-        }        
-      }
-    });
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((coEditionUpdate) => {
+        if (coEditionUpdate) {
+          if (
+            coEditionUpdate.updatedElements &&
+            coEditionUpdate.updatedElements.length > 0
+          ) {
+            coEditionUpdate.updatedElements.forEach((element) => {
+              if (element.elementFragment) {
+                this.updateElementContent({
+                  elementId: element.elementId,
+                  elementType: element.elementTagName,
+                  elementFragment: element.elementFragment,
+                });
+              }
+            });
+            this.documentService.setDidDocumentLoadAndRender(true);
+            this.documentService.reloadView();
+            this.tableOfContentService.reload();
+          } else {
+            this.documentService.reloadDocument();
+          }
+        }
+      });
   }
 
   ngAfterViewInit(): void {
@@ -140,7 +142,11 @@ export class DocumentComponent
   }
 
   initTrackChangesActions() {
-    this.trackChangesActionsService.show.next({trackChanges: this.document.querySelectorAll(this.trackChangesActionsService.getSelector())});
+    this.trackChangesActionsService.show.next({
+      trackChanges: this.document.querySelectorAll(
+        this.trackChangesActionsService.getSelector(),
+      ),
+    });
   }
 
   generateTooltip(coEdits: CoEditionVO[]) {
@@ -194,7 +200,7 @@ export class DocumentComponent
     if (ckeditorsOpen && ckeditorsOpen.length > 0) {
       const ckeditorOpen = ckeditorsOpen.item(0);
       const elementInEditor = ckeditorOpen.querySelector(`#${data.elementId}`);
-      if(!elementInEditor) {
+      if (!elementInEditor) {
         this.updateElementInXml(data);
         this.updateElementInDom(data);
       } else {
@@ -214,8 +220,8 @@ export class DocumentComponent
     if (data && data.elementId && data.elementType && data.elementFragment) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(this.xml, 'text/html');
-      let xmlElement = doc.getElementById(data.elementId);
-      if(xmlElement) {
+      const xmlElement = doc.getElementById(data.elementId);
+      if (xmlElement) {
         xmlElement.outerHTML = this.cleanForView(data.elementFragment);
         this.xml = doc.documentElement.outerHTML;
       }
@@ -228,8 +234,8 @@ export class DocumentComponent
     elementFragment: string;
   }) {
     if (data && data.elementId && data.elementType && data.elementFragment) {
-      let htmlElement = this.document.getElementById(data.elementId);
-      if(htmlElement) {
+      const htmlElement = this.document.getElementById(data.elementId);
+      if (htmlElement) {
         htmlElement.outerHTML = this.cleanForView(data.elementFragment);
       }
     }
@@ -243,7 +249,7 @@ export class DocumentComponent
     if (data && data.elementId && data.elementType) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(this.xml, 'text/html');
-      let elt = doc.getElementById(data.elementId);
+      const elt = doc.getElementById(data.elementId);
       return {
         elementId: data.elementId,
         elementType: data.elementType,

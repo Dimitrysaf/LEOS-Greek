@@ -24,7 +24,7 @@ import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -64,7 +64,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(memorandumDocument);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum document - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting Memorandum document", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting Memorandum document",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -79,7 +80,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting Memorandum toc items - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting Memorandum toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting Memorandum toc items",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -92,7 +94,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum toc items - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error memorandum while getting memorandum toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error memorandum while getting memorandum toc items",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -106,12 +109,14 @@ public class MemorandumController {
                                                         @RequestParam(required = false) boolean isSplit,
                                                         @RequestBody String elementContent) {
         try {
-            RefreshElementResponse updatedElement = this.memorandumApiService.saveElement(documentRef, elementName, elementContent, elementId, isSplit);
+            SaveElementResponse updatedElement = this.memorandumApiService.saveElement(documentRef, elementId,
+                    elementName, elementContent);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occured while getting memorandum element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occured while getting memorandum element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -122,11 +127,13 @@ public class MemorandumController {
                                                           @PathVariable("elementName") String elementName,
                                                           @PathVariable("elementId") String elementId) {
         try {
-            DocumentViewResponse memorandum = this.memorandumApiService.deleteBlock(documentRef, elementName, elementId);
+            DocumentViewResponse memorandum = this.memorandumApiService.deleteBlock(documentRef, elementName,
+                    elementId);
             return ResponseEntity.ok().body(memorandum);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpcted error occured while getting memorandum element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpcted error occured while getting memorandum element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
@@ -140,11 +147,13 @@ public class MemorandumController {
                                                           @PathVariable("elementId") String elementId,
                                                           @RequestBody InsertElementRequest request) {
         try {
-            DocumentViewResponse memorandum = this.memorandumApiService.insertElement(documentRef, elementName, elementId, request.getPosition());
+            DocumentViewResponse memorandum = this.memorandumApiService.insertElement(documentRef, elementName,
+                    elementId, request.getPosition());
             return ResponseEntity.ok().body(memorandum);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpcted error occured while getting memorandum element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpcted error occured while getting memorandum element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -156,24 +165,29 @@ public class MemorandumController {
                                                          @PathVariable("elementId") String elementId,
                                                          @RequestBody String elementContent) {
         try {
-            DocumentViewResponse memorandum = this.memorandumApiService.mergeElement(documentRef, elementContent, elementTag, elementId);
+            DocumentViewResponse memorandum = this.memorandumApiService.mergeElement(documentRef, elementContent,
+                    elementTag, elementId);
             return ResponseEntity.ok().body(memorandum);
         } catch (Exception e) {
             LOG.error("Error occurred while getting trying to merge on memorandum - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while merging elements ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while merging elements ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
+                                                   @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> memorandumes = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex, pageSize);
+            List<VersionVO> memorandumes = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex,
+                    pageSize);
             return ResponseEntity.ok().body(memorandumes);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -186,7 +200,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -197,11 +212,13 @@ public class MemorandumController {
                                                         @RequestBody SaveIntermediateVersionRequest saveEvent
     ) {
         try {
-            List<VersionVO> versions = this.memorandumApiService.saveDocument(documentRef, saveEvent.getCheckinComment(), saveEvent.getVersionType());
+            List<VersionVO> versions = this.memorandumApiService.saveDocument(documentRef,
+                    saveEvent.getCheckinComment(), saveEvent.getVersionType());
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while saving memorandum version - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while saving memorandum version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while saving memorandum version ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -212,39 +229,46 @@ public class MemorandumController {
                                                         @RequestBody SaveTocRequestEvent saveTocRequestEvent
     ) {
         try {
-            List<TableOfContentItemVO> toc = this.memorandumApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs());
+            List<TableOfContentItemVO> toc = this.memorandumApiService.saveToC(documentRef,
+                    saveTocRequestEvent.getTableOfContentItemVOs());
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while saving toc ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while saving toc ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String authorKey,
+    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
+                                                    @RequestParam String authorKey,
                                                     @RequestParam String type) {
         try {
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex,
-                                                      @RequestParam int pageSize) {
+    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
+                                                       @RequestParam int pageIndex,
+                                                       @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
+                    pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -257,33 +281,40 @@ public class MemorandumController {
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                             @RequestParam String currIntVersion,
+                                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef, currIntVersion, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef,
+                    currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                               @RequestParam String currIntVersion) {
         try {
             int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -296,11 +327,13 @@ public class MemorandumController {
                                                    @RequestParam boolean completeWords,
                                                    @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
-            List<SearchMatchVO> memorandum = this.memorandumApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords, tempUpdatedContentXML);
+            List<SearchMatchVO> memorandum = this.memorandumApiService.searchTextInDocument(documentRef, searchText,
+                    matchCase, completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(memorandum);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum search results - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while fetching search results for memorandum ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while fetching search results for memorandum ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -313,7 +346,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting memorandum version {} , error {}: - ", versionId, e.getMessage());
-            return new ResponseEntity<>("Unexpected error while trying to get memorandum version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to get memorandum version as html ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -327,7 +361,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while comparing old :{} with new {} versions ", oldVersionId, newVersionId);
-            return new ResponseEntity<>("Unexpected error while trying to get memorandum version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to get memorandum version as html ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -341,7 +376,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(memorandum);
         } catch (Exception e) {
             LOG.error("Error occured while getting anex element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to restore version ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -352,11 +388,13 @@ public class MemorandumController {
                                                        @PathVariable("elementId") String elementId,
                                                        @PathVariable("elementTagName") String elementTagName) {
         try {
-            EditElementResponse response = this.memorandumApiService.editElement(documentRef, elementId, elementTagName);
+            EditElementResponse response = this.memorandumApiService.editElement(documentRef, elementId,
+                    elementTagName);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting memorandum element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error while getting memorandum element ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while getting memorandum element ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -369,7 +407,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while getting downloading version", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while getting downloading version",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -382,7 +421,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while  downloading xml version",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -395,7 +435,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while  downloading xml version",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -408,7 +449,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while  downloading xml version",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -421,7 +463,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while saving after replace all - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred while saving after replace all", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred while saving after replace all",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -433,7 +476,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting document config  - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while getting document config ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while getting document config ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -445,7 +489,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(userGuidance);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get user guidance for memorandum " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get user guidance for memorandum", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get user guidance for memorandum",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -461,7 +506,8 @@ public class MemorandumController {
             return new ResponseEntity<>(cleanVersion, headers, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to download clean version for memorandum " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to download clean version for memorandum", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to download clean version for memorandum",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -473,7 +519,8 @@ public class MemorandumController {
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for memorandum " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get clean version for memorandum", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get clean version for memorandum",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

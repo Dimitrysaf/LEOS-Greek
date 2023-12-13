@@ -91,7 +91,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       'page.workspace.proposal-item.ready-status',
     );
 
-
     if(this.status === this.readyToMergeMessage) {
       this.loadContribution(this.hiddenCategories);
     }

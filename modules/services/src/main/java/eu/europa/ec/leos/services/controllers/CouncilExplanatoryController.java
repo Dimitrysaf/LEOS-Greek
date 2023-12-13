@@ -26,7 +26,7 @@ import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
@@ -82,12 +82,14 @@ public class CouncilExplanatoryController {
                                                          @RequestHeader("presenterId") String presenterId,
                                                          @RequestBody String elementContent) {
         try {
-            RefreshElementResponse updatedElement = this.explanatoryApiService.saveElement(documentRef, elementName, elementContent, elementId, isSplit);
+            SaveElementResponse updatedElement = this.explanatoryApiService.saveElement(documentRef, elementId,
+                    elementName, elementContent);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occured while getting explanatory element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occured while getting explanatory element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -98,11 +100,13 @@ public class CouncilExplanatoryController {
                                                            @PathVariable("elementName") String elementName,
                                                            @PathVariable("elementId") String elementId) {
         try {
-            DocumentViewResponse explanatory = this.explanatoryApiService.deleteBlock(documentRef, elementName, elementId);
+            DocumentViewResponse explanatory = this.explanatoryApiService.deleteBlock(documentRef, elementName,
+                    elementId);
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
-            return new ResponseEntity<>("Unexpcted error occured while getting explanatory element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpcted error occured while getting explanatory element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
 
@@ -116,11 +120,13 @@ public class CouncilExplanatoryController {
                                                            @PathVariable("elementId") String elementId,
                                                            @RequestBody InsertElementRequest request) {
         try {
-            DocumentViewResponse explanatory = this.explanatoryApiService.insertElement(documentRef, elementName, elementId, request.getPosition());
+            DocumentViewResponse explanatory = this.explanatoryApiService.insertElement(documentRef, elementName,
+                    elementId, request.getPosition());
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
-            return new ResponseEntity<>("Unexpcted error occured while getting explanatory element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpcted error occured while getting explanatory element",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -132,24 +138,29 @@ public class CouncilExplanatoryController {
                                                           @PathVariable("elementId") String elementId,
                                                           @RequestBody String elementContent) {
         try {
-            DocumentViewResponse explanatory = this.explanatoryApiService.mergeElement(documentRef, elementContent, elementTag, elementId);
+            DocumentViewResponse explanatory = this.explanatoryApiService.mergeElement(documentRef, elementContent,
+                    elementTag, elementId);
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
             LOG.error("Error occurred while getting trying to merge on explanatory - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while merging elements ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while merging elements ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
+                                                   @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex, pageSize);
+            List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef,
+                    pageIndex, pageSize);
             return ResponseEntity.ok().body(recentMinorVersions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -162,7 +173,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting recent changes ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -173,11 +185,13 @@ public class CouncilExplanatoryController {
                                                          @RequestBody SaveIntermediateVersionRequest saveEvent
     ) {
         try {
-            List<VersionVO> versions = this.explanatoryApiService.saveDocument(documentRef, saveEvent.getCheckinComment(), saveEvent.getVersionType());
+            List<VersionVO> versions = this.explanatoryApiService.saveDocument(documentRef,
+                    saveEvent.getCheckinComment(), saveEvent.getVersionType());
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while saving explanatory version - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while saving explanatory version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while saving explanatory version ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -188,39 +202,46 @@ public class CouncilExplanatoryController {
                                           @RequestBody SaveTocRequestEvent saveTocRequestEvent
     ) {
         try {
-            List<TableOfContentItemVO> toc = this.explanatoryApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs());
+            List<TableOfContentItemVO> toc = this.explanatoryApiService.saveToC(documentRef,
+                    saveTocRequestEvent.getTableOfContentItemVOs());
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting saving toc - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while saving toc ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while saving toc ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex,
+    public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
+                                                       @RequestParam int pageIndex,
                                                        @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
+                    pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String authorKey,
+    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
+                                                    @RequestParam String authorKey,
                                                     @RequestParam String type) {
         try {
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -233,33 +254,40 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                             @RequestParam String currIntVersion,
+                                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef, currIntVersion, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef,
+                    currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+    public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                               @RequestParam String currIntVersion) {
         try {
             int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -274,7 +302,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory toc items - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting explanatory toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting explanatory toc items",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -287,7 +316,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory toc items - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting explanatory toc items", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting explanatory toc items",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -301,7 +331,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory document - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting explanatory document", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting explanatory document",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -314,11 +345,13 @@ public class CouncilExplanatoryController {
                                                    @RequestParam boolean completeWords,
                                                    @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
-            List<SearchMatchVO> explanatory = this.explanatoryApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords, tempUpdatedContentXML);
+            List<SearchMatchVO> explanatory = this.explanatoryApiService.searchTextInDocument(documentRef, searchText,
+                    matchCase, completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory search results - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while fetching search results for explanatory ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while fetching search results for explanatory ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -331,7 +364,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory version {} , error {}: - ", versionId, e.getMessage());
-            return new ResponseEntity<>("Unexpected error while trying to get explanatory version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to get explanatory version as html ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -345,7 +379,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while comparing old :{} with new {} versions ", oldVersionId, newVersionId);
-            return new ResponseEntity<>("Unexpected error while trying to get explanatory version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to get explanatory version as html ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -359,7 +394,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(explanatory);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
-            return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to restore version ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -370,11 +406,13 @@ public class CouncilExplanatoryController {
                                                         @PathVariable("elementId") String elementId,
                                                         @PathVariable("elementTagName") String elementTagName) {
         try {
-            EditElementResponse response = this.explanatoryApiService.editElement(documentRef, elementId, elementTagName);
+            EditElementResponse response = this.explanatoryApiService.editElement(documentRef, elementId,
+                    elementTagName);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting explanatory element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error while getting explanatory element ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while getting explanatory element ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -387,7 +425,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while getting downloading version", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while getting downloading version",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -439,7 +478,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while saving after replace all - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred while saving after replace all", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred while saving after replace all",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -451,7 +491,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting document config  - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while getting document config ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while getting document config ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -463,7 +504,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(userGuidance);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get user guidance for council_explanatory " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get user guidance for council_explanatory", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get user guidance for council_explanatory",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -478,8 +520,11 @@ public class CouncilExplanatoryController {
             headers.set("Content-Disposition", "attachment; filename=\"" + jobFileName + "\"");
             return new ResponseEntity<>(cleanVersion, headers, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error occurred  while trying to download clean version for council_explanatory " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to download clean version for council_explanatory", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error(
+                    "Error occurred  while trying to download clean version for council_explanatory " + e.getMessage());
+            return new ResponseEntity<>(
+                    "Error occurred  while trying to download clean version for council_explanatory",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -491,7 +536,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for council_explanatory " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get clean version for explanatory", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get clean version for explanatory",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -504,7 +550,8 @@ public class CouncilExplanatoryController {
             return ResponseEntity.ok().body(tocAncestors);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get toc ancestors for council explanatory " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for council explanatory", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get toc ancestors for council explanatory",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

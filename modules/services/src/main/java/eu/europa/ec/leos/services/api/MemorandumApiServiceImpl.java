@@ -41,7 +41,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -129,7 +129,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     private Provider<StructureContext> structureContext;
 
     private static final Logger LOG = LoggerFactory.getLogger(MemorandumApiServiceImpl.class);
-    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+            .withZone(ZoneId.systemDefault());
 
 
     MemorandumApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context) {
@@ -149,7 +150,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public List<TableOfContentItemVO> getToc(String documentRef, TocMode tocMode) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
+        structureContext1.useDocumentTemplate(
+                memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
         return this.memorandumService.getTableOfContent(memorandum, tocMode);
     }
 
@@ -157,7 +159,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public String getElement(String documentRef, String elementName, String elementId) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
+        structureContext1.useDocumentTemplate(
+                memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
         return this.elementProcessor.getElement(memorandum, elementName, elementId);
     }
 
@@ -167,24 +170,31 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public RefreshElementResponse saveElement(String documentRef, String elementName, String elementFragment, String elementId, boolean isSplit) {
+    public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
+                                           String elementFragment) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
+        structureContext1.useDocumentTemplate(
+                memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
         populateCloneProposalMetadata(proposal);
-        byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementFragment, elementName, elementId, false);
-        memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation." + elementName + ".updated"));
-        return new RefreshElementResponse(elementId, elementName, elementProcessor.getElement(memorandum, elementName, elementId));
+        byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementFragment, elementName, elementId,
+                false);
+        memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR,
+                messageHelper.getMessage("operation." + elementName + ".updated"));
+        return new SaveElementResponse(elementId, elementName,
+                elementProcessor.getElement(memorandum, elementName, elementId));
     }
 
     @Override
-    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
+    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId,
+                                              Position position) {
         throw new UnsupportedOperationException("Insert element isn't supported for memorandum");
     }
 
     @Override
-    public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
+    public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag,
+                                             String elementId) throws Exception {
         throw new UnsupportedOperationException("Merge element isn't supported for memorandum");
     }
 
@@ -192,7 +202,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!").getDocTemplate());
+        structureContext1.useDocumentTemplate(
+                memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!").getDocTemplate());
         return structureContext1.getTocItems();
     }
 
@@ -204,12 +215,15 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) throws MethodNotSupportedException {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc)
+            throws MethodNotSupportedException {
         throw new MethodNotSupportedException("Save toc method not allowed for Memorandum type document");
     }
 
     @Override
-    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception {
+    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase,
+                                                    boolean completeWords, String tempUpdatedContentXML)
+            throws Exception {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         byte[] contentForReplace = getContentForReplaceProcess(tempUpdatedContentXML, memorandum);
         return searchService.searchTextForHighlight(contentForReplace, searchText, matchCase, completeWords);
@@ -218,7 +232,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public DocumentViewResponse showVersion(String versionId) {
         final Memorandum memorandum = memorandumService.findMemorandumVersion(versionId);
-        final String versionContent = documentContentService.getDocumentAsHtml(memorandum, "", securityContext.getPermissions(memorandum));
+        final String versionContent = documentContentService.getDocumentAsHtml(memorandum, "",
+                securityContext.getPermissions(memorandum));
         VersionInfoVO versionInfo = this.documentViewService.getVersionInfo(memorandum);
         return new DocumentViewResponse(null, versionContent, versionInfo, null, null);
     }
@@ -235,7 +250,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Memorandum version = memorandumService.findMemorandumVersion(versionId);
         Memorandum memo = memorandumService.findMemorandumByRef(documentRef);
         byte[] resultXmlContent = getContent(version);
-        Memorandum updatedMemo = memorandumService.updateMemorandum(memo, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+        Memorandum updatedMemo = memorandumService.updateMemorandum(memo, resultXmlContent, VersionType.MINOR,
+                messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
         return this.documentViewService.updateDocumentView(updatedMemo);
     }
 
@@ -244,8 +260,10 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         String jsonAlternatives = "";
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
-        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+        structureContext1.useDocumentTemplate(
+                memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
+        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(
+                securityContext.getUser().getRoles());
         User user = securityContext.getUser();
         boolean isClonedProposal = !memorandum.getClonedFrom().isEmpty();
         try {
@@ -278,7 +296,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
         String proposalId = proposal.getId();
         try {
-            final String jobFileName = "Proposal_" + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".zip";
+            final String jobFileName =
+                    "Proposal_" + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".zip";
             ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Memorandum.class, false, true);
             exportOptions.setExportVersions(new ExportVersions(null, memorandum));
             exportOptions.setWithCoverPage(false);
@@ -286,14 +305,16 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         } catch (Exception e) {
             LOG.error(OCCURRED_WHILE_USING_EXPORT_SERVICE, e);
         }
-        LOG.info("The actual version of CLEANED Memorandum for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        LOG.info("The actual version of CLEANED Memorandum for proposal {}, downloaded in {} milliseconds ({} sec)",
+                proposalId, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         return cleanVersion;
     }
 
     @Override
     public DocumentViewResponse showCleanVersion(String documentRef) {
         final Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        final String versionContent = documentContentService.getCleanDocumentAsHtml(memorandum, "", securityContext.getPermissions(memorandum));
+        final String versionContent = documentContentService.getCleanDocumentAsHtml(memorandum, "",
+                securityContext.getPermissions(memorandum));
         VersionInfoVO versionInfoVO = this.documentViewService.getVersionInfo(memorandum);
         return new DocumentViewResponse(versionContent, versionInfoVO);
     }
@@ -302,8 +323,10 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public byte[] downloadXmlVersionFiles(String documentRef, String versionId) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         final Memorandum chosenDocument = memorandumService.findMemorandumVersion(versionId);
-        final String fileName = chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
-        LOG.info("Downloaded file {}, in {} milliseconds ({} sec)", fileName, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+        final String fileName =
+                chosenDocument.getMetadata().get().getRef() + "_v" + chosenDocument.getVersionLabel() + ".xml";
+        LOG.info("Downloaded file {}, in {} milliseconds ({} sec)", fileName, stopwatch.elapsed(TimeUnit.MILLISECONDS),
+                stopwatch.elapsed(TimeUnit.SECONDS));
         return chosenDocument.getContent().get().getSource().getBytes();
     }
 
@@ -314,7 +337,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), memorandum);
         populateCloneProposalMetadata(memorandum);
 
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
+                event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
@@ -328,7 +352,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
 
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), memorandum);
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
+                event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
@@ -340,7 +365,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(event.getDocumentRef());
-        Memorandum updateMemorandum = memorandumService.updateMemorandum(memorandum, event.getUpdatedContent().getBytes(StandardCharsets.UTF_8),
+        Memorandum updateMemorandum = memorandumService.updateMemorandum(memorandum,
+                event.getUpdatedContent().getBytes(StandardCharsets.UTF_8),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         return this.documentViewService.updateDocumentView(updateMemorandum);
     }
@@ -349,14 +375,18 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         StructureContext context1 = structureContext.get();
-        context1.useDocumentTemplate(memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
+        context1.useDocumentTemplate(
+                memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
         List<TocItem> tocItems = context1.getTocItems();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(memorandum.getMetadata().get().getRef());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(
+                memorandum.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
 
         return new DocumentConfigResponse(
-                documentsMetadata, null, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), context1.getTocRules(),
+                documentsMetadata, null, tocItems, null,
+                StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
+                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(),
+                proposal.getMetadata().getOrNull(), context1.getTocRules(),
                 memorandum.isTrackChangesEnabled(), true, proposal.isClonedProposal()
         );
     }
@@ -365,23 +395,27 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        return templateConfigurationService.getTemplateConfiguration(memorandum.getMetadata().get().getDocTemplate(), "guidance");
+        return templateConfigurationService.getTemplateConfiguration(memorandum.getMetadata().get().getDocTemplate(),
+                "guidance");
     }
 
     @Override
-    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
+                                             TrackChangeActionType trackChangeAction) throws Exception {
         throw new UnsupportedOperationException("Accept change isn't supported for memorandum");
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
+                                             TrackChangeActionType trackChangeAction) throws Exception {
         throw new UnsupportedOperationException("Accept change isn't supported for memorandum");
     }
 
     @Override
     public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), isTrackChangeEnabled);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED),
+                isTrackChangeEnabled);
         String documentId = memorandumService.findMemorandumByRef(documentRef).getId();
         Memorandum memorandum = memorandumService.updateMemorandum(documentRef, documentId, properties, false);
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
@@ -393,11 +427,11 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
             Stopwatch stopwatch = Stopwatch.createStarted();
             final Memorandum currentDocument = memorandumService.findMemorandumByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentRef(currentDocument.getMetadata().get().getRef(), Memorandum.class);
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(
+                    currentDocument.getMetadata().get().getRef(), Memorandum.class);
             context.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
             populateCloneProposalMetadata(proposal);
-
 
             ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, Memorandum.class, false);
             exportOptions.setExportVersions(new ExportVersions(isClonedProposal() ?
@@ -409,7 +443,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
             if (proposalId != null) {
                 createPackageForExport(exportOptions);
             }
-            LOG.info("The actual version of Memorandum {} downloaded in {} milliseconds ({} sec)", currentDocument.getName(),
+            LOG.info("The actual version of Memorandum {} downloaded in {} milliseconds ({} sec)",
+                    currentDocument.getName(),
                     stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error(OCCURRED_WHILE_USING_EXPORT_SERVICE, e);
@@ -431,7 +466,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     protected void populateCloneProposalMetadata(XmlDocument document) {
-        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(this.getContent(document));
+        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
+                this.getContent(document));
         this.cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
     }
 

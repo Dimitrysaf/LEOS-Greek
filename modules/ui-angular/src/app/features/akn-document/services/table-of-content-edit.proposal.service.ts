@@ -6,15 +6,14 @@ import {
   DELETE,
   EC,
   LEOS_TC_DELETE_ACTION,
+  LEOS_TC_INSERT_ACTION, LEOS_TC_MOVE_ACTION,
   LS,
   MOVE_FROM,
   MOVE_TO,
-  SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
-  LEOS_TC_INSERT_ACTION, LEOS_TC_MOVE_ACTION
-} from '@/shared/constants';
+  SOFT_MOVE_PLACEHOLDER_ID_PREFIX} from '@/shared/constants';
+import { HASH_NUM_VALUE } from '@/shared/constants/toc.constant';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
-import { HASH_NUM_VALUE } from '@/shared/constants/toc.constant';
 import {
   containsItemOfOrigin,
   findNodeById,

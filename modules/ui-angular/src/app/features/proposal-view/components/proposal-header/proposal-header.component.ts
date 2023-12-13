@@ -12,15 +12,15 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { DomSanitizer } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { Permission } from '@/shared';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
-import { Router } from '@angular/router';
-import { AppConfigService } from '@/core/services/app-config.service';
-import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-proposal-header',

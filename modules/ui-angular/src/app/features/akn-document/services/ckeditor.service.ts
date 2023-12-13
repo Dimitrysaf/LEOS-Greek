@@ -20,8 +20,11 @@ import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentConfig } from '@/shared/models';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
+import { LeosAppConfig } from '@/shared/models/leos.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
+import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { LoadingService } from '@/shared/services/loading.service';
 
 import { TocItem } from '../models/toc.model';
 import { BlockDocumentEditorService } from './block-document-editor.service';
@@ -29,9 +32,6 @@ import { CheckBoxesConnector } from './check-boxes-connector';
 import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './table-of-content.service';
-import { LeosAppConfig } from '@/shared/models/leos.model';
-import { LoadingService } from '@/shared/services/loading.service';
-import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 

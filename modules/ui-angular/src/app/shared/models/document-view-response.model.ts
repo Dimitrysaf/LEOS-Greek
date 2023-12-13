@@ -22,3 +22,7 @@ export interface FetchElementResponse {
   elementId: string;
   elementTagName: string;
 }
+
+export interface SaveCoverPageElementResponse {
+  updatedTitle: string;
+}

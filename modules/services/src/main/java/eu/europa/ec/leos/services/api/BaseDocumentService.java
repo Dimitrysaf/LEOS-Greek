@@ -24,7 +24,7 @@ import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -56,11 +56,13 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception;
 
-    RefreshElementResponse saveElement(String documentRef, String elementName, String elementFragment, String elementId, boolean isSplit) throws Exception;
+    SaveElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment)
+            throws Exception;
 
     DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position);
 
-    DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception;
+    DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId)
+            throws Exception;
 
     List<TableOfContentItemVO> getToc(String documentRef, TocMode mode);
 
@@ -70,9 +72,11 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType);
 
-    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) throws MethodNotSupportedException;
+    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc)
+            throws MethodNotSupportedException;
 
-    List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception;
+    List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase,
+                                             boolean completeWords, String tempUpdatedContentXML) throws Exception;
 
     DocumentViewResponse showVersion(String versionId);
 
@@ -100,9 +104,11 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     String fetchUserGuidance(String documentRef);
 
-    DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception;
+    DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
+                                      TrackChangeActionType changeType) throws Exception;
 
-    DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception;
+    DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
+                                      TrackChangeActionType changeType) throws Exception;
 
     default Map<String, Attribute> getArticleTypesAttributes(List<TocItem> tocItems) {
         Map<String, Attribute> articleTypesAttributes = new HashMap<>();

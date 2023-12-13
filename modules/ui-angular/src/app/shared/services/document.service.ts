@@ -9,7 +9,8 @@ import {
   combineLatestWith,
   debounceTime,
   distinctUntilChanged,
-  filter, finalize,
+  filter,
+  finalize,
   mergeMap,
   Observable,
   of,
@@ -25,6 +26,7 @@ import {
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
+import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import {
   AnnotateOperationMode,
   Collaborator,
@@ -34,6 +36,7 @@ import {
 } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
+import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
 
 import { apiBaseUrl } from '../../../config';
@@ -45,8 +48,6 @@ import { NodeValidationResponse } from '../models/drop-response.model';
 import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
-import { LoadingService } from "@/shared/services/loading.service";
-import { TableOfContentService } from "@/features/akn-document/services/table-of-content.service";
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -105,7 +106,11 @@ export class DocumentService implements OnDestroy {
   navigationSidebarCollapsed$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
-  refreshConnectors$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
+  refreshConnectors$: Observable<{
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }>;
   refreshView$: Observable<DocumentViewResponse>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
@@ -120,9 +125,17 @@ export class DocumentService implements OnDestroy {
   isClonedProposal$: Observable<boolean>;
   isContributionDeclinedOrProcessed$: Observable<boolean>;
   isEditorOpen$: Observable<boolean>;
-  updateElementContent$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
-  getElementContent$: Observable<{elementId: string, elementType: string}>;
-  getElementContentResponse$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
+  updateElementContent$: Observable<{
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }>;
+  getElementContent$: Observable<{ elementId: string; elementType: string }>;
+  getElementContentResponse$: Observable<{
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -140,6 +153,7 @@ export class DocumentService implements OnDestroy {
     wholeWords: false,
     matchCase: false,
   });
+  titlePageBS = new BehaviorSubject<string | null>(null);
   private documentConfigBS = new BehaviorSubject<DocumentConfig>(null);
   private recentChangesBS = new BehaviorSubject<Version[]>([]);
   private totalNumVersionBS = new BehaviorSubject<number>(0);
@@ -159,7 +173,11 @@ export class DocumentService implements OnDestroy {
   private navigationSidebarCollapsedBS = new BehaviorSubject<boolean>(false);
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
-  private refreshConnectorsBS = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string}>({elementId: null, elementType: null, elementFragment: null});
+  private refreshConnectorsBS = new BehaviorSubject<{
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }>({ elementId: null, elementType: null, elementFragment: null });
   private refreshViewBS = new BehaviorSubject<DocumentViewResponse>(null);
   private documentRefAndCategoryBS =
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
@@ -170,7 +188,9 @@ export class DocumentService implements OnDestroy {
   private contributionViewAndMergeCollapsedBS = new BehaviorSubject<boolean>(
     true,
   );
-  private cleanVersionViewBS = new BehaviorSubject<DocumentViewResponse | null>(null);
+  private cleanVersionViewBS = new BehaviorSubject<DocumentViewResponse | null>(
+    null,
+  );
   /* 1-indexed */
   private annexDocNumber = 0;
   private isClonedProposalBS = new BehaviorSubject<boolean>(false);
@@ -178,8 +198,15 @@ export class DocumentService implements OnDestroy {
     false,
   );
   private isEditorOpenBS = new BehaviorSubject<boolean>(false);
-  private getElementContentBS = new BehaviorSubject<{elementId: string, elementType: string}>({elementId: null, elementType: null});
-  private updateElementContentBS = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string}>({elementId: null, elementType: null, elementFragment: null});
+  private getElementContentBS = new BehaviorSubject<{
+    elementId: string;
+    elementType: string;
+  }>({ elementId: null, elementType: null });
+  private updateElementContentBS = new BehaviorSubject<{
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }>({ elementId: null, elementType: null, elementFragment: null });
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -206,7 +233,7 @@ export class DocumentService implements OnDestroy {
       .pipe(filter(Boolean), distinctUntilChanged());
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
-      tap((res) =>{
+      tap((res) => {
         res.category !== 'coverpage' && this.getContributions();
         this.tocService.reload();
         this.getRecentChanges(res.category, res.ref, 0, 1);
@@ -223,10 +250,14 @@ export class DocumentService implements OnDestroy {
     this.contributionModeEnabled$ =
       this.contributionModeEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
-    this.documentConfig$ = this.documentConfigBS.asObservable().pipe(filter(Boolean));
+    this.documentConfig$ = this.documentConfigBS
+      .asObservable()
+      .pipe(filter(Boolean));
     this.recentChanges$ = this.recentChangesBS.asObservable();
     this.totalNumVersion$ = this.totalNumVersionBS.asObservable();
-    this.versionLatest$ = this.versionLatestBS.asObservable().pipe(filter(Boolean));
+    this.versionLatest$ = this.versionLatestBS
+      .asObservable()
+      .pipe(filter(Boolean));
     this.versionId$ = this.versionIdBS.asObservable();
     this.versionCompareIds$ = this.versionCompareIdsBS.asObservable();
     this.versionFilter$ = this.versionFilterBS.asObservable();
@@ -323,7 +354,12 @@ export class DocumentService implements OnDestroy {
     this.versionSearchResults$ = this.versionSearchParams$.pipe(
       filter(Boolean),
       switchMap((searchParams) =>
-        this.searchVersion(this.documentType, this.documentRef, searchParams.type, searchParams.author),
+        this.searchVersion(
+          this.documentType,
+          this.documentRef,
+          searchParams.type,
+          searchParams.author,
+        ),
       ),
       shareReplay(1),
     );
@@ -388,21 +424,24 @@ export class DocumentService implements OnDestroy {
     const documentType = this.documentType;
     const documentRef = this.documentRef;
 
-    this.http.get<DocumentViewResponse>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/clean-version`,
-    ).subscribe((resp) => this.cleanVersionViewBS.next(resp));
+    this.http
+      .get<DocumentViewResponse>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/clean-version`,
+      )
+      .subscribe((resp) => this.cleanVersionViewBS.next(resp));
   }
-
 
   async toggleTrackChangesEnabled(trackChangedEnabled) {
     const documentRef = this.documentRef;
-    const documentType = this.documentType
-    return this.http.post(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/toggle-trackchange-enabled`,
-      {
-        trackChangedEnabled,
-      }
-    ).subscribe((resp) => resp);
+    const documentType = this.documentType;
+    return this.http
+      .post(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/toggle-trackchange-enabled`,
+        {
+          trackChangedEnabled,
+        },
+      )
+      .subscribe((resp) => resp);
   }
 
   async downloadEConsilium(options: DownloadEConsiliumOptions) {
@@ -442,31 +481,47 @@ export class DocumentService implements OnDestroy {
 
   getDocumentByRef(ref: string, category: string) {
     category = category === 'coverpage' ? 'coverPage' : category;
-    this.loadingService.setTaskOngoing("refresh", ref);
+    this.loadingService.setTaskOngoing('refresh', ref);
     return this.http.get<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${category}/${ref}`,
     );
   }
 
   getIntermediateVersions(version: Version, pageIndex, pageSize) {
-    return this.getIntermediateDocumentVersionsData(this.documentType, this.documentRef, version, pageIndex, pageSize);
-  }
-
-  countIntermediateVersions(version: Version) {
-    return this.countIntermediateDocumentVersionsData(this.documentType, this.documentRef, version);
-  }
-
-  getRecentChanges(documentType, documentRef, pageIndex, pageSize) {
-    this.getDocumentRecentChangesData(documentType, documentRef, pageIndex, pageSize).subscribe(
-      versions => {
-        this.recentChangesBS.next(versions)
-        this.versionLatestBS.next(versions[0])
-      }
+    return this.getIntermediateDocumentVersionsData(
+      this.documentType,
+      this.documentRef,
+      version,
+      pageIndex,
+      pageSize,
     );
   }
 
+  countIntermediateVersions(version: Version) {
+    return this.countIntermediateDocumentVersionsData(
+      this.documentType,
+      this.documentRef,
+      version,
+    );
+  }
+
+  getRecentChanges(documentType, documentRef, pageIndex, pageSize) {
+    this.getDocumentRecentChangesData(
+      documentType,
+      documentRef,
+      pageIndex,
+      pageSize,
+    ).subscribe((versions) => {
+      this.recentChangesBS.next(versions);
+      this.versionLatestBS.next(versions[0]);
+    });
+  }
+
   countRecentChanges() {
-    return this.countDocumentRecentChangesData(this.documentType, this.documentRef);
+    return this.countDocumentRecentChangesData(
+      this.documentType,
+      this.documentRef,
+    );
   }
 
   compareDocumentsDownloadDocuwrite(
@@ -578,7 +633,11 @@ export class DocumentService implements OnDestroy {
     this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
   }
 
-  reloadConnectors(data: {elementId: string, elementType: string, elementFragment: string}) {
+  reloadConnectors(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
     this.refreshConnectorsBS.next(data);
   }
 
@@ -793,15 +852,19 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  updateElementContent(data: {elementId: string, elementType: string, elementFragment: string}) {
+  updateElementContent(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
     this.updateElementContentBS.next(data);
   }
 
-  getElementContent(
-    elementId: string,
-    elementTagName: string,
-  ) {
-    this.getElementContentBS.next({elementId: elementId, elementType: elementTagName});
+  getElementContent(elementId: string, elementTagName: string) {
+    this.getElementContentBS.next({
+      elementId,
+      elementType: elementTagName,
+    });
     return this.getElementContentResponse$;
   }
 
@@ -843,7 +906,7 @@ export class DocumentService implements OnDestroy {
 
   setVersionSearchParams(values: Partial<VersionSearchParams>) {
     this.versionSearchParamsBS.pipe(take(1)).subscribe((oldVal) => {
-      this.versionSearchParamsBS.next({...oldVal, ...values});
+      this.versionSearchParamsBS.next({ ...oldVal, ...values });
     });
   }
 
@@ -911,9 +974,9 @@ export class DocumentService implements OnDestroy {
     this.http
       .get(
         `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/restore/${versionNumber}`,
-      ).pipe(
-        finalize(() => this.loadingService.setLoading(false))
-    ).subscribe((r) => {
+      )
+      .pipe(finalize(() => this.loadingService.setLoading(false)))
+      .subscribe((r) => {
         this.setDocumentRefAndCategory(this.documentRef, this.documentType);
       });
   }
@@ -984,46 +1047,71 @@ export class DocumentService implements OnDestroy {
 
   countDocumentVersionsData(documentType: string, documentRef: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<number>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/count-version-data`,
-    ).subscribe(
-      count => this.totalNumVersionBS.next(count)
-    );
+    return this.http
+      .get<number>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/count-version-data`,
+      )
+      .subscribe((count) => this.totalNumVersionBS.next(count));
   }
 
   updateVersionsData() {
-    let self = this;
+    const self = this;
     this.versions$ = this.documentRefAndCategory$.pipe(
       filter(Boolean),
       switchMap((option) =>
-        this.getDocumentVersionsData(option.category, option.ref, 0, self.pageSize),
+        this.getDocumentVersionsData(
+          option.category,
+          option.ref,
+          0,
+          self.pageSize,
+        ),
       ),
       shareReplay(1),
     );
   }
 
-  getDocumentVersionsData(documentType: string, documentRef: string, pageIndex: number, pageSize: number) {
+  getDocumentVersionsData(
+    documentType: string,
+    documentRef: string,
+    pageIndex: number,
+    pageSize: number,
+  ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<Version[]>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/version-data?pageIndex=${pageIndex}&pageSize=${pageSize}`,
     );
   }
 
-  getIntermediateDocumentVersionsData(documentType: string, documentRef: string, version: Version, pageIndex, pageSize) {
+  getIntermediateDocumentVersionsData(
+    documentType: string,
+    documentRef: string,
+    version: Version,
+    pageIndex,
+    pageSize,
+  ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<Version[]>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/intermediate-version-data?currIntVersion=${version.cmisVersionNumber}&pageIndex=${pageIndex}&pageSize=${pageSize}`,
     );
   }
 
-  countIntermediateDocumentVersionsData(documentType: string, documentRef: string, version: Version) {
+  countIntermediateDocumentVersionsData(
+    documentType: string,
+    documentRef: string,
+    version: Version,
+  ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http.get<number>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/count-intermediate-version-data?currIntVersion=${version.cmisVersionNumber}`,
     );
   }
 
-  getDocumentRecentChangesData(documentType: string, documentRef: string, pageIndex, pageSize) {
+  getDocumentRecentChangesData(
+    documentType: string,
+    documentRef: string,
+    pageIndex,
+    pageSize,
+  ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     return this.http
       .get<Version[]>(
@@ -1041,19 +1129,28 @@ export class DocumentService implements OnDestroy {
       .pipe(take(1));
   }
 
-  searchVersion(documentType: string, documentRef: string, versionType: string, authorKey: string) {
+  searchVersion(
+    documentType: string,
+    documentRef: string,
+    versionType: string,
+    authorKey: string,
+  ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    let vType = versionType == "milestone" ? "MAJOR" : versionType == "save" ? "INTERMEDIATE" : "";
+    const vType =
+      versionType == 'milestone'
+        ? 'MAJOR'
+        : versionType == 'save'
+        ? 'INTERMEDIATE'
+        : '';
     if (this.versionSearchOpenBS.getValue()) {
       this.loadingService.setLoading(true);
       return this.http
         .get<Version[]>(
           `${apiBaseUrl}/secured/${documentType}/${documentRef}/search-versions?authorKey=${authorKey}&type=${vType}`,
-        ).pipe(
-          finalize(() => this.loadingService.setLoading(false))
-        );
+        )
+        .pipe(finalize(() => this.loadingService.setLoading(false)));
     } else {
-      return new Observable<Version[]>(observer => {
+      return new Observable<Version[]>((observer) => {
         observer.next([]);
         observer.complete();
       });
@@ -1243,6 +1340,10 @@ export class DocumentService implements OnDestroy {
     this.processedBS.next([process, contribution]);
   }
 
+  updateTitle(newTitle: string): void {
+    this.titlePageBS.next(newTitle);
+  }
+
   viewAndMergeContribution(contribution: ContributionVO) {
     this.contributionModeEnabledBS.next(true);
     this.handleContributionSelectCount(false, true);
@@ -1393,7 +1494,7 @@ export class DocumentService implements OnDestroy {
     let nextSibling = foundElement?.nextElementSibling;
     if (nextSibling && nextSibling.tagName.toLowerCase() === elementType) {
       return nextSibling.getAttribute('id');
-    } else if (nextSibling && nextSibling.tagName.toLowerCase() === "list") {
+    } else if (nextSibling && nextSibling.tagName.toLowerCase() === 'list') {
       nextSibling = nextSibling.firstElementChild;
       return nextSibling?.getAttribute('id');
     } else if (nextSibling) {
@@ -1419,11 +1520,11 @@ export class DocumentService implements OnDestroy {
 
   private getDocumentConfig(documentRef: string, documentType: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<DocumentConfig>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
-    ).subscribe(
-      config => this.documentConfigBS.next(config)
-    );
+    return this.http
+      .get<DocumentConfig>(
+        `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
+      )
+      .subscribe((config) => this.documentConfigBS.next(config));
   }
 
   private doSearch(parameters: DocumentSearchParams) {
