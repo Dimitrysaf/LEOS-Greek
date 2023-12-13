@@ -29,8 +29,9 @@ import { CheckBoxesConnector } from './check-boxes-connector';
 import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './table-of-content.service';
-import {LeosAppConfig} from "@/shared/models/leos.model";
-import {LoadingService} from "@/shared/services/loading.service";
+import { LeosAppConfig } from '@/shared/models/leos.model';
+import { LoadingService } from '@/shared/services/loading.service';
+import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -63,6 +64,7 @@ export class CKEditorService implements OnDestroy {
     private translateService: TranslateService,
     private tableOfContentService: TableOfContentService,
     private loadingService: LoadingService,
+    private environmentService: EnvironmentService,
     @Inject(DOCUMENT) private domDocument: Document,
     private blockDocumentEditorService: BlockDocumentEditorService,
   ) {}
@@ -141,13 +143,16 @@ export class CKEditorService implements OnDestroy {
   }
 
   changeSeeTrackChangesState() {
-    this.trackChangesConnector.getState().isTrackChangesShowed = !this.trackChangesConnector.getState().isTrackChangesShowed;
-    this.leosEditorConnector.getState().isTrackChangesShowed = !this.leosEditorConnector.getState().isTrackChangesShowed;
+    this.trackChangesConnector.getState().isTrackChangesShowed =
+      !this.trackChangesConnector.getState().isTrackChangesShowed;
+    this.leosEditorConnector.getState().isTrackChangesShowed =
+      !this.leosEditorConnector.getState().isTrackChangesShowed;
     this.trackChangesConnector.$triggerStateChange();
   }
 
   changeEnableTrackChangesState(isTrackChangesShowed) {
-    this.leosEditorConnector.getState().isTrackChangesEnabled = isTrackChangesShowed;
+    this.leosEditorConnector.getState().isTrackChangesEnabled =
+      isTrackChangesShowed;
   }
 
   getSeeTrackChangesState() {
@@ -205,6 +210,7 @@ export class CKEditorService implements OnDestroy {
       this.translateService,
       this.tableOfContentService,
       this.loadingService,
+      this.environmentService,
       (state: EditorOpenState) => {
         this.openStateSubj.next(state);
       },

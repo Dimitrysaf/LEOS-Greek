@@ -106,10 +106,11 @@ public class CoverPageController {
     public ResponseEntity<Object> saveCoverPageElement(@PathVariable("documentRef") String documentRef,
                                                        @PathVariable("elementName") String elementName,
                                                        @PathVariable("elementId") String elementId,
+                                                       @RequestParam(required = false) boolean isSplit,
                                                        @RequestHeader("presenterId") String presenterId,
                                                        @RequestBody String elementContent) {
         try {
-            RefreshElementResponse updatedElement = this.coverPageApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            RefreshElementResponse updatedElement = this.coverPageApiService.saveElement(documentRef, elementName, elementContent, elementId, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
@@ -241,7 +242,7 @@ public class CoverPageController {
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getMajorVersionsData(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex,
-                                                      @RequestParam int pageSize) {
+                                                       @RequestParam int pageSize) {
         try {
             List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);

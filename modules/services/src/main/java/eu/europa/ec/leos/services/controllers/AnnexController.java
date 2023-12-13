@@ -77,10 +77,11 @@ public class AnnexController {
     public ResponseEntity<Object> saveAnnexElement(@PathVariable("documentRef") String documentRef,
                                                    @PathVariable("elementName") String elementName,
                                                    @PathVariable("elementId") String elementId,
+                                                   @RequestParam(required = false) boolean isSplit,
                                                    @RequestHeader("presenterId") String presenterId,
                                                    @RequestBody String elementContent) {
         try {
-            RefreshElementResponse newElement = this.annexAPIService.saveElement(documentRef, elementId, elementName, elementContent);
+            RefreshElementResponse newElement = this.annexAPIService.saveElement(documentRef, elementName, elementContent, elementId, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, newElement);
             return ResponseEntity.ok().body(newElement);
         } catch (Exception e) {

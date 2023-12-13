@@ -165,7 +165,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) {
+    public RefreshElementResponse saveElement(String documentRef, String elementName, String elementFragment, String elementId, boolean isSplit) {
         String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
 
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
@@ -174,14 +174,12 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(proposalContent, Arrays.asList("docPurpose"), false);
         // Check if new doc purpose is not empty
         if (docPurpose != null && docPurpose.trim().replaceAll("(^\\h*)|(\\h*$)", "").length() > 0) {
-
             byte[] newXmlContent = !docPurposeElements.isEmpty() ? xmlContentProcessor.replaceElementById(proposalContent, elementFragment,
                     docPurposeElements.get(0).getElementId()) : null;
 
             if (newXmlContent == null) {
                 return null;
             }
-
             proposal = proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
             String newContent = elementProcessor.getElement(proposal, elementName, elementId);
             return new RefreshElementResponse(elementId, elementName, newContent);

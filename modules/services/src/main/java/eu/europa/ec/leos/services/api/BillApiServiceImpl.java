@@ -17,21 +17,19 @@ package eu.europa.ec.leos.services.api;
 import com.google.common.base.Stopwatch;
 import com.google.common.eventbus.Subscribe;
 import com.sun.istack.NotNull;
-import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.*;
-import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
-import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.model.action.ActionType;
-import eu.europa.ec.leos.model.action.CheckinCommentVO;
-import eu.europa.ec.leos.model.action.CheckinElement;
-import eu.europa.ec.leos.model.action.TrackChangeActionType;
-import eu.europa.ec.leos.model.action.VersionVO;
+import eu.europa.ec.leos.model.action.*;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
@@ -55,12 +53,7 @@ import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.exception.ImportElementException;
-import eu.europa.ec.leos.services.export.ExportDW;
-import eu.europa.ec.leos.services.export.ExportLW;
-import eu.europa.ec.leos.services.export.ExportOptions;
-import eu.europa.ec.leos.services.export.ExportService;
-import eu.europa.ec.leos.services.export.ExportVersions;
-import eu.europa.ec.leos.services.export.FileHelper;
+import eu.europa.ec.leos.services.export.*;
 import eu.europa.ec.leos.services.importoj.ImportService;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.processor.BillProcessor;
@@ -80,11 +73,8 @@ import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
-import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.toc.*;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -94,6 +84,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.rmi.UnexpectedException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -101,6 +92,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 public class BillApiServiceImpl implements BillApiService {
 
@@ -391,7 +384,7 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception {
         String op = "rejected";
         String msg = "operation.element.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
 
@@ -530,20 +523,46 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception {
+    public RefreshElementResponse saveElement(String documentRef, String elementName, String elementFragment, String elementId, boolean isSplit) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
+
+        if (bill == null) {
+            throw new UnexpectedException("Bill not found");
+        }
+
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(bill);
         byte[] newXmlContent = billProcessor.updateElement(bill, elementName, elementId, elementFragment);
+        if (newXmlContent == null) {
+            throw new UnexpectedException("Error updating bill");
+        }
+
+        boolean splittedContentIsEmpty = false;
+        Element elementToEditAfterClose = null;
 
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
         final String elementLabel = generateLabel(elementId, bill);
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description, new CheckinElement(ActionType.UPDATED, elementId, elementName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-        Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
-        String newContent = elementProcessor.getElement(updatedBill, elementName, elementId);
-        return new RefreshElementResponse(elementId, elementName, newContent);
+
+        Pair<byte[], Element> splittedContent = null;
+        if (isSplit && checkIfCloseElementEditor(elementName, elementFragment)) {
+            splittedContent = billProcessor.getSplittedElement(newXmlContent, elementFragment, elementName, elementId);
+            if (splittedContent != null) {
+                elementToEditAfterClose = splittedContent.right();
+                if (splittedContent.left() != null) {
+                    newXmlContent = splittedContent.left();
+                }
+            }
+        }
+        bill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
+        String elementContent = elementProcessor.getElement(bill, elementName, elementId);
+        if (splittedContent == null) {
+            splittedContentIsEmpty = true;
+        }
+
+        return new RefreshElementResponse(elementId, elementName, elementContent, elementToEditAfterClose, splittedContentIsEmpty);
     }
 
     @Override

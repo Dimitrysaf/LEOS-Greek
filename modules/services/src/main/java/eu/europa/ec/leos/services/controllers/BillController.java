@@ -78,16 +78,16 @@ public class BillController {
                                                   @PathVariable("elementName") String elementName,
                                                   @PathVariable("elementId") String elementId,
                                                   @RequestHeader("presenterId") String presenterId,
+                                                  @RequestParam(required = false) boolean isSplit,
                                                   @RequestBody String elementContent) {
         try {
-            RefreshElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            RefreshElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementName, elementContent, elementId, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occured while getting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
 
     @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -377,8 +377,8 @@ public class BillController {
     @GetMapping(value = "/{documentRef}/accept-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> acceptChange(@PathVariable("documentRef") String documentRef,
-                                                 @PathVariable("elementId") String elementId,
-                                                 @PathVariable("elementTagName") String elementTagName,
+                                               @PathVariable("elementId") String elementId,
+                                               @PathVariable("elementTagName") String elementTagName,
                                                @RequestParam("trackChangeAction") String trackChangeAction) {
         try {
             TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);

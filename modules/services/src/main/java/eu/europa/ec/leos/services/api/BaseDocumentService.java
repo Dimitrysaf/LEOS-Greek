@@ -36,7 +36,15 @@ import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import eu.europa.ec.leos.vo.toc.TocItemType;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.MethodNotSupportedException;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -48,7 +56,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception;
 
-    RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment) throws Exception;
+    RefreshElementResponse saveElement(String documentRef, String elementName, String elementFragment, String elementId, boolean isSplit) throws Exception;
 
     DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position);
 
@@ -124,4 +132,18 @@ public interface BaseDocumentService<T extends XmlDocument> {
     }
 
     boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef);
+    default  boolean checkIfCloseElementEditor(String elementTagName, String elementContent) {
+        switch (elementTagName) {
+            case SUBPARAGRAPH:
+            case SUBPOINT:
+                return elementContent.contains("<" + elementTagName + ">") || StringUtils.countMatches(elementContent, "<" + elementTagName) > 1;
+            case PARAGRAPH:
+                return elementContent.contains("<paragraph") || elementContent.contains("<subparagraph");
+            case POINT:
+            case INDENT:
+                return elementContent.contains("<subparagraph>");
+            default:
+                return false;
+        }
+    }
 }

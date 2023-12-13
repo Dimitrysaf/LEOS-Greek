@@ -180,3 +180,11 @@ export interface EditElementResponse {
   alternatives: string;
   clonedProposal: boolean;
 }
+
+export interface SaveElementAction {
+  elementId: string;
+  elementType: string;
+  elementFragment: string;
+  isSplit: boolean;
+  isSaveAndClose: boolean;
+}

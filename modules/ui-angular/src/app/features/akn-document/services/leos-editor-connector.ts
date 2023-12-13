@@ -1,25 +1,30 @@
 import { HttpClient } from '@angular/common/http';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {distinctUntilChanged, filter, finalize, take, tap, withLatestFrom} from 'rxjs';
+import { distinctUntilChanged, filter, finalize, take } from 'rxjs';
 
-import { EditElementResponse } from '@/features/akn-document/models/ckeditor';
+import {
+  EditElementResponse,
+  SaveElementAction,
+} from '@/features/akn-document/models/ckeditor';
 import type { EditorOpenState } from '@/features/akn-document/services/ckeditor.service';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
-import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import {
+  CoEditionDetectedDialogComponent
+} from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import {
   DocumentViewResponse,
   RefreshElementResponse,
 } from '@/shared/models/document-view-response.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
-import { countOccurrencesOfTextInString } from '@/shared/utils/string.utils';
 import { isNodeLastElement, getInstanceType } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
-import {LoadingService} from "@/shared/services/loading.service";
+import { LoadingService } from '@/shared/services/loading.service';
+import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
@@ -65,9 +70,12 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   receiveRefLabel?: (references: any, documentRef: any) => void;
   closeElement?: () => void;
 
+  public isCNInstance;
+
   private elementUnderEdit = null;
   private isElementSaved = false;
   private isSaveAndClose = false;
+  private elementToEditAfterClose: Element;
 
   constructor(
     state: LeosEditorConnectorInitialState,
@@ -79,6 +87,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     private translateService: TranslateService,
     private tableOfContentService: TableOfContentService,
     private loadingService: LoadingService,
+    private environmentService: EnvironmentService,
     private setEditorOpenState: (state: EditorOpenState) => void,
   ) {
     super(
@@ -90,6 +99,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       },
       options.rootElement,
     );
+    this.isCNInstance = this.environmentService.getInstanceName();
   }
 
   //leosEditorExtension > requestToc
@@ -103,6 +113,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementId: string;
     elementType: string;
   }) {
+    this.elementToEditAfterClose = null;
     const promise = new Promise<void>((resolve, reject) => {
       this.documentService.didDocumentLoadAndRender$
         .pipe(filter((isLoaded) => isLoaded === true))
@@ -115,7 +126,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       if (data.elementType === 'crossheading') {
         data.elementType = 'crossHeading';
       }
-      this.handleEdit(data);
+
+      setTimeout(() => {
+        this.handleEdit(data);
+      }, 1000);
     });
   }
 
@@ -152,19 +166,21 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
               this.getState()['permissions'] =
                 this.documentService.getUserPermissions();
               this.setEditorOpenState('OPEN');
-              if (!isCNInstance) {
-                this.documentService.getElementContent(data.elementId, data.elementType).subscribe((data) => {
-                  this.editElement(
-                    response.elementId,
-                    response.elementTagName,
-                    data.elementFragment,
-                    documentType.toUpperCase(),
-                    getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
-                    response.alternatives,
-                    JSON.stringify(response.levelItem),
-                    response.clonedProposal,
-                  );
-                });
+              if (!this.isCNInstance) {
+                this.documentService
+                  .getElementContent(data.elementId, data.elementType)
+                  .subscribe((data) => {
+                    this.editElement(
+                      response.elementId,
+                      response.elementTagName,
+                      data.elementFragment,
+                      documentType.toUpperCase(),
+                      getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
+                      response.alternatives,
+                      JSON.stringify(response.levelItem),
+                      response.clonedProposal,
+                    );
+                  });
               } else {
                 this.editElement(
                   response.elementId,
@@ -201,19 +217,21 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           this.getState()['permissions'] =
             this.documentService.getUserPermissions();
           this.setEditorOpenState('OPEN');
-          if (!isCNInstance) {
-            this.documentService.getElementContent(data.elementId, data.elementType).subscribe((data) => {
-              this.editElement(
-                response.elementId,
-                response.elementTagName,
-                data.elementFragment,
-                documentType.toUpperCase(),
-                getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
-                response.alternatives,
-                JSON.stringify(response.levelItem),
-                response.clonedProposal,
-              );
-            });
+          if (!this.isCNInstance) {
+            this.documentService
+              .getElementContent(data.elementId, data.elementType)
+              .subscribe((data) => {
+                this.editElement(
+                  response.elementId,
+                  response.elementTagName,
+                  data.elementFragment,
+                  documentType.toUpperCase(),
+                  getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
+                  response.alternatives,
+                  JSON.stringify(response.levelItem),
+                  response.clonedProposal,
+                );
+              });
           } else {
             this.editElement(
               response.elementId,
@@ -264,7 +282,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         data.elementType.toLowerCase(),
         data.documentRef,
       )
-      .pipe(take(1)).subscribe((response) => {
+      .pipe(take(1))
+      .subscribe((response) => {
         this.receiveElement(
           response.elementId,
           response.elementTagName,
@@ -276,29 +295,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
 
   // leosEditorExtension > elementEditor
   // checkboxesExtension (FinancialStatement screen)
-  saveElement(elemData: {
-    elementId: string;
-    elementType: string;
-    elementFragment: string;
-    isSplit: boolean;
-    isSaveAndClose: boolean;
-  }) {
+  saveElement(elemData: SaveElementAction) {
     this.isSaveAndClose = elemData.isSaveAndClose;
-    const isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
-    //! this is needed
-    if (
-      countOccurrencesOfTextInString(
-        elemData.elementType,
-        elemData.elementFragment,
-      ) === 4
-    ) {
-      this.isSaveAndClose = true;
-      this.closeElement();
-    }
     this.documentService.setDidDocumentLoadAndRender(false);
-    const documentRef = this.documentService.documentRef;
-    const documentType = this.documentService.documentType;
-    if (!isCNInstance) {
+    if (!this.isCNInstance) {
       this.refreshElement(
         elemData.elementId,
         elemData.elementType,
@@ -308,68 +308,88 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     let milliseconds = new Date().getTime();
     this.loadingService.setTaskOngoing('saving', String(milliseconds));
     this.saveDocumentElement(
-      documentRef,
+      this.documentService.documentRef,
       elemData.elementId,
       elemData.elementType,
       elemData.elementFragment,
       elemData.isSplit,
-      documentType,
+      this.documentService.documentType,
       this.coEditionService.presenterId
     ).subscribe((response) => {
-      this.isElementSaved = true;
-      if (isCNInstance) {
-        this.refreshElement(
-          response.elementId,
-          response.elementTagName,
-          response.elementFragment,
-        );
-        this.coEditionService.sendUpdateDocumentEvent(
-          documentRef,
-          elemData.elementId,
-          elemData.elementType,
-          null
-        );
-      }
-      this.coEditionService.setShouldReloadAfterUpdate();
-      this.loadingService.setTaskOver('saving', String(milliseconds));
-      if (
-        countOccurrencesOfTextInString(
-          elemData.elementType,
-          elemData.elementFragment,
-        ) === 4
-      ) {
-        this.isElementSaved = false;
-        this.openEditorInNewElementAfterSoftEnter(
-          response.elementId,
-          response.elementTagName,
-        );
+      this.handleActionsAfterSave(response, elemData, String(milliseconds));
+      if (!response.splittedContentIsEmpty) {
+        this.closeElement();
       }
     });
+  }
+
+  private handleActionsAfterSave(
+    response: RefreshElementResponse,
+    elemData: SaveElementAction,
+    taskId: string,
+  ) {
+    this.isElementSaved = true;
+    this.elementToEditAfterClose = response.elementToEditAfterClose;
+    if (this.isCNInstance) {
+      this.refreshElement(
+        response.elementId,
+        response.elementTagName,
+        response.elementFragment,
+      );
+      this.coEditionService.sendUpdateDocumentEvent(
+        this.documentService.documentRef,
+        elemData.elementId,
+        elemData.elementType,
+        null,
+      );
+    } else {
+      this.coEditionService.sendUpdateDocumentEvent(
+        this.documentService.documentRef,
+        response.elementId,
+        response.elementTagName,
+        response.elementFragment,
+      );
+    }
+    this.coEditionService.setShouldReloadAfterUpdate();
+    this.documentService.updateElementContent({
+        elementId: response.elementId,
+        elementType: response.elementTagName,
+        elementFragment: response.elementFragment,
+      }
+    );
+    this.loadingService.setTaskOver('saving', taskId);
   }
 
   // leosEditorExtension > elementEditor
   releaseElement(elemData: {
     elementId: string;
     elementType: string;
-    elementFragment: string,
+    elementFragment: string;
   }) {
-    const isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+    this.documentService.reloadConnectors(elemData);
     this.coEditionService.removeElementCoEditInfo(
       this.documentService.documentRef,
       this.elementUnderEdit,
     );
-    if (isCNInstance) {
+    if (this.isCNInstance) {
       if (this.isElementSaved && !this.isSaveAndClose) {
         this.documentService.reloadDocument();
       } else {
         this.documentService.resetDocument();
       }
-    } else {
-      this.documentService.reloadConnectors(elemData);
     }
-    this.isElementSaved = false;
+    if (this.elementToEditAfterClose !== null) {
+      this.editElementAction({
+        action: 'edit',
+        elementId: this.elementToEditAfterClose['elementId'],
+        elementType: this.elementToEditAfterClose['elementTagName'],
+      });
+    } else {
+      this.setEditorOpenState('CLOSE');
+      this.documentService.setIsEditorOpen(false);
+    }
     this.setEditorOpenState('CLOSE');
-    this.documentService.setIsEditorOpen(false);
+    this.isElementSaved = false;
   }
 
   // leosEditorExtension > actionHandler
@@ -379,7 +399,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
   }) {
     const { elementType, elementId } = elementData;
-    const isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
     const isLastElement = isNodeLastElement(
       this.tableOfContentService.getCurrentToc(),
       elementId,
@@ -404,10 +423,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     };
 
     if (
-      (isCNInstance &&
+      (this.isCNInstance &&
         isLastElement &&
         ['recital', 'citation', 'body'].includes(elementType)) ||
-      (!isCNInstance && isLastElement)
+      (!this.isCNInstance && isLastElement)
     ) {
       this.openLastElementDeleteConfirmation(confirmDeletion);
     } else {
@@ -419,7 +438,12 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           'page.editor.element-delete-dialog.body',
         ),
         accept: confirmDeletion,
-        dismiss: () => this.releaseElement({elementId: elementData.elementId, elementType: elementData.elementType, elementFragment: null}),
+        dismiss: () =>
+          this.releaseElement({
+            elementId: elementData.elementId,
+            elementType: elementData.elementType,
+            elementFragment: null,
+          }),
       });
     }
   }
@@ -480,7 +504,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       ),
       acceptLabel: this.translateService.instant('global.actions.continue'),
       accept: onConfirm,
-      dismiss: () => {},
+      dismiss: () => {
+      },
     });
   }
 
@@ -505,7 +530,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   ) {
     const cleanedHtml = this.cleanElementFromCoEditInfo(elementFragment);
     return this.http.put<RefreshElementResponse>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element?isSplit=${isSplit}`,
       cleanedHtml,
       { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'presenterId': presenterId } },
     );
@@ -569,40 +594,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       elementContent,
       { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
     );
-  }
-
-  //open the editor in the new element after soft enter
-  private openEditorInNewElementAfterSoftEnter(
-    prevElemId: string,
-    elemType: string,
-  ) {
-    const promise = new Promise<void>((resolve, reject) => {
-      this.documentService.didDocumentLoadAndRender$
-        .pipe(filter((isLoaded) => isLoaded === true))
-        .subscribe((loaded) => {
-          resolve();
-        });
-    });
-
-    promise.then(() => {
-      let elemId = null;
-      setTimeout(() => {
-        elemId = this.documentService.findNextElementOfTheSameTypeInDocument(
-          prevElemId,
-          elemType,
-        );
-        if (elemId !== null) {
-          if (elemType === 'crossheading') {
-            elemType = 'crossHeading';
-          }
-          this.handleEdit({
-            action: 'edit',
-            elementId: elemId,
-            elementType: elemType,
-          });
-        }
-      }, 4000);
-    });
   }
 }
 
