@@ -15,16 +15,22 @@
 define(function elementEditorModule(require) {
     "use strict";
 
+
+
     // load module dependencies
     var _ = require("lodash");
     var $ = require("jquery");
     var log = require("logger");
     var CKEDITOR = require("promise!ckEditor");
     var UTILS = require("core/leosUtils");
+
+    var dialogDefinition = require("./leosEmptyElementDialog");
     var pluginTools = require("../plugins/pluginTools");
     var leosPluginUtils = require("../plugins/leosPluginUtils");
-    var dialogDefinition = require("./leosEmptyElementDialog");
+
     var ZERO_WIDTH_SPACE = "^\u200B{7}$";
+
+
     var NUM = "num";
 
     function _setupElementEditor(connector) {
@@ -187,6 +193,7 @@ define(function elementEditorModule(require) {
             editor.on("requestRefLabel", _requestRefLabel.bind(undefined, connector));
             editor.on("merge", _mergeElement.bind(undefined, connector, params.elementId, params.elementType));
             editor.on('selectionChange', _removeZeroWidthSpacesOnFocus.bind(undefined, connector, params.elementId));
+            editor.on('canBeSaved', _canBeSaved.bind(undefined, connector, params.elementId));
 
             // load XML fragment in editor
             var options = {
@@ -210,6 +217,51 @@ define(function elementEditorModule(require) {
         } else {
             throw new Error("Unable to initialize the element editor!");
         }
+    }
+
+    function _canBeSaved(connector, elementId, event) {
+        var editor = event.editor;
+        _removeZeroWidthSpaces(elementId);
+        return !_isEmptyElement(elementId, editor);
+    }
+
+    function _removeZeroWidthSpaces(elementId) {
+        $("#" + elementId).find("*").addBack().contents().filter(function () {
+            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
+                return this.textContent.match(ZERO_WIDTH_SPACE);
+            }
+            return false;
+        }).remove();
+        $("#" + elementId).parent().contents().filter(function () {
+            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
+                return this.textContent.match(ZERO_WIDTH_SPACE);
+            }
+            return false;
+        }).remove();
+    }
+
+    function _isEmptyElement(elementId, editor) {
+        if (_isEmptyContentInElement(elementId)) {
+            pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
+            var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
+            dialogCommand.exec();
+            return true;
+        }
+        return false;
+    }
+
+    function _isEmptyContentInElement(elementId) {
+        var bogus = $("#" + elementId).find(leosPluginUtils.BOGUS);
+        var sibling;
+        if (bogus && bogus[0]) {
+            sibling = bogus[0].previousSibling;
+        }
+        var emptyElements = $("#" + elementId + ", p[data-akn-id='" + elementId + "'], h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
+        if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
+            || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
+            return true;
+        }
+        return false;
     }
 
     function _createEditorPlaceholder(rootElement, elementId) {
@@ -285,9 +337,6 @@ define(function elementEditorModule(require) {
     function _destroyEditor(connector, elementId, elementType, event) {
         log.debug("Destroying element editor...");
         var editor = event.editor;
-        if (_isEmptyContentInElement(elementId)) {
-            return;
-        }
         // set read-only to prevent changes
         editor.setReadOnly(true);
         var newContent = editor._.data.replaceAll("<p ", "<aknp ").replaceAll("</p>", "</aknp>").replaceAll(" xml:id=", " id=");
@@ -330,43 +379,25 @@ define(function elementEditorModule(require) {
         var editor = event.editor;
         // LEOS-3418 : to save modification in the Alternatives clause.
         if (!editor.readOnly || editor.config.isClause) {
-            _removeZeroWidthSpaces(elementId);
-            if (!_isEmptyElement(elementId, editor)) {
-                // set read-only to prevent changes
-                editor.setReadOnly(true);
-                // save the element being edited
-                var data = {
-                    elementId: elementId,
-                    elementType: elementType,
-                    elementFragment: event.data.data,
-                    isSplit: event.data.origin === "split" ? true : false,
-                    isSaveAndClose: !!event.data.isSaveAndClose ? true : false,
-                };
-                editor.LEOS.saveCmdExecuted = true;
-                connector.saveElement(data);
-                return true;
-            }
+            // set read-only to prevent changes
+            editor.setReadOnly(true);
+            // save the element being edited
+            var data = {
+                elementId: elementId,
+                elementType: elementType,
+                elementFragment: event.data.data,
+                isSplit: event.data.origin === "split" ? true : false,
+                isSaveAndClose: !!event.data.isSaveAndClose ? true : false,
+            };
+            editor.LEOS.saveCmdExecuted = true;
+            connector.saveElement(data);
+            return true;
         }
         return false;
     }
 
     function _removeZeroWidthSpacesOnFocus(connector, elementId) {
         _removeZeroWidthSpaces(elementId);
-    }
-
-    function _removeZeroWidthSpaces(elementId) {
-        $("#" + elementId).find("*").addBack().contents().filter(function () {
-            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
-                return this.textContent.match(ZERO_WIDTH_SPACE);
-            }
-            return false;
-        }).remove();
-        $("#" + elementId).parent().contents().filter(function () {
-            if (this.nodeType === Node.TEXT_NODE && this.textContent) {
-                return this.textContent.match(ZERO_WIDTH_SPACE); 
-            }
-            return false;
-        }).remove();
     }
 
     function _removeNonBreakingSpaceFromElement(elementId, eventData){
@@ -386,30 +417,6 @@ define(function elementEditorModule(require) {
             .replace(/&#160;/g, ' ')
             .replace(/&amp;#xa0;/g, ' ')
             .replace(/\u00A0/g, ' ');
-    }
-
-    function _isEmptyElement(elementId, editor) {
-        if (_isEmptyContentInElement(elementId)) {
-            pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
-            var dialogCommand = editor.addCommand(dialogDefinition.dialogName, new CKEDITOR.dialogCommand(dialogDefinition.dialogName));
-            dialogCommand.exec();
-            return true;
-        }
-        return false;
-    }
-
-    function _isEmptyContentInElement(elementId) {
-        var bogus = $("#" + elementId).find(leosPluginUtils.BOGUS);
-        var sibling;
-        if (bogus && bogus[0]) {
-            sibling = bogus[0].previousSibling;
-        }
-        var emptyElements = $("#" + elementId + ", p[data-akn-id='" + elementId + "'], h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
-        if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
-            || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
-            return true;
-        }
-        return false;
     }
 
     function _refreshElement(elementId, elementType, elementFragment) {

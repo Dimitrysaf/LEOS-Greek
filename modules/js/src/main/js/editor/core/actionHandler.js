@@ -56,15 +56,15 @@ define(function actionHandlerModule(require) {
                 currentInstance.fire("close");
                 connector.editElementAction(data);
             } else {
-                currentInstance.readOnly = false;
-                var isSaved = currentInstance.fire("save", {
-                    data: currentInstance.getData(),
-                    isSaveAndClose: true
-                });
-                if (isSaved) {
+                if (currentInstance.fire("canBeSaved")) {
+                    currentInstance.readOnly = false;
+                    currentInstance.fire("save", {
+                        data: currentInstance.getData(),
+                        isSaveAndClose: true
+                    });
                     currentInstance.fire("close");
+                    connector.editElementAction(data);
                 }
-                connector.editElementAction(data);
             }
         }
     }
