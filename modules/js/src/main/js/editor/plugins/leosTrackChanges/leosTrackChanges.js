@@ -178,7 +178,7 @@ define(function leosTrackChangesModule(require) {
 
         removeSoftAttributes: function(element) {
             var softAttributes = ["data-akn-attr-softuser", "data-akn-attr-softdate", "data-akn-attr-softaction",
-                "data-akn-attr-softactionroot", "data-akn-attr-softmove_label", "data-akn-attr-softmove_from"];
+                "data-akn-attr-softactionroot", "data-akn-attr-softmove_label", "data-akn-attr-softmove_from", "data-akn-attr-softmove_to"];
             for (var attrName of softAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -563,7 +563,7 @@ define(function leosTrackChangesModule(require) {
                 }
             } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER)) {
                 for (var elementSibling of element.getParent().$.children) {
-                    if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                    if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM) && !elementSibling.getAttribute(core.ACTION_ATTR)) {
                         core.removeTrackChangesAttributes(elementSibling);
                         core.removeTrackChangesAttributesForNumbering(elementSibling);
                         core.removeSoftAttributes(elementSibling);
