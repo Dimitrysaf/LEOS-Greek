@@ -69,7 +69,7 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
         int endOfNumTag = elementContent.indexOf("</" + NUM + ">");
         if (startOfNumTag != -1) {
             String tagNum = elementContent.substring(startOfNumTag, endOfNumTag + new String("</" + NUM + ">").length());
-            if (!tagNum.contains(LEOS_ACTION_ATTR) && tagNum.contains(LEOS_TITLE_ATTR)) {
+            if (tagNum.contains(LEOS_TITLE_ATTR)) {
                 elementContent = cleanTag(elementContent, tagNum, false);
             }
         }
