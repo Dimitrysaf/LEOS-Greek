@@ -581,11 +581,11 @@ public class AnnexController {
     public ResponseEntity<Object> acceptChange(@PathVariable("documentRef") String documentRef,
                                                @PathVariable("elementId") String elementId,
                                                @PathVariable("elementTagName") String elementTagName,
-                                               @RequestParam("trackChangeAction") String trackChangeAction) {
+                                               @RequestParam("trackChangeAction") String trackChangeAction,
+                                               @RequestHeader("presenterId") String presenterId) {
         try {
             TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
-            DocumentViewResponse response = this.annexAPIService.acceptChange(documentRef, elementId, elementTagName,
-                    trackChangeActionType);
+            DocumentViewResponse response = this.annexAPIService.acceptChange(documentRef, elementId, elementTagName, trackChangeActionType, presenterId);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while accepting change - " + e.getMessage());
@@ -598,11 +598,11 @@ public class AnnexController {
     public ResponseEntity<Object> rejectChange(@PathVariable("documentRef") String documentRef,
                                                @PathVariable("elementId") String elementId,
                                                @PathVariable("elementTagName") String elementTagName,
-                                               @RequestParam("trackChangeAction") String trackChangeAction) {
+                                               @RequestParam("trackChangeAction") String trackChangeAction,
+                                               @RequestHeader("presenterId") String presenterId) {
         try {
             TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
-            DocumentViewResponse response = this.annexAPIService.rejectChange(documentRef, elementId, elementTagName,
-                    trackChangeActionType);
+            DocumentViewResponse response = this.annexAPIService.rejectChange(documentRef, elementId, elementTagName, trackChangeActionType, presenterId);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while rejecting change - " + e.getMessage());

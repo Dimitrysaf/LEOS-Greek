@@ -108,14 +108,12 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
           coEditionUpdate.updatedElements.length > 0
         ) {
           coEditionUpdate.updatedElements.forEach((element) => {
-            if (element.elementFragment) {
-              this.updateElementContent({
-                elementId: element.elementId,
-                elementType: element.elementTagName,
-                elementFragment: element.elementFragment,
-                isClosing: false
-              });
-            }
+            this.updateElementContent({
+              elementId: element.elementId,
+              elementType: element.elementTagName,
+              elementFragment: element.elementFragment,
+              isClosing: false
+            });
           });
           this.documentService.setDidDocumentLoadAndRender(true);
           this.documentService.reloadView();
@@ -223,6 +221,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
     } else {
       !this.isCNInstance ? this.reloadElements(data) : this.documentService.reloadDocument();
     }
+    this.initTrackChangesActions();
   }
 
   private updateElementInXml(data: {
@@ -230,7 +229,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
     elementType: string;
     elementFragment: string;
   }) {
-    if (data && data.elementId && data.elementType && data.elementFragment) {
+    if (data && data.elementId && data.elementType) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(this.xml, 'text/html');
       const xmlElement = doc.getElementById(data.elementId);
@@ -246,7 +245,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
     elementType: string;
     elementFragment: string;
   }) {
-    if (data && data.elementId && data.elementType && data.elementFragment) {
+    if (data && data.elementId && data.elementType) {
       const htmlElement = this.document.getElementById(data.elementId);
       if (htmlElement) {
         htmlElement.outerHTML = this.cleanForView(data.elementFragment);
@@ -277,6 +276,9 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private cleanForTransformation(content: string): string {
+    if (!content) {
+      content = '';
+    }
     return content
       .replaceAll('<aknp ', '<p ')
       .replaceAll('</aknp>', '</p>')
@@ -286,6 +288,9 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private cleanForView(content: string): string {
+    if (!content) {
+      content = '';
+    }
     return content
       .replaceAll('<p ', '<aknp ')
       .replaceAll('</p>', '</aknp>')

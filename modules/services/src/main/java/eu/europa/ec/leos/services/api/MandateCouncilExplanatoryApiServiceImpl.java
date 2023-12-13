@@ -450,14 +450,12 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType changeType) throws Exception {
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception {
         throw new UnsupportedOperationException("Accept change isn't supported for council explanatory");
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType changeType) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception {
         throw new UnsupportedOperationException("Reject change isn't supported for council explanatory");
     }
 

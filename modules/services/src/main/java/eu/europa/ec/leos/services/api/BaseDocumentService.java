@@ -104,11 +104,9 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     String fetchUserGuidance(String documentRef);
 
-    DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
-                                      TrackChangeActionType changeType) throws Exception;
+    DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception;
 
-    DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
-                                      TrackChangeActionType changeType) throws Exception;
+    DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception;
 
     default Map<String, Attribute> getArticleTypesAttributes(List<TocItem> tocItems) {
         Map<String, Attribute> articleTypesAttributes = new HashMap<>();

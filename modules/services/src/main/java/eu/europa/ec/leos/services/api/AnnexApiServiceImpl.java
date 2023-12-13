@@ -81,7 +81,6 @@ import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
-import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -532,8 +531,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction, String presenterId) throws Exception {
         String op = "accepted";
         String msg = "operation.element.annex.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
 
@@ -542,16 +540,16 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         this.populateCloneProposalMetadata(annex);
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
         populateCloneProposalMetadata(proposal);
-        byte[] newXmlContent = trackChangesProcessor.acceptChange(annex, elementId, elementTagName, trackChangeAction);
+        byte[] newXmlContent = trackChangesProcessor.acceptChange(annex, elementId, trackChangeAction);
         newXmlContent = annexProcessor.renumberingAndPostProcessing(newXmlContent);
         annex = annexService.updateAnnex(annex, newXmlContent, VersionType.MINOR, messageHelper.getMessage(msg));
 
+        trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, true);
         return documentViewService.updateDocumentView(annex);
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction, String presenterId) throws Exception {
         String op = "rejected";
         String msg = "operation.element.annex.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
 
@@ -559,10 +557,11 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(annex);
 
-        byte[] newXmlContent = trackChangesProcessor.rejectChange(annex, elementId, elementTagName, trackChangeAction);
+        byte[] newXmlContent = trackChangesProcessor.rejectChange(annex, elementId, trackChangeAction);
         newXmlContent = annexProcessor.renumberingAndPostProcessing(newXmlContent);
         annex = annexService.updateAnnex(annex, newXmlContent, VersionType.MINOR, messageHelper.getMessage(msg));
 
+        trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, false);
         return documentViewService.updateDocumentView(annex);
     }
 
