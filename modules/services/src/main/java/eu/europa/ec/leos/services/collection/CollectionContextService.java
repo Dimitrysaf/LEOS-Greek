@@ -68,7 +68,7 @@ public abstract class CollectionContextService {
 
     protected final MessageHelper messageHelper;
     private final ExplanatoryService explanatoryService;
-    private final TemplateService templateService;
+    protected final TemplateService templateService;
     protected final PackageService packageService;
     protected final ProposalService proposalService;
     private final CollectionUrlBuilder urlBuilder;
@@ -404,7 +404,6 @@ public abstract class CollectionContextService {
 
         Proposal prpsl = proposalService.createProposal(proposalTemplate.getId(), leosPckg.getPath(), metadata, null);
 
-        // TO DO: To have other structure proposal
         if (cast(categoryTemplateMap.get(MEMORANDUM)) != null) {
             MemorandumContextService memorandumContext = memorandumContextProvider.get();
             memorandumContext.usePackage(leosPckg);

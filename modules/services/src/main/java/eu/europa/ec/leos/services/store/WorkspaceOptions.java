@@ -90,6 +90,8 @@ public class WorkspaceOptions {
                             .collect(Collectors.toList());
                     values.forEach(role -> roleCondition.add(user.getLogin() + "::" + role));
                     workspaceFilter.addFilter(new QueryFilter.Filter(id, "IN", false, roleCondition.toArray(new String[]{})));
+                } else {
+                    initRoleFilter();
                 }
             } else if(id.equalsIgnoreCase(FilterType.title.name())) {
                 workspaceFilter.removeFilter(FilterType.title.name());
