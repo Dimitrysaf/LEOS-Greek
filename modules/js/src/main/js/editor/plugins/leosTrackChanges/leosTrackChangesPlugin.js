@@ -28,11 +28,10 @@ define(function leosTrackChangesPluginModule(require) {
 
     var pluginDefinition = {
         init: function init(editor) {
-            // Plugin only allowed for cloned proposals
-            if (!editor.LEOS.instanceType === 'COUNCIL') {
+            // Plugin not allowed COUNCIL
+            if (editor.LEOS.instanceType === "COUNCIL") {
                 return;
             }
-
 
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
@@ -143,7 +142,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editor.contextMenu.addListener(function(element) {
                     var elementWithPseudoElt = core.getClosestElementWithPseudoElt(element, core.BEFORE);
                     if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
-                        && core.isMouseOverPseudoElt(elementWithPseudoElt, mousePosition, core.BEFORE)) {
+                        && !elementWithPseudoElt.getAttribute(core.ACTION_ATTR) && core.isMouseOverPseudoElt(elementWithPseudoElt, mousePosition, core.BEFORE)) {
                         editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
                         if ((elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_NUM))
                             || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
