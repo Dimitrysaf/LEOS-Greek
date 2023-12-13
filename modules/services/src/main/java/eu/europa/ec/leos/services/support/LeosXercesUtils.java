@@ -60,7 +60,7 @@ public class LeosXercesUtils {
                         Node deletedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "del", oldNumLabel);
                         addAttribute(deletedNum, LEOS_UID, securityContext.getUser().getLogin());
                         addAttribute(deletedNum, LEOS_TITLE, getTitleValue(securityContext));
-                        if (node.getNodeName() == LEVEL) {
+                        if (LEVEL.equals(node.getNodeName())) {
                             addAttribute(deletedNum, LEOS_ACTION_NUMBER, LEOS_TC_DELETE_ACTION);
                             addAttribute(deletedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
                         }
@@ -68,7 +68,7 @@ public class LeosXercesUtils {
                         Node insertedNum = createElementAsLastChildOfNode(node.getOwnerDocument(), numNode, "ins", numLabel);
                         addAttribute(insertedNum, LEOS_UID, securityContext.getUser().getLogin());
                         addAttribute(insertedNum, LEOS_TITLE, getTitleValue(securityContext));
-                        if (node.getNodeName() == LEVEL) {
+                        if (LEVEL.equals(node.getNodeName())) {
                             addAttribute(insertedNum, LEOS_ACTION_NUMBER, LEOS_TC_INSERT_ACTION);
                             addAttribute(insertedNum, LEOS_TC_ORIGINAL_NUMBER, oldNumLabel);
                         }
