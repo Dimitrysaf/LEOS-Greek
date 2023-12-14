@@ -267,6 +267,20 @@ define(function leosTrackChangesModule(require) {
             return null;
         },
 
+        findFirstTrackedElement: function(editor) {
+            var selection = editor.getSelection();
+            if (selection) {
+                var path = selection.getRanges()[0].startPath();
+                for (var i = 0; path.elements.length > i; i++) {
+                    var el = path.elements[i];
+                    if ((el.getName() !== this.TRACKCHANGES_ELEMENT) && el.getAttribute(this.ACTION_ATTR) && el.getAttribute(this.DATA_AKN_SOFTACTION)) {
+                        return el;
+                    }
+                }
+            }
+            return null;
+        },
+
         isInsideTrackedHigherElement: function(editor, user) {
             var selection = editor.getSelection();
             if (selection) {
