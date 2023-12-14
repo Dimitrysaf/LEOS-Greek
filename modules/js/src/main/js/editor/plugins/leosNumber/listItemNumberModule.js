@@ -361,6 +361,23 @@ define(function listItemNumberModule(require) {
                     listItems[idx].removeAttribute("data-akn-content-id");
                     listItems[idx].removeAttribute("data-akn-mp-id");
                     listItems[idx].removeAttribute("data-akn-tc-original-number");
+                    var softAttributes = ["data-akn-attr-softuser", "data-akn-attr-softdate", "data-akn-attr-softaction",
+                        "data-akn-attr-softactionroot", "data-akn-attr-softmove_label", "data-akn-attr-softmove_from", "data-akn-attr-softmove_to"];
+                    for (var attrName of softAttributes) {
+                        listItems[idx].removeAttribute(attrName);
+                    }
+                    var tcAttributes = ["data-akn-action", "data-akn-uid", "title", "data-wsc-ignore-checking"];
+                    for (var attrName of tcAttributes) {
+                        listItems[idx].removeAttribute(attrName);
+                    }
+                    var tcNumberingAttributes= ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number"];
+                    for (var attrName of tcNumberingAttributes) {
+                        listItems[idx].removeAttribute(attrName);
+                    }
+                    var tcEnterAttributes = ["data-akn-action-enter", "data-akn-uid-enter", "title-enter"];
+                    for (var attrName of tcEnterAttributes) {
+                        listItems[idx].removeAttribute(attrName);
+                    }
                 }
 
                 // To keep the num id on indentation and avoid diffing issues

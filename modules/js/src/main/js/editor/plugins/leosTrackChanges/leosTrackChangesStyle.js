@@ -347,8 +347,7 @@ define(function leosTrackChangesStyleModule(require) {
 
                     if (styleNode) {
                         if (!isFormatStyles) {
-                            if (styleRange.startContainer.$.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION
-                                && styleRange.startContainer.$.getAttribute(core.UID_ATTR) === core.getUserAndId(editor)[1]) {
+                            if (core.isTrackChangeElement(styleRange.startContainer, core.INSERT_ACTION) && styleRange.startContainer.$.getAttribute(core.UID_ATTR) === core.getUserAndId(editor)[1]) {
                                 styleRange.extractContents();
                             } else {
                                 // Move the contents of the range to the style element.

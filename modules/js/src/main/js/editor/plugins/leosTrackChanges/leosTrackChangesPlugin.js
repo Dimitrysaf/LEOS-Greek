@@ -311,7 +311,8 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Used for CTRL-X, to get the content BEFORE been deleted
                 editable.attachListener(editor.document, "keydown", function(e) {
-                    if (!CKEDITOR.dialog?.getCurrent() && !core.isInsideTrackedHigherElement(editor, core.getUserId(editor)) && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && !core.isInsideTrackedHigherElement(editor, core.getUserId(editor)) &&
+                        (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
                         if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_X) {
                             style.apply(editor, deleteTcStyle);
@@ -326,20 +327,28 @@ define(function leosTrackChangesPluginModule(require) {
 
                 // Delete functionality - key - catch snapshots
                 editable.attachListener(editor, "key", function(e) {
-                    if (!CKEDITOR.dialog?.getCurrent() && !core.isInsideTrackedHigherElement(editor, core.getUserId(editor)) && isTrackChangesEnabled && (editor.getSelection().getRanges().length > 0)) {
+                    if (!CKEDITOR.dialog?.getCurrent() && isTrackChangesEnabled && !core.isInsideTrackedHigherElement(editor, core.getUserId(editor)) &&
+                        (editor.getSelection().getRanges().length > 0)) {
 
                         var event = new EventWrapper(e);
 
                         // On delete functionality(prevents/backup of text)
                         if ((event.getKeyCode() === UTILS.KEYS.KEY_DELETE) || (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE)) {
 
+                            var trackedElement = core.findFirstTrackedElement(editor); // Modifications inside a tracked element(no span) is not allowed
+                            if (trackedElement && trackedElement.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                                event.getInstance().data.domEvent.preventDefault();
+                                event.getInstance().stop();
+                                return;
+                            }
+
                             editor.getSelection().getRanges()[0].optimize();
                             var range = editor.getSelection().getRanges()[0];
                             var deleteKey = (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE);
 
-                            if(!deleteKey) {
+                            if (!deleteKey) {
                                 var elementToDelete = range.getPreviousNode();
-                                if(elementToDelete.type === CKEDITOR.NODE_TEXT && elementToDelete.$.textContent.replace(/\u200B/g,'') === '' && elementToDelete.getParent().getAttribute(core.DATA_AKN_ACTION_ENTER) === 'insert') {
+                                if (elementToDelete.type === CKEDITOR.NODE_TEXT && elementToDelete.$.textContent.replace(/\u200B/g,'') === '' && elementToDelete.getParent().getAttribute(core.DATA_AKN_ACTION_ENTER) === 'insert') {
                                     return;
                                 }
                             }
@@ -381,6 +390,11 @@ define(function leosTrackChangesPluginModule(require) {
                     var character = event.getChar();
                     if (!CKEDITOR.dialog?.getCurrent() && character && !e.data.$.ctrlKey && !e.data.$.metaKey
                         && (event.getKeyCode() != UTILS.KEYS.KEY_DELETE) && (event.getKeyCode() != UTILS.KEYS.KEY_BACKSPACE) && (event.getKeyCode() != 29)) { // Do not capture CTRL hotkeys & escape
+                        var trackedElement = core.findFirstTrackedElement(editor); // Modifications inside a tracked element(no span) is not allowed
+                        if (trackedElement && trackedElement.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                            event.getInstance().data.preventDefault();
+                            return;
+                        }
                         if (isTrackChangesEnabled) {
                             if (!editor.getSelection().isCollapsed()) {
                                 editor.fire("saveSnapshot");
@@ -479,19 +493,23 @@ define(function leosTrackChangesPluginModule(require) {
                         range.select();
                         editor.fire("change");
                         return false;
+                    case "enter":
+                        var trackedElement = core.findFirstTrackedElement(editor);
+                        if (trackedElement && trackedElement.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                            core.setToEditablePosition(editor, trackedElement, core.CARET_END);
+                        }
+                        break;
                 }
             });
 
             editor.on("afterCommandExec", function(event) {
-                switch (event.data.name) {
-                    case "enter":
-                        var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
-                        if (elementToRemoveAttribute) {
-                            elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
-                            elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
-                            event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
-                        }
-                        break;
+                if (event.data.name === "enter") {
+                    var elementToRemoveAttribute = event.editor.getSelection().getStartElement().$.closest("li");
+                    if (elementToRemoveAttribute) {
+                        elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
+                        elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
+                        event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                    }
                 }
             }, null, null, 15);
 
