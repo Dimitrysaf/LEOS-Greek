@@ -99,7 +99,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       },
       options.rootElement,
     );
-    this.isCNInstance = this.environmentService.getInstanceName();
+    this.isCNInstance = this.environmentService.isCouncil();
   }
 
   //leosEditorExtension > requestToc
@@ -297,6 +297,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   // checkboxesExtension (FinancialStatement screen)
   saveElement(elemData: SaveElementAction) {
     this.isSaveAndClose = elemData.isSaveAndClose;
+    if(!this.isSaveAndClose && !this.documentService.isReloadRequired) {
+      this.documentService.isReloadRequired = true;
+    }
     this.documentService.setDidDocumentLoadAndRender(false);
     if (!this.isCNInstance) {
       this.refreshElement(
@@ -317,7 +320,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       this.coEditionService.presenterId
     ).subscribe((response) => {
       this.handleActionsAfterSave(response, elemData, String(milliseconds));
-      if (!response.splittedContentIsEmpty) {
+      if (response.splittedContentIsEmpty) {
         this.closeElement();
       }
     });
@@ -342,21 +345,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         elemData.elementType,
         null,
       );
-    } else {
-      this.coEditionService.sendUpdateDocumentEvent(
-        this.documentService.documentRef,
-        response.elementId,
-        response.elementTagName,
-        response.elementFragment,
-      );
     }
     this.coEditionService.setShouldReloadAfterUpdate();
-    this.documentService.updateElementContent({
-        elementId: response.elementId,
-        elementType: response.elementTagName,
-        elementFragment: response.elementFragment,
-      }
-    );
     this.loadingService.setTaskOver('saving', taskId);
   }
 
@@ -377,19 +367,20 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       } else {
         this.documentService.resetDocument();
       }
+    } else if(this.documentService.isReloadRequired) {
+      this.documentService.reloadDocument();
     }
-    if (this.elementToEditAfterClose !== null) {
+    this.setEditorOpenState('CLOSE');
+    this.documentService.setIsEditorOpen(false);
+    this.isElementSaved = false;
+    this.documentService.isReloadRequired = false;
+    if (this.elementToEditAfterClose && this.elementToEditAfterClose !== null) {
       this.editElementAction({
         action: 'edit',
         elementId: this.elementToEditAfterClose['elementId'],
         elementType: this.elementToEditAfterClose['elementTagName'],
       });
-    } else {
-      this.setEditorOpenState('CLOSE');
-      this.documentService.setIsEditorOpen(false);
     }
-    this.setEditorOpenState('CLOSE');
-    this.isElementSaved = false;
   }
 
   // leosEditorExtension > actionHandler

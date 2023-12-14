@@ -39,8 +39,6 @@ export class DocumentComponent
   @ViewChild('container', { static: true })
   containerElRef: ElementRef<HTMLDivElement>;
 
-  currentXml: string;
-
   private bookmarkMutationObserver?: MutationObserver;
   private destroy$: Subject<any> = new Subject();
 
@@ -61,8 +59,6 @@ export class DocumentComponent
   }
 
   ngOnInit(): void {
-    this.currentXml = this.xml;
-    
     this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
@@ -110,7 +106,6 @@ export class DocumentComponent
         if(coEditionUpdate.updatedElements && coEditionUpdate.updatedElements.length > 0) {
           coEditionUpdate.updatedElements.forEach(element => {
             if(element.elementFragment) {
-              console.log(`${element.elementTagName}: ${element.elementId}`)
               this.updateElementContent({
                 elementId: element.elementId,
                 elementType: element.elementTagName,
@@ -195,6 +190,27 @@ export class DocumentComponent
     elementType: string;
     elementFragment: string;
   }) {
+    const ckeditorsOpen = this.document.querySelectorAll('.cke_editable');
+    if (ckeditorsOpen && ckeditorsOpen.length > 0) {
+      const ckeditorOpen = ckeditorsOpen.item(0);
+      const elementInEditor = ckeditorOpen.querySelector(`#${data.elementId}`);
+      if(!elementInEditor) {
+        this.updateElementInXml(data);
+        this.updateElementInDom(data);
+      } else {
+        this.documentService.isReloadRequired = true;
+      }
+    } else {
+      this.updateElementInXml(data);
+      this.updateElementInDom(data);
+    }
+  }
+
+  private updateElementInXml(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
     if (data && data.elementId && data.elementType && data.elementFragment) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(this.xml, 'text/html');
@@ -203,7 +219,15 @@ export class DocumentComponent
         xmlElement.outerHTML = this.cleanForView(data.elementFragment);
         this.xml = doc.documentElement.outerHTML;
       }
+    }
+  }
 
+  private updateElementInDom(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    if (data && data.elementId && data.elementType && data.elementFragment) {
       let htmlElement = this.document.getElementById(data.elementId);
       if(htmlElement) {
         htmlElement.outerHTML = this.cleanForView(data.elementFragment);
