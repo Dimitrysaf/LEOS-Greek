@@ -185,6 +185,7 @@ export class DocumentService implements OnDestroy {
   private destroy$ = new Subject<void>();
 
   pageSize: number = 10;
+  isReloadRequired = false;
 
   constructor(
     private http: HttpClient,
