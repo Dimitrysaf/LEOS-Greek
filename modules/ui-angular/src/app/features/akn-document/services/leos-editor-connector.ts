@@ -320,7 +320,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       this.coEditionService.presenterId
     ).subscribe((response) => {
       this.handleActionsAfterSave(response, elemData, String(milliseconds));
-      if (response.splittedContentIsEmpty) {
+      if (!response.splittedContentIsEmpty) {
         this.closeElement();
       }
     });

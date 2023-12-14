@@ -520,6 +520,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         try {
             if (ELEMENTS_TO_BE_NUMBERED.contains(tagName)) {
                 numberProcessorHandler.renumberElement(parentNode, tagName, true);
+                coEditionContext.addUpdatedElement(getId(parentNode), parentNode.getNodeName(), nodeToString(parentNode));
             }
         } catch (Exception e) {
             LOG.error("Unable to renumber element", e);
