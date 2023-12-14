@@ -339,12 +339,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         response.elementTagName,
         response.elementFragment,
       );
-      this.coEditionService.sendUpdateDocumentEvent(
-        this.documentService.documentRef,
-        elemData.elementId,
-        elemData.elementType,
-        null,
-      );
+      if (elemData.isSaveAndClose) {
+        this.documentService.reloadDocument();
+      }
     }
     this.coEditionService.setShouldReloadAfterUpdate();
     this.loadingService.setTaskOver('saving', taskId);
@@ -356,13 +353,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
     elementFragment: string;
   }) {
-    this.documentService.reloadConnectors(elemData);
     this.coEditionService.removeElementCoEditInfo(
       this.documentService.documentRef,
       this.elementUnderEdit,
     );
-    if (this.isCNInstance) {
-      if (this.isElementSaved && !this.isSaveAndClose) {
+    this.documentService.reloadConnectors(elemData);
+    if (this.isCNInstance && (!this.elementToEditAfterClose || this.elementToEditAfterClose == null)) {
+      if (this.isElementSaved || !this.isSaveAndClose) {
         this.documentService.reloadDocument();
       } else {
         this.documentService.resetDocument();
