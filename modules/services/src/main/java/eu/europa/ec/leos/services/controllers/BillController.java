@@ -102,10 +102,7 @@ public class BillController {
             LOG.error("Error occurred while getting bill  element - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while deleting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
     }
-
 
     @PutMapping(value = "/{documentRef}/element/{elementName}/{elementId}/insert-element", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

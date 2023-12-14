@@ -34,6 +34,7 @@ import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
+import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -41,6 +42,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
@@ -50,6 +56,9 @@ import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 @Instance(instances = {InstanceType.OS, InstanceType.COMMISSION})
 public class CollectionContextProposalService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextProposalService.class);
+    private static final String TEMPLATE = "template";
+    private static final String ACT_TYPE = "actType";
+    private static final String PROCEDURE_TYPE = "procedureType";
 
     CollectionContextProposalService(TemplateService templateService, PackageService packageService, ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider, Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper) {
         super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext, explanatoryContextProvider, financialStatementContextProvider, explanatoryService, messageHelper);
@@ -60,6 +69,8 @@ public class CollectionContextProposalService extends CollectionContextService {
         LOG.trace("Executing 'Create Proposal' use case...");
 
         LeosPackage leosPackage = this.packageService.createPackage();
+        List<CatalogItem> catalogItems;
+        Map<String, String> templatePropertiesMap = new HashMap<>();
 
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
@@ -67,18 +78,25 @@ public class CollectionContextProposalService extends CollectionContextService {
         Option<ProposalMetadata> metadataOption = proposalTemplate.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
 
+        try {
+            catalogItems = templateService.getTemplatesCatalog();
+            getTemplateProperties(templatePropertiesMap, catalogItems, metadataOption.get().getTemplate());
+        } catch (IOException e) {
+            LOG.error("Error occurred while retrieving catalog items " + e.getMessage());
+        }
+
         Validate.notNull(purpose, "Proposal purpose is required!");
         ProposalMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
-                .withActType(actType)
-                .withProcedureType(procedureType)
+                .withType(metadataOption.get().getType())
+                .withActType(templatePropertiesMap.get("actType"))
+                .withProcedureType(templatePropertiesMap.get("procedureType"))
                 .withEeaRelevance(eeaRelevance)
                 .build();
 
         Proposal proposal = proposalService.createProposal(proposalTemplate.getId(), leosPackage.getPath(), metadata, null);
 
-        // TODO: To have other structure proposal
         if (cast(categoryTemplateMap.get(MEMORANDUM)) != null) {
             MemorandumContextService memorandumContext = memorandumContextProvider.get();
             memorandumContext.usePackage(leosPackage);
@@ -99,5 +117,29 @@ public class CollectionContextProposalService extends CollectionContextService {
         Bill bill = billContext.executeCreateBill();
         proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
+    }
+
+    private Map<String, String> getTemplateProperties(Map<String, String> tp, List<CatalogItem> catalogItems, String templateId) {
+        CatalogItem matchingItem = catalogItems.stream()
+                .filter(item -> item.getKey().equalsIgnoreCase(templateId))
+                .findFirst()
+                .orElse(null);
+
+        if (matchingItem != null) {
+            tp.put(TEMPLATE, matchingItem.getKey());
+            return tp;
+        }
+
+        for (CatalogItem item : catalogItems) {
+            tp = getTemplateProperties(tp, item.getItems(), templateId);
+            if (tp.containsKey(TEMPLATE) && !tp.containsKey(ACT_TYPE)) {
+                tp.put(ACT_TYPE, item.getKey());
+                break;
+            } else if (tp.containsKey(TEMPLATE) && tp.containsKey(ACT_TYPE) && !tp.containsKey(PROCEDURE_TYPE)) {
+                tp.put(PROCEDURE_TYPE, item.getKey());
+                break;
+            }
+        }
+        return tp;
     }
 }
