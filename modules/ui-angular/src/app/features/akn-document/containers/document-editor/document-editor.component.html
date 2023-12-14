@@ -10,21 +10,6 @@
       </eui-breadcrumb-item>
     </eui-breadcrumb>
   </eui-page-breadcrumb>
-  <eui-page-header-action-items>
-    <app-document-actions-dropdown
-      (annexChangeStructure)="confirmAnnexStructureChange()"
-    ></app-document-actions-dropdown>
-    <button
-      *ngIf="documentConfig?.proposalMetadata"
-      class="mt-1"
-      euiButton
-      euiSizeS
-      euiPrimary
-      translate="global.actions.close"
-      (click)="handleClose()"
-    ></button>
-  </eui-page-header-action-items>
-
   <eui-page-content
     [ngClass]="{
       'eui-page-content--blocked':
