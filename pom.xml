@@ -20,7 +20,7 @@
 
     <groupId>eu.europa.ec.leos.pilot</groupId>
     <artifactId>leos</artifactId>
-    <version>5.1.0-SNAPSHOT</version>
+    <version>5.0.1</version>
     <packaging>pom</packaging>
 
     <name>LEOS Pilot</name>
