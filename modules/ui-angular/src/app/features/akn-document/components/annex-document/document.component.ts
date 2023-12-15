@@ -76,11 +76,7 @@ export class DocumentComponent
     this.documentService.updateElementContent$
     .pipe(takeUntil(this.destroy$))
     .subscribe((data) => {
-      const ckeditorOpen =
-        this.document.querySelectorAll('.cke_editable').length > 0;
-      if (!ckeditorOpen) {
         this.updateElementContent(data);
-      }
     });
 
     this.documentService.getElementContent$
@@ -98,7 +94,7 @@ export class DocumentComponent
       .subscribe((trigger) => {
         trigger !== 0 && this.loadDocument(this.xml);
       });
-    
+
     this.coEditionWSService.shouldReloadAfterUpdate
     .pipe(takeUntil(this.destroy$))
     .subscribe((coEditionUpdate) => {
@@ -106,19 +102,20 @@ export class DocumentComponent
         if(coEditionUpdate.updatedElements && coEditionUpdate.updatedElements.length > 0) {
           coEditionUpdate.updatedElements.forEach(element => {
             if(element.elementFragment) {
-              this.updateElementContent({
+              this.documentService.reloadConnectors({
                 elementId: element.elementId,
                 elementType: element.elementTagName,
                 elementFragment: element.elementFragment
               });
             }
-          });          
+          });
           this.documentService.setDidDocumentLoadAndRender(true);
           this.documentService.reloadView();
+
           this.tableOfContentService.reload();
         } else {
           this.documentService.reloadDocument();
-        }        
+        }
       }
     });
   }
@@ -189,12 +186,13 @@ export class DocumentComponent
     elementId: string;
     elementType: string;
     elementFragment: string;
+    isClosing: boolean;
   }) {
     const ckeditorsOpen = this.document.querySelectorAll('.cke_editable');
     if (ckeditorsOpen && ckeditorsOpen.length > 0) {
       const ckeditorOpen = ckeditorsOpen.item(0);
       const elementInEditor = ckeditorOpen.querySelector(`#${data.elementId}`);
-      if(!elementInEditor) {
+      if(!elementInEditor || data.isClosing) {
         this.updateElementInXml(data);
         this.updateElementInDom(data);
       } else {

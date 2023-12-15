@@ -70,7 +70,7 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
   ) {
     elementFragment = elementFragment.replaceAll('id', 'xml:id');
     return this.http.put<RefreshElementResponse>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element?isSplit=false`,
       elementFragment,
       { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
     );

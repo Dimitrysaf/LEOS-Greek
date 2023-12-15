@@ -114,23 +114,28 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
   }) {
     this.elementToEditAfterClose = null;
-    const promise = new Promise<void>((resolve, reject) => {
-      this.documentService.didDocumentLoadAndRender$
-        .pipe(filter((isLoaded) => isLoaded === true))
-        .subscribe((loaded) => {
-          resolve();
-        });
-    });
+    if (data.elementType === 'crossheading') {
+      data.elementType = 'crossHeading';
+    }
 
-    promise.then(() => {
-      if (data.elementType === 'crossheading') {
-        data.elementType = 'crossHeading';
-      }
+    if (this.isCNInstance) {
+      const promise = new Promise<void>((resolve, reject) => {
+        this.documentService.didDocumentLoadAndRender$
+          .pipe(filter((isLoaded) => isLoaded === true))
+          .subscribe((loaded) => {
+            resolve();
+          });
+      });
 
-      setTimeout(() => {
-        this.handleEdit(data);
-      }, 1000);
-    });
+      promise.then(() => {
+        setTimeout(() => {
+          this.handleEdit(data);
+        }, 1000);
+      });
+
+    } else {
+      this.handleEdit(data);
+    }
   }
 
   handleEdit(data: { action: string; elementId: string; elementType: string }) {
@@ -353,11 +358,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
     elementFragment: string;
   }) {
+    this.documentService.reloadConnectors(elemData, true);
     this.coEditionService.removeElementCoEditInfo(
       this.documentService.documentRef,
       this.elementUnderEdit,
     );
-    this.documentService.reloadConnectors(elemData);
     if (this.isCNInstance && (!this.elementToEditAfterClose || this.elementToEditAfterClose == null)) {
       if (this.isElementSaved || !this.isSaveAndClose) {
         this.documentService.reloadDocument();
@@ -372,10 +377,28 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.isElementSaved = false;
     this.documentService.isReloadRequired = false;
     if (this.elementToEditAfterClose && this.elementToEditAfterClose !== null) {
-      this.editElementAction({
-        action: 'edit',
-        elementId: this.elementToEditAfterClose['elementId'],
-        elementType: this.elementToEditAfterClose['elementTagName'],
+      this.elementToEditAfterClose = null;
+      const promise = new Promise<void>((resolve, reject) => {
+        this.documentService.didDocumentLoadAndRender$
+          .pipe(filter((isLoaded) => isLoaded === true))
+          .subscribe((loaded) => {
+            resolve();
+          });
+      });
+
+      promise.then(() => {
+        let data= {
+          action: "edit",
+          elementId: this.elementToEditAfterClose['elementId'],
+          elementType: this.elementToEditAfterClose['elementTagName'],
+        }
+        if (data.elementType === 'crossheading') {
+          data.elementType = 'crossHeading';
+        }
+
+        setTimeout(() => {
+          this.handleEdit(data);
+        }, 1000);
       });
     }
   }
