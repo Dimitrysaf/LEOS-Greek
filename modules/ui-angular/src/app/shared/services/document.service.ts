@@ -105,7 +105,7 @@ export class DocumentService implements OnDestroy {
   navigationSidebarCollapsed$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
-  refreshConnectors$: Observable<{elementId: string, elementType: string, elementFragment: string, isClosing: boolean}>;
+  refreshConnectors$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
   refreshView$: Observable<DocumentViewResponse>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
   replacedTextPresent = false;
@@ -120,7 +120,7 @@ export class DocumentService implements OnDestroy {
   isClonedProposal$: Observable<boolean>;
   isContributionDeclinedOrProcessed$: Observable<boolean>;
   isEditorOpen$: Observable<boolean>;
-  updateElementContent$: Observable<{elementId: string, elementType: string, elementFragment: string, isClosing: boolean}>;
+  updateElementContent$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
   getElementContent$: Observable<{elementId: string, elementType: string}>;
   getElementContentResponse$: Observable<{elementId: string, elementType: string, elementFragment: string}>;
 
@@ -159,7 +159,7 @@ export class DocumentService implements OnDestroy {
   private navigationSidebarCollapsedBS = new BehaviorSubject<boolean>(false);
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
-  private refreshConnectorsBS = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string, isClosing: boolean}>({elementId: null, elementType: null, elementFragment: null, isClosing: false});
+  private refreshConnectorsBS = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string}>({elementId: null, elementType: null, elementFragment: null});
   private refreshViewBS = new BehaviorSubject<DocumentViewResponse>(null);
   private documentRefAndCategoryBS =
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
@@ -179,7 +179,7 @@ export class DocumentService implements OnDestroy {
   );
   private isEditorOpenBS = new BehaviorSubject<boolean>(false);
   private getElementContentBS = new BehaviorSubject<{elementId: string, elementType: string}>({elementId: null, elementType: null});
-  private updateElementContentBS = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string, isClosing: boolean}>({elementId: null, elementType: null, elementFragment: null, isClosing: false});
+  private updateElementContentBS = new BehaviorSubject<{elementId: string, elementType: string, elementFragment: string}>({elementId: null, elementType: null, elementFragment: null});
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -578,13 +578,8 @@ export class DocumentService implements OnDestroy {
     this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
   }
 
-  reloadConnectors(data: {elementId: string, elementType: string, elementFragment: string}, isClosing = false) {
-    this.refreshConnectorsBS.next({
-      elementId: data.elementId,
-      elementType: data.elementType,
-      elementFragment: data.elementFragment,
-      isClosing: isClosing
-    });
+  reloadConnectors(data: {elementId: string, elementType: string, elementFragment: string}) {
+    this.refreshConnectorsBS.next(data);
   }
 
   refreshView(data: DocumentViewResponse) {
@@ -798,7 +793,7 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  updateElementContent(data: {elementId: string, elementType: string, elementFragment: string, isClosing: boolean}) {
+  updateElementContent(data: {elementId: string, elementType: string, elementFragment: string}) {
     this.updateElementContentBS.next(data);
   }
 
