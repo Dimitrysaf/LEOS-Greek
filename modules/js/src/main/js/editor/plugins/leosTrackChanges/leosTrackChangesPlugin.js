@@ -322,6 +322,14 @@ define(function leosTrackChangesPluginModule(require) {
                             event.getInstance().data.preventDefault();
                             event.getInstance().stop();
                         }
+                        if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_V) {
+                            style.apply(editor, insertTcStyle);
+                            var range = editor.getSelection().getRanges()[0];
+                            range.collapse(false);
+                            range.select();
+                            event.getInstance().data.preventDefault();
+                            event.getInstance().stop();
+                        }
                     }
                 });
 

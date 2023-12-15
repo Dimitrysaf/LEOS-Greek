@@ -185,7 +185,7 @@ define(function leosPastePluginModule(require) {
     function _processPaste(editor, fragment, type) {
         //Check for <span> as widget and extract its child to be added as first child
         var idx = _isWidgetPresent(fragment);
-        if(idx != -1) {
+        if(idx && idx != -1) {
             let child = fragment.children[idx].getFirst(); //get first child as widget
             fragment.children[idx].replaceWith(child);
         }

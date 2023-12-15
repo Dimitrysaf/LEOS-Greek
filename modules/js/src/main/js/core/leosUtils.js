@@ -39,9 +39,10 @@ define(function leosUtilsModule(require) {
     var NUM = "num";
     var KEYS = {
         "KEY_DELETE": 8,
+        "KEY_ENTER": 13,
         "KEY_BACKSPACE": 46,
-        "KEY_X": 88,
-        "KEY_ENTER": 13
+        "KEY_V": 86,
+        "KEY_X": 88
     }
 
     function _getParentElement(connector) {
