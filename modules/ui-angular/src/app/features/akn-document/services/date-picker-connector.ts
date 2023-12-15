@@ -69,10 +69,11 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
     documentType: string,
   ) {
     elementFragment = elementFragment.replaceAll('id', 'xml:id');
+    const presenterId = this.coEditionService.presenterId;
     return this.http.put<RefreshElementResponse>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element?isSplit=false`,
       elementFragment,
-      { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
+      { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'presenterId': presenterId } },
     );
   }
 }
