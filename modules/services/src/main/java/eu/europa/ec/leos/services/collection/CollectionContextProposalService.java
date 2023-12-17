@@ -90,8 +90,8 @@ public class CollectionContextProposalService extends CollectionContextService {
                 .builder()
                 .withPurpose(purpose)
                 .withType(metadataOption.get().getType())
-                .withActType(templatePropertiesMap.get("actType"))
-                .withProcedureType(templatePropertiesMap.get("procedureType"))
+                .withActType(templatePropertiesMap.get(ACT_TYPE))
+                .withProcedureType(templatePropertiesMap.get(PROCEDURE_TYPE))
                 .withEeaRelevance(eeaRelevance)
                 .build();
 
@@ -130,13 +130,17 @@ public class CollectionContextProposalService extends CollectionContextService {
             return tp;
         }
 
+        boolean skipItr = false;
         for (CatalogItem item : catalogItems) {
             tp = getTemplateProperties(tp, item.getItems(), templateId);
             if (tp.containsKey(TEMPLATE) && !tp.containsKey(ACT_TYPE)) {
                 tp.put(ACT_TYPE, item.getKey());
-                break;
+                skipItr = true;
             } else if (tp.containsKey(TEMPLATE) && tp.containsKey(ACT_TYPE) && !tp.containsKey(PROCEDURE_TYPE)) {
                 tp.put(PROCEDURE_TYPE, item.getKey());
+                skipItr = true;
+            }
+            if(skipItr) {
                 break;
             }
         }
