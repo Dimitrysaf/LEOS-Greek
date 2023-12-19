@@ -3,9 +3,8 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+ ɵElement,  ValidatorFn,
+  Validators } from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 
 import { Version } from '@/features/akn-document/models';
@@ -14,7 +13,6 @@ import {
   DownloadEConsiliumOptions,
   RelevantElements,
 } from '@/shared/services/document.service';
-import { ɵElement } from '@angular/forms';
 
 @Component({
   selector: 'app-download-econsilium-modal',

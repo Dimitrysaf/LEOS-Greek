@@ -9,7 +9,7 @@ import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -54,7 +54,8 @@ public class FinancialStatementController {
     @Autowired
     private CoEditionContext coEditionContext;
 
-    public FinancialStatementController(GenericDocumentApiService genericDocumentApiService, FinancialStatementApiService financialStatementApiService) {
+    public FinancialStatementController(GenericDocumentApiService genericDocumentApiService,
+                                        FinancialStatementApiService financialStatementApiService) {
         this.genericDocumentApiService = Objects.requireNonNull(genericDocumentApiService);
         this.financialStatementApiService = Objects.requireNonNull(financialStatementApiService);
     }
@@ -87,14 +88,16 @@ public class FinancialStatementController {
 
     @GetMapping(value = "/{documentRef}/search-versions", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String authorKey,
+    public ResponseEntity<Object> searchVersionData(@PathVariable("documentRef") String documentRef,
+                                                    @RequestParam String authorKey,
                                                     @RequestParam String type) {
         try {
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -102,7 +105,8 @@ public class FinancialStatementController {
     @GetMapping(value = "/{documentRef}/version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public List<VersionVO> getMajorVersionsData(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public List<VersionVO> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
+                                                @RequestParam int pageIndex, @RequestParam int pageSize) {
         return this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
     }
 
@@ -114,7 +118,8 @@ public class FinancialStatementController {
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting document versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -130,8 +135,10 @@ public class FinancialStatementController {
     @GetMapping(value = "/{documentRef}/recent-changes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
-    public List<VersionVO> getRecentChanges(@PathVariable("documentRef") String documentRef, @RequestParam int pageIndex, @RequestParam int pageSize) {
-        List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex, pageSize);
+    public List<VersionVO> getRecentChanges(@PathVariable("documentRef") String documentRef,
+                                            @RequestParam int pageIndex, @RequestParam int pageSize) {
+        List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef,
+                pageIndex, pageSize);
         return recentMinorVersions;
     }
 
@@ -144,26 +151,32 @@ public class FinancialStatementController {
 
     @GetMapping(value = "/{documentRef}/intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion, @RequestParam int pageIndex, @RequestParam int pageSize) {
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                             @RequestParam String currIntVersion,
+                                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
-            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef, currIntVersion, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef,
+                    currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
     @GetMapping(value = "/{documentRef}/count-intermediate-version-data", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef, @RequestParam String currIntVersion) {
+    public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
+                                                             @RequestParam String currIntVersion) {
         try {
             int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occurred while getting versioning data", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting versioning data",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -182,7 +195,8 @@ public class FinancialStatementController {
     @ResponseStatus(HttpStatus.OK)
     public List<VersionVO> saveVersion(@PathVariable("documentRef") String documentRef,
                                        @RequestBody SaveIntermediateVersionRequest request) {
-        List<VersionVO> versions = this.genericDocumentApiService.saveDocument(documentRef, request.getVersionType(), request.getCheckinComment());
+        List<VersionVO> versions = this.genericDocumentApiService.saveDocument(documentRef, request.getVersionType(),
+                request.getCheckinComment());
         return versions;
     }
 
@@ -215,11 +229,13 @@ public class FinancialStatementController {
                                               @RequestHeader("presenterId") String presenterId,
                                               @RequestBody String elementContent) throws Exception {
         try {
-            RefreshElementResponse response = this.genericDocumentApiService.saveElement(documentRef, elementId, elementName, elementContent);
+            SaveElementResponse response = this.genericDocumentApiService.saveElement(documentRef, elementId,
+                    elementName, elementContent);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, response);
             return ResponseEntity.ok(response);
         } catch (CmisBaseException cmisBaseException) {
-            LOG.error("---[FINANCIAL STATEMENT] [CMIS EXCEPTION] --- Error saving element : {} ", cmisBaseException.getMessage());
+            LOG.error("---[FINANCIAL STATEMENT] [CMIS EXCEPTION] --- Error saving element : {} ",
+                    cmisBaseException.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
@@ -231,7 +247,8 @@ public class FinancialStatementController {
     public EditElementResponse getElement(@PathVariable("documentRef") String documentRef,
                                           @PathVariable("elementId") String elementId,
                                           @PathVariable("elementTagName") String elementTagName) {
-        EditElementResponse response = this.genericDocumentApiService.getElement(documentRef, elementId, elementTagName);
+        EditElementResponse response = this.genericDocumentApiService.getElement(documentRef, elementId,
+                elementTagName);
         return response;
     }
 
@@ -250,8 +267,10 @@ public class FinancialStatementController {
                                                 @RequestParam String searchText,
                                                 @RequestParam boolean matchCase,
                                                 @RequestParam boolean completeWords,
-                                                @RequestBody(required = false) String tempUpdatedContentXML) throws Exception {
-        return this.genericDocumentApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords, tempUpdatedContentXML);
+                                                @RequestBody(required = false) String tempUpdatedContentXML)
+            throws Exception {
+        return this.genericDocumentApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords,
+                tempUpdatedContentXML);
     }
 
     @GetMapping(value = "/{newVersionId}/compare/{oldVersionId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -262,7 +281,8 @@ public class FinancialStatementController {
             String contentHtml = this.genericDocumentApiService.compare(newVersionId, oldVersionId);
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error while trying to get document version as html ", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error while trying to get document version as html ",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
@@ -276,7 +296,8 @@ public class FinancialStatementController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while  downloading xml version",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -289,7 +310,8 @@ public class FinancialStatementController {
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading xml version - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while  downloading xml version", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while  downloading xml version",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -302,10 +324,10 @@ public class FinancialStatementController {
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while saving after replace all - " + e.getMessage());
-            return new ResponseEntity<>("Error occurred while saving after replace all", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred while saving after replace all",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
 
     @GetMapping(value = "/{documentRef}/download-clean-version", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -319,8 +341,11 @@ public class FinancialStatementController {
             headers.set("Content-Disposition", "attachment; filename=\"" + jobFileName + "\"");
             return new ResponseEntity<>(cleanVersion, headers, HttpStatus.OK);
         } catch (Exception e) {
-            LOG.error("Error occurred  while trying to download clean version for financial statement " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to download clean version for financial statement", HttpStatus.INTERNAL_SERVER_ERROR);
+            LOG.error(
+                    "Error occurred  while trying to download clean version for financial statement " + e.getMessage());
+            return new ResponseEntity<>(
+                    "Error occurred  while trying to download clean version for financial statement",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -332,7 +357,8 @@ public class FinancialStatementController {
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for financial statement " + e.getMessage());
-            return new ResponseEntity<>("Error occurred  while trying to get clean version for financial statement", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Error occurred  while trying to get clean version for financial statement",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -343,11 +369,13 @@ public class FinancialStatementController {
     ) {
         try {
             boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
-            boolean response = financialStatementApiService.toggleTrackChangeEnabled(isTrackChangesEnabled, documentRef);
+            boolean response = financialStatementApiService.toggleTrackChangeEnabled(isTrackChangesEnabled,
+                    documentRef);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred while toggling Track change enabled- " + e);
-            return new ResponseEntity<>("Unexpected error occurred while toggling Track change enabled", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while toggling Track change enabled",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

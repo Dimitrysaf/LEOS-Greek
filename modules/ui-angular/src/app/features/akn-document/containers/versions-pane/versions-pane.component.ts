@@ -1,8 +1,8 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import {TranslateService} from "@ngx-translate/core";
 
 import { Version } from '@/features/akn-document/models';
 import { DocumentService } from '@/shared/services/document.service';
-import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-versions-pane',
@@ -12,11 +12,11 @@ import {TranslateService} from "@ngx-translate/core";
 export class VersionsPaneComponent implements OnInit {
   @Output() exploreMilestone = new EventEmitter<Version>();
 
-  protected hasMore: boolean = false;
+  protected hasMore = false;
   protected versions: Version[] = [];
   protected showMoreLabel: string;
-  private totalNumVersions: number = 0;
-  private semaphore: boolean = true;
+  private totalNumVersions = 0;
+  private semaphore = true;
 
   protected toggleShowMore() {
     if (this.hasMore && this.semaphore) {
@@ -34,7 +34,7 @@ export class VersionsPaneComponent implements OnInit {
   }
 
   initVersions() {
-    let self = this;
+    const self = this;
     this.semaphore = false;
     this.doc.versions$.subscribe((recVersions: Version[]) => {
       self.versions = [...recVersions];
@@ -48,7 +48,7 @@ export class VersionsPaneComponent implements OnInit {
   }
 
   updateVersions() {
-    let self = this;
+    const self = this;
     this.semaphore = false;
     this.doc.getDocumentVersionsData(this.doc.documentType, this.doc.documentRef, Math.floor(this.versions.length/this.doc.pageSize), this.doc.pageSize).subscribe((recVersions: Version[]) => {
       self.versions = [...self.versions, ...recVersions];

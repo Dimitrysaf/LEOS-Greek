@@ -13,32 +13,19 @@
  */
 package eu.europa.ec.leos.services.dto.response;
 
-import eu.europa.ec.leos.model.xml.Element;
 
-public class RefreshElementResponse {
+public class SaveElementResponse {
 
     private final String elementId;
     private final String elementTagName;
     private final String elementFragment;
-    private final Element elementToEditAfterClose;
-    private final Boolean splittedContentIsEmpty;
 
-    public RefreshElementResponse(String elementId, String elementTagName, String elementFragment, Element elementToEditAfterClose, Boolean splittedContentIsEmpty) {
+    public SaveElementResponse(String elementId, String elementTagName, String elementFragment) {
         this.elementId = elementId;
         this.elementTagName = elementTagName;
         this.elementFragment = elementFragment;
-        this.elementToEditAfterClose = elementToEditAfterClose;
-        this.splittedContentIsEmpty = splittedContentIsEmpty;
     }
 
-    public RefreshElementResponse(String elementId, String elementTagName, String elementFragment) {
-        this.elementId = elementId;
-        this.elementTagName = elementTagName;
-        this.elementFragment = elementFragment;
-        this.elementToEditAfterClose = null;
-        this.splittedContentIsEmpty = null;
-    }
-    
     public String getElementId() {
         return elementId;
     }
@@ -49,13 +36,5 @@ public class RefreshElementResponse {
 
     public String getElementFragment() {
         return elementFragment;
-    }
-
-    public Element getElementToEditAfterClose() {
-        return elementToEditAfterClose;
-    }
-
-    public Boolean getSplittedContentIsEmpty() {
-        return splittedContentIsEmpty;
     }
 }

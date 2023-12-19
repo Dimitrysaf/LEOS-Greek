@@ -12,7 +12,7 @@ import {
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {Subject, combineLatest, takeUntil} from 'rxjs';
+import {combineLatest, Subject, takeUntil} from 'rxjs';
 
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';

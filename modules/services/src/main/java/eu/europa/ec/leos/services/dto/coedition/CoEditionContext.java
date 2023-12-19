@@ -3,7 +3,7 @@ package eu.europa.ec.leos.services.dto.coedition;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -23,12 +23,14 @@ public class CoEditionContext {
     private SimpMessagingTemplate simpMessagingTemplate;
     private List<Element> updatedElements = new ArrayList<Element>();
 
-    public void sendUpdatedElements(String documentRef, String presenterId, RefreshElementResponse updatedElement) {
+    public void sendUpdatedElements(String documentRef, String presenterId, SaveElementResponse updatedElement) {
         new Thread(() -> {
             User user = securityContext.getUser();
-            addUpdatedElement(updatedElement.getElementId(), updatedElement.getElementTagName(), updatedElement.getElementFragment());
+            addUpdatedElement(updatedElement.getElementId(), updatedElement.getElementTagName(),
+                    updatedElement.getElementFragment());
             simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + documentRef,
-                    new UpdateCoEditionResponse(user, presenterId, documentRef, InfoType.DOCUMENT_UPDATED, getUpdatedElements()));
+                    new UpdateCoEditionResponse(user, presenterId, documentRef, InfoType.DOCUMENT_UPDATED,
+                            getUpdatedElements()));
         }).start();
     }
 

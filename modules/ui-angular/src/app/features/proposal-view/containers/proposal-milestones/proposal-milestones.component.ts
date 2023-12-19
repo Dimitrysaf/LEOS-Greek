@@ -3,6 +3,7 @@ import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { AddMilestoneDialogComponent } from '@/features/proposal-view/components/add-milestone-dialog/add-milestone-dialog.component';
 import { MilestoneAnnotationWarningModalComponent } from '@/features/proposal-view/components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
 import {
@@ -15,10 +16,9 @@ import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
+import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
 
 import { ProposalMilestoneSendCopyDialogComponent } from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
-import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
-import { AppConfigService } from '@/core/services/app-config.service';
 
 const MILESTONE_RELOAD_INTERVAL = 10000;
 @Component({

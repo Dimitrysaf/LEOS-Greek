@@ -11,7 +11,7 @@ import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class FinancialStatementApiServiceImpl implements FinancialStatementApiService{
+public class FinancialStatementApiServiceImpl implements FinancialStatementApiService {
 
     @Autowired
     FinancialStatementService financialStatementService;
@@ -42,9 +42,11 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     @Override
     public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED), isTrackChangeEnabled);
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.TRACK_CHANGES_ENABLED),
+                isTrackChangeEnabled);
         String documentId = financialStatementService.findFinancialStatementByRef(documentRef).getId();
-        FinancialStatement financialStatement = financialStatementService.updateFinancialStatement(documentRef, documentId, properties, false);
+        FinancialStatement financialStatement = financialStatementService.updateFinancialStatement(documentRef,
+                documentId, properties, false);
         trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
         return true;
     }
@@ -60,17 +62,20 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public RefreshElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment, boolean isSplit) throws Exception {
+    public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
+                                           String elementFragment) throws Exception {
         return null;
     }
 
     @Override
-    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
+    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId,
+                                              Position position) {
         return null;
     }
 
     @Override
-    public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
+    public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag,
+                                             String elementId) throws Exception {
         return null;
     }
 
@@ -95,12 +100,15 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) throws MethodNotSupportedException {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc)
+            throws MethodNotSupportedException {
         return null;
     }
 
     @Override
-    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception {
+    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase,
+                                                    boolean completeWords, String tempUpdatedContentXML)
+            throws Exception {
         return null;
     }
 
@@ -170,12 +178,14 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception {
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
+                                             TrackChangeActionType changeType) throws Exception {
         return null;
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
+                                             TrackChangeActionType changeType) throws Exception {
         return null;
     }
 }

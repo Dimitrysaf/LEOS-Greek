@@ -1,16 +1,18 @@
+import {HttpClient} from "@angular/common/http";
 import {
   ChangeDetectorRef,
   Component,
   Input, OnDestroy,
   OnInit,
 } from "@angular/core";
-import {TrackChangeAction, TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
-import {DocumentService} from "@/shared/services/document.service";
-import {DocumentConfig, LeosConfig, Permission} from "@/shared";
 import {Subject, takeUntil} from "rxjs";
-import {HttpClient} from "@angular/common/http";
-import {CKEditorService} from "@/features/akn-document/services/ckeditor.service";
+
 import {AppConfigService} from "@/core/services/app-config.service";
+import {CKEditorService} from "@/features/akn-document/services/ckeditor.service";
+import {TrackChangeAction, TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
+import {DocumentConfig, LeosConfig, Permission} from "@/shared";
+import {DocumentService} from "@/shared/services/document.service";
+
 import {appConfig} from "../../../../../config";
 
 @Component({
@@ -107,7 +109,7 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   getAction(elt: HTMLElement) {
-    let action = elt.getAttribute('leos:action');
+    const action = elt.getAttribute('leos:action');
     this.movedToId = elt.getAttribute('leos:softmove_to');
     this.movedFromId = elt.getAttribute('leos:softmove_from');
     if (action == 'insert') {

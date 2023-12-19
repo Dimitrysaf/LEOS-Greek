@@ -36,7 +36,7 @@ import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
-import eu.europa.ec.leos.services.dto.response.RefreshElementResponse;
+import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.export.ExportDW;
@@ -138,7 +138,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     private Provider<StructureContext> structureContext;
     private Provider<BillContextService> context;
 
-    MandateCouncilExplanatoryApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context) {
+    MandateCouncilExplanatoryApiServiceImpl(Provider<StructureContext> structureContext,
+                                            Provider<BillContextService> context) {
 
         this.structureContext = structureContext;
         this.context = context;
@@ -154,7 +155,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     @Override
     public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
         Explanatory explanatory = explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
+        this.setStructureContext(
+                explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         byte[] updatedXmlContent = explanatoryProcessor.deleteElement(explanatory, elementId, elementName);
 
         final String updatedLabel = generateLabel(elementId, explanatory);
@@ -165,17 +167,13 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public RefreshElementResponse saveElement(String documentRef, String elementName, String elementFragment, String elementId, boolean isSplit) throws Exception {
+    public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
+                                           String elementFragment) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        if (explanatory == null) {
-            throw new UnexpectedException("Explanatory not found");
-        }
-
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
-        byte[] updatedXmlContent = explanatoryProcessor.updateElement(explanatory, elementId, elementName, elementFragment);
-        if (updatedXmlContent == null) {
-            throw new UnexpectedException("Error updating explanatory");
-        }
+        this.setStructureContext(
+                explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
+        byte[] updatedXmlContent = explanatoryProcessor.updateElement(explanatory, elementId, elementName,
+                elementFragment);
 
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage("operation.checkin.minor");
@@ -183,54 +181,51 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
                 new CheckinElement(ActionType.UPDATED, elementId, elementName, updatedLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-        Element elementToEditAfterClose = null;
-        boolean splittedContentIsEmpty = false;
-        Pair<byte[], Element> splittedContent = null;
-        if (isSplit && checkIfCloseElementEditor(elementName, elementFragment)) {
-            splittedContent = explanatoryProcessor.getSplittedElement(updatedXmlContent, elementFragment, elementName, elementId);
-            if (splittedContent != null) {
-                elementToEditAfterClose = splittedContent.right();
-                if (splittedContent.left() != null) {
-                    updatedXmlContent = splittedContent.left();
-                }
-            }
-        }
-        explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
+        explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR,
+                checkinCommentJson);
         String newContent = elementProcessor.getElement(explanatory, elementName, elementId);
-        if (splittedContent == null) {
-            splittedContentIsEmpty = true;
-        }
-        return new RefreshElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
+        return new SaveElementResponse(elementId, elementName, newContent);
     }
 
     @Override
-    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position) {
+    public DocumentViewResponse insertElement(String documentRef, String elementName, String elementId,
+                                              Position position) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
-        byte[] updatedXmlContent = this.explanatoryProcessor.insertNewElement(explanatory, elementId, elementName, position.equals(Position.BEFORE));
+        this.setStructureContext(
+                explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
+        byte[] updatedXmlContent = this.explanatoryProcessor.insertNewElement(explanatory, elementId, elementName,
+                position.equals(Position.BEFORE));
 
-        final String title = messageHelper.getMessage("operation.element.inserted", StringUtils.capitalize(elementName));
+        final String title = messageHelper.getMessage("operation.element.inserted",
+                StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage("operation.checkin.minor");
         final String elementLabel = "";
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
                 new CheckinElement(ActionType.INSERTED, elementId, elementName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
-        explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, checkinCommentJson);
+        explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR,
+                checkinCommentJson);
 
         // TO DO : to be added  DocumentUpdatedByCoEditorEvent
         return documentViewService.updateDocumentView(explanatory);
     }
 
     @Override
-    public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag, String elementId) throws Exception {
+    public DocumentViewResponse mergeElement(String documentRef, String elementContent, String elementTag,
+                                             String elementId) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
-        Element mergeOnElement = explanatoryProcessor.getMergeOnElement(explanatory, elementContent, elementTag, elementId);
+        this.setStructureContext(
+                explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
+        Element mergeOnElement = explanatoryProcessor.getMergeOnElement(explanatory, elementContent, elementTag,
+                elementId);
         byte[] updatedXmlContent = null;
         if (mergeOnElement != null) {
             updatedXmlContent = explanatoryProcessor.mergeElement(explanatory, elementContent, elementTag, elementId);
-            explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.element.updated", org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
-            LOG.info("Element '{}' merged into '{}' in Explanatory {} id {})", elementId, mergeOnElement.getElementId(), explanatory.getName(), explanatory.getId());
+            explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR,
+                    messageHelper.getMessage("operation.element.updated",
+                            org.apache.commons.lang3.StringUtils.capitalize(elementTag)));
+            LOG.info("Element '{}' merged into '{}' in Explanatory {} id {})", elementId, mergeOnElement.getElementId(),
+                    explanatory.getName(), explanatory.getId());
         }
         return documentViewService.updateDocumentView(explanatory);
     }
@@ -238,7 +233,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     @Override
     public List<TableOfContentItemVO> getToc(String documentRef, TocMode mode) {
         Explanatory memorandum = this.explanatoryService.findExplanatoryByRef(documentRef);
-        this.setStructureContext(memorandum.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
+        this.setStructureContext(
+                memorandum.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         return this.explanatoryService.getTableOfContent(memorandum, mode);
     }
 
@@ -246,7 +242,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public List<TocItem> getTocItems(@NotNull String documentRef) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
+        structureContext1.useDocumentTemplate(
+                explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         return structureContext1.getTocItems();
     }
 
@@ -264,18 +261,23 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) throws MethodNotSupportedException {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc)
+            throws MethodNotSupportedException {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
+        structureContext1.useDocumentTemplate(
+                explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         ExplanatoryStructureType structureType = getStructureType(structureContext1);
         setBlockOrCrossHeading(toc);
-        Explanatory updatedAnnex = explanatoryService.saveTableOfContent(explanatory, toc, structureType, messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
+        Explanatory updatedAnnex = explanatoryService.saveTableOfContent(explanatory, toc, structureType,
+                messageHelper.getMessage("operation.toc.updated"), securityContext.getUser());
         return this.explanatoryService.getTableOfContent(updatedAnnex, TocMode.SIMPLIFIED);
     }
 
     @Override
-    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase, boolean completeWords, String tempUpdatedContentXML) throws Exception {
+    public List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase,
+                                                    boolean completeWords, String tempUpdatedContentXML)
+            throws Exception {
         List<SearchMatchVO> matches = Collections.emptyList();
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         byte[] contentForReplace = getContentForReplaceProcess(tempUpdatedContentXML, explanatory);
@@ -309,7 +311,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Explanatory version = explanatoryService.findExplanatoryVersion(versionId);
         Explanatory annex = explanatoryService.findExplanatoryByRef(documentRef);
         byte[] resultXmlContent = getContent(version);
-        Explanatory updatedAnnex = explanatoryService.updateExplanatory(annex, resultXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+        Explanatory updatedAnnex = explanatoryService.updateExplanatory(annex, resultXmlContent, VersionType.MINOR,
+                messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
         return this.documentViewService.updateDocumentView(updatedAnnex);
     }
 
@@ -317,7 +320,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         String jsonAlternatives = "";
-        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getUser().getRoles());
+        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(
+                securityContext.getUser().getRoles());
         User user = securityContext.getUser();
         Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
         boolean isClonedProposal = proposal.isClonedProposal();
@@ -346,15 +350,19 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         try {
             Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
             Stopwatch stopwatch = Stopwatch.createStarted();
-            LeosPackage leosPackage = packageService.findPackageByDocumentRef(explanatory.getMetadata().get().getRef(), Explanatory.class);
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(explanatory.getMetadata().get().getRef(),
+                    Explanatory.class);
             context.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
             String proposalId = proposal.getId();
-            final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
+            final String jobFileName =
+                    "Proposal_" + proposalId + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             ExportOptions exportOptions = new ExportDW(ExportOptions.Output.WORD, Explanatory.class, false, true);
             exportOptions.setExportVersions(new ExportVersions<Explanatory>(null, explanatory));
-            cleanVersion = exportService.createDocuWritePackage(FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
-            LOG.info("The actual version of CLEANED Bill for proposal {}, downloaded in {} milliseconds ({} sec)", proposalId,
+            cleanVersion = exportService.createDocuWritePackage(
+                    FileHelper.getReplacedExtensionFilename(jobFileName, "zip"), proposalId, exportOptions);
+            LOG.info("The actual version of CLEANED Bill for proposal {}, downloaded in {} milliseconds ({} sec)",
+                    proposalId,
                     stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
@@ -377,7 +385,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public byte[] replaceAllTextInDocument(ReplaceAllMatchRequest event) throws Exception {
         Explanatory explanatory = explanatoryService.findExplanatoryByRef(event.getDocumentRef());
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), explanatory);
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
+                event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
@@ -390,7 +399,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public byte[] replaceOneTextInDocument(ReplaceMatchRequest event) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(event.getDocumentRef());
         byte[] contentForReplace = getContentForReplaceProcess(event.getTempUpdatedContentXML(), explanatory);
-        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(), event.isCaseSensitive(), event.isCompleteWords());
+        List<SearchMatchVO> searchMatchVOS = this.searchService.searchText(contentForReplace, event.getSearchText(),
+                event.isCaseSensitive(), event.isCompleteWords());
         return searchService.replaceText(
                 contentForReplace,
                 event.getSearchText(),
@@ -403,7 +413,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(event.getDocumentRef());
 
-        Explanatory updateAnnex = explanatoryService.updateExplanatory(explanatory, event.getUpdatedContent().getBytes(StandardCharsets.UTF_8),
+        Explanatory updateAnnex = explanatoryService.updateExplanatory(explanatory,
+                event.getUpdatedContent().getBytes(StandardCharsets.UTF_8),
                 VersionType.MINOR, messageHelper.getMessage("operation.search.replace.updated"));
         return this.documentViewService.updateDocumentView(updateAnnex);
     }
@@ -413,15 +424,19 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
 
-        structureContext1.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
+        structureContext1.useDocumentTemplate(
+                explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         List<TocItem> tocItems = structureContext1.getTocItems();
         List<NumberingConfig> numberConfigs = structureContext1.getNumberingConfigs();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(explanatory.getMetadata().get().getRef());
+        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(
+                explanatory.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
 
         return new DocumentConfigResponse(
-                documentsMetadata, numberConfigs, tocItems, null, StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
-                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(), proposal.getMetadata().getOrNull(), structureContext1.getTocRules(),
+                documentsMetadata, numberConfigs, tocItems, null,
+                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
+                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(),
+                proposal.getMetadata().getOrNull(), structureContext1.getTocRules(),
                 explanatory.isTrackChangesEnabled(), true, proposal.isClonedProposal()
         );
     }
@@ -430,16 +445,19 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public String fetchUserGuidance(String documentRef) {
         // KLUGE temporary hack for compatibility with new domain model
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        return templateConfigurationService.getTemplateConfiguration(explanatory.getMetadata().get().getDocTemplate(), "guidance");
+        return templateConfigurationService.getTemplateConfiguration(explanatory.getMetadata().get().getDocTemplate(),
+                "guidance");
     }
 
     @Override
-    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception {
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
+                                             TrackChangeActionType changeType) throws Exception {
         throw new UnsupportedOperationException("Accept change isn't supported for council explanatory");
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
+                                             TrackChangeActionType changeType) throws Exception {
         throw new UnsupportedOperationException("Reject change isn't supported for council explanatory");
     }
 
@@ -466,16 +484,19 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
 
     private String generateLabel(String reference, XmlDocument sourceDocument) {
         final byte[] sourceXmlContent = sourceDocument.getContent().get().getSource().getBytes();
-        Result<String> updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(reference), sourceDocument.getMetadata().get().getRef(),
+        Result<String> updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(reference),
+                sourceDocument.getMetadata().get().getRef(),
                 sourceXmlContent);
         return updatedLabel.get();
     }
 
-    private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations) throws Exception {
+    private byte[] doDownloadVersion(String documentRef, boolean isWithAnnotations, String annotations)
+            throws Exception {
         try {
             final Explanatory currentDocument = this.explanatoryService.findExplanatoryByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentRef(currentDocument.getMetadata().get().getRef(), Explanatory.class);
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(
+                    currentDocument.getMetadata().get().getRef(), Explanatory.class);
             context.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
 
@@ -493,7 +514,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
                 final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
                 return exportService.createDocuWritePackage(jobFileName, proposalId, exportOptions);
             }
-            LOG.info("The actual version of Explanatory {} downloaded in {} milliseconds ({} sec)", currentDocument.getName());
+            LOG.info("The actual version of Explanatory {} downloaded in {} milliseconds ({} sec)",
+                    currentDocument.getName());
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
         }
@@ -505,7 +527,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Explanatory explanatory = explanatoryService.findExplanatoryByRef(documentRef);
         List<String> elementAncestorsIds = null;
         StructureContext ctxt = structureContext.get();
-        ctxt.useDocumentTemplate(explanatory.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
+        ctxt.useDocumentTemplate(
+                explanatory.getMetadata().getOrError(() -> "Bill metadata is required!").getDocTemplate());
         if (CollectionUtils.isNotEmpty(elementIds)) {
             try {
                 elementAncestorsIds = explanatoryService.getAncestorsIdsForElementId(explanatory, elementIds);
@@ -514,7 +537,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
             }
         }
         // we are combining two operations (get toc + get selected element ancestors)
-        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(explanatory.getMetadata().get().getRef(),
+        final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
+                explanatory.getMetadata().get().getRef(),
                 TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, ctxt.getNumberingConfigs());
     }
@@ -529,7 +553,9 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     private void setBlockOrCrossHeading(TableOfContentItemVO sourceItem) {
-        boolean iscrossHeading = getTagValueFromTocItemVo(sourceItem).equalsIgnoreCase(CROSSHEADING) || getTagValueFromTocItemVo(sourceItem).equalsIgnoreCase(BLOCK);
+        boolean iscrossHeading =
+                getTagValueFromTocItemVo(sourceItem).equalsIgnoreCase(CROSSHEADING) || getTagValueFromTocItemVo(
+                        sourceItem).equalsIgnoreCase(BLOCK);
         if (iscrossHeading && MAIN_BODY.equals(sourceItem.getParentItem().getTocItem().getAknTag().value())) {
             sourceItem.setBlock(true);
         } else if (iscrossHeading) {

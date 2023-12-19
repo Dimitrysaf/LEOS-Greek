@@ -59,16 +59,16 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { LoadingService } from '@/shared/services/loading.service';
 import { parentHasClass } from '@/shared/utils';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { BlockDocumentEditorService } from '../../services/block-document-editor.service';
 import { CKEditorService } from '../../services/ckeditor.service';
+import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
-import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
-import { LoadingService } from '@/shared/services/loading.service';
 
 enum PageMode {
   Normal,
@@ -265,10 +265,14 @@ export class DocumentEditorComponent
     this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
-        this.loadingService.setTaskOver("refresh", this.documentRef);
+        this.loadingService.setTaskOver('refresh', this.documentRef);
         this.documentService.setDidDocumentLoadAndRender(true);
         this.loadDocument = true;
-        this.setPageSubTitle(documentView.versionInfoVO.documentVersion, `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`, documentView.versionInfoVO.lastModificationInstant);
+        this.setPageSubTitle(
+          documentView.versionInfoVO.documentVersion,
+          `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`,
+          documentView.versionInfoVO.lastModificationInstant,
+        );
         this.proposalRef = documentView.proposalRef;
       });
 
@@ -278,7 +282,11 @@ export class DocumentEditorComponent
         if (documentView) {
           this.documentService.setDidDocumentLoadAndRender(true);
           this.loadDocument = true;
-          this.setPageSubTitle(documentView.versionInfoVO.documentVersion, `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`, documentView.versionInfoVO.lastModificationInstant);
+          this.setPageSubTitle(
+            documentView.versionInfoVO.documentVersion,
+            `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`,
+            documentView.versionInfoVO.lastModificationInstant,
+          );
           this.proposalRef = documentView.proposalRef;
         }
       });
@@ -392,15 +400,14 @@ export class DocumentEditorComponent
         }
       });
 
-    this.documentService.versionLatest$.subscribe(
-      version => {
-        version && this.setPageSubTitle(
+    this.documentService.versionLatest$.subscribe((version) => {
+      version &&
+        this.setPageSubTitle(
           this.formatVersionNumber(version),
           version.createdBy,
-          version.updatedDate
+          version.updatedDate,
         );
-      }
-    );
+    });
   }
 
   ngAfterViewInit(): void {
@@ -409,9 +416,11 @@ export class DocumentEditorComponent
     this.coEditionWSService.latestMessage
       .pipe(takeUntil(this.destroy$))
       .subscribe((latestMessage) => {
-        if (latestMessage.info?.sessionId !== null &&
+        if (
+          latestMessage.info?.sessionId !== null &&
           latestMessage.info.presenterId !== presenterId &&
-          latestMessage.info.documentId === this.documentRef) {
+          latestMessage.info.documentId === this.documentRef
+        ) {
           this.appShellService.growl({
             severity: 'info',
             summary: 'Co Edition update',
@@ -426,10 +435,7 @@ export class DocumentEditorComponent
       });
 
     this.loadingService.task$
-      .pipe(
-        takeUntil(this.destroy$),
-        debounceTime(500)
-      )
+      .pipe(takeUntil(this.destroy$), debounceTime(500))
       .subscribe((latestTask) => {
         if (latestTask.ongoing) {
           if (
@@ -481,6 +487,12 @@ export class DocumentEditorComponent
             life: 1,
           });
         }
+      });
+
+    this.documentService.titlePageBS
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((title) => {
+        this.pageTitle = title;
       });
   }
 
