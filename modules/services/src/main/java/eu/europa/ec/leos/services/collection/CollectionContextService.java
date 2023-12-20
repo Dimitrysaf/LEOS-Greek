@@ -67,7 +67,7 @@ public abstract class CollectionContextService {
     private static final String PROPOSAL_METADATA_IS_REQUIRED = "Proposal metadata is required!";
 
     protected final MessageHelper messageHelper;
-    private final ExplanatoryService explanatoryService;
+    protected final ExplanatoryService explanatoryService;
     protected final TemplateService templateService;
     protected final PackageService packageService;
     protected final ProposalService proposalService;
@@ -444,23 +444,61 @@ public abstract class CollectionContextService {
 
         proposal = proposalService.updateProposal(proposal, metadata, VersionType.MINOR, proposalComment);
 
-        LeosPackage leosPckg = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-
-        MemorandumContextService memorandumContext = memorandumContextProvider.get();
-        memorandumContext.usePackage(leosPckg);
-        memorandumContext.usePurpose(purpose);
-        memorandumContext.useActionMessageMap(actionMsgMap);
-        memorandumContext.useEeaRelevance(eeaRelevance);
-        memorandumContext.executeUpdateMemorandum();
-
-        BillContextService billContext = billContextProvider.get();
-        billContext.usePackage(leosPckg);
-        billContext.usePurpose(purpose);
-        billContext.useActionMessageMap(actionMsgMap);
-        billContext.useEeaRelevance(eeaRelevance);
-        billContext.executeUpdateBill();
+        useProposal(proposal);
+        usePurpose(proposal.getMetadata().get().getPurpose());
+        useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+        String comment = messageHelper.getMessage("operation.docpurpose.updated");
+        useActionMessage(ContextActionService.METADATA_UPDATED, comment);
+        useActionComment(comment);
+        executeUpdateDocumentsAssociatedToProposal();
 
         return proposal;
+    }
+
+    public void executeUpdateDocumentsAssociatedToProposal() {
+        LOG.trace("Executing 'Update Documents Associated to Proposal' use case...");
+
+        Validate.notNull(proposal, "Proposal is required!");
+        Validate.notNull(proposalComment, "Proposal comment is required!");
+
+        Option<ProposalMetadata> metadataOption = proposal.getMetadata();
+        Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
+
+        Validate.notNull(purpose, "Proposal purpose is required!");
+
+        LeosPackage leosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(),
+                XmlDocument.class, false);
+
+        for (XmlDocument document : documents) {
+            switch (document.getCategory()) {
+                case COUNCIL_EXPLANATORY: {
+                    executeUpdateExplanatory(leosPackage, purpose, actionMsgMap);
+                    break;
+                }
+                case MEMORANDUM: {
+                    MemorandumContextService memorandumContext = memorandumContextProvider.get();
+                    memorandumContext.usePackage(leosPackage);
+                    memorandumContext.usePurpose(purpose);
+                    memorandumContext.useEeaRelevance(eeaRelevance);
+                    memorandumContext.useActionMessageMap(actionMsgMap);
+                    memorandumContext.executeUpdateMemorandum();
+                    break;
+                }
+                case BILL: {
+                    BillContextService billContext = billContextProvider.get();
+                    billContext.usePackage(leosPackage);
+                    billContext.usePurpose(purpose);
+                    billContext.useEeaRelevance(eeaRelevance);
+                    billContext.useActionMessageMap(actionMsgMap);
+                    billContext.executeUpdateBill();
+                    break;
+                }
+                default:
+                    LOG.debug("Do nothing for rest of the categories like MEDIA, CONFIG & LEG");
+                    break;
+            }
+        }
     }
 
     public void executeDeleteProposal() {
@@ -556,4 +594,6 @@ public abstract class CollectionContextService {
     protected static <T> T cast(Object obj) {
         return (T) obj;
     }
+
+    protected abstract void executeUpdateExplanatory(LeosPackage leosPackage, String purpose, Map<ContextActionService, String> actionMsgMap);
 }

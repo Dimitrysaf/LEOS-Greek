@@ -40,6 +40,9 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 
+import java.util.List;
+import java.util.Map;
+
 import static eu.europa.ec.leos.domain.repository.LeosCategory.COUNCIL_EXPLANATORY;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
 
@@ -91,5 +94,16 @@ public class CollectionContextMandateService extends CollectionContextService {
         return explanatory;
     }
 
+    @Override
+    protected void executeUpdateExplanatory(LeosPackage leosPackage, String purpose, Map<ContextActionService, String> actionMsgMap) {
+        List<Explanatory> explanatories = explanatoryService.findCouncilExplanatoryByPackagePath(leosPackage.getPath());
+        explanatories.forEach(explanatory -> {
+            ExplanatoryContextService explanatoryContext = explanatoryContextProvider.get();
+            explanatoryContext.useExplanatory(explanatory);
+            explanatoryContext.usePurpose(purpose);
+            explanatoryContext.useActionMessageMap(actionMsgMap);
+            explanatoryContext.executeUpdateExplanatory();
+        });
+    }
 
 }

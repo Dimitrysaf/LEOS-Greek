@@ -33,7 +33,11 @@ import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.collection.CollectionContextService;
+import eu.europa.ec.leos.services.collection.document.AnnexContextService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
+import eu.europa.ec.leos.services.collection.document.ContextActionService;
+import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
@@ -89,55 +93,66 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     private static final Logger LOG = LoggerFactory.getLogger(CoverPageApiServiceImpl.class);
     private static final String DELETE_ISN_T_SUPPORTED_FOR_COVER_PAGE = "Delete isn't supported for cover page";
     private static final String OCCURRED_WHILE_USING_EXPORT_SERVICE = "Unexpected error occurred while using ExportService";
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
-    @Autowired
     ProposalService proposalService;
-    @Autowired
     DocumentViewService<Proposal> documentViewService;
-    @Autowired
     DocumentContentService documentContentService;
-    @Autowired
     SecurityContext securityContext;
-    @Autowired
     UserHelper userHelper;
-    @Autowired
     ComparisonDelegateAPI<Proposal> comparisonDelegate;
-    @Autowired
     SearchService searchService;
-    @Autowired
     MessageHelper messageHelper;
-    @Autowired
     ElementProcessor elementProcessor;
-    @Autowired
     PackageService packageService;
-    @Autowired
     XmlContentProcessor xmlContentProcessor;
-    @Autowired
     ExportService exportService;
-    @Autowired
     TemplateConfigurationService templateConfigurationService;
-    @Autowired
     LegService legService;
-    @Autowired
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
-    @Autowired
     RepositoryPropertiesMapper repositoryPropertiesMapper;
-    @Autowired
     TrackChangesContext trackChangesContext;
 
     private Provider<CloneContext> cloneContext;
-    private Provider<BillContextService> context;
-    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
-            .withZone(ZoneId.systemDefault());
-
-
+    private Provider<CollectionContextService> proposalContextProvider;
+    private Provider<BillContextService> billContextServiceProvider;
+    private Provider<MemorandumContextService> memorandumContextServiceProvider;
     private Provider<StructureContext> structureContext;
 
-    CoverPageApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext,
-                            Provider<BillContextService> context) {
-        this.structureContext = structureContext;
+    @Autowired
+    public CoverPageApiServiceImpl(ProposalService proposalService,
+            DocumentViewService<Proposal> documentViewService, DocumentContentService documentContentService,
+            SecurityContext securityContext, UserHelper userHelper,
+            ComparisonDelegateAPI<Proposal> comparisonDelegate, SearchService searchService, MessageHelper messageHelper,
+            ElementProcessor elementProcessor, PackageService packageService, XmlContentProcessor xmlContentProcessor,
+            ExportService exportService, TemplateConfigurationService templateConfigurationService, LegService legService,
+            LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper,
+            RepositoryPropertiesMapper repositoryPropertiesMapper, TrackChangesContext trackChangesContext,
+            Provider<CloneContext> cloneContext, Provider<BillContextService> billContextServiceProvider,
+            Provider<StructureContext> structureContext, Provider<CollectionContextService> proposalContextProvider,
+            Provider<MemorandumContextService> memorandumContextServiceProvider) {
+        this.proposalService = proposalService;
+        this.documentViewService = documentViewService;
+        this.documentContentService = documentContentService;
+        this.securityContext = securityContext;
+        this.userHelper = userHelper;
+        this.comparisonDelegate = comparisonDelegate;
+        this.searchService = searchService;
+        this.messageHelper = messageHelper;
+        this.elementProcessor = elementProcessor;
+        this.packageService = packageService;
+        this.xmlContentProcessor = xmlContentProcessor;
+        this.exportService = exportService;
+        this.templateConfigurationService = templateConfigurationService;
+        this.legService = legService;
+        this.leosPermissionAuthorityMapHelper = leosPermissionAuthorityMapHelper;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.trackChangesContext = trackChangesContext;
         this.cloneContext = cloneContext;
-        this.context = context;
+        this.billContextServiceProvider = billContextServiceProvider;
+        this.structureContext = structureContext;
+        this.proposalContextProvider = proposalContextProvider;
+        this.memorandumContextServiceProvider = memorandumContextServiceProvider;
     }
 
     @Override
@@ -190,8 +205,17 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 return null;
             }
 
-            proposal = proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR,
-                    messageHelper.getMessage("operation.docpurpose.updated"));
+            proposal = proposalService.updateProposal(proposal, newXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.docpurpose.updated"));
+
+            CollectionContextService context = proposalContextProvider.get();
+            context.useProposal(proposal);
+            context.usePurpose(docPurpose);
+            context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+            String comment = messageHelper.getMessage("operation.docpurpose.updated");
+            context.useActionMessage(ContextActionService.METADATA_UPDATED, comment);
+            context.useActionComment(comment);
+            context.executeUpdateDocumentsAssociatedToProposal();
+
             String newContent = elementProcessor.getElement(proposal, elementName, elementId);
             return new SaveCoverPageElementResponse(elementId, elementName, newContent, proposal.getTitle());
         }
@@ -293,9 +317,8 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         byte[] cleanVersion = new byte[0];
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(),
-                Proposal.class);
-        context.get().usePackage(leosPackage);
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        billContextServiceProvider.get().usePackage(leosPackage);
         String proposalId = proposal.getId();
         try {
             final String jobFileName =
@@ -435,9 +458,8 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             Stopwatch stopwatch = Stopwatch.createStarted();
             final Proposal currentDocument = this.proposalService.getProposalByRef(documentRef);
 
-            LeosPackage leosPackage = packageService.findPackageByDocumentRef(
-                    currentDocument.getMetadata().get().getRef(), Proposal.class);
-            context.get().usePackage(leosPackage);
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(currentDocument.getMetadata().get().getRef(), Proposal.class);
+            billContextServiceProvider.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
             populateCloneProposalMetadata(proposal);
 
@@ -518,7 +540,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     private String getContextProposalId() {
-        return context.get().getProposalId();
+        return billContextServiceProvider.get().getProposalId();
     }
 
     private boolean isClonedProposal() {

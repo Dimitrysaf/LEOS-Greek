@@ -146,4 +146,9 @@ public class CollectionContextProposalService extends CollectionContextService {
         }
         return tp;
     }
+
+    @Override
+    protected void executeUpdateExplanatory(LeosPackage leosPackage, String purpose, Map<ContextActionService, String> actionMsgMap) {
+    }
+
 }

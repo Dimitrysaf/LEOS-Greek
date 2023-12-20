@@ -84,8 +84,6 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
 
     this.title =
       this.domSanitizer.sanitize(SecurityContext.HTML, this.title) || '';
-
-    console.log(this.title);
   }
 
   handleClose() {
