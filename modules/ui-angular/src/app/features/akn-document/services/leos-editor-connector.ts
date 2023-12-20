@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { distinctUntilChanged, filter, finalize, take } from 'rxjs';
+import { distinctUntilChanged, filter, take } from 'rxjs';
 
 import {
   EditElementResponse,
@@ -112,23 +112,27 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
   }) {
     this.elementToEditAfterClose = null;
-    const promise = new Promise<void>((resolve, reject) => {
-      this.documentService.didDocumentLoadAndRender$
-        .pipe(filter((isLoaded) => isLoaded === true))
-        .subscribe((loaded) => {
-          resolve();
-        });
-    });
+    if (data.elementType === 'crossheading') {
+      data.elementType = 'crossHeading';
+    }
 
-    promise.then(() => {
-      if (data.elementType === 'crossheading') {
-        data.elementType = 'crossHeading';
-      }
+    if (this.isCNInstance) {
+      const promise = new Promise<void>((resolve, reject) => {
+        this.documentService.didDocumentLoadAndRender$
+          .pipe(filter((isLoaded) => isLoaded === true))
+          .subscribe((loaded) => {
+            resolve();
+          });
+      });
 
-      setTimeout(() => {
-        this.handleEdit(data);
-      }, 1000);
-    });
+      promise.then(() => {
+        setTimeout(() => {
+          this.handleEdit(data);
+        }, 1000);
+      });
+    } else {
+      this.handleEdit(data);
+    }
   }
 
   handleEdit(data: { action: string; elementId: string; elementType: string }) {
@@ -295,18 +299,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   // checkboxesExtension (FinancialStatement screen)
   saveElement(elemData: SaveElementAction) {
     this.isSaveAndClose = elemData.isSaveAndClose;
-    if (!this.isSaveAndClose && !this.documentService.isReloadRequired) {
-      this.documentService.isReloadRequired = true;
-    }
     this.documentService.setDidDocumentLoadAndRender(false);
-    if (!this.isCNInstance) {
-      this.refreshElement(
-        elemData.elementId,
-        elemData.elementType,
-        elemData.elementFragment,
-      );
-    }
-    const milliseconds = new Date().getTime();
+    this.refreshElement(
+      elemData.elementId,
+      elemData.elementType,
+      elemData.elementFragment,
+    );
+    let milliseconds = new Date().getTime();
     this.loadingService.setTaskOngoing('saving', String(milliseconds));
     this.saveDocumentElement(
       this.documentService.documentRef,
@@ -318,9 +317,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       this.coEditionService.presenterId,
     ).subscribe((response) => {
       this.handleActionsAfterSave(response, elemData, String(milliseconds));
-      if (!response.splittedContentIsEmpty) {
-        this.closeElement();
-      }
     });
   }
 
@@ -331,23 +327,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   ) {
     this.isElementSaved = true;
     this.elementToEditAfterClose = response.elementToEditAfterClose;
-    if (this.isCNInstance) {
-      this.refreshElement(
-        response.elementId,
-        response.elementTagName,
-        response.elementFragment,
-      );
-      if (elemData.isSaveAndClose) {
-        this.documentService.reloadDocument();
-      }
+    if (this.elementToEditAfterClose && this.elementToEditAfterClose !== null) {
+      this.closeElement();
     }
     this.updateTitleWithResponse(response);
     this.coEditionService.setShouldReloadAfterUpdate();
-    this.documentService.updateElementContent({
-      elementId: response.elementId,
-      elementType: response.elementTagName,
-      elementFragment: response.elementFragment,
-    });
     this.loadingService.setTaskOver('saving', taskId);
   }
 
@@ -370,26 +354,26 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       this.documentService.documentRef,
       this.elementUnderEdit,
     );
-    if (isCNInstance) {
-      if (this.isElementSaved && !this.isSaveAndClose) {
-        this.documentService.reloadDocument();
-      } else {
-        this.documentService.resetDocument();
-      }
-    } else if (this.documentService.isReloadRequired) {
-      this.documentService.reloadDocument();
+    this.documentService.reloadConnectors(elemData, true);
+    if (this.isCNInstance && !this.isElementSaved && (!this.elementToEditAfterClose || this.elementToEditAfterClose == null)) {
+      this.documentService.resetDocument();
     }
     this.setEditorOpenState('CLOSE');
     this.documentService.setIsEditorOpen(false);
-    this.isElementSaved = false;
-    this.documentService.isReloadRequired = false;
     if (this.elementToEditAfterClose && this.elementToEditAfterClose !== null) {
       this.editElementAction({
         action: 'edit',
         elementId: this.elementToEditAfterClose['elementId'],
         elementType: this.elementToEditAfterClose['elementTagName'],
       });
+    } else if (this.documentService.isReloadRequired) {
+      if (!this.isElementSaved) {
+        // When updates have been done on the same edited element by another user, if saved, other changes are screwed up.
+        this.documentService.reloadDocument();
+      }
+      this.documentService.isReloadRequired = false;
     }
+    this.isElementSaved = false;
   }
 
   // leosEditorExtension > actionHandler

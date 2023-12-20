@@ -110,6 +110,7 @@ export class DocumentService implements OnDestroy {
     elementId: string;
     elementType: string;
     elementFragment: string;
+    isClosing: boolean;
   }>;
   refreshView$: Observable<DocumentViewResponse>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
@@ -129,8 +130,12 @@ export class DocumentService implements OnDestroy {
     elementId: string;
     elementType: string;
     elementFragment: string;
+    isClosing: boolean;
   }>;
-  getElementContent$: Observable<{ elementId: string; elementType: string }>;
+  getElementContent$: Observable<{
+    elementId: string;
+    elementType: string
+  }>;
   getElementContentResponse$: Observable<{
     elementId: string;
     elementType: string;
@@ -177,7 +182,8 @@ export class DocumentService implements OnDestroy {
     elementId: string;
     elementType: string;
     elementFragment: string;
-  }>({ elementId: null, elementType: null, elementFragment: null });
+    isClosing: boolean;
+  }>({ elementId: null, elementType: null, elementFragment: null, isClosing: false });
   private refreshViewBS = new BehaviorSubject<DocumentViewResponse>(null);
   private documentRefAndCategoryBS =
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
@@ -206,7 +212,8 @@ export class DocumentService implements OnDestroy {
     elementId: string;
     elementType: string;
     elementFragment: string;
-  }>({ elementId: null, elementType: null, elementFragment: null });
+    isClosing: boolean;
+  }>({ elementId: null, elementType: null, elementFragment: null, isClosing: false });
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -637,8 +644,13 @@ export class DocumentService implements OnDestroy {
     elementId: string;
     elementType: string;
     elementFragment: string;
-  }) {
-    this.refreshConnectorsBS.next(data);
+  }, isClosing = false) {
+    this.refreshConnectorsBS.next({
+      elementId: data.elementId,
+      elementType: data.elementType,
+      elementFragment: data.elementFragment,
+      isClosing: isClosing
+    });
   }
 
   refreshView(data: DocumentViewResponse) {
@@ -856,6 +868,7 @@ export class DocumentService implements OnDestroy {
     elementId: string;
     elementType: string;
     elementFragment: string;
+    isClosing: boolean;
   }) {
     this.updateElementContentBS.next(data);
   }

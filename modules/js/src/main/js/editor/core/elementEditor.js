@@ -355,7 +355,7 @@ define(function elementEditorModule(require) {
         };
         connector.releaseElement(data);
         // destroy editor instance, without updating DOM
-        if (editor.LEOS.instanceType !== 'COUNCIL' && connector.getState().isAngularUI) {
+        if (connector.getState().isAngularUI) {
             placeholder.outerHTML = newContent;
 
             editor.destroy(false);
