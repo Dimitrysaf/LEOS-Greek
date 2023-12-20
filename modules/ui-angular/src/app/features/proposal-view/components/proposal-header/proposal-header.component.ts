@@ -5,6 +5,7 @@ import {
   OnDestroy,
   OnInit,
   SecurityContext,
+  SimpleChanges
 } from '@angular/core';
 import {
   FormBuilder,
@@ -49,13 +50,20 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
     private domSanitizer: DomSanitizer,
   ) {}
 
+  ngOnChanges(changes:SimpleChanges):void{
+    if ('editableTitle' in changes) {
+      const updatedTitle = changes['editableTitle'].currentValue;
+      this.setPageTitle(updatedTitle);
+    } 
+  }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
   ngOnInit(): void {
-    this.setPageTitle();
+    this.setPageTitle(this.editableTitle);
     this.createForm = this.fb.group({
       docPurpose: new FormControl(this.title, {
         validators: [Validators.required, noWhitespaceValidator],
@@ -69,8 +77,8 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setPageTitle() {
-    this.title = [this.nonEditablePartOfTitle, this.editableTitle]
+  private setPageTitle(newTitle: any) {
+    this.title = [this.nonEditablePartOfTitle, newTitle]
       .filter(Boolean)
       .join(' ');
 
