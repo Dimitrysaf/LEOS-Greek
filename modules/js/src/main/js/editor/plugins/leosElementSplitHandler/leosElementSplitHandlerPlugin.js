@@ -90,7 +90,8 @@ define(function leosElementSplitHandlerPluginModule(require) {
                 if (editor.fire("canBeSaved")) {
                     editor.fire("save", {
                         data: editor.getData(),
-                        origin: "split"
+                        origin: "split",
+                        isSaveAndClose: true
                     });
                 }
             }
