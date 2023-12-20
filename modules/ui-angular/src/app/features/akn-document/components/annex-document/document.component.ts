@@ -108,7 +108,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
           coEditionUpdate.updatedElements.length > 0
         ) {
           coEditionUpdate.updatedElements.forEach((element) => {
-            if(element.elementFragment) {
+            if (element.elementFragment) {
               this.updateElementContent({
                 elementId: element.elementId,
                 elementType: element.elementTagName,
@@ -117,13 +117,13 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
               });
             }
           });
-        }
           this.documentService.setDidDocumentLoadAndRender(true);
           this.documentService.reloadView();
           this.tableOfContentService.reload();
         } else {
           this.documentService.reloadDocument();
         }
+      }
     });
   }
 
@@ -216,11 +216,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
       if (!elementInEditor) {
         this.reloadElements(data);
       } else if (data.isClosing) {
-        if (!this.isCNInstance) {
-          this.reloadElements(data);
-        } else {
-          this.documentService.reloadDocument();
-        }
+        !this.isCNInstance ? this.reloadElements(data) : this.documentService.reloadDocument();
       } else {
         this.documentService.isReloadRequired = true;
       }
