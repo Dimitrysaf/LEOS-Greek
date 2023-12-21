@@ -482,8 +482,13 @@ define(function leosTrackChangesPluginModule(require) {
                     case "leosCrossReferenceWidget":
                     case "mathjax":
                     case "table":
-                        if ((editor.getSelection().isCollapsed() && core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) ||
-                            !editor.getSelection().isCollapsed()) {
+                        if ((editor.getSelection().isCollapsed() && (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)
+                                || core.isInsideTrackedDeletedOrSoftMovedToElement(editor))) || !editor.getSelection().isCollapsed()) {
+                            return false;
+                        }
+                        break;
+                    case "specialchar":
+                        if (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION) || core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
                             return false;
                         }
                         break;
