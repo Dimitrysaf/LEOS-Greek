@@ -133,7 +133,7 @@
         <resources>
             <resource>
                 <directory>dist</directory>
-                <targetPath>ui-a</targetPath>
+                <targetPath>ui</targetPath>
             </resource>
         </resources>
     </build>
