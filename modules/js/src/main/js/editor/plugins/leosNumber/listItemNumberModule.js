@@ -366,6 +366,7 @@ define(function listItemNumberModule(require) {
                     for (var attrName of softAttributes) {
                         listItems[idx].removeAttribute(attrName);
                     }
+                    listItems[idx].classList.remove("selectedMovedElement");
                     var tcAttributes = ["data-akn-action", "data-akn-uid", "title", "data-wsc-ignore-checking"];
                     for (var attrName of tcAttributes) {
                         listItems[idx].removeAttribute(attrName);

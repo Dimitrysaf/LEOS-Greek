@@ -34,7 +34,7 @@ define(function leosTrackChangesModule(require) {
         ACCEPT: "accept", REJECT: "reject",
 
         DATA_AKN_SOFTACTION: "data-akn-attr-softaction", DATA_AKN_ATTR_SOFTMOVE_FROM: "data-akn-attr-softmove_from",
-        SOFTACTION_MOVE_FROM: "move_from",
+        SOFTACTION_MOVE_FROM: "move_from", SOFTACTION_MOVE_TO: "move_to",
 
         // Caret definitions
         CARET_START: false, CARET_END: true,
@@ -182,6 +182,7 @@ define(function leosTrackChangesModule(require) {
             for (var attrName of softAttributes) {
                 element.removeAttribute(attrName);
             }
+            element.classList.remove("selectedMovedElement");
         },
 
         addTrackChangesAttributes: function(editor, element, action) {
@@ -267,13 +268,14 @@ define(function leosTrackChangesModule(require) {
             return null;
         },
 
-        findFirstTrackedElement: function(editor) {
+        isInsideTrackedDeletedOrSoftMovedToElement: function(editor) {
             var selection = editor.getSelection();
             if (selection) {
                 var path = selection.getRanges()[0].startPath();
                 for (var i = 0; path.elements.length > i; i++) {
                     var el = path.elements[i];
-                    if ((el.getName() !== this.TRACKCHANGES_ELEMENT) && el.getAttribute(this.ACTION_ATTR) && el.getAttribute(this.DATA_AKN_SOFTACTION)) {
+                    if ((el.getName() !== this.TRACKCHANGES_ELEMENT) && ((el.getAttribute(this.ACTION_ATTR) === core.DELETE_ACTION) ||
+                        (el.getAttribute(this.DATA_AKN_SOFTACTION) === this.SOFTACTION_MOVE_TO))) {
                         return el;
                     }
                 }
