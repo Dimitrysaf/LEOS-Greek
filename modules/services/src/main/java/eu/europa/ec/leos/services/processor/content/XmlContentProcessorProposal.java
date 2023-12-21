@@ -370,7 +370,6 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         } else {
             XercesUtils.deleteElement(nodeToBeAdded);
         }
-        numberProcessorHandler.renumberDocument(document, ARTICLE, true);
         return nodeToByteArray(document);
     }
 
@@ -385,7 +384,6 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         } else {
             restoreSoftMovedElementMarkedWithAttribute(nodeToBeRemoved);
         }
-        numberProcessorHandler.renumberDocument(document, ARTICLE, true);
         return nodeToByteArray(document);
     }
 
@@ -415,8 +413,6 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             XercesUtils.deleteElement(nodeToBeRemoved);
         }
         restoreSoftMovedElementMarkedWithAttribute(nodeToBeRestored);
-
-        numberProcessorHandler.renumberDocument(document, ARTICLE, true);
         return nodeToByteArray(document);
     }
 
