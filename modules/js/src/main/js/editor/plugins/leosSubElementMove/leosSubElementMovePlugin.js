@@ -135,7 +135,8 @@ define(function leosSubElementMovePluginModule(require) {
                 var selection = editor.getSelection();
                 var element = selection.getStartElement();
                 movedElement.getAttributeNames().forEach(attribute => element.setAttribute(attribute, movedElement.getAttribute(attribute)));
-                element.setText(movedElement.innerText);
+                movedElement.querySelectorAll("*").forEach(childElement => childElement.removeAttribute("id"));
+                element.setHtml(movedElement.innerHTML);
                 element.setAttribute("data-akn-num", element.getAttribute("data-akn-num"));
                 element.setAttribute("data-num-origin", LS_ORIGIN);
                 _setSoftMovedAttributes(editor, element);

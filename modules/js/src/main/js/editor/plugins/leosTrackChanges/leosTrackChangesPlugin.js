@@ -169,7 +169,7 @@ define(function leosTrackChangesPluginModule(require) {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
                                 rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                             };
-                        } else if (editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) {
+                        } else if ((editor.getSelection().isCollapsed() || element.$.classList.contains("cke_widget_inline")) && !core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) {
                             tcElement = element.$.closest(core.TRACKCHANGES_ELEMENT_SELECTOR);
                             if (tcElement) {
                                 editor.getSelection().fake(new CKEDITOR.dom.element(tcElement));
@@ -178,7 +178,7 @@ define(function leosTrackChangesPluginModule(require) {
                                     rejectOneChangeItem: canUserRejectChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED
                                 };
                             }
-                        } else {
+                        } else if (!editor.getSelection().isCollapsed()) {
                             var tcElements = core.findElementsInSelection(editor.getSelection());
                             if (tcElements.length > 0) {
                                 return {
@@ -298,6 +298,10 @@ define(function leosTrackChangesPluginModule(require) {
                 event.data.dataValue = event.data.dataValue.replace(/xml:id="_temp_tc_([\s\S][^:]+?)"/g, "");
             }, null, null, 15);
 
+            editor.on("toHtml", function() {
+                $(editor.editable().$).find("[data-akn-action='delete']").attr("data-wsc-ignore-checking", "true");
+            }, null, null, 15);
+
             // Bind events if the Dom is ready!
             editor.on("contentDom", function() {
 
@@ -343,8 +347,7 @@ define(function leosTrackChangesPluginModule(require) {
                         // On delete functionality(prevents/backup of text)
                         if ((event.getKeyCode() === UTILS.KEYS.KEY_DELETE) || (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE)) {
 
-                            var trackedElement = core.findFirstTrackedElement(editor); // Modifications inside a tracked element(no span) is not allowed
-                            if (trackedElement && trackedElement.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                            if (core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) { // Modifications inside a tracked element(no span) is not allowed
                                 event.getInstance().data.domEvent.preventDefault();
                                 event.getInstance().stop();
                                 return;
@@ -398,8 +401,7 @@ define(function leosTrackChangesPluginModule(require) {
                     var character = event.getChar();
                     if (!CKEDITOR.dialog?.getCurrent() && character && !e.data.$.ctrlKey && !e.data.$.metaKey
                         && (event.getKeyCode() != UTILS.KEYS.KEY_DELETE) && (event.getKeyCode() != UTILS.KEYS.KEY_BACKSPACE) && (event.getKeyCode() != 29)) { // Do not capture CTRL hotkeys & escape
-                        var trackedElement = core.findFirstTrackedElement(editor); // Modifications inside a tracked element(no span) is not allowed
-                        if (trackedElement && trackedElement.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                        if (core.isInsideTrackedDeletedOrSoftMovedToElement(editor)) { // Modifications inside a tracked element(no span) is not allowed
                             event.getInstance().data.preventDefault();
                             return;
                         }
@@ -502,9 +504,9 @@ define(function leosTrackChangesPluginModule(require) {
                         editor.fire("change");
                         return false;
                     case "enter":
-                        var trackedElement = core.findFirstTrackedElement(editor);
-                        if (trackedElement && trackedElement.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
-                            core.setToEditablePosition(editor, trackedElement, core.CARET_END);
+                        var trackedDeletedOrMovedToElement = core.isInsideTrackedDeletedOrSoftMovedToElement(editor);
+                        if (trackedDeletedOrMovedToElement) {
+                            core.setToEditablePosition(editor, trackedDeletedOrMovedToElement, core.CARET_END);
                         }
                         break;
                 }
