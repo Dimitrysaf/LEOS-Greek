@@ -3,7 +3,7 @@
 @RepositoryBrowserPageRegressionScenariosEditRevision
 Feature: Repository Browser Page Regression Features in Edit Revision
 
-  @resetFilterAndDoubleClickMandate
+  @resetFilter
   Scenario: Verify user is able to reset filter, search mandate and open proposal by using double click
     Given navigate to "Revision" application
     Then  user is on EU login page
@@ -20,10 +20,10 @@ Feature: Repository Browser Page Regression Features in Edit Revision
     And   create mandate button is displayed and enabled
     And   create draft button is displayed and enabled
     And   proposals list is displayed
-    When  tick "acts-REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" in filter section
-    Then  "acts-REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" is ticked in filter section
+    When  tick "acts-DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" in filter section
+    Then  "acts-DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" is ticked in filter section
     When  click on reset button
-    Then  "acts-REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" is unTicked in filter section
+    Then  "acts-DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" is unTicked in filter section
     When  click on proposal 1
     Then  user is on overview screen
     When  click on home link present in breadcrumb

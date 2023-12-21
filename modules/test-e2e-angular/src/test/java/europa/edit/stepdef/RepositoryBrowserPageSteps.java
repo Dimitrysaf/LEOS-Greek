@@ -6,6 +6,7 @@ import europa.edit.util.WebDriverFactory;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+
 import static org.testng.Assert.*;
 
 public class RepositoryBrowserPageSteps extends BaseDriver {
@@ -50,8 +51,19 @@ public class RepositoryBrowserPageSteps extends BaseDriver {
         repositoryBrowserPage.clickOnNthProposal(arg0);
     }
 
-    @And("create proposal button is present")
-    public void createProposalButtonIsDisplayed() {
+    @And("create proposal button is displayed and enabled")
+    public void createProposalButtonIsDisplayedAndEnabled() {
         assertTrue(repositoryBrowserPage.isCreateProposalBtnDisplayed());
+        assertTrue(repositoryBrowserPage.isCreateProposalBtnEnabled());
+    }
+
+    @When("click on create proposal button")
+    public void clickOnCreateProposalButton() {
+        repositoryBrowserPage.clickCreateProposalButton();
+    }
+
+    @When("click on upload button")
+    public void clickOnUploadButtonPresentInTheRepositoryBrowserPage() {
+        repositoryBrowserPage.clickUploadButton();
     }
 }

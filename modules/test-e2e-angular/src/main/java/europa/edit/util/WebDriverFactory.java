@@ -48,9 +48,9 @@ public class WebDriverFactory {
                 tlDriver.set(remoteDriver(browser, gridUrl));
                 break;
         }
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(Constants.TIMEOUT_DELAY));
-        driver.manage().deleteAllCookies();
-        driver.manage().window().maximize();
+        tlDriver.get().manage().timeouts().implicitlyWait(Duration.ofSeconds(Constants.TIMEOUT_DELAY));
+        tlDriver.get().manage().deleteAllCookies();
+        tlDriver.get().manage().window().maximize();
         return getDriver();
     }
 
@@ -98,6 +98,7 @@ public class WebDriverFactory {
                     options.addArguments("--disable-gpu");
                     options.addArguments("--no-sandbox");
                     options.addArguments("--disable-browser-side-navigation");
+                    options.setCapability("se:downloadsEnabled", true);
                     options.setAcceptInsecureCerts(true);
                     options.setPageLoadStrategy(PageLoadStrategy.EAGER);
                     Map<String, Object> prefs = new HashMap<>();

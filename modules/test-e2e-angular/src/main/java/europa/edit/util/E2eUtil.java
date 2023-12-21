@@ -2,10 +2,7 @@ package europa.edit.util;
 
 import com.google.common.io.Files;
 import com.hierynomus.msdtyp.AccessMask;
-import com.hierynomus.msfscc.FileAttributes;
-import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
 import com.hierynomus.mssmb2.SMB2CreateDisposition;
-import com.hierynomus.mssmb2.SMB2CreateOptions;
 import com.hierynomus.mssmb2.SMB2ShareAccess;
 import com.hierynomus.smbj.SMBClient;
 import com.hierynomus.smbj.SmbConfig;
@@ -21,8 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -32,7 +27,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import static europa.edit.util.Constants.*;
-import static europa.edit.util.Constants.TIMEOUT_DELAY;
 import static org.testng.Assert.*;
 
 /* 	Author: Satyabrata Das
@@ -69,6 +63,17 @@ public class E2eUtil {
         wait.until(pageLoadCondition);
     }
 
+    public static void waitForLoadingProgressBarToDisappear(WebDriver driver) {
+        try {
+            wait(1000);
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EXPLICIT_TIMEOUT_DELAY));
+            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("eui-block-document.eui-block-document--blocked")));
+            waitForPageLoad(driver,TIMEOUT_DELAY);
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+        }
+    }
+
     public static void waitForElementClickable(WebDriver driver, WebElement element) {
         try {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_DELAY));
@@ -86,7 +91,6 @@ public class E2eUtil {
 
     public static void elementClickJS(WebDriver driver, WebElement element) {
         ((JavascriptExecutor) driver).executeScript(CLICK_ELEMENT, element);
-        waitForPageLoad(driver, Constants.TIMEOUT_DELAY);
     }
 
     public static void elementSendKeys(WebDriver driver, WebElement element, String data) {
@@ -193,7 +197,7 @@ public class E2eUtil {
 
     public static WebElement waitForElementTobePresent(WebDriver driver, By by) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(TIMEOUT_DELAY))
+                .withTimeout(Duration.ofSeconds(EXPLICIT_TIMEOUT_DELAY))
                 .pollingEvery(Duration.ofSeconds(POLLING_TIME))
                 .ignoring(Exception.class);
         return wait.until(ExpectedConditions.presenceOfElementLocated(by));
@@ -205,15 +209,23 @@ public class E2eUtil {
 
     public static boolean waitForElementTobeDisPlayed(WebDriver driver, WebElement element) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(TIMEOUT_DELAY))
+                .withTimeout(Duration.ofSeconds(EXPLICIT_TIMEOUT_DELAY))
                 .pollingEvery(Duration.ofSeconds(POLLING_TIME))
                 .ignoring(Exception.class);
         return wait.until(ExpectedConditions.visibilityOf(element)).isDisplayed();
     }
 
+    public static boolean waitForElementTobeDisPlayed(WebDriver driver, By by) {
+        Wait<WebDriver> wait = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(EXPLICIT_TIMEOUT_DELAY))
+                .pollingEvery(Duration.ofSeconds(POLLING_TIME))
+                .ignoring(Exception.class);
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(by)).isDisplayed();
+    }
+
     public static WebElement waitForElementTobeClickable(WebDriver driver, WebElement element) {
         Wait<WebDriver> wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(TIMEOUT_DELAY))
+                .withTimeout(Duration.ofSeconds(EXPLICIT_TIMEOUT_DELAY))
                 .pollingEvery(Duration.ofSeconds(POLLING_TIME))
                 .ignoring(Exception.class);
         return wait.until(ExpectedConditions.elementToBeClickable(element));
@@ -223,13 +235,13 @@ public class E2eUtil {
         try {
             driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(POLLING_TIME));
             Wait<WebDriver> wait = new FluentWait<>(driver)
-                    .withTimeout(Duration.ofSeconds(TIMEOUT_DELAY))
+                    .withTimeout(Duration.ofSeconds(EXPLICIT_TIMEOUT_DELAY))
                     .pollingEvery(Duration.ofSeconds(POLLING_TIME));
             Boolean found = false;
             long totalTime = 0;
             long startTime;
             long endTime;
-            while (!found && (totalTime / 1000) < TIMEOUT_DELAY) {
+            while (!found && (totalTime / 1000) < EXPLICIT_TIMEOUT_DELAY) {
                 startTime = System.currentTimeMillis();
                 found = wait.until(ExpectedConditions.invisibilityOfElementLocated(by));
                 endTime = System.currentTimeMillis();
@@ -529,195 +541,91 @@ public class E2eUtil {
         }
     }
 
-    public static HashMap<String, String> findLatestFile(String fileType, String relativePath) {
-        long lastModifiedTime = Long.MIN_VALUE;
-        String chosenFileName = null;
-        HashMap<String, String> map = new HashMap<>();
-        HashMap<String, Object> fileNameTimeStampMap;
-        String relativePathLocation = "";
-        if (null != relativePath && !"".equals(relativePath)) {
-            relativePathLocation = File.separator + relativePath;
-        }
+    public static File findRecentFile(String fileType, String relativePathLocation) {
         try {
-            if (TestParameters.getInstance().getMode().equalsIgnoreCase("remote")) {
-                fileNameTimeStampMap = getRecentFileNameWithTimeStampInRemote(relativePathLocation, fileType);
-                if (null != fileNameTimeStampMap) {
-                    chosenFileName = fileNameTimeStampMap.get("chosenFileName").toString();
-                    lastModifiedTime = ((Number) fileNameTimeStampMap.get("lastModifiedTime")).longValue();
-                }
-
-            }
-            if (TestParameters.getInstance().getMode().equalsIgnoreCase("local")) {
-                File directory = new File(System.getProperty("user.dir") + config.getProperty("relative.download.path.local") + relativePathLocation);
-                chosenFileName = getRecentFileNameFromLocal(fileType, lastModifiedTime, chosenFileName, directory);
-            }
-            if (null != chosenFileName) {
-                map.put(Constants.FILE_NAME, chosenFileName);
-                String FilePath = "";
-                if (TestParameters.getInstance().getMode().equalsIgnoreCase("remote")) {
-                    FilePath = config.getProperty("path.remote.download") + relativePathLocation + File.separator + chosenFileName;
-                }
-                if (TestParameters.getInstance().getMode().equalsIgnoreCase("local")) {
-                    FilePath = System.getProperty("user.dir") + config.getProperty("relative.download.path.local") + relativePathLocation + File.separator + chosenFileName;
-                }
-                logger.info("FilePath " + FilePath);
-                map.put(Constants.FILE_FULL_PATH, FilePath);
-                return map;
-            }
-        } catch (Exception | AssertionError e) {
-            e.printStackTrace();
-            throw e;
-        }
-        return map;
-    }
-
-    private static HashMap<String, Object> getRecentFileNameWithTimeStampInRemote(String relativePathLocation, String fileType) {
-        String chosenFileName = null;
-        long lastModifiedTime = Long.MIN_VALUE;
-        HashMap<String, Object> fileNameTimeStampMap = new HashMap<>();
-        try (DiskShare share = smbConnect()) {
-            if (null != share) {
-                if (null != share.list(config.getProperty("path.remote.download.relative") + relativePathLocation, "*." + fileType)) {
-                    for (FileIdBothDirectoryInformation f : share.list(config.getProperty("path.remote.download.relative") + relativePathLocation, "*." + fileType)) {
-                        if (f.getLastAccessTime().getWindowsTimeStamp() > lastModifiedTime) {
-                            chosenFileName = f.getFileName();
-                            lastModifiedTime = f.getLastAccessTime().getWindowsTimeStamp();
-                        }
-                    }
-                    fileNameTimeStampMap.put("chosenFileName", chosenFileName);
-                    fileNameTimeStampMap.put("lastModifiedTime", lastModifiedTime);
-                    return fileNameTimeStampMap;
-                }
+            File directory = new File(System.getProperty("user.dir") + relativePathLocation);
+            File file = getRecentFileFromLocal(fileType, directory);
+            if (null != file) {
+                return file;
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
         return null;
     }
 
-    private static String getRecentFileNameFromLocal(String fileType, long lastModifiedTime, String chosenFileName, File directory) {
+    private static File getRecentFileFromLocal(String fileType, File directory) {
+        long lastModifiedTime = Long.MIN_VALUE;
         File[] files = directory.listFiles();
+        File newFile = null;
         if (files != null) {
             for (File file : files) {
                 String extension = Files.getFileExtension(file.getName());
                 if (extension.equalsIgnoreCase(fileType)) {
                     if (file.lastModified() > lastModifiedTime) {
-                        chosenFileName = file.getName();
-                        lastModifiedTime = file.lastModified();
+                        newFile = file;
                     }
                 }
             }
-        } else {
-            fail("Issue while finding files from a directory in local path");
         }
-        return chosenFileName;
+        return newFile;
     }
 
-    public static void getLatestFileAfterUnzip(String fileType, String destinationPath, String searchFileType) throws IOException {
-        boolean bool = findRecentFileAndUnzip(fileType, null, destinationPath, false);
-        if (bool) {
-            HashMap<String, String> map = findLatestFile(searchFileType, destinationPath);
-            String FileNamePath = map.get(Constants.FILE_FULL_PATH);
-            if (null != FileNamePath) {
-                logger.info("legFileNamePath " + FileNamePath);
+    public static void unZipFile(String zipFilePath, String destDirectory) throws IOException {
+        File destDir = new File(destDirectory);
+
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath));
+        ZipEntry zipEntry = zis.getNextEntry();
+        while (zipEntry != null) {
+            File newFile = newFile(destDir, zipEntry);
+            if (zipEntry.isDirectory()) {
+                if (!newFile.isDirectory() && !newFile.mkdirs()) {
+                    throw new IOException("Failed to create directory " + newFile);
+                }
             } else {
-                logger.info("legFileNamePath is null");
-            }
-        } else {
-            logger.info("unzip is failed");
-        }
-    }
-
-    public static boolean findRecentFileAndUnzip(String fileType, String sourcePath, String destinationPath, boolean folderCreationWhileUnzip) throws IOException {
-        boolean bool = false;
-        DiskShare share = null;
-        String fileNameWithExt = null;
-        long lastModifiedTime = Long.MIN_VALUE;
-        String relativeSourcePath = "";
-        if (null != sourcePath) {
-            relativeSourcePath = Constants.FILE_SEPARATOR + sourcePath;
-        }
-        try {
-            if (TestParameters.getInstance().getMode().equalsIgnoreCase("remote")) {
-                try {
-                    share = smbConnect();
-                    if (null != share) {
-                        logger.info("share is not null");
-                        if (null != share.list(config.getProperty("path.remote.download.relative") + relativeSourcePath, "*." + fileType)) {
-                            logger.info("share.list is not null");
-                            for (FileIdBothDirectoryInformation f : share.list(config.getProperty("path.remote.download.relative") + relativeSourcePath, "*." + fileType)) {
-                                logger.info("FileIdBothDirectoryInformation has value");
-                                if (f.getLastAccessTime().getWindowsTimeStamp() > lastModifiedTime) {
-                                    logger.info("lastModifiedTime is less");
-                                    fileNameWithExt = f.getFileName();
-                                    lastModifiedTime = f.getLastAccessTime().getWindowsTimeStamp();
-                                }
-                            }
-                        } else {
-                            fail("Issue while finding files from a directory in remote location");
-                        }
-                    } else {
-                        fail("DiskShare is coming null");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw e;
+                // fix for Windows-created archives
+                File parent = newFile.getParentFile();
+                if (!parent.isDirectory() && !parent.mkdirs()) {
+                    throw new IOException("Failed to create directory " + parent);
                 }
+                // write file content
+                FileOutputStream fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
             }
-            if (TestParameters.getInstance().getMode().equalsIgnoreCase("local")) {
-                File directory = new File(System.getProperty("user.dir") + config.getProperty("relative.download.path.local") + relativeSourcePath);
-                fileNameWithExt = getRecentFileNameFromLocal(fileType, lastModifiedTime, fileNameWithExt, directory);
-            }
-        } catch (Exception | AssertionError e) {
-            e.printStackTrace();
+            zipEntry = zis.getNextEntry();
         }
-        if (null != fileNameWithExt) {
-            logger.info("chosenFileName " + fileNameWithExt);
-            String folderName = "";
-            if (folderCreationWhileUnzip) {
-                folderName = Constants.FILE_SEPARATOR + fileNameWithExt.split("\\.")[0];
-            }
-            String zipFilePath = "";
-            String destDirectory = "";
-            if (TestParameters.getInstance().getMode().equalsIgnoreCase("remote")) {
-                zipFilePath = config.getProperty("path.remote.download.relative") + relativeSourcePath + Constants.FILE_SEPARATOR + fileNameWithExt;
-                destDirectory = config.getProperty("path.remote.download.relative") + Constants.FILE_SEPARATOR + destinationPath + folderName;
-            }
-            if (TestParameters.getInstance().getMode().equalsIgnoreCase("local")) {
-                zipFilePath = System.getProperty("user.dir") + config.getProperty("relative.download.path.local") + relativeSourcePath + Constants.FILE_SEPARATOR + fileNameWithExt;
-                destDirectory = System.getProperty("user.dir") + config.getProperty("relative.download.path.local") + Constants.FILE_SEPARATOR + destinationPath + folderName;
-            }
-            logger.info("zipFilePath " + zipFilePath);
-            logger.info("destDirectory " + destDirectory);
-            try {
-                bool = unzip(zipFilePath, destDirectory, share);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        if (null != share) {
-            share.close();
-        }
-        return bool;
+        zis.closeEntry();
+        zis.close();
     }
 
-    public static String findRecentFolderNameFromRemote(String relativePath) {
+    public static File newFile(File destinationDir, ZipEntry zipEntry) throws IOException {
+        File destFile = new File(destinationDir, zipEntry.getName());
+        String destDirPath = destinationDir.getCanonicalPath();
+        String destFilePath = destFile.getCanonicalPath();
+        if (!destFilePath.startsWith(destDirPath + File.separator)) {
+            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+        }
+        return destFile;
+    }
+
+    public static String findRecentFolderFromLocal(String relativePath) {
         String folderName = null;
         long lastModifiedTime = Long.MIN_VALUE;
-        try (DiskShare share = smbConnect()) {
-            if (null != share) {
-                String fullPath = config.getProperty("path.remote.download.relative") + Constants.FILE_SEPARATOR + relativePath;
-                if (null != share.list(fullPath)) {
-                    for (FileIdBothDirectoryInformation f : share.list(fullPath)) {
-                        if (!(".".equals(f.getFileName()) || "..".equals(f.getFileName())) && (f.getFileAttributes() & FileAttributes.FILE_ATTRIBUTE_DIRECTORY.getValue()) > 0) {
-                            if (f.getLastAccessTime().getWindowsTimeStamp() > lastModifiedTime) {
-                                folderName = f.getFileName();
-                                lastModifiedTime = f.getLastAccessTime().getWindowsTimeStamp();
-                            }
-                        }
+        try {
+            File parentFolder = new File(System.getProperty("user.dir") + relativePath);
+            for (File fileEntry : Objects.requireNonNull(parentFolder.listFiles())) {
+                if (fileEntry.isDirectory()) {
+                    if (fileEntry.lastModified() > lastModifiedTime) {
+                        folderName = fileEntry.getName();
+                        lastModifiedTime = fileEntry.lastModified();
                     }
                 }
-                share.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -727,172 +635,18 @@ public class E2eUtil {
 
     public static List<String> findFilesFromGivenPath(String relativePath, String fileType) {
         List<String> fileNames = new ArrayList<>();
-        try (DiskShare share = smbConnect()) {
-            if (null != share) {
-                String fullPath = config.getProperty("path.remote.download.relative") + Constants.FILE_SEPARATOR + relativePath;
-                if (null != share.list(fullPath, "*." + fileType)) {
-                    for (FileIdBothDirectoryInformation f : share.list(fullPath, "*." + fileType)) {
-                        fileNames.add(f.getFileName());
+        try {
+            File parentFolder = new File(System.getProperty("user.dir") + relativePath);
+            for (File file : Objects.requireNonNull(parentFolder.listFiles())) {
+                if (!file.isDirectory()) {
+                    if (file.getName().contains(fileType)) {
+                        fileNames.add(file.getName());
                     }
                 }
-                share.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return fileNames;
-    }
-
-    public static void highlightElement(WebDriver driver, WebElement element) {
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-        jsExecutor.executeScript("arguments[0].setAttribute('style', 'border:3px solid yellow;')", element);
-        try {
-            Thread.sleep(2000);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        jsExecutor.executeScript("arguments[0].setAttribute('style', 'border:;')", element);
-    }
-
-    public static InputStream readFile(String relativeLocation, String sourceFileFullPath, String fileName) throws FileNotFoundException {
-        InputStream in = null;
-        if (TestParameters.getInstance().getMode().equalsIgnoreCase("remote")) {
-            DiskShare share = smbConnect();
-            assertNotNull(share);
-            sourceFileFullPath = config.getProperty("path.remote.download.relative") + File.separator + relativeLocation + File.separator + fileName;
-            final com.hierynomus.smbj.share.File file = getFile(share, sourceFileFullPath, AccessMask.GENERIC_READ);
-            in = file.getInputStream();
-        }
-        if (TestParameters.getInstance().getMode().equalsIgnoreCase("local")) {
-            File initialFile = new File(sourceFileFullPath);
-            in = new FileInputStream(initialFile);
-        }
-        return in;
-    }
-
-    private static com.hierynomus.smbj.share.File getFile(DiskShare diskShare, String sourceFilePath, AccessMask accessMask) {
-        return diskShare.openFile(sourceFilePath, EnumSet.of(accessMask), null, SMB2ShareAccess.ALL, SMB2CreateDisposition.FILE_OPEN, null);
-    }
-
-    public static boolean moveFile(String relativeLocation, String sourceFileFullPath, String fileName) throws IOException {
-        if (TestParameters.getInstance().getMode().equalsIgnoreCase("remote")) {
-            String sourceFilePath = config.getProperty("path.remote.download.relative") + File.separator + fileName;
-            String destinationPath = config.getProperty("path.remote.download.relative") + File.separator + relativeLocation + File.separator + fileName;
-            DiskShare share = smbConnect();
-            assertNotNull(share);
-            Set<SMB2CreateOptions> createOptions = new HashSet<>();
-            createOptions.add(SMB2CreateOptions.FILE_WRITE_THROUGH);
-            try (com.hierynomus.smbj.share.File file = getFile(share, sourceFilePath, AccessMask.GENERIC_ALL)) {
-                file.rename(destinationPath, true);
-                return true;
-            }
-        }
-        if (TestParameters.getInstance().getMode().equalsIgnoreCase("local")) {
-            String destinationPath = System.getProperty("user.dir") + config.getProperty("relative.upload.path.local") + File.separator + relativeLocation + File.separator + fileName;
-            Path sourcePath = Paths.get(sourceFileFullPath);
-            Path targetPath = Paths.get(destinationPath);
-            File file = targetPath.toFile();
-            if (file.isFile()) {
-                java.nio.file.Files.delete(targetPath);
-            }
-            java.nio.file.Files.move(sourcePath, targetPath);
-            return true;
-        }
-        return false;
-    }
-
-    public static void deleteFilesFromRemoteMachine(List<String> relativePaths) throws IOException {
-        DiskShare share = null;
-        List<String> locationPath;
-        if (TestParameters.getInstance().getMode().equalsIgnoreCase("remote")) {
-            for (String relativePath : relativePaths) {
-                locationPath = new ArrayList<>();
-                if (null == share) {
-                    try {
-                        share = smbConnect();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (null != share) {
-                    try {
-                        if (null != share.list(relativePath, "*.*")) {
-                            logger.info("share.list is not null");
-                            for (FileIdBothDirectoryInformation f : share.list(relativePath, "*.*")) {
-                                if (!(".".equals(f.getFileName()) || "..".equals(f.getFileName()))) {
-                                    locationPath.add(relativePath + Constants.FILE_SEPARATOR + f.getFileName());
-                                }
-                            }
-                            for (String path : locationPath) {
-                                try {
-                                    share.rm(path);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        if (null != share) {
-            share.close();
-        }
-    }
-
-    public static void deleteFilesFoldersFromRemoteMachine(List<String> relativePaths) throws IOException {
-        DiskShare share = null;
-        List<String> folderLocationPath;
-        List<String> fileLocationPath;
-        if (TestParameters.getInstance().getMode().equalsIgnoreCase("remote")) {
-            for (String relativePath : relativePaths) {
-                folderLocationPath = new ArrayList<>();
-                fileLocationPath = new ArrayList<>();
-                if (null == share) {
-                    try {
-                        share = smbConnect();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (null != share) {
-                    try {
-                        if (null != share.list(relativePath)) {
-                            logger.info("share.list is not null");
-                            for (FileIdBothDirectoryInformation f : share.list(relativePath)) {
-                                if (!(".".equals(f.getFileName()) || "..".equals(f.getFileName()))) {
-                                    if ((f.getFileAttributes() & FileAttributes.FILE_ATTRIBUTE_DIRECTORY.getValue()) > 0) {
-                                        folderLocationPath.add(relativePath + Constants.FILE_SEPARATOR + f.getFileName());
-                                    } else {
-                                        fileLocationPath.add(relativePath + Constants.FILE_SEPARATOR + f.getFileName());
-                                    }
-                                }
-                            }
-                            for (String path : folderLocationPath) {
-                                try {
-                                    share.rmdir(path, true);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            for (String path : fileLocationPath) {
-                                try {
-                                    share.rm(path);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        if (null != share) {
-            share.close();
-        }
     }
 }

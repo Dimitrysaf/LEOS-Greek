@@ -13,7 +13,7 @@ Feature: Repository Browser Page Regression Features in Edit Commission
     When  user enters password "user.nonsupport.1.pwd"
     And   user clicks on sign in button
     Then  user is on repository browser page
-    And   create proposal button is present
+    And   create proposal button is displayed and enabled
     And   upload button is not present
 
 
@@ -28,7 +28,7 @@ Feature: Repository Browser Page Regression Features in Edit Commission
     And   user clicks on sign in button
     Then  user is on repository browser page
     And   upload button is present
-    And   create proposal button is present
+    And   create proposal button is displayed and enabled
     And   filter section is displayed
     And   search text box is present in filter section
     And   search button is present in filter section

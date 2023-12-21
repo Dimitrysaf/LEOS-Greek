@@ -70,6 +70,7 @@ public class FilterPage {
 
     public void clickOnResetButton() {
         elementClick(driver, RESET_TXT);
+        waitForLoadingProgressBarToDisappear(driver);
     }
 
     public List<String> getProceduresList(List<String> actualProceduresList) {
@@ -102,9 +103,16 @@ public class FilterPage {
 
     public void clickOnCheckBox(String filter) {
         elementClickJS(driver, driver.findElement(By.cssSelector("input[id='" + filter + "']")));
+        waitForLoadingProgressBarToDisappear(driver);
     }
 
     public boolean isCheckBoxTicked(String filter) {
         return isElementSelected(driver.findElement(By.cssSelector("input[id='" + filter + "']")));
     }
+
+    public void enterSearchText(String keyWords) {
+        elementSendKeys(driver, FILTERS_SEARCH_INPUT, keyWords);
+        waitForLoadingProgressBarToDisappear(driver);
+    }
+
 }
