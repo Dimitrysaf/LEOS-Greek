@@ -275,7 +275,7 @@ define(function leosTrackChangesModule(require) {
                 for (var i = 0; path.elements.length > i; i++) {
                     var el = path.elements[i];
                     if ((el.getName() !== this.TRACKCHANGES_ELEMENT) && ((el.getAttribute(this.ACTION_ATTR) === core.DELETE_ACTION) ||
-                        (el.getAttribute(this.DATA_AKN_SOFTACTION) === this.SOFTACTION_MOVE_TO))) {
+                        (el.getAttribute(this.DATA_AKN_SOFTACTION) === this.SOFTACTION_MOVE_TO) || el.hasClass("selectedMovedElement"))) {
                         return el;
                     }
                 }
