@@ -1271,4 +1271,19 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             }
         }
     }
+
+    @Override
+    public byte[] applyMoveActionOnElement(byte[] xmlContent, String elementId, boolean accept) {
+        return xmlContent;
+    }
+
+    @Override
+    public byte[] applyDeleteActionOnElement(byte[] xmlContent, String elementId, boolean accept) {
+        return xmlContent;
+    }
+
+    @Override
+    public byte[] applyAddActionOnElement(byte[] xmlContent, String elementId, boolean accept) {
+        return xmlContent;
+    }
 }

@@ -178,14 +178,12 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType changeType) throws Exception {
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception {
         return null;
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType changeType) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception {
         return null;
     }
 }

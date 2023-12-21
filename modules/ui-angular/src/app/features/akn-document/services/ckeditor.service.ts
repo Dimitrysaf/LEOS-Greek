@@ -138,6 +138,12 @@ export class CKEditorService implements OnDestroy {
     this.checkBoxesConnector?.$triggerStateChange();
   }
 
+  refreshStateSpecificConnectors() {
+    this.refToLinkConnector?.$triggerStateChange();
+    this.mathJaxConnector?.$triggerStateChange();
+    this.trackChangesConnector?.$triggerStateChange();
+  }
+
   triggerMergeContributionConnectorStateChange() {
     this.mergeContributionConnector.$triggerStateChange();
   }

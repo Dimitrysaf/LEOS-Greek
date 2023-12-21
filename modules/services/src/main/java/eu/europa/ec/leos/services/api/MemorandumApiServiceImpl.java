@@ -400,14 +400,12 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction, String presenterId) throws Exception {
         throw new UnsupportedOperationException("Accept change isn't supported for memorandum");
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction, String presenterId) throws Exception {
         throw new UnsupportedOperationException("Accept change isn't supported for memorandum");
     }
 

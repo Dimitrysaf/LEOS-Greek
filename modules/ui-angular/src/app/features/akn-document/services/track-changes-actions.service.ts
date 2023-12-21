@@ -2,7 +2,6 @@ import {HttpClient} from "@angular/common/http";
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs';
 
-import {BlockDocumentEditorService} from "@/features/akn-document/services/block-document-editor.service";
 import {TableOfContentService} from "@/features/akn-document/services/table-of-content.service";
 import {LEOS_TC_DELETE_ACTION, LEOS_TC_INSERT_ACTION} from "@/shared/constants";
 import {DocumentViewResponse} from "@/shared/models/document-view-response.model";
@@ -10,6 +9,7 @@ import {CoEditionServiceWS} from "@/shared/services/coEdition.websocket.service"
 import {DocumentService} from "@/shared/services/document.service";
 
 import {apiBaseUrl} from "../../../../config";
+import {BlockDocumentEditorService} from "@/features/akn-document/services/block-document-editor.service";
 
 export enum TrackChangeAction {
   ADD,
@@ -33,7 +33,7 @@ export class TrackChangesActionsService{
     private http: HttpClient,
     private tableOfContentService: TableOfContentService,
     private coEditionService: CoEditionServiceWS,
-    private blockDocumentEditorService: BlockDocumentEditorService,
+    private blockDocumentEditorService : BlockDocumentEditorService,
   ) {
     this.selector = '';
     for (let i = 0; i < this.ALLOWED_TAGS.length; i++) {
@@ -100,12 +100,7 @@ export class TrackChangesActionsService{
       documentType,
       trackChangeAction,
     ).subscribe((response) => {
-      this.coEditionService.sendUpdateDocumentEvent(
-        documentRef,
-        elemData.elementId,
-        elemData.elementType,
-        null
-      );
+      docService.refreshView(response);
       this.blockDocumentEditorService.setIsDocumentEditorBlocked(false);
     });
   }
@@ -114,8 +109,8 @@ export class TrackChangesActionsService{
     elementId: string;
     elementType: string;
   }, trackChangeAction: string, docService: DocumentService) {
-    this.blockDocumentEditorService.setIsDocumentEditorBlocked(true);
     docService.setDidDocumentLoadAndRender(false);
+    this.blockDocumentEditorService.setIsDocumentEditorBlocked(true);
     const documentRef = docService.documentRef;
     const documentType = docService.documentType;
     this.rejectChangeForDocumentElement(
@@ -125,12 +120,7 @@ export class TrackChangesActionsService{
       documentType,
       trackChangeAction,
     ).subscribe((response) => {
-      this.coEditionService.sendUpdateDocumentEvent(
-        documentRef,
-        elemData.elementId,
-        elemData.elementType,
-        null
-      );
+      docService.refreshView(response);
       this.blockDocumentEditorService.setIsDocumentEditorBlocked(false);
     });
   }
@@ -142,9 +132,10 @@ export class TrackChangesActionsService{
     documentType: string,
     trackChangeAction: string,
   ) {
+    const presenterId = this.coEditionService.presenterId;
     return this.http.get<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/accept-change/${elementId}/${elementType}?trackChangeAction=${trackChangeAction}`,
-      { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
+      { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'presenterId': presenterId } },
     );
   }
 
@@ -155,9 +146,10 @@ export class TrackChangesActionsService{
     documentType: string,
     trackChangeAction: string,
   ) {
+    const presenterId = this.coEditionService.presenterId;
     return this.http.get<DocumentViewResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/reject-change/${elementId}/${elementType}?trackChangeAction=${trackChangeAction}`,
-      { headers: { 'Content-Type': 'text/plain; charset=utf-8' } },
+      { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'presenterId': presenterId } },
     );
   }
 }

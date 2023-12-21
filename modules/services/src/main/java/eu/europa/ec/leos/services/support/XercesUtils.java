@@ -1164,6 +1164,16 @@ public class XercesUtils {
         return false;
     }
 
+    public static boolean hasAttribute(Node node, String attrName) {
+        if (node != null) {
+            String attrValue = getAttributeValue(node, attrName);
+            if (!StringUtils.isEmpty(attrValue)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static boolean hasChildContainsAttributeValue(Node node, String attrName, String attrValue) {
     	NodeList children = node.getChildNodes();
     	for (int i = 0; i < children.getLength(); i++) {

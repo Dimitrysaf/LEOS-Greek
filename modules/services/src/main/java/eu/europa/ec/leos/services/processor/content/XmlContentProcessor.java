@@ -85,6 +85,12 @@ public interface XmlContentProcessor {
 
     Pair<byte[], String> updateSoftMovedElement(byte[] xmlContent, String elementContent);
 
+    byte[] applyMoveActionOnElement(byte[] xmlContent, String elementId, boolean accept);
+
+    byte[] applyDeleteActionOnElement(byte[] xmlContent, String elementId, boolean accept);
+
+    byte[] applyAddActionOnElement(byte[] xmlContent, String elementId, boolean accept);
+
     /**
      * Finds the first element with the id,if there are others, XML is incorrect
      *

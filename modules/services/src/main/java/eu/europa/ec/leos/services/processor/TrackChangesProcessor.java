@@ -20,8 +20,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 
 public interface TrackChangesProcessor<T extends XmlDocument> {
     @PreAuthorize("hasPermission(#doc, 'CAN_ACCEPT_CHANGES')")
-    byte[] acceptChange(T doc, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception;
+    byte[] acceptChange(T doc, String elementId, TrackChangeActionType trackChangeAction) throws Exception;
 
     @PreAuthorize("hasPermission(#doc, 'CAN_REJECT_CHANGES')")
-    byte[] rejectChange(T doc, String elementId, String elementTagName, TrackChangeActionType trackChangeAction) throws Exception;
+    byte[] rejectChange(T doc, String elementId, TrackChangeActionType trackChangeAction) throws Exception;
+
+    void handleCoEdition(byte[] xmlContent, String docRef, String elementId, String tagName, TrackChangeActionType trackChangeAction, String presenterId,
+                    boolean accept);
 }

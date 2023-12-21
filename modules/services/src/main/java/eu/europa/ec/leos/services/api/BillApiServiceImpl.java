@@ -74,7 +74,6 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.*;
-import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -92,8 +91,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
 public class BillApiServiceImpl implements BillApiService {
 
@@ -388,8 +385,7 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse acceptChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction, String presenterId) throws Exception {
         String op = "accepted";
         String msg = "operation.element.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
 
@@ -397,19 +393,19 @@ public class BillApiServiceImpl implements BillApiService {
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(bill);
 
-        byte[] newXmlContent = trackChangesProcessor.acceptChange(bill, elementId, elementTagName, trackChangeAction);
+        byte[] newXmlContent = trackChangesProcessor.acceptChange(bill, elementId, trackChangeAction);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage(msg, updatedLabel);
         bill = billService.updateBill(bill, newXmlContent, comment);
 
+        trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, true);
         return documentViewService.updateDocumentView(bill);
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName,
-                                             TrackChangeActionType trackChangeAction) throws Exception {
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction, String presenterId) throws Exception {
         String op = "rejected";
         String msg = "operation.element.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
 
@@ -417,13 +413,14 @@ public class BillApiServiceImpl implements BillApiService {
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(bill);
 
-        byte[] newXmlContent = trackChangesProcessor.rejectChange(bill, elementId, elementTagName, trackChangeAction);
+        byte[] newXmlContent = trackChangesProcessor.rejectChange(bill, elementId, trackChangeAction);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
 
         final String updatedLabel = generateLabel(elementId, bill);
         final String comment = messageHelper.getMessage(msg, updatedLabel);
         bill = billService.updateBill(bill, newXmlContent, comment);
 
+        trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, false);
         return documentViewService.updateDocumentView(bill);
     }
 
