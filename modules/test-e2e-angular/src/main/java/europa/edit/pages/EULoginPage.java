@@ -1,5 +1,6 @@
 package europa.edit.pages;
 
+import europa.edit.util.Constants;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.CacheLookup;
@@ -22,6 +23,7 @@ public class EULoginPage {
 
     public EULoginPage(WebDriver driver) {
         this.driver = driver;
+        waitForPageLoad(driver, Constants.TIMEOUT_DELAY);
         PageFactory.initElements(driver, this);
     }
 

@@ -30,6 +30,7 @@ public class RepositoryBrowserPage extends HeaderPage {
     public RepositoryBrowserPage(WebDriver driver) {
         super(driver);
         this.driver = driver;
+        waitForLoadingProgressBarToDisappear(driver);
         AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, Constants.TIMEOUT_DELAY);
         PageFactory.initElements(ajax, this);
     }
@@ -44,9 +45,9 @@ public class RepositoryBrowserPage extends HeaderPage {
         return waitForElementTobeDisPlayed(driver, driver.findElement(CREATE_PROPOSAL_BTN));
     }
 
-/*    public void clickCreateProposalButton() {
-        waitForElementTobePresent(driver, CREATE_PROPOSAL_BTN).click();
-    }*/
+    public boolean isCreateProposalBtnEnabled() {
+        return isElementEnabled(driver.findElement(CREATE_PROPOSAL_BTN));
+    }
 
     public boolean isUploadBtnNotPresent() {
         return waitUnTillElementIsNotPresent(driver, UPLOAD_BTN);
@@ -83,5 +84,13 @@ public class RepositoryBrowserPage extends HeaderPage {
 
     public boolean isProposalListDisplayed() {
         return waitForElementTobeDisPlayed(driver, driver.findElement(PROPOSAL_LIST_LINK));
+    }
+
+    public void clickCreateProposalButton() {
+        elementClick(driver, driver.findElement(CREATE_PROPOSAL_BTN));
+    }
+
+    public void clickUploadButton() {
+        elementClick(driver, driver.findElement(UPLOAD_BTN));
     }
 }
