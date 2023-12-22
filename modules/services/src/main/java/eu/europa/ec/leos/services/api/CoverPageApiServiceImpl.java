@@ -88,6 +88,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
+
 @Service("coverPage")
 public class CoverPageApiServiceImpl implements CoverPageApiService {
     private static final Logger LOG = LoggerFactory.getLogger(CoverPageApiServiceImpl.class);
@@ -287,6 +289,15 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal updatedProposal = proposalService.updateProposal(sourceVersion, resultXmlContent, VersionType.MINOR,
                 messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));
         return this.documentViewService.updateDocumentView(updatedProposal);
+    }
+
+    @Override
+    public DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID),
+                documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionComment);
+        Proposal updatedDocument = proposalService.updateProposal(documentRef, documentId, properties, true);
+        return this.documentViewService.updateDocumentView(updatedDocument);
     }
 
     @Override

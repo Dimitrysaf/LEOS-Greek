@@ -80,6 +80,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
+
 @Service("memorandum")
 public class MemorandumApiServiceImpl implements MemorandumApiService {
 
@@ -253,6 +255,15 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Memorandum updatedMemo = memorandumService.updateMemorandum(memo, resultXmlContent, VersionType.MINOR,
                 messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
         return this.documentViewService.updateDocumentView(updatedMemo);
+    }
+
+    @Override
+    public DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID),
+                documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionComment);
+        Memorandum updatedDocument = memorandumService.updateMemorandum(documentRef, documentId, properties, true);
+        return this.documentViewService.updateDocumentView(updatedDocument);
     }
 
     @Override

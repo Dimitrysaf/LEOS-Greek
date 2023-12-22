@@ -104,6 +104,7 @@ import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
+import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 public class AnnexApiServiceImpl implements AnnexApiService {
     private static final Logger LOG = LoggerFactory.getLogger(AnnexApiServiceImpl.class);
@@ -327,6 +328,15 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex updatedAnnex = annexService.updateAnnex(annex, resultXmlContent, VersionType.MINOR,
                 messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
         return this.documentViewService.updateDocumentView(updatedAnnex);
+    }
+
+    @Override
+    public DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID),
+                documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionComment);
+        Annex updatedDocument = annexService.updateAnnex(documentRef, documentId, properties, true);
+        return this.documentViewService.updateDocumentView(updatedDocument);
     }
 
     @Override

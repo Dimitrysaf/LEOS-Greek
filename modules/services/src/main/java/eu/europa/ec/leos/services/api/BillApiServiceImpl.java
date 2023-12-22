@@ -93,6 +93,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
+
 public class BillApiServiceImpl implements BillApiService {
 
     private static final String BILL_METADATA_IS_REQUIRED = "Bill metadata is required!";
@@ -224,6 +226,15 @@ public class BillApiServiceImpl implements BillApiService {
         byte[] resultXmlContent = getContent(targetVersion);
         Bill updatedBill = billService.updateBill(sourceVersion, resultXmlContent,
                 messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));
+        return this.documentViewService.updateDocumentView(updatedBill);
+    }
+
+    @Override
+    public DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID),
+                documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionComment);
+        Bill updatedBill = billService.updateBill(documentRef, documentId, properties, true);
         return this.documentViewService.updateDocumentView(updatedBill);
     }
 

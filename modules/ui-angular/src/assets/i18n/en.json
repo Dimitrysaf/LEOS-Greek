@@ -301,6 +301,7 @@
   "page.editor.subtitle": "v{{ version }} - last edited by {{ updatedByFull }} on {{ updatedOn }}",
   "page.editor.versions.actions.view": "View this version",
   "page.editor.versions.actions.revert": "Revert to this version",
+  "page.editor.versions.actions.changeBase": "Change to base version",
   "page.editor.versions.actions.export": "Export this version",
   "page.editor.versions.actions.explore": "Explore the milestone",
   "page.editor.versions.actions-button.tooltip": "Actions",

@@ -63,6 +63,11 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     this.versionRevertDialog.openDialog();
   }
 
+  onBaseChange(version: any) {
+    console.log("version.documentId", version.documentId, version.versionNumber, version.checkinCommentVO.title)
+    this.doc.changeBaseVersion(this.version);
+  }
+
   onAccept() {
     this.versionRevertDialog.closeDialog();
     this.doc.versionRevert(this.versionToRevert);

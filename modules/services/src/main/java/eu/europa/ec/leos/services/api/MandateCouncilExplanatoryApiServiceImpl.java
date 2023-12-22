@@ -334,6 +334,11 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
+    public DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment) {
+        return null;
+    }
+
+    @Override
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         String jsonAlternatives = "";
