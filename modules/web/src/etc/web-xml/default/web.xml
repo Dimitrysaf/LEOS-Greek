@@ -62,7 +62,7 @@
 
     <filter-mapping>
         <filter-name>requestContextFilter</filter-name>
-        <url-pattern>/ui/*</url-pattern>
+        <url-pattern>/ui-v/*</url-pattern>
         <url-pattern>/VAADIN/*</url-pattern>
         <url-pattern>/ws/*</url-pattern>
     </filter-mapping>
@@ -92,7 +92,7 @@
         <servlet-name>dispatcher</servlet-name>
         <url-pattern>/api/*</url-pattern>
         <url-pattern>/secured-api/*</url-pattern>
-        <url-pattern>/ui-a/api/*</url-pattern>
+        <url-pattern>/ui/api/*</url-pattern>
     </servlet-mapping>
 
     <!-- LEOS UI Dispatcher Servlet -->
@@ -107,7 +107,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>ui-dispatcher</servlet-name>
-        <url-pattern>/ui-a/*</url-pattern>
+        <url-pattern>/ui/*</url-pattern>
     </servlet-mapping>
 
     <!-- LEOS Web Application Servlet -->
@@ -143,7 +143,7 @@
     <!-- LEOS Web Application Servlet mappings -->
     <servlet-mapping>
         <servlet-name>LEOS Web Application Servlet</servlet-name>
-        <url-pattern>/ui/*</url-pattern>
+        <url-pattern>/ui-v/*</url-pattern>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
 
@@ -188,7 +188,18 @@
 
     <filter-mapping>
         <filter-name>ForwardSlashFilter</filter-name>
-        <url-pattern>/ui-a</url-pattern>
+        <url-pattern>/ui</url-pattern>
+    </filter-mapping>
+
+    <!-- LeosVaadinAccessFilter filter -->
+    <filter>
+        <filter-name>LeosVaadinAccessFilter</filter-name>
+        <filter-class>eu.europa.ec.leos.web.support.LeosVaadinAccessFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>LeosVaadinAccessFilter</filter-name>
+        <url-pattern>/ui-v</url-pattern>
     </filter-mapping>
 
     <!-- Hook for Spring Security -->
@@ -201,9 +212,9 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/api/secured/*</url-pattern>
-        <url-pattern>/ui/*</url-pattern>
+        <url-pattern>/ui-v/*</url-pattern>
         <url-pattern>/VAADIN/*</url-pattern>
-        <url-pattern>/ui-a/*</url-pattern>
+        <url-pattern>/ui/*</url-pattern>
     </filter-mapping>
 
     <!-- User authentication -->
@@ -216,9 +227,9 @@
         <web-resource-collection>
             <web-resource-name>Secure</web-resource-name>
             <description>Require users to authenticate</description>
-            <url-pattern>/ui/*</url-pattern>
+            <url-pattern>/ui-v/*</url-pattern>
             <url-pattern>/VAADIN/*</url-pattern>
-            <url-pattern>/ui-a/*</url-pattern>
+            <url-pattern>/ui/*</url-pattern>
         </web-resource-collection>
         <auth-constraint>
             <description>Allow access to authenticated users</description>
@@ -234,7 +245,7 @@
         <web-resource-collection>
             <web-resource-name>UnSecure</web-resource-name>
             <description>Not require users to authenticate</description>
-            <url-pattern>/ui-a/api/*</url-pattern>
+            <url-pattern>/ui/api/*</url-pattern>
         </web-resource-collection>
     </security-constraint>
 

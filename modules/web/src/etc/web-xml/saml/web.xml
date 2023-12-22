@@ -62,7 +62,7 @@
 
     <filter-mapping>
         <filter-name>requestContextFilter</filter-name>
-        <url-pattern>/ui/*</url-pattern>
+        <url-pattern>/ui-v/*</url-pattern>
         <url-pattern>/VAADIN/*</url-pattern>
         <url-pattern>/ws/*</url-pattern>
     </filter-mapping>
@@ -126,7 +126,7 @@
     <!-- LEOS Web Application Servlet mappings -->
     <servlet-mapping>
         <servlet-name>LEOS Web Application Servlet</servlet-name>
-        <url-pattern>/ui/*</url-pattern>
+        <url-pattern>/ui-v/*</url-pattern>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
 
@@ -163,6 +163,17 @@
         <url-pattern>/api/token</url-pattern>
     </filter-mapping>
 
+    <!-- LeosVaadinAccessFilter filter -->
+    <filter>
+        <filter-name>LeosVaadinAccessFilter</filter-name>
+        <filter-class>eu.europa.ec.leos.web.support.LeosVaadinAccessFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>LeosVaadinAccessFilter</filter-name>
+        <url-pattern>/ui-v</url-pattern>
+    </filter-mapping>
+
     <!-- Hook for Spring Security-->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
@@ -173,7 +184,7 @@
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/api/secured/*</url-pattern>
-        <url-pattern>/ui/*</url-pattern>
+        <url-pattern>/ui-v/*</url-pattern>
         <url-pattern>/VAADIN/*</url-pattern>
         <url-pattern>/saml/*</url-pattern>
     </filter-mapping>

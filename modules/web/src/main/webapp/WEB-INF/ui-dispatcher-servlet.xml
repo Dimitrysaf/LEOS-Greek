@@ -9,6 +9,6 @@
     <mvc:annotation-driven/>
     <context:component-scan base-package="eu.europa.ec.leos.web.support.resource"/>
 
-    <mvc:resources mapping="/**" location="classpath:/ui-a/"/>
+    <mvc:resources mapping="/**" location="classpath:/ui/"/>
 
 </beans>
