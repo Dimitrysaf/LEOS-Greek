@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject} from 'rxjs';
 
 import { Permission } from '@/shared';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -13,10 +13,9 @@ import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog
   selector: 'app-proposal-actions-dropdown',
   templateUrl: './proposal-actions-dropdown.component.html',
 })
-export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
+export class ProposalActionsDropdownComponent implements OnDestroy {
   @Input() proposalId: string;
   @Input() permissions: Permission[];
-  @Input() totMilestones: number;
   loading = false;
 
   @Input() nonEditablePartOfTitle: string;
@@ -29,7 +28,6 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
   subjectProp = 'subject=';
   bodyProp = 'body=';
   amp = '&amp;';
-  breakStr = '%0D%0A';
   @ViewChild('proposalDeleteConf')
   proposalDeleteConf: ConfirmDeleteDialogComponent;
   @ViewChild('proposalDeleteCannotConf')
@@ -41,7 +39,7 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
   private destroy$: Subject<any> = new Subject();
 
   constructor(
-    private proposalDetailsService: ProposalDetailsService,
+    public proposalDetailsService: ProposalDetailsService,
     private sanitizer: DomSanitizer,
   ) {
     proposalDetailsService.permissions$.subscribe((permissions) => {
@@ -49,22 +47,10 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnInit(): void {
-    this.proposalDetailsService.milestones$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (milestones) => {
-          this.totMilestones = milestones.length;
-        },
-        error: (error) => {
-          console.error('error', error);
-        },
-      });
-  }
-
   ngOnDestroy(): void {
     this.destroy$.next(null);
     this.destroy$.unsubscribe();
+    this.proposalDetailsService.clonedProposalCount = 0;
   }
 
   handleDownload() {
@@ -88,7 +74,7 @@ export class ProposalActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   handleConfirmationDelete() {
-    if (this.isClonedProposal || this.totMilestones === 0) {
+    if (this.proposalDetailsService.clonedProposalCount === 0) {
       this.proposalDeleteConf.deleteDialog.openDialog();
     } else {
       this.proposalDeleteCannotConf.confirmDialog.openDialog();

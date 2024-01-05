@@ -317,8 +317,15 @@ public abstract class ApiServiceImpl implements ApiService {
     public void deleteCollection(String proposalRef) {
         CollectionContextService context = collectionContextProvider.get();
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        populateCloneProposalMetadataVO(proposal.getContent().get().getSource().getBytes());
         context.useProposal(proposal);
         context.executeDeleteProposal();
+        if (cloneContext != null && cloneContext.isClonedProposal()) {
+            CloneProposalMetadataVO cloneProposalMetadataVO = cloneContext.getCloneProposalMetadataVO();
+            String originalProposalId = cloneProposalMetadataVO.getClonedFromObjectId();
+            proposalService.removeClonedProposalMetadata(originalProposalId, proposalRef, cloneProposalMetadataVO);
+            LOG.info("Cloned proposal metadata with proposal ref {} is cleaned up from original proposal with id {}", proposalRef, originalProposalId);
+        }
     }
 
     @Override
@@ -487,7 +494,6 @@ public abstract class ApiServiceImpl implements ApiService {
         boolean isClonedProposal = false;
         Set<String> docVersionSeriesIds = new HashSet<>();
         String proposalVersionSeriesId = null;
-        CloneProposalMetadataVO cloneProposalMetadataVO = new CloneProposalMetadataVO();
         if (proposalRef != null) {
             proposal = this.proposalService.findProposalByRef(proposalRef);
             if(LOG.isTraceEnabled())
@@ -498,17 +504,16 @@ public abstract class ApiServiceImpl implements ApiService {
             proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null)
                     ? proposal.getContent().get().getSource().getBytes()
                     : new byte[0];
-            isClonedProposal = proposal.isClonedProposal();
-            if (isClonedProposal) {
-                cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposalXmlContent);
-                cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
-            }
+
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
             List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
             List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
             legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
             DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, proposalVersionSeriesId, docVersionSeriesIds);
-            proposalVO.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+            if (proposal.isClonedProposal()) {
+                populateCloneProposalMetadataVO(proposalXmlContent);
+                proposalVO.setCloneProposalMetadataVO(cloneContext.getCloneProposalMetadataVO());
+            }
             StampedLock milestonesVOsLock = new StampedLock();
             long stamp = milestonesVOsLock.writeLock();
             try {
@@ -622,7 +627,6 @@ public abstract class ApiServiceImpl implements ApiService {
                     break;
             }
         }
-
         annexVOList.sort(Comparator.comparingInt(DocumentVO::getDocNumber));
         DocumentVO legalText = proposalVO.getChildDocument(LeosCategory.BILL);
         if (legalText != null) {
@@ -630,7 +634,6 @@ public abstract class ApiServiceImpl implements ApiService {
                 legalText.addChildDocument(annexVO);
             }
         }
-
         return proposalVO;
     }
 
@@ -816,8 +819,7 @@ public abstract class ApiServiceImpl implements ApiService {
             }
         }
         if (isClonedProposal) {
-            cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(proposalXmlContent);
-            cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+            populateCloneProposalMetadataVO(proposalXmlContent);
         }
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
         List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
@@ -939,7 +941,6 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposal.getContent().get().getSource().getBytes() : new byte[0];
             boolean isClonedProposal = proposal.isClonedProposal();
             try {
-                cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
                 final String versionComment = messageHelper.getMessage("milestone.versionComment");
                 createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
                 LegDocument newLegDocument = milestoneService.createMilestone(proposalId, milestoneComment);
@@ -1117,4 +1118,8 @@ public abstract class ApiServiceImpl implements ApiService {
         this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
     }
 
+    private void populateCloneProposalMetadataVO(byte[] xmlContent) {
+        CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
+        cloneContext.setCloneProposalMetadataVO(cloneProposalMetadataVO);
+    }
 }
