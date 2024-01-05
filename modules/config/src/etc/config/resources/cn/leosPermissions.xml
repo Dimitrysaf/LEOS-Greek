@@ -15,7 +15,6 @@
             <permission>CAN_CREATE_MILESTONE</permission>
             <permission>CAN_RESTORE_PREVIOUS_VERSION</permission>
             <permission>CAN_ADD_REMOVE_COLLABORATOR</permission>
-            <permission>CAN_DOWNLOAD_PROPOSAL</permission>
             <permission>CAN_UPLOAD</permission>
             <permission>CAN_WORK_WITH_EXPORT_PACKAGE</permission>
             <permission>CAN_RENUMBER</permission>
