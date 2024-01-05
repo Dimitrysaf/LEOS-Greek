@@ -251,6 +251,17 @@ export class DocumentComponent
       akomantosoEl
         .querySelectorAll('meta, coverPage')
         .forEach((el) => el.remove());
+
+      akomantosoEl
+          .querySelectorAll('docPurpose')
+          .forEach((el) => {
+            let docInnerHTML = el.textContent;
+            if(docInnerHTML){
+              docInnerHTML = docInnerHTML.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
+              docInnerHTML = docInnerHTML.replace(/<\/?ins[^>]*?>/gi, '');
+              el.innerHTML = docInnerHTML;
+            }
+          });
     }
 
     if (akomantosoId) {

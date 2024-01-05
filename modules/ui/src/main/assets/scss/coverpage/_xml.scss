@@ -45,7 +45,7 @@
         @extend %documentFooter;
 
         @include editor;
-        
+        @extend %xmlTrackChanges;
         display: block;
     }
 

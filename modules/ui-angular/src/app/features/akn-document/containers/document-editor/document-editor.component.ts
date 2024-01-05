@@ -491,7 +491,7 @@ export class DocumentEditorComponent
     this.documentService.titlePageBS
       .pipe(takeUntil(this.destroy$))
       .subscribe((title) => {
-        this.pageTitle = title;
+        this.pageTitle = this.sanitizePageTitle(title);
       });
   }
 
@@ -986,18 +986,6 @@ export class DocumentEditorComponent
     this.mergeAllContributionsChangesDialog.closeDialog();
   }
 
-  setPageTitle() {
-    this.pageTitle = [
-      this.documentConfig.proposalMetadata.stage,
-      this.documentConfig.proposalMetadata.type,
-      this.documentConfig.proposalMetadata.purpose,
-    ]
-      .filter(Boolean)
-      .join(' ');
-    this.pageTitle =
-      this.domSanitizer.sanitize(SecurityContext.HTML, this.pageTitle) || '';
-  }
-
   protected exploreMilestone(version: Version) {
     this.milestoneViewData = {
       createdBy: version.createdBy,
@@ -1385,6 +1373,26 @@ export class DocumentEditorComponent
           this.pageSubTitle = subTitle;
         });
     }
+  }
+
+  public setPageTitle() {
+    this.pageTitle = [
+      this.documentConfig.proposalMetadata.stage,
+      this.documentConfig.proposalMetadata.type,
+      this.documentConfig.proposalMetadata.purpose,
+    ]
+      .filter(Boolean)
+      .join(' ');
+    this.pageTitle = this.sanitizePageTitle(this.pageTitle);
+  }
+
+  private sanitizePageTitle(title: string): string {
+    if(!title){
+      return title;
+    }
+    let resultTitle =  title.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
+    resultTitle = resultTitle.replace(/<\/?ins[^>]*?>/gi, '');
+    return this.domSanitizer.sanitize(SecurityContext.HTML, resultTitle) || '';
   }
 
   private setVersionForViewHeader(versionInfo: VersionInfoVO) {

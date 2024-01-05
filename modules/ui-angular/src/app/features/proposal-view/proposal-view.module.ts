@@ -5,7 +5,6 @@ import { DocumentService } from '@/shared/services/document.service';
 
 import { ProposalService } from '../proposals/services/proposal.service';
 import { AddMilestoneDialogComponent } from './components/add-milestone-dialog/add-milestone-dialog.component';
-import { EditTitleDialogComponent } from './components/edit-title-dialog/edit-title-dialog.component';
 import { MilestoneAnnotationWarningModalComponent } from './components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
 import { ProposalActionsDropdownComponent } from './components/proposal-actions-dropdown/proposal-actions-dropdown.component';
 import { ProposalDetailsComponent } from './components/proposal-details/proposal-details.component';
@@ -30,7 +29,6 @@ import { ProposalViewRoutingModule } from './proposal-view-routing.module';
     ProposalCollaboratorsComponent,
     ProposalCollaboratorsDialogComponent,
     ProposalHeaderComponent,
-    EditTitleDialogComponent,
     ProposalLastUpdatedOnComponent,
     ProposalExportsComponent,
     AddMilestoneDialogComponent,

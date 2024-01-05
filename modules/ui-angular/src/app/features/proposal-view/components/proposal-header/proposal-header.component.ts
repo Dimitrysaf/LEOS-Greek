@@ -87,6 +87,8 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
       .filter(Boolean)
       .join(' ');
 
+    this.title = this.title.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
+    this.title = this.title.replace(/<\/?ins[^>]*?>/gi, '');
     this.title =
       this.domSanitizer.sanitize(SecurityContext.HTML, this.title) || '';
   }
