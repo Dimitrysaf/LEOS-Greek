@@ -102,7 +102,7 @@
                   <button
                     euiListItem
                     (click)="openMilestoneSendCopyForContributionDialog(row)"
-                    *ngIf="!proposal.cloneProposalMetadataVO.clonedProposal"
+                    *ngIf="!proposal.cloneProposalMetadataVO?.clonedProposal"
                   >
                     {{
                       'page.collection.milestones.actions.send-copy-for-contribution'
@@ -113,7 +113,7 @@
                     euiListItem
                     (click)="openAnnotationWarningModal(row)"
                     [disabled]="row.status !== milestoneStatus.Ready"
-                    *ngIf="proposal.cloneProposalMetadataVO.clonedProposal"
+                    *ngIf="proposal.cloneProposalMetadataVO?.clonedProposal"
                   >
                     {{
                       'page.collection.milestones.actions.send-revision-for-merge'
@@ -172,8 +172,8 @@
           <eui-dropdown-content>
             <ul euiList>
               <li euiListItem>
-                <button 
-                euiListItem 
+                <button
+                euiListItem
                 (click)="updateReadyToMergeStatus(clonedMilestone)">
                   {{
                     'page.collection.milestones.actions.view-contribution'
@@ -201,7 +201,7 @@
   #addMilestoneDialog
   (closed)="onAddMilestoneDialogClosed()"
   *ngIf="addMilestoneDialogVisible"
-  [isCloneProposal]="proposal.cloneProposalMetadataVO.clonedProposal"
+  [isCloneProposal]="proposal.cloneProposalMetadataVO?.clonedProposal"
 ></app-add-milestone-dialog>
 
 <app-proposal-milestone-view

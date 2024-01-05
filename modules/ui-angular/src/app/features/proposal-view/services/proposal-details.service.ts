@@ -63,6 +63,7 @@ export class ProposalDetailsService implements OnDestroy {
     switchMap((name) => this.searchUsers(name)),
   );
   private destroy$ = new Subject<void>();
+  public clonedProposalCount : number;
 
   constructor(
     private appConfig: AppConfigService,
@@ -95,11 +96,14 @@ export class ProposalDetailsService implements OnDestroy {
         const permissions = this.resolvePermissions(collaborators, config);
         this.permissionsBS.next(permissions);
       });
+
+    this.clonedProposalCount = 0;
   }
 
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
+    this.clonedProposalCount = 0;
   }
 
   setUserAutocompleteInputChange(name: string) {

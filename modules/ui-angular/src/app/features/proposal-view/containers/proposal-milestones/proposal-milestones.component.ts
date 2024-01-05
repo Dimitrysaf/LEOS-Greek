@@ -69,7 +69,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.appConfigService.config.subscribe((config: LeosAppConfig) => {
       this.viewContribution = config.showRevisionEnabled;
     });
-   
+
     this.proposalDetailsService.milestones$
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -79,6 +79,11 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
             !firstLoad,
           );
           firstLoad = false;
+          milestones.forEach((milestone) => {
+            if (milestone.clonedMilestones && !this.proposal.cloneProposalMetadataVO?.clonedProposal) {
+              this.proposalDetailsService.clonedProposalCount = milestone.clonedMilestones.length;
+            }
+          })
         },
         error: (error) => {
           this.uxAppService.growl({
@@ -103,6 +108,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     clearTimeout(this.milestonesCheckTimer);
     this.destroy$.next(null);
     this.destroy$.unsubscribe();
+    this.proposalDetailsService.clonedProposalCount = 0;
   }
 
   openAnnotationWarningModal(milestone: MilestoneDescriptor): void {
