@@ -968,7 +968,7 @@ public class DocumentServiceImpl implements DocumentService {
     private DocumentVersion updateDocumentVersion(Document doc, String updatedBy, int versionType, String labelVersion,
             String comments) throws RepositoryException {
         DocumentVersion docVersion = new DocumentVersion();
-        docVersion.setAuditCBy(updatedBy);
+        docVersion.setAuditCBy(doc.getAuditCBy());
         docVersion.setAuditCDate(LocalDateTime.now());
         docVersion.setAuditLastMBy(updatedBy);
         docVersion.setAuditLastMDate(LocalDateTime.now());

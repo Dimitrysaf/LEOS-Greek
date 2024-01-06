@@ -549,6 +549,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposalVO.addCollaborators(proposal.getCollaborators());
                     proposalVO.setUpdatedBy(userHelper.convertToPresentation(proposal.getLastModifiedBy()));
                     proposalVO.setCreatedBy(userHelper.convertToPresentation(proposal.getCreatedBy()));
+                    proposalVO.setCreatedOn(Date.from(proposal.getInitialCreationInstant()));
                     proposalVO.setUpdatedOn(Date.from(proposal.getLastModificationInstant()));
                     proposalVO.setLanguage(metadataVO.getLanguage());
                     proposalVO.setSource(proposalXmlContent);
