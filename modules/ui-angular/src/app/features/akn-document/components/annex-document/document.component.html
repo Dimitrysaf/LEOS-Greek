@@ -1,5 +1,10 @@
-<div [id]="containerId" [ngClass]="containerClass" #container>
-  <!-- Document xml goes here -->
+<div class="main-container" >
+    <div [id]="containerId" class="document-container" [ngStyle]="documentStyle" #container>
+      <!-- Document xml goes here -->
+  </div>
 </div>
-<app-track-changes-actions>
-</app-track-changes-actions>
+<div #zoomScrollbar>
+  <app-zoom-scrollbar [zoomLevel]="zoomLevel" (zoomChange)="handleZoomChange($event)"></app-zoom-scrollbar>
+</div>
+<app-track-changes-actions></app-track-changes-actions>
+

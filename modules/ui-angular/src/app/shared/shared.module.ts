@@ -21,6 +21,7 @@ import { ProposalCreateFormComponent } from './components/proposal-create-form/p
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
 import { ProposalMilestoneViewComponent } from './components/proposal-milestone-view/proposal-milestone-view.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
+import { ZoomScrollbarComponent } from './components/zoom-scrollbar/zoom-scrollbar.component';
 import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
 import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
 import { EscapeHtmlPipe } from './pipes/escape-html.pipe';
@@ -51,6 +52,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     CoEditionDetectedDialogComponent,
     MilestoneTocComponent,
     ResizeHandleComponent,
+    ZoomScrollbarComponent,
     ProposalMilestoneViewComponent,
     HtmlToPlaintextPipe,
     EscapeHtmlPipe,
@@ -82,6 +84,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     EscapeHtmlPipe,
     UnescapeHtmlPipe,
     ConfirmReloadDialogComponent,
+    ZoomScrollbarComponent,
   ],
 })
 export class SharedModule {}
