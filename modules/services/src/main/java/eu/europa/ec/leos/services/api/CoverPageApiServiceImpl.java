@@ -14,6 +14,8 @@
 
 package eu.europa.ec.leos.services.api;
 
+import com.google.common.base.Stopwatch;
+import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
@@ -34,7 +36,6 @@ import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
-import eu.europa.ec.leos.services.collection.document.AnnexContextService;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
@@ -75,8 +76,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.google.common.base.Stopwatch;
-import com.sun.istack.NotNull;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
@@ -87,8 +86,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 @Service("coverPage")
 public class CoverPageApiServiceImpl implements CoverPageApiService {

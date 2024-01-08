@@ -140,6 +140,7 @@ export class DocumentEditorComponent
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
 
   id: string;
+  baseECVersion  = "0.1.0";
 
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
@@ -1388,7 +1389,7 @@ export class DocumentEditorComponent
   }
 
   private setPageSubTitle(documentVersion, updatedBy, updatedDate, baseVersionTitle, revisedBaseVersion) {
-    if (this.isCNInstance && "0.1.0" !== revisedBaseVersion) {
+    if (this.isCNInstance && this.baseECVersion !== revisedBaseVersion) {
       this.translate
         .get('page.editor.base.revision.toolbar.info', {
           version: documentVersion,

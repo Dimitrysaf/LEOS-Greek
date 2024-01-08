@@ -16,12 +16,14 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.*;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -79,8 +81,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 @Service("memorandum")
 public class MemorandumApiServiceImpl implements MemorandumApiService {

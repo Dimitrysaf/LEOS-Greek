@@ -389,6 +389,7 @@ public class BillController {
             return new ResponseEntity<>("Unexpected error while trying to restore version ",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
     }
 
     @GetMapping(value = "/{documentRef}/element/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)

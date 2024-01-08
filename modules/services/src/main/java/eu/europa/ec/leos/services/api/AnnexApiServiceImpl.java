@@ -16,13 +16,13 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -104,7 +104,6 @@ import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 
 public class AnnexApiServiceImpl implements AnnexApiService {
     private static final Logger LOG = LoggerFactory.getLogger(AnnexApiServiceImpl.class);
