@@ -213,7 +213,7 @@ export class DocumentEditorComponent
     public environmentService: EnvironmentService,
     private loadingService: LoadingService,
     private tableOfContentService: TableOfContentService,
-    private domSatinizer: DomSanitizer,
+    private domSanitizer: DomSanitizer,
     private tocEditService: TableOfContentEditService,
     private hostElRef: ElementRef,
     private syncScrollingService: SyncDocumentScrollService,
@@ -271,7 +271,8 @@ export class DocumentEditorComponent
         this.setPageSubTitle(
           documentView.versionInfoVO.documentVersion,
           `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`,
-          documentView.versionInfoVO.lastModificationInstant,
+          documentView.versionInfoVO.lastModificationInstant, documentView.versionInfoVO.baseVersionTitle,
+          documentView.versionInfoVO.revisedBaseVersion
         );
         this.proposalRef = documentView.proposalRef;
       });
@@ -285,7 +286,8 @@ export class DocumentEditorComponent
           this.setPageSubTitle(
             documentView.versionInfoVO.documentVersion,
             `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`,
-            documentView.versionInfoVO.lastModificationInstant,
+            documentView.versionInfoVO.lastModificationInstant, documentView.versionInfoVO.baseVersionTitle,
+            documentView.versionInfoVO.revisedBaseVersion
           );
           this.proposalRef = documentView.proposalRef;
         }
@@ -406,6 +408,8 @@ export class DocumentEditorComponent
           this.formatVersionNumber(version),
           version.createdBy,
           version.updatedDate,
+          null,
+          null
         );
     });
   }
@@ -677,7 +681,7 @@ export class DocumentEditorComponent
     const content = this.tranlsateService.instant(
       `editor-switch-annex-structure-to-${nextAnnexStructure}-content`,
     );
-    const conteSanitized = this.domSatinizer.bypassSecurityTrustHtml(content);
+    const conteSanitized = this.domSanitizer.bypassSecurityTrustHtml(content);
 
     this.dialogService.openDialog({
       title: this.tranlsateService.instant(
@@ -1383,17 +1387,32 @@ export class DocumentEditorComponent
     return akomantosoEl.outerHTML;
   }
 
-  private setPageSubTitle(documentVersion, updatedBy, updatedDate) {
-    this.translate
-      .get('page.editor.subtitle', {
-        version: documentVersion,
-        updatedByFull: updatedBy,
-        updatedOn: updatedDate,
-      })
-      .pipe(takeUntil(this.destroy$), take(1))
-      .subscribe((subTitle: string) => {
-        this.pageSubTitle = subTitle;
-      });
+  private setPageSubTitle(documentVersion, updatedBy, updatedDate, baseVersionTitle, revisedBaseVersion) {
+    if (this.isCNInstance && "0.1.0" !== revisedBaseVersion) {
+      this.translate
+        .get('page.editor.base.revision.toolbar.info', {
+          version: documentVersion,
+          updatedByFull: updatedBy,
+          updatedOn: updatedDate,
+          baseVersionTitle: baseVersionTitle,
+          revisedBaseVersion: revisedBaseVersion
+        })
+        .pipe(takeUntil(this.destroy$), take(1))
+        .subscribe((subTitle: string) => {
+          this.pageSubTitle = subTitle;
+        });
+    } else {
+      this.translate
+        .get('page.editor.subtitle', {
+          version: documentVersion,
+          updatedByFull: updatedBy,
+          updatedOn: updatedDate,
+        })
+        .pipe(takeUntil(this.destroy$), take(1))
+        .subscribe((subTitle: string) => {
+          this.pageSubTitle = subTitle;
+        });
+    }
   }
 
   public setPageTitle() {
@@ -1405,7 +1424,7 @@ export class DocumentEditorComponent
       .filter(Boolean)
       .join(' ');
     this.pageTitle =
-      this.domSatinizer.sanitize(SecurityContext.HTML, this.pageTitle) || '';
+      this.domSanitizer.sanitize(SecurityContext.HTML, this.pageTitle) || '';
   }
 
   private setVersionForViewHeader(versionInfo: VersionInfoVO) {

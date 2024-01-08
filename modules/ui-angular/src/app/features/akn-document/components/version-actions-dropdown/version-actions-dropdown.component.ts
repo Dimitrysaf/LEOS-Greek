@@ -64,8 +64,7 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   onBaseChange(version: any) {
-    console.log("version.documentId", version.documentId, version.versionNumber, version.checkinCommentVO.title)
-    this.doc.changeBaseVersion(this.version);
+    this.doc.changeBaseVersion(version);
   }
 
   onAccept() {

@@ -230,15 +230,6 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID),
-                documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionComment);
-        Bill updatedBill = billService.updateBill(documentRef, documentId, properties, true);
-        return this.documentViewService.updateDocumentView(updatedBill);
-    }
-
-    @Override
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());

@@ -29,12 +29,16 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
+import eu.europa.ec.leos.services.document.AnnexService;
+import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.util.CheckinCommentUtil;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
@@ -74,9 +78,13 @@ public class DocumentApiServiceMandateImpl extends DocumentApiServiceImpl {
                                          ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
                                          ExportPackageService exportPackageService, NotificationService notificationService,
                                          SecurityContext securityContext, MessageHelper messageHelper, ComparisonDelegateAPI comparisonDelegate,
-                                         LegService legService, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService, ElementProcessor elementProcessor, TransformationService transformationService) {
+                                         LegService legService, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
+            ElementProcessor elementProcessor, TransformationService transformationService,
+            RepositoryPropertiesMapper repositoryPropertiesMapper, DocumentViewService<XmlDocument> documentViewService,
+            BillService billService, AnnexService annexService) {
         super(documentContentService, packageService, proposalService, exportService, leosRepository, exportPackageService, notificationService,
-                securityContext, messageHelper, comparisonDelegate, legService, referenceLabelService, workspaceService, elementProcessor, transformationService);
+                securityContext, messageHelper, comparisonDelegate, legService, referenceLabelService, workspaceService, elementProcessor, transformationService,
+                repositoryPropertiesMapper, documentViewService, billService, annexService);
     }
 
     @Override

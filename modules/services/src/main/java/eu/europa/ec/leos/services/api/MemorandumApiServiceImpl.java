@@ -258,15 +258,6 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID),
-                documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionComment);
-        Memorandum updatedDocument = memorandumService.updateMemorandum(documentRef, documentId, properties, true);
-        return this.documentViewService.updateDocumentView(updatedDocument);
-    }
-
-    @Override
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         String jsonAlternatives = "";

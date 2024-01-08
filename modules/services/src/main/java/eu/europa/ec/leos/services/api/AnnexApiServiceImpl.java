@@ -331,15 +331,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID),
-                documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionComment);
-        Annex updatedDocument = annexService.updateAnnex(documentRef, documentId, properties, true);
-        return this.documentViewService.updateDocumentView(updatedDocument);
-    }
-
-    @Override
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         populateCloneProposalMetadata(annex);

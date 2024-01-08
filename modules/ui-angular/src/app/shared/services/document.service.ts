@@ -1033,7 +1033,7 @@ export class DocumentService implements OnDestroy {
     this.loadingService.setLoading(true);
     this.http
       .get(
-        `${apiBaseUrl}/secured/bill/${this.documentRef}/baseVersion/${versionId}`,
+        `${apiBaseUrl}/secured/document/${this.documentType}/${this.documentRef}/baseVersion/${versionId}`,
         { params: {
             versionLabel: versionNumber,
             versionComment: baseVersionTitle

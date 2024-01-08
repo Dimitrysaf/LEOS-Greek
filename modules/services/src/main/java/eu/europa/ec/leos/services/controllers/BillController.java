@@ -391,20 +391,6 @@ public class BillController {
         }
     }
 
-    @GetMapping(value = "/{documentRef}/baseVersion/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> changeBaseVersion(@PathVariable("documentRef") String documentRef,
-                                                    @PathVariable("documentId") String documentId,
-                                                    @RequestParam String versionLabel, @RequestParam String versionComment) {
-        try {
-            DocumentViewResponse response = billApiService.changeBaseVersion(documentRef, documentId, versionLabel, versionComment);
-            return ResponseEntity.ok().body(response);
-        } catch (Exception e) {
-            LOG.error("Error occurred while changing baseVersion for - " + documentRef, e);
-            return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @GetMapping(value = "/{documentRef}/element/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getBillElement(@PathVariable("documentRef") String documentRef,

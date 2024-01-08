@@ -86,8 +86,6 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     DocumentViewResponse restoreToVersion(String documentRef, String versionId);
 
-    DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment);
-
     EditElementResponse editElement(String documentRef, String elementId, String elementTagName);
 
     byte[] downloadVersion(String documentRef, boolean isWithAnnotations) throws Exception;

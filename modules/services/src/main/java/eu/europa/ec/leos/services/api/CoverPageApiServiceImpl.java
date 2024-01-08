@@ -292,15 +292,6 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public DocumentViewResponse changeBaseVersion(String documentRef, String documentId, String versionLabel, String versionComment) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID),
-                documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionComment);
-        Proposal updatedDocument = proposalService.updateProposal(documentRef, documentId, properties, true);
-        return this.documentViewService.updateDocumentView(updatedDocument);
-    }
-
-    @Override
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         String element = this.elementProcessor.getElement(proposal, elementTagName, elementId);
