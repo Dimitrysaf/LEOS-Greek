@@ -64,9 +64,18 @@ define(function actionHandlerModule(require) {
                     });
                     currentInstance.fire("close");
                     connector.editElementAction(data);
+                } else {
+                    _cancelActionElement(data.elementId);
                 }
             }
         }
+    }
+
+    function _cancelActionElement(elementId) {
+        CKEDITOR.fire("editorInitEnds");
+        let element = document.querySelector(`#${elementId}`);
+        $(element).css( "pointer-events", "all" );
+        $(element).next().children().css( "pointer-events", "all" );
     }
 
     function _getCurrentEditorInstance() {

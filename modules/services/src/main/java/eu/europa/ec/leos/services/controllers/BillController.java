@@ -82,7 +82,7 @@ public class BillController {
                                                   @RequestBody String elementContent) {
         try {
             SaveElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName,
-                    elementContent);
+                    elementContent, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {

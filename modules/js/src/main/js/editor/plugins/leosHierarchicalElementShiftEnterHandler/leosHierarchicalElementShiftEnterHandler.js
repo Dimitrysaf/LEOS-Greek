@@ -393,6 +393,10 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             return false;
         }
 
+        if (leosPluginUtils.isCrossHeadingInList(startElement)) {
+            return false;
+        }
+
         // If selection on several block elements, avoid problems and block it
         if (selection.getRanges().length > 0 && (_getBlockElement(getFirstRange(editor).startContainer) != _getBlockElement(getFirstRange(editor).endContainer))) {
             return false;

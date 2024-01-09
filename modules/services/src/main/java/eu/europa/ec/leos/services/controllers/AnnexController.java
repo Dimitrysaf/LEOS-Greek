@@ -82,7 +82,7 @@ public class AnnexController {
                                                    @RequestBody String elementContent) {
         try {
             SaveElementResponse newElement = this.annexAPIService.saveElement(documentRef, elementId, elementName,
-                    elementContent);
+                    elementContent, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, newElement);
             return ResponseEntity.ok().body(newElement);
         } catch (Exception e) {

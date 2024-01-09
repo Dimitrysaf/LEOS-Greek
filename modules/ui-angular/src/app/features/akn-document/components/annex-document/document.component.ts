@@ -112,10 +112,10 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
               elementId: element.elementId,
               elementType: element.elementTagName,
               elementFragment: element.elementFragment,
-              isClosing: false
+              isClosing: false,
+              isSaved: false,
             });
           });
-          this.documentService.setDidDocumentLoadAndRender(true);
           this.documentService.reloadView();
           this.tableOfContentService.reload();
         } else {
@@ -169,7 +169,9 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
   private loadDocument(xml: string) {
     this.xml = this.cleanupAndSerializeXML(xml);
     this.containerElRef.nativeElement.innerHTML = this.xml;
-    this.documentService.setDidDocumentLoadAndRender(true);
+    if (!this.isCNInstance) {
+      this.documentService.setDidDocumentLoadAndRender(true);
+    }
     this.initTrackChangesActions();
     this.ckeditorService.refreshStateAllAvailableConnectors();
   }
@@ -206,6 +208,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
     elementType: string;
     elementFragment: string;
     isClosing: boolean;
+    isSaved: boolean;
   }) {
     const ckeditorsOpen = this.document.querySelectorAll('.cke_editable');
     if (ckeditorsOpen && ckeditorsOpen.length > 0) {
@@ -213,7 +216,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
       const elementInEditor = ckeditorOpen.querySelector(`#${data.elementId}`);
       if (!elementInEditor) {
         this.reloadElements(data);
-      } else if (data.isClosing) {
+      } else if (data.isClosing && !data.isSaved) {
         !this.isCNInstance ? this.reloadElements(data) : this.documentService.reloadDocument();
       } else {
         this.documentService.isReloadRequired = true;

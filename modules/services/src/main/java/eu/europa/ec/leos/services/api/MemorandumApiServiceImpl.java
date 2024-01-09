@@ -171,7 +171,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementFragment) {
+                                           String elementFragment, boolean isSplit) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
         StructureContext structureContext1 = structureContext.get();

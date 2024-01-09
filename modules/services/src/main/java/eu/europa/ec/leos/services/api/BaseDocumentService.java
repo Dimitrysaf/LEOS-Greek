@@ -40,7 +40,9 @@ import eu.europa.ec.leos.vo.toc.TocItemType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.MethodNotSupportedException;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
@@ -56,7 +58,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception;
 
-    SaveElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment)
+    SaveElementResponse saveElement(String documentRef, String elementId, String elementName, String elementFragment, boolean isSplit)
             throws Exception;
 
     DocumentViewResponse insertElement(String documentRef, String elementName, String elementId, Position position);
@@ -146,6 +148,10 @@ public interface BaseDocumentService<T extends XmlDocument> {
             case POINT:
             case INDENT:
                 return elementContent.contains("<subparagraph>");
+            case LEVEL:
+                return elementContent.contains("<level") || elementContent.contains("<subparagraph");
+            case BLOCK:
+                return elementContent.contains("<block");
             default:
                 return false;
         }

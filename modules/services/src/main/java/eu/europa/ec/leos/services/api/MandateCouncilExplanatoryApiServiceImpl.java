@@ -168,12 +168,15 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementFragment) throws Exception {
+                                           String elementFragment, boolean isSplit) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.setStructureContext(
                 explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
         byte[] updatedXmlContent = explanatoryProcessor.updateElement(explanatory, elementId, elementName,
                 elementFragment);
+
+        boolean splittedContentIsEmpty = false;
+        Element elementToEditAfterClose = null;
 
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
         final String description = messageHelper.getMessage("operation.checkin.minor");
@@ -181,10 +184,24 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
                 new CheckinElement(ActionType.UPDATED, elementId, elementName, updatedLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+        Pair<byte[], Element> splittedContent = null;
+        if (isSplit && checkIfCloseElementEditor(elementName, elementFragment)) {
+            splittedContent = explanatoryProcessor.getSplittedElement(updatedXmlContent, elementFragment, elementName, elementId);
+            if (splittedContent != null) {
+                elementToEditAfterClose = splittedContent.right();
+                if (splittedContent.left() != null) {
+                    updatedXmlContent = splittedContent.left();
+                }
+            }
+        }
         explanatory = explanatoryService.updateExplanatory(explanatory, updatedXmlContent, VersionType.MINOR,
                 checkinCommentJson);
         String newContent = elementProcessor.getElement(explanatory, elementName, elementId);
-        return new SaveElementResponse(elementId, elementName, newContent);
+        if (splittedContent == null) {
+            splittedContentIsEmpty = true;
+        }
+
+        return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
     }
 
     @Override
