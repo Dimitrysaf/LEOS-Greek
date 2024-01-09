@@ -83,7 +83,7 @@ public class CouncilExplanatoryController {
                                                          @RequestBody String elementContent) {
         try {
             SaveElementResponse updatedElement = this.explanatoryApiService.saveElement(documentRef, elementId,
-                    elementName, elementContent);
+                    elementName, elementContent, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {

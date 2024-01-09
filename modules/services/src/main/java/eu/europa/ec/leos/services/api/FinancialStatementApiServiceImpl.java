@@ -63,7 +63,7 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementFragment) throws Exception {
+                                           String elementFragment, boolean isSplit) throws Exception {
         return null;
     }
 

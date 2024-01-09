@@ -81,6 +81,7 @@ import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,7 +192,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementContent) throws UnexpectedException {
+                                           String elementContent, boolean isSplit) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
 
         if (annex == null) {
@@ -201,11 +202,25 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(annex);
         byte[] updatedXmlContent = annexProcessor.updateAnnexBlock(annex, elementId, elementName, elementContent);
-        //TO DO add splitted content functionality since
-        Annex updatedAnnex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR,
-                messageHelper.getMessage("operation.annex.block.updated"));
-        String newContent = elementProcessor.getElement(updatedAnnex, elementName, elementId);
-        return new SaveElementResponse(elementId, elementName, newContent);
+        boolean splittedContentIsEmpty = false;
+        Element elementToEditAfterClose = null;
+        Pair<byte[], Element> splittedContent = null;
+
+        if (isSplit && checkIfCloseElementEditor(elementName, elementContent)) {
+            splittedContent = annexProcessor.getSplittedElement(updatedXmlContent, elementContent, elementName, elementId);
+            if (splittedContent != null) {
+                elementToEditAfterClose = splittedContent.right();
+                if (splittedContent.left() != null) {
+                    updatedXmlContent = splittedContent.left();
+                }
+            }
+        }
+        annex = annexService.updateAnnex(annex, updatedXmlContent, VersionType.MINOR, messageHelper.getMessage("operation.annex.block.updated"));
+        String newContent = elementProcessor.getElement(annex, elementName, elementId);
+        if (splittedContent == null) {
+            splittedContentIsEmpty = true;
+        }
+        return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
     }
 
     @Override

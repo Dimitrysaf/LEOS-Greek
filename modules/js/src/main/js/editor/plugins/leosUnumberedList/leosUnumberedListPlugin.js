@@ -149,7 +149,7 @@ define(function leosListCrossHeadingPluginModule(require) {
     }
 
     function getPointOrCrossHeadingFromSelector(path, selector) {
-        if (!!path.lastElement) {
+        if (!!path && !!path.lastElement) {
             var element = path.lastElement.$.closest(selector);
             return element ? new CKEDITOR.dom.element(element) : null;
         }

@@ -126,9 +126,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       });
 
       promise.then(() => {
-        setTimeout(() => {
-          this.handleEdit(data);
-        }, 1000);
+         this.handleEdit(data);
       });
     } else {
       this.handleEdit(data);
@@ -300,11 +298,14 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   saveElement(elemData: SaveElementAction) {
     this.isSaveAndClose = elemData.isSaveAndClose;
     this.documentService.setDidDocumentLoadAndRender(false);
-    this.refreshElement(
-      elemData.elementId,
-      elemData.elementType,
-      elemData.elementFragment,
-    );
+    this.isElementSaved = true;
+    if (!elemData.isSplit) {
+      this.refreshElement(
+        elemData.elementId,
+        elemData.elementType,
+        elemData.elementFragment,
+      );
+    }
     let milliseconds = new Date().getTime();
     this.loadingService.setTaskOngoing('saving', String(milliseconds));
     this.saveDocumentElement(
@@ -325,7 +326,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elemData: SaveElementAction,
     taskId: string,
   ) {
-    this.isElementSaved = true;
     this.elementToEditAfterClose = response.elementToEditAfterClose;
     if (this.elementToEditAfterClose && this.elementToEditAfterClose !== null) {
       this.closeElement();
@@ -349,12 +349,13 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     elementType: string;
     elementFragment: string;
   }) {
-    const isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
     this.coEditionService.removeElementCoEditInfo(
       this.documentService.documentRef,
       this.elementUnderEdit,
     );
-    this.documentService.reloadConnectors(elemData, true);
+    if (!this.elementToEditAfterClose || this.elementToEditAfterClose == null) {
+      this.documentService.reloadConnectors(elemData, true);
+    }
     if (this.isCNInstance && !this.isElementSaved && (!this.elementToEditAfterClose || this.elementToEditAfterClose == null)) {
       this.documentService.resetDocument();
     }

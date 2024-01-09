@@ -74,6 +74,7 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.toc.*;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -557,7 +558,7 @@ public class BillApiServiceImpl implements BillApiService {
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementFragment) throws Exception {
+                                           String elementFragment, boolean isSplit) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
 
         if (bill == null) {
@@ -580,9 +581,23 @@ public class BillApiServiceImpl implements BillApiService {
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
                 new CheckinElement(ActionType.UPDATED, elementId, elementName, elementLabel));
         final String checkinCommentJson = CheckinCommentUtil.getJsonObject(checkinComment);
+        Pair<byte[], Element> splittedContent = null;
+        if (isSplit && checkIfCloseElementEditor(elementName, elementFragment)) {
+            splittedContent = billProcessor.getSplittedElement(newXmlContent, elementFragment, elementName, elementId);
+            if (splittedContent != null) {
+                elementToEditAfterClose = splittedContent.right();
+                if (splittedContent.left() != null) {
+                    newXmlContent = splittedContent.left();
+                }
+            }
+        }
         Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
         String newContent = elementProcessor.getElement(updatedBill, elementName, elementId);
-        return new SaveElementResponse(elementId, elementName, newContent);
+        if (splittedContent == null) {
+            splittedContentIsEmpty = true;
+        }
+
+        return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
     }
 
     @Override

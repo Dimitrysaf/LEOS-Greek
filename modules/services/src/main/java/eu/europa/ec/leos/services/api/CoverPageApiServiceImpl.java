@@ -185,7 +185,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementFragment) {
+                                           String elementFragment, boolean isSplit) {
         String docPurpose = proposalService.getPurposeFromXml(elementFragment.getBytes());
 
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);

@@ -110,7 +110,7 @@ public class MemorandumController {
                                                         @RequestBody String elementContent) {
         try {
             SaveElementResponse updatedElement = this.memorandumApiService.saveElement(documentRef, elementId,
-                    elementName, elementContent);
+                    elementName, elementContent, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {

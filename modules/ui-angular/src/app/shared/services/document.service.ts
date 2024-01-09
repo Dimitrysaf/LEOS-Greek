@@ -111,6 +111,7 @@ export class DocumentService implements OnDestroy {
     elementType: string;
     elementFragment: string;
     isClosing: boolean;
+    isSaved: boolean;
   }>;
   refreshView$: Observable<DocumentViewResponse>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory | null>;
@@ -131,6 +132,7 @@ export class DocumentService implements OnDestroy {
     elementType: string;
     elementFragment: string;
     isClosing: boolean;
+    isSaved: boolean;
   }>;
   getElementContent$: Observable<{
     elementId: string;
@@ -183,7 +185,8 @@ export class DocumentService implements OnDestroy {
     elementType: string;
     elementFragment: string;
     isClosing: boolean;
-  }>({ elementId: null, elementType: null, elementFragment: null, isClosing: false });
+    isSaved: boolean;
+  }>({ elementId: null, elementType: null, elementFragment: null, isClosing: false, isSaved: false });
   private refreshViewBS = new BehaviorSubject<DocumentViewResponse>(null);
   private documentRefAndCategoryBS =
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
@@ -213,7 +216,8 @@ export class DocumentService implements OnDestroy {
     elementType: string;
     elementFragment: string;
     isClosing: boolean;
-  }>({ elementId: null, elementType: null, elementFragment: null, isClosing: false });
+    isSaved: boolean;
+  }>({ elementId: null, elementType: null, elementFragment: null, isClosing: false, isSaved: false });
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -644,12 +648,13 @@ export class DocumentService implements OnDestroy {
     elementId: string;
     elementType: string;
     elementFragment: string;
-  }, isClosing = false) {
+  }, isClosing = false, isSaved = false) {
     this.refreshConnectorsBS.next({
       elementId: data.elementId,
       elementType: data.elementType,
       elementFragment: data.elementFragment,
-      isClosing: isClosing
+      isClosing: isClosing,
+      isSaved: isSaved
     });
   }
 
@@ -869,6 +874,7 @@ export class DocumentService implements OnDestroy {
     elementType: string;
     elementFragment: string;
     isClosing: boolean;
+    isSaved: boolean;
   }) {
     this.updateElementContentBS.next(data);
   }
