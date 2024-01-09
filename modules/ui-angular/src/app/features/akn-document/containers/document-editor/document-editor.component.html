@@ -786,28 +786,7 @@
               class="eui-u-flex eui-u-flex-row app-u-gap-xs"
               style="max-width: fit-content"
             >
-              <select
-                euiSelect
-                name="action_nolabel"
-                aria-label="action nolabel"
-                [disabled]="
-                  documentService.isContributionDeclinedOrProcessed$ | async
-                "
-                (change)="onSelectAction($event)"
-              >
-                <option value="accept_selected" selected>
-                  {{
-                    'page.editor.contribution.view.actions.accept.selected'
-                      | translate
-                  }}
-                </option>
-                <option value="accept_proposed_version">
-                  {{
-                    'page.editor.contribution.view.actions.accept.proposed.version'
-                      | translate
-                  }}
-                </option>
-              </select>
+              
               <button
                 euiButton
                 euiPrimary
@@ -826,16 +805,6 @@
               >
                 {{ 'page.editor.contribution.view.actions.apply' | translate }}
               </button>
-              <span class="eui-u-ml-s eui-u-mr-s processed-span">{{
-                'page.editor.contribution.view.actions.processed' | translate
-              }}</span>
-              <eui-slide-toggle
-                (changed)="onChangeProcessedToggle($event)"
-                [isChecked]="processed"
-                [disabled]="
-                  documentService.isContributionDeclinedOrProcessed$ | async
-                "
-              ></eui-slide-toggle>
 
               <button
                 euiButton
@@ -935,30 +904,6 @@
   (dismiss)="onCancelClose()"
 >
   <p>{{ 'page.editor.open.editor.dialog.body' | translate }}</p>
-</eui-dialog>
-<eui-dialog
-  #markContributionAsProcessedDialog
-  [title]="
-    'page.editor.contribution.view.mark-contribution-as-processed.modal-title'
-      | translate
-  "
-  [acceptLabel]="'global.actions.continue' | translate"
-  [dismissLabel]="'global.actions.cancel' | translate"
-  [width]="'25vw'"
-  [isHandleCloseOnAccept]="true"
-  [isHandleCloseOnDismiss]="true"
-  [hasCloseButton]="false"
-  (clickOutside)="onCancelMarkContributionAsProcessed()"
-  (close)="onCancelMarkContributionAsProcessed()"
-  (accept)="onAcceptMarkContributionAsProcessed()"
-  (dismiss)="onCancelMarkContributionAsProcessed()"
->
-  <p class="eui-u-mb-s">
-    {{
-      'page.editor.contribution.view.mark-contribution-as-processed.modal-text'
-        | translate
-    }}
-  </p>
 </eui-dialog>
 <eui-dialog
   #mergeAllContributionsChangesDialog

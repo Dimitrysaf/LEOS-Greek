@@ -1,0 +1,268 @@
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" id="REG-clrhoam0c0009e447139f7g8d-en">
+    <bill name="REG">
+        <preface id="_preface">
+            <container id="_preface__procedureIdentifier" name="procedureIdentifier">
+                <aknP id="_preface__procedureIdentifier__p">
+                    <docketNumber class="leos-content-new" id="_preface__procedureIdentifier__p__docketNumber" refersTo="~_procedure_YYYY_NNN"/>
+                </aknP>
+            </container>
+            <longTitle id="_preface__longtitle">
+                <aknP id="_preface__longtitle__p">
+                    <docStage id="_preface__longtitle__p__docstage">Proposal for a</docStage>
+                    <docType id="_preface__longtitle__p__doctype" refersTo="~_REG">REGULATION OF THE EUROPEAN PARLIAMENT
+                        AND OF THE COUNCIL
+                    </docType>
+                    <docPurpose id="_preface__longtitle__p__docpurpose">on ... Fork And Merge</docPurpose>
+                </aknP>
+            </longTitle>
+        </preface>
+        <preamble id="_preamble">
+            <formula id="_preamble__formula_1" name="actingEntity">
+                <aknP id="_preamble__formula_1__p">THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</aknP>
+            </formula>
+            <citations id="_cits">
+                <citation id="_cit_1" refersTo="~_legalBasis">
+                    <aknP id="_cit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in
+                        particular Article [...] thereof,
+                    </aknP>
+                </citation>
+                <citation id="_cit_2">
+                    <aknP id="_cit_2__p">Having regard to the proposal from the European Commission,</aknP>
+                </citation>
+                <citation id="_cit_3">
+                    <aknP id="_cit_3__p">After transmission of the draft legislative act to the national Parliaments,
+                    </aknP>
+                </citation>
+                <citation id="_cit_4">
+                    <aknP id="_cit_4__p">Having regard to the opinion of the European Economic and Social Committee
+                        <authorialNote id="_authorialnote_1" marker="1" placement="bottom">
+                            <aknP id="_authorialNote_1__p">OJ C [...], [...], p. [...]</aknP>
+                        </authorialNote>
+                        ,
+                    </aknP>
+                </citation>
+                <citation id="_cit_5">
+                    <aknP id="_cit_5__p">Having regard to the opinion of the Committee of the Regions
+                        <authorialNote id="_authorialnote_2" marker="2" placement="bottom">
+                            <aknP id="_authorialNote_2__p">OJ C [...], [...], p. [...]</aknP>
+                        </authorialNote>
+                        ,
+                    </aknP>
+                </citation>
+                <citation id="_cit_6">
+                    <aknP id="_cit_6__p">Acting in accordance with the ordinary legislative procedure,</aknP>
+                </citation>
+            </citations>
+            <recitals id="_recs">
+                <intro id="_recitalsIntro">
+                    <aknP id="_recs_intro">Whereas:</aknP>
+                </intro>
+                <recital id="_rec_1">
+                    <num id="_rec_1__num">(1)</num>
+                    <aknP id="_rec_1__p">Recital...</aknP>
+                </recital>
+                <recital id="_rec_2">
+                    <num id="_rec_2__num">(2)</num>
+                    <aknP id="_rec_2__p">Recital...</aknP>
+                </recital>
+            </recitals>
+            <formula id="_preamble__formula_2" name="enactingFormula">
+                <aknP id="_preamble__formula_2__p">HAVE ADOPTED THIS REGULATION:</aknP>
+            </formula>
+        </preamble>
+        <aknBody id="_body">
+            <article id="_art_1" leos:autonumbering="true" leos:initial-num="Article 1">
+                <num id="_art_1__num">Article 1</num>
+                <heading id="_art_1__heading">Scope</heading>
+                <paragraph id="_art_1__para_1">
+                    <num id="_art_1__para_1__num">1.</num>
+                    <content id="_art_1__para_1__content">
+                        <aknP id="_art_1__para_1__content__p">Text...</aknP>
+                    </content>
+                </paragraph>
+            </article>
+            <article id="_art_definitions" leos:autonumbering="true" leos:initial-num="Article 2" refersTo="~_ART_DEF">
+                <num id="_art_definitions__num">Article 2</num>
+                <heading id="_art_definitions_heading">Definitions</heading>
+                <paragraph id="_art_definitions__para_1">
+                    <content id="_art_definitions__para_1__content">
+                        <aknP id="_art_definitions__para_1__content__p">Text...</aknP>
+                    </content>
+                </paragraph>
+            </article>
+            <article id="_art_3" leos:autonumbering="true" leos:initial-num="Article 3">
+                <num id="_art_3__num">Article 3</num>
+                <heading id="_art_3__heading">Entry into force</heading>
+                <paragraph id="_art_3__para_1">
+                    <content id="_art_3__para_1__content">
+                        <aknP id="_art_3__para_1__content__p">This Regulation shall enter into force on the [...] day
+                            following that of its publication in the <i id="_art_3__para_1__content__p__i">Official
+                                Journal of the European Union</i>.
+                        </aknP>
+                    </content>
+                </paragraph>
+            </article>
+            <article id="_bill__akn_article_5hAjPf" leos:listIdAttr="_akn_article_1MxDRT">
+                <num id="_bill__akn_article_5hAjPf_j75VWU">Article 4</num>
+                <heading id="_bill__akn_article_5hAjPf_c4hfLT">Article heading...</heading>
+                <paragraph id="_bill__akn_article_5hAjPf_ZInehe" leos:action-number="delete" leos:softdate="2024-01-17T11:02:04+00:00" leos:softuser="DOE Jane(undefined)" leos:title-number="DOE Jane : 2024-01-17T11:03:03+00:00" leos:uid-number="jane">
+                    <content id="_bill__akn_article_5hAjPf_9ygqBG">
+                        <aknP id="_bill__akn_article_5hAjPf_5y73G4">Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Aliquam sed libero et purus fermentum mollis vitae fringilla ligula. Interdum et
+                            malesuada fames ac ante ipsum primis in faucibus. Ut luctus, sem gravida molestie auctor,
+                            arcu ipsum euismod tortor, sed consequat tortor nulla sed metus.
+                            <span class="leos-content-removed">Sed</span>
+                            <span class="leos-content-new"></span>
+                            <span class="leos-content-new">
+                                <del id="_bill__akn_article_5hAjPf_4NhMAf" leos:title="DOE Jane : 2024-01-17T11:03:03+00:00" leos:uid="jane">
+                                    <span class="leos-content-new">Sed</span>
+                                    molestie gravida velit vel ullamcorper.
+                                </del>
+                            </span>
+                            Donec blandit, odio sit amet posuere facilisis, tortor sapien rutrum odio, sed aliquam
+                            mauris sem aliquet quam. Proin ac maximus libero. 
+                        </aknP>
+                    </content>
+                </paragraph>
+                <paragraph id="_bill__akn_article_5hAjPf_8ETYVQ" leos:action-number="delete" leos:softdate="2024-01-17T11:03:03+00:00" leos:softuser="DOE Jane(undefined)" leos:title-number="DOE Jane : 2024-01-17T11:03:03+00:00" leos:uid-number="jane">
+                    <content id="_bill__akn_article_5hAjPf_yCCtv1">
+                        <aknP id="_bill__akn_article_5hAjPf_nQnT4O">Aenean sed congue tellus.Morbi facilisis erat quis
+                            neque volutpat, a luctus purus posuere. Fusce condimentum urna et felis sodales,
+                            <span class="leos-content-removed">vitae</span>
+                            <span class="leos-content-new"></span>
+                            <span class="leos-content-removed">molestie</span>
+                            <span class="leos-content-new">
+                                <del id="_bill__akn_article_5hAjPf_ng7XzU" leos:title="DOE Jane : 2024-01-17T11:03:03+00:00" leos:uid="jane">
+                                    <span class="leos-content-new">vitae</span>
+                                    <span class="leos-content-new"></span>
+                                </del>
+                            </span>
+                            <span class="leos-content-new">molestie</span>
+                            sem dignissim. Nulla porttitor lectus sit amet urna tempor volutpat. Quisque
+                            <span class="leos-content-removed">laoreet</span>
+                            <span class="leos-content-new"></span>
+                            <span class="leos-content-new">
+                                <del id="_bill__akn_article_5hAjPf_p10PJt" leos:title="DOE Jane : 2024-01-17T11:03:03+00:00" leos:uid="jane">
+                                    <span class="leos-content-new">laoreet</span>
+                                    tempor
+                                    <span class="leos-content-removed">erat,</span>
+                                    <span class="leos-content-new">erat</span>
+                                </del>
+                            </span>
+                            <span class="leos-content-new">
+                                <ins id="_bill__akn_article_5hAjPf_SrMvO5" leos:title="DOE Jane : 2024-01-17T11:03:03+00:00" leos:uid="jane">
+                                    <span class="leos-content-new">tempus</span>
+                                    <span class="leos-content-new">fugit</span>
+                                </ins>
+                            </span>
+                            <span class="leos-content-new">,</span>
+                            in varius erat ultricies ut. Donec finibus ut tortor scelerisque porttitor. Class aptent
+                            taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+                        </aknP>
+                    </content>
+                </paragraph>
+                <paragraph id="_bill__akn_article_5hAjPf_mWX9Uf" leos:action-number="delete" leos:softdate="2024-01-17T11:02:47+00:00" leos:softuser="DOE Jane(undefined)" leos:title-number="DOE Jane : 2024-01-17T11:03:03+00:00" leos:uid-number="jane">
+                    <content id="_bill__akn_article_5hAjPf_ncJbcp">
+                        <aknP id="_bill__akn_article_5hAjPf_TnE57b">Nam mollis id arcu efficitur vehicula. Etiam porta
+                            massa risus, at consequat dui semper et. Nullam metus nisi, accumsan ac sodales nec, rhoncus
+                            varius mi. Aliquam blandit tempus erat non fermentum. Aliquam erat
+                            <span class="leos-content-removed">volutpat.</span>
+                            <span class="leos-content-new"></span>
+                            <span class="leos-content-new">
+                                <ins id="_bill__akn_article_5hAjPf_miLB80" leos:title="DOE Jane : 2024-01-17T11:03:03+00:00" leos:uid="jane">
+                                    <span class="leos-content-new">text</span>
+                                    <span class="leos-content-new"></span>
+                                </ins>
+                            </span>
+                            <span class="leos-content-new">volutpat.</span>
+                            Vestibulum felis leo, varius ac mattis ac, blandit a erat. Donec varius et nibh vel
+                            convallis. 
+                        </aknP>
+                    </content>
+                </paragraph>
+            </article>
+            <article id="_bill__akn_article_eE8bLo" leos:initial-num="Article 5" leos:listIdAttr="_akn_article_URUEfo">
+                <num id="_bill__akn_article_eE8bLo_2cm0pC">Article 5</num>
+                <heading id="_bill__akn_article_eE8bLo_Ossz1p">Article heading...</heading>
+                <paragraph id="_bill__akn_article_eE8bLo_4nwWy7">
+                    <num id="_bill__akn_article_eE8bLo_DRnJFv">1.</num>
+                    <content id="_bill__akn_article_eE8bLo_f01pSb">
+                        <aknP id="_bill__akn_article_eE8bLo_qrs3ns">Proin egestas elementum sapien malesuada
+                            sollicitudin. Phasellus a nunc in nisi efficitur imperdiet vel vel sapien. Aliquam facilisis
+                            vel turpis in commodo.
+                        </aknP>
+                    </content>
+                </paragraph>
+                <paragraph id="_bill__akn_article_eE8bLo_fXHP2D">
+                    <num id="_bill__akn_article_eE8bLo_gXqusN">2.</num>
+                    <content id="_bill__akn_article_eE8bLo_wVb6Jz">
+                        <aknP id="_bill__akn_article_eE8bLo_webPRb">Cras dapibus est et tellus egestas, ut tempus metus
+                            condimentum. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac
+                            turpis egestas. Suspendisse ornare tellus et blandit blandit.
+                        </aknP>
+                    </content>
+                </paragraph>
+                <paragraph id="_bill__akn_article_eE8bLo-par1">
+                    <num id="_bill__akn_article_eE8bLo_Ten4wY">3.</num>
+                    <content id="_bill__akn_article_eE8bLo_h8snbx">
+                        <aknP id="_bill__akn_article_eE8bLo_NJLxSM">Quisque justo magna, lacinia in scelerisque sit
+                            amet, dignissim a ex. Morbi tempor magna a eros cursus dictum. Ut porta rhoncus viverra.
+                            Suspendisse eu egestas purus, sed bibendum risus.
+                        </aknP>
+                    </content>
+                </paragraph>
+                <paragraph id="_bill__akn_article_eE8bLo_ArNaJz">
+                    <num id="_bill__akn_article_eE8bLo_ClkVlC">4.</num>
+                    <content id="_bill__akn_article_eE8bLo_OruFJr">
+                        <aknP id="_bill__akn_article_eE8bLo_b1YpnS">Morbi posuere dui ut sem tincidunt facilisis.
+                            Pellentesque vel lacus sit amet nisi consectetur iaculis. Sed elementum at metus et
+                            fringilla.
+                        </aknP>
+                    </content>
+                </paragraph>
+            </article>
+            <clause id="_clause_1" leos:alternative="true" leos:optionlist="listOption1" leos:selectedoption="1">
+                <content id="_clause_1__content">
+                    <aknP id="_clause_1__content__p">This Regulation shall be binding in its entirety and directly
+                        applicable in all Member States.
+                    </aknP>
+                </content>
+            </clause>
+        </aknBody>
+        <conclusions id="_conclusions">
+            <aknP id="_conclusions__p_1">Done at <location id="_conclusions__p__location_1" refersTo="~_BEL_BRU">
+                Brussels</location>,
+                <span class="leos-content-new">
+                    <date date="9999-01-01" id="_akn_aviQud"/>
+                </span>
+            </aknP>
+            <block id="_conclusions__block_1" name="signatory">
+                <signature id="_conclusions__block_1__signature_1">
+                    <organization id="_conclusions__block_1__signature_1__organization" refersTo="~_EP">For the European
+                        Parliament
+                    </organization>
+                    <role id="_conclusions__block_1__signature_1__role" refersTo="~_PRESID">The President</role>
+                    <person id="_conclusions__block_1__signature_1__person" refersTo="">[...]</person>
+                </signature>
+                <signature id="_conclusions__block_1__signature_2">
+                    <organization id="_conclusions__block_1__signature_2__organization" refersTo="~_CONSIL">For the
+                        Council
+                    </organization>
+                    <role id="_conclusions__block_1__signature_2__role" refersTo="~_PRESID">The President</role>
+                    <person id="_conclusions__block_1__signature_2__person" refersTo="">[...]</person>
+                </signature>
+            </block>
+        </conclusions>
+        <span class="leos-authnote-table" id="leos-authnote-table-id">
+            <hr size="2"/>
+            <span class="leos-authnote" id="endNote__authorialnote_1">
+                <marker id="marker__authorialnote_1">1</marker>
+                <text id="text__authorialnote_1">OJ C [...], [...], p. [...]</text>
+            </span>
+            <span class="leos-authnote" id="endNote__authorialnote_2">
+                <marker id="marker__authorialnote_2">2</marker>
+                <text id="text__authorialnote_2">OJ C [...], [...], p. [...]</text>
+            </span>
+        </span>
+    </bill>
+</akomaNtoso>

@@ -41,6 +41,37 @@
           )
         "
       ></button>
+      <!-- Send feedback button -->
+      <button
+        euiListItem
+        *ngIf="true"
+        [disabled]="true"
+        translate="page.editor.contribution.actions.send.feedback"
+        (click)="onClickSendFeedback(contribution)"
+      ></button>
+      <!-- Mark as Processed button-->
+      <button
+        euiListItem
+        [disabled]="contribution.contributionStatus === ContributionStatus.ContributionDone"
+        translate="page.editor.contribution.view.actions.processed"
+        (click)="onClickMarkAsProcessed(contribution)"
+      ></button>
+      <!-- Apply All Changes button-->
+      <button
+        euiListItem
+        *ngIf="true"
+        [disabled]="true"
+        translate="page.editor.contribution.view.actions.apply.all.changes"
+        (click)="onClickApplyAllChanges(contribution)"
+      ></button>
+      <!-- Apply All with Track Changes button-->
+      <button
+        euiListItem
+        *ngIf="true"
+        [disabled]="true"
+        translate="page.editor.contribution.view.actions.apply.all.with.track.changes"
+        (click)="onClickApplyAllWithTrackChanges(contribution)"
+      ></button>
     </div>
   </eui-dropdown-content>
 </eui-dropdown>
@@ -62,5 +93,29 @@
   <p>{{ versionModalText }}</p>
   <p class="eui-u-mb-s">
     {{ 'page.editor.contribution.decline.modal-text' | translate }}
+  </p>
+</eui-dialog>
+<eui-dialog
+  #markContributionAsProcessedDialog
+  [title]="
+    'page.editor.contribution.view.mark-contribution-as-processed.modal-title'
+      | translate
+  "
+  [acceptLabel]="'global.actions.continue' | translate"
+  [dismissLabel]="'global.actions.cancel' | translate"
+  [width]="'25vw'"
+  [isHandleCloseOnAccept]="true"
+  [isHandleCloseOnDismiss]="true"
+  [hasCloseButton]="false"
+  (clickOutside)="onCancelMarkContributionAsProcessed()"
+  (close)="onCancelMarkContributionAsProcessed()"
+  (accept)="onAcceptMarkContributionAsProcessed()"
+  (dismiss)="onCancelMarkContributionAsProcessed()"
+>
+  <p class="eui-u-mb-s">
+    {{
+    'page.editor.contribution.view.mark-contribution-as-processed.modal-text'
+    | translate
+    }}
   </p>
 </eui-dialog>
