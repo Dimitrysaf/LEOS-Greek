@@ -14,5 +14,15 @@ public enum LeosCategory {
     COVERPAGE,
     SUPPORT_DOCUMENT,
     STAT_FINANC_LEGIS,
-    TEMPLATE
+    TEMPLATE;
+
+    public static LeosCategory caseInsensitiveValueOf(String name) {
+        for (LeosCategory value : LeosCategory.values()) {
+            if (value.name().equalsIgnoreCase(name)) {
+                return value;
+            }
+        }
+        throw new IllegalArgumentException("No enum constant " + LeosCategory.class + "." + name);
+    }
+
 }

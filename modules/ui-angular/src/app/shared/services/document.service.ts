@@ -1025,6 +1025,27 @@ export class DocumentService implements OnDestroy {
       });
   }
 
+  changeBaseVersion(version: Version) {
+    const versionId = version.documentId;
+    const baseVersionTitle = version.checkinCommentVO.title;
+    const { major, intermediate, minor } = version.versionNumber;
+    const versionNumber = `${major}.${intermediate}.${minor}`;
+    this.loadingService.setLoading(true);
+    this.http
+      .get(
+        `${apiBaseUrl}/secured/document/${this.documentType}/${this.documentRef}/baseVersion/${versionId}`,
+        { params: {
+            versionLabel: versionNumber,
+            versionComment: baseVersionTitle
+          }
+        },
+      ).pipe(
+      finalize(() => this.loadingService.setLoading(false))
+    ).subscribe((r) => {
+      this.setDocumentRefAndCategory(this.documentRef, this.documentType);
+    });
+  }
+
   validateNodeDrop(
     draggedNodeId: string[],
     draggedNodeTagName: string,

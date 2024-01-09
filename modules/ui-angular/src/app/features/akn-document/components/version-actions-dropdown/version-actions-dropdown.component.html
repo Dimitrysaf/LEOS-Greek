@@ -32,6 +32,11 @@
       ></button>
       <button
         euiListItem
+        translate="page.editor.versions.actions.changeBase"
+        (click)="onBaseChange(version)"
+      ></button>
+      <button
+        euiListItem
         translate="page.editor.versions.actions.explore"
         (click)="exploreMilestone.emit(version)"
         *ngIf="isMilestone"

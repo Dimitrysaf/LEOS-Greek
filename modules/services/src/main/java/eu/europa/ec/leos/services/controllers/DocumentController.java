@@ -14,6 +14,7 @@
 
 package eu.europa.ec.leos.services.controllers;
 
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.services.api.DocumentApiService;
@@ -21,6 +22,7 @@ import eu.europa.ec.leos.services.dto.request.DoubleCompareRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 import org.slf4j.Logger;
@@ -191,6 +193,22 @@ public class DocumentController {
         } catch (Exception e) {
             LOG.error(ERROR_OCCURRED_WHILE_REQUESTING_DOUBLE_COMPARE, e);
             return new ResponseEntity<>(e.getCause().getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{documentType}/{documentRef}/baseVersion/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> changeBaseVersion(@PathVariable("documentType") String documentType,
+            @PathVariable("documentRef") String documentRef,
+            @PathVariable("documentId") String documentId,
+            @RequestParam String versionLabel, @RequestParam String versionComment) {
+        try {
+            final LeosCategory documentCategory = LeosCategory.caseInsensitiveValueOf(documentType);
+            DocumentViewResponse response = documentApiService.changeBaseVersion(documentRef, documentCategory, documentId, versionLabel, versionComment);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred while changing baseVersion for - " + documentRef, e);
+            return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

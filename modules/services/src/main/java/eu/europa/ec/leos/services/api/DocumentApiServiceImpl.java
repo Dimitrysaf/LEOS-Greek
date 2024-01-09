@@ -14,19 +14,26 @@
 
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
+import eu.europa.ec.leos.services.document.AnnexService;
+import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.TransformationService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -53,6 +60,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
 
 public abstract class DocumentApiServiceImpl implements DocumentApiService {
@@ -73,13 +81,19 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
     protected final WorkspaceService workspaceService;
     protected final ElementProcessor elementProcessor;
     protected final TransformationService transformationService;
+    protected final RepositoryPropertiesMapper repositoryPropertiesMapper;
+    protected final DocumentViewService<XmlDocument> documentViewService;
+    protected final BillService billService;
+    protected final AnnexService annexService;
 
     protected DocumentApiServiceImpl(DocumentContentService documentContentService, PackageService packageService,
                                      ProposalService proposalService, ExportService exportService, LeosRepository leosRepository,
                                      ExportPackageService exportPackageService, NotificationService notificationService,
                                      SecurityContext securityContext, MessageHelper messageHelper, ComparisonDelegateAPI comparisonDelegate,
                                      LegService legService, ReferenceLabelService referenceLabelService, WorkspaceService workspaceService,
-                                     ElementProcessor elementProcessor, TransformationService transformationService) {
+                                     ElementProcessor elementProcessor, TransformationService transformationService,
+            RepositoryPropertiesMapper repositoryPropertiesMapper, DocumentViewService<XmlDocument> documentViewService,
+            BillService billService, AnnexService annexService) {
         this.documentContentService = documentContentService;
         this.packageService = packageService;
         this.proposalService = proposalService;
@@ -95,6 +109,10 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         this.workspaceService = workspaceService;
         this.elementProcessor = elementProcessor;
         this.transformationService = transformationService;
+        this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.documentViewService = documentViewService;
+        this.billService = billService;
+        this.annexService = annexService;
     }
 
 
@@ -186,4 +204,23 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
 
         return new FetchElementResponse(elementId, elementTagName, contentForType, documentRef);
     }
+
+    @Override
+    public DocumentViewResponse changeBaseVersion(String documentRef, LeosCategory documentType, String documentId, String versionLabel, String versionComment) {
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID),
+                documentId + CMIS_PROPERTY_SPLITTER + versionLabel + CMIS_PROPERTY_SPLITTER + versionComment);
+        XmlDocument updatedDocument = null;
+        switch(documentType) {
+            case BILL:
+                updatedDocument = billService.updateBill(documentRef, documentId, properties, true);
+                break;
+            case ANNEX:
+                updatedDocument = annexService.updateAnnex(documentRef, documentId, properties, true);
+                break;
+        }
+
+        return this.documentViewService.updateDocumentView(updatedDocument);
+    }
+
 }

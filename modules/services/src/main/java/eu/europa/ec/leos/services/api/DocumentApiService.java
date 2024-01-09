@@ -14,10 +14,12 @@
 
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
+import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
 
@@ -43,4 +45,6 @@ public interface DocumentApiService {
     String fetchReferenceLabel(String documentRef, List<String> references, String currentElementID, boolean capital);
 
     FetchElementResponse fetchElement(String elementId, String elementTagName, String documentRef);
+
+    DocumentViewResponse changeBaseVersion(String documentRef, LeosCategory documentType, String documentId, String versionLabel, String versionComment);
 }

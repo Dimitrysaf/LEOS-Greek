@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.document.util;
 
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -98,12 +99,15 @@ public class DocumentViewService<T extends XmlDocument> {
 
         String versionLabel = null;
         String versionComment = null;
+        String baseRevisionId = null;
         if (document instanceof Annex) {
-            String baseRevisionId = ((Annex) document).getBaseRevisionId();
-            if (StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
-                versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
-                versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
-            }
+            baseRevisionId = ((Annex) document).getBaseRevisionId();
+        } else if(document instanceof Bill) {
+            baseRevisionId = ((Bill) document).getBaseRevisionId();
+        }
+        if (StringUtils.isNotBlank(baseRevisionId) && baseRevisionId.split(CMIS_PROPERTY_SPLITTER).length >= 3) {
+            versionLabel = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[1];
+            versionComment = baseRevisionId.split(CMIS_PROPERTY_SPLITTER)[2];
         }
         return new VersionInfoVO(
                 document.getVersionLabel(),
