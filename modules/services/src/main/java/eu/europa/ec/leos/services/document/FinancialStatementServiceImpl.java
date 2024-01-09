@@ -131,9 +131,11 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                 .builder()
                 .withRef(ref)
                 .build();
-        FinancialStatement FinancialStatement = financialStatementRepository.createFinancialStatement(templateId, path, fileName, metadata);
-        byte[] updatedBytes = updateDataInXml((content == null) ? getContent(FinancialStatement) : content, metadata);
-        return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        FinancialStatement financialStatement = financialStatementRepository.createFinancialStatement(templateId, path, fileName, metadata);
+        byte[] updatedBytes = updateDataInXml((content == null) ? getContent(financialStatement) : content, metadata);
+        financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
@@ -149,26 +151,36 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                 .builder()
                 .withRef(ref)
                 .build();
-        FinancialStatement FinancialStatement = financialStatementRepository.createClonedFinancialStatement(templateId, path, fileName, metadata, cloneDocumentMetadataVO);
-        byte[] updatedBytes = updateDataInXml((content == null) ? getContent(FinancialStatement) : content, metadata);
+        FinancialStatement financialStatement = financialStatementRepository.createClonedFinancialStatement(templateId, path, fileName, metadata,
+                cloneDocumentMetadataVO);
+        byte[] updatedBytes = updateDataInXml((content == null) ? getContent(financialStatement) : content, metadata);
         updatedBytes = xmlContentProcessor.addTrackChangesAttributes(updatedBytes);
-        return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), metadata, updatedBytes, VersionType.MINOR,
+                actionMessage);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
     public FinancialStatement createFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, String actionMessage,
                                                                   byte[] content, String name) {
         LOG.trace("Creating FinancialStatement From Content... [path={}, metadata={}]", path, metadata);
-        FinancialStatement FinancialStatement = financialStatementRepository.createFinancialStatementFromContent(path, name, metadata, content);
-        return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, content, VersionType.MINOR, actionMessage);
+        FinancialStatement financialStatement = financialStatementRepository.createFinancialStatementFromContent(path, name, metadata, content);
+        financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), metadata, content, VersionType.MINOR, actionMessage);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
     public FinancialStatement createClonedFinancialStatementFromContent(String path, FinancialStatementMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage,
                                                                         byte[] content, String name) {
         LOG.trace("Creating cloned FinancialStatement From Content... [path={}, metadata={}]", path, metadata);
-        FinancialStatement FinancialStatement = financialStatementRepository.createClonedFinancialStatementFromContent(path, name, metadata, cloneDocumentMetadataVO, content);
-        return financialStatementRepository.updateFinancialStatement(FinancialStatement.getId(), metadata, content, VersionType.MINOR, actionMessage);
+        FinancialStatement financialStatement = financialStatementRepository.createClonedFinancialStatementFromContent(path, name, metadata,
+                cloneDocumentMetadataVO, content);
+        financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), metadata, content, VersionType.MINOR,
+                actionMessage);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
@@ -216,14 +228,18 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     @Override
     public FinancialStatement findFinancialStatement(String id) {
         LOG.trace("Finding FinancialStatement... [id={}]", id);
-        return financialStatementRepository.findFinancialStatementById(id, FinancialStatement.class, true);
+        FinancialStatement financialStatement = financialStatementRepository.findFinancialStatementById(id, FinancialStatement.class, true);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public FinancialStatement findFinancialStatementVersion(String id) {
         LOG.trace("Finding FinancialStatement version... [it={}]", id);
-        return financialStatementRepository.findFinancialStatementById(id, FinancialStatement.class, false);
+        FinancialStatement financialStatement = financialStatementRepository.findFinancialStatementById(id, FinancialStatement.class, false);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
@@ -236,6 +252,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(financialStatement, updatedFinancialStatementContent));
 
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
         return financialStatement;
     }
 
@@ -252,13 +269,16 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(financialStatement, updatedBytes));
 
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
         return financialStatement;
     }
 
     @Override
     public FinancialStatement updateFinancialStatement(String id, byte[] updatedFinancialStatementContent) {
         LOG.trace("Updating FinancialStatement content... [id={}]", id);
-        return financialStatementRepository.updateFinancialStatement(id, updatedFinancialStatementContent, VersionType.MINOR, "Content updated");
+        FinancialStatement financialStatement = financialStatementRepository.updateFinancialStatement(id, updatedFinancialStatementContent, VersionType.MINOR, "Content updated");
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
@@ -274,6 +294,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(financialStatement, updatedFinancialStatementContent));
 
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
         return financialStatement;
     }
 
@@ -283,13 +304,16 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         Stopwatch stopwatch = Stopwatch.createStarted();
         financialStatement = financialStatementRepository.updateFinancialStatement(financialStatement.getId(), updatedFinancialStatementContent, VersionType.MINOR, comment);
         LOG.trace("Updated FinancialStatement ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
         return financialStatement;
     }
 
     @Override
     public FinancialStatement updateFinancialStatement(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating FinancialStatement metadata properties... [id={}]", id);
-        return financialStatementRepository.updateFinancialStatement(ref, id, properties, latest);
+        FinancialStatement financialStatement = financialStatementRepository.updateFinancialStatement(ref, id, properties, latest);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
@@ -297,13 +321,16 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         LOG.trace("Updating FinancialStatement... [id={}, milestoneComments={}, versionType={}, comment={}]", financialStatement.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(financialStatement);
         financialStatement = financialStatementRepository.updateMilestoneComments(financialStatement.getId(), milestoneComments, updatedBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
         return financialStatement;
     }
 
     @Override
     public FinancialStatement updateFinancialStatementWithMilestoneComments(String ref, String financialStatementId, List<String> milestoneComments) {
         LOG.trace("Updating FinancialStatement... [id={}, milestoneComments={}]", financialStatementId, milestoneComments);
-        return financialStatementRepository.updateMilestoneComments(ref, financialStatementId, milestoneComments);
+        FinancialStatement financialStatement = financialStatementRepository.updateMilestoneComments(ref, financialStatementId, milestoneComments);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
@@ -320,7 +347,9 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         final FinancialStatementMetadata metadata = FinancialStatement.getMetadata().getOrError(() -> "FinancialStatement metadata is required!");
         final Content content = FinancialStatement.getContent().getOrError(() -> "FinancialStatement content is required!");
         final byte[] contentBytes = content.getSource().getBytes();
-        return financialStatementRepository.updateFinancialStatement(id, metadata, contentBytes, versionType, comment);
+        FinancialStatement financialStatement = financialStatementRepository.updateFinancialStatement(id, metadata, contentBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override
@@ -360,7 +389,9 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     @Override
     public FinancialStatement findFinancialStatementByRef(String ref) {
         LOG.trace("Finding FinancialStatement by ref... [ref=" + ref + "]");
-        return financialStatementRepository.findFinancialStatementByRef(ref);
+        FinancialStatement financialStatement = financialStatementRepository.findFinancialStatementByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
     }
 
     @Override

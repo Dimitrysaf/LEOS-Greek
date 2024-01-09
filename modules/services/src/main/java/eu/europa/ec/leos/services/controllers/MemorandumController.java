@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.api.MemorandumApiService;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.InsertElementRequest;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
+import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
@@ -520,6 +521,22 @@ public class MemorandumController {
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for memorandum " + e.getMessage());
             return new ResponseEntity<>("Error occurred  while trying to get clean version for memorandum",
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/{documentRef}/toggle-trackchange-enabled", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> toggleTrackChangeEnabled(@PathVariable("documentRef") String documentRef,
+                                                           @RequestBody ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest
+    ) {
+        try {
+            boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
+            boolean response = memorandumApiService.toggleTrackChangeEnabled(isTrackChangesEnabled, documentRef);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred while toggling Track change enabled- " + e);
+            return new ResponseEntity<>("Unexpected error occurred while toggling Track change enabled",
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

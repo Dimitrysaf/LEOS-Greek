@@ -48,6 +48,7 @@ import { NodeValidationResponse } from '../models/drop-response.model';
 import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
+import {EnvironmentService} from "@/shared/services/enviroment.service";
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -143,6 +144,10 @@ export class DocumentService implements OnDestroy {
     elementType: string;
     elementFragment: string;
   }>;
+  public trackChangesStatus$ : Observable<{
+    isTrackChangesEnabled: boolean;
+    isTrackChangesShowed: boolean;
+  }>;
 
   private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
     false,
@@ -218,6 +223,10 @@ export class DocumentService implements OnDestroy {
     isClosing: boolean;
     isSaved: boolean;
   }>({ elementId: null, elementType: null, elementFragment: null, isClosing: false, isSaved: false });
+  private trackChangesStatusBS = new BehaviorSubject<{
+    isTrackChangesEnabled: boolean;
+    isTrackChangesShowed: boolean;
+  }>({isTrackChangesEnabled: false, isTrackChangesShowed: false});
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
@@ -234,7 +243,9 @@ export class DocumentService implements OnDestroy {
     private coEditionService: CoEditionServiceWS,
     private loadingService: LoadingService,
     private tocService: TableOfContentService,
+    private envService: EnvironmentService,
   ) {
+    this.trackChangesStatus$ = this.trackChangesStatusBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
     this.isContributionDeclinedOrProcessed$ =
       this.isContributionDeclinedOrProcessedBS.asObservable();
@@ -393,6 +404,18 @@ export class DocumentService implements OnDestroy {
     this.destroy$.complete();
     this.getAnnotations = null;
     this.setAnnotationMode = null;
+  }
+
+  updateTrackChangesStatus(status: {
+    isTrackChangesEnabled: boolean;
+    isTrackChangesShowed: boolean;
+  }) {
+    this.trackChangesStatusBS.next(status);
+    this.tocService.setIsTrackChangesEnabled(status.isTrackChangesEnabled);
+  }
+
+  isCNInstance() {
+    return this.envService.isCouncil();
   }
 
   async download(withAnnotations = false) {
@@ -1302,6 +1325,7 @@ export class DocumentService implements OnDestroy {
 
   setIsClonedProposal(cloned: boolean) {
     this.isClonedProposalBS.next(cloned);
+    this.tocService.setIsClonedProposal(cloned);
   }
 
   setIsContributionDeclinedOrProcessed(declined: boolean) {

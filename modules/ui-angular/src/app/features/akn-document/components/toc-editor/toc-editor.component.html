@@ -240,7 +240,7 @@
         </div>
       </div>
       <!-- Cross heading -->
-      <div class="">
+      <div class="" *ngIf="isCrossHeading(selectedNode.tocItem)">
         <div class="input-wrap" euiInputGroup>
           <label euiLabel class="toc-editor-label"> Content </label>
           <input

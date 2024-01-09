@@ -3,6 +3,7 @@ package eu.europa.ec.leos.services.document;
 
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -23,6 +24,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.toc.StructureServiceImpl;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TocItem;
@@ -88,6 +90,8 @@ public class BillServiceImplTest {
     @Mock
     private TableOfContentProcessor tableOfContentProcessor;
     @Mock
+    private TrackChangesContext trackChangesContext;
+    @Mock
     private XPathCatalog xPathCatalog;
 
     @InjectMocks
@@ -104,7 +108,7 @@ public class BillServiceImplTest {
         billRepository =  new BillRepositoryImpl(leosRepository);
         billService = new BillServiceProposalImpl(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService,
                 xmlNodeConfigProcessor, attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper,
-                tableOfContentProcessor, xPathCatalog);
+                tableOfContentProcessor, xPathCatalog, trackChangesContext);
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "toc/schema/structure_1.xsd");
@@ -131,7 +135,7 @@ public class BillServiceImplTest {
         when(source.getBytes()).thenReturn(byteContent);
         when(content.getSource()).thenReturn(source);
         when(leosRepository.updateDocument(anyString(), eq(billMetadata), eq(byteContent), eq(VersionType.MINOR), anyString(), any())).thenReturn(bill);
-        when(billService.findBill(bill.getId(), true)).thenReturn(bill);
+        when(billRepository.findBillById(bill.getId(), Bill.class, true)).thenReturn(bill);
         when(xmlContentProcessor.createDocumentContentWithNewTocList(any(), any(), any(), anyBoolean())).thenReturn(byteContent);
         when(numberService.renumberArticles(any(), eq(true))).thenReturn(byteContent);
         when(numberService.renumberRecitals(any())).thenReturn(byteContent);

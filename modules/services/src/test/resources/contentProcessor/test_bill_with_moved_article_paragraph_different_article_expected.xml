@@ -255,13 +255,19 @@
                     </content>
                 </paragraph>
                 <paragraph leos:origin="ec" xml:id="__akn_article_XiUbXW_ncxthR">
-                    <num leos:origin="ec" xml:id="__akn_article_XiUbXW_rGtW0E">3.</num>
+                    <num leos:origin="ec" xml:id="__akn_article_XiUbXW_rGtW0E">
+                        <del leos:title="demo : 2024-01-11T09:19:16.783+01:00" leos:uid="demo">4.</del>
+                        <ins leos:title="demo : 2024-01-11T09:19:16.785+01:00" leos:uid="demo">3.</ins>
+                    </num>
                     <content leos:origin="ec" xml:id="__akn_article_XiUbXW_rULzWV">
                         <p leos:origin="ec" xml:id="__akn_article_XiUbXW_iaV1kI">w4t34t34t34t34</p>
                     </content>
                 </paragraph>
                 <paragraph leos:origin="ec" xml:id="__akn_article_XiUbXW_WtU0mc">
-                    <num leos:origin="ec" xml:id="__akn_article_XiUbXW_g5zcUg">4.</num>
+                    <num leos:origin="ec" xml:id="__akn_article_XiUbXW_g5zcUg">
+                        <del leos:title="demo : 2024-01-11T09:19:16.785+01:00" leos:uid="demo">5.</del>
+                        <ins leos:title="demo : 2024-01-11T09:19:16.785+01:00" leos:uid="demo">4.</ins>
+                    </num>
                     <content leos:origin="ec" xml:id="__akn_article_XiUbXW_eGxAhA">
                         <p leos:origin="ec" xml:id="__akn_article_XiUbXW_dFeblR">g34tg34tg34gt34g3</p>
                     </content>

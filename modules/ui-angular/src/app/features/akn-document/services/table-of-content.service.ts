@@ -14,10 +14,11 @@ import {
 import { apiBaseUrl } from 'src/config';
 
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
-import { DocumentRefAndCategory } from '@/shared/services/document.service';
+import {DocumentRefAndCategory, DocumentService} from '@/shared/services/document.service';
 import { LoadingService } from '@/shared/services/loading.service';
 
 import { TocItem } from '../models/ckeditor';
+import {EnvironmentService} from "@/shared/services/enviroment.service";
 
 @Injectable({ providedIn: 'root' })
 export class TableOfContentService implements OnDestroy {
@@ -30,6 +31,9 @@ export class TableOfContentService implements OnDestroy {
   private tocBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
   private tocItemsBS = new BehaviorSubject<TocItem[]>(null);
   private destroy$ = new Subject<void>();
+
+  public isClonedProposal: boolean = false;
+  public isTrackChangesEnabled: boolean = false;
 
   constructor(
     private http: HttpClient,
@@ -60,6 +64,14 @@ export class TableOfContentService implements OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  setIsClonedProposal(isClonedProposal: boolean) {
+    this.isClonedProposal = isClonedProposal;
+  }
+
+  setIsTrackChangesEnabled(isTrackChangesEnabled: boolean) {
+    this.isTrackChangesEnabled = isTrackChangesEnabled;
   }
 
   setDocumentRefAndCategory(ref: string, category: string) {

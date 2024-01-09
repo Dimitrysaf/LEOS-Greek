@@ -35,6 +35,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -79,6 +80,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     private final XPathCatalog xPathCatalog;
     private final TableOfContentProcessor tableOfContentProcessor;
     private final MessageHelper messageHelper;
+    protected final TrackChangesContext trackChangesContext;
 
     protected static final String PROPOSAL_NAME_PREFIX = "main";
 
@@ -87,7 +89,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
                         XmlNodeProcessor xmlNodeProcessor,
                         XmlContentProcessor xmlContentProcessor,
                         XmlNodeConfigProcessor xmlNodeConfigProcessor, PackageRepository packageRepository,
-                        XPathCatalog xPathCatalog, TableOfContentProcessor tableOfContentProcessor, MessageHelper messageHelper) {
+                        XPathCatalog xPathCatalog, TableOfContentProcessor tableOfContentProcessor, MessageHelper messageHelper, TrackChangesContext trackChangesContext) {
         this.proposalRepository = proposalRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
@@ -96,12 +98,15 @@ public abstract class ProposalServiceImpl implements ProposalService {
         this.xPathCatalog = xPathCatalog;
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.messageHelper = messageHelper;
+        this.trackChangesContext = trackChangesContext;
     }
 
     @Override
     public Proposal findProposal(String id) {
         LOG.trace("Finding Proposal... [id={}]", id);
-        return proposalRepository.findProposalById(id, true);
+        Proposal proposal = proposalRepository.findProposalById(id, true);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override
@@ -110,29 +115,38 @@ public abstract class ProposalServiceImpl implements ProposalService {
         byte[] xmlContent = getContent(proposal);
         byte[] updatedBytes = updateDataInXml(xmlContent, updatedMetadata);
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedMetadata, updatedBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
     }
 
     @Override
     public Proposal updateProposal(Proposal proposal, ProposalMetadata metadata) {
         LOG.trace("Updating Proposal... [id={}, metadata={}]", proposal.getId(), metadata);
-        return proposalRepository.updateProposal(proposal.getMetadata().get().getRef(), proposal.getId(), metadata);
+        proposal = proposalRepository.updateProposal(proposal.getMetadata().get().getRef(), proposal.getId(), metadata);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override
     public Proposal updateProposal(String ref, String id, Map<String, Object> properties) {
         LOG.trace("Updating Proposal...with custom properties [id={}]", id);
-        return proposalRepository.updateProposal(ref, id, properties);
+        Proposal proposal = proposalRepository.updateProposal(ref, id, properties);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override
     public Proposal updateProposal(String proposalId, byte[] updatedBytes) {
-        return proposalRepository.updateProposal(proposalId, updatedBytes);
+        Proposal proposal = proposalRepository.updateProposal(proposalId, updatedBytes);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override
     public Proposal updateProposal(String proposalId, byte[] updatedBytes, Map<String, Object> properties) {
-        return proposalRepository.updateProposal(proposalId, updatedBytes, properties);
+        Proposal proposal = proposalRepository.updateProposal(proposalId, updatedBytes, properties);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override
@@ -140,13 +154,16 @@ public abstract class ProposalServiceImpl implements ProposalService {
         LOG.trace("Updating Proposal... [id={}, milestoneComments={}, major={}, comment={}]", proposal.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(proposal);
         proposal = proposalRepository.updateProposal(proposal.getId(), milestoneComments, updatedBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
     }
 
     @Override
     public Proposal updateProposalWithMilestoneComments(String ref, String proposalId, List<String> milestoneComments) {
         LOG.trace("Updating Proposal... [id={}, milestoneComments={}]", proposalId, milestoneComments);
-        return proposalRepository.updateMilestoneComments(ref, proposalId, milestoneComments);
+        Proposal proposal = proposalRepository.updateMilestoneComments(ref, proposalId, milestoneComments);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override
@@ -202,6 +219,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedBytes);
 
         LOG.trace("Added component in Proposal ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
     }
 
@@ -225,6 +243,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedBytes);
 
         LOG.trace("Added component in Proposal ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
     }
 
@@ -239,6 +258,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         //save updated xml
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedBytes);
         LOG.trace("Removed component in Proposal ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
     }
 
@@ -250,7 +270,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     @Override
     public Proposal createVersion(String id, VersionType versionType, String comment) {
         LOG.trace("Creating Proposal version... [id={}, versionType={}, comment={}]", id, versionType, comment);
-        final Proposal proposal = findProposal(id);
+        Proposal proposal = findProposal(id);
         final ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is required!");
         final Content content = proposal.getContent().getOrError(() -> "Proposal content is required!");
         final byte[] contentBytes = content.getSource().getBytes();
@@ -260,7 +280,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
     @Override
     public Proposal findProposalByRef(String ref) {
         LOG.trace("Finding Proposal by ref... [ref=" + ref + "]");
-        return proposalRepository.findProposalByRef(ref);
+        Proposal proposal = proposalRepository.findProposalByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override
@@ -375,12 +397,16 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
     @Override public Proposal findProposal(String id, boolean latest) {
         LOG.trace("Finding Memorandum... [id={}]", id);
-        return proposalRepository.findProposalById(id, latest);
+        Proposal proposal = proposalRepository.findProposalById(id, latest);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override public Proposal findProposalVersion(String id) {
         LOG.trace("Finding Proposal version... [id={}]", id);
-        return proposalRepository.findProposalById(id, false);
+        Proposal proposal = proposalRepository.findProposalById(id, false);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override public Proposal updateProposal(Proposal proposal, byte[] content,  VersionType versionType, String comment) {
@@ -391,17 +417,22 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 .build();
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedMetadata, content, versionType, comment);
 
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
     }
 
     @Override public Proposal updateProposal(String ref, String proposalId, ProposalMetadata metadata) {
         LOG.trace("Updating Proposal Xml Content... [id={}]", proposalId);
-        return proposalRepository.updateProposal(ref, proposalId, metadata);
+        Proposal proposal =  proposalRepository.updateProposal(ref, proposalId, metadata);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override public Proposal updateProposal(String ref, String id, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Proposal metadata properties...");
-        return proposalRepository.updateProposal(ref, id, properties, latest);
+        Proposal proposal = proposalRepository.updateProposal(ref, id, properties, latest);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override public Proposal updateProposal(Proposal proposal, byte[] updatedProposalContent, String comment) {
@@ -465,7 +496,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
 
     @Override
     public Proposal getProposalByRef(String ref) {
-        return proposalRepository.getProposalByRef(ref);
+        Proposal proposal =  proposalRepository.getProposalByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override
@@ -484,7 +517,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
         Proposal proposal = proposalRepository.createProposal(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Proposal ref {} in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(proposal) : content, metadata);
-        return proposalRepository.updateProposal(proposal.getId(), updatedBytes);
+        proposal = proposalRepository.updateProposal(proposal.getId(), updatedBytes);
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     @Override
@@ -495,7 +530,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 .builder()
                 .withRef(ref)
                 .build();
-        return proposalRepository.createProposalFromContent(path, ref + XML_DOC_EXT, metadata, updateDataInXml(content, metadata));
+        Proposal proposal = proposalRepository.createProposalFromContent(path, ref + XML_DOC_EXT, metadata, updateDataInXml(content, metadata));
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        return proposal;
     }
 
     protected String generateProposalReference(String language) {

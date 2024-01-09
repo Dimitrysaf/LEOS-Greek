@@ -445,7 +445,6 @@ public class BillApiServiceImpl implements BillApiService {
                 isTrackChangeEnabled);
         String documentId = billService.findBillByRef(documentRef).getId();
         Bill bill = billService.updateBill(documentRef, documentId, properties, false);
-        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
         return true;
     }
 

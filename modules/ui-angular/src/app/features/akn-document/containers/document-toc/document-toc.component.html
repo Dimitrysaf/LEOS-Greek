@@ -25,7 +25,7 @@
         [cdkDropListDisabled]="!isEdit || !node.tocItem.draggable"
       >
         <div class="drop-placeholder"></div>
-        <li class="node-li">
+        <li class="node-li" *ngIf="shouldBeVisible(node)">
           <div
             class="mat-tree-node"
             [class]="{ 'selected-node': selectedNode?.id === node.id }"
@@ -38,8 +38,8 @@
             ></eui-icon>
             <div
               [id]="'node-label-' + node.id"
-              [class]="'label' + ' ' + node.tocStyling"
-              [innerHTML]="node.label"
+              [class]="'label' + ' ' + getNodeStyling(node)"
+              [innerHTML]="getNodeLabel(node.label)"
               [euiTooltip]="getNodeTooltip(node)"
               [position]="
                 isLabelTextMoreThanOneLine(node.label) ? 'right' : 'above'
@@ -92,9 +92,9 @@
             ></eui-icon>
             <div
               [id]="'node-label-' + node.id"
-              [class]="'label-extended' + ' ' + node.tocStyling"
+              [class]="'label-extended' + ' ' + getNodeStyling(node)"
               (click)="handleNodeSelect(node)"
-              [innerHTML]="node.label"
+              [innerHTML]="getNodeLabel(node.label)"
               [euiTooltip]="getNodeTooltip(node)"
               [position]="
                 isLabelTextMoreThanOneLine(node.label) ? 'right' : 'above'

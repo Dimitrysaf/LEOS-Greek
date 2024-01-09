@@ -1,6 +1,7 @@
 package integration.saveToc.proposal;
 
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.junit.Before;
@@ -27,6 +28,8 @@ public class SaveTocBillMoveClonedProposalTest_IT extends SaveTocBillProposalTes
 
     @Mock
     private SecurityContext securityContext;
+    @Mock
+    private TrackChangesContext trackChangesContext;
 
     @Before
     public void onSetUp() throws Exception {
@@ -42,6 +45,7 @@ public class SaveTocBillMoveClonedProposalTest_IT extends SaveTocBillProposalTes
         // Given
         final byte[] xmlInput = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "bill_with2Article.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "test_clone_proposal_move__article_top__expected.xml");
+        when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
         TableOfContentItemVO body = getElementById(toc, "body");

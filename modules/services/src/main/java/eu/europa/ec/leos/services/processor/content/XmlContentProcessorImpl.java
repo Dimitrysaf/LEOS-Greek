@@ -1987,7 +1987,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void addTrackChangeAttributes(Node node, String attr) {
-        if (cloneContext != null && cloneContext.isClonedProposal()) {
+        if (trackChangesContext != null && trackChangesContext.isTrackChangesEnabled()) {
             String userLogin = securityContext.getUser().getLogin();
             String leosAction = null;
             switch (attr) {

@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.label.ref.Ref;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
@@ -29,10 +30,13 @@ public class ReferenceLabelServiceImplProposal extends ReferenceLabelServiceImpl
     @Autowired
     private CloneContext cloneContext;
 
+    @Autowired
+    private TrackChangesContext trackChangesContext;
+
     @Override
     public Result<String> generateSoftMoveLabel(Ref ref, String referenceLocation, Node sourceNode,
                                                 String direction, String documentRefSource) {
-        if (cloneContext.isClonedProposal()) {
+        if (trackChangesContext != null && trackChangesContext.isTrackChangesEnabled()) {
             return super.generateSoftMoveLabel(ref, referenceLocation, sourceNode, direction, documentRefSource);
         }
         return new Result<String>("", null);

@@ -184,7 +184,9 @@
                 </paragraph>
             </article>
             <article leos:origin="ec" xml:id="__akn_article_XiUbXW">
-                <num leos:editable="false" leos:origin="ec" xml:id="__akn_article_XiUbXW_AxA7bt">Article 1</num>
+                <num leos:editable="false" leos:origin="ec" xml:id="__akn_article_XiUbXW_AxA7bt">
+                    Article 1
+                </num>
                 <heading leos:origin="ec" xml:id="__akn_article_XiUbXW_559BlA">Article heading...</heading>
                 <paragraph leos:origin="ec" xml:id="__akn_article_XiUbXW-par1">
                     <num leos:origin="ec" xml:id="__akn_article_XiUbXW_3OlGaO">1.</num>
@@ -225,7 +227,9 @@
                      leos:softaction="move_from" leos:softactionroot="true"
                      leos:softdate="2022-09-21T15:19:23.448+02:00" leos:softmove_from="moved__art_1"
                      leos:softmove_label="MOVED from Article 1" leos:softuser="DOE Jane(DGT)" xml:id="_art_1">
-                <num leos:editable="false" leos:origin="ls" xml:id="_art_1__num">Article 2</num>
+                <num leos:editable="false" leos:origin="ls" xml:id="_art_1__num">
+                    Article 2
+                </num>
                 <heading leos:origin="ec" xml:id="_art_1__heading">Scope</heading>
                 <paragraph leos:origin="ec" xml:id="_art_1__para_1">
                     <num leos:origin="ec" xml:id="_art_1__para_1__num">1.</num>
@@ -251,7 +255,10 @@
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_v01SHK">
-                            <num leos:origin="ec" xml:id="_art_1_32Oyqp">(b)</num>
+                            <num leos:origin="ec" xml:id="_art_1_32Oyqp">
+                                <del leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">(c)</del>
+                                <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(b)</ins>
+                            </num>
                             <content leos:origin="ec" xml:id="_art_1_pL3jdf">
                                 <p leos:origin="ec" xml:id="_art_1_2RXeaM">weewhwehh</p>
                             </content>
@@ -261,7 +268,9 @@
             </article>
             <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:origin="ec"
                      xml:id="_art_2">
-                <num leos:editable="false" leos:origin="ec" xml:id="_art_2__num">Article 3</num>
+                <num leos:editable="false" leos:origin="ec" xml:id="_art_2__num">
+                    Article 3
+                </num>
                 <heading leos:origin="ec" xml:id="_art_2__heading">Entry into force</heading>
                 <paragraph leos:origin="ec" xml:id="_art_2__para_1">
                     <content leos:origin="ec" xml:id="_art_2__para_1__content">

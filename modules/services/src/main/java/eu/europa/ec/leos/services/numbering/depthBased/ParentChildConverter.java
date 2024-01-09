@@ -101,7 +101,8 @@ public class ParentChildConverter {
                 .filter(n -> getNodeDepth(n.getNode()) == depthNode)
                 .collect(Collectors.toList());
         if (flatNodeList.size() == 0) {
-            throw new IllegalStateException("No element found with depth: " + depthNode);
+            //throw new IllegalStateException("No element found with depth: " + depthNode);
+            return;
         }
         ParentChildNode lastOfSameDepth = flatNodeList.get(flatNodeList.size() - 1);
 
