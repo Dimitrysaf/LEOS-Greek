@@ -364,9 +364,11 @@ define(function aknNumberedParagraphPluginModule(require) {
                         else if ((leosPluginUtils.getElementName(currentNode) === HTML_SUB_PARAGRAPH) && (!LIST_FROM_MATCH.test(leosPluginUtils.getElementName(nextNode)))) {
                             _convertToParagraph(currentNode);
 
-                            if(isFirstOccurrence){
-                                currentNode.setAttribute(leosPluginUtils.DATA_AKN_NUM, paragraphNode.getAttribute(leosPluginUtils.DATA_AKN_NUM));
-                                currentNode.setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, paragraphNode.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID));
+                            if(isFirstOccurrence) {
+                                if (paragraphNode.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                                    currentNode.setAttribute(leosPluginUtils.DATA_AKN_NUM, paragraphNode.getAttribute(leosPluginUtils.DATA_AKN_NUM));
+                                    currentNode.setAttribute(leosPluginUtils.DATA_AKN_NUM_ID, paragraphNode.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID));
+                                }
                                 currentNode.setAttribute(DATA_AKN_ATTR_SOFTACTION, TRANSFORMED);
                                 currentNode.setAttribute(DATA_AKN_ATTR_SOFTTRANSFROM, paragraphNode.getAttribute("id"));
                                 isFirstOccurrence = false;

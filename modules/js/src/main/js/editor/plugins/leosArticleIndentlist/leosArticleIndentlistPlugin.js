@@ -532,7 +532,7 @@ define(function leosArticleIndentListPluginModule(require) {
         return (list && firstListItemInPath
             && firstListItemInPath.getParent().equals(list)
             && firstListItemInPath.equals(list.getFirst(listItem)))
-            || list.getFirst().equals(path.lastElement);
+            || (list.getFirst() && list.getFirst().equals(path.lastElement));
     }
 
     /**

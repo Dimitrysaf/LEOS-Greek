@@ -759,6 +759,7 @@ define(function leosAnnexListPluginModule(require) {
 
         // Merge with previous block's content.
         nextCursor.enlarge( CKEDITOR.ENLARGE_LIST_ITEM_CONTENTS );
+        var isINP = nextCursor.startContainer.getAttribute("refersto") && nextCursor.startContainer.getAttribute("refersto") === "~_INP";
         var frag = nextCursor.extractContents();
 
         cursor.trim( false, true );
@@ -791,21 +792,38 @@ define(function leosAnnexListPluginModule(require) {
             last.remove();
 
         // Insert fragment at the range position.
-        var nextNode = cursor.startContainer.getChild( cursor.startOffset );
-        if (nextNode){
-            var pElement = new CKEDITOR.dom.element('p');
-            pElement.append(frag);
-            pElement.insertBefore(nextNode);
-            cursor.setStart(pElement, 0);
-            cursor.setEnd(pElement, 0);
+        var listElemP = cursor.startContainer.find('p');
+        if (listElemP && listElemP.$.length === 1) {
+            var elemP = listElemP.getItem(0);
+            elemP.appendText(" ");
+            elemP.append(frag);
+            cursor.setStart(elemP, elemP.getChildCount() - 1);
+            cursor.setEnd(elemP, elemP.getChildCount() - 1);
             cursor.select();
             bm = cursor.createBookmark2();
+        } else if (isINP) {
+            cursor.enlarge( CKEDITOR.ENLARGE_LIST_ITEM_CONTENTS );
+            var fragToMove = cursor.extractContents();
+            nextCursor.startContainer.append(fragToMove);
+            nextCursor.startContainer.appendText(" ");
+            nextCursor.startContainer.append(frag);
+            cursor.startContainer.remove();
+            nextCursor.startContainer.setAttribute(leosPluginUtils.ID, cursor.startContainer.getAttribute(leosPluginUtils.ID));
+            leosTrackChanges.core.removeTrackChangesAttributes(nextCursor.startContainer);
+            leosTrackChanges.core.removeTrackChangesAttributesForNumbering(nextCursor.startContainer);
+            leosTrackChanges.core.removeTrackChangesAttributesForEnter(nextCursor.startContainer);
+            leosTrackChanges.core.removeSoftAttributes(nextCursor.startContainer);
+            nextCursor.setStart(nextCursor.startContainer, nextCursor.startContainer.getChildCount() - 1);
+            nextCursor.setEnd(nextCursor.endContainer, nextCursor.endContainer.getChildCount() - 1);
+            nextCursor.select();
+            bm = nextCursor.createBookmark2();
         } else {
-            cursor.startContainer.append( frag );
+            cursor.startContainer.appendText(" ");
+            cursor.startContainer.append(frag);
         }
 
         // Move the sub list nested in the next list item.
-        if ( nextLi ) {
+        if ( nextLi && !isINP ) {
             var sublist = getSubList( nextLi );
             if ( sublist ) {
                 // If next line is in the sub list of the current list item.
@@ -949,14 +967,14 @@ define(function leosAnnexListPluginModule(require) {
                         }
 
                         if ( joinWith ) {
-                            if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(range) && !leosTrackChanges.core.isCreatedByEnterKey(range) && (!range.startContainer.$.attributes || !range.startContainer.$.attributes['data-akn-empty'])) {
+                            if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(range) && !leosTrackChanges.core.isCreatedByEnterKey(range) && (!range.startContainer.$.attributes || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
                                 editor.fire("handleTrackTraceForEnterDeleted", range);
                                 evt.cancel();
                                 return;
                             }
                             joinNextLineToCursor( editor, cursor, range );
-                            var parentOfPreviousIsParagraph = previous.getParent().getAttribute("data-akn-element") === leosPluginUtils.PARAGRAPH;
-                            var parentOfPreviousIsNumbered = previous.getParent().getAttribute("data-akn-num");
+                            var parentOfPreviousIsParagraph = previous.getParent() && previous.getParent().getAttribute("data-akn-element") === leosPluginUtils.PARAGRAPH;
+                            var parentOfPreviousIsNumbered = previous.getParent() && previous.getParent().getAttribute("data-akn-num");
                             /*
                              * This if was created, because the first level of Point (a)
                              * cannot become a paragraph in case of unnumbered paragraphs.
@@ -1111,7 +1129,7 @@ define(function leosAnnexListPluginModule(require) {
                                     }
                                 }
 
-                                if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(nextLine) && (!range.startContainer.$.attributes || !range.startContainer.$.attributes['data-akn-empty'])) {
+                                if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(nextLine) && (!range.startContainer.$.attributes || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
                                     editor.fire("handleTrackTraceForEnterDeleted", nextLine);
                                     evt.cancel();
                                     return;

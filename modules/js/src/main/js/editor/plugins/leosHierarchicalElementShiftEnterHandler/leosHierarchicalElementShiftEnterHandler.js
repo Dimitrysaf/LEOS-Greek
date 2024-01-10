@@ -111,12 +111,21 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         LOG.debug("ENTER button clicked");
         var elementType = context.editor.LEOS.elementType;
         var selection = context.editor.getSelection();
+        var currentElement = leosKeyHandler.getSelectedElement(selection);
+        // Specific if for unnumbered paragaphs with children.
+        // When we already have a subparagraph (intro), we cannot have more.
+        if (!_isEnterAllowedForUnnumberedParagraph(currentElement, context.editor)) {
+            context.event.cancel();
+            return;
+        }
+        var isINP = _isINP(currentElement, context.editor);
+        var enterAsShiftEnterForPoints = elementType === 'article' && isINP && isShiftEnterAllowedInThisContext(context.editor);
         if (selection.getStartElement().getName() === 'ol') {
             selection = leosPluginUtils.selectLastEditableElement(selection);
         }
         if (_isElementInsideTable(selection.getStartElement())) {
             context.event.cancel();
-        } else if (elementType && (elementType === 'block' || ((elementType === 'level' || elementType === 'paragraph') && _isStartElementOrderedListOrContent(selection)))) {
+        } else if (elementType && (enterAsShiftEnterForPoints || elementType === 'block' || ((elementType === 'level' || elementType === 'paragraph') && _isStartElementOrderedListOrContent(selection)))) {
             _executeShiftEnter(context.editor);
             leosPluginUtils.manageEmptyLists(context.editor);
             leosPluginUtils.managePoints(context.editor);
@@ -124,6 +133,33 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
             leosPluginUtils.manageCrossheadings(context.editor);
             leosPluginUtils.manageSiblingLists(context.editor);
         }
+        if (enterAsShiftEnterForPoints) {
+            context.event.cancel();
+        }
+    }
+
+    function _isINP(currentElement, editor) {
+        var elementName = currentElement.getName && currentElement.getName();
+        if (editor.LEOS.instanceType === 'COMMISSION' && elementName === "li"
+            && currentElement.getAttribute("data-akn-name") === "subparagraph"
+            && currentElement.getAttribute(DATA_AKN_NUM) === null
+            && currentElement.getAttribute("refersto") === "~_INP") {
+            return true;
+        }
+        do {
+            elementName = currentElement.getName && currentElement.getName();
+            // Added in case of the unnumbered paragraph: shift-enter should be disabled
+            if (editor.LEOS.instanceType === 'COMMISSION' && elementName === "li"
+                && currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph"
+                && currentElement.getAttribute(DATA_AKN_NUM)
+                && currentElement.find("ol").count() !== 0
+                && currentElement.find("[refersto='~_INP']").count() !== 0) {
+                return true;
+            }
+            if (elementName === "ol") {
+                return false;
+            }
+        } while (currentElement = currentElement.getParent());
     }
 
     function _isElementInsideTable(element) {
@@ -481,6 +517,22 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         }
         return true;
     };
+
+    function _isEnterAllowedForUnnumberedParagraph(currentElement, editor) {
+        do {
+            var elementName = currentElement.getName && currentElement.getName();
+            // Added in case of the unnumbered paragraph: shift-enter should be disabled
+            if (editor.LEOS.instanceType === 'COMMISSION' && elementName === "li"
+                && currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph"
+                && currentElement.getAttribute(DATA_AKN_NUM) === null
+                && currentElement.find("ol").count() !== 0) {
+                return false;
+            }
+            if (elementName === "ol") {
+                return true;
+            }
+        } while (currentElement = currentElement.getParent());
+    }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
 

@@ -691,7 +691,10 @@ define(function leosTrackChangesModule(require) {
                     element.getParent().getParent().setAttribute(core.DATA_AKN_ID_TO_BE_RESTORED, element.getAttribute(core.DATA_AKN_ATTR_SOFTMOVE_FROM));
                 }
                 element.remove();
-            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION && element.getName() === leosPluginUtils.HTML_SUB_POINT) {
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION
+                || (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW
+                    && element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION
+                    && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
                 this.rejectInsertedEnter(element, editor);
             } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))
                 || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
