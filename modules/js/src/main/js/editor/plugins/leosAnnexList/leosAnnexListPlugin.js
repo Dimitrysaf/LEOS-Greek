@@ -793,8 +793,8 @@ define(function leosAnnexListPluginModule(require) {
 
         // Insert fragment at the range position.
         var listElemP = cursor.startContainer.find('p');
-        if (listElemP && listElemP.$.length === 1) {
-            var elemP = listElemP.getItem(0);
+        if (listElemP && listElemP.$.length > 0) {
+            var elemP = listElemP.getItem(listElemP.$.length-1);
             elemP.appendText(" ");
             elemP.append(frag);
             cursor.setStart(elemP, elemP.getChildCount() - 1);
