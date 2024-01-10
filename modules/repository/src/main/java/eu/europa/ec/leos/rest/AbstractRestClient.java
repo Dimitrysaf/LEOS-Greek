@@ -1,6 +1,8 @@
 package eu.europa.ec.leos.rest;
 
 import eu.europa.ec.leos.rest.support.requests.UpdateDocumentRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -11,12 +13,20 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AbstractRestClient {
 
+    private static final Logger logger = LoggerFactory.getLogger(AbstractRestClient.class);
+
     @Autowired
     private RestTemplate restTemplate;
 
     protected <T> T getEntity(String url, Class<T> responseType, Object... parameters) {
-        ResponseEntity<T> resp = restTemplate.getForEntity(url, responseType, parameters);
-        return resp.getBody();
+        ResponseEntity<T> resp;
+        try {
+            resp = restTemplate.getForEntity(url, responseType, parameters);
+            return resp.getBody();
+        } catch (Exception e) {
+            logger.error("Error occured in GET request" + e.getMessage());
+        }
+        return null;
     }
 
     protected <T> T postEntity(String url, Object request, Class<T> responseType, Object... parameters) {
