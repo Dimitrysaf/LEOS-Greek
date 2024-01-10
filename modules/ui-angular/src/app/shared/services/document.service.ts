@@ -321,20 +321,20 @@ export class DocumentService implements OnDestroy {
       mergeMap(([versionToCompare, option]) =>
         versionToCompare.length > 2
           ? this.getDocumentVersionsDoubleComparison(
-              option.ref,
-              option.category,
-              versionToCompare[2],
-              versionToCompare[1] !== undefined ? versionToCompare[1] : null,
-              versionToCompare[0],
-            )
+            option.ref,
+            option.category,
+            versionToCompare[2],
+            versionToCompare[1] !== undefined ? versionToCompare[1] : null,
+            versionToCompare[0],
+          )
           : versionToCompare.length > 1
-          ? this.getDocumentVersionsSimpleComparison(
+            ? this.getDocumentVersionsSimpleComparison(
               option.ref,
               option.category,
               versionToCompare[1],
               versionToCompare[0],
             )
-          : of(''),
+            : of(''),
       ),
     );
 
@@ -839,8 +839,8 @@ export class DocumentService implements OnDestroy {
     const params =
       elementIds?.length > 0
         ? {
-            elementIds: elementIds.join(','),
-          }
+          elementIds: elementIds.join(','),
+        }
         : {};
     return this.http.get(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/fetch-toc-ancestors`,
@@ -1034,7 +1034,8 @@ export class DocumentService implements OnDestroy {
     this.http
       .get(
         `${apiBaseUrl}/secured/document/${this.documentType}/${this.documentRef}/baseVersion/${versionId}`,
-        { params: {
+        {
+          params: {
             versionLabel: versionNumber,
             versionComment: baseVersionTitle
           }
@@ -1180,8 +1181,8 @@ export class DocumentService implements OnDestroy {
       versionType == 'milestone'
         ? 'MAJOR'
         : versionType == 'save'
-        ? 'INTERMEDIATE'
-        : '';
+          ? 'INTERMEDIATE'
+          : '';
     if (this.versionSearchOpenBS.getValue()) {
       this.loadingService.setLoading(true);
       return this.http
@@ -1658,7 +1659,7 @@ export class DocumentService implements OnDestroy {
               }
               if (
                 elementTextLength - res.matchedElements[0].matchStartIndex >
-                  -1 &&
+                -1 &&
                 elementTextLength - res.matchedElements[0].matchEndIndex > -1 &&
                 !foundSearchText
               ) {

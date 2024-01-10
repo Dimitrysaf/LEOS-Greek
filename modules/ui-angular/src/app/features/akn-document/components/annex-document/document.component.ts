@@ -20,10 +20,11 @@ import { TrackChangesActionsService } from '@/features/akn-document/services/tra
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
-
-import { TableOfContentService } from '../../services/table-of-content.service';
 import {EnvironmentService} from "@/shared/services/enviroment.service";
 
+import { TableOfContentService } from '../../services/table-of-content.service';
+
+const MAIN_CONTAINER_WIDTH = 500.6;
 @Component({
   selector: 'app-document',
   templateUrl: './document.component.html',
@@ -38,7 +39,11 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() readonly = true;
   @ViewChild('container', { static: true })
   containerElRef: ElementRef<HTMLDivElement>;
+  @ViewChild('zoomScrollbar', { static: true })
+  zoomScrollbarRef: ElementRef<HTMLDivElement>;
+  documentStyle={};
 
+  zoomLevel: number;
   private bookmarkMutationObserver?: MutationObserver;
   private destroy$: Subject<any> = new Subject();
   private isCNInstance = false;
@@ -378,5 +383,19 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
       childList: true,
       subtree: true,
     });
+  }
+
+  handleZoomChange(event: { zoomLevel: number }) {
+    this.zoomLevel = event.zoomLevel;
+    const scaleFactor = event.zoomLevel / 100;
+    const transformOrigin = this.zoomLevel > 100 ? 'center top' : 'top left';
+
+    this.documentStyle = {
+      transform: `scale(${scaleFactor})`,
+      transformOrigin
+    };
+
+    const zoomedDocumentHeight = MAIN_CONTAINER_WIDTH * scaleFactor;
+    this.containerElRef.nativeElement.style.height = `${zoomedDocumentHeight}px`;
   }
 }

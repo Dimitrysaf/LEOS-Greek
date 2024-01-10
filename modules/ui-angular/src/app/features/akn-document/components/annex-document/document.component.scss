@@ -14,3 +14,24 @@
   opacity: 0.3;
   user-select: none;
 }
+
+.document-container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: start;
+  justify-content: center;
+}
+
+.document-content {
+  flex-grow: 1;
+  transform-origin: top left;
+  position: relative;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: start;
+  position: relative;
+}

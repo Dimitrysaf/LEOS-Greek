@@ -383,22 +383,19 @@
             </ul>
           </div>
           <!-- Document with editor -->
-          <app-document
-            [containerId]="containerId"
-            [documentType]="documentType"
-            [readonly]="
+          <app-document [containerId]="containerId"
+                        [documentType]="documentType"
+                        [readonly]="
               environmentService.isCouncil() &&
               documentService.documentType === 'memorandum'
             "
-            [containerClass]="{
+                        [containerClass]="{
               'leos-doc-content': true,
               'sync-scroll': true,
               'toc-edit-mode': isEditMode
-            }"
-          ></app-document>
+            }"></app-document>
         </eui-page-column-body>
       </eui-page-column>
-
       <!-- splitter: document & document:viewVersion -->
       <app-resize-handle
         [leftEl]="documentPaneElement?.nativeElement"

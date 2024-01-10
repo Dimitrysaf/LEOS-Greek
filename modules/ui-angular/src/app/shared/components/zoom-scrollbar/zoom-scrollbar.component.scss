@@ -1,0 +1,63 @@
+.zoom-scrollbar-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.zoom-range {
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+}
+
+.zoom-range::-webkit-slider-runnable-track {
+  background: black;
+  height: 3px;
+  cursor: pointer;
+}
+
+.zoom-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 7px;
+  height: 20px;
+  background: black;
+  cursor: pointer;
+  border: none;
+  margin-top: -7.5px;
+}
+
+.zoom-range::-moz-range-track {
+  background: black;
+  height: 5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.zoom-range::-moz-range-thumb {
+  width: 10px;
+  height: 20px;
+  background: black;
+  cursor: pointer;
+  border: none;
+}
+
+.zoom-value {
+  width: 50px;
+  text-align: right;
+  padding-right: 30px;
+}
+
+.zoom-controls {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.eui-icon-minus{
+  font-size: 13px;
+}
+
+.eui-icon-add{
+  font-size: 13px;
+}
