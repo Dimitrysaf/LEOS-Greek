@@ -366,8 +366,10 @@ define(function leosTrackChangesPluginModule(require) {
 
                             var originalBackspace = false;
                             if (range.collapsed && range.startContainer.$.attributes && range.startContainer.$.attributes[leosPluginUtils.DATA_REJECT_INSERTED_ENTER]) {
+                                var previousHtml = range.startContainer.getHtml();
+                                range.startContainer.setText(" ");
+                                range.startContainer.appendHtml(previousHtml);
                                 originalBackspace = true;
-                                range.startContainer.$.textContent = " " + range.startContainer.$.textContent;
                             }
 
                             if (!originalBackspace) {
