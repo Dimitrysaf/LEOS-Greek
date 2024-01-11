@@ -319,6 +319,7 @@ define(function leosTrackChangesPluginModule(require) {
                         (editor.getSelection().getRanges().length > 0)) {
                         var event = new EventWrapper(e);
                         if (e.data.$.ctrlKey && event.getKeyCode() === UTILS.KEYS.KEY_X) {
+                            editor.execCommand("copy");
                             style.apply(editor, deleteTcStyle);
                             var range = editor.getSelection().getRanges()[0];
                             range.collapse(false);
