@@ -335,6 +335,10 @@ define(function leosTrackChangesPluginModule(require) {
                             event.getInstance().data.preventDefault();
                             event.getInstance().stop();
                         }
+                        
+                        if ((event.getKeyCode() === UTILS.KEYS.KEY_DELETE) || (event.getKeyCode() === UTILS.KEYS.KEY_BACKSPACE)) {
+                            editor.element.fire("input", new CKEDITOR.dom.event(new InputEvent("input")));
+                        }
                     }
                 });
 
@@ -376,8 +380,6 @@ define(function leosTrackChangesPluginModule(require) {
                             if (!originalBackspace) {
 
                                 if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
-
-                                    editor.fire("saveSnapshot");
 
                                     style.apply(editor, deleteTcStyle);
 
