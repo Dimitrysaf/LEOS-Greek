@@ -52,4 +52,6 @@ public interface BillProcessor {
     byte[] removeDeletedElements(byte[] docContent);
 
     byte[] renumberingAndPostProcessing(byte[] docContent);
+
+    byte[] renumberingAndPostProcessing(byte[] docContent, boolean renumberChildElements);
 }

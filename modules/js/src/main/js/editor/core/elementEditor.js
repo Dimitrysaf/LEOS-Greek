@@ -29,8 +29,7 @@ define(function elementEditorModule(require) {
     var leosPluginUtils = require("../plugins/leosPluginUtils");
 
     var ZERO_WIDTH_SPACE = "^\u200B{7}$";
-
-
+    var WHITE_SPACE = '\u00A0';
     var NUM = "num";
 
     function _setupElementEditor(connector) {
@@ -250,20 +249,6 @@ define(function elementEditorModule(require) {
         return false;
     }
 
-    function _isEmptyContentInElement(elementId) {
-        var bogus = $("#" + elementId).find(leosPluginUtils.BOGUS);
-        var sibling;
-        if (bogus && bogus[0]) {
-            sibling = bogus[0].previousSibling;
-        }
-        var emptyElements = $("#" + elementId + ", p[data-akn-id='" + elementId + "'], h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']").find(":emptyTrim").addBack(":emptyTrim");
-        if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
-            || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
-            return true;
-        }
-        return false;
-    }
-
     function _createEditorPlaceholder(rootElement, elementId) {
         let element;
         if (rootElement) {
@@ -379,13 +364,14 @@ define(function elementEditorModule(require) {
         var editor = event.editor;
         // LEOS-3418 : to save modification in the Alternatives clause.
         if (!editor.readOnly || editor.config.isClause) {
+            var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
             // set read-only to prevent changes
             editor.setReadOnly(true);
             // save the element being edited
             var data = {
                 elementId: elementId,
                 elementType: elementType,
-                elementFragment: event.data.data,
+                elementFragment: eventData,
                 isSplit: event.data.origin === "split" ? true : false,
                 isSaveAndClose: !!event.data.isSaveAndClose ? true : false,
             };
@@ -401,22 +387,88 @@ define(function elementEditorModule(require) {
     }
 
     function _removeNonBreakingSpaceFromElement(elementId, eventData){
-        var newVal = $("#" + elementId).html()
-            .replace(/&amp;nbsp;/g, ' ')
-            .replace(/&nbsp;/g, ' ')
-            .replace(/&#xa0;/g, ' ')
-            .replace(/&#160;/g, ' ')
-            .replace(/&amp;#xa0;/g, ' ')
-            .replace(/\u00A0/g, ' ');
+        var jqElement = $("#" + elementId);
+        if(jqElement && jqElement.html()){
+            var newVal = jqElement.html()
+                .replace(/&amp;nbsp;/g, WHITE_SPACE)
+                .replace(/&nbsp;/g, WHITE_SPACE)
+                .replace(/&#xa0;/g, WHITE_SPACE)
+                .replace(/&#160;/g, WHITE_SPACE)
+                .replace(/&amp;#xa0;/g, WHITE_SPACE);
+    //            .replace(/\u00A0/g, ' ');
+            $("#" + elementId).html(newVal);
+        }
+        return eventData.replace(/&amp;nbsp;/g, WHITE_SPACE)
+            .replace(/&nbsp;/g, WHITE_SPACE)
+            .replace(/&#xa0;/g, WHITE_SPACE)
+            .replace(/&#160;/g, WHITE_SPACE)
+            .replace(/&amp;#xa0;/g, WHITE_SPACE);
+//            .replace(/\u00A0/g, ' ');
+    }
 
-        $("#" + elementId).html(newVal);
+    function _isEmptyContentInElement(elementId) {
+        var isEmptyElementFound = false;
 
-        return eventData.replace(/&amp;nbsp;/g, ' ')
-            .replace(/&nbsp;/g, ' ')
-            .replace(/&#xa0;/g, ' ')
-            .replace(/&#160;/g, ' ')
-            .replace(/&amp;#xa0;/g, ' ')
-            .replace(/\u00A0/g, ' ');
+        var emptyElements = $("#" + elementId + ", p[data-akn-id='" + elementId + "'], h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']"
+            + ", li[refersto]").find(":emptyTrim");
+
+
+        var bogus = $("#" + elementId).find(leosPluginUtils.BOGUS);
+        var sibling;
+        if (bogus && bogus[0]) {
+            sibling = bogus[0].previousSibling;
+            if(isLastEditableElement($(bogus[0]).parent())){
+                isEmptyElementFound = true;
+            }
+        }
+
+        if (emptyElements.length > 0 || (bogus.length > 0 && !(sibling && (sibling.nodeType === Node.TEXT_NODE
+            || sibling.nodeType === Node.ELEMENT_NODE))) && (bogus.parents('table').length === 0)) {
+            emptyElements.each(function(){
+                var isSubparagraph = ($(this).is("p") && $(this).attr("data-akn-element") == "subparagraph");
+                if(!$(this).is("li,br") && !isSubparagraph ){
+                    isEmptyElementFound = true;
+                }
+            })
+        }
+
+
+        var isEmptyList = false;
+        $("#" + elementId).find("li br").each(function(){
+            var prevSibling = this.previousSibling;
+            var isEmptyPrevSibling = !(prevSibling && ((prevSibling.nodeType === Node.TEXT_NODE && prevSibling.textContent.trim().length > 0)
+                        || prevSibling.nodeType === Node.ELEMENT_NODE));
+            var sibling = this.nextSibling;
+            var isSiblingOL = (sibling && sibling.nodeType === Node.ELEMENT_NODE && sibling.tagName.toLowerCase() == 'ol');
+            var isLastEditable = isLastEditableElement($(this).parent());
+            if( isLastEditable ||
+                ($(this).parents('table').length === 0
+                    && ($(this).parent().attr("refersto") || (isEmptyPrevSibling && isSiblingOL))
+                )
+            ){
+                isEmptyList = true;
+            }
+        });
+        return  (isEmptyElementFound || isEmptyList);
+    }
+
+    function isLastEditableElement(elementToTest){
+        var parent = elementToTest.parent();
+        var isNextNullOrDiv = elementToTest.next().length == 0 || elementToTest.next()[0].localName == 'div';
+        var isPreviousDiv = elementToTest.prev().length != 0 && elementToTest.prev()[0].localName == 'div' ;
+        if(isNextNullOrDiv &&
+            (
+                isPreviousDiv
+                ||
+                (elementToTest.prev().length == 0
+                    && (parent.next().length == 0 || parent.next()[0].localName == 'div')
+                    && parent.prev().length != 0
+                    && (parent.prev()[0].localName == 'div' || parent.parent()[0].localName == 'article'))
+            )){
+            // for comprehensible
+            return true;
+        }
+        return false;
     }
 
     function _refreshElement(elementId, elementType, elementFragment) {
