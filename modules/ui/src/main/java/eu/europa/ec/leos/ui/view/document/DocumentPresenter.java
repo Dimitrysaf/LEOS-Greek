@@ -1291,10 +1291,14 @@ class DocumentPresenter extends AbstractLeosPresenter {
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentId, final String legFileName, final String versionedReference) {
-        final LeosPackage leosPackage = this.packageService.findPackageByDocumentId(documentId);
-        //final LegDocument referenceDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
-        final LegDocument legDocument = this.packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
-        return this.legService.storeLegDocumentTemporary(legDocument);
+        try {
+            final LeosPackage leosPackage = this.packageService.findPackageByDocumentId(documentId);
+            final LegDocument legDocument = this.packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
+            return this.legService.storeLegDocumentTemporary(legDocument);
+        } catch(Exception e) {
+            LOG.error("Error fetching temporary annotations ", e);
+        }
+        return null;
     }
 
     private List<TocItem> getTocITems(Bill bill) {

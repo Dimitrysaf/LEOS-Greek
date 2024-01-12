@@ -292,7 +292,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                 getSource().getBytes());
         legContent.put(documentName, xmlContent);
         byte[] updatedLegContent = ZipPackageUtil.zipByteArray(legContent);
-        legService.updateLegDocument(legDocument.getId(), updatedLegContent);
+        legService.updateLegDocument(legDocument.getId(), updatedLegContent, legDocument.getStatus());
     }
 
     private String getClonedMilestoneId(String proposalRef, String legDocumentName) {
