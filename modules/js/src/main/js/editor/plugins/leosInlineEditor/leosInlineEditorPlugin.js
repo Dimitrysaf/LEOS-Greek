@@ -32,13 +32,12 @@ define(function leosInlineEditorPluginModule(require) {
         init : function init(editor) {
 
             var contentHeight = _getContentHeight(editor.element);
-            var _mousePosition = [];
-            var docContainer = document.getElementById("docContainer");
+            var docContainer = UTILS.getDocContainer();
             docContainer.addEventListener('mousedown', _onMouseDown);
 
             editor.on("change", function(event) {
                 var newContentHeight = _getContentHeight(event.editor.element);
-                if(contentHeight != newContentHeight) {
+                if (contentHeight != newContentHeight) {
                     event.editor.fire("contentChange");
                     contentHeight = newContentHeight;
                 }
@@ -84,7 +83,7 @@ define(function leosInlineEditorPluginModule(require) {
             }
 
             editor.on('blur', function (evt) {
-                if (evt.editor.LEOS.implicitSaveEnabled && !evt.editor.LEOS.bookmarkNavigatorClicked &&
+                if ((evt.editor.LEOS.implicitSaveEnabled !== "false") && !evt.editor.LEOS.bookmarkNavigatorClicked &&
                     !evt.editor.LEOS.saveCmdExecuted) {
                 	if (_isMouseOutsideEditor(evt.editor.container.$) && !_isMouseOnDocumentScrollbar()) {
                         if (evt.editor.checkDirty()) {
@@ -95,8 +94,7 @@ define(function leosInlineEditorPluginModule(require) {
                                 });
                                 editor.fire("close");
                             }
-                        }
-                        else {
+                        } else {
                             _paddParent(evt.editor.element);
                             editor.fire("close");
                         }
@@ -108,38 +106,19 @@ define(function leosInlineEditorPluginModule(require) {
             });
 
             function _isMouseOutsideEditor(element) {
-                var positionEditor = _getElementPosition(element);
-                var top = positionEditor[1];
-                var bottom = top + parseInt(window.getComputedStyle(element, null).height);
-                var left = positionEditor[0];
-                var right = left + parseInt(window.getComputedStyle(element, null).width);
-
-                var mouseX = _mousePosition[0];
-                var mouseY = _mousePosition[1];
-
+                var positionEditor = UTILS.getElementPosition(element);
+                var left = positionEditor[0], right = left + parseInt(window.getComputedStyle(element).width);
+                var top = positionEditor[1], bottom = top + parseInt(window.getComputedStyle(element).height);
+                var mouseX = editor.LEOS.mousePosition[0], mouseY = editor.LEOS.mousePosition[1];
     			return mouseX <= left || mouseX >= right || mouseY <= top || mouseY >= bottom;
 			}
 
             function _isMouseOnDocumentScrollbar() {
-                var positionEditor = _getElementPosition(docContainer);
-                var bottom = positionEditor[1] + parseInt(window.getComputedStyle(docContainer, null).height) - 20;
-                var right = positionEditor[0] + parseInt(window.getComputedStyle(docContainer, null).width) - 20;
-
-                var mouseX = _mousePosition[0] - docContainer.scrollLeft;
-                var mouseY = _mousePosition[1] - docContainer.scrollTop;
-
+                var positionEditor = UTILS.getElementPosition(docContainer);
+                var right = positionEditor[0] + parseInt(window.getComputedStyle(docContainer).width) - 20;
+                var bottom = positionEditor[1] + parseInt(window.getComputedStyle(docContainer).height) - 20;
+                var mouseX = editor.LEOS.mousePosition[0] - docContainer.scrollLeft, mouseY = editor.LEOS.mousePosition[1] - docContainer.scrollTop;
                 return mouseX >= right || mouseY >= bottom;
-            }
-
-            function _getElementPosition(element) {
-                var x = 0; 
-                var y = 0;
-                do {
-                    x += element.offsetLeft;
-                    y += element.offsetTop;
-                    element = element.offsetParent
-                } while (element);
-                return [x,y];
             }
 
             function _onMouseDown(event) {
@@ -149,7 +128,7 @@ define(function leosInlineEditorPluginModule(require) {
                     posx = event.pageX + docContainer.scrollLeft;
                     posy = event.pageY + docContainer.scrollTop;
                 }
-                _mousePosition = [posx, posy];
+                editor.LEOS.mousePosition = [posx, posy];
 			}
 
             editor.on('focus', function(evt) {

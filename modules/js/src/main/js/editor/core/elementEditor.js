@@ -182,7 +182,8 @@ define(function elementEditorModule(require) {
                 proposalRef: proposalRef,
                 isTrackChangesEnabled: connector.getState().isTrackChangesEnabled,
                 isTrackChangesShowed: connector.getState().isTrackChangesShowed,
-                isTrackChangesStyleFormattingEnabled: connector.getState().isTrackChangesStyleFormattingEnabled
+                isTrackChangesStyleFormattingEnabled: connector.getState().isTrackChangesStyleFormattingEnabled,
+                mousePosition: []
             };
             // register editor event callbacks
             editor.on("close", _destroyEditor.bind(undefined, connector, params.elementId, params.elementType));
