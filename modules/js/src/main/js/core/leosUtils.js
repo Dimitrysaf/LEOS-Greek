@@ -296,6 +296,24 @@ define(function leosUtilsModule(require) {
         return str.replace(/>\n\s*/g, ">");
     }
 
+    function _getDocContainer() {
+        var docContainer = document.getElementById("docContainer");
+        return docContainer.parentElement.classList?.contains("main-container") ? docContainer.parentElement : docContainer;
+    }
+
+    function _getElementPosition(element) {
+        /*var x = 0, y = 0;
+        do {
+            x += element.offsetLeft;
+            y += element.offsetTop;
+            element = element.offsetParent
+        } while (element);
+        return [x, y];*/
+        var docContainer = _getDocContainer();
+        var position = element.getBoundingClientRect();
+        return [position.left + docContainer.scrollLeft, position.top + docContainer.scrollTop];
+    }
+
     return {
         getParentElement: _getParentElement,
         getElementOrigin : _getElementOrigin,
@@ -309,6 +327,8 @@ define(function leosUtilsModule(require) {
         toIsoString : _toIsoString,
         generateTrackChangesStyles : _generateTrackChangesStyles,
         cleanUpElementFragment: _cleanUpElementFragment,
+        getDocContainer: _getDocContainer,
+        getElementPosition: _getElementPosition,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE,
         KEYS: KEYS
     };

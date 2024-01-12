@@ -439,22 +439,11 @@ define(function leosTrackChangesModule(require) {
             return null;
         },
 
-        isMouseOverPseudoElt: function(element, mousePosition, pseudoElt) {
-            function getElementPosition(element) {
-                var x = 0, y = 0;
-                do {
-                    x += element.offsetLeft;
-                    y += element.offsetTop;
-                    element = element.offsetParent
-                } while (element);
-                return [x, y];
-            }
-
-            var positionEditor = getElementPosition(element);
+        isMouseOverPseudoElt: function(element, pseudoElt, mousePosition) {
+            var positionEditor = UTILS.getElementPosition(element);
             var top = positionEditor[1], bottom = top + parseInt(window.getComputedStyle(element, ":" + pseudoElt).height);
             var left = positionEditor[0], right = left + parseInt(window.getComputedStyle(element, ":" + pseudoElt).width);
             var mouseX = mousePosition[0], mouseY = mousePosition[1];
-
             return ((mouseX >= (left - 5)) && (mouseX <= (right + 5)) && (mouseY >= (top - 5)) && (mouseY <= (bottom + 5)));
         }
 

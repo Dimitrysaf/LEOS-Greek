@@ -39,7 +39,6 @@ define(function leosTrackChangesPluginModule(require) {
             var deleteTcStyle = new CKEDITOR.style({ element: core.TRACKCHANGES_ELEMENT, attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION) });
             var selectedElement, handleMutations = false;
             var handleMutationsDoneBySpellChecker = false, spellCheckerOriginalText, spellCheckerReplacementText;
-            var mousePosition = [], docContainer = document.getElementById("docContainer");
 
             // Add toggle display
             editor.ui.addButton("toggleDisplay", {
@@ -142,7 +141,7 @@ define(function leosTrackChangesPluginModule(require) {
                 editor.contextMenu.addListener(function(element) {
                     var elementWithPseudoElt = core.getClosestElementWithPseudoElt(element, core.BEFORE);
                     if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
-                        && !elementWithPseudoElt.getAttribute(core.ACTION_ATTR) && core.isMouseOverPseudoElt(elementWithPseudoElt, mousePosition, core.BEFORE)) {
+                        && !elementWithPseudoElt.getAttribute(core.ACTION_ATTR) && core.isMouseOverPseudoElt(elementWithPseudoElt, core.BEFORE, editor.LEOS.mousePosition)) {
                         editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
                         if ((elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_NUM))
                             || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
@@ -188,18 +187,6 @@ define(function leosTrackChangesPluginModule(require) {
                             }
                         }
                     }
-                });
-                var calculateMousePosition = function(event) {
-                    var posx = 0, posy = 0;
-                    if (event.pageX || event.pageY) {
-                        posx = event.pageX + docContainer.scrollLeft;
-                        posy = event.pageY + docContainer.scrollTop;
-                    }
-                    mousePosition = [posx, posy];
-                };
-                docContainer.addEventListener("mousedown", calculateMousePosition);
-                editor.on("destroy", function() {
-                    docContainer.removeEventListener("mousedown", calculateMousePosition);
                 });
             }
 
