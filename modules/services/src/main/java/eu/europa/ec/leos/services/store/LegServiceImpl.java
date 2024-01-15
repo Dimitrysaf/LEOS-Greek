@@ -1116,8 +1116,8 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
-    public LegDocument updateLegDocument(String id, byte[] content) {
-        return packageRepository.updateLegDocument(id, LeosLegStatus.FILE_READY, content, VersionType.INTERMEDIATE,
+    public LegDocument updateLegDocument(String id, byte[] content, LeosLegStatus legStatus) {
+        return packageRepository.updateLegDocument(id, legStatus, content, VersionType.INTERMEDIATE,
                 "Milestone is updated");
     }
 

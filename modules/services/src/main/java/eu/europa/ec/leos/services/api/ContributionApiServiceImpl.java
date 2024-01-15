@@ -222,10 +222,14 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentRef, final String legFileName, final String versionedReference) {
-        final LeosPackage leosPackage = this.packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
-        //final LegDocument referenceDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
-        final LegDocument legDocument = this.packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
-        return this.legService.storeLegDocumentTemporary(legDocument);
+        try {
+            final LeosPackage leosPackage = this.packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
+            final LegDocument legDocument = this.packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
+            return this.legService.storeLegDocumentTemporary(legDocument);
+        } catch(Exception e) {
+            LOG.error("Error fetching temporary annotations ", e);
+        }
+        return null;
     }
 
     public void declineContribution(String contributionVersionRef) {
