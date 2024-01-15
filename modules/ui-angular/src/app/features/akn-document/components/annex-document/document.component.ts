@@ -31,12 +31,13 @@ const MAIN_CONTAINER_WIDTH = 500.6;
   styleUrls: ['./document.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() containerId: string;
   @Input() containerClass: NgClass['ngClass'] = '';
   @Input() documentType: string;
   @Input() xml: string;
   @Input() readonly = true;
+  @Input() isDoubleCompare = false;
   @ViewChild('container', { static: true })
   containerElRef: ElementRef<HTMLDivElement>;
   @ViewChild('zoomScrollbar', { static: true })
@@ -56,7 +57,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
     private translate: TranslateService,
     private trackChangesActionsService: TrackChangesActionsService,
     private tableOfContentService: TableOfContentService,
-    private environmentService: EnvironmentService
+    private environmentService: EnvironmentService,
   ) {
     this.isCNInstance = this.environmentService.isCouncil();
   }
@@ -68,66 +69,68 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.documentService.documentView$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((documentView) => {
-        this.loadDocument(documentView.editableXml);
-      });
-
-    this.documentService.refreshView$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((documentView) => {
-        if (documentView) {
+    if (!this.readonly) {
+      this.documentService.documentView$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((documentView) => {
           this.loadDocument(documentView.editableXml);
-        }
-      });
+        });
 
-    this.documentService.updateElementContent$
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((data) => {
-        this.updateElementContent(data);
-    });
+      this.documentService.refreshView$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((documentView) => {
+          if (documentView) {
+            this.loadDocument(documentView.editableXml);
+          }
+        });
 
-    this.documentService.getElementContent$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((data) => {
-        this.documentService.getElementContentResponse$ = new BehaviorSubject<{
-          elementId: string;
-          elementType: string;
-          elementFragment: string;
-        }>(this.getElementContent(data)).asObservable();
-      });
+      this.documentService.updateElementContent$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data) => {
+          this.updateElementContent(data);
+        });
 
-    this.documentService.reloadTrigger$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((trigger) => {
-        trigger !== 0 && this.loadDocument(this.xml);
-      });
+      this.documentService.getElementContent$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data) => {
+          this.documentService.getElementContentResponse$ = new BehaviorSubject<{
+            elementId: string;
+            elementType: string;
+            elementFragment: string;
+          }>(this.getElementContent(data)).asObservable();
+        });
 
-    this.coEditionWSService.shouldReloadAfterUpdate
-    .pipe(takeUntil(this.destroy$))
-    .subscribe((coEditionUpdate) => {
-      if (coEditionUpdate) {
-        if (
-          coEditionUpdate.updatedElements &&
-          coEditionUpdate.updatedElements.length > 0
-        ) {
-          coEditionUpdate.updatedElements.forEach((element) => {
-            this.updateElementContent({
-              elementId: element.elementId,
-              elementType: element.elementTagName,
-              elementFragment: element.elementFragment,
-              isClosing: false,
-              isSaved: false,
-            });
-          });
-          this.documentService.reloadView();
-          this.tableOfContentService.reload();
-        } else {
-          this.documentService.reloadDocument();
-        }
-      }
-    });
+      this.documentService.reloadTrigger$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((trigger) => {
+          trigger !== 0 && this.loadDocument(this.xml);
+        });
+
+      this.coEditionWSService.shouldReloadAfterUpdate
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((coEditionUpdate) => {
+          if (coEditionUpdate) {
+            if (
+              coEditionUpdate.updatedElements &&
+              coEditionUpdate.updatedElements.length > 0
+            ) {
+              coEditionUpdate.updatedElements.forEach((element) => {
+                this.updateElementContent({
+                  elementId: element.elementId,
+                  elementType: element.elementTagName,
+                  elementFragment: element.elementFragment,
+                  isClosing: false,
+                  isSaved: false,
+                });
+              });
+              this.documentService.reloadView();
+              this.tableOfContentService.reload();
+            } else {
+              this.documentService.reloadDocument();
+            }
+          }
+        });
+    }
   }
 
   ngAfterViewInit(): void {
@@ -177,8 +180,10 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
     if (!this.isCNInstance) {
       this.documentService.setDidDocumentLoadAndRender(true);
     }
-    this.initTrackChangesActions();
-    this.ckeditorService.refreshStateAllAvailableConnectors();
+    if (!this.readonly) {
+      this.initTrackChangesActions();
+      this.ckeditorService.refreshStateAllAvailableConnectors();
+    }
   }
 
   private cleanupAndSerializeXML(xml: string, akomantosoId?: string) {
@@ -186,7 +191,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
     const xmlDoc = parser.parseFromString(xml, 'text/html');
     const akomantosoEl = xmlDoc.querySelector('akomantoso');
 
-    if (this.documentType !== 'coverPage') {
+    if (this.documentType !== 'coverPage' && akomantosoEl) {
       akomantosoEl
         .querySelectorAll('meta, coverPage')
         .forEach((el) => el.remove());
@@ -397,5 +402,12 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const zoomedDocumentHeight = MAIN_CONTAINER_WIDTH * scaleFactor;
     this.containerElRef.nativeElement.style.height = `${zoomedDocumentHeight}px`;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.readonly && 'xml' in changes && changes.xml.currentValue !== undefined) {
+      this.xml = changes.xml.currentValue;
+      this.loadDocument(this.xml);
+    }
   }
 }

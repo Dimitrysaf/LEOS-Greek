@@ -161,6 +161,9 @@ define(function SoftActionsExtensionModule(require) {
     }
 
     function _findMovedElementById(id) {
+        if (!id) {
+            return;
+        }
         var movedElement = document.getElementById(id);
         if (!movedElement) { // movedElement not found
             id = id.replace('moved_transformed_','moved_');
