@@ -3,16 +3,44 @@
   padding-right: 0;
 }
 
-@media (max-width: 914px) {
+.row-spacing {
+  column-gap: 5px
+}
+
+.col-md-6 {
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 960px) {
   .label-column {
     text-align: start;
-    width: 100%;
+    width:100%
   }
 
-  .confidentiality-row {
-    display: flex;
-    flex-direction: column;
+  .col-md-6 {
+    flex-wrap: wrap;
+  }
+
+  .col-sm-8 {
+    width: 100px;
+  }
+}
+
+@media( max-width: 768px) {
+
+  .label-column {
+    width:25%
+  }
+}
+
+@media( max-width: 495px) {
+  .label-column {
     width: 100%;
   }
 }
 
+@media( max-width: 245px) {
+  .col-md-6 {
+    flex-wrap: nowrap;
+  }
+}
