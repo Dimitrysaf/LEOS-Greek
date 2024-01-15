@@ -20,11 +20,6 @@
       [originRef]="originRef"
     ></app-proposal-header>
 
-    <app-proposal-details
-      [proposal]="proposal"
-      (eeaRelevanceChanged)="onSaveEEA($event)"
-    ></app-proposal-details>
-
     <eui-tabs class="eui-u-display-block eui-u-mt-l">
       <eui-tab>
         <eui-tab-label>{{
@@ -59,6 +54,17 @@
         }}</eui-tab-label>
         <eui-tab-content>
           <app-proposal-collaborators></app-proposal-collaborators>
+        </eui-tab-content>
+      </eui-tab>
+      <eui-tab>
+        <eui-tab-label>{{
+            'page.collection.tabs.details' | translate
+          }}</eui-tab-label>
+        <eui-tab-content>
+          <app-proposal-details
+            [proposal]="proposal"
+            (eeaRelevanceChanged)="onSaveEEA($event)"
+          ></app-proposal-details>
         </eui-tab-content>
       </eui-tab>
     </eui-tabs>
