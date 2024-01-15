@@ -66,6 +66,7 @@ define(function leosInlineEditorPluginModule(require) {
             }
 
             function _addSoftAttributeToParent(editor) {
+                editor.fire( 'lockSnapshot' );
                 if (editor.LEOS.isClonedProposal) {
                     const selection = editor.getSelection();
                     if (selection) {
@@ -80,6 +81,7 @@ define(function leosInlineEditorPluginModule(require) {
                         }
                     }
                 }
+                editor.fire( 'unlockSnapshot' );
             }
 
             editor.on('blur', function (evt) {
