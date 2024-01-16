@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.lang3.Validate;
@@ -60,6 +61,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     private final ValidationService validationService;
     private final MessageHelper messageHelper;
     private final XPathCatalog xPathCatalog;
+    private final TrackChangesContext trackChangesContext;
 
     private final TableOfContentProcessor tableOfContentProcessor;
 
@@ -70,7 +72,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
                            NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
                            ValidationService validationService, DocumentVOProvider documentVOProvider,
                            TableOfContentProcessor tableOfContentProcessor, MessageHelper messageHelper,
-                           XPathCatalog xPathCatalog) {
+                           XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
         this.explanatoryRepository = explanatoryRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -83,6 +85,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.numberService = numberService;
         this.xPathCatalog = xPathCatalog;
+        this.trackChangesContext = trackChangesContext;
     }
 
     @Override
@@ -97,14 +100,18 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
                 .build();
         Explanatory explanatory = explanatoryRepository.createExplanatory(templateId, path, fileName, metadata);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(explanatory) : content, metadata);
-        return explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        return explanatory;
     }
 
     @Override
     public Explanatory createExplanatoryFromContent(String path, ExplanatoryMetadata metadata, String actionMessage, byte[] content, String name) {
         LOG.trace("Creating Explanatory From Content... [path={}, metadata={}]", path, metadata);
         Explanatory explanatory = explanatoryRepository.createExplanatoryFromContent(path, name, metadata, content);
-        return explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, content, VersionType.MINOR, actionMessage);
+        explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, content, VersionType.MINOR, actionMessage);
+        trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        return explanatory;
     }
 
     @Override
@@ -116,14 +123,18 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     @Override
     public Explanatory findExplanatory(String id) {
         LOG.trace("Finding Explanatory... [id={}]", id);
-        return explanatoryRepository.findExplanatoryById(id, Explanatory.class, true);
+        Explanatory explanatory = explanatoryRepository.findExplanatoryById(id, Explanatory.class, true);
+        trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        return explanatory;
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public Explanatory findExplanatoryVersion(String id) {
         LOG.trace("Finding Explanatory version... [it={}]", id);
-        return explanatoryRepository.findExplanatoryById(id, Explanatory.class, false);
+        Explanatory explanatory = explanatoryRepository.findExplanatoryById(id, Explanatory.class, false);
+        trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        return explanatory;
     }
 
     private Explanatory updateInternalReferencesAsync(Explanatory explanatory) {
@@ -215,11 +226,13 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     @Override
     public Explanatory createVersion(String id, VersionType versionType, String comment) {
         LOG.trace("Creating Explanatory version... [id={}, versionType={}, comment={}]", id, versionType, comment);
-        final Explanatory explanatory = findExplanatory(id);
+        Explanatory explanatory = findExplanatory(id);
         final ExplanatoryMetadata metadata = explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!");
         final Content content = explanatory.getContent().getOrError(() -> "Explanatory content is required!");
         final byte[] contentBytes = content.getSource().getBytes();
-        return explanatoryRepository.updateExplanatory(id, metadata, contentBytes, versionType, comment);
+        explanatory = explanatoryRepository.updateExplanatory(id, metadata, contentBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        return explanatory;
     }
 
     @Override
@@ -260,7 +273,9 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     @Override
     public Explanatory findExplanatoryByRef(String ref) {
         LOG.trace("Finding Explanatory by ref... [ref=" + ref + "]");
-        return explanatoryRepository.findExplanatoryByRef(ref);
+        Explanatory explanatory = explanatoryRepository.findExplanatoryByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        return explanatory;
     }
 
     @Override
@@ -331,6 +346,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     	Stopwatch stopwatch = Stopwatch.createStarted();
     	Explanatory explanatory = explanatoryRepository.updateExplanatory(ref, id, properties, latest);
     	LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
         return explanatory;
     }
 

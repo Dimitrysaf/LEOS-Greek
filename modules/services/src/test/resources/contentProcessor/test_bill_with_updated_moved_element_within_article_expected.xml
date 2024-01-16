@@ -23,7 +23,10 @@
         </content>
     </paragraph>
     <paragraph leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_cD61lQ">
-        <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_C0edtb">2.</num>
+        <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_C0edtb">
+            <del leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">3.</del>
+            <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">2.</ins>
+        </num>
         <content leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_0FNIyh">
             <p leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_9hFSiC">No exposures with a residual maturity of three
                 months or less denominated and funded in the national currency of the borrower shall be assigned a risk
@@ -32,7 +35,10 @@
         </content>
     </paragraph>
     <paragraph leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_9g9vYg">
-        <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_tZc0Dj">3.</num>
+        <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_tZc0Dj">
+            <del leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">4.</del>
+            <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">3.</ins>
+        </num>
         
         <list leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_22HE8L"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="imp_art_d1e9946_jmGg54_wqNpGu">
             <content leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_DYCJJo">
@@ -70,7 +76,10 @@
         </list>
     </paragraph>
     <paragraph leos:softaction="move_from" leos:softactionroot="true" leos:softdate="Tue Nov 09 2021" leos:softmove_from="moved_imp_art_d1e9946_jmGg54_S7r2mk" leos:softuser="DOE Jane" xml:id="temp_imp_art_d1e9946_jmGg54_S7r2mk">
-        <num leos:origin="ls">4.</num>
+        <num leos:origin="ls">
+            <del leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">5.</del>
+            <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">4.</ins>
+        </num>
         <content>
             <p>Exposures to institutions of a residual maturity of three months or less denominated and funded in the
                 national currency of the borrower shall be assigned a risk weight that is one category less favourable
@@ -80,7 +89,10 @@
         </content>
     </paragraph>
     <paragraph leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_xvW5wh">
-        <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_APOyUk">5.</num>
+        <num leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_APOyUk">
+            <del leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">6.</del>
+            <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">5.</ins>
+        </num>
         <content leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_vANnvu">
             <p leos:origin="ec" xml:id="imp_art_d1e9946_jmGg54_vnKNbB">Exposures to financial institutions authorised
                 and supervised by the competent authorities and subject to prudential requirements comparable to those

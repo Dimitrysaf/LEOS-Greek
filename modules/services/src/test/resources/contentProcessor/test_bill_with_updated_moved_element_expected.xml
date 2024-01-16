@@ -52,7 +52,10 @@
                     </content>
                 </paragraph>
                 <paragraph leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_eWhbrz">
-                    <num leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_M5LbN5">3.</num>
+                    <num leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_M5LbN5">
+                        <del leos:title="demo : 2024-01-11T09:33:34.172+01:00" leos:uid="demo">4.</del>
+                        <ins leos:title="demo : 2024-01-11T09:33:34.173+01:00" leos:uid="demo">3.</ins>
+                    </num>
                     <subparagraph leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_07Gi1E">
                         <content leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_2ErrTK">
                             <p leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_AXc5RD">When competent authorities of a
@@ -81,7 +84,10 @@
                     </subparagraph>
                 </paragraph>
                 <paragraph leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_8lPy12">
-                    <num leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_tqWJAh">4.</num>
+                    <num leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_tqWJAh">
+                        <del leos:title="demo : 2024-01-11T09:33:34.174+01:00" leos:uid="demo">5.</del>
+                        <ins leos:title="demo : 2024-01-11T09:33:34.174+01:00" leos:uid="demo">4.</ins>
+                    </num>
                     <content leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_JwiWat">
                         <p leos:origin="ec" xml:id="imp_art_d1e9661_OJ8Bry_9veV8E">Exposures to regional governments or
                             local authorities of the Member States that are not referred to in paragraphs 2 to 4 and are

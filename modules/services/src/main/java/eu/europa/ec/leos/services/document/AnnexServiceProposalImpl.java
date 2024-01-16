@@ -26,6 +26,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,9 +42,9 @@ public class AnnexServiceProposalImpl extends AnnexServiceImpl {
                              XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
                              NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
                              ValidationService validationService, DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
-                             MessageHelper messageHelper, XPathCatalog xPathCatalog) {
+                             MessageHelper messageHelper, XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
         super(annexRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, numberService, xmlNodeConfigProcessor,
-                validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog);
+                validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext);
     }
 
     @Override

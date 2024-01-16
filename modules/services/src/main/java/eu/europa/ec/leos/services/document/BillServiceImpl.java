@@ -35,6 +35,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.lang3.Validate;
@@ -70,6 +71,7 @@ public abstract class BillServiceImpl implements BillService {
     protected final MessageHelper messageHelper;
     protected final TableOfContentProcessor tableOfContentProcessor;
     protected final XPathCatalog xPathCatalog;
+    protected final TrackChangesContext trackChangesContext;
 
     @Autowired
     BillServiceImpl(BillRepository billRepository, PackageRepository packageRepository,
@@ -78,7 +80,7 @@ public abstract class BillServiceImpl implements BillService {
                     XmlNodeConfigProcessor xmlNodeConfigProcessor, AttachmentProcessor attachmentProcessor,
                     ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
                     MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
-                    XPathCatalog xPathCatalog) {
+                    XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
         this.billRepository = billRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -92,19 +94,24 @@ public abstract class BillServiceImpl implements BillService {
         this.messageHelper = messageHelper;
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.xPathCatalog = xPathCatalog;
+        this.trackChangesContext = trackChangesContext;
     }
 
     @Override
     public Bill findBill(String id, boolean latest) {
         LOG.trace("Finding Bill... [id={}]", id);
-        return billRepository.findBillById(id, Bill.class, latest);
+        Bill bill = billRepository.findBillById(id, Bill.class, latest);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        return bill;
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public Bill findBillVersion(String id) {
         LOG.trace("Finding Bill version... [it={}]", id);
-        return billRepository.findBillById(id, Bill.class, false);
+        Bill bill = billRepository.findBillById(id, Bill.class, false);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        return bill;
     }
 
     @Override
@@ -176,13 +183,16 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Updating Bill... [id={}, milestoneComments={}, versionType={}, comment={}]", bill.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(bill);
         bill = billRepository.updateMilestoneComments(bill.getId(), milestoneComments, updatedBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
         return bill;
     }
 
     @Override
     public Bill updateBillWithMilestoneComments(String ref, String billId, List<String> milestoneComments){
         LOG.trace("Updating Bill... [id={}, milestoneComments={}]", billId, milestoneComments);
-        return billRepository.updateMilestoneComments(ref, billId, milestoneComments);
+        Bill bill = billRepository.updateMilestoneComments(ref, billId, milestoneComments);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        return bill;
     }
 
     @Override
@@ -198,6 +208,7 @@ public abstract class BillServiceImpl implements BillService {
         bill = billRepository.updateBill(bill.getId(), bill.getMetadata().get(), updatedBytes, VersionType.MINOR, actionMsg);
 
         LOG.trace("Added attachment in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
         return bill;
     }
 
@@ -214,6 +225,7 @@ public abstract class BillServiceImpl implements BillService {
         bill = billRepository.updateBill(bill.getId(), bill.getMetadata().get(), updatedBytes, VersionType.MINOR, actionMsg);
 
         LOG.trace("Removed attachment from Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
         return bill;
     }
 
@@ -230,13 +242,14 @@ public abstract class BillServiceImpl implements BillService {
         bill = billRepository.updateBill(bill.getId(), bill.getMetadata().get(), updatedBytes, VersionType.MINOR, actionMsg);
 
         LOG.trace("Update attachments in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
         return bill;
     }
     
     @Override
     public Bill createVersion(String id, VersionType versionType, String comment) {
         LOG.trace("Creating Bill version... [id={}, versionType={}, comment={}]", id, versionType, comment);
-        final Bill bill = findBill(id, true);
+        Bill bill = findBill(id, true);
         final BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
         final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
         final byte[] contentBytes = content.getSource().getBytes();
@@ -276,7 +289,9 @@ public abstract class BillServiceImpl implements BillService {
     @Override
     public Bill findBillByRef(String ref) {
         LOG.trace("Finding Bill by ref... [ref=" + ref + "]");
-        return billRepository.findBillByRef(ref);
+        Bill bill = billRepository.findBillByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        return bill;
     }
     
     @Override
@@ -360,14 +375,18 @@ public abstract class BillServiceImpl implements BillService {
         Bill bill = billRepository.createBill(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Bill with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(bill) : content, metadata);
-        return billRepository.updateBill(bill.getId(), metadata, updatedBytes, VersionType.MINOR, actionMsg);
+        bill = billRepository.updateBill(bill.getId(), metadata, updatedBytes, VersionType.MINOR, actionMsg);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        return bill;
     }
 
     @Override
     public Bill createBillFromContent(String path, BillMetadata metadata, String actionMsg, byte[] content, String name) {
         LOG.trace("Creating Bill From Content... [path={}, metadata={}]", path, metadata);
         Bill bill = billRepository.createBillFromContent(path, name, metadata, content);
-        return billRepository.updateBill(bill.getId(), metadata, content, VersionType.MINOR, actionMsg);
+        bill = billRepository.updateBill(bill.getId(), metadata, content, VersionType.MINOR, actionMsg);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        return bill;
     }
 
 }

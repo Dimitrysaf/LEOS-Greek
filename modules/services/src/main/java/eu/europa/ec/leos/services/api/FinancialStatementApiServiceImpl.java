@@ -17,7 +17,6 @@ import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
-import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItem;
 import org.apache.http.MethodNotSupportedException;
@@ -35,9 +34,6 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     FinancialStatementService financialStatementService;
     @Autowired
     RepositoryPropertiesMapper repositoryPropertiesMapper;
-    @Autowired
-    TrackChangesContext trackChangesContext;
-
 
     @Override
     public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
@@ -47,7 +43,6 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
         String documentId = financialStatementService.findFinancialStatementByRef(documentRef).getId();
         FinancialStatement financialStatement = financialStatementService.updateFinancialStatement(documentRef,
                 documentId, properties, false);
-        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
         return true;
     }
 

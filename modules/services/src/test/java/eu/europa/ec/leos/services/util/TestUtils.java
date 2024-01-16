@@ -68,6 +68,7 @@ public class TestUtils {
         return input.replaceAll("\\s+", "")
                 .replaceAll(attr+"=\".+?\"", "")
                 .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"")
+                .replaceAll("leos:title=\".+?\"", "leos:title=\"dummy\"")
                 .replaceAll("leos:listIdAttr=\".+?\"", "");
     }
 

@@ -57,13 +57,19 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
         actualTargetItem,
         position,
       );
-      this.moveOriginAttribute(sourceItem, targetItem);
+      if (this.tocService.isClonedProposal) {
+        this.moveOriginAttribute(sourceItem, targetItem);
+      }
       this.setNumber(tocTree, sourceItem, targetItem);
-      sourceItem.softActionAttr = ADD;
-      sourceItem.trackChangeAction = LEOS_TC_INSERT_ACTION;
-      sourceItem.softActionRoot = true;
+      if (this.tocService.isTrackChangesEnabled) {
+        sourceItem.softActionAttr = ADD;
+        sourceItem.trackChangeAction = LEOS_TC_INSERT_ACTION;
+        sourceItem.softActionRoot = true;
+      }
     } else {
-      this.handleMoveAction(sourceItem, tocTree);
+      if (this.tocService.isTrackChangesEnabled) {
+        this.handleMoveAction(sourceItem, tocTree);
+      }
       super.addOrMoveItem(
         isAdd,
         sourceItem,
@@ -85,8 +91,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     tocTree: TableOfContentItemVO[],
   ) {
     if (
-      moveFromItem.originAttr !== null &&
-      moveFromItem.originAttr.toLowerCase() === EC &&
+      (!this.tocService.isClonedProposal || (moveFromItem.originAttr !== null && moveFromItem.originAttr.toLowerCase() === EC)) &&
       (moveFromItem.softActionAttr == null ||
         (!this.hasTocItemSoftAction(moveFromItem, MOVE_FROM) &&
           !this.hasTocItemSoftAction(moveFromItem, MOVE_TO) &&
@@ -94,12 +99,12 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
           !this.hasTocItemSoftAction(moveFromItem, DELETE)))
     ) {
       const moveTemp = this.copyMovingItemToTemp(moveFromItem, true, tocTree);
-      moveFromItem.originNumAttr = LS;
+      moveFromItem.originNumAttr = this.tocService.isClonedProposal ? LS : null;
       moveFromItem.softActionRoot = true;
 
       this.dropItemAtOriginalPosition(moveTemp, moveFromItem, tocTree);
     }
-    moveFromItem.originNumAttr = LS;
+    moveFromItem.originNumAttr = this.tocService.isClonedProposal ? LS : null;
     moveFromItem.softActionRoot = true;
     if (moveFromItem.softActionAttr === MOVE_FROM) {
       moveFromItem.softMoveFrom =
@@ -122,7 +127,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     //create a clone of the original item to a item with moved attributes
     const moveToItem = cloneDeep(originalItem);
     moveToItem.id = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + originalItem.id;
-    moveToItem.originNumAttr = EC;
+    moveToItem.originNumAttr = this.tocService.isClonedProposal ? EC : null;
     moveToItem.softUserAttr = null;
     moveToItem.softDateAttr = null;
     moveToItem.trackChangeAction = LEOS_TC_DELETE_ACTION;
@@ -142,7 +147,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
   }
 
   deleteItem(newTree: TableOfContentItemVO[], item: TableOfContentItemVO) {
-    if (this.documentConfig?.trackChangesEnabled) {
+    if (this.tocService.isTrackChangesEnabled) {
       softDeleteItem(newTree, item, LS);
     } else {
       this.removeNode(newTree, item);

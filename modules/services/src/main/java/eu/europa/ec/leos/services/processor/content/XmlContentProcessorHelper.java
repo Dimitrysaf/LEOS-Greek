@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.processor.content;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -80,6 +81,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_TRANS_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ELEMENT_NAME;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
@@ -240,6 +243,13 @@ public class XmlContentProcessorHelper {
             originNumAttr = getAttributeValue(numNode, LEOS_ORIGIN_ATTR);
             numId = getAttributeValue(numNode, XMLID);
             numSoftActionAttribute = getAttributeForSoftAction(numNode, LEOS_SOFT_ACTION_ATTR);
+            String numStr = XercesUtils.nodeToString(numNode);
+            if (numStr.contains("<" + LEOS_TC_DELETE_ELEMENT_NAME + " ")) {
+                Node insNode = getFirstChild(numNode, LEOS_TC_INSERT_ELEMENT_NAME);
+                if (insNode != null) {
+                    numNode = insNode;
+                }
+            }
             number = extractNumber(numNode.getTextContent() != null ? numNode.getTextContent().trim() : null, tocItem.isNumWithType());
             if (indentOriginType != null && indentOriginNumValue == null
                     && !indentOriginType.equals(IndentedItemType.OTHER_SUBPARAGRAPH)

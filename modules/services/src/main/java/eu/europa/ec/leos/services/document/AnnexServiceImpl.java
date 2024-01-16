@@ -35,6 +35,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.lang3.Validate;
@@ -67,13 +68,14 @@ public abstract class AnnexServiceImpl implements AnnexService {
     protected final MessageHelper messageHelper;
     protected final XPathCatalog xPathCatalog;
     protected final TableOfContentProcessor tableOfContentProcessor;
+    protected final TrackChangesContext trackChangesContext;
 
     @Autowired
     AnnexServiceImpl(AnnexRepository annexRepository, XmlNodeProcessor xmlNodeProcessor,
                      XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
                      NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
                      ValidationService validationService, DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
-                     MessageHelper messageHelper, XPathCatalog xPathCatalog) {
+                     MessageHelper messageHelper, XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
         this.annexRepository = annexRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
@@ -85,6 +87,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         this.messageHelper = messageHelper;
         this.xPathCatalog = xPathCatalog;
         this.tableOfContentProcessor = tableOfContentProcessor;
+        this.trackChangesContext = trackChangesContext;
     }
 
     @Override
@@ -96,14 +99,18 @@ public abstract class AnnexServiceImpl implements AnnexService {
     @Override
     public Annex findAnnex(String id, boolean latest) {
         LOG.trace("Finding Annex... [id={}]", id);
-        return annexRepository.findAnnexById(id, Annex.class, latest);
+        Annex annex = annexRepository.findAnnexById(id, Annex.class, latest);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return annex;
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public Annex findAnnexVersion(String id) {
         LOG.trace("Finding Annex version... [it={}]", id);
-        return annexRepository.findAnnexById(id, Annex.class, false);
+        Annex annex = annexRepository.findAnnexById(id, Annex.class, false);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return annex;
     }
 
     private Annex updateInternalReferencesAsync(Annex annex) {
@@ -185,13 +192,16 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Updating Annex... [id={}, milestoneComments={}, versionType={}, comment={}]", annex.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(annex);
         annex = annexRepository.updateMilestoneComments(annex.getId(), milestoneComments, updatedBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         return annex;
     }
 
     @Override
     public Annex updateAnnexWithMilestoneComments(String ref, String annexId, List<String> milestoneComments){
         LOG.trace("Updating Annex... [id={}, milestoneComments={}]", annexId, milestoneComments);
-        return annexRepository.updateMilestoneComments(ref, annexId, milestoneComments);
+        Annex annex = annexRepository.updateMilestoneComments(ref, annexId, milestoneComments);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return annex;
     }
 
     @Override
@@ -204,11 +214,13 @@ public abstract class AnnexServiceImpl implements AnnexService {
     @Override
     public Annex createVersion(String id, VersionType versionType, String comment) {
         LOG.trace("Creating Annex version... [id={}, versionType={}, comment={}]", id, versionType, comment);
-        final Annex annex = findAnnex(id, true);
+        Annex annex = findAnnex(id, true);
         final AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata is required!");
         final Content content = annex.getContent().getOrError(() -> "Annex content is required!");
         byte[] contentBytes = content.getSource().getBytes();
-        return annexRepository.updateAnnex(id, metadata, contentBytes, versionType, comment);
+        annex = annexRepository.updateAnnex(id, metadata, contentBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return annex;
     }
 
     @Override
@@ -254,7 +266,9 @@ public abstract class AnnexServiceImpl implements AnnexService {
     @Override
     public Annex findAnnexByRef(String ref) {
         LOG.trace("Finding Annex by ref... [ref=" + ref + "]");
-        return annexRepository.findAnnexByRef(ref);
+        Annex annex = annexRepository.findAnnexByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return annex;
     }
 
     @Override
@@ -325,7 +339,9 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Annex annex = annexRepository.createAnnex(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Annex with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(annex) : content, metadata);
-        return annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return annex;
     }
 
     @Override
@@ -340,20 +356,26 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.info("Created Annex with ref '{}' in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(annex) : content, metadata);
         updatedBytes = xmlContentProcessor.addTrackChangesAttributes(updatedBytes);
-        return annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return annex;
     }
 
     @Override
     public Annex createAnnexFromContent(String path, AnnexMetadata metadata, String actionMessage, byte[] content, String name) {
         LOG.trace("Creating Annex From Content... [path={}, metadata={}]", path, metadata);
         Annex annex = annexRepository.createAnnexFromContent(path, name, metadata, content);
-        return annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return annex;
     }
 
     @Override
     public Annex createClonedAnnexFromContent(String path, AnnexMetadata metadata, CloneDocumentMetadataVO cloneDocumentMetadataVO, String actionMessage, byte[] content, String name) {
         LOG.trace("Creating cloned Annex From Content... [path={}, metadata={}]", path, metadata);
         Annex annex = annexRepository.createClonedAnnexFromContent(path, name, metadata, cloneDocumentMetadataVO, content);
-        return annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage);
+        annex = annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        return annex;
     }
 }

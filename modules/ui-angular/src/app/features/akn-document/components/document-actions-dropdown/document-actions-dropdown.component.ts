@@ -12,7 +12,7 @@ import {
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {combineLatest, Subject, takeUntil} from 'rxjs';
+import {BehaviorSubject, combineLatest, Observable, Subject, takeUntil} from 'rxjs';
 
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';
@@ -68,11 +68,15 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    combineLatest([this.doc.documentConfig$, this.doc.permissions$])
+     combineLatest([this.doc.documentConfig$, this.doc.permissions$])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([config, perms]) => {
         this.setMenuState(config, perms);
       });
+  }
+
+  updateTrackChangesStatus() {
+    this.doc.updateTrackChangesStatus({isTrackChangesEnabled: this.isTrackChangesEnabled, isTrackChangesShowed: this.seeTrackChanges})
   }
 
   handleAnnexStructureChange() {
@@ -82,6 +86,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   toggleSeeTrackChanges() {
     this.seeTrackChanges = !this.seeTrackChanges;
     this.ckEditorService.changeSeeTrackChangesState();
+    this.updateTrackChangesStatus();
   }
 
   showCleanVersion() {
@@ -92,6 +97,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     this.isTrackChangesEnabled = !this.isTrackChangesEnabled;
     this.ckEditorService.changeEnableTrackChangesState(this.isTrackChangesEnabled);
     this.doc.toggleTrackChangesEnabled(this.isTrackChangesEnabled);
+    this.updateTrackChangesStatus();
   }
 
   onApplyContinuousNumberingSelect() {
@@ -144,6 +150,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     this.showCleanVersionVisible = (isCN || isClonedProposal) && !isMandateMemorandum;
     this.isClonedProposal = isClonedProposal;
     this.isTrackChangesEnabled = isTCEnabled;
+    this.updateTrackChangesStatus();
   }
   setTrackChangesEnabled() {
 

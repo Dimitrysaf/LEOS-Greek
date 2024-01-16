@@ -27,6 +27,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +49,9 @@ public class ProposalServiceMandateImpl extends ProposalServiceImpl {
                                       XmlContentProcessor xmlContentProcessor,
                                       XmlNodeConfigProcessor xmlNodeConfigProcessor, PackageRepository packageRepository,
                                       XPathCatalog xPathCatalog, TableOfContentProcessor tableOfContentProcessor,
-                                      MessageHelper messageHelper) {
+                                      MessageHelper messageHelper, TrackChangesContext trackChangesContext) {
         super(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor, packageRepository,
-                xPathCatalog, tableOfContentProcessor, messageHelper);
+                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext);
     }
 
     @Override

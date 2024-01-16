@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.test.support.LeosTest;
 import io.atlassian.fugue.Option;
@@ -78,6 +79,8 @@ public class AnnexServiceImplTest extends LeosTest {
     @Mock
     private XPathCatalog xPathCatalog;
     @Mock
+    private TrackChangesContext trackChangesContext;
+    @Mock
     private LeosRepository leosRepository;
     private UpdateInternalReferencesMessage message;
 
@@ -91,7 +94,7 @@ public class AnnexServiceImplTest extends LeosTest {
         message = new UpdateInternalReferencesMessage(objectId, "annex");
         annexService = new AnnexServiceMandateImpl(annexRepository, xmlNodeProcessor,
                 xmlContentProcessor, xmlDocumentService, numberService, xmlNodeConfigProcessor, validationService,
-                documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog);
+                documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext);
 
     }
 
@@ -99,7 +102,7 @@ public class AnnexServiceImplTest extends LeosTest {
     public void test_updateBaseVersionId() throws Exception {
         Annex mockedAnnex = getMockedAnnexWithBaseVersionId();
         when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(mockedAnnex);
-        when(annexService.findAnnex(mockedAnnex.getId(), true)).thenReturn(mockedAnnex);
+        when(annexRepository.findAnnexById(mockedAnnex.getId(), Annex.class, true)).thenReturn(mockedAnnex);
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), baseVersionId);
         Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);
@@ -110,7 +113,7 @@ public class AnnexServiceImplTest extends LeosTest {
     public void test_enableLiveDiffing() throws Exception {
         Annex mockedAnnex = getMockedAnnexWithLiveDiffing();
         when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(mockedAnnex);
-        when(annexService.findAnnex(mockedAnnex.getId(), true)).thenReturn(mockedAnnex);
+        when(annexRepository.findAnnexById(mockedAnnex.getId(), Annex.class, true)).thenReturn(mockedAnnex);
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), true);
         Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);
@@ -121,7 +124,7 @@ public class AnnexServiceImplTest extends LeosTest {
     public void test_disableLiveDiffing() throws Exception {
         Annex mockedAnnex = getMockedAnnexWithoutLiveDiffing();
         when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(mockedAnnex);
-        when(annexService.findAnnex(mockedAnnex.getId(), true)).thenReturn(mockedAnnex);
+        when(annexRepository.findAnnexById(mockedAnnex.getId(), Annex.class, true)).thenReturn(mockedAnnex);
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), false);
         Annex annex = annexService.updateAnnex(objectId, objectId, properties, true);

@@ -20,7 +20,6 @@ import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.clone.CloneContext;
-import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
@@ -168,7 +167,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         }
         String tagName = tocVo.getTocItem().getAknTag().value();
 
-        if (isClonedProposal()) {
+        if (isTrackChangesEnabled()) {
             if (SoftActionType.MOVE_TO.equals(tocVo.getSoftActionAttr())) {
                 updateXMLIDAttributeFullStructureNode(node, SOFT_MOVE_PLACEHOLDER_ID_PREFIX, false);
             } else if (SoftActionType.DELETE.equals(tocVo.getSoftActionAttr())) {
@@ -206,7 +205,8 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                     moveId = null;
             }
         }
-        XmlContentProcessorHelper.updateSoftInfo(node, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), moveId,
+        XmlContentProcessorHelper.updateSoftInfo(node, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user,
+                cloneContext.isClonedProposal() ? tocVo.getOriginAttr() : EC, moveId,
                 tocVo, getOriginOfDocument(node));
     }
 
@@ -319,7 +319,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Override
     public byte[] removeElementById(byte[] xmlContent, String elementId, boolean isTrackChangesEnabled) {
-        if (isClonedProposal()) {
+        if (isTrackChangesEnabled()) {
             Element element = getElementById(xmlContent, elementId);
             if (element == null) {
                 return xmlContent;
@@ -331,7 +331,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Override
     public void removeElement(Node node) {
-        if (isClonedProposal()) {
+        if (isTrackChangesEnabled()) {
             super.removeElement(node);
         } else {
             XercesUtils.deleteElement(node);
@@ -340,22 +340,24 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Override
     public void specificInstanceXMLPostProcessing(Node node) {
-        if (isClonedProposal()) {
+        if (isTrackChangesEnabled()) {
             removeTempIdAttributeIfExists(node);
             updateSoftMoveLabelAttribute(node, LEOS_SOFT_MOVE_TO);
             updateSoftMoveLabelAttribute(node, LEOS_SOFT_MOVE_FROM);
-            updateNewElements(node, CITATION, null, LS);
-            updateNewElements(node, RECITAL, null, LS);
-            updateNewElements(node, ARTICLE, null, LS);
-            updateNewElements(node, PARAGRAPH, SUBPARAGRAPH, LS);
-            updateNewElements(node, POINT, SUBPARAGRAPH, LS);
-            updateNewElements(node, INDENT, SUBPARAGRAPH, LS);
-            updateNewElements(node, LIST, SUBPARAGRAPH, LS);
-            updateNewElements(node, POINT, SUBPOINT, LS);
-            updateNewElements(node, INDENT, SUBPOINT, LS);
-            updateNewElements(node, PREFACE, null, LS);
-            updateNewElements(node, MAIN_BODY, null, LS);
-            updateNewElements(node, LEVEL, SUBPARAGRAPH, LS);
+            if (isClonedProposal()) {
+                updateNewElements(node, CITATION, null, LS);
+                updateNewElements(node, RECITAL, null, LS);
+                updateNewElements(node, ARTICLE, null, LS);
+                updateNewElements(node, PARAGRAPH, SUBPARAGRAPH, LS);
+                updateNewElements(node, POINT, SUBPARAGRAPH, LS);
+                updateNewElements(node, INDENT, SUBPARAGRAPH, LS);
+                updateNewElements(node, LIST, SUBPARAGRAPH, LS);
+                updateNewElements(node, POINT, SUBPOINT, LS);
+                updateNewElements(node, INDENT, SUBPOINT, LS);
+                updateNewElements(node, PREFACE, null, LS);
+                updateNewElements(node, MAIN_BODY, null, LS);
+                updateNewElements(node, LEVEL, SUBPARAGRAPH, LS);
+            }
         }
     }
 
@@ -689,13 +691,17 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         }
     }
 
+    private boolean isTrackChangesEnabled() {
+        return trackChangesContext != null && trackChangesContext.isTrackChangesEnabled();
+    }
+
     private boolean isClonedProposal() {
         return cloneContext != null && cloneContext.isClonedProposal();
     }
 
     private Node buildHeadingNode(Node node, TableOfContentItemVO tocVo, User user) {
         Node headingNode = XmlContentProcessorHelper.extractOrBuildHeaderElement(node, tocVo, user);
-        if (isClonedProposal()) {
+        if (isTrackChangesEnabled()) {
             XmlContentProcessorHelper.addUserInfoIfContentHasChanged(getFirstChild(node, HEADING), headingNode, user);
         }
         return headingNode;
@@ -703,7 +709,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     private Node buildNumNode(Node node, TableOfContentItemVO tocVo) {
         Node numNode = XmlContentProcessorHelper.extractOrBuildNumElement(node, tocVo);
-        if (!isClonedProposal() && XercesUtils.containsAttributeWithValue(numNode, LEOS_ORIGIN_ATTR, LS)) {
+        if (!isTrackChangesEnabled() && XercesUtils.containsAttributeWithValue(numNode, LEOS_ORIGIN_ATTR, LS)) {
             // On TOC drag & drop there´s no clone context (request scope) and then items are added with
             // soft action ADD and origin LS on no cloned proposals.
             XercesUtils.removeAttribute(numNode, LEOS_ORIGIN_ATTR);

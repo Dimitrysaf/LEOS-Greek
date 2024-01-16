@@ -129,6 +129,9 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$: Subject<any> = new Subject();
   private zoneOnStable$: Observable<any>;
 
+  private seeTrackChanges: boolean = false;
+  private trackChangesEnabled: boolean = false;
+
   constructor(
     private documentService: DocumentService,
     private dialogService: EuiDialogService,
@@ -180,10 +183,26 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe((result) => {
         this.handleNodeValidationResult(result);
       });
+
+    this.documentService.trackChangesStatus$.subscribe((status) => {
+      this.seeTrackChanges = this.documentService.isCNInstance() || status.isTrackChangesShowed;
+      this.trackChangesEnabled = status.isTrackChangesEnabled;
+    });
   }
 
   ngAfterViewInit() {
     this.setupResizeObserver();
+  }
+
+  seeTocItemStyling() {
+    return this.seeTrackChanges;
+  }
+
+  shouldBeVisible(node: TableOfContentItemVO): boolean {
+    if (!this.seeTrackChanges) {
+      return !node.trackChangeAction || (node.trackChangeAction !== LEOS_TC_DELETE_ACTION);
+    }
+    return true;
   }
 
   getNodeTooltip(node: TableOfContentItemVO): string {
@@ -196,6 +215,19 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
   isLabelTextMoreThanOneLine(label: string) {
     return label.length >= ONE_LINE_NODE_LABEL_LENGTH;
+  }
+
+  getNodeStyling(node: TableOfContentItemVO): string {
+    if (this.seeTocItemStyling()) {
+      return node.tocStyling;
+    }
+  }
+
+  getNodeLabel(label: string) {
+    if (!this.seeTocItemStyling()) {
+      return label.replace(/<span class="leos-soft-move-label">.*?<\/span>/ig,'');
+    }
+    return label;
   }
 
   getChildren = (node: TableOfContentItemVO) => node.childItems;

@@ -75,7 +75,6 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.toc.StructureContext;
-import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
@@ -150,8 +149,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
     @Autowired
     RepositoryPropertiesMapper repositoryPropertiesMapper;
-    @Autowired
-    TrackChangesContext trackChangesContext;
     @Autowired
     @Qualifier("applicationProperties")
     private Properties applicationProperties;
@@ -609,7 +606,6 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 isTrackChangeEnabled);
         String documentId = annexService.findAnnexByRef(documentRef).getId();
         Annex annex = annexService.updateAnnex(documentRef, documentId, properties, false);
-        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
         return true;
     }
 

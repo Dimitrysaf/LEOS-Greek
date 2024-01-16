@@ -26,6 +26,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,9 +47,9 @@ public class ProposalServiceProposalImpl extends ProposalServiceImpl {
                                        XmlContentProcessor xmlContentProcessor,
                                        XmlNodeConfigProcessor xmlNodeConfigProcessor, PackageRepository packageRepository,
                                        XPathCatalog xPathCatalog, TableOfContentProcessor tableOfContentProcessor,
-                                       MessageHelper messageHelper) {
+                                       MessageHelper messageHelper, TrackChangesContext trackChangesContext) {
         super(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor, packageRepository,
-                xPathCatalog, tableOfContentProcessor, messageHelper);
+                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext);
     }
 
     @Override

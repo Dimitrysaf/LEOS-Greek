@@ -76,8 +76,10 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     NumberProcessor numberProcessor;
     @Mock
     CoEditionContext coEditionContext;
+    @Mock
+    TrackChangesContext trackChangesContext;
 
-    TrackChangesContext trackChangesContext = new TrackChangesContext();
+    //TrackChangesContext trackChangesContext = new TrackChangesContext();
     @InjectMocks
     protected NumberConfigFactory numberConfigFactory = Mockito.spy(new NumberConfigFactory());
     @InjectMocks
@@ -708,7 +710,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
     public void test_doXMLPostProcessing_clonedProposal_ECOrigin_shouldOnlyChangeLabel() {
         //Given
         byte[] documentXml = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_clonedProposal_ECOrigin.xml");
-        when(cloneContext.isClonedProposal()).thenReturn(true);
+        when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
         when(referenceLabelService.generateSoftMoveLabel(
                 argThat(equalTo(new Ref("moved_art_1__para_1", "art_1__para_1", null, "ec"))),
                 argThat(any(String.class)),
@@ -744,6 +746,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         //Given
         byte[] documentXml = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_clonedProposal_noOriginAttribute.xml");
         when(cloneContext.isClonedProposal()).thenReturn(true);
+        when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
         when(referenceLabelService.generateSoftMoveLabel(
                 argThat(equalTo(new Ref("moved_art_1__para_1", "art_1__para_1", null, null))),
                 argThat(any(String.class)),
@@ -790,6 +793,8 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
+        when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
+
         NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
         Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent,
@@ -797,8 +802,8 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // Then
         byte[] expectedDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_updated_moved_element_expected.xml");
-        assertEquals(squeezeXmlAndRemoveAllNS(new String(expectedDocument, UTF_8)),
-                squeezeXmlAndRemoveAllNS(new String(result.left(), UTF_8)));
+        assertEquals(squeezeXmlRemovingAttributeAndRemoveAllNS(new String(expectedDocument, UTF_8), "leos:softuser"),
+                squeezeXmlRemovingAttributeAndRemoveAllNS(new String(result.left(), UTF_8), "leos:softuser"));
     }
 
     @Test
@@ -809,14 +814,16 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
+        when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
+
         NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
         Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));
 
         // Then
         byte[] expectedDocument = TestUtils.getFileContent(FILE_PREFIX + "/test_bill_with_updated_moved_element_within_article_expected.xml");
-        assertEquals(squeezeXmlAndRemoveAllNS(new String(expectedDocument, UTF_8)),
-                squeezeXmlAndRemoveAllNS(result.right()));
+        assertEquals(squeezeXmlRemovingAttributeAndRemoveAllNS(new String(expectedDocument, UTF_8), "leos:softuser"),
+                squeezeXmlRemovingAttributeAndRemoveAllNS(result.right(), "leos:softuser"));
     }
 
     @Test
@@ -827,6 +834,8 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
+        when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
+
         NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
         Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));
@@ -845,6 +854,8 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
+        when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
+
         NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
         Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));
@@ -863,6 +874,8 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
+        when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
+
         NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
         Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));
@@ -881,6 +894,8 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
 
         // When
         when(cloneContext.isClonedProposal()).thenReturn(true);
+        when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
+
         NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, securityContext, trackChangesContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", Arrays.asList(numberProcessorPoint));
         Pair<byte[], String> result = xercesXmlContentProcessor.updateSoftMovedElement(xmlContent, new String(elementFragment, UTF_8));

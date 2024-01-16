@@ -19,6 +19,7 @@ import java.util.Map;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -74,6 +75,8 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 	@Mock
 	private XPathCatalog xPathCatalog;
 	@Mock
+	private TrackChangesContext trackChangesContext;
+	@Mock
 	private LeosRepository leosRepository;;
 	
 	private String objectId = "555";
@@ -87,7 +90,7 @@ public class ExplanatoryServiceImplTest extends LeosTest {
 		
 		explanatoryService = new ExplanatoryServiceImpl(explanatoryRepository, 
 				packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, numberService,
-				xmlNodeConfigProcessor, validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog);
+				xmlNodeConfigProcessor, validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext);
 	}
 	
 	@Test

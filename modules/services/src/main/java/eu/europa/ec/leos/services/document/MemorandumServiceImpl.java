@@ -31,6 +31,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.lang3.Validate;
@@ -62,6 +63,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     protected final DocumentVOProvider documentVOProvider;
     protected final MessageHelper messageHelper;
     protected final XPathCatalog xPathCatalog;
+    protected final TrackChangesContext trackChangesContext;
 
     @Autowired
     MemorandumServiceImpl(MemorandumRepository memorandumRepository,
@@ -70,7 +72,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
                           XmlContentProcessor xmlContentProcessor,
                           XmlNodeConfigProcessor xmlNodeConfigProcessor, ValidationService validationService,
                           DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
-                          MessageHelper messageHelper, XPathCatalog xPathCatalog) {
+                          MessageHelper messageHelper, XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
         this.memorandumRepository = memorandumRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -81,19 +83,24 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.messageHelper = messageHelper;
         this.xPathCatalog = xPathCatalog;
+        this.trackChangesContext = trackChangesContext;
     }
 
     @Override
     public Memorandum findMemorandum(String id, boolean latest) {
         LOG.trace("Finding Memorandum... [id={}]", id);
-        return memorandumRepository.findMemorandumById(id, id, Memorandum.class, latest);
+        Memorandum memorandum = memorandumRepository.findMemorandumById(id, id, Memorandum.class, latest);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
 
     @Override
     @Cacheable(value = "docVersions")
     public Memorandum findMemorandumVersion(String id) {
         LOG.trace("Finding Memorandum version... [id={}]", id);
-        return memorandumRepository.findMemorandumById(id, null, Memorandum.class, false);
+        Memorandum memorandum = memorandumRepository.findMemorandumById(id, null, Memorandum.class, false);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
     
     @Override
@@ -116,33 +123,41 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         memorandum = memorandumRepository.updateMemorandum(memorandum.getId(), updatedMemorandumContent, versionType, comment);
         //call validation on document with updated content
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(memorandum, updatedMemorandumContent));
-        
+
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
         return memorandum;
     }
 
     @Override
     public Memorandum updateMemorandum(String ref, String memorandumId, MemorandumMetadata updatedMetadata) {
         LOG.trace("Updating Memorandum Xml Content... [id={}]", memorandumId);
-        return memorandumRepository.updateMemorandum(ref, memorandumId, updatedMetadata);
+        Memorandum memorandum = memorandumRepository.updateMemorandum(ref, memorandumId, updatedMetadata);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
 
     @Override
     public Memorandum updateMemorandum(String ref, String memorandumId, Map<String, Object> properties, boolean latest) {
         LOG.trace("Updating Memorandum metadata properties...");
-        return memorandumRepository.updateMemorandum(ref, memorandumId, properties, latest);
+        Memorandum memorandum = memorandumRepository.updateMemorandum(ref, memorandumId, properties, latest);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
 
     @Override
     public Memorandum updateMemorandum(Memorandum memorandum, byte[] updatedMemorandumContent, String comment) {
         LOG.trace("Updating Memorandum Xml Content... [id={}]", memorandum.getId());
         memorandum = memorandumRepository.updateMemorandum(memorandum.getId(), updatedMemorandumContent, VersionType.MINOR, comment);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
         return memorandum;
     }
 
     @Override
     public Memorandum updateMemorandum(String id, byte[] updatedMemorandumContent) {
         LOG.trace("Updating Memorandum Xml Content... [id={}]", id);
-        return memorandumRepository.updateMemorandum(id, updatedMemorandumContent, VersionType.MINOR, "Content updated");
+        Memorandum memorandum = memorandumRepository.updateMemorandum(id, updatedMemorandumContent, VersionType.MINOR, "Content updated");
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
 
     @Override
@@ -157,6 +172,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         validationService.validateDocumentAsync(documentVOProvider.createDocumentVO(memorandum, updatedBytes));
         
         LOG.trace("Updated Memorandum ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
         return memorandum;
     }
 
@@ -165,13 +181,16 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         LOG.trace("Updating Memorandum... [id={}, milestoneComments={}, versionType={}, comment={}]", memorandum.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(memorandum);
         memorandum = memorandumRepository.updateMilestoneComments(memorandum.getId(), milestoneComments, updatedBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
         return memorandum;
     }
 
     @Override
     public Memorandum updateMemorandumWithMilestoneComments(String ref, String memorandumId, List<String> milestoneComments){
         LOG.trace("Updating Memorandum... [id={}, milestoneComments={}]", memorandumId, milestoneComments);
-        return memorandumRepository.updateMilestoneComments(ref, memorandumId, milestoneComments);
+        Memorandum memorandum = memorandumRepository.updateMilestoneComments(ref, memorandumId, milestoneComments);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
 
     @Override
@@ -197,11 +216,13 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     @Override
     public Memorandum createVersion(String id, VersionType versionType, String comment) {
         LOG.trace("Creating Memorandum version... [id={}, versionType={}, comment={}]", id, versionType, comment);
-        final Memorandum memorandum = findMemorandum(id, true);
+        Memorandum memorandum = findMemorandum(id, true);
         final MemorandumMetadata metadata = memorandum.getMetadata().getOrError(() -> "Memorandum metadata is required!");
         final Content content = memorandum.getContent().getOrError(() -> "Memorandum content is required!");
         final byte[] contentBytes = content.getSource().getBytes();
-        return memorandumRepository.updateMemorandum(id, metadata, contentBytes, versionType, comment);
+        memorandum = memorandumRepository.updateMemorandum(id, metadata, contentBytes, versionType, comment);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
 
     protected byte[] getContent(Memorandum memorandum) {
@@ -212,7 +233,9 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     @Override
     public Memorandum findMemorandumByRef(String ref) {
         LOG.trace("Finding Memorandum by ref... [ref=" + ref + "]");
-        return memorandumRepository.findMemorandumByRef(ref);
+        Memorandum memorandum = memorandumRepository.findMemorandumByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
     
     @Override
@@ -270,13 +293,17 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         Memorandum memorandum = memorandumRepository.createMemorandum(templateId, path, ref + XML_DOC_EXT, metadata);
         LOG.info("Created Memorandum ref {} in path {}", ref, path);
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(memorandum) : content, metadata);
-        return memorandumRepository.updateMemorandum(memorandum.getId(), metadata, updatedBytes, VersionType.MINOR, actionMsg);
+        memorandum = memorandumRepository.updateMemorandum(memorandum.getId(), metadata, updatedBytes, VersionType.MINOR, actionMsg);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
 
     @Override
     public Memorandum createMemorandumFromContent(String path, MemorandumMetadata metadata, String actionMsg, byte[] content, String name) {
         LOG.trace("Creating Memorandum... [ path={}, metadata={}]", path, metadata);
         Memorandum memorandum = memorandumRepository.createMemorandumFromContent(path, name, metadata, content);
-        return memorandumRepository.updateMemorandum(memorandum.getId(), metadata, content, VersionType.MINOR, actionMsg);
+        memorandum = memorandumRepository.updateMemorandum(memorandum.getId(), metadata, content, VersionType.MINOR, actionMsg);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
     }
 }

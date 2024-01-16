@@ -64,6 +64,7 @@ import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.toc.StructureContext;
 import eu.europa.ec.leos.services.toc.StructureService;
 import eu.europa.ec.leos.services.toc.StructureServiceImpl;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
@@ -148,6 +149,8 @@ public class LegServiceImplTest {
 	private IndentHelper indentHelper;
 	@Mock
 	private TableOfContentProcessor tableOfContentProcessor;
+	@Mock
+	private TrackChangesContext trackChangesContext;
 
 	@InjectMocks
 	private XPathCatalog xPathCatalog = spy(new XPathCatalog());
@@ -178,7 +181,7 @@ public class LegServiceImplTest {
 	
 	@InjectMocks
 	private ProposalService proposalService = spy(new ProposalServiceProposalImpl(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor, packageRepository, xPathCatalog,
-									tableOfContentProcessor, messageHelper));
+									tableOfContentProcessor, messageHelper, trackChangesContext));
 
 	@InjectMocks
 	private LegServiceImpl legService;
