@@ -33,7 +33,8 @@ define(function toolbarPositionAdapterModule(require) {
         log.debug("Attaching toolbarPosition router...");
         var editor = event.editor;
         var connector = event.listenerData;
-        var rootElement = UTILS.getParentElement(connector);
+        var rootElement = UTILS.getParentElement(connector).parentElement;
+        //var rootElement = document.getElementById();
         repositionHandler = _repositionEditor.bind(undefined, editor);
         $(rootElement).on("scroll.editor." + editor.id, repositionHandler);
         connector.addResizeListener(rootElement, repositionHandler);
