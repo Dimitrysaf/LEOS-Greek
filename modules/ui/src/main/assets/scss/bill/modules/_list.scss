@@ -54,7 +54,7 @@ $LIST_SPACING: 40px;
             @extend %padList;
         }
     }
-    paragraph > list:not(:nth-child(1)):not(:nth-child(2)) > subparagraph {
+    paragraph > list:not(:nth-child(1)):not(:nth-child(2)) > subparagraph:not([leos\:action-enter="insert"]) {
         padding-left: $LIST_SPACING;
     }
     paragraph > list > subparagraph:not(:nth-child(1)) {
