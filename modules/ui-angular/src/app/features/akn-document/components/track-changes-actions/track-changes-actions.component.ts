@@ -2,7 +2,6 @@ import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
-  Input,
   OnDestroy,
   OnInit,
 } from '@angular/core';
@@ -16,8 +15,6 @@ import {
 } from '@/features/akn-document/services/track-changes-actions.service';
 import { DocumentConfig, LeosConfig, Permission } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
-
-import { appConfig } from '../../../../../config';
 
 @Component({
   selector: 'app-track-changes-actions',

@@ -21,6 +21,8 @@ export class RevisionActionsDropdownComponent implements OnInit {
   versionModalText: string;
   versionToDecline = '';
   ContributionStatus = ContributionStatus;
+  processed = false;
+  contributionPaneOpened = false;
 
   constructor(
     public documentService: DocumentService,
@@ -28,46 +30,28 @@ export class RevisionActionsDropdownComponent implements OnInit {
     private appShellService: UxAppShellService,
   ) {}
 
-  ngOnInit(): void {}
-
-  onContributionDecline(
-    version: string,
-    versionNumber: { major: number; intermediate: number; minor: number },
-  ) {
-    this.translate
-      .get('page.editor.contribution.decline.modal-text-version', {
-        versionNumber: `${versionNumber.major}.${versionNumber.intermediate}.${versionNumber.minor}`,
-      })
-      .subscribe((res) => {
-        this.versionModalText = res;
+  ngOnInit(): void {
+    this.documentService.contributionModeEnabled$
+      .subscribe((enabled) => {
+        this.contributionPaneOpened = enabled;
       });
-    this.versionToDecline = version;
-    this.declineContributionDialog.openDialog();
-  }
-
-  onClickViewAndMerge(contribution: ContributionVO) {
-    this.documentService.viewAndMergeContribution(contribution);
-    this.documentService.updateProcessedStatus(false, contribution);
   }
 
   onClickSendFeedback(contribution: ContributionVO) {
     // do nothing for the moment
   }
+
   onClickApplyAllChanges(contribution: ContributionVO) {
     // do nothing for the moment
   }
 
-  onClickApplyAllWithTrackChanges(contribution: ContributionVO) {
-   // do nothing for the moment
- }
+  onClickApplyAllChangesWithTC(contribution: ContributionVO) {
+    // do nothing for the moment
+  }
+
   onClickMarkAsProcessed(contribution: ContributionVO) {
     this.documentService.toggleIsContributionDeclinedOrProcessed();
     this.markContributionAsProcessedDialog.openDialog();
-  }
-
-  onClickView(contribution: ContributionVO) {
-    this.documentService.viewAndMergeContribution(contribution);
-    this.documentService.updateProcessedStatus(true, contribution);
   }
 
   onAccept() {

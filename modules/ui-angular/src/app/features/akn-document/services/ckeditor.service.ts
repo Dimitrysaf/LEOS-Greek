@@ -32,6 +32,7 @@ import { CheckBoxesConnector } from './check-boxes-connector';
 import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './table-of-content.service';
+import {MergeActionsService} from "@/features/akn-document/services/merge-actions.service";
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -67,6 +68,7 @@ export class CKEditorService implements OnDestroy {
     private environmentService: EnvironmentService,
     @Inject(DOCUMENT) private domDocument: Document,
     private blockDocumentEditorService: BlockDocumentEditorService,
+    private mergeActionsService: MergeActionsService,
   ) {}
 
   ngOnDestroy() {
@@ -343,6 +345,7 @@ export class CKEditorService implements OnDestroy {
           {
             rootElement,
           },
+          this.mergeActionsService,
         );
 
         require(['extension/mergeContributionExtension'], (

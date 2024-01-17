@@ -228,14 +228,18 @@ $BLACK : #000000;
     }
 
     %contributionAction {
-        color: black;
         padding-right: 2px;
         font-size: small;
+        > img {
+            border: none;
+        }
     }
 
     %mergeContributionWrapper {
         border: medium dotted $GREY_COLOR;
-        margin: 5px;
+        margin-bottom: 5px;
+        margin-left: 1px;
+        margin-right: 7px;
         width: 100%;
     }
 
@@ -249,7 +253,7 @@ $BLACK : #000000;
             display: inline-block;
             float: right;
             cursor: pointer;
-            > .accept, > .reject, > .undo {
+            > .accepted, > .accepted_tc, > .processed, > .undo {
                 @extend %contributionAction;
             }
         }
@@ -293,7 +297,10 @@ $BLACK : #000000;
     }
 
     .selected-contribution-wrapper {
-        background-color: #E1EFFE;
+        background-color: #E1EFFE !important;
         border-color: #ADB4BB;
+        [leos\:uid] {
+            background-color: #E1EFFE !important;
+        }
     }
 }

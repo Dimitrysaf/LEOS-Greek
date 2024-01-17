@@ -786,6 +786,10 @@
               class="eui-u-flex eui-u-flex-row app-u-gap-xs"
               style="max-width: fit-content"
             >
+              <app-revision-actions-dropdown
+                [contribution]="contribution"
+                class="col-md-3"
+              ></app-revision-actions-dropdown>
               <button
                 euiButton
                 euiPrimary
@@ -830,6 +834,7 @@
             #contributionViewContainer
             containerId="contributionViewContainer"
             [xml]="contributionForView"
+            [contributionView]=true
             [containerClass]="{
               'leos-revision-content': true,
               'sync-scroll': true,
@@ -837,6 +842,10 @@
             }"
           >
           </app-document>
+          <app-merge-actions
+            [contribution]="contribution"
+          >
+          </app-merge-actions>
         </eui-page-column-body>
       </eui-page-column>
 

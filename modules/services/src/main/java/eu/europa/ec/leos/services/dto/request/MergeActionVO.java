@@ -7,6 +7,7 @@ public class MergeActionVO {
     ElementState elementState;
     String elementId;
     String elementTagName;
+    Boolean withTrackChanges = false;
     ContributionVO contributionVO;
 
     public enum MergeAction {ACCEPT, REJECT, UNDO}
@@ -50,5 +51,13 @@ public class MergeActionVO {
 
     public void setContributionVO(ContributionVO contributionVO) {
         this.contributionVO = contributionVO;
+    }
+
+    public Boolean isWithTrackChanges() {
+        return withTrackChanges;
+    }
+
+    public void setWithTrackChanges(Boolean withTrackChanges) {
+        this.withTrackChanges = withTrackChanges;
     }
 }

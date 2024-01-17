@@ -58,6 +58,8 @@ import { TableOfContentProposalEditService } from './services/table-of-content-e
 import { TableOfContentEditService } from './services/table-of-content-edit.service';
 import { ValidateTocProposalService } from './services/validate-node-drop.proposal.service';
 import { ValidateTocService } from './services/validate-node-drop.service';
+import {MergeActionsService} from "@/features/akn-document/services/merge-actions.service";
+import {MergeActionsComponent} from "@/shared/components/merge-actions/merge-actions.component";
 
 export const DOCUMENT_ACTIONS_SERVICE =
   new InjectionToken<DocumentActionsService>('DocumentActionsService');
@@ -90,6 +92,7 @@ export const DOCUMENT_ACTIONS_SERVICE =
     RibbonToolbarDropdownComponent,
     RibbonToolbarBaseComponent,
     TrackChangesActionsComponent,
+    MergeActionsComponent,
     TocActionMenuComponent,
     SaveVersionComponent,
     DocumentActionsDropdownComponent,
@@ -140,7 +143,8 @@ export const DOCUMENT_ACTIONS_SERVICE =
     TrackChangesActionsService,
     CKEditorService,
     BlockDocumentEditorService,
+    MergeActionsService,
   ],
-  exports: [TrackChangesActionsComponent],
+  exports: [TrackChangesActionsComponent, MergeActionsComponent],
 })
 export class AknDocumentModule {}

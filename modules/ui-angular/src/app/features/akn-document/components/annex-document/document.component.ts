@@ -40,6 +40,7 @@ export class DocumentComponent
   @Input() documentType: string;
   @Input() xml: string;
   @Input() readonly = true;
+  @Input() contributionView = false;
   @Input() isDoubleCompare = false;
   @ViewChild('container', { static: true })
   containerElRef: ElementRef<HTMLDivElement>;
@@ -88,16 +89,19 @@ export class DocumentComponent
     this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
-        this.loadDocument(documentView.editableXml);
+        if (!this.contributionView) {
+          this.loadDocument(documentView.editableXml);
+        }
       });
 
     this.documentService.refreshView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((documentView) => {
-        if (documentView) {
+        if (documentView && !this.contributionView) {
           this.loadDocument(documentView.editableXml);
         }
       });
+
     this.documentService.reloadTrigger$
       .pipe(takeUntil(this.destroy$))
       .subscribe((trigger) => trigger !== 0 && this.loadDocument(this.xml));

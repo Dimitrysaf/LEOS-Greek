@@ -3,15 +3,19 @@ import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import { Permission } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import {
+  CONTRIBUTION_SELECTED, ContributionActionAttrValue, MERGE_ACTION_ATTR,
   MergeActionItem,
   MergeActionVO,
 } from '@/shared/models/merge-action-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
+import {MergeActionsService} from "@/features/akn-document/services/merge-actions.service";
 
 export type MergeContributionConnectorState = LeosJavaScriptExtensionState & {
   tocItemsJsonArray: string; // json
   isAngularUI?: boolean;
   permissions: Permission[];
+  canAccept: boolean;
+  canReject: boolean;
 };
 
 export type MergeContributionConnectorInitialState = Omit<
@@ -28,6 +32,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
   refreshContributions?: (...args: any[]) => void;
   populateMergeActionList?: (selectAll: boolean) => void;
   populateTocItemList?: (...args: any[]) => void;
+  updateMergeActionList?: (...args: any[]) => void;
 
   private acceptAllContributions: boolean;
   private contribution: ContributionVO;
@@ -36,14 +41,28 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     state: MergeContributionConnectorInitialState,
     private documentService: DocumentService,
     private options: MergeContributionConnectorOptions,
+    private mergeActionsService: MergeActionsService,
   ) {
     super(
       { ...staticExtensionState, isAngularUI: true, ...state },
       options.rootElement,
     );
+    this.mergeActionsService.updateMergeActionList$.subscribe((action) => {
+      this.updateMergeActionList(action);
+    });
   }
   requestTocItemList() {
     this.populateTocItemList();
+  }
+
+  undo(event: MouseEvent, element: HTMLElement, actions: HTMLElement) {
+    element.classList.remove(CONTRIBUTION_SELECTED);
+    element.removeAttribute(MERGE_ACTION_ATTR);
+    this.mergeActionsService.removeMergeActionList(element);
+  }
+
+  showActionMenu(event: MouseEvent, element: HTMLElement, actions: HTMLElement) {
+    this.mergeActionsService.showMenu(event, element, actions);
   }
 
   handleMergeAction(mergeActionList: MergeActionItem[]) {
@@ -54,6 +73,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
         elementState: item.elementState.toUpperCase(),
         elementId: item.elementId.replaceAll('revision-', ''),
         elementTagName: item.elementTagName,
+        withTrackChanges: item.withTrackChanges,
         contributionVO: this.contribution,
       };
       mergeActionVOs.push(tmp);
