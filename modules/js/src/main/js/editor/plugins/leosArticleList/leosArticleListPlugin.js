@@ -1052,7 +1052,8 @@ define(function leosArticleListPluginModule(require) {
                         if ( joinWith ) {
                             if (editor.LEOS.isTrackChangesEnabled) {
                                 var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(range);
-                                if (!isNewTrackChangeNumber && (!range.startContainer.$.attributes || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
+                                var isNewTrackChangeEnter = leosTrackChanges.core.isNewTrackChangeEnter(range);
+                                if (!isNewTrackChangeNumber && !isNewTrackChangeEnter && (!range.startContainer.$.attributes || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
                                     editor.fire("handleTrackTraceForEnterDeleted", range);
                                     evt.cancel();
                                     return;
@@ -1217,7 +1218,8 @@ define(function leosArticleListPluginModule(require) {
 
                                 if (editor.LEOS.isTrackChangesEnabled) {
                                     var isNewTrackChangeNumber = leosTrackChanges.core.isNewTrackChangeNumber(nextLine);
-                                    if (!isNewTrackChangeNumber && (!range.startContainer.$.attributes || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
+                                    var isNewTrackChangeEnter = leosTrackChanges.core.isNewTrackChangeEnter(nextLine);
+                                    if (!isNewTrackChangeNumber && !isNewTrackChangeEnter && (!range.startContainer.$.attributes || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
                                         editor.fire("handleTrackTraceForEnterDeleted", nextLine);
                                         evt.cancel();
                                         return;

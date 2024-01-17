@@ -345,9 +345,9 @@ define(function leosTrackChangesModule(require) {
             return null;
         },
 
-        isNewTrackChangeNumber: function(element) {
+        isNewTrackChangeNumber: function(range) {
             var hasNewNumberAttribute = false;
-            var elementToCheck = element.startContainer;
+            var elementToCheck = range.startContainer;
             if (elementToCheck.type === CKEDITOR.NODE_TEXT) { elementToCheck = elementToCheck.getParent() }
             do {
                 if (elementToCheck.getAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER) === this.NEW) {
@@ -355,6 +355,18 @@ define(function leosTrackChangesModule(require) {
                 }
             } while (!hasNewNumberAttribute && elementToCheck.getName() !== 'li' && (elementToCheck = elementToCheck.getParent()));
             return hasNewNumberAttribute;
+        },
+
+        isNewTrackChangeEnter: function(range) {
+            var hasNewEnterAttribute = false;
+            var elementToCheck = range.startContainer;
+            if (elementToCheck.type === CKEDITOR.NODE_TEXT) { elementToCheck = elementToCheck.getParent() }
+            do {
+                if (elementToCheck.getAttribute(this.DATA_AKN_ACTION_ENTER) === this.INSERT_ACTION) {
+                    hasNewEnterAttribute = true;
+                }
+            } while (!hasNewEnterAttribute && elementToCheck.getName() !== 'li' && (elementToCheck = elementToCheck.getParent()));
+            return hasNewEnterAttribute;
         },
 
         isCreatedByEnterKey: function(element) {
