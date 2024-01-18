@@ -69,21 +69,26 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
   }
 
   ngOnInit(): void {
-    if (!this.readonly) {
-      this.documentService.documentView$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((documentView) => {
+    this.documentService.documentView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((documentView) => {
+        this.loadDocument(documentView.editableXml);
+      });
+
+    this.documentService.refreshView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((documentView) => {
+        if (documentView) {
           this.loadDocument(documentView.editableXml);
-        });
+        }
+      });
+    this.documentService.reloadTrigger$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((trigger) => {
+        trigger !== 0 && this.loadDocument(this.xml);
+      });
 
-      this.documentService.refreshView$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((documentView) => {
-          if (documentView) {
-            this.loadDocument(documentView.editableXml);
-          }
-        });
-
+    if (!this.readonly) {
       this.documentService.updateElementContent$
         .pipe(takeUntil(this.destroy$))
         .subscribe((data) => {
@@ -98,12 +103,6 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
             elementType: string;
             elementFragment: string;
           }>(this.getElementContent(data)).asObservable();
-        });
-
-      this.documentService.reloadTrigger$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((trigger) => {
-          trigger !== 0 && this.loadDocument(this.xml);
         });
 
       this.coEditionWSService.shouldReloadAfterUpdate
