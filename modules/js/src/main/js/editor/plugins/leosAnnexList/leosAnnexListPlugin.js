@@ -967,7 +967,11 @@ define(function leosAnnexListPluginModule(require) {
                         }
 
                         if ( joinWith ) {
-                            if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(range) && !leosTrackChanges.core.isCreatedByEnterKey(range) && (!range.startContainer.$.attributes || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
+                            if (editor.LEOS.isTrackChangesEnabled
+                                && !leosTrackChanges.core.isNewTrackChangeNumber(range) && !leosTrackChanges.core.isNewTrackChangeEnter(range)
+                                && !leosTrackChanges.core.isCreatedByEnterKey(range)
+                                && (!range.startContainer.$.attributes
+                                    || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
                                 editor.fire("handleTrackTraceForEnterDeleted", range);
                                 evt.cancel();
                                 return;
@@ -1129,7 +1133,10 @@ define(function leosAnnexListPluginModule(require) {
                                     }
                                 }
 
-                                if (editor.LEOS.isTrackChangesEnabled && !leosTrackChanges.core.isNewTrackChangeNumber(nextLine) && (!range.startContainer.$.attributes || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
+                                if (editor.LEOS.isTrackChangesEnabled
+                                    && !leosTrackChanges.core.isNewTrackChangeNumber(nextLine) && !leosTrackChanges.core.isNewTrackChangeEnter(nextLine)
+                                    && (!range.startContainer.$.attributes
+                                        || !(range.startContainer.$.attributes['data-akn-empty'] || range.startContainer.$.attributes['data-reject-inserted-enter']))) {
                                     editor.fire("handleTrackTraceForEnterDeleted", nextLine);
                                     evt.cancel();
                                     return;

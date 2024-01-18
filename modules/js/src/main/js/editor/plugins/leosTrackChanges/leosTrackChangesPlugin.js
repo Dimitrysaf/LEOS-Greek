@@ -363,6 +363,11 @@ define(function leosTrackChangesPluginModule(require) {
                                 range.startContainer.appendHtml(previousHtml);
                                 originalBackspace = true;
                             }
+                            if (!deleteKey && range.collapsed && range.startOffset === 0 && range.endOffset === 0
+                                && range.startContainer.$.attributes && range.startContainer.$.attributes[core.DATA_AKN_ACTION_ENTER]
+                                && range.startContainer.$.attributes[core.DATA_AKN_ACTION_ENTER].value === core.INSERT_ACTION) {
+                                originalBackspace = true;
+                            }
 
                             if (!originalBackspace) {
 
