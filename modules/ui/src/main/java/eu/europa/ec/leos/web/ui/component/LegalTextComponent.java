@@ -36,7 +36,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.ui.component.LeosDisplayField;
 import eu.europa.ec.leos.ui.event.InitLeosEditorEvent;
 import eu.europa.ec.leos.ui.event.StateChangeEvent;

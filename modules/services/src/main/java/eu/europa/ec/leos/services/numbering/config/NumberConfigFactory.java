@@ -1,7 +1,7 @@
 package eu.europa.ec.leos.services.numbering.config;
 
 import eu.europa.ec.leos.services.support.XercesUtils;
-import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.NumberingType;
 import eu.europa.ec.leos.vo.toc.TocItem;

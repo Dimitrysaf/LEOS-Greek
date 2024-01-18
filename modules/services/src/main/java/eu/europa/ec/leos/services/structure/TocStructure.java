@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.services.toc;
+package eu.europa.ec.leos.services.structure;
 
 import java.util.HashMap;
 import java.util.List;
