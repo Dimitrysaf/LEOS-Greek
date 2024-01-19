@@ -65,7 +65,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.ui.event.StateChangeEvent;
 import eu.europa.ec.leos.ui.event.toc.CloseAndRefreshTocEvent;
 import eu.europa.ec.leos.ui.event.toc.CloseTocAndDocumentEvent;

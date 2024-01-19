@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.toc;
 
+import eu.europa.ec.leos.services.structure.StructureServiceImpl;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.export.ExportHelperTest;
 import eu.europa.ec.leos.test.support.LeosTest;

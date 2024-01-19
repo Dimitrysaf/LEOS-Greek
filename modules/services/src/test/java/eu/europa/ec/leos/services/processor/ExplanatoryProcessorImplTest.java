@@ -29,8 +29,8 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorParagraphAn
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDefault;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
-import eu.europa.ec.leos.services.toc.StructureContext;
-import eu.europa.ec.leos.services.toc.StructureServiceImpl;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.StructureServiceImpl;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;

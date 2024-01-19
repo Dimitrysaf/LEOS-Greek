@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.services.toc;
+package eu.europa.ec.leos.services.structure;
 
 import eu.europa.ec.leos.vo.toc.AlternateConfig;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;

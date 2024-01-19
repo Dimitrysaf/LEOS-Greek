@@ -55,7 +55,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
-import eu.europa.ec.leos.services.toc.StructureContext;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
@@ -75,7 +75,6 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
-import java.rmi.UnexpectedException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

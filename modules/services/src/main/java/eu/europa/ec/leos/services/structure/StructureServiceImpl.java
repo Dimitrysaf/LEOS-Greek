@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.services.toc;
+package eu.europa.ec.leos.services.structure;
 
 import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getTocItemsByName;
 
