@@ -7,7 +7,6 @@ import {
   Inject,
   OnDestroy,
   OnInit,
-  Renderer2,
   SecurityContext,
   ViewChild,
 } from '@angular/core';
@@ -42,6 +41,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
+import { TocInlineEditMenuService } from '@/features/akn-document/services/toc-inline-edit-menu.service';
 import { ContributionStatus, DOCUMENT_STYLES, DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -125,7 +125,7 @@ export class DocumentEditorComponent
   isSyncScrollEnabled$: Observable<boolean>;
 
   isEditMode = false;
-
+  isReady = false;
   compareChanges: NodeListOf<HTMLElement>;
   navigationAnchorsList: HTMLElement[];
   navigationAnchorIndex = -1;
@@ -140,7 +140,7 @@ export class DocumentEditorComponent
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
 
   id: string;
-  baseECVersion  = "0.1.0";
+  baseECVersion = '0.1.0';
 
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
@@ -215,10 +215,11 @@ export class DocumentEditorComponent
     private loadingService: LoadingService,
     private tableOfContentService: TableOfContentService,
     private domSanitizer: DomSanitizer,
+    public tocService: TableOfContentService,
     private tocEditService: TableOfContentEditService,
+    private tocInlineMenu: TocInlineEditMenuService,
     private hostElRef: ElementRef,
     private syncScrollingService: SyncDocumentScrollService,
-    private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document,
   ) {
     combineLatest([this.route.params, this.route.data])
@@ -228,7 +229,7 @@ export class DocumentEditorComponent
         this.documentType = data.category;
 
         //init services
-        this.tableOfContentService.setDocumentRefAndCategory(
+        this.tocService.setDocumentRefAndCategory(
           this.documentRef,
           this.documentType,
         );
@@ -272,29 +273,22 @@ export class DocumentEditorComponent
         this.setPageSubTitle(
           documentView.versionInfoVO.documentVersion,
           `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`,
-          documentView.versionInfoVO.lastModificationInstant, documentView.versionInfoVO.baseVersionTitle,
-          documentView.versionInfoVO.revisedBaseVersion
+          documentView.versionInfoVO.lastModificationInstant,
+          documentView.versionInfoVO.baseVersionTitle,
+          documentView.versionInfoVO.revisedBaseVersion,
         );
         this.proposalRef = documentView.proposalRef;
       });
 
-    this.documentService.refreshView$
+    this.tocService.isEditMode$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((documentView) => {
-        if (documentView) {
-          this.documentService.setDidDocumentLoadAndRender(true);
-          this.loadDocument = true;
-          this.setPageSubTitle(
-            documentView.versionInfoVO.documentVersion,
-            `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`,
-            documentView.versionInfoVO.lastModificationInstant, documentView.versionInfoVO.baseVersionTitle,
-            documentView.versionInfoVO.revisedBaseVersion
-          );
-          this.proposalRef = documentView.proposalRef;
-        }
+      .subscribe((editMode) => {
+        this.isEditMode = editMode;
+        if (editMode === false)
+          this.tocInlineMenu.setIsGoingToMove(editMode, null);
       });
 
-    this.tableOfContentService.tocItems$
+    this.tocService.tocItems$
       .pipe(takeUntil(this.destroy$))
       .subscribe((tocItems) => {
         this.tocItems = tocItems;
@@ -404,13 +398,13 @@ export class DocumentEditorComponent
       });
 
     this.documentService.versionLatest$.subscribe((version) => {
-      version &&
+      if (version)
         this.setPageSubTitle(
           this.formatVersionNumber(version),
           version.createdBy,
           version.updatedDate,
           null,
-          null
+          null,
         );
     });
   }
@@ -467,7 +461,7 @@ export class DocumentEditorComponent
         this.tasksOngoing
           .filter(
             (value, index, array) =>
-              index == array.findIndex((item) => item.name == value.name),
+              index === array.findIndex((item) => item.name === value.name),
           )
           .forEach(
             (c) =>
@@ -574,6 +568,7 @@ export class DocumentEditorComponent
 
   ngOnDestroy() {
     //remove every session related actions from the user and clean the document relaod if it is present
+    this.tocService.setIsEditMode(false);
     this.coEditionWSService.setShouldReloadAfterUpdate();
     this.coEditionWSService.removeDocumentCoEditInfo(this.documentRef);
     this.coEditionWSService.removeSession();
@@ -642,7 +637,9 @@ export class DocumentEditorComponent
         accept: () => {
           this.editInlineToC();
         },
-        dismiss: () => (this.isEditMode = false),
+        dismiss: () => {
+          this.tocService.setIsEditMode(false);
+        },
       });
     } else {
       this.editInlineToC();
@@ -650,7 +647,7 @@ export class DocumentEditorComponent
   }
 
   editInlineToC() {
-    this.isEditMode = true;
+    this.tocService.setIsEditMode(true);
     //set the styling for the toc
     this.documentService.setAnnotationMode('READ_ONLY');
     this.coEditionWSService.sendTocInlineEdit(this.documentRef);
@@ -744,7 +741,7 @@ export class DocumentEditorComponent
   handleSave() {
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
-    this.tableOfContentService
+    this.tocService
       .saveToc(this.documentRef, this.documentType, toc)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -753,6 +750,7 @@ export class DocumentEditorComponent
           this.documentTocComponent.clearSelectedNode();
           this.tocEditService.resetTreeHistory();
           this.documentService.reloadDocument();
+          this.tocService.reload();
         },
         error: (err) => {},
       });
@@ -760,7 +758,7 @@ export class DocumentEditorComponent
 
   handleCancel() {
     //TODO : implement cancel
-
+    this.tocService.setIsEditMode(this.isReady);
     if (this.documentTocComponent.isToCDraft) {
       //TODO: handle confirm you want to discard changes
       this.unSavedDialog.openDialog();
@@ -1034,6 +1032,18 @@ export class DocumentEditorComponent
     this.markContributionAsProcessedDialog.closeDialog();
   }
 
+  setPageTitle() {
+    this.pageTitle = [
+      this.documentConfig.proposalMetadata.stage,
+      this.documentConfig.proposalMetadata.type,
+      this.documentConfig.proposalMetadata.purpose,
+    ]
+      .filter(Boolean)
+      .join(' ');
+    this.pageTitle =
+      this.domSanitizer.sanitize(SecurityContext.HTML, this.pageTitle) || '';
+  }
+
   protected exploreMilestone(version: Version) {
     this.milestoneViewData = {
       createdBy: version.createdBy,
@@ -1286,12 +1296,12 @@ export class DocumentEditorComponent
   private closeInlineToCEdit(reloadToc = false) {
     this.documentTocComponent.messageFromValidation = null;
     this.documentTocComponent.isDropValid = null;
-    this.isEditMode = false;
+    this.tocService.setIsEditMode(false);
     this.documentTocComponent.resetTreeState();
     this.documentTocComponent.clearHighlightInvalidNodes();
     this.coEditionWSService.removeTocInlineEdit(this.documentRef);
     this.documentService.setAnnotationMode('NORMAL');
-    if (reloadToc) this.tableOfContentService.reload();
+    if (reloadToc) this.tocService.reload();
   }
 
   private get tocStructure() {
@@ -1388,15 +1398,21 @@ export class DocumentEditorComponent
     return akomantosoEl.outerHTML;
   }
 
-  private setPageSubTitle(documentVersion, updatedBy, updatedDate, baseVersionTitle, revisedBaseVersion) {
+  private setPageSubTitle(
+    documentVersion,
+    updatedBy,
+    updatedDate,
+    baseVersionTitle,
+    revisedBaseVersion,
+  ) {
     if (this.isCNInstance && this.baseECVersion !== revisedBaseVersion) {
       this.translate
         .get('page.editor.base.revision.toolbar.info', {
           version: documentVersion,
           updatedByFull: updatedBy,
           updatedOn: updatedDate,
-          baseVersionTitle: baseVersionTitle,
-          revisedBaseVersion: revisedBaseVersion
+          baseVersionTitle,
+          revisedBaseVersion,
         })
         .pipe(takeUntil(this.destroy$), take(1))
         .subscribe((subTitle: string) => {
@@ -1414,18 +1430,6 @@ export class DocumentEditorComponent
           this.pageSubTitle = subTitle;
         });
     }
-  }
-
-  public setPageTitle() {
-    this.pageTitle = [
-      this.documentConfig.proposalMetadata.stage,
-      this.documentConfig.proposalMetadata.type,
-      this.documentConfig.proposalMetadata.purpose,
-    ]
-      .filter(Boolean)
-      .join(' ');
-    this.pageTitle =
-      this.domSanitizer.sanitize(SecurityContext.HTML, this.pageTitle) || '';
   }
 
   private setVersionForViewHeader(versionInfo: VersionInfoVO) {

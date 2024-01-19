@@ -2,10 +2,11 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   SecurityContext,
-  SimpleChanges
+  SimpleChanges,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -28,7 +29,7 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
   templateUrl: './proposal-header.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ProposalHeaderComponent implements OnInit, OnDestroy {
+export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
   @Input() nonEditablePartOfTitle: string;
   @Input() editableTitle: string;
   @Input() isClonedProposal: boolean;
@@ -50,11 +51,11 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
     private domSanitizer: DomSanitizer,
   ) {}
 
-  ngOnChanges(changes:SimpleChanges):void{
+  ngOnChanges(changes: SimpleChanges): void {
     if ('editableTitle' in changes) {
       const updatedTitle = changes['editableTitle'].currentValue;
       this.setPageTitle(updatedTitle);
-    } 
+    }
   }
 
   ngOnDestroy(): void {
@@ -77,6 +78,10 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
     });
   }
 
+  handleClose() {
+    this.router.navigate([`/workspace`]);
+  }
+
   private setPageTitle(newTitle: any) {
     this.title = [this.nonEditablePartOfTitle, newTitle]
       .filter(Boolean)
@@ -84,9 +89,5 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy {
 
     this.title =
       this.domSanitizer.sanitize(SecurityContext.HTML, this.title) || '';
-  }
-
-  handleClose() {
-    this.router.navigate([`/workspace`]);
   }
 }

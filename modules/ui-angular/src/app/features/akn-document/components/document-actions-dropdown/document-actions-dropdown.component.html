@@ -118,10 +118,7 @@
           </button>
         </li>
         <!-- Enable track changes -->
-        <li
-            euiListItem
-            (click)="toggleTrackChangesEnabled()"
-        >
+        <li euiListItem (click)="toggleTrackChangesEnabled()">
           <button euiListItem [disabled]="!canActivateTrackChanges">
             <eui-icon
               euiSizeS
@@ -131,14 +128,13 @@
                   : 'eui-icon-checkbox-outline'
               "
             ></eui-icon>
-            {{ 'page.editor.actions-dropdown.enable-track-changes' | translate }}
+            {{
+              'page.editor.actions-dropdown.enable-track-changes' | translate
+            }}
           </button>
         </li>
         <!-- See track changes -->
-        <li
-          euiListItem
-          (click)="toggleSeeTrackChanges()"
-        >
+        <li euiListItem (click)="toggleSeeTrackChanges()">
           <button euiListItem>
             <eui-icon
               euiSizeS

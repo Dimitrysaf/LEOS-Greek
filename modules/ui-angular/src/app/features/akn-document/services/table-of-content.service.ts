@@ -21,16 +21,22 @@ import { TocItem } from '../models/ckeditor';
 import {EnvironmentService} from "@/shared/services/enviroment.service";
 
 @Injectable({ providedIn: 'root' })
-export class TableOfContentService implements OnDestroy {
+export class TableOfContentService {
   toc$: Observable<TableOfContentItemVO[]>;
   tocItems$: Observable<TocItem[]>;
   documentRefAndCategory$: Observable<DocumentRefAndCategory>;
+  selectedNode$: Observable<TableOfContentItemVO>;
+  isEditMode$: Observable<boolean>;
+  isTocDraft$: Observable<boolean>;
 
-  private documentRefAndCategoryBS =
-    new BehaviorSubject<DocumentRefAndCategory | null>(null);
+  documentRefAndCategoryBS = new BehaviorSubject<DocumentRefAndCategory | null>(
+    null,
+  );
   private tocBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
   private tocItemsBS = new BehaviorSubject<TocItem[]>(null);
-  private destroy$ = new Subject<void>();
+  private selectedNodeBS = new BehaviorSubject<TableOfContentItemVO>(null);
+  private isEditModeBS = new BehaviorSubject<boolean>(false);
+  private isTocDraftBS = new BehaviorSubject<boolean>(false);
 
   public isClonedProposal: boolean = false;
   public isTrackChangesEnabled: boolean = false;
@@ -45,11 +51,13 @@ export class TableOfContentService implements OnDestroy {
 
     this.toc$ = this.tocBS.asObservable();
     this.tocItems$ = this.tocItemsBS.asObservable();
+    this.selectedNode$ = this.selectedNodeBS.asObservable();
+    this.isTocDraft$ = this.isTocDraftBS.asObservable();
+    this.isEditMode$ = this.isEditModeBS.asObservable();
 
     this.documentRefAndCategory$
       .pipe(
         filter(Boolean),
-        takeUntil(this.destroy$),
         mergeMap((options) => {
           const toc = this.getToc(options.ref, options.category);
           const tocItems = this.getTocItems(options.ref, options.category);
@@ -60,10 +68,6 @@ export class TableOfContentService implements OnDestroy {
         this.tocBS.next(result[0]);
         this.tocItemsBS.next(result[1]);
       });
-  }
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
   setIsClonedProposal(isClonedProposal: boolean) {
@@ -121,8 +125,28 @@ export class TableOfContentService implements OnDestroy {
     return this.tocBS.value;
   }
 
+  getCurrentTocItems() {
+    return this.tocItemsBS.value;
+  }
+
+  getIsTocDraft() {
+    return this.isTocDraftBS.value;
+  }
+
   setToc(toc: TableOfContentItemVO[]) {
     this.tocBS.next(toc);
+  }
+
+  setTocIsDraft(value: boolean) {
+    this.isTocDraftBS.next(value);
+  }
+
+  setSelectedNode(node: TableOfContentItemVO) {
+    this.selectedNodeBS.next(node);
+  }
+
+  setIsEditMode(value: boolean) {
+    this.isEditModeBS.next(value);
   }
 
   private getTocItems(

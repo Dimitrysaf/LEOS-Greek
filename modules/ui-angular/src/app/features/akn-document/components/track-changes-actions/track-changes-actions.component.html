@@ -1,5 +1,7 @@
 <div [style]="locationCss" class="tc_panel tc_menu_panel">
-  <button class="tc_menuitem tc_menubutton" width="100%"
+  <button
+    class="tc_menuitem tc_menubutton"
+    width="100%"
     euiButton
     euiIconButton
     euiBasicButton
@@ -8,10 +10,14 @@
     [disabled]="!this.canRejectTrackChanges"
     (click)="onReject()"
   >
-      <img src="assets/images/remove.png" alt="" />
-      <span class="tc_menubutton_label">{{'page.editor.track.changes.actions.reject' | translate}}</span>
+    <img src="assets/images/remove.png" alt="" />
+    <span class="tc_menubutton_label">{{
+      'page.editor.track.changes.actions.reject' | translate
+    }}</span>
   </button>
-  <button class="tc_menuitem tc_menubutton" width="100%"
+  <button
+    class="tc_menuitem tc_menubutton"
+    width="100%"
     euiButton
     euiIconButton
     euiBasicButton
@@ -20,7 +26,9 @@
     [disabled]="!this.canAcceptTrackChanges"
     (click)="onAccept()"
   >
-      <img src="assets/images/ok.png" alt="" />
-      <span class="tc_menubutton_label">{{'page.editor.track.changes.actions.accept' | translate}}</span>
+    <img src="assets/images/ok.png" alt="" />
+    <span class="tc_menubutton_label">{{
+      'page.editor.track.changes.actions.accept' | translate
+    }}</span>
   </button>
 </div>

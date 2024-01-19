@@ -1,5 +1,5 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import {TranslateService} from "@ngx-translate/core";
+import { TranslateService } from '@ngx-translate/core';
 
 import { Version } from '@/features/akn-document/models';
 import { DocumentService } from '@/shared/services/document.service';
@@ -18,17 +18,14 @@ export class VersionsPaneComponent implements OnInit {
   private totalNumVersions = 0;
   private semaphore = true;
 
-  protected toggleShowMore() {
-    if (this.hasMore && this.semaphore) {
-      this.updateVersions();
-    }
-  }
-
-  constructor(public doc: DocumentService, private translate: TranslateService) {}
+  constructor(
+    public doc: DocumentService,
+    private translate: TranslateService,
+  ) {}
 
   ngOnInit(): void {
     this.showMoreLabel = this.translate.instant(
-      'page.editor.versions.modifications-show'
+      'page.editor.versions.modifications-show',
     );
     this.initVersions();
   }
@@ -50,10 +47,23 @@ export class VersionsPaneComponent implements OnInit {
   updateVersions() {
     const self = this;
     this.semaphore = false;
-    this.doc.getDocumentVersionsData(this.doc.documentType, this.doc.documentRef, Math.floor(this.versions.length/this.doc.pageSize), this.doc.pageSize).subscribe((recVersions: Version[]) => {
-      self.versions = [...self.versions, ...recVersions];
-      self.hasMore = self.versions.length < self.totalNumVersions;
-      self.semaphore = true;
-    });
+    this.doc
+      .getDocumentVersionsData(
+        this.doc.documentType,
+        this.doc.documentRef,
+        Math.floor(this.versions.length / this.doc.pageSize),
+        this.doc.pageSize,
+      )
+      .subscribe((recVersions: Version[]) => {
+        self.versions = [...self.versions, ...recVersions];
+        self.hasMore = self.versions.length < self.totalNumVersions;
+        self.semaphore = true;
+      });
+  }
+
+  protected toggleShowMore() {
+    if (this.hasMore && this.semaphore) {
+      this.updateVersions();
+    }
   }
 }

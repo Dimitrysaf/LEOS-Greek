@@ -8,7 +8,7 @@
       [treeControl]="treeControl"
       (cdkDropListDropped)="onDrop($event)"
       [cdkDropListSortingDisabled]="true"
-      [cdkDropListDisabled]="!isEdit"
+      [cdkDropListDisabled]="!isEditMode"
     >
       <mat-nested-tree-node
         cdkScrollable
@@ -22,7 +22,7 @@
         [cdkDragData]="node"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
-        [cdkDropListDisabled]="!isEdit || !node.tocItem.draggable"
+        [cdkDropListDisabled]="!isEditMode || !node.tocItem.draggable"
       >
         <div class="drop-placeholder"></div>
         <li class="node-li" *ngIf="shouldBeVisible(node)">
@@ -45,15 +45,7 @@
                 isLabelTextMoreThanOneLine(node.label) ? 'right' : 'above'
               "
             ></div>
-            <app-node-toc-actions
-              [isEditMode]="isEdit"
-              [isNodeSelectedToMove]="selectedNodeToMove !== null"
-              [node]="node"
-              (handleMove)="handleMove(node)"
-              (handlePlaceAt)="handlePlaceAt(node, $event)"
-              (handleCancelMove)="handleCancelMove()"
-            >
-            </app-node-toc-actions>
+            <app-toc-action-menu [node]="node"> </app-toc-action-menu>
           </div>
         </li>
         <div class="drop-placeholder"></div>
@@ -70,11 +62,12 @@
         (cdkDragMoved)="dragMoved($event)"
         (cdkDropListDropped)="onDrop($event)"
         [cdkDropListSortingDisabled]="true"
-        [cdkDropListDisabled]="!isEdit"
+        [cdkDropListDisabled]="!isEditMode"
       >
         <div class="drop-placeholder"></div>
         <li>
           <div
+            (click)="handleNodeSelect(node)"
             class="mat-tree-node"
             [class]="{ 'selected-node': selectedNode?.id === node.id }"
           >
@@ -100,15 +93,7 @@
                 isLabelTextMoreThanOneLine(node.label) ? 'right' : 'above'
               "
             ></div>
-            <app-node-toc-actions
-              [isEditMode]="isEdit"
-              [isNodeSelectedToMove]="selectedNodeToMove !== null"
-              [node]="node"
-              (handleMove)="handleMove(node)"
-              (handlePlaceAt)="handlePlaceAt(node, $event)"
-              (handleCancelMove)="handleCancelMove()"
-            >
-            </app-node-toc-actions>
+            <app-toc-action-menu [node]="node"> </app-toc-action-menu>
           </div>
           <ul class="">
             <div *ngIf="treeControl.isExpanded(node)">
@@ -119,10 +104,10 @@
         <div class="drop-placeholder"></div>
       </mat-nested-tree-node>
     </mat-tree>
-  </div>
 
-  <!-- validation message -->
-  <div class="d-flex flex-column p-2 eui-u-font-s" *ngIf="isEdit">
+    <!-- selected element show -->
+  </div>
+  <div class="d-flex flex-column p-2 eui-u-font-s" *ngIf="isEditMode">
     <span
       euiLabel
       [euiDanger]="!isDropValid"
@@ -133,25 +118,11 @@
     >
     </span>
   </div>
-  <!-- selected element show -->
-  <div class="d-flex flex-column eui-u-font-s" *ngIf="isEdit && selectedNode">
-    <app-toc-editor
-      [documentType]="documentType"
-      [toc]="this.treeControl.dataNodes"
-      [tocItems]="tocItems"
-      [selectedNode]="selectedNode"
-      [documentConfig]="documentConfig"
-      (handleTocRemove)="handleTocRemove()"
-      (handleNodeChangesEvent)="handleNodeChanges($event)"
-      (handleInvalidNodes)="handleInvalidNodes($event)"
-    ></app-toc-editor>
-  </div>
+  <app-confirm-delete-dialog
+    #deleteTocConfirmation
+    [title]="'toc.edit.window.item.selected.delete-dialog.title' | translate"
+    [description]="
+      'toc.edit.window.item.selected.delete-dialog.desc' | translate
+    "
+  ></app-confirm-delete-dialog>
 </div>
-
-<app-confirm-delete-dialog
-  #deleteTocConfirmation
-  [title]="'toc.edit.window.item.selecdted.delete-dialog.title' | translate"
-  [description]="
-    'toc.edit.window.item.selecdted.delete-dialog.desc' | translate
-  "
-></app-confirm-delete-dialog>

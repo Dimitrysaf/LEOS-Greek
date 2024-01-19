@@ -1,10 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { orderBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
@@ -112,8 +106,7 @@ export class SearchVersionsPaneComponent implements OnInit {
   }
 
   private updateState() {
-    const { versionType, cmisVersionNumber, checkinCommentVO } =
-      this.version;
+    const { versionType, cmisVersionNumber, checkinCommentVO } = this.version;
     this.isMilestone = versionType === 'MAJOR';
     this.isCreation =
       versionType === 'INTERMEDIATE' && cmisVersionNumber === '1.0';
@@ -122,9 +115,7 @@ export class SearchVersionsPaneComponent implements OnInit {
     this.title = this.getTitle();
     this.subtitle = this.getSubtitle();
     const currentVersions = this.docService.getVersionCompareIds();
-    if (
-      currentVersions.length > 0
-    ) {
+    if (currentVersions.length > 0) {
       const sortedCurrentVersions = this.sortVersions(...currentVersions);
       const maxSortedVersion = this.sortVersions(
         sortedCurrentVersions.at(-1),
@@ -147,15 +138,13 @@ export class SearchVersionsPaneComponent implements OnInit {
 
   private getTitle() {
     return this.translate.get('page.editor.versions.group-title', {
-          version: this.formatVersionNumber(this.version),
-          title: this.version.checkinCommentVO.title,
-        });
+      version: this.formatVersionNumber(this.version),
+      title: this.version.checkinCommentVO.title,
+    });
   }
 
   private getSubtitle() {
-    return of(
-      `${this.version.updatedDate} ${this.version.createdBy}`,
-    );
+    return of(`${this.version.updatedDate} ${this.version.createdBy}`);
   }
 
   private sortVersions(...versions: Version[]): Version[] {

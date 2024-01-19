@@ -1,10 +1,20 @@
-<div class="eui-card-header" class="major-version" *ngIf="this.isMilestone || this.isIntermediate()">
+<div
+  class="eui-card-header"
+  class="major-version"
+  *ngIf="this.isMilestone || this.isIntermediate()"
+>
   <div class="eui-card-header__title-container">
-    <div class="eui-card-header__title-container-title major-version-title">{{ title | async }}</div>
+    <div class="eui-card-header__title-container-title major-version-title">
+      {{ title | async }}
+    </div>
     <div *ngIf="description">
       {{ description }}
     </div>
-    <div class="eui-card-header__title-container-subtitle major-version-subtitle">{{ subtitle | async }}</div>
+    <div
+      class="eui-card-header__title-container-subtitle major-version-subtitle"
+    >
+      {{ subtitle | async }}
+    </div>
   </div>
   <div class="eui-card-header__right-content">
     <eui-chip euiSizeS euiPrimary *ngIf="isMilestone">
@@ -14,10 +24,7 @@
       ></span>
     </eui-chip>
     <eui-chip euiSizeS euiSuccess *ngIf="isCreation">
-      <span
-        euiLabel
-        translate="page.editor.versions.group-tag.creation"
-      ></span>
+      <span euiLabel translate="page.editor.versions.group-tag.creation"></span>
     </eui-chip>
     <app-version-actions-dropdown
       [version]="version"
@@ -32,32 +39,30 @@
       [checked]="isCompareCheckboxChecked(version)"
       [disabled]="isCompareCheckboxDisabled(version)"
       (change)="onSelectVersion(version, $event)"
-      *ngIf="(docService.compareModeEnabled$ | async)"
+      *ngIf="docService.compareModeEnabled$ | async"
     />
   </div>
 </div>
-<div *ngIf="!this.isMilestone && !this.isIntermediate()"
-    class="minor-version"
-    title="{{ version.updatedDate }} {{ version.createdBy }}"
-  >
-    <div>{{ formatVersionNumber(version) }}</div>
-    <div class="title">{{ formatTitle(version) }}</div>
-    <div>
-      <app-version-actions-dropdown
-        [version]="version"
-        *ngIf="
-            (docService.compareModeEnabled$ | async) === false
-          "
-      ></app-version-actions-dropdown>
-      <input
-        id="select-{{ version.documentId }}"
-        class="eui-input-checkbox--button-sizing"
-        euiInputCheckBox
-        [checked]="isCompareCheckboxChecked(version)"
-        [disabled]="isCompareCheckboxDisabled(version)"
-        (change)="onSelectVersion(version, $event)"
-        *ngIf="docService.compareModeEnabled$ | async"
-      />
-    </div>
+<div
+  *ngIf="!this.isMilestone && !this.isIntermediate()"
+  class="minor-version"
+  title="{{ version.updatedDate }} {{ version.createdBy }}"
+>
+  <div>{{ formatVersionNumber(version) }}</div>
+  <div class="title">{{ formatTitle(version) }}</div>
+  <div>
+    <app-version-actions-dropdown
+      [version]="version"
+      *ngIf="(docService.compareModeEnabled$ | async) === false"
+    ></app-version-actions-dropdown>
+    <input
+      id="select-{{ version.documentId }}"
+      class="eui-input-checkbox--button-sizing"
+      euiInputCheckBox
+      [checked]="isCompareCheckboxChecked(version)"
+      [disabled]="isCompareCheckboxDisabled(version)"
+      (change)="onSelectVersion(version, $event)"
+      *ngIf="docService.compareModeEnabled$ | async"
+    />
+  </div>
 </div>
-

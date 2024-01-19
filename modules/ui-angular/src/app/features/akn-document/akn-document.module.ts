@@ -9,12 +9,15 @@ import { AknDocumentRoutingModule } from '@/features/akn-document/akn-document-r
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { RevisionActionsDropdownComponent } from '@/features/akn-document/components/revision-actions-dropdown/revision-actions-dropdown.component';
 import { RevisionPaneGroupComponent } from '@/features/akn-document/components/revision-pane-group/revision-pane-group.component';
-import {SearchVersionsPaneComponent} from "@/features/akn-document/components/search-versions-pane/search-versions-pane.component";
+import { SearchVersionsPaneComponent } from '@/features/akn-document/components/search-versions-pane/search-versions-pane.component';
 import { RevisionPaneComponent } from '@/features/akn-document/containers/revision-pane/revision-pane.component';
-import {TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
+import { TocInlineEditMenuMandateService } from '@/features/akn-document/services/toc-inline-edit-menu.mandate.service';
+import { TocInlineEditMenuProposalService } from '@/features/akn-document/services/toc-inline-edit-menu.proposal.service';
+import { TocInlineEditMenuService } from '@/features/akn-document/services/toc-inline-edit-menu.service';
+import { TrackChangesActionsService } from '@/features/akn-document/services/track-changes-actions.service';
 import { LeosLegacyModule } from '@/features/leos-legacy/leos-legacy.module';
 import { CN } from '@/shared/constants';
-import {DocumentService} from "@/shared/services/document.service";
+import { DocumentService } from '@/shared/services/document.service';
 import { SharedModule } from '@/shared/shared.module';
 
 import { AknRouteReUseStrategy } from './akn-route-strategy';
@@ -25,6 +28,7 @@ import { DocumentSearchComponent } from './components/document-search/document-s
 import { ImportFromJournalDialogComponent } from './components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { NodeTocActionsComponent } from './components/node-toc-actions/node-toc-actions.component';
 import { SaveVersionDialogComponent } from './components/save-version-dialog/save-version-dialog.component';
+import { TocActionMenuComponent } from './components/toc-action-menu/toc-action-menu.component';
 import { TocActionsButtonsComponent } from './components/toc-actions-buttons/toc-actions-buttons.component';
 import { TocEditorComponent } from './components/toc-editor/toc-editor.component';
 import { TrackChangesActionsComponent } from './components/track-changes-actions/track-changes-actions.component';
@@ -64,7 +68,8 @@ import { ValidateTocService } from './services/validate-node-drop.service';
     RevisionPaneComponent,
     RevisionPaneGroupComponent,
     RevisionActionsDropdownComponent,
-    TrackChangesActionsComponent
+    TrackChangesActionsComponent,
+    TocActionMenuComponent,
   ],
   imports: [
     CommonModule,
@@ -94,12 +99,17 @@ import { ValidateTocService } from './services/validate-node-drop.service';
           ? TableOfContentMandateEditService
           : TableOfContentProposalEditService,
     },
+    {
+      provide: TocInlineEditMenuService,
+      useClass:
+        process.env.NG_APP_LEOS_INSTANCE.toLowerCase() === CN.toLowerCase()
+          ? TocInlineEditMenuMandateService
+          : TocInlineEditMenuProposalService,
+    },
     BlockDocumentEditorService,
     DocumentService,
     TrackChangesActionsService,
   ],
-  exports: [
-    TrackChangesActionsComponent
-  ]
+  exports: [TrackChangesActionsComponent],
 })
 export class AknDocumentModule {}

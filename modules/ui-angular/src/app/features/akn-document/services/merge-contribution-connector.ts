@@ -1,6 +1,6 @@
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
-import {Permission} from "@/shared";
+import { Permission } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import {
   MergeActionItem,

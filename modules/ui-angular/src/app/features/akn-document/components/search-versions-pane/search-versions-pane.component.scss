@@ -5,9 +5,9 @@
 .minor-version {
   align-items: center;
   display: flex;
+  font-size: var(--eui-base-font-size-s);
   gap: var(--eui-base-spacing-xs);
   overflow-y: hidden;
-  font-size: var(--eui-base-font-size-s);
   padding-left: 5%;
 
   &:hover {
@@ -22,8 +22,8 @@
 }
 
 .major-version {
+  border: 0;
   display: flex;
-  border: 0px;
 }
 
 .major-version-title {

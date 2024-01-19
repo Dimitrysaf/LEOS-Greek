@@ -16,6 +16,7 @@ import { UserDetails } from '@eui/base';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
+import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import {
   ARTICLE,
   BLOCK,
@@ -122,6 +123,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     private translateService: TranslateService,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
+    private tocService: TableOfContentService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -231,14 +233,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
   }
 
   hanldeNodeSelect(node: TableOfContentItemVO) {
-    this.invalidHeadingMsg = null;
-    this.invalidNumberMsg = null;
-    this.invalidCrossMsg = null;
-    this.selectedNode = node;
-    this.heading = node.heading;
+    this.tocService.setSelectedNode(node);
     this.type = this.getDisplayableTocItem(node.tocItem);
-    this.number = node.number;
-    this.content = node.content;
     this.numberConfig = getNumberingByName(
       this.documentConfig.numberingConfig,
       node.tocItem.numberingType,

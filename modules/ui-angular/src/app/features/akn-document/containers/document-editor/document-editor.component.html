@@ -112,8 +112,8 @@
               </app-toc-actions-buttons>
             </div>
             <app-document-toc
+              [isEditMode]="isEditMode"
               [tocItems]="tocItems"
-              [isEdit]="isEditMode"
               [documentType]="documentType"
               [documentRef]="documentRef"
               (reBuildTocItems)="onRebuildTocItems($event)"
@@ -383,17 +383,19 @@
             </ul>
           </div>
           <!-- Document with editor -->
-          <app-document [containerId]="containerId"
-                        [documentType]="documentType"
-                        [readonly]="
+          <app-document
+            [containerId]="containerId"
+            [documentType]="documentType"
+            [readonly]="
               environmentService.isCouncil() &&
               documentService.documentType === 'memorandum'
             "
-                        [containerClass]="{
+            [containerClass]="{
               'leos-doc-content': true,
               'sync-scroll': true,
               'toc-edit-mode': isEditMode
-            }"></app-document>
+            }"
+          ></app-document>
         </eui-page-column-body>
       </eui-page-column>
       <!-- splitter: document & document:viewVersion -->
@@ -419,7 +421,7 @@
               euiIconButton
               euiSizeS
               [euiPrimary]="isSyncScrollEnabled$ | async"
-              [euiSecondary]="!(isSyncScrollEnabled$ | async)"
+              [euiSecondary]="(isSyncScrollEnabled$ | async) === false"
               (click)="toggleSyncScroll()"
             >
               <span euiSizeS class="eui-icon eui-icon-sync"></span>
@@ -479,7 +481,7 @@
                 euiIconButton
                 euiSizeS
                 [euiPrimary]="isSyncScrollEnabled$ | async"
-                [euiSecondary]="!(isSyncScrollEnabled$ | async)"
+                [euiSecondary]="(isSyncScrollEnabled$ | async) === false"
                 *ngIf="versionsComparisonForView"
                 (click)="toggleSyncScroll()"
                 [euiTooltip]="
@@ -680,7 +682,7 @@
       </eui-page-column>
 
       <!-- splitter: document annotations & document:contribution
-           Note: It actually resizes the two document panes -->
+                 Note: It actually resizes the two document panes -->
       <app-resize-handle
         [leftEl]="documentPaneElement?.nativeElement"
         [rightEl]="contributionViewPaneElement?.nativeElement"
@@ -707,7 +709,7 @@
                 euiIconButton
                 euiSizeS
                 [euiPrimary]="isSyncScrollEnabled$ | async"
-                [euiSecondary]="!(isSyncScrollEnabled$ | async)"
+                [euiSecondary]="(isSyncScrollEnabled$ | async) === false"
                 *ngIf="contributionForView"
                 (click)="toggleSyncScroll()"
                 [euiTooltip]="

@@ -126,7 +126,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       });
 
       promise.then(() => {
-         this.handleEdit(data);
+        this.handleEdit(data);
       });
     } else {
       this.handleEdit(data);
@@ -169,11 +169,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
               if (!this.isCNInstance) {
                 this.documentService
                   .getElementContent(data.elementId, data.elementType)
-                  .subscribe((data) => {
+                  .subscribe((elemData) => {
                     this.editElement(
                       response.elementId,
                       response.elementTagName,
-                      data.elementFragment,
+                      elemData.elementFragment,
                       documentType.toUpperCase(),
                       getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
                       response.alternatives,
@@ -220,11 +220,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           if (!this.isCNInstance) {
             this.documentService
               .getElementContent(data.elementId, data.elementType)
-              .subscribe((data) => {
+              .subscribe((elemData) => {
                 this.editElement(
                   response.elementId,
                   response.elementTagName,
-                  data.elementFragment,
+                  elemData.elementFragment,
                   documentType.toUpperCase(),
                   getInstanceType(process.env.NG_APP_LEOS_INSTANCE),
                   response.alternatives,
@@ -306,7 +306,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         elemData.elementFragment,
       );
     }
-    let milliseconds = new Date().getTime();
+    const milliseconds = new Date().getTime();
     this.loadingService.setTaskOngoing('saving', String(milliseconds));
     this.saveDocumentElement(
       this.documentService.documentRef,
@@ -335,7 +335,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.loadingService.setTaskOver('saving', taskId);
   }
 
-  updateTitleWithResponse(response: any): void {
+  private updateTitleWithResponse(response: any): void {
     const updatedTitle = response.updatedTitle;
     if (updatedTitle) {
       this.documentService.updateTitle(updatedTitle);
@@ -344,7 +344,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }
 
   // leosEditorExtension > elementEditor
-  releaseElement(elemData: {
+  private releaseElement(elemData: {
     elementId: string;
     elementType: string;
     elementFragment: string;
@@ -356,7 +356,11 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     if (!this.elementToEditAfterClose || this.elementToEditAfterClose == null) {
       this.documentService.reloadConnectors(elemData, true);
     }
-    if (this.isCNInstance && !this.isElementSaved && (!this.elementToEditAfterClose || this.elementToEditAfterClose == null)) {
+    if (
+      this.isCNInstance &&
+      !this.isElementSaved &&
+      (!this.elementToEditAfterClose || this.elementToEditAfterClose == null)
+    ) {
       this.documentService.resetDocument();
     }
     this.setEditorOpenState('CLOSE');
@@ -378,7 +382,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }
 
   // leosEditorExtension > actionHandler
-  deleteElementAction(elementData: {
+  private deleteElementAction(elementData: {
     action: string;
     elementId: string;
     elementType: string;
@@ -434,7 +438,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }
 
   // leosEditorExtension > actionHandler
-  insertElementAction(elementData: {
+  private insertElementAction(elementData: {
     action: string;
     elementId: string;
     elementType: string;
@@ -460,7 +464,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   }
 
   // leosEditorExtension > elementEditor
-  mergeElement(elementData: {
+  private mergeElement(elementData: {
     elementId: string;
     elementType: string;
     elementFragment: string;

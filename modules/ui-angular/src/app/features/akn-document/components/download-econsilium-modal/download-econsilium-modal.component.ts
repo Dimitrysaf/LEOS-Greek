@@ -3,8 +3,10 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
- ɵElement,  ValidatorFn,
-  Validators } from '@angular/forms';
+  ɵElement,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 
 import { Version } from '@/features/akn-document/models';
@@ -23,7 +25,30 @@ export class DownloadEconsiliumModalComponent implements OnInit {
   @ViewChild('dialog') dialog: EuiDialogComponent;
   includeRecitals: boolean;
   includeEnactingTerms: boolean;
-  form: FormGroup<{ [K in keyof { relevantElements: FormGroup<{ all: FormControl<boolean | null>; recitals: FormControl<boolean | null>; annotations: FormControl<boolean | null>; enactingTerms: FormControl<boolean | null> }>; cleanVersion: FormControl<"false" | "true" | null>; title: FormControl<string | null> }]: ɵElement<{ relevantElements: FormGroup<{ all: FormControl<boolean | null>; recitals: FormControl<boolean | null>; annotations: FormControl<boolean | null>; enactingTerms: FormControl<boolean | null> }>; cleanVersion: FormControl<"false" | "true" | null>; title: FormControl<string | null> }[K], null> }>;
+  form: FormGroup<{
+    [K in keyof {
+      relevantElements: FormGroup<{
+        all: FormControl<boolean | null>;
+        recitals: FormControl<boolean | null>;
+        annotations: FormControl<boolean | null>;
+        enactingTerms: FormControl<boolean | null>;
+      }>;
+      cleanVersion: FormControl<'false' | 'true' | null>;
+      title: FormControl<string | null>;
+    }]: ɵElement<
+      {
+        relevantElements: FormGroup<{
+          all: FormControl<boolean | null>;
+          recitals: FormControl<boolean | null>;
+          annotations: FormControl<boolean | null>;
+          enactingTerms: FormControl<boolean | null>;
+        }>;
+        cleanVersion: FormControl<'false' | 'true' | null>;
+        title: FormControl<string | null>;
+      }[K],
+      null
+    >;
+  }>;
   dialogOpen = false;
 
   private versionsData: any;

@@ -1,8 +1,11 @@
 <div class="eui-dropdown-button">
   <eui-dropdown>
-    <button euiButton euiSizeS euiPrimary
-            [euiDisabled]="this.proposalState === 'active'"
-            [disabled]="this.proposalState === 'active'"
+    <button
+      euiButton
+      euiSizeS
+      euiPrimary
+      [euiDisabled]="this.proposalState === 'active'"
+      [disabled]="this.proposalState === 'active'"
     >
       <span euiLabel>Actions</span>
       <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
@@ -68,7 +71,8 @@
                 'page.collection.proposal-header.actions.delete-dialog-cannot.desc'
                   | translate
                     : {
-                        totMilestones: this.proposalDetailsService.clonedProposalCount
+                        totMilestones:
+                          this.proposalDetailsService.clonedProposalCount
                       }
               "
               (confirmDeletion)="handleDelete()"

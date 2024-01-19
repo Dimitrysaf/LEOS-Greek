@@ -16,22 +16,22 @@
 }
 
 .document-container {
-  position: relative;
+  align-items: start;
   display: flex;
   flex-direction: row;
-  align-items: start;
   justify-content: center;
+  position: relative;
 }
 
 .document-content {
   flex-grow: 1;
-  transform-origin: top left;
   position: relative;
+  transform-origin: top left;
 }
 
 .main-container {
+  align-items: start;
   display: flex;
   justify-content: center;
-  align-items: start;
   position: relative;
 }

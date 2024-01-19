@@ -30,6 +30,7 @@ import {
   findNodeById,
   getIndentLevel,
   isIndentAllowed,
+  isLastExistingChildElement,
   isNumSoftDeleted,
   restoreMovedItemOrSetNumber,
   setBlockOrCrossHeading,
@@ -382,4 +383,18 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
       this.updateDepthOfTocItems(parent.childItems);
     }
   }
+
+  private checkDeleteOnLastItemInList = (
+    tocTree: TableOfContentItemVO[],
+    deletedItem: TableOfContentItemVO,
+  ) => {
+    const parentItem = findNodeById(tocTree, deletedItem.id);
+    if (
+      parentItem.tocItem.aknTag === LIST &&
+      isLastExistingChildElement(deletedItem, parentItem)
+    ) {
+      return parentItem;
+    }
+    return null;
+  };
 }

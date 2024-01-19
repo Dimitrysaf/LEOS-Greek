@@ -2,13 +2,10 @@ import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
-import type {
-  MilestoneViewItem,
-  MilestoneViewResponse,
-} from '@/features/proposal-view/models/milestone.model';
+import type { MilestoneViewResponse } from '@/features/proposal-view/models/milestone.model';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
 
@@ -16,14 +13,16 @@ import { downloadBlob } from '@/shared/utils';
   providedIn: 'root',
 })
 export class ProposalMilestonesService {
+  readyToMergeStatus$: Observable<string>;
   private readyToMergeStatusSource = new BehaviorSubject<string>('');
-  readyToMergeStatus$ = this.readyToMergeStatusSource.asObservable();
-  
+
   constructor(
     private http: HttpClient,
     private loadingService: LoadingService,
     @Inject(DOCUMENT) private document: Document,
-  ) {}
+  ) {
+    this.readyToMergeStatus$ = this.readyToMergeStatusSource.asObservable();
+  }
 
   listMilestoneView(proposalRef: string, legFileName: string) {
     return this.http.get<MilestoneViewResponse>(
@@ -34,7 +33,10 @@ export class ProposalMilestonesService {
     );
   }
 
-  listMilestoneViewFromVersion(proposalRef: string, versionedReference: string) {
+  listMilestoneViewFromVersion(
+    proposalRef: string,
+    versionedReference: string,
+  ) {
     return this.http.get<MilestoneViewResponse>(
       `${apiBaseUrl}/secured/list-milestones-view-version/${proposalRef}`,
       {
@@ -45,9 +47,9 @@ export class ProposalMilestonesService {
 
   listContributionsView(proposalRef: string, legFileName: string) {
     return this.http.get<MilestoneViewResponse>(
-      `${apiBaseUrl}/secured/contribution/milestones/${proposalRef}/viewContribution/${legFileName}`
+      `${apiBaseUrl}/secured/contribution/milestones/${proposalRef}/viewContribution/${legFileName}`,
     );
-}
+  }
 
   exportMilestonePdf(documentRef: string, legFileName: string) {
     this.loadingService.setLoading(true);
@@ -74,7 +76,10 @@ export class ProposalMilestonesService {
       });
   }
 
-  exportMilestonePdfFromVersion(documentRef: string, versionedReference: string) {
+  exportMilestonePdfFromVersion(
+    documentRef: string,
+    versionedReference: string,
+  ) {
     this.loadingService.setLoading(true);
     return this.http
       .get(
@@ -102,13 +107,10 @@ export class ProposalMilestonesService {
   downloadLegFile(legFileId: string) {
     this.loadingService.setLoading(true);
     return this.http
-      .get(
-        `${apiBaseUrl}/secured/searchlegfile/${legFileId}`,
-        {
-          observe: 'response',
-          responseType: 'blob',
-        },
-      )
+      .get(`${apiBaseUrl}/secured/searchlegfile/${legFileId}`, {
+        observe: 'response',
+        responseType: 'blob',
+      })
       .subscribe({
         next: (response) => {
           const cd = parseContentDisposition(
@@ -128,6 +130,6 @@ export class ProposalMilestonesService {
   }
 
   resetReadyToMergeStatus(): void {
-    this.readyToMergeStatusSource.next(''); 
+    this.readyToMergeStatusSource.next('');
   }
 }

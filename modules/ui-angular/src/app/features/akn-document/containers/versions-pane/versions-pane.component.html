@@ -5,10 +5,7 @@
   ></app-versions-pane-group>
   <app-versions-pane-group
     class="eui-u-display-block eui-u-width-100"
-    *ngFor="
-      let version of versions;
-      trackByProperty: 'cmisVersionNumber'
-    "
+    *ngFor="let version of versions; trackByProperty: 'cmisVersionNumber'"
     [majorVersion]="version"
     [subVersions]="version.subVersions ?? []"
     (exploreMilestone)="exploreMilestone.emit($event)"
