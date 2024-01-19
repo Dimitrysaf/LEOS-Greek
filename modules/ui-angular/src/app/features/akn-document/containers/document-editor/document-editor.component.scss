@@ -293,4 +293,14 @@ app-document {
     width: 100%;
     z-index: 10001;
   }
+
+  .toolbar-container {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  .title {
+    margin-right: auto;
+  }
 }

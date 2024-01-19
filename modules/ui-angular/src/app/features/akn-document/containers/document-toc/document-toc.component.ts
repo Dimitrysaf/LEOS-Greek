@@ -151,10 +151,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     this.documentService.documentConfig$
       .pipe(takeUntil(this.destroy$))
       .subscribe((dConfig) => {
-        this.validateTocService.setDocumentConfig(dConfig);
-        this.tocEditService.setDocumentConfig(dConfig);
         this.documentConfig = dConfig;
-        this.tocInlineEditMenuService.setDocumentConfig(dConfig);
       });
     this.tocService.selectedNode$
       .pipe(takeUntil(this.destroy$))

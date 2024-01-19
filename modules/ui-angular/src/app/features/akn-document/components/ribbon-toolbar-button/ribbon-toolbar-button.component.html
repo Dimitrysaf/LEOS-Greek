@@ -1,0 +1,27 @@
+<button
+  [id]="buttonItem.id"
+  euiButton
+  euiResponsive
+  [euiDisabled]="buttonItem.disabled"
+  [euiVariant]="buttonItem.euiStyle"
+  [euiSizeVariant]="buttonItem.euiSize"
+  (click)="buttonItem.actionFn()"
+  [euiTooltip]="buttonItem.label"
+  class="eui-u-mr-s eui-u-mb-s"
+>
+  <span
+    euiIcon
+    [euiTooltip]="buttonItem.label"
+    *ngIf="buttonItem.iconClass"
+    [iconClass]="'eui-icon ' + buttonItem.iconClass"
+  ></span>
+  <eui-icon-svg
+    *ngIf="buttonItem.svgIconClas"
+    [set]="buttonItem.svgType"
+    [icon]="buttonItem.svgIconClas"
+    class="eui-u-mr-xs"
+  ></eui-icon-svg>
+  <div euiLabel euiSizeS *ngIf="!isOverflow">{{
+    buttonItem?.label | translate
+    }}</div>
+</button>

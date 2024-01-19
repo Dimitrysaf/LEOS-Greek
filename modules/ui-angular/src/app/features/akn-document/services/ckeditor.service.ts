@@ -35,7 +35,9 @@ import { TableOfContentService } from './table-of-content.service';
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CKEditorService implements OnDestroy {
   private actionManagerConnector?: ActionManagerConnector;
   private leosEditorConnector?: LeosEditorConnector;
@@ -93,15 +95,15 @@ export class CKEditorService implements OnDestroy {
       .pipe(take(1))
       .subscribe(([require, leosState]) => {
         require(['js/leosModulesBootstrap']);
-        this.initActionManager(require, leosState, rootElement);
-        this.initLeosEditor(require, leosState, rootElement);
+        // this.initActionManager(require, leosState, rootElement);
+        // this.initLeosEditor(require, leosState, rootElement);
         this.initUserGuidance(require, leosState, rootElement);
-        this.initChangeDetails(require, leosState, rootElement);
-        this.initRefToLink(require, leosState, rootElement);
-        this.initSoftActions(require, leosState, rootElement);
-        this.initMathJax(require, leosState, rootElement);
-        this.initTrackChanges(require, leosState, rootElement);
-        this.initMergeContribution(require, leosState, rootElement);
+        // this.initChangeDetails(require, leosState, rootElement);
+        // this.initRefToLink(require, leosState, rootElement);
+        // this.initSoftActions(require, leosState, rootElement);
+        // this.initMathJax(require, leosState, rootElement);
+        // this.initTrackChanges(require, leosState, rootElement);
+        // this.initMergeContribution(require, leosState, rootElement);
         if (this.documentService.documentType === 'stat_financ_legis') {
           this.initDatePicker(require, leosState, rootElement);
           this.initCheckBoxes(require, rootElement);

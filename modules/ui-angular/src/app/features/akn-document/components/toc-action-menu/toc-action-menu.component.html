@@ -19,3 +19,9 @@
     ></span>
   </button>
 </eui-dropdown-button-menu>
+
+<app-confirm-delete-dialog
+  #deleteTocConfirmation
+  [title]="'toc.edit.window.item.selected.delete-dialog.title' | translate"
+  [description]="'toc.edit.window.item.selected.delete-dialog.desc' | translate"
+></app-confirm-delete-dialog>

@@ -1,0 +1,130 @@
+<form [formGroup]="form" class="econsilium-form">
+  <!-- Relevant Elements (Include) -->
+  <div class="label-column">
+    <label euiLabel euiRequired>{{
+      'dialog.download-econsilium.relevantElements' | translate
+    }}</label>
+
+    <eui-feedback-message euiDanger *ngIf="!form.get('relevantElements').valid">
+      <span>{{
+        'dialog.download-econsilium.relevantElements.error' | translate
+      }}</span>
+    </eui-feedback-message>
+  </div>
+  <div class="input-column">
+    <div euiInputGroup formGroupName="relevantElements">
+      <!-- Recitals -->
+      <ng-container *ngIf="includeRecitals">
+        <input id="recitals" formControlName="recitals" euiInputCheckBox />
+        <label euiLabel for="recitals">{{
+          'dialog.download-econsilium.recitals' | translate
+        }}</label>
+      </ng-container>
+
+      <!-- Enacting Terms (Articles) -->
+      <ng-container *ngIf="includeEnactingTerms">
+        <input
+          id="enactingTerms"
+          formControlName="enactingTerms"
+          euiInputCheckBox
+        />
+        <label euiLabel for="enactingTerms">{{
+          'dialog.download-econsilium.enactingTerms' | translate
+        }}</label>
+      </ng-container>
+
+      <!-- With Annotations -->
+      <input id="annotations" formControlName="annotations" euiInputCheckBox />
+      <label euiLabel for="annotations">{{
+        'dialog.download-econsilium.annotations' | translate
+      }}</label>
+
+      <!-- All Text -->
+      <input id="all" formControlName="all" euiInputCheckBox />
+      <label euiLabel for="all">{{
+        'dialog.download-econsilium.all' | translate
+      }}</label>
+    </div>
+  </div>
+
+  <!-- Title -->
+  <div class="label-column">
+    <label euiLabel euiRequired for="title">{{
+      'dialog.download-econsilium.title' | translate
+    }}</label>
+  </div>
+  <div class="input-column">
+    <textarea
+      id="title"
+      formControlName="title"
+      rows="3"
+      euiTextArea
+      [euiMaxlength]="100"
+      required
+      [placeholder]="'dialog.download-econsilium.title.placeholder' | translate"
+    ></textarea>
+  </div>
+
+  <!-- Clean Version -->
+  <div
+    class="label-column"
+    [title]="
+      (documentService.documentType === 'council_explanatory'
+        ? 'dialog.download-econsilium.printStyle'
+        : 'dialog.download-econsilium.cleanVersion-tooltip'
+      ) | translate
+    "
+  >
+    <label euiLabel>{{
+      (documentService.documentType === 'council_explanatory'
+        ? 'dialog.download-econsilium.printStyle'
+        : 'dialog.download-econsilium.cleanVersion'
+      ) | translate
+    }}</label>
+  </div>
+  <div
+    class="input-column eui-u-flex eui-u-flex-wrap"
+    [title]="
+      (documentService.documentType === 'council_explanatory'
+        ? 'dialog.download-econsilium.printStyle'
+        : 'dialog.download-econsilium.cleanVersion-tooltip'
+      ) | translate
+    "
+  >
+    <!-- Clean Version: false -->
+    <div>
+      <input
+        type="radio"
+        euiInputRadio
+        id="cleanVersion-false"
+        formControlName="cleanVersion"
+        name="cleanVersion"
+        value="false"
+      />
+      <label euiLabel for="cleanVersion-false" class="eui-u-mt-none">{{
+        (documentService.documentType === 'council_explanatory'
+          ? 'dialog.download-econsilium.printStyle.docuwrite'
+          : 'dialog.download-econsilium.cleanVersion.false'
+        ) | translate
+      }}</label>
+    </div>
+
+    <!-- Clean Version: true -->
+    <div>
+      <input
+        type="radio"
+        euiInputRadio
+        id="cleanVersion-true"
+        formControlName="cleanVersion"
+        name="cleanVersion"
+        value="true"
+      />
+      <label euiLabel for="cleanVersion-true" class="eui-u-mt-none">{{
+        (documentService.documentType === 'council_explanatory'
+          ? 'dialog.download-econsilium.printStyle.internal'
+          : 'dialog.download-econsilium.cleanVersion.true'
+        ) | translate
+      }}</label>
+    </div>
+  </div>
+</form>

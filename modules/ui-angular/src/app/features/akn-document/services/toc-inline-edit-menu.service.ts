@@ -73,7 +73,7 @@ export abstract class TocInlineEditMenuService {
     combineLatest([
       this.targetNodeBS,
       this.store.select(getI18nState),
-      this.documentConfigBS.asObservable(),
+      this.documentService.documentConfig$,
     ])
       .pipe(filter(([node]) => node !== null))
       .subscribe(([targetNode, state, documentConfig]) => {

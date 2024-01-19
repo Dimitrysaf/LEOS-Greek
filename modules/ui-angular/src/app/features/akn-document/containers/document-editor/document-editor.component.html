@@ -16,24 +16,26 @@
         blockDocumentEditorService.isDocumentEditorBlocked$ | async
     }"
   >
-    <header
-      class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-xs eui-page-header"
-    >
-      <h4 class="flex-grow-1 eui-u-font-2xl" [innerHTML]="pageTitle"></h4>
-      <app-document-actions-dropdown
-        (annexChangeStructure)="confirmAnnexStructureChange()"
-        class="eui-u-ml-s"
-      ></app-document-actions-dropdown>
-      <button
-        *ngIf="documentConfig?.proposalMetadata"
-        class="eui-u-ml-s"
-        euiButton
-        euiSizeS
-        euiPrimary
-        translate="global.actions.close"
-        (click)="handleClose()"
-      ></button>
-    </header>
+    <eui-page-column-header-collapsed-content>
+      <!-- Search & Refresh -->
+      <div class="eui-u-flex eui-u-flex-row justify-content-between">
+        <h4
+          class="subtitle eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-left"
+        >
+          {{ pageSubTitle }}
+        </h4>
+        <button
+          *ngIf="documentConfig?.proposalMetadata"
+          class="eui-u-ml-xs eui-u-mr-xs"
+          euiButton
+          euiSizeS
+          euiPrimary
+          translate="global.actions.close"
+          (click)="handleClose()"
+        ></button>
+      </div>
+    </eui-page-column-header-collapsed-content>
+
     <eui-page-columns>
       <!-- ToC -->
       <eui-page-column
@@ -313,23 +315,13 @@
         *ngIf="(documentService.navigationSidebarCollapsed$ | async) === false"
       ></app-resize-handle>
 
-      <!-- document -->
       <eui-page-column
         #documentPane
         class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
         [interactiveScrollbars]="false"
       >
         <eui-page-column-header-body>
-          <!-- Search & Refresh -->
-          <div class="eui-u-flex eui-u-flex-row">
-            <h4 class="eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-center">
-              {{ pageSubTitle }}
-            </h4>
-            <app-actions-toolbar
-              class="eui-u-flex app-u-gap-s app-u-flex-basis-0 mt-1"
-              [disabled]="isEditMode"
-            ></app-actions-toolbar>
-          </div>
+          <app-ribbon-toolbar-container></app-ribbon-toolbar-container>
         </eui-page-column-header-body>
         <!-- leos-editing-pane is used in leosFloatingSpacePlugin.js -->
         <eui-page-column-body
@@ -398,7 +390,7 @@
           ></app-document>
         </eui-page-column-body>
       </eui-page-column>
-      <!-- splitter: document & document:viewVersion -->
+      <!--       splitter: document & document:viewVersion -->
       <app-resize-handle
         [leftEl]="documentPaneElement?.nativeElement"
         [rightEl]="versionForViewPaneElement?.nativeElement"

@@ -11,6 +11,7 @@ import {
   NodeValidationResponse,
 } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
+import { DocumentService } from '@/shared/services/document.service';
 import {
   getActualTargetItem,
   isCrossheading,
@@ -22,15 +23,20 @@ import { isTocItemsEqual } from '@/shared/utils/tocRules.utils';
 Injectable();
 
 export abstract class ValidateTocService {
+  documentConfig: DocumentConfig;
   dropValidationResult$: Observable<NodeValidation>;
 
   private dropValidationResultBS: BehaviorSubject<NodeValidation> =
     new BehaviorSubject(null);
-  private documentConfigBS: BehaviorSubject<DocumentConfig> =
-    new BehaviorSubject(null);
 
-  constructor(private http: HttpClient) {
+  protected constructor(
+    protected http: HttpClient,
+    protected documentService: DocumentService,
+  ) {
     this.dropValidationResult$ = this.dropValidationResultBS.asObservable();
+    this.documentService.documentConfig$.subscribe(
+      (documentConfig) => (this.documentConfig = documentConfig),
+    );
   }
 
   public validateNodeDrop(
@@ -92,10 +98,6 @@ export abstract class ValidateTocService {
     });
   }
 
-  public setDocumentConfig(documentConfig: DocumentConfig) {
-    this.documentConfigBS.next(documentConfig);
-  }
-
   public validateAddingItemAsChildOrSibling(
     validationResult: NodeValidation,
     sourceItem: TableOfContentItemVO,
@@ -109,8 +111,7 @@ export abstract class ValidateTocService {
       targetTocItem.aknTag.toUpperCase(),
       targetTocItem.numberingType.toUpperCase(),
     ].join('_');
-    const targetTocItems: TocItem[] =
-      this.documentConfigBS.value.tocRules[targetRules];
+    const targetTocItems: TocItem[] = this.documentConfig.tocRules[targetRules];
 
     if (
       isSourceDivision(sourceItem) ||

@@ -1,0 +1,33 @@
+<form [formGroup]="form">
+  <div euiInputGroup>
+    <label euiLabel euiRequired for="title">{{
+      'page.editor.actions-dropdown.save-version.modal.title.label' | translate
+    }}</label>
+    <input
+      id="title"
+      euiInputText
+      formControlName="title"
+      [placeholder]="
+        'page.editor.actions-dropdown.save-version.modal.title.placeholder'
+          | translate
+      "
+    />
+  </div>
+
+  <div euiInputGroup>
+    <label euiLabel for="description">{{
+      'page.editor.actions-dropdown.save-version.modal.description.label'
+        | translate
+    }}</label>
+    <textarea
+      id="description"
+      euiTextArea
+      formControlName="description"
+      [placeholder]="
+        'page.editor.actions-dropdown.save-version.modal.description.placeholder'
+          | translate
+      "
+      rows="4"
+    ></textarea>
+  </div>
+</form>

@@ -68,12 +68,6 @@ export abstract class TableOfContentEditService {
     return tempInitialTreeBeforeEdit;
   }
 
-  //todo : replace this
-  public setDocumentConfig(documentConfig: DocumentConfig) {
-    this.environment = process.env.NG_APP_LEOS_INSTANCE;
-    this.documentConfig = documentConfig;
-  }
-
   public handleNodeChanges(
     newTree: TableOfContentItemVO[],
     saveSnapshot?: boolean,

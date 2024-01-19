@@ -1,0 +1,28 @@
+.section-container {
+  display: flex;
+  flex-direction: column;
+  height: 120px;
+  padding-left: var(--eui-base-spacing-xs);
+  padding-right: var(--eui-base-spacing-xs);
+  position: relative; /* Ensure relative positioning for the pseudo-element */
+  width: 100%;
+
+  &::after {
+    background-color: var(--eui-base-color-primary-140);
+    bottom: 10%; /* Adjust the bottom margin/padding/distance */
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 10%; /* Adjust the top margin/padding/distance */
+    width: 0.5px;
+  }
+
+  .section-content {
+    align-items: center;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+  }
+}

@@ -14,6 +14,7 @@ import {
 } from '@/shared/constants';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
+import { DocumentService } from '@/shared/services/document.service';
 import {
   containsItem,
   containsOnlySameIndentType,
@@ -27,8 +28,11 @@ import { ValidateTocService } from './validate-node-drop.service';
 
 @Injectable()
 export class ValidateTocMandateService extends ValidateTocService {
-  constructor(private _http: HttpClient) {
-    super(_http);
+  constructor(
+    protected _http: HttpClient,
+    protected documentService: DocumentService,
+  ) {
+    super(_http, documentService);
   }
 
   validateAddingToItem(

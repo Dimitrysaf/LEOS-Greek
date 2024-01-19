@@ -38,9 +38,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { DOCUMENT_ACTIONS_SERVICE } from '@/features/akn-document/akn-document.module';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
+import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
 import { TocInlineEditMenuService } from '@/features/akn-document/services/toc-inline-edit-menu.service';
 import { ContributionStatus, DOCUMENT_STYLES, DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
@@ -90,7 +92,7 @@ const compareClasses = [
   selector: 'app-document-editor',
   templateUrl: './document-editor.component.html',
   styleUrls: ['./document-editor.component.scss'],
-  providers: [AnnotateService, DocumentService, CKEditorService],
+  providers: [AnnotateService],
 })
 export class DocumentEditorComponent
   implements OnDestroy, OnInit, AfterViewInit
@@ -221,6 +223,8 @@ export class DocumentEditorComponent
     private hostElRef: ElementRef,
     private syncScrollingService: SyncDocumentScrollService,
     @Inject(DOCUMENT) private document: Document,
+    @Inject(DOCUMENT_ACTIONS_SERVICE)
+    private documentActions: DocumentActionsService,
   ) {
     combineLatest([this.route.params, this.route.data])
       .pipe(take(1))
@@ -576,6 +580,7 @@ export class DocumentEditorComponent
     this.destroy$.next(null);
     this.destroy$.complete();
     this.unloadStyleSheet?.();
+    this.documentActions.resetDocumentActions();
   }
 
   disableUndoButton() {
