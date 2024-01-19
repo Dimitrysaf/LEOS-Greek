@@ -3,8 +3,16 @@
   padding-right: 0;
 }
 
-@media (min-width: 576px) {
+@media (max-width: 914px) {
   .label-column {
     text-align: start;
+    width: 100%;
+  }
+
+  .confidentiality-row {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
   }
 }
+
