@@ -1,28 +1,33 @@
-import {HttpClient} from "@angular/common/http";
+import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
-  Input, OnDestroy,
+  Input,
+  OnDestroy,
   OnInit,
-} from "@angular/core";
-import {Subject, takeUntil} from "rxjs";
+} from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
 
-import {AppConfigService} from "@/core/services/app-config.service";
-import {CKEditorService} from "@/features/akn-document/services/ckeditor.service";
-import {TrackChangeAction, TrackChangesActionsService} from "@/features/akn-document/services/track-changes-actions.service";
-import {DocumentConfig, LeosConfig, Permission} from "@/shared";
-import {DocumentService} from "@/shared/services/document.service";
+import { AppConfigService } from '@/core/services/app-config.service';
+import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
+import {
+  TrackChangeAction,
+  TrackChangesActionsService,
+} from '@/features/akn-document/services/track-changes-actions.service';
+import { DocumentConfig, LeosConfig, Permission } from '@/shared';
+import { DocumentService } from '@/shared/services/document.service';
 
-import {appConfig} from "../../../../../config";
+import { appConfig } from '../../../../../config';
 
 @Component({
-  selector:'app-track-changes-actions',
-  styleUrls:['./track-changes-actions.component.scss'],
-  host:{
-    '(document:click)':'clickedOutside()',
-    '(document:keydown)':'clickedOutside()',
+  selector: 'app-track-changes-actions',
+  styleUrls: ['./track-changes-actions.component.scss'],
+  // eslint-disable-next-line @angular-eslint/no-host-metadata-property
+  host: {
+    '(document:click)': 'clickedOutside()',
+    '(document:keydown)': 'clickedOutside()',
   },
-  templateUrl: './track-changes-actions.component.html'
+  templateUrl: './track-changes-actions.component.html',
 })
 export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   documentConfig: DocumentConfig;
@@ -34,15 +39,22 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   canRejectTrackChanges: boolean;
   currentElement: HTMLElement;
   trackChangeAction: TrackChangeAction;
-  movedToId : string;
+  movedToId: string;
   movedFromId: string;
 
   private destroy$ = new Subject();
 
-  private mouseLocation :{left:number,top:number} = {left:0, top:0};
+  private mouseLocation: { left: number; top: number } = { left: 0, top: 0 };
 
-  constructor(private http: HttpClient, private doc: DocumentService, private ref: ChangeDetectorRef, private trackChangesActionsService:TrackChangesActionsService, private ckEditorService: CKEditorService, private appConfigService: AppConfigService){
-    trackChangesActionsService.show.subscribe(trackChanges => {
+  constructor(
+    private http: HttpClient,
+    private doc: DocumentService,
+    private ref: ChangeDetectorRef,
+    private trackChangesActionsService: TrackChangesActionsService,
+    private ckEditorService: CKEditorService,
+    private appConfigService: AppConfigService,
+  ) {
+    trackChangesActionsService.show.subscribe((trackChanges) => {
       this.trackChangesDr = trackChanges.trackChanges;
       this.addTrackChangesEvents();
     });
@@ -63,8 +75,11 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   setMenuState(permissions: Permission[]) {
-    this.canAcceptTrackChanges = permissions.includes('CAN_ACCEPT_CHANGES') &&
-      (!this.documentConfig?.clonedProposal || (this.documentConfig?.clonedProposal && this.leosConfig?.user.roles.includes("SUPPORT")));
+    this.canAcceptTrackChanges =
+      permissions.includes('CAN_ACCEPT_CHANGES') &&
+      (!this.documentConfig?.clonedProposal ||
+        (this.documentConfig?.clonedProposal &&
+          this.leosConfig?.user.roles.includes('SUPPORT')));
     this.canRejectTrackChanges = permissions.includes('CAN_REJECT_CHANGES');
   }
 
@@ -73,20 +88,20 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   addTrackChangesEvents() {
-    this.trackChangesDr?.forEach(tc => {
-      tc.addEventListener("contextmenu", e => {
+    this.trackChangesDr?.forEach((tc) => {
+      tc.addEventListener('contextmenu', (e) => {
         if (this.seeTrackChanges()) {
           e.preventDefault();
           this.showMenu(e);
         }
-      })
+      });
     });
   }
 
   get locationCss() {
     return {
-      'position': 'fixed',
-      'display': this.isShown ? 'block':'none',
+      position: 'fixed',
+      display: this.isShown ? 'block' : 'none',
       left: this.mouseLocation.left + 'px',
       top: this.mouseLocation.top + 'px',
     };
@@ -102,8 +117,8 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
     this.currentElement = event.currentTarget;
     this.mouseLocation = {
       left: event.clientX,
-      top: event.clientY
-    }
+      top: event.clientY,
+    };
     this.getAction(event.currentTarget);
     this.ref.markForCheck();
   }
@@ -112,9 +127,9 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
     const action = elt.getAttribute('leos:action');
     this.movedToId = elt.getAttribute('leos:softmove_to');
     this.movedFromId = elt.getAttribute('leos:softmove_from');
-    if (action == 'insert') {
+    if (action === 'insert') {
       this.trackChangeAction = TrackChangeAction.ADD;
-    } else if (action == 'delete') {
+    } else if (action === 'delete') {
       this.trackChangeAction = TrackChangeAction.DEL;
     }
     if (!!this.movedToId) {
@@ -134,15 +149,25 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   onAccept() {
-    this.trackChangesActionsService.applyTrackChangeAction(this.trackChangeAction,
-      {elementType: this.currentElement.tagName.toLowerCase(), elementId: this.currentElement.id},
-      this.doc);
+    this.trackChangesActionsService.applyTrackChangeAction(
+      this.trackChangeAction,
+      {
+        elementType: this.currentElement.tagName.toLowerCase(),
+        elementId: this.currentElement.id,
+      },
+      this.doc,
+    );
   }
 
   onReject() {
-    this.trackChangesActionsService.rejectTrackChangeAction(this.trackChangeAction,
-      {elementType: this.currentElement.tagName.toLowerCase(), elementId: this.currentElement.id},
-      this.doc);
+    this.trackChangesActionsService.rejectTrackChangeAction(
+      this.trackChangeAction,
+      {
+        elementType: this.currentElement.tagName.toLowerCase(),
+        elementId: this.currentElement.id,
+      },
+      this.doc,
+    );
   }
 
   ngOnDestroy(): void {

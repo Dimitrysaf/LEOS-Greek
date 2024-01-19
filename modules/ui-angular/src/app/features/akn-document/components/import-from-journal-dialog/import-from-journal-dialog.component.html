@@ -148,7 +148,7 @@
         <div *ngIf="importManager?.count$ | async">
           {{
             'dialog.import-from-journal.footer.elements-selected'
-              | translate: { count: (importManager?.count$ | async) }
+              | translate : { count: (importManager?.count$ | async) }
           }}
         </div>
         <button

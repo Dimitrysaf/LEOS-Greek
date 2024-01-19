@@ -13,7 +13,13 @@ import {
 import { EuiBreadcrumbService } from '@eui/components/layout';
 import { ProcedureType } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
-import {combineLatest, distinctUntilChanged, map, Observable, take} from 'rxjs';
+import {
+  combineLatest,
+  distinctUntilChanged,
+  map,
+  Observable,
+  take,
+} from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { Document } from '@/shared/models/document.model';

@@ -7,10 +7,14 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class LoadingService {
   loading$: Observable<boolean>;
-  task$: Observable<{taskName: string, key: string, ongoing: boolean}>;
+  task$: Observable<{ taskName: string; key: string; ongoing: boolean }>;
 
   private loadingBS = new BehaviorSubject<boolean>(false);
-  private taskBS = new BehaviorSubject<{taskName: string, key: string, ongoing: boolean}>({taskName: null, key: null, ongoing: false});
+  private taskBS = new BehaviorSubject<{
+    taskName: string;
+    key: string;
+    ongoing: boolean;
+  }>({ taskName: null, key: null, ongoing: false });
 
   constructor(private uxAppService: UxAppShellService) {
     this.loadingBS.asObservable().subscribe((val) => {
@@ -24,10 +28,10 @@ export class LoadingService {
   }
 
   setTaskOngoing(taskName: string, key: string) {
-    this.taskBS.next({taskName, key, ongoing: true});
+    this.taskBS.next({ taskName, key, ongoing: true });
   }
 
   setTaskOver(taskName: string, key: string) {
-    this.taskBS.next({taskName, key, ongoing: false});
+    this.taskBS.next({ taskName, key, ongoing: false });
   }
 }

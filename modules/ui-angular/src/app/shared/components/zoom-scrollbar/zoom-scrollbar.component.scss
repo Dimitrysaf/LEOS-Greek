@@ -1,63 +1,62 @@
 .zoom-scrollbar-container {
-  display: flex;
   align-items: center;
+  display: flex;
   justify-content: center;
 }
 
 .zoom-range {
-  -webkit-appearance: none;
-  width: 100%;
+  appearance: none;
   background: transparent;
+  width: 100%;
 }
 
 .zoom-range::-webkit-slider-runnable-track {
   background: black;
-  height: 3px;
   cursor: pointer;
+  height: 3px;
 }
 
 .zoom-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
   appearance: none;
-  width: 7px;
-  height: 20px;
   background: black;
-  cursor: pointer;
   border: none;
+  cursor: pointer;
+  height: 20px;
   margin-top: -7.5px;
+  width: 7px;
 }
 
 .zoom-range::-moz-range-track {
   background: black;
-  height: 5px;
-  cursor: pointer;
   border-radius: 5px;
+  cursor: pointer;
+  height: 5px;
 }
 
 .zoom-range::-moz-range-thumb {
-  width: 10px;
-  height: 20px;
   background: black;
-  cursor: pointer;
   border: none;
+  cursor: pointer;
+  height: 20px;
+  width: 10px;
 }
 
 .zoom-value {
-  width: 50px;
-  text-align: right;
   padding-right: 30px;
+  text-align: right;
+  width: 50px;
 }
 
 .zoom-controls {
-  position: relative;
-  display: flex;
   align-items: center;
+  display: flex;
+  position: relative;
 }
 
-.eui-icon-minus{
+.eui-icon-minus {
   font-size: 13px;
 }
 
-.eui-icon-add{
+.eui-icon-add {
   font-size: 13px;
 }

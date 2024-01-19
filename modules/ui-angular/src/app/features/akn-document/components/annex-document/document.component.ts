@@ -20,11 +20,12 @@ import { TrackChangesActionsService } from '@/features/akn-document/services/tra
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
-import {EnvironmentService} from "@/shared/services/enviroment.service";
+import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
 
 const MAIN_CONTAINER_WIDTH = 500.6;
+
 @Component({
   selector: 'app-document',
   templateUrl: './document.component.html',
@@ -42,7 +43,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
   containerElRef: ElementRef<HTMLDivElement>;
   @ViewChild('zoomScrollbar', { static: true })
   zoomScrollbarRef: ElementRef<HTMLDivElement>;
-  documentStyle={};
+  documentStyle = {};
 
   zoomLevel: number;
   private bookmarkMutationObserver?: MutationObserver;

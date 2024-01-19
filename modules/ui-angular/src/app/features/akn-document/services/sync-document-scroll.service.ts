@@ -16,6 +16,26 @@ export class SyncDocumentScrollService {
     });
   }
 
+  public setSyncScroll(value: boolean) {
+    this.isSyncScrollEnabledBS.next(value);
+  }
+
+  public syncScrollByNavigationChange(sender: HTMLElement) {
+    const scrolledDiv = sender.closest('.sync-scroll');
+
+    [...this.scrollables.keys()]
+      .filter((scrollable) => scrollable.id !== scrolledDiv.id)
+      .forEach((scrollable) => {
+        requestAnimationFrame(() => {
+          scrollable.scrollTop = scrolledDiv.scrollTop;
+        });
+      });
+  }
+
+  get isSyncScrollEnabled() {
+    return this.isSyncScrollEnabledBS.value;
+  }
+
   private toggleSyncScroll(isEnabled: boolean) {
     if (isEnabled) {
       this.document
@@ -37,26 +57,6 @@ export class SyncDocumentScrollService {
     } else {
       [...this.scrollables.values()].forEach((destroyFn) => destroyFn());
     }
-  }
-
-  public setSyncScroll(value) {
-    this.isSyncScrollEnabledBS.next(value);
-  }
-
-  public syncScrollByNavigationChange(sender: HTMLElement) {
-    const scrolledDiv = sender.closest('.sync-scroll');
-
-    [...this.scrollables.keys()]
-      .filter((scrollable) => scrollable.id !== scrolledDiv.id)
-      .forEach((scrollable) => {
-        requestAnimationFrame(() => {
-          scrollable.scrollTop = scrolledDiv.scrollTop;
-        });
-      });
-  }
-
-  get isSyncScrollEnabled() {
-    return this.isSyncScrollEnabledBS.value;
   }
 
   private handleSyncScroll(event: Event) {

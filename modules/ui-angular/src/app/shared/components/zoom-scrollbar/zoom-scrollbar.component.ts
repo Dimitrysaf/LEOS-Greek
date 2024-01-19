@@ -1,17 +1,20 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 const MIN_SLIDER_TRUE_VALUE = 50;
 const MAX_SLIDER_TRUE_VALUE = 108;
 const STARTING_VALUE = 100;
-const DOCUMENT_WIDTH =866.5;
+const DOCUMENT_WIDTH = 866.5;
 const DOCUMENT_HEIGHT = 1628;
 @Component({
   selector: 'app-zoom-scrollbar',
   templateUrl: './zoom-scrollbar.component.html',
-  styleUrls: ['./zoom-scrollbar.component.scss']
+  styleUrls: ['./zoom-scrollbar.component.scss'],
 })
-export class ZoomScrollbarComponent implements OnInit{
-  @Output() zoomChange = new EventEmitter<{ zoomLevel: number, size: { width: number, height: number } }>();
+export class ZoomScrollbarComponent implements OnInit {
+  @Output() zoomChange = new EventEmitter<{
+    zoomLevel: number;
+    size: { width: number; height: number };
+  }>();
   private _zoomLevel: number;
 
   ngOnInit() {
@@ -59,4 +62,3 @@ export class ZoomScrollbarComponent implements OnInit{
     return (actualValue - STARTING_VALUE) * factor + STARTING_VALUE;
   }
 }
-

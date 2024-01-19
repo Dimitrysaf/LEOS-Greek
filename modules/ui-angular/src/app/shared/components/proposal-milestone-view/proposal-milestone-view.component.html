@@ -126,8 +126,11 @@
         <eui-chip euiSecondary><span euiLabel>Processed</span></eui-chip>
       </eui-chip-list>
     </div>
-   
-    <div class="eui-dialog__footer-content"><button class="eui-button" (click)="close()"><span class="eui-button__container">
-      Close </span></button></div>
+
+    <div class="eui-dialog__footer-content">
+      <button class="eui-button" (click)="close()">
+        <span class="eui-button__container"> {{ 'global.actions.close' | translate }} </span>
+      </button>
+    </div>
   </eui-dialog-footer>
 </eui-dialog>

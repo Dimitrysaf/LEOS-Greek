@@ -69,7 +69,7 @@
           'page.collection.milestones.table.date' | translate
         "
       >
-        {{ row.updatedDate | date: 'dd/MM/yyyy HH:mm' }}
+        {{ row.updatedDate | date : 'dd/MM/yyyy HH:mm' }}
       </td>
       <td
         [attr.data-col-label]="
@@ -123,14 +123,8 @@
                 </li>
               </ng-container>
               <li euiListItem>
-                <button
-                  euiListItem
-                  (click)="onDownloadMilestone(row)"
-                >
-                  {{
-                  'page.collection.actions-dropdown.download'
-                  | translate
-                  }}
+                <button euiListItem (click)="onDownloadMilestone(row)">
+                  {{ 'page.collection.actions-dropdown.download' | translate }}
                 </button>
               </li>
             </ul>
@@ -154,7 +148,7 @@
             'page.collection.milestones.table.date' | translate
           "
         >
-          {{ clonedMilestone.updatedDate | date: 'dd/MM/yyyy HH:mm' }}
+          {{ clonedMilestone.updatedDate | date : 'dd/MM/yyyy HH:mm' }}
         </td>
         <td
           [attr.data-col-label]="
@@ -163,28 +157,30 @@
         >
           {{ clonedMilestone.status }}
         </td>
-        <td
-      >
-        <eui-dropdown *ngIf="isReadyToMerge(clonedMilestone.status) && viewContribution">
-          <button euiButton euiBasicButton="true">
-            <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
-          </button>
-          <eui-dropdown-content>
-            <ul euiList>
-              <li euiListItem>
-                <button
-                euiListItem
-                (click)="updateReadyToMergeStatus(clonedMilestone)">
-                  {{
-                    'page.collection.milestones.actions.view-contribution'
-                      | translate
-                  }}
-                </button>
-              </li>
-            </ul>
-          </eui-dropdown-content>
-        </eui-dropdown>
-      </td>
+        <td>
+          <eui-dropdown
+            *ngIf="isReadyToMerge(clonedMilestone.status) && viewContribution"
+          >
+            <button euiButton euiBasicButton="true">
+              <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+            </button>
+            <eui-dropdown-content>
+              <ul euiList>
+                <li euiListItem>
+                  <button
+                    euiListItem
+                    (click)="updateReadyToMergeStatus(clonedMilestone)"
+                  >
+                    {{
+                      'page.collection.milestones.actions.view-contribution'
+                        | translate
+                    }}
+                  </button>
+                </li>
+              </ul>
+            </eui-dropdown-content>
+          </eui-dropdown>
+        </td>
       </tr>
     </ng-template>
     <ng-template euiTemplate="emptyMessage">

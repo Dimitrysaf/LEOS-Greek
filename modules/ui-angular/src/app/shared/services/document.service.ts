@@ -137,13 +137,16 @@ export class DocumentService implements OnDestroy {
   }>;
   getElementContent$: Observable<{
     elementId: string;
-    elementType: string
+    elementType: string;
   }>;
   getElementContentResponse$: Observable<{
     elementId: string;
     elementType: string;
     elementFragment: string;
   }>;
+  pageSize = 10;
+  isReloadRequired = false;
+  titlePageBS = new BehaviorSubject<string | null>(null);
   public trackChangesStatus$ : Observable<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
@@ -165,7 +168,6 @@ export class DocumentService implements OnDestroy {
     wholeWords: false,
     matchCase: false,
   });
-  titlePageBS = new BehaviorSubject<string | null>(null);
   private documentConfigBS = new BehaviorSubject<DocumentConfig>(null);
   private recentChangesBS = new BehaviorSubject<Version[]>([]);
   private totalNumVersionBS = new BehaviorSubject<number>(0);
@@ -177,7 +179,7 @@ export class DocumentService implements OnDestroy {
     type: 'all',
     author: '',
   });
-  private versionSearchResultsIsEmpty: Boolean = true;
+  private versionSearchResultsIsEmpty = true;
   private versionFilterBS = new BehaviorSubject<string>('All');
   private searchAndReplaceTextBS = new BehaviorSubject<string>('');
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
@@ -191,7 +193,13 @@ export class DocumentService implements OnDestroy {
     elementFragment: string;
     isClosing: boolean;
     isSaved: boolean;
-  }>({ elementId: null, elementType: null, elementFragment: null, isClosing: false, isSaved: false });
+  }>({
+    elementId: null,
+    elementType: null,
+    elementFragment: null,
+    isClosing: false,
+    isSaved: false,
+  });
   private refreshViewBS = new BehaviorSubject<DocumentViewResponse>(null);
   private documentRefAndCategoryBS =
     new BehaviorSubject<DocumentRefAndCategory | null>(null);
@@ -222,17 +230,22 @@ export class DocumentService implements OnDestroy {
     elementFragment: string;
     isClosing: boolean;
     isSaved: boolean;
-  }>({ elementId: null, elementType: null, elementFragment: null, isClosing: false, isSaved: false });
+  }>({
+    elementId: null,
+    elementType: null,
+    elementFragment: null,
+    isClosing: false,
+    isSaved: false,
+  });
+
   private trackChangesStatusBS = new BehaviorSubject<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
   }>({isTrackChangesEnabled: false, isTrackChangesShowed: false});
+
   private getAnnotations?: () => Promise<string>;
 
   private destroy$ = new Subject<void>();
-
-  pageSize: number = 10;
-  isReloadRequired = false;
 
   constructor(
     private http: HttpClient,
@@ -256,7 +269,9 @@ export class DocumentService implements OnDestroy {
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
       tap((res) => {
-        res.category !== 'coverpage' && this.getContributions();
+        if (res.category !== 'coverpage') {
+          this.getContributions();
+        }
         this.tocService.reload();
         this.getRecentChanges(res.category, res.ref, 0, 1);
         this.countDocumentVersionsData(res.category, res.ref);
@@ -332,20 +347,20 @@ export class DocumentService implements OnDestroy {
       mergeMap(([versionToCompare, option]) =>
         versionToCompare.length > 2
           ? this.getDocumentVersionsDoubleComparison(
-            option.ref,
-            option.category,
-            versionToCompare[2],
-            versionToCompare[1] !== undefined ? versionToCompare[1] : null,
-            versionToCompare[0],
-          )
+              option.ref,
+              option.category,
+              versionToCompare[2],
+              versionToCompare[1] !== undefined ? versionToCompare[1] : null,
+              versionToCompare[0],
+            )
           : versionToCompare.length > 1
-            ? this.getDocumentVersionsSimpleComparison(
+          ? this.getDocumentVersionsSimpleComparison(
               option.ref,
               option.category,
               versionToCompare[1],
               versionToCompare[0],
             )
-            : of(''),
+          : of(''),
       ),
     );
 
@@ -465,7 +480,7 @@ export class DocumentService implements OnDestroy {
       .subscribe((resp) => this.cleanVersionViewBS.next(resp));
   }
 
-  async toggleTrackChangesEnabled(trackChangedEnabled) {
+  toggleTrackChangesEnabled(trackChangedEnabled) {
     const documentRef = this.documentRef;
     const documentType = this.documentType;
     return this.http
@@ -667,17 +682,21 @@ export class DocumentService implements OnDestroy {
     this.reloadTriggerBS.next(this.reloadTriggerBS.value + 1);
   }
 
-  reloadConnectors(data: {
-    elementId: string;
-    elementType: string;
-    elementFragment: string;
-  }, isClosing = false, isSaved = false) {
+  reloadConnectors(
+    data: {
+      elementId: string;
+      elementType: string;
+      elementFragment: string;
+    },
+    isClosing = false,
+    isSaved = false,
+  ) {
     this.refreshConnectorsBS.next({
       elementId: data.elementId,
       elementType: data.elementType,
       elementFragment: data.elementFragment,
-      isClosing: isClosing,
-      isSaved: isSaved
+      isClosing,
+      isSaved,
     });
   }
 
@@ -862,8 +881,8 @@ export class DocumentService implements OnDestroy {
     const params =
       elementIds?.length > 0
         ? {
-          elementIds: elementIds.join(','),
-        }
+            elementIds: elementIds.join(','),
+          }
         : {};
     return this.http.get(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/fetch-toc-ancestors`,
@@ -1060,14 +1079,14 @@ export class DocumentService implements OnDestroy {
         {
           params: {
             versionLabel: versionNumber,
-            versionComment: baseVersionTitle
-          }
+            versionComment: baseVersionTitle,
+          },
         },
-      ).pipe(
-      finalize(() => this.loadingService.setLoading(false))
-    ).subscribe((r) => {
-      this.setDocumentRefAndCategory(this.documentRef, this.documentType);
-    });
+      )
+      .pipe(finalize(() => this.loadingService.setLoading(false)))
+      .subscribe((r) => {
+        this.setDocumentRefAndCategory(this.documentRef, this.documentType);
+      });
   }
 
   validateNodeDrop(
@@ -1105,7 +1124,7 @@ export class DocumentService implements OnDestroy {
     return this.versionSearchResultsIsEmpty;
   }
 
-  setVersionSearchResultsIsEmpty(value: Boolean) {
+  setVersionSearchResultsIsEmpty(value: boolean) {
     this.versionSearchResultsIsEmpty = value;
   }
 
@@ -1201,11 +1220,11 @@ export class DocumentService implements OnDestroy {
   ) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
     const vType =
-      versionType == 'milestone'
+      versionType === 'milestone'
         ? 'MAJOR'
-        : versionType == 'save'
-          ? 'INTERMEDIATE'
-          : '';
+        : versionType === 'save'
+        ? 'INTERMEDIATE'
+        : '';
     if (this.versionSearchOpenBS.getValue()) {
       this.loadingService.setLoading(true);
       return this.http
@@ -1683,7 +1702,7 @@ export class DocumentService implements OnDestroy {
               }
               if (
                 elementTextLength - res.matchedElements[0].matchStartIndex >
-                -1 &&
+                  -1 &&
                 elementTextLength - res.matchedElements[0].matchEndIndex > -1 &&
                 !foundSearchText
               ) {

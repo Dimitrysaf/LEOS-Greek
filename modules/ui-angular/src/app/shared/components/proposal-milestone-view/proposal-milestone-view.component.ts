@@ -34,7 +34,12 @@ type MilestoneDocument = {
 
 export type MilestoneDescriptor = Pick<
   Milestone,
-  'createdBy' | 'createdDate' | 'legDocumentName' | 'proposalRef' | 'title' | 'versionedReference'
+  | 'createdBy'
+  | 'createdDate'
+  | 'legDocumentName'
+  | 'proposalRef'
+  | 'title'
+  | 'versionedReference'
 >;
 
 @Component({
@@ -57,13 +62,13 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   @ViewChild('annotationsPane', { read: ElementRef })
   annotationsPaneElement: ElementRef;
   status: string;
-  
+
   documents: MilestoneDocument[] = [];
   containerId = 'view-container-id';
   activeTabIndex: number;
   showPdfExport = false;
 
-  readyToMergeMessage : string;
+  readyToMergeMessage: string;
 
   isTocPaneCollapsed = false;
   isAnnotationsPaneCollapsed = false;
@@ -83,7 +88,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.milestonesService.readyToMergeStatus$.subscribe(status => {
+    this.milestonesService.readyToMergeStatus$.subscribe((status) => {
       this.status = status;
     });
 
@@ -91,10 +96,9 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       'page.workspace.proposal-item.ready-status',
     );
 
-    if(this.status === this.readyToMergeMessage) {
+    if (this.status === this.readyToMergeMessage) {
       this.loadContribution(this.hiddenCategories);
-    }
-    else {
+    } else {
       this.loadDocuments(this.hiddenCategories);
     }
   }
@@ -143,14 +147,14 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   private loadContribution(hiddenCategories) {
     this.milestonesService
-        .listContributionsView(
-          this.milestone.proposalRef,
-          this.milestone.legDocumentName,
-        )
-        .subscribe((response) => {
-          this.handleMilestoneExplorerDocuments(response, hiddenCategories);
-        });
-        this.milestonesService.resetReadyToMergeStatus();
+      .listContributionsView(
+        this.milestone.proposalRef,
+        this.milestone.legDocumentName,
+      )
+      .subscribe((response) => {
+        this.handleMilestoneExplorerDocuments(response, hiddenCategories);
+      });
+    this.milestonesService.resetReadyToMergeStatus();
   }
 
   private loadDocuments(hiddenCategories: string[]) {
@@ -175,7 +179,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     }
   }
 
-  private handleMilestoneExplorerDocuments(response: MilestoneViewResponse, hiddenCategories: string[]) {
+  private handleMilestoneExplorerDocuments(
+    response: MilestoneViewResponse,
+    hiddenCategories: string[],
+  ) {
     this.showPdfExport = response.pdfRenditionsPresent;
 
     this.documents = response.documents
@@ -184,7 +191,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       .map((x) => this.viewToDoc(x));
     this.setActiveTab(0);
   }
-  
+
   private viewToDoc(item: MilestoneViewItem): MilestoneDocument {
     return {
       ref: item.contentFileName,

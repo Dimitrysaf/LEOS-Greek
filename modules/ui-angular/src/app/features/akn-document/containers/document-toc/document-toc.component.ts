@@ -22,13 +22,15 @@ import {
   BehaviorSubject,
   debounceTime,
   distinctUntilChanged,
-  filter, Observable,
+  filter,
+  Observable,
   Subject,
   take,
   takeUntil,
 } from 'rxjs';
 
-import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
+import { TocInlineEditMenuMandateService } from '@/features/akn-document/services/toc-inline-edit-menu.mandate.service';
+import { TocInlineEditMenuService } from '@/features/akn-document/services/toc-inline-edit-menu.service';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
   ADD,
@@ -39,8 +41,7 @@ import {
   DELETE,
   DIVISION,
   EC,
-  HASH_NUM_VALUE,
-  LEOS_TC_DELETE_ACTION,
+  HASH_NUM_VALUE, LEOS_TC_DELETE_ACTION,
   MAX_TRUNCATION_LIMIT,
   MOVE_FROM,
   MOVE_LABEL_SPAN_START_TAG,
@@ -64,8 +65,6 @@ import { DocumentService } from '@/shared/services/document.service';
 import { scrollInParent } from '@/shared/utils';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import {
-  checkDeleteOnLastItemInList,
-  checkIfConfirmDeletion,
   checkPositionAfterValidation,
   checkPositionAfterValidationExplanatory,
   findNodeById,
@@ -84,7 +83,6 @@ import { ValidateTocService } from '../../services/validate-node-drop.service';
   styleUrls: ['./document-toc.component.scss'],
 })
 export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() isEdit: boolean;
   @Input() documentType: string;
   @Input() documentRef: string;
   @Input() versionId: string;
@@ -95,7 +93,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('tree', { read: ElementRef }) treeElRef: ElementRef<HTMLElement>;
   documentConfig: DocumentConfig;
 
-  //toc related
+  @Input() isEditMode = false;
   selectedNode: TableOfContentItemVO = null;
   selectedNodeToMove: TableOfContentItemVO = null;
   isToCDraft: boolean;
@@ -140,6 +138,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     private validateTocService: ValidateTocService,
     private tocEditService: TableOfContentEditService,
     private tocService: TableOfContentService,
+    private tocInlineEditMenuService: TocInlineEditMenuService,
     @Inject(DOCUMENT) private document: Document,
     private zone: NgZone,
   ) {
@@ -158,6 +157,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
         this.validateTocService.setDocumentConfig(dConfig);
         this.tocEditService.setDocumentConfig(dConfig);
         this.documentConfig = dConfig;
+        this.tocInlineEditMenuService.documentConfigBS.next(dConfig);
+      });
+    this.tocService.selectedNode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((selectedNode) => {this.selectedNode = selectedNode});
+    this.tocService.isTocDraft$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isDraft) => {
+        this.isToCDraft = isDraft;
       });
   }
 
@@ -260,7 +268,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       this.tocEditService.setTreeHistory(event.newTree);
       return;
     }
-    this.isToCDraft = true;
+    this.tocService.setTocIsDraft(true);
     this.highlightInvalidNodes();
     this.tocEditService.setTree(event.newTree);
   }
@@ -271,7 +279,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       nodeTarget.parentItem,
     );
     this.validateAndMove(
-      this.selectedNodeToMove,
+      null,
       nodeTarget,
       nodeTargetParent,
       position,
@@ -279,16 +287,12 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   handleMove(node: TableOfContentItemVO) {
-    this.handleNodeSelect(node);
     this.selectedNodeToMove = node;
+    this.handleNodeSelect(node);
   }
 
   isNodeSelected() {
     return this.selectedNode !== null;
-  }
-
-  isNodeSelectedToMove() {
-    return this.selectedNodeToMove !== null;
   }
 
   expandAll() {
@@ -308,96 +312,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       item.childItems.length > 0 &&
       !(item.softActionAttr === DELETE || item.softActionAttr === 'MOVE')
     );
-  }
-
-  isArticle(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === ARTICLE.toLowerCase();
-  }
-
-  isDivision(tocItem: TocItem) {
-    return tocItem.aknTag.toLowerCase() === DIVISION.toLowerCase();
-  }
-
-  isItemHeadingVisible(tocItem: TocItem) {
-    return (
-      tocItem.itemHeading === 'MANDATORY' || tocItem.itemHeading === 'OPTIONAL'
-    );
-  }
-
-  isItemHeadingEditable(tocItem: TocItem) {
-    return tocItem.aknTag === DIVISION
-      ? false
-      : this.isItemHeadingVisible(tocItem);
-  }
-
-  isItemNumberEditable(tocItem: TocItem) {
-    return tocItem.numberEditable;
-  }
-
-  isItemNumberVisible(tocItem: TocItem) {
-    return (
-      tocItem.itemNumber === 'MANDATORY' || tocItem.itemNumber === 'OPTIONAL'
-    );
-  }
-
-  deleteItem(newTree: TableOfContentItemVO[], item: TableOfContentItemVO) {
-    item.trackChangeAction = LEOS_TC_DELETE_ACTION;
-    this.tocEditService.setTreeHistory(this.treeControl.dataNodes);
-    this.tocEditService.deleteItem(newTree, item);
-    this.tocEditService.setTree(newTree);
-    this.selectedNodeToMove = null;
-  }
-
-  handleTocRemove() {
-    const newTree = cloneDeep(this.treeControl.dataNodes);
-    const item = findNodeById(newTree, this.selectedNode.id);
-    const parentItem: TableOfContentItemVO = checkDeleteOnLastItemInList(
-      newTree,
-      item,
-    );
-    if (item) {
-      if (item.softActionAttr === DELETE) {
-        this.tocEditService.setTreeHistory(this.treeControl.dataNodes);
-        this.tocEditService.undeleteItem(newTree, item);
-      } else {
-        if (this.coEditionService.checkForCoEdition('EDIT_TOC')) {
-          // co edition dialog
-          this.dialogService.openDialog({
-            title: this.translateService.instant(
-              'page.editor.co-edition-detected.title',
-            ),
-            bodyComponent: {
-              component: CoEditionDetectedDialogComponent,
-            },
-            accept: () => this.deleteWithConfirmationCheck(newTree, item),
-          });
-        } else {
-          this.dialogService.openDialog({
-            title: this.translateService.instant(
-              'page.editor.element-delete-dialog.title',
-            ),
-            content: this.translateService.instant(
-              'page.editor.element-delete-dialog.body',
-            ),
-            accept: () => this.deleteWithConfirmationCheck(newTree, item),
-          });
-        }
-      }
-    }
-  }
-
-  deleteWithConfirmationCheck(
-    newTree: TableOfContentItemVO[],
-    item: TableOfContentItemVO,
-  ) {
-    if (checkIfConfirmDeletion(newTree, item)) {
-      this.onTocDeleteWithChildren();
-      this.deleteDialog.deleteDialog.accept.pipe(take(1)).subscribe(() => {
-        this.deleteItem(newTree, item);
-      });
-    } else {
-      this.deleteItem(newTree, item);
-    }
   }
 
   onTocDeleteWithChildren() {
@@ -440,10 +354,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     this.document
       .querySelectorAll('.invalid-node')
       .forEach((el) => el.classList.remove('invalid-node'));
-  }
-
-  handleCancelMove() {
-    this.selectedNodeToMove = null;
   }
 
   handleNodeSelect(node: TableOfContentItemVO, scrollTo = true) {
@@ -598,12 +508,11 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   resetTreeState() {
     this.clearSelectedNode();
     this.isDropValid = false;
-    this.selectedNodeToMove = null;
     const initialTreeBeforeEdit = this.tocEditService.resetTreeHistory();
     if (initialTreeBeforeEdit) {
       this.tocService.setToc(initialTreeBeforeEdit);
     }
-    this.isToCDraft = false;
+    this.tocService.setTocIsDraft(false);
     this.invalidNodes?.clear();
   }
 
@@ -910,8 +819,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       if (isAdd) {
         this.reBuildTocItems.emit(true);
       }
-      this.isToCDraft = true;
-      this.selectedNodeToMove = null;
+      this.tocService.setTocIsDraft(true);
       setTimeout(() => {
         this.handleNodeSelect(nodeDragged);
       });

@@ -1,11 +1,13 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
   AfterViewInit,
-  Component, EventEmitter,
+  Component,
+  EventEmitter,
   Input,
   OnChanges,
   OnDestroy,
-  OnInit, Output,
+  OnInit,
+  Output,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
@@ -35,7 +37,8 @@ export class ProposalDraftsComponent
 {
   @Input() proposal: Document;
   @Input() proposalState: string;
-  @Output() proposalStateChange: EventEmitter<string> = new EventEmitter<string>();
+  @Output() proposalStateChange: EventEmitter<string> =
+    new EventEmitter<string>();
   coverpage: Document | null = null;
   explanatories: Document[] | null = null;
   memorandum: Document | null = null;
@@ -107,7 +110,7 @@ export class ProposalDraftsComponent
   }
 
   handleAnnexAdd() {
-    if (this.proposalState != 'loading' && this.proposalState != 'active') {
+    if (this.proposalState !== 'loading' && this.proposalState !== 'active') {
       this.proposalStateChange.emit('active');
       this.proposalDetailsService.createAnnex();
     }
@@ -135,7 +138,7 @@ export class ProposalDraftsComponent
       this.proposalStateChange.emit('done');
       return;
     }
-    if (this.proposalState != 'loading' && this.proposalState != 'active') {
+    if (this.proposalState !== 'loading' && this.proposalState !== 'active') {
       this.proposalStateChange.emit('active');
       this.proposalDetailsService.deleteAnnex(
         this.annexToDelete.metadata.internalRef,

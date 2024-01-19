@@ -45,7 +45,12 @@
         <td>{{ row.entity.organizationName }}</td>
         <td>
           <ng-container
-            *ngIf="isEditRole && editUserId === row.login && row.entity.organizationName === entity; else tdRole"
+            *ngIf="
+              isEditRole &&
+                editUserId === row.login &&
+                row.entity.organizationName === entity;
+              else tdRole
+            "
           >
             <div euiInputGroup class="row">
               <div class="col-sm-10">

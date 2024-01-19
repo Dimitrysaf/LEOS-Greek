@@ -46,52 +46,48 @@ export abstract class TableOfContentEditService {
 
   constructor(protected tocService: TableOfContentService) {}
 
-  setTree(newTree: TableOfContentItemVO[]) {
+  public setTree(newTree: TableOfContentItemVO[]) {
     this.tocService.setToc(newTree);
   }
 
-  popTreeHistory() {
+  public popTreeHistory() {
     return this.treeHistory.pop();
   }
 
-  getTreeHistorySize() {
+  public getTreeHistorySize() {
     return this.treeHistory.length;
   }
 
-  setTreeHistory(oldTree: TableOfContentItemVO[]) {
+  public setTreeHistory(oldTree: TableOfContentItemVO[]) {
     this.treeHistory.push(oldTree);
   }
 
-  resetTreeHistory(): TableOfContentItemVO[] {
+  public resetTreeHistory(): TableOfContentItemVO[] {
     const tempInitialTreeBeforeEdit = this.treeHistory.shift();
     this.treeHistory = [];
     return tempInitialTreeBeforeEdit;
   }
 
-  setDocumentConfig(documentConfig: DocumentConfig) {
+  //todo : replace this
+  public setDocumentConfig(documentConfig: DocumentConfig) {
     this.environment = process.env.NG_APP_LEOS_INSTANCE;
     this.documentConfig = documentConfig;
   }
 
-  isDeletedItem = (tableOfContentItemVO: TableOfContentItemVO) =>
-    DELETE === tableOfContentItemVO.softActionAttr;
+  public handleNodeChanges(
+    newTree: TableOfContentItemVO[],
+    saveSnapshot?: boolean,
+  ) {
+    if (saveSnapshot) {
+      this.setTreeHistory(newTree);
+      return;
+    }
+    this.tocService.setTocIsDraft(true);
+    // this.highlightInvalidNodes();
+    this.setTree(newTree);
+  }
 
-  isMoveToItem = (tableOfContentItemVO: TableOfContentItemVO) =>
-    MOVE_TO === tableOfContentItemVO.softActionAttr;
-
-  isUndeletableItem = (
-    tocTree: TableOfContentItemVO[],
-    tableOfContentItemVO: TableOfContentItemVO,
-  ) => {
-    const parentItem = findNodeById(tocTree, tableOfContentItemVO.parentItem);
-    return (
-      parentItem &&
-      !this.isMoveToItem(tableOfContentItemVO) &&
-      DELETE !== parentItem.softActionAttr
-    );
-  };
-
-  undeleteItem = (
+  public undeleteItem = (
     tocTree: TableOfContentItemVO[],
     tableOfContentItemVO: TableOfContentItemVO,
   ) => {
@@ -99,7 +95,23 @@ export abstract class TableOfContentEditService {
     this.setTree(tocTree);
   };
 
-  dropItemAtOriginalPosition(
+  public abstract handleMoveAction(
+    moveFromItem: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+  );
+
+  protected abstract copyMovingItemToTemp(
+    originalItem: TableOfContentItemVO,
+    isSoftActionRoot: boolean,
+    tocTree: TableOfContentItemVO[],
+  );
+
+  abstract deleteItem(
+    newTree: TableOfContentItemVO[],
+    item: TableOfContentItemVO,
+  );
+
+  public dropItemAtOriginalPosition(
     nodeToAdd: TableOfContentItemVO,
     originalNode: TableOfContentItemVO,
     tocTree: TableOfContentItemVO[],
@@ -308,15 +320,25 @@ export abstract class TableOfContentEditService {
         targetItem.tocItem.numberingType.toUpperCase(),
       ].join('_');
       const targetTocAllowedItems = this.documentConfig.tocRules[targetRules];
-      if (actualTargetItem.tocItem.aknTag !== targetItem.tocItem.aknTag && position === 'AS_CHILDREN'
-        && !(targetTocAllowedItems != null && targetTocAllowedItems.find(i => i.aknTag === sourceItem.tocItem.aknTag))) {
+      if (
+        actualTargetItem.tocItem.aknTag !== targetItem.tocItem.aknTag &&
+        position === 'AS_CHILDREN' &&
+        !(
+          targetTocAllowedItems != null &&
+          targetTocAllowedItems.find(
+            (i) => i.aknTag === sourceItem.tocItem.aknTag,
+          )
+        )
+      ) {
         position = 'AFTER';
       }
-      if ((LEVEL === targetItem.tocItem.aknTag &&
-          LEVEL !== sourceItem.tocItem.aknTag &&
-          targetTocAllowedItems != null &&
-          targetTocAllowedItems.length > 0 &&
-          targetTocAllowedItems.includes(sourceItem.tocItem))) {
+      if (
+        LEVEL === targetItem.tocItem.aknTag &&
+        LEVEL !== sourceItem.tocItem.aknTag &&
+        targetTocAllowedItems != null &&
+        targetTocAllowedItems.length > 0 &&
+        targetTocAllowedItems.includes(sourceItem.tocItem)
+      ) {
         /*
          * This if is when we add level as child or after a Part, Title, Chapter or Section,
          * because in this case the actualTargetItem is equal to targetItem, and we need to set
@@ -345,63 +367,7 @@ export abstract class TableOfContentEditService {
     this.setItemLevel(tocTree, sourceItem, targetItem, position);
   }
 
-  abstract handleMoveAction(
-    moveFromItem: TableOfContentItemVO,
-    tocTree: TableOfContentItemVO[],
-  );
-
-  abstract copyMovingItemToTemp(
-    originalItem: TableOfContentItemVO,
-    isSoftActionRoot: boolean,
-    tocTree: TableOfContentItemVO[],
-  );
-
-  abstract deleteItem(
-    newTree: TableOfContentItemVO[],
-    item: TableOfContentItemVO,
-  );
-
-  setItemLevel = (
-    toc: TableOfContentItemVO[],
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-    position: string,
-  ) => {
-    const targetItemLevel = 0;
-    getItemIndentLevel(toc, targetItem, targetItemLevel, [
-      LEVEL,
-      PARAGRAPH,
-      INDENT,
-      POINT,
-    ]);
-
-    switch (position) {
-      case 'AS_CHILDREN':
-        if (targetItem.tocItem.root) {
-          sourceItem.indentLevel = 0;
-        } else if (
-          [LEVEL, PARAGRAPH, 'INDENT', POINT].includes(
-            targetItem.tocItem.aknTag,
-          )
-        ) {
-          sourceItem.indentLevel = targetItemLevel + 1;
-        } else {
-          sourceItem.indentLevel = targetItemLevel;
-        }
-        break;
-      case 'BEFORE':
-        sourceItem.indentLevel = targetItemLevel;
-        break;
-      case 'AFTER':
-        if (targetItem.tocItem.root) {
-          sourceItem.indentLevel = 0;
-        } else {
-          sourceItem.indentLevel = targetItemLevel;
-        }
-    }
-  };
-
-  performAddOrMoveAction(
+  public performAddOrMoveAction(
     isAdd: boolean,
     tocTree: TableOfContentItemVO[],
     sourceItem: TableOfContentItemVO,
@@ -513,25 +479,7 @@ export abstract class TableOfContentEditService {
     }
   }
 
-  isInList = (
-    toc: TableOfContentItemVO[],
-    sourceItem: TableOfContentItemVO,
-  ): boolean => {
-    const parent = findNodeById(toc, sourceItem.parentItem);
-    if (parent != null) {
-      if (parent.tocItem.aknTag === 'LIST') {
-        return true;
-      }
-      for (const item of parent.childItems) {
-        if (item.tocItem.aknTag === POINT || item.tocItem.aknTag === 'INDENT')
-          return true;
-      }
-    }
-
-    return false;
-  };
-
-  handleLevelMove = (
+  protected handleLevelMove = (
     sourceItem: TableOfContentItemVO,
     targetItem: TableOfContentItemVO,
   ) => {
@@ -542,83 +490,7 @@ export abstract class TableOfContentEditService {
       sourceItem.itemDepth = targetItem.itemDepth;
   };
 
-  isDroppedOnPointOrIndent = (
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-  ) => {
-    const sourceTagValue: string = sourceItem.tocItem.aknTag;
-    const targetTagValue: string = targetItem.tocItem.aknTag;
-    return (
-      (sourceTagValue === CROSSHEADING ||
-        sourceTagValue === POINT ||
-        sourceTagValue === INDENT) &&
-      (targetTagValue === POINT || targetTagValue === INDENT)
-    );
-  };
-
-  isRootElement = (element: TableOfContentItemVO) => element.softActionRoot;
-
-  isSourceDivision = (sourceItem: TableOfContentItemVO) =>
-    sourceItem.tocItem.aknTag === DIVISION;
-
-  isCrossheading = (sourceItem: TableOfContentItemVO) => {
-    const sourceTagValue = sourceItem.tocItem.aknTag;
-    return sourceTagValue === CROSSHEADING;
-  };
-
-  setItemDepthInHigherElements = (
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-  ) => {
-    sourceItem.itemDepth =
-      targetItem.itemDepth === 0 ? 1 : targetItem.itemDepth;
-    sourceItem.childItems.forEach((c) =>
-      this.setItemDepthInHigherElements(c, targetItem),
-    );
-  };
-
-  setItemDepth = (
-    sourceItem: TableOfContentItemVO,
-    targetItem: TableOfContentItemVO,
-    position: string,
-  ) => {
-    if (sourceItem.tocItem.higherElement || targetItem.tocItem.higherElement) {
-      this.setItemDepthInHigherElements(sourceItem, targetItem);
-    } else {
-      switch (position) {
-        case 'AFTER':
-          if (targetItem.tocItem.root) {
-            sourceItem.itemDepth = 1;
-          } else
-            sourceItem.itemDepth =
-              targetItem.itemDepth === 0 ? 1 : targetItem.itemDepth;
-          break;
-        case 'BEFORE':
-          sourceItem.itemDepth =
-            targetItem.itemDepth === 0 ? 1 : targetItem.itemDepth;
-          break;
-        case 'AS_CHILDREN':
-          sourceItem.itemDepth = targetItem.itemDepth + 1;
-          break;
-      }
-    }
-  };
-
-  checkDeleteOnLastItemInList = (
-    tocTree: TableOfContentItemVO[],
-    deletedItem: TableOfContentItemVO,
-  ) => {
-    const parentItem = findNodeById(tocTree, deletedItem.id);
-    if (
-      parentItem.tocItem.aknTag === LIST &&
-      isLastExistingChildElement(deletedItem, parentItem)
-    ) {
-      return parentItem;
-    }
-    return null;
-  };
-
-  containsItem = (node: TableOfContentItemVO, aknTag: AknTag) => {
+  protected containsItem = (node: TableOfContentItemVO, aknTag: AknTag) => {
     for (const child of node.childItems) {
       if (child.tocItem.aknTag === aknTag) {
         return true;
@@ -627,7 +499,7 @@ export abstract class TableOfContentEditService {
     return false;
   };
 
-  setNumber = (
+  protected setNumber = (
     newTree: TableOfContentItemVO[],
     droppedElement: TableOfContentItemVO,
     targetElement: TableOfContentItemVO,
@@ -644,60 +516,7 @@ export abstract class TableOfContentEditService {
     }
   };
 
-  isNumbered = (
-    toc: TableOfContentItemVO[],
-    droppedElement: TableOfContentItemVO,
-    targetElement: TableOfContentItemVO,
-  ): boolean => {
-    let numbered = true;
-    if (droppedElement.tocItem.itemNumber === 'NONE') {
-      numbered = false;
-    } else if (droppedElement.tocItem.itemNumber === 'OPTIONAL') {
-      if (targetElement.tocItem.aknTag === droppedElement.tocItem.aknTag) {
-        if (
-          targetElement.number === '' ||
-          targetElement.number === null ||
-          targetElement.softActionAttr === 'DELETE'
-        ) {
-          numbered = false;
-        }
-      } else if (
-        targetElement.childItems &&
-        targetElement.childItems.length > 0
-      ) {
-        for (const itemVO of targetElement.childItems) {
-          if (itemVO.tocItem.aknTag === droppedElement.tocItem.aknTag) {
-            if (itemVO.number === '' || itemVO.numSoftActionAttr === 'DELETE') {
-              numbered = false;
-              break;
-            }
-          }
-        }
-      }
-    }
-    const droppedElementParent = findNodeById(toc, droppedElement.parentItem);
-    if (
-      numbered &&
-      droppedElement.tocItem.aknTag === PARAGRAPH &&
-      droppedElementParent &&
-      droppedElementParent.numberingToggled &&
-      droppedElement.numberingToggled === false
-    ) {
-      return false;
-    }
-    if (
-      !numbered &&
-      droppedElement.tocItem.aknTag === PARAGRAPH &&
-      droppedElementParent &&
-      droppedElementParent.numberingToggled &&
-      droppedElement.numberingToggled === false
-    ) {
-      return true;
-    }
-    return numbered;
-  };
-
-  moveOriginAttribute(
+  protected moveOriginAttribute(
     droppedElement: TableOfContentItemVO,
     targetElement: TableOfContentItemVO,
   ) {
@@ -707,20 +526,7 @@ export abstract class TableOfContentEditService {
     droppedElement.originAttr = this.environment === CN ? CN : LS;
   }
 
-  isElementAndTargetOriginDifferent(
-    element: TableOfContentItemVO,
-    parent: TableOfContentItemVO,
-  ): boolean {
-    let isDifferent = false;
-    if (element.originAttr === null) {
-      isDifferent = true;
-    } else if (element.originAttr !== parent.originAttr) {
-      isDifferent = true;
-    }
-    return isDifferent;
-  }
-
-  getTableOfContentItemVOById = (
+  protected getTableOfContentItemVOById = (
     id: string,
     tableOfContentItemVOS: Array<TableOfContentItemVO>,
   ) => {
@@ -740,12 +546,12 @@ export abstract class TableOfContentEditService {
     return null;
   };
 
-  resetUserInfo(sourceItem: TableOfContentItemVO) {
+  protected resetUserInfo(sourceItem: TableOfContentItemVO) {
     sourceItem.softUserAttr = null;
     sourceItem.softUserAttr = null;
   }
 
-  updateMovedOnEmptyParent(
+  protected updateMovedOnEmptyParent(
     dropData: TableOfContentItemVO,
     targetItemVO: TableOfContentItemVO,
     movedOntoType: string,
@@ -762,26 +568,7 @@ export abstract class TableOfContentEditService {
     }
   }
 
-  containsMovedElement(
-    childItems: TableOfContentItemVO[],
-    movedElementType: string,
-  ) {
-    for (const child of childItems) {
-      if (child.tocItem.aknTag === movedElementType && child.node != null) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  flattened = (node: TableOfContentItemVO): TableOfContentItemVO[] => {
-    const childItemsFlat = node.childItems.flatMap((child) =>
-      child.childItems.flatMap((l) => this.flattened(l)),
-    );
-    return [node, ...childItemsFlat];
-  };
-
-  updateDepthOfTocItems = (list: TableOfContentItemVO[]) => {
+  protected updateDepthOfTocItems = (list: TableOfContentItemVO[]) => {
     const tocItems = list
       .flatMap((l) => this.flattened(l))
       .filter(
@@ -858,4 +645,189 @@ export abstract class TableOfContentEditService {
     eventItem.parentItem = parentToBeNode.id;
     parentToBeNode.childItems.push(eventItem);
   }
+
+  private flattened = (node: TableOfContentItemVO): TableOfContentItemVO[] => {
+    const childItemsFlat = node.childItems.flatMap((child) =>
+      child.childItems.flatMap((l) => this.flattened(l)),
+    );
+    return [node, ...childItemsFlat];
+  };
+
+  private containsMovedElement(
+    childItems: TableOfContentItemVO[],
+    movedElementType: string,
+  ) {
+    for (const child of childItems) {
+      if (child.tocItem.aknTag === movedElementType && child.node != null) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private isElementAndTargetOriginDifferent(
+    element: TableOfContentItemVO,
+    parent: TableOfContentItemVO,
+  ): boolean {
+    let isDifferent = false;
+    if (element.originAttr === null) {
+      isDifferent = true;
+    } else if (element.originAttr !== parent.originAttr) {
+      isDifferent = true;
+    }
+    return isDifferent;
+  }
+
+  private isNumbered = (
+    toc: TableOfContentItemVO[],
+    droppedElement: TableOfContentItemVO,
+    targetElement: TableOfContentItemVO,
+  ): boolean => {
+    let numbered = true;
+    if (droppedElement.tocItem.itemNumber === 'NONE') {
+      numbered = false;
+    } else if (droppedElement.tocItem.itemNumber === 'OPTIONAL') {
+      if (targetElement.tocItem.aknTag === droppedElement.tocItem.aknTag) {
+        if (
+          targetElement.number === '' ||
+          targetElement.number === null ||
+          targetElement.softActionAttr === 'DELETE'
+        ) {
+          numbered = false;
+        }
+      } else if (
+        targetElement.childItems &&
+        targetElement.childItems.length > 0
+      ) {
+        for (const itemVO of targetElement.childItems) {
+          if (itemVO.tocItem.aknTag === droppedElement.tocItem.aknTag) {
+            if (itemVO.number === '' || itemVO.numSoftActionAttr === 'DELETE') {
+              numbered = false;
+              break;
+            }
+          }
+        }
+      }
+    }
+    const droppedElementParent = findNodeById(toc, droppedElement.parentItem);
+    if (
+      numbered &&
+      droppedElement.tocItem.aknTag === PARAGRAPH &&
+      droppedElementParent &&
+      droppedElementParent.numberingToggled &&
+      droppedElement.numberingToggled === false
+    ) {
+      return false;
+    }
+    if (
+      !numbered &&
+      droppedElement.tocItem.aknTag === PARAGRAPH &&
+      droppedElementParent &&
+      droppedElementParent.numberingToggled &&
+      droppedElement.numberingToggled === false
+    ) {
+      return true;
+    }
+    return numbered;
+  };
+
+  private setItemDepth = (
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    position: string,
+  ) => {
+    if (sourceItem.tocItem.higherElement || targetItem.tocItem.higherElement) {
+      this.setItemDepthInHigherElements(sourceItem, targetItem);
+    } else {
+      switch (position) {
+        case 'AFTER':
+          if (targetItem.tocItem.root) {
+            sourceItem.itemDepth = 1;
+          } else
+            sourceItem.itemDepth =
+              targetItem.itemDepth === 0 ? 1 : targetItem.itemDepth;
+          break;
+        case 'BEFORE':
+          sourceItem.itemDepth =
+            targetItem.itemDepth === 0 ? 1 : targetItem.itemDepth;
+          break;
+        case 'AS_CHILDREN':
+          sourceItem.itemDepth = targetItem.itemDepth + 1;
+          break;
+      }
+    }
+  };
+
+  private setItemDepthInHigherElements = (
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+  ) => {
+    sourceItem.itemDepth =
+      targetItem.itemDepth === 0 ? 1 : targetItem.itemDepth;
+    sourceItem.childItems.forEach((c) =>
+      this.setItemDepthInHigherElements(c, targetItem),
+    );
+  };
+
+  private isDroppedOnPointOrIndent = (
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+  ) => {
+    const sourceTagValue: string = sourceItem.tocItem.aknTag;
+    const targetTagValue: string = targetItem.tocItem.aknTag;
+    return (
+      (sourceTagValue === CROSSHEADING ||
+        sourceTagValue === POINT ||
+        sourceTagValue === INDENT) &&
+      (targetTagValue === POINT || targetTagValue === INDENT)
+    );
+  };
+
+  private isSourceDivision = (sourceItem: TableOfContentItemVO) =>
+    sourceItem.tocItem.aknTag === DIVISION;
+
+  private isCrossheading = (sourceItem: TableOfContentItemVO) => {
+    const sourceTagValue = sourceItem.tocItem.aknTag;
+    return sourceTagValue === CROSSHEADING;
+  };
+
+  private setItemLevel = (
+    toc: TableOfContentItemVO[],
+    sourceItem: TableOfContentItemVO,
+    targetItem: TableOfContentItemVO,
+    position: string,
+  ) => {
+    const targetItemLevel = 0;
+    getItemIndentLevel(toc, targetItem, targetItemLevel, [
+      LEVEL,
+      PARAGRAPH,
+      INDENT,
+      POINT,
+    ]);
+
+    switch (position) {
+      case 'AS_CHILDREN':
+        if (targetItem.tocItem.root) {
+          sourceItem.indentLevel = 0;
+        } else if (
+          [LEVEL, PARAGRAPH, 'INDENT', POINT].includes(
+            targetItem.tocItem.aknTag,
+          )
+        ) {
+          sourceItem.indentLevel = targetItemLevel + 1;
+        } else {
+          sourceItem.indentLevel = targetItemLevel;
+        }
+        break;
+      case 'BEFORE':
+        sourceItem.indentLevel = targetItemLevel;
+        break;
+      case 'AFTER':
+        if (targetItem.tocItem.root) {
+          sourceItem.indentLevel = 0;
+        } else {
+          sourceItem.indentLevel = targetItemLevel;
+        }
+    }
+  };
 }

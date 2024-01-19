@@ -1,0 +1,28 @@
+<eui-dropdown-button-menu
+  #dropdownComponentRef
+  *ngIf="isEditMode && !node.tocItem.root"
+>
+  <button
+    euiButton
+    euiRounded
+    euiIconButton
+    euiBasicButton
+    euiSecondary
+    euiSizeS
+  >
+    <span
+      euiSizeS
+      euiIcon
+      iconClass="eui-icon eui-icon-more-vertical"
+      (click)="onMenuIconClick()"
+    ></span>
+  </button>
+</eui-dropdown-button-menu>
+
+<app-confirm-delete-dialog
+  #deleteTocConfirmation
+  [title]="'toc.edit.window.item.selected.delete-dialog.title' | translate"
+  [description]="
+    'toc.edit.window.item.selected.delete-dialog.desc' | translate
+  "
+></app-confirm-delete-dialog>

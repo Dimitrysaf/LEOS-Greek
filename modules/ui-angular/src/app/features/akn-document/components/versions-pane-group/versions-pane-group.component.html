@@ -37,14 +37,17 @@
   </eui-card-header>
 
   <eui-card-content
-    class="eui-u-pb-none {{ !showVersions? 'eui-u-display-hidden' : '' }}"
+    class="eui-u-pb-none {{ !showVersions ? 'eui-u-display-hidden' : '' }}"
     (scroll)="onScrollLoadData()"
   >
     <div class="subversions">
       <div
         class="subversion"
         title="{{ version.updatedDate }} {{ version.createdBy }}"
-        *ngFor="let version of this.displayedVersions; trackByProperty: 'cmisVersionNumber'"
+        *ngFor="
+          let version of this.displayedVersions;
+          trackByProperty: 'cmisVersionNumber'
+        "
       >
         <div>{{ formatVersionNumber(version) }}</div>
         <div class="title">{{ formatTitle(version) }}</div>

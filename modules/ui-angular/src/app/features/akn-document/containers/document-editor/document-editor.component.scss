@@ -35,9 +35,9 @@
   }
 
   .eui-page-header {
-    padding: var(--eui-base-spacing-xs);
     flex-direction: initial;
     justify-content: center;
+    padding: var(--eui-base-spacing-xs);
   }
 
   .eui-page-column__header-left-content-body {
@@ -174,7 +174,7 @@
     z-index: 10;
   }
 
-  @include eui-scrollbars($size: 0px);
+  @include eui-scrollbars($size: 0);
 }
 
 app-document {

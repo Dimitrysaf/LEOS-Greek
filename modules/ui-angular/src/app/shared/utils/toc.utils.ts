@@ -16,7 +16,8 @@ import {
   ELEMENTS_TO_REMOVE_FROM_CONTENT,
   HASH_NUM_VALUE,
   INDENT,
-  LEOS_TC_DELETE_ACTION, LEOS_TC_INSERT_ACTION,
+  LEOS_TC_DELETE_ACTION,
+  LEOS_TC_INSERT_ACTION,
   LEVEL,
   LIST,
   MAX_INDENT_LEVEL,
@@ -784,12 +785,14 @@ export const softDeleteMovedRootItems = (
   }
 
   if (
-    isRootElement(item) && item.softActionAttr &&
+    isRootElement(item) &&
+    item.softActionAttr &&
     MOVE_FROM.toLowerCase() === item.softActionAttr.toLowerCase()
   ) {
     revertMoveAndTransformToSoftDeleted(tocTree, item);
     totalDeletedItems++;
-  } else if ( item.originAttr &&
+  } else if (
+    item.originAttr &&
     CN === item.originAttr.toLowerCase() &&
     item.softActionAttr == null
   ) {
@@ -988,13 +991,29 @@ export const getItemSoftStyle = (
 ) => {
   let itemSoftStyle = '';
   if (tableOfContentItemVO.trackChangeAction) {
-    if (hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION) && hasTocItemSoftAction(tableOfContentItemVO, MOVE_TO)) {
+    if (
+      hasTocItemTrackChangeAction(
+        tableOfContentItemVO,
+        LEOS_TC_DELETE_ACTION,
+      ) &&
+      hasTocItemSoftAction(tableOfContentItemVO, MOVE_TO)
+    ) {
       itemSoftStyle = 'leos-soft-movedto';
-    } else if (hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION) && hasTocItemSoftAction(tableOfContentItemVO, MOVE_FROM)) {
+    } else if (
+      hasTocItemTrackChangeAction(
+        tableOfContentItemVO,
+        LEOS_TC_INSERT_ACTION,
+      ) &&
+      hasTocItemSoftAction(tableOfContentItemVO, MOVE_FROM)
+    ) {
       itemSoftStyle = 'leos-soft-movedfrom';
-    } else if (hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)) {
+    } else if (
+      hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)
+    ) {
       itemSoftStyle = 'leos-soft-new';
-    } else if (hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION)) {
+    } else if (
+      hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION)
+    ) {
       let initialNum = tableOfContentItemVO.initialNum;
       if (initialNum != null) {
         initialNum = initialNum.replace('Article ', '');
@@ -1041,7 +1060,8 @@ export const isLastExistingChildElement = (
 ) => parentItem.childItems.length === 1;
 
 export const isDeletedItem = (tableOfContentItemVO: TableOfContentItemVO) =>
-  DELETE === tableOfContentItemVO.softActionAttr || LEOS_TC_DELETE_ACTION === tableOfContentItemVO.trackChangeAction;
+  DELETE === tableOfContentItemVO.softActionAttr ||
+  LEOS_TC_DELETE_ACTION === tableOfContentItemVO.trackChangeAction;
 
 export const isMoveToItem = (tableOfContentItemVO: TableOfContentItemVO) =>
   MOVE_TO === tableOfContentItemVO.softActionAttr;
@@ -1054,8 +1074,9 @@ export const isUndeletableItem = (
   return (
     parentItem &&
     !isMoveToItem(tableOfContentItemVO) &&
-    DELETE !== parentItem.softActionAttr && !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION)
-    && !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)
+    DELETE !== parentItem.softActionAttr &&
+    !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION) &&
+    !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)
   );
 };
 
@@ -1074,10 +1095,16 @@ export const isDeletableItem = (
       isLastExistingChildElement(tableOfContentItemVO, parentItem)
     );
   if (process.env.NG_APP_LEOS_INSTANCE !== CN) {
-    return !(PARAGRAPH === elementName
-      ? isLastExistingChildElement(tableOfContentItemVO, parentItem)
-      : false) && !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_DELETE_ACTION)
-      && !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION);
+    return (
+      !(PARAGRAPH === elementName
+        ? isLastExistingChildElement(tableOfContentItemVO, parentItem)
+        : false) &&
+      !hasTocItemTrackChangeAction(
+        tableOfContentItemVO,
+        LEOS_TC_DELETE_ACTION,
+      ) &&
+      !hasTocItemTrackChangeAction(tableOfContentItemVO, LEOS_TC_INSERT_ACTION)
+    );
   }
 };
 
@@ -1400,11 +1427,11 @@ export const isTocItemFirstChild = (
 };
 
 export const getInstanceType = (instance: string) => {
-  if(instance === EC) {
+  if (instance === EC) {
     return 'COMMISSION';
-  } else if( instance === CN) {
+  } else if (instance === CN) {
     return 'COUNCIL';
   } else {
     return 'OS';
   }
-}
+};

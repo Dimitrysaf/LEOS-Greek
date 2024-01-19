@@ -54,7 +54,7 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
         documentRef,
         elemData.elementId,
         elemData.elementType,
-        elemData.elementFragment
+        elemData.elementFragment,
       );
       this.documentService.reloadConnectors(elemData);
       this.blockDocumentEditorService.setIsDocumentEditorBlocked(false);
@@ -73,7 +73,7 @@ export class DatePickerConnector extends AbstractJavaScriptComponent<DatePickerC
     return this.http.put<RefreshElementResponse>(
       `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element?isSplit=false`,
       elementFragment,
-      { headers: { 'Content-Type': 'text/plain; charset=utf-8', 'presenterId': presenterId } },
+      { headers: { 'Content-Type': 'text/plain; charset=utf-8', presenterId } },
     );
   }
 }

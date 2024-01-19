@@ -20,10 +20,7 @@ export class TrackChangesConnector extends AbstractJavaScriptComponent<TrackChan
     state: TrackChangesConnectorInitialState,
     private options: TrackChangesConnectorOptions,
   ) {
-    super(
-      { ...staticExtensionState, ...state },
-      options.rootElement,
-    );
+    super({ ...staticExtensionState, ...state }, options.rootElement);
   }
 }
 

@@ -21,6 +21,7 @@ import { ProposalMilestonesService } from '@/shared/services/proposal-milestones
 import { ProposalMilestoneSendCopyDialogComponent } from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
 
 const MILESTONE_RELOAD_INTERVAL = 10000;
+
 @Component({
   selector: 'app-proposal-milestones',
   templateUrl: './proposal-milestones.component.html',
@@ -35,7 +36,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   openMilestoneViewDialogVisible = false;
   sendCopyDialogVisible = false;
   annotationWarningDialogVisible = false;
-  viewContribution= true;
+  viewContribution = true;
   @ViewChild('milestoneViewDialog')
   milestoneViewDialog: ProposalMilestoneViewComponent;
   @ViewChild('sendMilestoneCopyForContributionDialog')
@@ -80,10 +81,14 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
           );
           firstLoad = false;
           milestones.forEach((milestone) => {
-            if (milestone.clonedMilestones && !this.proposal.cloneProposalMetadataVO?.clonedProposal) {
-              this.proposalDetailsService.clonedProposalCount = milestone.clonedMilestones.length;
+            if (
+              milestone.clonedMilestones &&
+              !this.proposal.cloneProposalMetadataVO?.clonedProposal
+            ) {
+              this.proposalDetailsService.clonedProposalCount =
+                milestone.clonedMilestones.length;
             }
-          })
+          });
         },
         error: (error) => {
           this.uxAppService.growl({
@@ -158,8 +163,8 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   onDownloadMilestone(milestone: Milestone) {
-    if(milestone?.legFileId){
-      this.proposalMilestonesService.downloadLegFile(milestone?.legFileId)
+    if (milestone?.legFileId) {
+      this.proposalMilestonesService.downloadLegFile(milestone?.legFileId);
     }
   }
 
@@ -183,11 +188,23 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         );
       case MilestoneStatus.ReadyToMerge:
         return this.translateService.instant(
-          'page.workspace.proposal-item.ready-status'
+          'page.workspace.proposal-item.ready-status',
         );
       default:
         return status;
     }
+  }
+
+  updateReadyToMergeStatus(milestone: Milestone): void {
+    this.proposalMilestonesService.updateReadyToMergeStatus(milestone.status);
+    this.openMilestoneViewDialog(milestone);
+  }
+
+  isReadyToMerge(status: MilestoneStatus): boolean {
+    const readyToMergeTranslation = this.translateService.instant(
+      'page.workspace.proposal-item.ready-status',
+    );
+    return this.getStatus(status) === readyToMergeTranslation;
   }
 
   private initMilestonesDataSource(
@@ -256,15 +273,5 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     ).getTime();
 
     return clonedMilestone;
-  }
-
-  updateReadyToMergeStatus(milestone: Milestone): void {
-    this.proposalMilestonesService.updateReadyToMergeStatus(milestone.status);
-    this.openMilestoneViewDialog(milestone);
-  }
-
-  isReadyToMerge(status: MilestoneStatus): boolean {
-    const readyToMergeTranslation = this.translateService.instant('page.workspace.proposal-item.ready-status');
-    return this.getStatus(status) === readyToMergeTranslation;
   }
 }

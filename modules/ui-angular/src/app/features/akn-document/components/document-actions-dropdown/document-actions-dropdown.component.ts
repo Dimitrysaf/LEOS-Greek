@@ -17,7 +17,7 @@ import {BehaviorSubject, combineLatest, Observable, Subject, takeUntil} from 'rx
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
-import {DocumentConfig, Permission} from '@/shared';
+import { DocumentConfig, Permission } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
@@ -95,7 +95,9 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
 
   toggleTrackChangesEnabled() {
     this.isTrackChangesEnabled = !this.isTrackChangesEnabled;
-    this.ckEditorService.changeEnableTrackChangesState(this.isTrackChangesEnabled);
+    this.ckEditorService.changeEnableTrackChangesState(
+      this.isTrackChangesEnabled,
+    );
     this.doc.toggleTrackChangesEnabled(this.isTrackChangesEnabled);
     this.updateTrackChangesStatus();
   }
@@ -132,28 +134,34 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     const isMandateMemorandum = isCN && isMemorandum;
     const CAN_UPDATE = permissions.includes('CAN_UPDATE');
     const CAN_RENUMBER = permissions.includes('CAN_RENUMBER');
-    const CAN_WORK_WITH_EXPORT_PACKAGE = permissions.includes('CAN_WORK_WITH_EXPORT_PACKAGE');
-    const CAN_ACTIVATE_TRACK_CHANGES = permissions.includes('CAN_ACTIVATE_TRACK_CHANGES');
+    const CAN_WORK_WITH_EXPORT_PACKAGE = permissions.includes(
+      'CAN_WORK_WITH_EXPORT_PACKAGE',
+    );
+    const CAN_ACTIVATE_TRACK_CHANGES = permissions.includes(
+      'CAN_ACTIVATE_TRACK_CHANGES',
+    );
 
     this.saveVersionVisible = !isMandateMemorandum && CAN_UPDATE;
     this.exportVersionVisible = !isMandateExplanatory && !isMandateMemorandum;
     this.exportVersionWithAnnotationsVisible = !isMandateMemorandum;
-    this.exportEConsiliumVisible = isCN && !isMandateMemorandum && CAN_WORK_WITH_EXPORT_PACKAGE;
+    this.exportEConsiliumVisible =
+      isCN && !isMandateMemorandum && CAN_WORK_WITH_EXPORT_PACKAGE;
     this.importVisible = isDocument && CAN_UPDATE;
     this.toggleUserGuidanceVisible = true;
     this.seeNavigationPanelVisible = true;
     this.changeDocumentStructureVisible = isAnnex && CAN_UPDATE;
-    this.renumberDocumentVisible = (isMandateAnnex || isMandateDocument) && CAN_RENUMBER;
+    this.renumberDocumentVisible =
+      (isMandateAnnex || isMandateDocument) && CAN_RENUMBER;
     this.seeTrackChanges = this.documentConfig.trackChangesShowed;
-    this.canActivateTrackChanges = !isClonedProposal && CAN_ACTIVATE_TRACK_CHANGES;
-    this.exportCleanVersionVisible = (isCN || isClonedProposal) && !isMandateMemorandum;
-    this.showCleanVersionVisible = (isCN || isClonedProposal) && !isMandateMemorandum;
+    this.canActivateTrackChanges =
+      !isClonedProposal && CAN_ACTIVATE_TRACK_CHANGES;
+    this.exportCleanVersionVisible =
+      (isCN || isClonedProposal) && !isMandateMemorandum;
+    this.showCleanVersionVisible =
+      (isCN || isClonedProposal) && !isMandateMemorandum;
     this.isClonedProposal = isClonedProposal;
     this.isTrackChangesEnabled = isTCEnabled;
     this.updateTrackChangesStatus();
   }
-  setTrackChangesEnabled() {
-
-  }
-
+  setTrackChangesEnabled() {}
 }

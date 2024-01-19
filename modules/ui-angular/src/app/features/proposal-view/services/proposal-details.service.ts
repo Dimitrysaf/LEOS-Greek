@@ -48,6 +48,7 @@ export class ProposalDetailsService implements OnDestroy {
   milestones$: Observable<Milestone[]>;
   exportedDocuments$: Observable<ExportPackageVO[]>;
   permissions$: Observable<Permission[]>;
+  clonedProposalCount: number;
 
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject('');
@@ -63,7 +64,6 @@ export class ProposalDetailsService implements OnDestroy {
     switchMap((name) => this.searchUsers(name)),
   );
   private destroy$ = new Subject<void>();
-  public clonedProposalCount : number;
 
   constructor(
     private appConfig: AppConfigService,

@@ -11,9 +11,8 @@ describe('ZoomScrollbarComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ZoomScrollbarComponent ]
-    })
-    .compileComponents();
+      declarations: [ZoomScrollbarComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

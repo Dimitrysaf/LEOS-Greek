@@ -78,7 +78,12 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
   }
 
   updateStateLoading(value: string) {
-    if (value === 'loading' || value === 'done' || value === 'error' || value === 'active') {
+    if (
+      value === 'loading' ||
+      value === 'done' ||
+      value === 'error' ||
+      value === 'active'
+    ) {
       this.proposalState = value;
     } else {
       this.proposalState = 'done';
