@@ -2062,7 +2062,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         String elementId = element.getElementId();
         Node node = XercesUtils.getElementById(document, elementId);
         boolean isSoftMovedFrom = isSoftMovedFrom(node);
-        boolean isProposalElement = isProposalElement(node);
+        boolean isProposalElement = isProposalElement(node) || (isTrackChangesEnabled && !cloneContext.isClonedProposal());
         boolean isSoftDeleted = isSoftDeletedOrMovedTo(node);
         Node parentNode = node.getParentNode();
         List<Node> siblings =  XercesUtils.getChildren(parentNode, Arrays.asList(SUBPARAGRAPH, POINT, INDENT, LIST, CROSSHEADING));

@@ -64,7 +64,7 @@ define(function SoftActionsExtensionModule(require) {
     function _displaySoftMoveLabelForDirection(direction, target) {
         const firstLabels = [];
         var moveItems = $(target).find(eval("SOFT_MOVE_" + direction.toUpperCase() + "_SELECTOR"));
-        var parentElement = target;
+        var parentElement = target.parentElement;
         moveItems.each(function(i, moveItem) {
             if (moveItem.hasAttribute(SOFT_MOVE_LABEL_ATTR)) {
                 var label = moveItem.getAttribute(SOFT_MOVE_LABEL_ATTR);

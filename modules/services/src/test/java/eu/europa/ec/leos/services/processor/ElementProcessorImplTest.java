@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATIONS;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITALS;
