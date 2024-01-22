@@ -52,11 +52,36 @@
   display: flex;
   position: relative;
 }
+.zoom-controls::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 10px;
+  background-color: black;
+}
+
+.zoom-controls::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 2px;
+  height: 10px;
+  background-color: black;
+}
 
 .eui-icon-minus {
   font-size: 13px;
+  cursor: pointer;
+  margin-right: 5px;
 }
 
 .eui-icon-add {
   font-size: 13px;
+  cursor: pointer;
+  margin-left: 5px;
 }

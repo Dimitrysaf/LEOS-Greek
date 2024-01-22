@@ -1,16 +1,8 @@
 <div class="zoom-scrollbar-container">
   <div class="zoom-controls">
-    <span class="eui-icon eui-icon-minus"></span>
-    <input
-      type="range"
-      class="zoom-range"
-      min="50"
-      max="150"
-      [value]="zoomLevel"
-      (input)="onZoomChange($event)"
-      step="1"
-    />
-    <span class="eui-icon eui-icon-add"></span>
+    <span class="eui-icon eui-icon-minus" (click)="zoomOut()"></span>
+    <input type="range" class="zoom-range" [min]="minDisplayValue" [max]="maxDisplayValue" [value]="zoomLevel" (input)="onZoomChange($event)" step="1">
+    <span class="eui-icon eui-icon-add" (click)="zoomIn()"></span>
   </div>
   <span class="zoom-value">{{ zoomLevel | number : '1.0-0' }}%</span>
 </div>

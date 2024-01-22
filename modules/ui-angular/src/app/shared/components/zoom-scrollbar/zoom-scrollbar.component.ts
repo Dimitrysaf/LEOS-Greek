@@ -1,10 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
-const MIN_SLIDER_TRUE_VALUE = 50;
-const MAX_SLIDER_TRUE_VALUE = 108;
+const MIN_DISPLAY_VALUE = 50
+const MAX_DISPLAY_VALUE = 150
+const MIN_SLIDER_TRUE_VALUE = 60;
+const MAX_SLIDER_TRUE_VALUE = 140;
 const STARTING_VALUE = 100;
 const DOCUMENT_WIDTH = 866.5;
 const DOCUMENT_HEIGHT = 1628;
+const STEP_VALUE = 10
 @Component({
   selector: 'app-zoom-scrollbar',
   templateUrl: './zoom-scrollbar.component.html',
@@ -16,9 +19,11 @@ export class ZoomScrollbarComponent implements OnInit {
     size: { width: number; height: number };
   }>();
   private _zoomLevel: number;
-
+  public minDisplayValue:number = MIN_DISPLAY_VALUE;
+  public maxDisplayValue:number = MAX_DISPLAY_VALUE;
   ngOnInit() {
-    this._zoomLevel = STARTING_VALUE;
+    const middleActualValue = (MAX_SLIDER_TRUE_VALUE + MIN_SLIDER_TRUE_VALUE) / 2;
+    this._zoomLevel = this.mapActualToDisplay(middleActualValue);
     this.emitZoomChange(this._zoomLevel);
   }
 
@@ -44,6 +49,24 @@ export class ZoomScrollbarComponent implements OnInit {
     this.zoomChange.emit({ zoomLevel, size: { width, height } });
   }
 
+  zoomIn() {
+    if (this._zoomLevel + STEP_VALUE > MAX_DISPLAY_VALUE) {
+      this._zoomLevel = MAX_DISPLAY_VALUE;
+    } else if (this._zoomLevel < MAX_DISPLAY_VALUE) {
+      this._zoomLevel += STEP_VALUE;
+    }
+    this.onZoomChange({ target: { value: this._zoomLevel } });
+  }
+
+  zoomOut() {
+    if (this._zoomLevel - STEP_VALUE < MIN_DISPLAY_VALUE) {
+      this._zoomLevel = MIN_DISPLAY_VALUE;
+    } else if (this._zoomLevel > MIN_DISPLAY_VALUE) {
+      this._zoomLevel -= STEP_VALUE;
+    }
+    this.onZoomChange({ target: { value: this._zoomLevel } });
+  }
+
   private mapDisplayToActual(displayValue: number): number {
     if (displayValue === STARTING_VALUE) {
       return STARTING_VALUE;
@@ -54,11 +77,12 @@ export class ZoomScrollbarComponent implements OnInit {
   }
 
   private mapActualToDisplay(actualValue: number): number {
-    if (actualValue === STARTING_VALUE) {
-      return STARTING_VALUE;
-    }
-    const range = MAX_SLIDER_TRUE_VALUE - MIN_SLIDER_TRUE_VALUE;
-    const factor = STARTING_VALUE / range;
-    return (actualValue - STARTING_VALUE) * factor + STARTING_VALUE;
+    const middleActualValue = (MAX_SLIDER_TRUE_VALUE + MIN_SLIDER_TRUE_VALUE) / 2;
+    const actualRangeHalf = (MAX_SLIDER_TRUE_VALUE - MIN_SLIDER_TRUE_VALUE) / 2;
+    const displayRangeHalf = (MAX_DISPLAY_VALUE - MIN_DISPLAY_VALUE) / 2;
+
+    const offsetFromMiddle = actualValue - middleActualValue;
+
+    return STARTING_VALUE + (offsetFromMiddle / actualRangeHalf) * displayRangeHalf;
   }
 }
