@@ -214,6 +214,7 @@ define(function leosTrackChangesModule(require) {
         },
 
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
+            editor.fire('lockSnapshot', {"dontUpdate": true});
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
             if (core.isTrackChangeElement(selectedElement, core.DELETE_ACTION)) {
@@ -222,9 +223,12 @@ define(function leosTrackChangesModule(require) {
             } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
                 tcElement.insertAfter(selectedElement);
             } else {
-                editor.insertElement(tcElement);
+                var selection = editor.getSelection();
+                var range = selection.getRanges()[ 0 ];
+                editor.editable().insertElementIntoRange( tcElement, range );
             }
             this.setToEditablePosition(editor, tcElement, toEnd);
+            editor.fire('unlockSnapshot');
             return tcElement;
         },
 

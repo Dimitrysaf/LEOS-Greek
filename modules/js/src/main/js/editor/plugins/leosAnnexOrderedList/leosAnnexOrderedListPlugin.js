@@ -115,6 +115,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
     //Fix ckeditor enterKey plugin's behaviour when enter is pressed at the end of a sub-point and restore the point structure
     function _restoreListStructure(event) {
         if (event.data.name === 'enter') {
+            event.editor.fire('lockSnapshot', {"forceUpdate": true});
             var selectedElement = leosKeyHandler.getSelectedElement(event.editor.getSelection());
             var parent = selectedElement.getParent();
             var isSubPoint = leosPluginUtils.isSubparagraph(selectedElement);
@@ -123,8 +124,11 @@ define(function leosAnnexOrderedListPluginModule(require) {
                 && !parent.getParent().getPrevious();
 
             if(isSubPoint && isParentPoint && pointWithoutContent){
+                event.editor.fire('unlockSnapshot');
                 selectedElement.insertBefore(parent.getParent());
                 leosPluginUtils.setFocus(selectedElement, event.editor);
+            } else {
+                event.editor.fire('unlockSnapshot');
             }
         }
     }
