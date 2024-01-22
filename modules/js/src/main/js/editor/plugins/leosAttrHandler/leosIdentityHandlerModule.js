@@ -70,7 +70,9 @@ define(function leosIdentityHandler(require) {
         if(oldElementsParentIsAListThatCanBeSplit && parentIsSplitInTwo){
             const parentFirstPart = oldElementDetails.ancestors[parentFirstPartIndex];
             const parentSecondPart = newElement.getNext().findOne(getMultipleAttributesQuerySelector(parentFirstPart));
-            removeIdentityFromTSmallestAncestorAndItsChildren(parentFirstPart, newElement.getPrevious(), parentSecondPart, newElement.getNext());
+            if(parentFirstPart && parentSecondPart) {
+                removeIdentityFromTSmallestAncestorAndItsChildren(parentFirstPart, newElement.getPrevious(), parentSecondPart, newElement.getNext());
+            }
         }
     }
 

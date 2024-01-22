@@ -77,6 +77,7 @@ define(function aknLevelSubParagraphPluginModule(require) {
     
     function _restoreParagraphStructure(event) {
         if (event.data.name === 'enter') {
+            event.editor.fire('lockSnapshot', {"forceUpdate": true});
             var selectedElement = leosKeyHandler.getSelectedElement(event.editor.getSelection());
             var isSelectedElementSubParagraph = leosPluginUtils.getElementName(selectedElement) === HTML_SUB_PARAGRAPH && isFirstLevelLi(getClosestLiElement(selectedElement));
             var isSelectedElementEmpty = leosKeyHandler.isContentEmptyTextNode(selectedElement);
@@ -86,11 +87,14 @@ define(function aknLevelSubParagraphPluginModule(require) {
             var isParentSubParagraph = leosPluginUtils.getElementName(parent) === HTML_SUB_PARAGRAPH;
 
             if(isSelectedElementSubParagraph && isSelectedElementEmpty && (hasTextNext || isParentSubParagraph)){
+                event.editor.fire('unlockSnapshot');
                 selectedElement.insertBefore(parent);
                 leosPluginUtils.setFocus(selectedElement, event.editor);
                 if(isOnlyChild){
                     parent.appendBogus();
                 }
+            } else {
+                event.editor.fire('unlockSnapshot');
             }
         }
     }
