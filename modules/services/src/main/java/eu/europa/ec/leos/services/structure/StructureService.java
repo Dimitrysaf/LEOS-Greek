@@ -1,8 +1,8 @@
 package eu.europa.ec.leos.services.structure;
 
-import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.AlternateConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.TocItem;
 
 import java.util.List;
 import java.util.Map;

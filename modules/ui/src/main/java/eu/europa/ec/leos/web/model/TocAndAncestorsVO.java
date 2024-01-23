@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.leos.web.model;
 
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 

@@ -18,7 +18,7 @@ import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
 import org.w3c.dom.Node;
 

@@ -12,7 +12,7 @@ import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.util.LeosDomainUtil;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

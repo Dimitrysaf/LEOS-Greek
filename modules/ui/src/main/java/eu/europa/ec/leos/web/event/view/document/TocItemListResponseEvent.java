@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.web.event.view.document;
 
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 
 import java.util.List;
 

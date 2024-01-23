@@ -107,7 +107,7 @@ import eu.europa.ec.leos.usecases.document.BillContext;
 import eu.europa.ec.leos.usecases.document.CollectionContext;
 import eu.europa.ec.leos.vo.coedition.InfoType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.web.event.NavigationRequestEvent;
 import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.NotificationEvent.Type;

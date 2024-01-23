@@ -2,9 +2,9 @@ package eu.europa.ec.leos.services.numbering.config;
 
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.structure.StructureContext;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.NumberingType;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

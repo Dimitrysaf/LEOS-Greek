@@ -3,7 +3,7 @@ package eu.europa.ec.leos.ui.component.toc;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.ui.UI;
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.vo.toc.AknTag;
+import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckDeleteLastEditingTypeEvent;
@@ -18,10 +18,10 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static eu.europa.ec.leos.vo.toc.AknTag.ARTICLE;
-import static eu.europa.ec.leos.vo.toc.AknTag.CITATION;
-import static eu.europa.ec.leos.vo.toc.AknTag.LEVEL;
-import static eu.europa.ec.leos.vo.toc.AknTag.RECITAL;
+import static eu.europa.ec.leos.vo.structure.AknTag.ARTICLE;
+import static eu.europa.ec.leos.vo.structure.AknTag.CITATION;
+import static eu.europa.ec.leos.vo.structure.AknTag.LEVEL;
+import static eu.europa.ec.leos.vo.structure.AknTag.RECITAL;
 
 public class CheckDeleteLastEditingTypeConsumer implements Consumer<CheckDeleteLastEditingTypeEvent> {
 

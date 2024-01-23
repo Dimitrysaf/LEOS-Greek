@@ -13,6 +13,13 @@
  */
 package eu.europa.ec.leos.vo.toc;
 
+import eu.europa.ec.leos.vo.structure.ActionPositions;
+import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.OptionsType;
+import eu.europa.ec.leos.vo.structure.Profiles;
+import eu.europa.ec.leos.vo.structure.TocItem;
+
 public class TocItemBuilder {
     protected AknTag aknTag;
     protected boolean root;

@@ -27,7 +27,7 @@ import eu.europa.ec.leos.ui.view.ComparisonDisplayMode;
 import eu.europa.ec.leos.ui.view.TriFunction;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
 import eu.europa.ec.leos.web.model.VersionInfoVO;
 

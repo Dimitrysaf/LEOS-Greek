@@ -76,18 +76,18 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
-import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
-import io.atlassian.fugue.Pair;
-import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.AlternateConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -447,7 +447,6 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = billService.updateBill(documentRef, documentId, properties, false);
         return true;
     }
-
 
     @Override
     public String searchForImport(Integer number, Integer year, DocType type) {

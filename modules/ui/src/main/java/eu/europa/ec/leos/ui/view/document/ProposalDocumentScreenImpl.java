@@ -34,7 +34,7 @@ import eu.europa.ec.leos.ui.component.versions.VersionsTab;
 import eu.europa.ec.leos.ui.extension.AnnotateExtension;
 import eu.europa.ec.leos.ui.extension.SoftActionsExtension;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.component.ResetRevisionComponentEvent;

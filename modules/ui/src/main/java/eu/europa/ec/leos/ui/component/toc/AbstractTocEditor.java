@@ -21,13 +21,13 @@ import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
-import eu.europa.ec.leos.vo.toc.AknTag;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.OptionsType;
+import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;

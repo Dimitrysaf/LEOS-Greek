@@ -2,9 +2,9 @@ package eu.europa.ec.leos.services.processor.content.indent;
 
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.ArrayUtils;

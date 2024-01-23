@@ -13,6 +13,15 @@ package eu.europa.ec.leos.vo.toc;
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
+import eu.europa.ec.leos.vo.structure.Attribute;
+import eu.europa.ec.leos.vo.structure.Level;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.SubElementNumberingConfig;
+import eu.europa.ec.leos.vo.structure.SubElementNumberingConfigs;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItemType;
+import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -47,8 +56,8 @@ public class StructureConfigUtils {
         if (subElementTocItems.size() > 1 && subElementTocItems.get(0).getParentNameNumberingTypeDependency() != null) {
             TocItem parentTocItem = getTocItemByName(tocItems, subElementTocItems.get(0).getParentNameNumberingTypeDependency().value());
             if(parentTocItem != null && parentTocItem.getTocItemTypes() != null
-                    && isNotEmpty(parentTocItem.getTocItemTypes().tocItemTypes)) {
-                for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().tocItemTypes) {
+                    && isNotEmpty(parentTocItem.getTocItemTypes().getTocItemTypes())) {
+                for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().getTocItemTypes()) {
                     if (tocItemTyp.getName().equals(tocItemType)) {
                         return getNumberingTypeFromSubElementNumberingConfigs(tocItems, subElementTagName, tocItemTyp.getSubElementNumberingConfigs());
                     }
@@ -65,8 +74,8 @@ public class StructureConfigUtils {
         if (subElementTocItems.size() > 1 && subElementTocItems.get(0).getParentNameNumberingTypeDependency() != null) {
             TocItem parentTocItem = getTocItemByName(tocItems, subElementTocItems.get(0).getParentNameNumberingTypeDependency().value());
             if(parentTocItem != null && parentTocItem.getTocItemTypes() != null
-                    && isNotEmpty(parentTocItem.getTocItemTypes().tocItemTypes)){
-                for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().tocItemTypes) {
+                    && isNotEmpty(parentTocItem.getTocItemTypes().getTocItemTypes())){
+                for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().getTocItemTypes()) {
                     if (tocItemTyp.getName().equals(tocItemType)) {
                         NumberingType numberingType = getNumberingTypeFromSubElementNumberingConfigs(tocItems, subElementTagName,
                                 tocItemTyp.getSubElementNumberingConfigs());
@@ -139,7 +148,7 @@ public class StructureConfigUtils {
         TocItem tocItem = getTocItemByName(tocItems, tagName);
         TocItemTypeName tocItemType = TocItemTypeName.REGULAR;
         if (tocItem != null && tocItem.getTocItemTypes() != null) {
-            for (TocItemType tocItemTyp : tocItem.getTocItemTypes().tocItemTypes) {
+            for (TocItemType tocItemTyp : tocItem.getTocItemTypes().getTocItemTypes()) {
                 if (tocItemTyp.getAttribute() != null
                         && attributes.containsKey(tocItemTyp.getAttribute().getAttributeName())
                         && attributes.get(tocItemTyp.getAttribute().getAttributeName()).equals(tocItemTyp.getAttribute().getAttributeValue())) {

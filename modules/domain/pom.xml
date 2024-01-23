@@ -131,13 +131,25 @@
                 <artifactId>maven-jaxb2-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>generate-structure</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <schemaDirectory>src/main/resources/toc/schema</schemaDirectory>
+                            <schemaDirectory>src/main/resources/schema/structure</schemaDirectory>
                             <generateDirectory>target/generated-sources</generateDirectory>
-                            <generatePackage>eu.europa.ec.leos.vo.toc</generatePackage>
+                            <generatePackage>eu.europa.ec.leos.vo.structure</generatePackage>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-light</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>src/main/resources/schema/light</schemaDirectory>
+                            <generateDirectory>target/generated-sources</generateDirectory>
+                            <generatePackage>eu.europa.ec.leos.vo.light</generatePackage>
                         </configuration>
                     </execution>
                 </executions>

@@ -43,7 +43,7 @@ import eu.europa.ec.leos.ui.view.ScreenLayoutHelper;
 import eu.europa.ec.leos.ui.view.TriFunction;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
-import eu.europa.ec.leos.vo.toc.NumberingType;
+import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.web.event.view.document.InstanceTypeResolver;
 import eu.europa.ec.leos.web.model.VersionInfoVO;

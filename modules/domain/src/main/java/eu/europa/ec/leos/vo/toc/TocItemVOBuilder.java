@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.vo.toc;
 
 import eu.europa.ec.leos.model.action.SoftActionType;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.w3c.dom.Node;
 
 import java.util.ArrayList;

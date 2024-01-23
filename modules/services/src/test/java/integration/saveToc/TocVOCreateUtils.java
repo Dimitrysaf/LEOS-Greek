@@ -14,9 +14,9 @@
 package integration.saveToc;
 
 import eu.europa.ec.leos.model.action.SoftActionType;
-import eu.europa.ec.leos.vo.toc.AknTag;
-import eu.europa.ec.leos.vo.toc.NumberingType;
-import eu.europa.ec.leos.vo.toc.OptionsType;
+import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItemBuilder;

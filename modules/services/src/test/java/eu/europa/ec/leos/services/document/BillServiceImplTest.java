@@ -25,8 +25,8 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.StructureServiceImpl;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Option;
 import org.junit.Before;
 import org.junit.Test;
@@ -109,7 +109,7 @@ public class BillServiceImplTest {
                 tableOfContentProcessor, xPathCatalog, trackChangesContext);
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
-        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "toc/schema/structure_1.xsd");
+        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
 
         tocItems = structureServiceImpl.getTocItems(docTemplate);
         numberingConfigs = structureServiceImpl.getNumberingConfigs(docTemplate);

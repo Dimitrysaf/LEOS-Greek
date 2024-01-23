@@ -67,8 +67,8 @@ import eu.europa.ec.leos.services.structure.StructureServiceImpl;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
@@ -195,7 +195,7 @@ public class LegServiceImplTest {
 		byte[] bytesFile = TestUtils.getFileContent("/structure-test-explanatory-CN.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
 		
-        ReflectionTestUtils.setField(structureService, "structureSchema", "toc/schema/structure_1.xsd");
+        ReflectionTestUtils.setField(structureService, "structureSchema", "schema/structure/structure_1.xsd");
         tocItems = structureService.getTocItems(docTemplate);
         numberingConfigs = structureService.getNumberingConfigs(docTemplate);
         

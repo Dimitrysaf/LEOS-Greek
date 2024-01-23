@@ -2,12 +2,12 @@ package eu.europa.ec.leos.services.response;
 
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
-import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.Attribute;
-import eu.europa.ec.leos.vo.toc.Level;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.TocItem;
-import eu.europa.ec.leos.vo.toc.TocItemTypeName;
+import eu.europa.ec.leos.vo.structure.AlternateConfig;
+import eu.europa.ec.leos.vo.structure.Attribute;
+import eu.europa.ec.leos.vo.structure.Level;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 
 import java.util.HashMap;
 import java.util.List;

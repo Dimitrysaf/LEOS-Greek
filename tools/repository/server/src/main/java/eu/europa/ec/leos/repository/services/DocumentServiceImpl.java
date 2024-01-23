@@ -658,6 +658,7 @@ public class DocumentServiceImpl implements DocumentService {
             case "CONFIG":
             case "STRUCTURE":
             case "TEMPLATE":
+            case "LIGHT_PROFILE":
                 try {
                     return Optional.of(findTemplateByName(ref));
                 } catch (RepositoryException e) {

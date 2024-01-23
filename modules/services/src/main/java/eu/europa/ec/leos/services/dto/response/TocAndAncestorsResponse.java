@@ -14,7 +14,7 @@
 package eu.europa.ec.leos.services.dto.response;
 
 import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.ArrayList;

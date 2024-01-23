@@ -23,7 +23,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.Validate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

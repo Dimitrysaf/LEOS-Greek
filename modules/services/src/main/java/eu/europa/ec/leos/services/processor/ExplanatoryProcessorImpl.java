@@ -1,5 +1,29 @@
 package eu.europa.ec.leos.services.processor;
 
+import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.model.annex.LevelItemVO;
+import eu.europa.ec.leos.model.xml.Element;
+import eu.europa.ec.leos.services.numbering.NumberService;
+import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.support.XmlHelper;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import io.atlassian.fugue.Pair;
+import org.apache.commons.lang3.Validate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Provider;
+import java.util.Arrays;
+import java.util.List;
+
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
@@ -13,32 +37,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getNumberingConfigByTagName;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.inject.Provider;
-
-import org.apache.commons.lang3.Validate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import eu.europa.ec.leos.domain.repository.Content;
-import eu.europa.ec.leos.domain.repository.document.Explanatory;
-import eu.europa.ec.leos.domain.common.TocMode;
-import eu.europa.ec.leos.i18n.MessageHelper;
-import eu.europa.ec.leos.model.annex.LevelItemVO;
-import eu.europa.ec.leos.model.xml.Element;
-import eu.europa.ec.leos.services.numbering.NumberService;
-import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.structure.StructureContext;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
-import io.atlassian.fugue.Pair;
 
 @Service
 public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {

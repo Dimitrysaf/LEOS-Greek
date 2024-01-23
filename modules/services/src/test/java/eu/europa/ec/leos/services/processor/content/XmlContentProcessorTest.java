@@ -14,9 +14,9 @@ import eu.europa.ec.leos.services.structure.StructureServiceImpl;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -88,7 +88,7 @@ public abstract class XmlContentProcessorTest extends LeosTest {
 
         byte[] bytesFile = TestUtils.getFileContent(configFile);
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
-        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "toc/schema/structure_1.xsd");
+        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
         tocItems = structureServiceImpl.getTocItems(docTemplate);
         numberingConfigs = structureServiceImpl.getNumberingConfigs(docTemplate);
         tocRules = structureServiceImpl.getTocRules(docTemplate);
