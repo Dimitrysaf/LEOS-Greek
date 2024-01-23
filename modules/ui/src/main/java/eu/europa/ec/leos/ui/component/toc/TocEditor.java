@@ -22,10 +22,10 @@ import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.ui.TreeGrid;
 
 import eu.europa.ec.leos.model.action.ActionType;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 
 public interface TocEditor {
 

@@ -17,6 +17,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
+import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import org.w3c.dom.Node;
 

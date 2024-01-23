@@ -4,7 +4,7 @@ import eu.europa.ec.leos.services.structure.StructureServiceImpl;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.export.ExportHelperTest;
 import eu.europa.ec.leos.test.support.LeosTest;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -40,7 +40,7 @@ public class StructureServiceTest extends LeosTest {
         docTemplate = "BL-023";
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
-        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "toc/schema/structure_1.xsd");
+        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
         
     }
 

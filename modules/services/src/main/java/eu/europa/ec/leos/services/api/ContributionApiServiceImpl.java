@@ -37,7 +37,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.user.UserService;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

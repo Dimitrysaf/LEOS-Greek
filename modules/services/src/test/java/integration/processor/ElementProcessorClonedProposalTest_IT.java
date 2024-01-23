@@ -39,8 +39,8 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.services.validation.handlers.AkomantosoXsdValidator;
 import eu.europa.ec.leos.test.support.LeosTest;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -164,7 +164,7 @@ public class ElementProcessorClonedProposalTest_IT extends LeosTest {
 
         getStructureFile();
 
-        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "toc/schema/structure_1.xsd");
+        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
         numberingConfigs = structureServiceImpl.getNumberingConfigs(docTemplate);
         tocItems = structureServiceImpl.getTocItems(docTemplate);
         tocRules = structureServiceImpl.getTocRules(docTemplate);

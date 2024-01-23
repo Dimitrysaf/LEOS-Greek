@@ -69,7 +69,7 @@ import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.http.MethodNotSupportedException;
 import org.slf4j.Logger;

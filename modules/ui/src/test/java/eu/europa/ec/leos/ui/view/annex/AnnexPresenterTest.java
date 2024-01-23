@@ -51,9 +51,9 @@ import eu.europa.ec.leos.ui.support.CoEditionHelper;
 import eu.europa.ec.leos.vo.coedition.CoEditionActionInfo;
 import eu.europa.ec.leos.vo.coedition.CoEditionActionInfo.Operation;
 import eu.europa.ec.leos.vo.coedition.CoEditionVO;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.web.event.NavigationRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.CloseDocumentEvent;
 import eu.europa.ec.leos.web.event.view.document.DeleteElementRequestEvent;
@@ -189,7 +189,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
 
         byte[] bytesFile = getFileContent("/structure-test2.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
-        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "toc/schema/structure_1.xsd");
+        ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");
 
         tocItems = structureServiceImpl.getTocItems(docTemplate);
         tocRules = structureServiceImpl.getTocRules(docTemplate);

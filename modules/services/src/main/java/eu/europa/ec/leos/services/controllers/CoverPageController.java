@@ -32,7 +32,7 @@ import eu.europa.ec.leos.services.request.SaveTocRequestEvent;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

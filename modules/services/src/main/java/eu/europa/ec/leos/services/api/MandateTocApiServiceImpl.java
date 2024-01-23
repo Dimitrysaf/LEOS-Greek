@@ -8,8 +8,8 @@ import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.structure.StructureContext;
-import eu.europa.ec.leos.vo.toc.NumberingType;
-import eu.europa.ec.leos.vo.toc.OptionsType;
+import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
@@ -33,7 +33,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.vo.toc.NumberingType.BULLET_NUM;
+import static eu.europa.ec.leos.vo.structure.NumberingType.BULLET_NUM;
 
 @Service
 @Instance(InstanceType.COUNCIL)

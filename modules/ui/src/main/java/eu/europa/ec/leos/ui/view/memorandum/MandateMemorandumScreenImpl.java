@@ -22,7 +22,7 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.ui.component.versions.VersionComparator;
 import eu.europa.ec.leos.ui.component.versions.VersionsTab;
 import eu.europa.ec.leos.ui.component.toc.TocEditor;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.event.component.LayoutChangeRequestEvent;
 import eu.europa.ec.leos.web.event.view.document.FetchUserPermissionsResponse;

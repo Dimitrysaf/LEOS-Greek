@@ -16,6 +16,13 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
+import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.AlternateConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.ObjectFactory;
+import eu.europa.ec.leos.vo.structure.Structure;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.structure.TocRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +31,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import eu.europa.ec.leos.services.template.TemplateStructureService;
-import eu.europa.ec.leos.vo.toc.AknTag;
-import eu.europa.ec.leos.vo.toc.AlternateConfig;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.ObjectFactory;
-import eu.europa.ec.leos.vo.toc.Structure;
-import eu.europa.ec.leos.vo.toc.TocItem;
-import eu.europa.ec.leos.vo.toc.TocRules;
 
 @Service
 public class StructureServiceImpl implements StructureService {

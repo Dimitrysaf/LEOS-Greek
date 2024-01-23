@@ -26,7 +26,7 @@ import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 
 import java.util.List;
 import java.util.Map;

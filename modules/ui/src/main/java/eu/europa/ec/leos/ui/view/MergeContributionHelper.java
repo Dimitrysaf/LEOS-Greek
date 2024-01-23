@@ -13,7 +13,7 @@ import eu.europa.ec.leos.ui.event.contribution.CompareAndShowRevisionEvent;
 import eu.europa.ec.leos.ui.event.contribution.MergeActionRequestEvent.MergeAction;
 import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.util.LeosDomainUtil;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.web.event.NotificationEvent;
 import eu.europa.ec.leos.web.model.MergeActionVO;
 import org.apache.commons.lang3.StringUtils;

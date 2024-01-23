@@ -31,11 +31,11 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.vo.toc.Attribute;
+import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
-import eu.europa.ec.leos.vo.toc.TocItemType;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItemType;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.MethodNotSupportedException;

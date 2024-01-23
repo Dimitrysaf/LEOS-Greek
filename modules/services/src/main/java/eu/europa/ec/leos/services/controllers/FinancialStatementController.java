@@ -16,7 +16,7 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

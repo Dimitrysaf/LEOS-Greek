@@ -111,7 +111,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import eu.europa.ec.leos.vo.toc.TocItemTypeName;
+import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
@@ -136,12 +136,12 @@ import eu.europa.ec.leos.services.processor.content.indent.IndentHelper;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.vo.toc.AknTag;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.NumberingType;
+import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import io.atlassian.fugue.Pair;
 

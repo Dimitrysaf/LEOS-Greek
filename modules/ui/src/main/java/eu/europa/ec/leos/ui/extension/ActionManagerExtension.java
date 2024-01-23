@@ -20,7 +20,7 @@ import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.annotations.JavaScript;
 import com.vaadin.ui.AbstractComponent;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.web.event.view.document.CancelActionElementRequestEvent;
 import eu.europa.ec.leos.web.support.LeosCacheToken;
 

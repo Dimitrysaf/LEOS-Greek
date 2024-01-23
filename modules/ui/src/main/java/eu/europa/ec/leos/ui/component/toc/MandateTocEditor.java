@@ -26,14 +26,14 @@ import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
-import eu.europa.ec.leos.vo.toc.Level;
-import eu.europa.ec.leos.vo.toc.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.NumberingType;
-import eu.europa.ec.leos.vo.toc.OptionsType;
+import eu.europa.ec.leos.vo.structure.Level;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
-import eu.europa.ec.leos.vo.toc.TocItem;
+import eu.europa.ec.leos.vo.structure.TocItem;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -74,7 +74,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateDepthOfTocItems;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.updateStyleClassOfTocItems;
-import static eu.europa.ec.leos.vo.toc.NumberingType.BULLET_NUM;
+import static eu.europa.ec.leos.vo.structure.NumberingType.BULLET_NUM;
 
 @SpringComponent
 @Instance(InstanceType.COUNCIL)
