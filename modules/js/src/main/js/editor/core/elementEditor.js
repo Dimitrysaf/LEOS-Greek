@@ -442,15 +442,11 @@ define(function elementEditorModule(require) {
             var sibling = this.nextSibling;
             var isSiblingOL = (sibling && sibling.nodeType === Node.ELEMENT_NODE && sibling.tagName.toLowerCase() == 'ol');
             var isLastEditable = isLastEditableElement($(this).parent());
-            if( isLastEditable ||
-                ($(this).parents('table').length === 0
-                    && ($(this).parent().attr("refersto") || (isEmptyPrevSibling && isSiblingOL))
-                )
-            ){
+            if (isLastEditable || (!$(this).siblings(":not(br)").length && ($(this).parent().attr("refersto") || (isEmptyPrevSibling && isSiblingOL)))) {
                 isEmptyList = true;
             }
         });
-        return  (isEmptyElementFound || isEmptyList);
+        return (isEmptyElementFound || isEmptyList);
     }
 
     function isLastEditableElement(elementToTest){
