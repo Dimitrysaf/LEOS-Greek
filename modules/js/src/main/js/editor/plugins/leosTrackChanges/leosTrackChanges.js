@@ -472,7 +472,7 @@ define(function leosTrackChangesModule(require) {
             var ranges = selection && selection.getRanges();
             var range = ranges && ranges[0];
             var el = range && range.startContainer;
-            if (el && core.isTrackChangeElement(el, core.INSERT_ACTION) && el.getText() === '') {
+            if (el && core.isTrackChangeElement(el, core.INSERT_ACTION) && (el.getText() === '') && !el.getChildCount()) {
                 el.remove();
             }
         },

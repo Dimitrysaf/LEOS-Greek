@@ -85,7 +85,7 @@ define(function leosInlineEditorPluginModule(require) {
             }
 
             editor.on('blur', function (evt) {
-                if ((evt.editor.LEOS.implicitSaveEnabled !== "false") && !evt.editor.LEOS.bookmarkNavigatorClicked &&
+                if ((evt.editor.LEOS.implicitSaveEnabled.toString() !== "false") && !evt.editor.LEOS.bookmarkNavigatorClicked &&
                     !evt.editor.LEOS.saveCmdExecuted) {
                 	if (_isMouseOutsideEditor(evt.editor.container.$) && !_isMouseOnDocumentScrollbar()) {
                         if (evt.editor.checkDirty()) {
