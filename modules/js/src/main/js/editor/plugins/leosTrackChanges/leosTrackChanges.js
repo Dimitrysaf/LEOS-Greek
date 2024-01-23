@@ -60,10 +60,8 @@ define(function leosTrackChangesModule(require) {
                     return [tcElement, this.PARENT];
                 }
             }
-            // TODO: Not needed anymore but check if causes some regression
             // Check element before and after caret
-            // return this.searchTrackChangeElement(editor, action);
-            return null;
+            return this.searchTrackChangeElement(editor, action);
         },
 
         searchTrackChangeElement: function(editor, action, deleteKey) {
