@@ -442,11 +442,29 @@ define(function elementEditorModule(require) {
             var sibling = this.nextSibling;
             var isSiblingOL = (sibling && sibling.nodeType === Node.ELEMENT_NODE && sibling.tagName.toLowerCase() == 'ol');
             var isLastEditable = isLastEditableElement($(this).parent());
-            if (isLastEditable || (!$(this).siblings(":not(br)").length && ($(this).parent().attr("refersto") || (isEmptyPrevSibling && isSiblingOL)))) {
+            if (isLastEditable || (isEmpty($(this).parent().get(0)) && ($(this).parent().attr("refersto") || (isEmptyPrevSibling && isSiblingOL)))) {
                 isEmptyList = true;
             }
         });
-        return (isEmptyElementFound || isEmptyList);
+
+
+        var isEmptyRefersToElement = false;
+        $("#" + elementId).find("ol[data-akn-name='aknOrderedList']").each(function() {
+            var refersToElement = this.firstChild, newRefersToElement = this.previousSibling;
+            var containsRefersToElement = refersToElement && refersToElement.hasAttribute("refersto");
+            var containsNewRefersToElement = !containsRefersToElement && newRefersToElement && newRefersToElement.nodeType === Node.ELEMENT_NODE && newRefersToElement.tagName.toLowerCase() == "p";
+            if ((containsRefersToElement && isEmpty(refersToElement)) || (containsNewRefersToElement && isEmpty(newRefersToElement))) {
+                isEmptyRefersToElement = true;
+            }
+        });
+
+
+        return isEmptyElementFound || isEmptyList || isEmptyRefersToElement;
+    }
+
+    function isEmpty(element) {
+        return element && !$(element).children(":not(br)").length &&
+            !$(element).contents().filter(function() { return this.nodeType == Node.TEXT_NODE && CKEDITOR.tools.trim(this.textContent).length > 0; }).length;
     }
 
     function isLastEditableElement(elementToTest){
