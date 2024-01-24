@@ -36,6 +36,7 @@ import {
 } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
+import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
 
@@ -48,7 +49,6 @@ import { NodeValidationResponse } from '../models/drop-response.model';
 import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
-import {EnvironmentService} from "@/shared/services/enviroment.service";
 
 export enum RelevantElements {
   ALL = 'ALL',
@@ -147,7 +147,7 @@ export class DocumentService implements OnDestroy {
   pageSize = 10;
   isReloadRequired = false;
   titlePageBS = new BehaviorSubject<string | null>(null);
-  public trackChangesStatus$ : Observable<{
+  public trackChangesStatus$: Observable<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
   }>;
@@ -241,7 +241,7 @@ export class DocumentService implements OnDestroy {
   private trackChangesStatusBS = new BehaviorSubject<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
-  }>({isTrackChangesEnabled: false, isTrackChangesShowed: false});
+  }>({ isTrackChangesEnabled: false, isTrackChangesShowed: false });
 
   private getAnnotations?: () => Promise<string>;
 
@@ -794,9 +794,6 @@ export class DocumentService implements OnDestroy {
   }
 
   searchReplaceAll() {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json', // Set the content type as JSON
-    });
     this.http
       .put<any>(
         `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/replace-all`,
@@ -837,7 +834,7 @@ export class DocumentService implements OnDestroy {
         },
         { responseType: 'text' as 'json' },
       )
-      .subscribe((updateResult) => {
+      .subscribe(() => {
         this.setDocumentRefAndCategory(this.documentRef, this.documentType);
       });
   }
@@ -1037,7 +1034,7 @@ export class DocumentService implements OnDestroy {
         `${apiBaseUrl}/secured/${this.documentType}/${this.documentRef}/restore/${versionNumber}`,
       )
       .pipe(finalize(() => this.loadingService.setLoading(false)))
-      .subscribe((r) => {
+      .subscribe(() => {
         this.setDocumentRefAndCategory(this.documentRef, this.documentType);
       });
   }
@@ -1084,7 +1081,7 @@ export class DocumentService implements OnDestroy {
         },
       )
       .pipe(finalize(() => this.loadingService.setLoading(false)))
-      .subscribe((r) => {
+      .subscribe(() => {
         this.setDocumentRefAndCategory(this.documentRef, this.documentType);
       });
   }
@@ -1310,7 +1307,7 @@ export class DocumentService implements OnDestroy {
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/renumber-document`,
         {},
       )
-      .subscribe((response) => {
+      .subscribe(() => {
         this.setDocumentRefAndCategory(documentRef, documentType);
       });
   }
@@ -1388,7 +1385,7 @@ export class DocumentService implements OnDestroy {
         { params: { versionLabel } },
       )
       .subscribe({
-        next: (res) => {
+        next: () => {
           this.appShell.growl({
             severity: 'success',
             summary: this.translate.instant(
@@ -1489,7 +1486,7 @@ export class DocumentService implements OnDestroy {
         { responseType: 'text' as 'json' },
       )
       .subscribe({
-        next: (res) => {
+        next: () => {
           this.appShell.growl({
             severity: 'success',
             summary: this.translate.instant(
@@ -1638,14 +1635,6 @@ export class DocumentService implements OnDestroy {
       const nextVal = value ?? !oldVal;
       subj.next(nextVal);
     });
-  }
-
-  private getDocument(documentRef: string, category: string) {
-    return this.http
-      .get(`${apiBaseUrl}/secured/${category}/${documentRef}`, {
-        responseType: 'text',
-      })
-      .pipe(take(1));
   }
 
   private static searchStateComparator(a, b) {
@@ -1844,7 +1833,7 @@ export class DocumentService implements OnDestroy {
       if (node.childNodes.length === 1) {
         return this.getNodeTextOnlyLength(node.childNodes[0]);
       } else if (node.childNodes.length > 1) {
-        node.childNodes.forEach((n, i) => this.getNodeTextOnlyLength(n));
+        node.childNodes.forEach((n) => this.getNodeTextOnlyLength(n));
       }
     }
   }

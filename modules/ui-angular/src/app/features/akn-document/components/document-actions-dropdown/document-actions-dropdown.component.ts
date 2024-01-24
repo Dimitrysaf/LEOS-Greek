@@ -12,7 +12,7 @@ import {
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {BehaviorSubject, combineLatest, Observable, Subject, takeUntil} from 'rxjs';
+import { combineLatest, Subject, takeUntil } from 'rxjs';
 
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';
@@ -68,7 +68,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-     combineLatest([this.doc.documentConfig$, this.doc.permissions$])
+    combineLatest([this.doc.documentConfig$, this.doc.permissions$])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([config, perms]) => {
         this.setMenuState(config, perms);
@@ -76,7 +76,10 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   updateTrackChangesStatus() {
-    this.doc.updateTrackChangesStatus({isTrackChangesEnabled: this.isTrackChangesEnabled, isTrackChangesShowed: this.seeTrackChanges})
+    this.doc.updateTrackChangesStatus({
+      isTrackChangesEnabled: this.isTrackChangesEnabled,
+      isTrackChangesShowed: this.seeTrackChanges,
+    });
   }
 
   handleAnnexStructureChange() {
@@ -163,5 +166,6 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     this.isTrackChangesEnabled = isTCEnabled;
     this.updateTrackChangesStatus();
   }
+
   setTrackChangesEnabled() {}
 }

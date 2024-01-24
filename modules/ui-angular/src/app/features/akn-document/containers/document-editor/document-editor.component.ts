@@ -284,8 +284,6 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((editMode) => {
         this.isEditMode = editMode;
-        if (editMode === false)
-          this.tocInlineMenu.setIsGoingToMove(editMode, null);
       });
 
     this.tocService.tocItems$

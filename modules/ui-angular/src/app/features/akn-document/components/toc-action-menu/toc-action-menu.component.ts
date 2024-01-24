@@ -8,8 +8,11 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { EuiDropdownButtonMenuComponent } from '@eui/components/eui-dropdown-button-menu';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  EuiDropdownButtonMenuComponent,
+  EuiDropdownButtonMenuItem,
+} from '@eui/components/eui-dropdown-button-menu';
+import { Observable, Subject, takeUntil } from 'rxjs';
 
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -22,16 +25,11 @@ import { TocInlineEditMenuService } from '../../services/toc-inline-edit-menu.se
   templateUrl: './toc-action-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TocActionMenuComponent
-  implements OnInit, OnDestroy, AfterViewInit
-{
+export class TocActionMenuComponent implements OnInit, OnDestroy {
   @Input() node: TableOfContentItemVO;
 
+  menuItems: EuiDropdownButtonMenuItem[] = [];
   isEditMode: boolean;
-  @ViewChild('deleteTocConfirmation')
-  deleteDialog: ConfirmDeleteDialogComponent;
-  @ViewChild('dropdownComponentRef', { static: false })
-  private dropdownComponent: EuiDropdownButtonMenuComponent;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -44,20 +42,15 @@ export class TocActionMenuComponent
     this.tocInlineEditMenuService.items$
       .pipe(takeUntil(this.destroy$))
       .subscribe((items) => {
-        if (this.dropdownComponent) {
-          this.dropdownComponent.menuItems = items;
-        }
+        this.menuItems = items;
       });
+
     this.tocService.isEditMode$
       .pipe(takeUntil(this.destroy$))
       .subscribe((isEdit) => {
         this.isEditMode = isEdit;
         this.changeDetectorRef.markForCheck();
       });
-  }
-
-  ngAfterViewInit() {
-    this.tocInlineEditMenuService.setViewChild(this.deleteDialog);
   }
 
   ngOnDestroy() {

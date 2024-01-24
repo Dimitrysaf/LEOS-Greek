@@ -43,46 +43,15 @@ export class TocInlineEditMenuProposalService extends TocInlineEditMenuService {
     );
   }
 
-  getItems(node: TableOfContentItemVO): EuiDropdownButtonMenuItem[] {
-    let items: EuiDropdownButtonMenuItem[] = [];
-    switch (node.tocItem.aknTag) {
-      case ARTICLE:
-        items = [
-          {
-            id: ARTICLE_TYPE_CHANGE_ACTION_ID,
-            label: this.translateService.instant(
-              'toc.edit.window.item.list.type.change',
-            ),
-            iconClass: null,
-            children: [
-              {
-                id: ARTICLE_TYPE_REGULAR,
-                label: this.translateService.instant(
-                  'toc.edit.window.item.regular.article.type',
-                ),
-                iconClass: null,
-                command: () => this.handleArticleTypeChange('REGULAR'),
-              },
-              {
-                id: ARTICLE_TYPE_DEFINITION,
-                label: this.translateService.instant(
-                  'toc.edit.window.item.definition.article.type',
-                ),
-                iconClass: null,
-                command: () => this.handleArticleTypeChange('DEFINITION'),
-              },
-            ],
-          },
-        ];
-        break;
-    }
-    return items;
-  }
-
-  updateTypeSpecificItems(
+  buildTypeSpecificItems(
     node: TableOfContentItemVO,
   ): EuiDropdownButtonMenuItem[] {
-    const items: EuiDropdownButtonMenuItem[] = this.getItems(node);
+    const items: EuiDropdownButtonMenuItem[] = [];
+    switch (node.tocItem.aknTag) {
+      case ARTICLE:
+        items.push(this.buildArticleItem(node));
+        break;
+    }
     return items;
   }
 }

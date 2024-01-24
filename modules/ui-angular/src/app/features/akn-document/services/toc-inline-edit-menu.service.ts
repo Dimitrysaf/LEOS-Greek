@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { EuiDialogService } from '@eui/components/eui-dialog';
+import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { getI18nState } from '@eui/core';
 import { Store } from '@ngrx/store';
@@ -8,6 +8,9 @@ import { cloneDeep } from 'lodash-es';
 import { BehaviorSubject, combineLatest, filter, Observable, take } from 'rxjs';
 
 import {
+  ARTICLE_TYPE_CHANGE_ACTION_ID,
+  ARTICLE_TYPE_DEFINITION,
+  ARTICLE_TYPE_REGULAR,
   CANCEL_MOVE_ID,
   DELETE_ACTION_ID,
   ITEM_NAME_ACTION_ID,
@@ -21,7 +24,6 @@ import { TableOfContentEditService } from '@/features/akn-document/services/tabl
 import { ValidateTocService } from '@/features/akn-document/services/validate-node-drop.service';
 import { DocumentConfig } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
-import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
   BULLET_NUM,
   CROSSHEADING,
@@ -45,24 +47,18 @@ import {
 
 @Injectable()
 export abstract class TocInlineEditMenuService {
-  public documentConfigBS = new BehaviorSubject<DocumentConfig>(null);
   public items$: Observable<EuiDropdownButtonMenuItem[]>;
-  public isReady$: Observable<boolean>;
   public documentConfig: DocumentConfig;
   public selectedNodeToMove: TableOfContentItemVO;
 
-  private typeSpecificItems: EuiDropdownButtonMenuItem[] = [];
-  private commonItems: EuiDropdownButtonMenuItem[] = [];
   private heading: string;
   private previousHeading: string;
   private previousType: string;
+  private isReadyToMove = false;
 
   private itemsBS = new BehaviorSubject<EuiDropdownButtonMenuItem[]>([]);
   private targetNodeBS = new BehaviorSubject<TableOfContentItemVO>(null);
-  private readyBS = new BehaviorSubject<boolean>(null);
-
-  private deleteDialog: ConfirmDeleteDialogComponent;
-  private isReadyToMove = false;
+  private documentConfigBS = new BehaviorSubject<DocumentConfig>(null);
 
   protected constructor(
     protected store: Store<any>,
@@ -74,41 +70,22 @@ export abstract class TocInlineEditMenuService {
     protected tocService: TableOfContentService,
     protected documentService: DocumentService,
   ) {
-    combineLatest([this.targetNodeBS, this.store.select(getI18nState)])
+    combineLatest([
+      this.targetNodeBS,
+      this.store.select(getI18nState),
+      this.documentConfigBS.asObservable(),
+    ])
       .pipe(filter(([node]) => node !== null))
-      .subscribe(([targetNode, state]) => {
+      .subscribe(([targetNode, state, documentConfig]) => {
+        this.documentConfig = documentConfig;
         this.updateDropdownItems(targetNode);
       });
 
-    this.readyBS
-      .asObservable()
-      .pipe(filter((node) => node !== null))
-      .subscribe((node) => {
-        this.setIsGoingToMove(node, null);
-      });
-
-    this.isReady$ = this.readyBS.asObservable();
     this.items$ = this.itemsBS.asObservable();
-
-    this.documentConfigBS.subscribe((config) => {
-      this.documentConfig = config;
-    });
   }
 
-  protected abstract getItems(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem[];
-
-  protected abstract updateTypeSpecificItems(
-    type: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem[];
-
-  public setDocumentConfigBS(dConfig: DocumentConfig): void {
-    this.documentConfigBS.next(dConfig);
-  }
-
-  setViewChild(ref: any) {
-    this.deleteDialog = ref;
+  public setDocumentConfig(documentConfig: DocumentConfig) {
+    this.documentConfigBS.next(documentConfig);
   }
 
   public getTargetNode() {
@@ -119,16 +96,7 @@ export abstract class TocInlineEditMenuService {
     this.targetNodeBS.next(node);
   }
 
-  public setIsGoingToMove(
-    isReady: boolean,
-    selectedNode: TableOfContentItemVO,
-  ) {
-    this.isReadyToMove = isReady;
-    this.selectedNodeToMove = selectedNode;
-    this.readyBS.next(isReady);
-  }
-
-  getDisplayableTocItem(tocItem: TocItem): string {
+  public getDisplayableTocItem(tocItem: TocItem): string {
     if (tocItem.numberingType === BULLET_NUM) {
       return this.translateService.instant('toc.item.type.bullet');
     }
@@ -143,36 +111,55 @@ export abstract class TocInlineEditMenuService {
     );
   }
 
+  protected abstract buildTypeSpecificItems(
+    type: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem[];
+
+  protected setIsGoingToMove(
+    isReady: boolean,
+    selectedNode: TableOfContentItemVO,
+  ) {
+    this.isReadyToMove = isReady;
+    this.selectedNodeToMove = selectedNode;
+  }
+
+  protected buildArticleItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: ARTICLE_TYPE_CHANGE_ACTION_ID,
+      label: this.translateService.instant(
+        'toc.edit.window.item.list.type.change',
+      ),
+      children: [
+        {
+          id: ARTICLE_TYPE_REGULAR,
+          label: this.translateService.instant(
+            'toc.edit.window.item.regular.article.type',
+          ),
+          disabled: node.tocItemType === 'REGULAR',
+          command: () => this.handleArticleTypeChange('REGULAR'),
+        },
+        {
+          id: ARTICLE_TYPE_DEFINITION,
+          label: this.translateService.instant(
+            'toc.edit.window.item.definition.article.type',
+          ),
+          disabled: node.tocItemType === 'DEFINITION',
+          command: () => this.handleArticleTypeChange('DEFINITION'),
+        },
+      ],
+    };
+  }
+
   protected updateDropdownItems(selectedNode: TableOfContentItemVO) {
     if (!this.isReadyToMove) {
-      this.commonItems = [
-        {
-          id: MOVE_ACTION_ID,
-          label: this.translateService.instant(
-            'page.editor.toc.move-actions.move',
-          ),
-          iconClass: null,
-          command: () => this.setIsGoingToMove(true, selectedNode),
-        },
-        {
-          id: ITEM_NAME_ACTION_ID,
-          label: this.getDisplayableTocItem(selectedNode.tocItem),
-          iconClass: null,
-          disabled: true,
-        },
-        {
-          id: DELETE_ACTION_ID,
-          label: this.getDeleteButtonLabel(selectedNode),
-          iconClass: null,
-          disabled: !this.isDeleteButtonDisabled(selectedNode),
-          command: () => this.handleNodeDeletion(selectedNode),
-        },
-      ];
-      this.typeSpecificItems = this.updateTypeSpecificItems(selectedNode);
-      this.itemsBS.next([...this.commonItems, ...this.typeSpecificItems]);
+      this.itemsBS.next([
+        ...this.buildCommonItems(selectedNode),
+        ...this.buildTypeSpecificItems(selectedNode),
+      ]);
     } else {
-      this.moveItems(selectedNode);
-      this.itemsBS.next(this.commonItems);
+      this.itemsBS.next([...this.buildMoveItems(selectedNode)]);
     }
   }
 
@@ -219,6 +206,37 @@ export abstract class TocInlineEditMenuService {
     this.previousType = oldValue;
     this.previousHeading = oldHeading;
     this.tocEditService.handleNodeChanges(toc);
+  }
+
+  private buildCommonItems(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem[] {
+    return [
+      this.buildItemNameItem(node),
+      this.buildMoveItem(node),
+      this.buildDeleteItem(node),
+    ];
+  }
+
+  private buildItemNameItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: ITEM_NAME_ACTION_ID,
+      label: this.getDisplayableTocItem(node.tocItem),
+      disabled: true,
+    };
+  }
+
+  private buildDeleteItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: DELETE_ACTION_ID,
+      label: this.getDeleteButtonLabel(node),
+      disabled: !this.isDeleteButtonDisabled(node),
+      command: () => this.handleNodeDeletion(node),
+    };
   }
 
   private isDeleteButtonDisabled(node: TableOfContentItemVO) {
@@ -281,17 +299,37 @@ export abstract class TocInlineEditMenuService {
     item: TableOfContentItemVO,
   ) {
     if (checkIfConfirmDeletion(newTree, item)) {
-      this.onTocDeleteWithChildren();
-      this.deleteDialog.deleteDialog.accept.pipe(take(1)).subscribe(() => {
-        this.deleteItem(newTree, item);
-      });
+      this.onTocDeleteWithChildren(newTree, item);
     } else {
       this.deleteItem(newTree, item);
     }
   }
 
-  private onTocDeleteWithChildren() {
-    this.deleteDialog.deleteDialog.openDialog();
+  private openDeleteDialog(
+    newTree: TableOfContentItemVO[],
+    item: TableOfContentItemVO,
+  ) {
+    this.dialogService.openDialog(
+      new EuiDialogConfig({
+        dialogId: 'delete-dialog-id',
+        title: this.translateService.instant(
+          'toc.edit.window.item.selected.delete-dialog.title',
+        ),
+        content: this.translateService.instant(
+          'toc.edit.window.item.selected.delete-dialog.desc',
+        ),
+        acceptLabel: this.translateService.instant('global.actions.delete'),
+        typeClass: 'danger',
+        accept: () => this.deleteItem(newTree, item),
+      }),
+    );
+  }
+
+  private onTocDeleteWithChildren(
+    newTree: TableOfContentItemVO[],
+    item: TableOfContentItemVO,
+  ) {
+    this.openDeleteDialog(newTree, item);
   }
 
   private deleteItem(
@@ -316,6 +354,7 @@ export abstract class TocInlineEditMenuService {
       nodeTargetParent,
       position,
     );
+    this.setIsGoingToMove(false, null);
   }
 
   private validateAndMove(
@@ -345,42 +384,72 @@ export abstract class TocInlineEditMenuService {
     );
   }
 
-  private onCancelMove() {
-    this.setIsGoingToMove(false, null);
+  private buildMoveItem(
+    selectedNode: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: MOVE_ACTION_ID,
+      label: this.translateService.instant('page.editor.toc.move-actions.move'),
+      command: () => this.setIsGoingToMove(true, selectedNode),
+    };
   }
 
-  private moveItems(selectedNode: TableOfContentItemVO) {
-    this.commonItems = [
-      {
-        id: PLACE_BEFORE_ACTION_ID,
-        label: this.translateService.instant(
-          'page.editor.toc.move-actions.place-before',
-        ),
-        iconClass: null,
-        command: () => this.handlePlaceAt(selectedNode, 'BEFORE'),
-      },
-      {
-        id: PLACE_AS_CHILDREN_ACTION_ID,
-        label: this.translateService.instant(
-          'page.editor.toc.move-actions.place-child',
-        ),
-        iconClass: null,
-        command: () => this.handlePlaceAt(selectedNode, 'AS_CHILDREN'),
-      },
-      {
-        id: PLACE_AFTER_ACTION_ID,
-        label: this.translateService.instant(
-          'page.editor.toc.move-actions.place-after',
-        ),
-        iconClass: null,
-        command: () => this.handlePlaceAt(selectedNode, 'AFTER'),
-      },
-      {
-        id: CANCEL_MOVE_ID,
-        label: this.translateService.instant('Cancel'),
-        iconClass: null,
-        command: () => this.onCancelMove(),
-      },
+  private buildMoveItems(selectedNode: TableOfContentItemVO) {
+    return [
+      this.isReadyToMove && this.buildMovePlaceBeforeItem(selectedNode),
+      this.isReadyToMove && this.buildMoveAsChildrenItem(selectedNode),
+      this.isReadyToMove && this.buildMovePlaceAfterItem(selectedNode),
+      this.isReadyToMove && this.buildCancelItem(selectedNode),
     ];
+  }
+
+  private buildMovePlaceBeforeItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: PLACE_BEFORE_ACTION_ID,
+      label: this.translateService.instant(
+        'page.editor.toc.move-actions.place-before',
+      ),
+      command: () => this.handlePlaceAt(node, 'BEFORE'),
+    };
+  }
+
+  private buildMovePlaceAfterItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: PLACE_AFTER_ACTION_ID,
+      label: this.translateService.instant(
+        'page.editor.toc.move-actions.place-after',
+      ),
+      command: () => this.handlePlaceAt(node, 'AFTER'),
+    };
+  }
+
+  private buildMoveAsChildrenItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: PLACE_AS_CHILDREN_ACTION_ID,
+      label: this.translateService.instant(
+        'page.editor.toc.move-actions.place-child',
+      ),
+      command: () => this.handlePlaceAt(node, 'AS_CHILDREN'),
+    };
+  }
+
+  private buildCancelItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: CANCEL_MOVE_ID,
+      label: this.translateService.instant('Cancel'),
+      command: () => this.onCancelMove(),
+    };
+  }
+
+  private onCancelMove() {
+    this.setIsGoingToMove(false, null);
   }
 }

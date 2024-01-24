@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
-import { TranslateService } from '@ngx-translate/core';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 
 import {
   ARTICLE_TYPE_CHANGE_ACTION_ID,
@@ -83,215 +83,175 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     );
   }
 
-  protected getItems(node: TableOfContentItemVO): EuiDropdownButtonMenuItem[] {
-    let items: EuiDropdownButtonMenuItem[] = [];
+  protected buildTypeSpecificItems(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem[] {
+    const items: EuiDropdownButtonMenuItem[] = [];
     switch (node.tocItem.aknTag) {
       case CROSSHEADING:
-        items = [
-          {
-            id: CROSSHEADING_CHANGE_TYPE_ACTION_ID,
-            label: this.translateService.instant(
-              'toc.edit.window.item.list.type.change',
-            ),
-            iconClass: null,
-            children: [
-              {
-                id: CROSSHEADING_CHANGE_TYPE_NO_GRAPHIC_ID,
-                label: this.translateService.instant(
-                  'toc.edit.window.item.list.type.none',
-                ),
-                iconClass: null,
-                command: () => this.handleListRadioButton('NONE'),
-              },
-              {
-                id: CROSSHEADING_CHANGE_TYPE_BULLET_NUM_ID,
-                label: this.translateService.instant(
-                  'toc.edit.window.item.list.type.bullet_num',
-                ),
-                iconClass: null,
-                command: () =>
-                  this.handleListRadioButton('BULLET_BLACK_CIRCLE'),
-              },
-              {
-                id: CROSSHEADING_CHANGE_TYPE_INDENT_ID,
-                label: this.translateService.instant(
-                  'toc.edit.window.item.list.type.indent',
-                ),
-                iconClass: null,
-                command: () => this.handleListRadioButton('INDENT'),
-              },
-            ],
-          },
-        ];
+        items.push(this.buildCrossHeadingItem(node));
         break;
       case BLOCK:
-        items = [];
         break;
       case DIVISION:
-        this.active_division_style = node.autoNumOverwritten
-          ? null
-          : node.style;
-        this.possibleDivisionType = this.getDivisionTypesToEnable(
-          this.getPreviousDivisionType(node),
-        );
-        items = [
-          {
-            id: DIVISION_CHANGE_TYPE_ACTION_ID,
-            label: this.translateService.instant(
-              'toc.edit.window.item.list.type',
-            ),
-            iconClass: null,
-            children: [
-              {
-                id: DIVISION_CHANGE_TYPE_1_ID,
-                label: this.translateService.instant(
-                  'toc.division.number.caption.type_1',
-                ),
-                iconClass: null,
-                command: () => this.handleDivisionChange('type_1'),
-                disabled: !this.isDivisionStyleEnabled('type_1'),
-              },
-              {
-                id: DIVISION_CHANGE_TYPE_2_ID,
-                label: this.translateService.instant(
-                  'toc.division.number.caption.type_2',
-                ),
-                iconClass: null,
-                command: () => this.handleDivisionChange('type_2'),
-                disabled: !this.isDivisionStyleEnabled('type_2'),
-              },
-              {
-                id: DIVISION_CHANGE_TYPE_3_ID,
-                label: this.translateService.instant(
-                  'toc.division.number.caption.type_3',
-                ),
-                iconClass: null,
-                command: () => this.handleDivisionChange('type_3'),
-                disabled: !this.isDivisionStyleEnabled('type_3'),
-              },
-              {
-                id: DIVISION_CHANGE_TYPE_4_ID,
-                label: this.translateService.instant(
-                  'toc.division.number.caption.type_4',
-                ),
-                iconClass: null,
-                command: () => this.handleDivisionChange('type_4'),
-                disabled: !this.isDivisionStyleEnabled('type_4'),
-              },
-            ],
-          },
-        ];
+        items.push(this.buildDivisionItem(node));
         break;
       case POINT:
-        items = [
-          {
-            id: POINT_CHANGE_TYPE_ACTION_ID,
-            label: this.translateService.instant(
-              'toc.edit.window.item.list.type.change',
-            ),
-            iconClass: null,
-            children: [
-              {
-                id: POINT_CHANGE_TYPE_NO_GRAPHIC_ID,
-                label: this.translateService.instant('toc.item.type.bullet'),
-                iconClass: null,
-                command: () =>
-                  this.handleIndentListRadioButtonGroupChange('BULLET_NUM'),
-              },
-              {
-                id: POINT_CHANGE_TYPE_LONG_INDENT_ID,
-                label: this.translateService.instant('toc.item.type.indent'),
-                iconClass: null,
-                command: () =>
-                  this.handleIndentListRadioButtonGroupChange('INDENT'),
-              },
-              {
-                id: POINT_CHANGE_TYPE_NUMBERED_ID,
-                label: this.translateService.instant(
-                  'toc.edit.window.item.list.type.numbered',
-                ),
-                iconClass: null,
-                command: () =>
-                  this.handleIndentListRadioButtonGroupChange('POINT_NUM'),
-              },
-            ],
-          },
-        ];
+        items.push(this.buildPointItem(node));
         break;
       case INDENT:
-        items = [
-          {
-            id: INDENT_CHANGE_TYPE_ACTION_ID,
-            label: this.translateService.instant(
-              'toc.edit.window.item.list.type.change',
-            ),
-            iconClass: null,
-            children: [
-              {
-                id: INDENT_CHANGE_TYPE_NO_GRAPHIC_ID,
-                label: this.translateService.instant('toc.item.type.bullet'),
-                iconClass: null,
-                command: () =>
-                  this.handleIndentListRadioButtonGroupChange('BULLET_NUM'),
-              },
-              {
-                id: INDENT_CHANGE_TYPE_LONG_INDENT_ID,
-                label: this.translateService.instant('toc.item.type.indent'),
-                iconClass: null,
-                command: () =>
-                  this.handleIndentListRadioButtonGroupChange('INDENT'),
-              },
-              {
-                id: INDENT_CHANGE_TYPE_NUMBERED_ID,
-                label: this.translateService.instant(
-                  'toc.edit.window.item.list.type.numbered',
-                ),
-                iconClass: null,
-                command: () =>
-                  this.handleIndentListRadioButtonGroupChange('POINT_NUM'),
-              },
-            ],
-          },
-        ];
+        items.push(this.buildIndentItem(node));
         break;
       case ARTICLE:
-        items = [
-          {
-            id: ARTICLE_TYPE_CHANGE_ACTION_ID,
-            label: this.translateService.instant(
-              'toc.edit.window.item.list.type.change',
-            ),
-            iconClass: null,
-            children: [
-              {
-                id: ARTICLE_TYPE_REGULAR,
-                label: this.translateService.instant(
-                  'toc.edit.window.item.regular.article.type',
-                ),
-                iconClass: null,
-                command: () => this.handleArticleTypeChange('REGULAR'),
-              },
-              {
-                id: ARTICLE_TYPE_DEFINITION,
-                label: this.translateService.instant(
-                  'toc.edit.window.item.definition.article.type',
-                ),
-                iconClass: null,
-                command: () => this.handleArticleTypeChange('DEFINITION'),
-              },
-            ],
-          },
-        ];
+        items.push(this.buildArticleItem(node));
         break;
     }
     return items;
   }
 
-  protected updateTypeSpecificItems(
+  private buildCrossHeadingItem(
     node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem[] {
-    const items: EuiDropdownButtonMenuItem[] = this.getItems(node);
-    return items;
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: CROSSHEADING_CHANGE_TYPE_ACTION_ID,
+      label: this.translateService.instant(
+        'toc.edit.window.item.list.type.change',
+      ),
+      children: [
+        {
+          id: CROSSHEADING_CHANGE_TYPE_NO_GRAPHIC_ID,
+          label: this.translateService.instant(
+            'toc.edit.window.item.list.type.none',
+          ),
+          command: () => this.handleListRadioButton('NONE'),
+        },
+        {
+          id: CROSSHEADING_CHANGE_TYPE_BULLET_NUM_ID,
+          label: this.translateService.instant(
+            'toc.edit.window.item.list.type.bullet_num',
+          ),
+          command: () => this.handleListRadioButton('BULLET_BLACK_CIRCLE'),
+        },
+        {
+          id: CROSSHEADING_CHANGE_TYPE_INDENT_ID,
+          label: this.translateService.instant(
+            'toc.edit.window.item.list.type.indent',
+          ),
+          command: () => this.handleListRadioButton('INDENT'),
+        },
+      ],
+    };
+  }
+
+  private buildDivisionItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    this.active_division_style = node.autoNumOverwritten ? null : node.style;
+    this.possibleDivisionType = this.getDivisionTypesToEnable(
+      this.getPreviousDivisionType(node),
+    );
+    return {
+      id: DIVISION_CHANGE_TYPE_ACTION_ID,
+      label: this.translateService.instant('toc.edit.window.item.list.type'),
+      children: [
+        {
+          id: DIVISION_CHANGE_TYPE_1_ID,
+          label: this.translateService.instant(
+            'toc.division.number.caption.type_1',
+          ),
+          command: () => this.handleDivisionChange('type_1'),
+          disabled: !this.isDivisionStyleEnabled('type_1'),
+        },
+        {
+          id: DIVISION_CHANGE_TYPE_2_ID,
+          label: this.translateService.instant(
+            'toc.division.number.caption.type_2',
+          ),
+          command: () => this.handleDivisionChange('type_2'),
+          disabled: !this.isDivisionStyleEnabled('type_2'),
+        },
+        {
+          id: DIVISION_CHANGE_TYPE_3_ID,
+          label: this.translateService.instant(
+            'toc.division.number.caption.type_3',
+          ),
+          command: () => this.handleDivisionChange('type_3'),
+          disabled: !this.isDivisionStyleEnabled('type_3'),
+        },
+        {
+          id: DIVISION_CHANGE_TYPE_4_ID,
+          label: this.translateService.instant(
+            'toc.division.number.caption.type_4',
+          ),
+          command: () => this.handleDivisionChange('type_4'),
+          disabled: !this.isDivisionStyleEnabled('type_4'),
+        },
+      ],
+    };
+  }
+
+  private buildPointItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: POINT_CHANGE_TYPE_ACTION_ID,
+      label: this.translateService.instant(
+        'toc.edit.window.item.list.type.change',
+      ),
+      children: [
+        {
+          id: POINT_CHANGE_TYPE_NO_GRAPHIC_ID,
+          label: this.translateService.instant('toc.item.type.bullet'),
+          command: () =>
+            this.handleIndentListRadioButtonGroupChange('BULLET_NUM'),
+        },
+        {
+          id: POINT_CHANGE_TYPE_LONG_INDENT_ID,
+          label: this.translateService.instant('toc.item.type.indent'),
+          command: () => this.handleIndentListRadioButtonGroupChange('INDENT'),
+        },
+        {
+          id: POINT_CHANGE_TYPE_NUMBERED_ID,
+          label: this.translateService.instant(
+            'toc.edit.window.item.list.type.numbered',
+          ),
+          command: () =>
+            this.handleIndentListRadioButtonGroupChange('POINT_NUM'),
+        },
+      ],
+    };
+  }
+
+  private buildIndentItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    return {
+      id: INDENT_CHANGE_TYPE_ACTION_ID,
+      label: this.translateService.instant(
+        'toc.edit.window.item.list.type.change',
+      ),
+      children: [
+        {
+          id: INDENT_CHANGE_TYPE_NO_GRAPHIC_ID,
+          label: this.translateService.instant('toc.item.type.bullet'),
+          command: () =>
+            this.handleIndentListRadioButtonGroupChange('BULLET_NUM'),
+        },
+        {
+          id: INDENT_CHANGE_TYPE_LONG_INDENT_ID,
+          label: this.translateService.instant('toc.item.type.indent'),
+          command: () => this.handleIndentListRadioButtonGroupChange('INDENT'),
+        },
+        {
+          id: INDENT_CHANGE_TYPE_NUMBERED_ID,
+          label: this.translateService.instant(
+            'toc.edit.window.item.list.type.numbered',
+          ),
+          command: () =>
+            this.handleIndentListRadioButtonGroupChange('POINT_NUM'),
+        },
+      ],
+    };
   }
 
   private handleListRadioButton(value: NumberingType) {

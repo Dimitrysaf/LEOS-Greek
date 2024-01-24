@@ -32,7 +32,9 @@ const MAIN_CONTAINER_WIDTH = 500.6;
   styleUrls: ['./document.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+export class DocumentComponent
+  implements OnInit, AfterViewInit, OnDestroy, OnChanges
+{
   @Input() containerId: string;
   @Input() containerClass: NgClass['ngClass'] = '';
   @Input() documentType: string;
@@ -69,6 +71,17 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
     this.destroy$.complete();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (
+      this.readonly &&
+      'xml' in changes &&
+      changes.xml.currentValue !== undefined
+    ) {
+      this.xml = changes.xml.currentValue;
+      this.loadDocument(this.xml);
+    }
+  }
+
   ngOnInit(): void {
     this.documentService.documentView$
       .pipe(takeUntil(this.destroy$))
@@ -85,9 +98,7 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
       });
     this.documentService.reloadTrigger$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((trigger) => {
-        trigger !== 0 && this.loadDocument(this.xml);
-      });
+      .subscribe((trigger) => trigger !== 0 && this.loadDocument(this.xml));
 
     if (!this.readonly) {
       this.documentService.updateElementContent$
@@ -99,11 +110,12 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
       this.documentService.getElementContent$
         .pipe(takeUntil(this.destroy$))
         .subscribe((data) => {
-          this.documentService.getElementContentResponse$ = new BehaviorSubject<{
-            elementId: string;
-            elementType: string;
-            elementFragment: string;
-          }>(this.getElementContent(data)).asObservable();
+          this.documentService.getElementContentResponse$ =
+            new BehaviorSubject<{
+              elementId: string;
+              elementType: string;
+              elementFragment: string;
+            }>(this.getElementContent(data)).asObservable();
         });
 
       this.coEditionWSService.shouldReloadAfterUpdate
@@ -155,6 +167,20 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
         this.trackChangesActionsService.getSelector(),
       ),
     });
+  }
+
+  handleZoomChange(event: { zoomLevel: number }) {
+    this.zoomLevel = event.zoomLevel;
+    const scaleFactor = event.zoomLevel / 100;
+    const transformOrigin = this.zoomLevel > 100 ? 'center top' : 'top left';
+
+    this.documentStyle = {
+      transform: `scale(${scaleFactor})`,
+      transformOrigin,
+    };
+
+    const zoomedDocumentHeight = MAIN_CONTAINER_WIDTH * scaleFactor;
+    this.containerElRef.nativeElement.style.height = `${zoomedDocumentHeight}px`;
   }
 
   generateTooltip(coEdits: CoEditionVO[]) {
@@ -227,12 +253,14 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
       if (!elementInEditor) {
         this.reloadElements(data);
       } else if (data.isClosing && !data.isSaved) {
-        !this.isCNInstance ? this.reloadElements(data) : this.documentService.reloadDocument();
+        if (!this.isCNInstance) this.reloadElements(data);
+        else this.documentService.reloadDocument();
       } else {
         this.documentService.isReloadRequired = true;
       }
     } else {
-      !this.isCNInstance ? this.reloadElements(data) : this.documentService.reloadDocument();
+      if (!this.isCNInstance) this.reloadElements(data);
+      else this.documentService.reloadDocument();
     }
     this.initTrackChangesActions();
   }
@@ -323,9 +351,6 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
       if (key)
         for (const coEdit of coEdits[key]) {
           if (coEdit.infoType === 'TOC_INFO') return;
-          const elemInToc = this.document.querySelector(
-            `[data-id="${coEdit.elementId}"]`,
-          );
           const elemInDoc = this.document.getElementById(coEdit.elementId);
           const coEditNode = this.document.createElement('div');
           coEditNode.classList.add(
@@ -388,26 +413,5 @@ export class DocumentComponent implements OnInit, AfterViewInit, OnDestroy, OnCh
       childList: true,
       subtree: true,
     });
-  }
-
-  handleZoomChange(event: { zoomLevel: number }) {
-    this.zoomLevel = event.zoomLevel;
-    const scaleFactor = event.zoomLevel / 100;
-    const transformOrigin = this.zoomLevel > 100 ? 'center top' : 'top left';
-
-    this.documentStyle = {
-      transform: `scale(${scaleFactor})`,
-      transformOrigin
-    };
-
-    const zoomedDocumentHeight = MAIN_CONTAINER_WIDTH * scaleFactor;
-    this.containerElRef.nativeElement.style.height = `${zoomedDocumentHeight}px`;
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (this.readonly && 'xml' in changes && changes.xml.currentValue !== undefined) {
-      this.xml = changes.xml.currentValue;
-      this.loadDocument(this.xml);
-    }
   }
 }

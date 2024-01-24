@@ -6,6 +6,7 @@ import { apiBaseUrl } from 'src/config';
 import { DocumentConfig } from '@/shared';
 import { CROSSHEADING } from '@/shared/constants';
 import {
+  NodeMoveAction,
   NodeValidation,
   NodeValidationResponse,
 } from '@/shared/models/drop-response.model';
@@ -19,6 +20,7 @@ import {
 import { isTocItemsEqual } from '@/shared/utils/tocRules.utils';
 
 Injectable();
+
 export abstract class ValidateTocService {
   dropValidationResult$: Observable<NodeValidation>;
 
@@ -45,6 +47,7 @@ export abstract class ValidateTocService {
     position: string,
     documentType: string,
     documentRef: string,
+    isAdd: boolean = false,
   ) {
     this.requestNodeDropValidation(
       draggedNodeId,
@@ -57,9 +60,17 @@ export abstract class ValidateTocService {
       documentType,
       documentRef,
     ).subscribe((response) => {
+      const moveAction: NodeMoveAction = {
+        isAdd,
+        position,
+      };
+      let validationResult: NodeValidation = {
+        ...response.result,
+        action: moveAction,
+      };
       if (response.result.success) {
         if (position === 'AS_CHILDREN') {
-          const validationResult: NodeValidation = {
+          validationResult = {
             success: true,
             targetItem: response.result.targetItem,
             sourceItem: nodeDragged,
@@ -76,8 +87,8 @@ export abstract class ValidateTocService {
           this.dropValidationResultBS.next(validationResult);
           return;
         }
-        this.dropValidationResultBS.next(response.result);
-      } else this.dropValidationResultBS.next(response.result);
+        this.dropValidationResultBS.next(validationResult);
+      } else this.dropValidationResultBS.next(validationResult);
     });
   }
 
