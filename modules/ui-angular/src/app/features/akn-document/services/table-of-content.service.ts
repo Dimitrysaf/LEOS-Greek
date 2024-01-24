@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
   filter,
@@ -7,18 +7,15 @@ import {
   forkJoin,
   mergeMap,
   Observable,
-  Subject,
   take,
-  takeUntil,
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
-import {DocumentRefAndCategory, DocumentService} from '@/shared/services/document.service';
+import { DocumentRefAndCategory } from '@/shared/services/document.service';
 import { LoadingService } from '@/shared/services/loading.service';
 
 import { TocItem } from '../models/ckeditor';
-import {EnvironmentService} from "@/shared/services/enviroment.service";
 
 @Injectable({ providedIn: 'root' })
 export class TableOfContentService {
@@ -29,6 +26,9 @@ export class TableOfContentService {
   isEditMode$: Observable<boolean>;
   isTocDraft$: Observable<boolean>;
 
+  public isClonedProposal = false;
+  public isTrackChangesEnabled = false;
+
   documentRefAndCategoryBS = new BehaviorSubject<DocumentRefAndCategory | null>(
     null,
   );
@@ -37,9 +37,6 @@ export class TableOfContentService {
   private selectedNodeBS = new BehaviorSubject<TableOfContentItemVO>(null);
   private isEditModeBS = new BehaviorSubject<boolean>(false);
   private isTocDraftBS = new BehaviorSubject<boolean>(false);
-
-  public isClonedProposal: boolean = false;
-  public isTrackChangesEnabled: boolean = false;
 
   constructor(
     private http: HttpClient,

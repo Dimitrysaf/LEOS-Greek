@@ -52,36 +52,37 @@
   display: flex;
   position: relative;
 }
+
 .zoom-controls::after {
+  background-color: black;
   content: '';
-  position: absolute;
+  height: 10px;
   left: 50%;
+  position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
   width: 2px;
-  height: 10px;
-  background-color: black;
 }
 
 .zoom-controls::after {
+  background-color: black;
   content: '';
-  position: absolute;
+  height: 10px;
   left: 50%;
+  position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
   width: 2px;
-  height: 10px;
-  background-color: black;
 }
 
 .eui-icon-minus {
-  font-size: 13px;
   cursor: pointer;
+  font-size: 13px;
   margin-right: 5px;
 }
 
 .eui-icon-add {
-  font-size: 13px;
   cursor: pointer;
+  font-size: 13px;
   margin-left: 5px;
 }

@@ -29,19 +29,16 @@ import {
   takeUntil,
 } from 'rxjs';
 
-import { TocInlineEditMenuMandateService } from '@/features/akn-document/services/toc-inline-edit-menu.mandate.service';
 import { TocInlineEditMenuService } from '@/features/akn-document/services/toc-inline-edit-menu.service';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
   ADD,
-  ARTICLE,
   BULLET_NUM,
   CN,
   CONTENT_SEPARATOR,
   DELETE,
-  DIVISION,
-  EC,
-  HASH_NUM_VALUE, LEOS_TC_DELETE_ACTION,
+  HASH_NUM_VALUE,
+  LEOS_TC_DELETE_ACTION,
   MAX_TRUNCATION_LIMIT,
   MOVE_FROM,
   MOVE_LABEL_SPAN_START_TAG,
@@ -127,8 +124,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
   private destroy$: Subject<any> = new Subject();
   private zoneOnStable$: Observable<any>;
 
-  private seeTrackChanges: boolean = false;
-  private trackChangesEnabled: boolean = false;
+  private seeTrackChanges = false;
+  private trackChangesEnabled = false;
 
   constructor(
     private documentService: DocumentService,
@@ -157,11 +154,13 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
         this.validateTocService.setDocumentConfig(dConfig);
         this.tocEditService.setDocumentConfig(dConfig);
         this.documentConfig = dConfig;
-        this.tocInlineEditMenuService.documentConfigBS.next(dConfig);
+        this.tocInlineEditMenuService.setDocumentConfig(dConfig);
       });
     this.tocService.selectedNode$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((selectedNode) => {this.selectedNode = selectedNode});
+      .subscribe((selectedNode) => {
+        this.selectedNode = selectedNode;
+      });
     this.tocService.isTocDraft$
       .pipe(takeUntil(this.destroy$))
       .subscribe((isDraft) => {
@@ -193,7 +192,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       });
 
     this.documentService.trackChangesStatus$.subscribe((status) => {
-      this.seeTrackChanges = this.documentService.isCNInstance() || status.isTrackChangesShowed;
+      this.seeTrackChanges =
+        this.documentService.isCNInstance() || status.isTrackChangesShowed;
       this.trackChangesEnabled = status.isTrackChangesEnabled;
     });
   }
@@ -208,7 +208,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
   shouldBeVisible(node: TableOfContentItemVO): boolean {
     if (!this.seeTrackChanges) {
-      return !node.trackChangeAction || (node.trackChangeAction !== LEOS_TC_DELETE_ACTION);
+      return (
+        !node.trackChangeAction ||
+        node.trackChangeAction !== LEOS_TC_DELETE_ACTION
+      );
     }
     return true;
   }
@@ -233,7 +236,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getNodeLabel(label: string) {
     if (!this.seeTocItemStyling()) {
-      return label.replace(/<span class="leos-soft-move-label">.*?<\/span>/ig,'');
+      return label.replace(
+        /<span class="leos-soft-move-label">.*?<\/span>/gi,
+        '',
+      );
     }
     return label;
   }
@@ -278,12 +284,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       this.treeControl.dataNodes,
       nodeTarget.parentItem,
     );
-    this.validateAndMove(
-      null,
-      nodeTarget,
-      nodeTargetParent,
-      position,
-    );
+    this.validateAndMove(null, nodeTarget, nodeTargetParent, position);
   }
 
   handleMove(node: TableOfContentItemVO) {
@@ -301,21 +302,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
   colllapseAll() {
     this.treeControl.collapseAll();
-  }
-
-  showNumParagraphToggle(item: TableOfContentItemVO) {
-    const env = process.env.NG_APP_LEOS_INSTANCE;
-    return (
-      item.originAttr &&
-      item.originAttr === EC &&
-      item.tocItem.aknTag === ARTICLE &&
-      item.childItems.length > 0 &&
-      !(item.softActionAttr === DELETE || item.softActionAttr === 'MOVE')
-    );
-  }
-
-  onTocDeleteWithChildren() {
-    this.deleteDialog.deleteDialog.openDialog();
   }
 
   handleInvalidNodes(event: Set<TableOfContentItemVO>) {
@@ -704,6 +690,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
       position,
       this.documentType,
       this.documentRef,
+      isAdd,
     );
   }
 
@@ -718,10 +705,10 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.handleAddNodeAfterValidation(
-      this.targetNode,
-      this.draggedItem,
-      this.dragAction.isAdd,
-      this.dragAction.action,
+      result.targetItem,
+      result.sourceItem,
+      result.action.isAdd,
+      result.action.position,
     );
 
     this.draggedItem = null;
@@ -768,15 +755,15 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
         nodeTarget.parentItem,
       );
 
-      const resultOfValidation =
-        this.validateTocService.validateAddingItemAsChildOrSibling(
-          validationResult,
-          nodeDragged,
-          nodeTarget,
-          this.treeControl.dataNodes,
-          parentNode,
-          position,
-        );
+      this.validateTocService.validateAddingItemAsChildOrSibling(
+        validationResult,
+        nodeDragged,
+        nodeTarget,
+        this.treeControl.dataNodes,
+        parentNode,
+        position,
+      );
+
       if (!validationResult?.success) {
         this.populateValidationMessage(validationResult);
         return;
