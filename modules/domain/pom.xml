@@ -137,7 +137,7 @@
                         </goals>
                         <configuration>
                             <schemaDirectory>src/main/resources/schema/structure</schemaDirectory>
-                            <generateDirectory>target/generated-sources</generateDirectory>
+                            <generateDirectory>target/generated-sources/structure</generateDirectory>
                             <generatePackage>eu.europa.ec.leos.vo.structure</generatePackage>
                         </configuration>
                     </execution>
@@ -148,7 +148,7 @@
                         </goals>
                         <configuration>
                             <schemaDirectory>src/main/resources/schema/light</schemaDirectory>
-                            <generateDirectory>target/generated-sources</generateDirectory>
+                            <generateDirectory>target/generated-sources/light</generateDirectory>
                             <generatePackage>eu.europa.ec.leos.vo.light</generatePackage>
                         </configuration>
                     </execution>

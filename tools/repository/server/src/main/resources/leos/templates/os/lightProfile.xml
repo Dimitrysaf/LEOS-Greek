@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<container xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ lightProfile.xsd">
+    <name>lightProfileTest.xml</name>
+    <description>Profile description for various clients in Leos Light</description>
+    <version>1.0.0</version>
+
+    <profileList>
+        <profile>
+            <name>DECISION_EDIT</name>
+            <breadcrumb>true</breadcrumb>
+            <tocEdition>true</tocEdition>
+            <internalReference>true</internalReference>
+            <authorialNote>true</authorialNote>
+            <showLoggedUser>false</showLoggedUser>
+            <trackChangesEnabled>false</trackChangesEnabled>
+            <closeDocument>true</closeDocument>
+            <callbackPresent>true</callbackPresent>
+            <annotations>true</annotations>
+            <importOJ>true</importOJ>
+        </profile>
+
+        <profile>
+            <name>DGT_EDIT</name>
+            <breadcrumb>false</breadcrumb>
+            <tocEdition>false</tocEdition>
+            <internalReference>false</internalReference>
+            <authorialNote>false</authorialNote>
+            <showLoggedUser>true</showLoggedUser>
+            <trackChangesEnabled>false</trackChangesEnabled>
+            <closeDocument>false</closeDocument>
+            <callbackPresent>true</callbackPresent>
+            <annotations>true</annotations>
+            <importOJ>false</importOJ>
+        </profile>
+
+    </profileList>
+</container>

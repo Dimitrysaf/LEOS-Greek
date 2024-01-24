@@ -86,8 +86,7 @@ public class DataInitializationService {
                             "                            AUDIT_C_DATE,AUDIT_LAST_M_DATE,AUDIT_LAST_M_BY) VALUES ((SELECT id from CONFIG_VERSION WHERE CONFIG_ID IN (SELECT ID FROM CONFIG\n" +
                             "                            WHERE NAME =?)), ?,'application/xml', ?,'0','0','admin'," +
                             "to_timestamp('22-01-21 08:25:53.270000000','DD-MM-RR HH24:MI:SSXFF'),to_timestamp('22-01-21 08:25:54.068000000','DD-MM-RR HH24:MI:SSXFF'),'admin');";
-                    int result = jdbcTemplate.update(sql, fileName.substring(0, fileName.lastIndexOf(".")), fileContent, fileName);
-                    LOG.info("Result of the update is :" + result);
+                    jdbcTemplate.update(sql, fileName.substring(0, fileName.lastIndexOf(".")), fileContent, fileName);
                 }
             }
         } catch (IOException e) {
@@ -123,8 +122,7 @@ public class DataInitializationService {
                             "AUDIT_LAST_M_DATE) VALUES ((SELECT ID FROM DOCUMENT_VERSION WHERE DOCUMENT_ID IN (SELECT ID FROM DOCUMENT WHERE NAME=?))," +
                             "?, ?,null,'on Test ...','REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL',0, ?,'REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL'," +
                             "'admin/admin',to_timestamp('28-01-23 15:07:05.687000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',to_timestamp('28-01-23 15:07:06.082000000','DD-MM-RR HH24:MI:SSXFF'));";
-                    int result = jdbcTemplate.update(sql, fileName, category, fileContent, template);
-                    LOG.info("Result of the update is :" + result);
+                    jdbcTemplate.update(sql, fileName, category, fileContent, template);
                 }
             }
         } catch (IOException e) {

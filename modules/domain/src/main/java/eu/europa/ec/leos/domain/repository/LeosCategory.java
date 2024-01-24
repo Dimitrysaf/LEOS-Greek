@@ -14,7 +14,8 @@ public enum LeosCategory {
     COVERPAGE,
     SUPPORT_DOCUMENT,
     STAT_FINANC_LEGIS,
-    TEMPLATE;
+    TEMPLATE,
+    LIGHT_PROFILE;
 
     public static LeosCategory caseInsensitiveValueOf(String name) {
         for (LeosCategory value : LeosCategory.values()) {
