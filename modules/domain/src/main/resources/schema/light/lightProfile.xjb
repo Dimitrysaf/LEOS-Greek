@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jaxb:bindings 
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" jaxb:version="2.0"
+    xmlns:xjc= "http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc"
+    xmlns:ci="http://jaxb.dev.java.net/plugin/code-injector">
+
+    <jaxb:globalBindings generateElementProperty="false">
+        <xjc:simple />
+        <xjc:serializable uid="-1"/>
+    </jaxb:globalBindings>
+
+    <jaxb:bindings schemaLocation="lightProfile.xsd" multiple="true"></jaxb:bindings>
+
+</jaxb:bindings>

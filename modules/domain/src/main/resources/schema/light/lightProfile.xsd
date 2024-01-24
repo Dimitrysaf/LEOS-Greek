@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://eu.europa.ec.digit.leos.pilot/schema/"
+           xmlns="http://eu.europa.ec.digit.leos.pilot/schema/">
+
+    <xs:element name="container">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="description" type="xs:string"/>
+                <xs:element name="version" type="xs:string"/>
+                <xs:element name="profileList" type="profiles"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="profiles">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="profile" type="profile"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="profile">
+        <xs:sequence>
+            <xs:element name="name" type="systemName"/>
+            <xs:element name="breadcrumb" type="xs:boolean" default="true"/>
+            <xs:element name="tocEdition" type="xs:boolean" default="true"/>
+            <xs:element name="internalReference" type="xs:boolean" default="true"/>
+            <xs:element name="authorialNote" type="xs:boolean" default="true"/>
+            <xs:element name="showLoggedUser" type="xs:boolean" default="false"/>
+            <xs:element name="trackChangesEnabled" type="xs:boolean" default="false"/>
+            <xs:element name="closeDocument" type="xs:boolean" default="true"/>
+            <xs:element name="callbackPresent" type="xs:boolean" default="false"/>
+            <xs:element name="annotations" type="xs:boolean" default="true"/>
+            <xs:element name="importOJ" type="xs:boolean" default="true"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="systemName" final="restriction">
+        <xs:annotation>
+            <xs:documentation>Names of client systems. For instance: decision, dgt etc.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DECISION_EDIT"/>
+            <xs:enumeration value="DGT_EDIT"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
