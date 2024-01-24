@@ -42,6 +42,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
+import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
 
 @Service
 public class PackageServiceImpl implements PackageService {
@@ -223,4 +225,25 @@ public class PackageServiceImpl implements PackageService {
                         .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName()));
         return ConversionUtils.buildPackage(pkg, collaboratorsService);
     }
+
+    public List<PackagesRecentlyChanged> findRecentPackagesForUser(final String userName, final BigDecimal numberOfRecentPackages) throws RepositoryException {
+        try {
+            return packageRepository.findRecentPackagesForUser(userName, numberOfRecentPackages);
+        }
+        catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, userName);
+        }
+    }
+
+    public List<PackagesFavorites> findFavoritePackagesForUser(final String userName) throws RepositoryException {
+        try {
+            return packageRepository.findFavoritePackagesForUser(userName);
+        }
+        catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, userName);
+        }
+    }
+
+
+
 }
