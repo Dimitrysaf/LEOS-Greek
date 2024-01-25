@@ -1371,18 +1371,6 @@ public class LegServiceImpl implements LegService {
         return MEDIA_DIR + ANNOT_FILE_PREFIX + docName + ANNOT_FILE_EXT;
     }
 
-    private void setComponentsRefs(LeosCategory leosCategory, final ExportResource exportResource, byte[] xmlContent) {
-        Map<String, String> componentMap = xmlNodeProcessor.getValuesFromXml(xmlContent,
-                new String[]{XmlNodeConfigProcessor.DOC_REF_COVER},
-                xmlNodeConfigProcessor.getConfig(leosCategory));
-        exportResource.setComponentsIdsMap(componentMap);
-    }
-
-    private byte[] getContent(XmlDocument xmlDocument) {
-        final Content content = xmlDocument.getContent().getOrError(() -> "xml content is required!");
-        return content.getSource().getBytes();
-    }
-
     private byte[] addRelevantElements(ExportOptions exportOptions, String currentVersion, byte[] xmlContent) {
         final List<String> rootElements = structureContextProvider.get().getTocItems().stream().filter(x -> x.isRoot() && x.getProfiles() == null).map(x -> x.getAknTag().value()).collect(Collectors.toList());
         final List<Element> relevantXmlElements = getRelevantElementsFromXml(exportOptions.getRelevantElements(), rootElements, xmlContent);

@@ -61,8 +61,8 @@ public class TokenServiceTest extends LeosTest {
     @Test
     public void Test_getAccessToken() {
         //Given
-        String serverId = "leosApiId";
-        String serverSecret = "leosApiSecret";
+        String serverId = "LeosApiId";
+        String serverSecret = "LeosApiSecret";
         ReflectionTestUtils.setField(tokenService, "leosApiId", serverId);
         ReflectionTestUtils.setField(tokenService, "leosApiSecret", serverSecret);
         ReflectionTestUtils.setField(tokenService, "accessTokenExpirationInMin", 1);
