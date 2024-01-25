@@ -140,7 +140,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
 
     function _isINP(currentElement, editor) {
         var elementName = currentElement.getName && currentElement.getName();
-        if (editor.LEOS.instanceType === 'COMMISSION' && elementName === "li"
+        if (editor.LEOS.instanceType !== 'COUNCIL' && elementName === "li"
             && currentElement.getAttribute("data-akn-name") === "subparagraph"
             && currentElement.getAttribute(DATA_AKN_NUM) === null
             && currentElement.getAttribute("refersto") === "~_INP") {
@@ -149,7 +149,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         do {
             elementName = currentElement.getName && currentElement.getName();
             // Added in case of the unnumbered paragraph: shift-enter should be disabled
-            if (editor.LEOS.instanceType === 'COMMISSION' && elementName === "li"
+            if (editor.LEOS.instanceType !== 'COUNCIL' && elementName === "li"
                 && (currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph" || currentElement.getAttribute("data-akn-element") === "point")
                 && currentElement.getAttribute(DATA_AKN_NUM)
                 && currentElement.find("ol").count() !== 0
@@ -503,7 +503,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         do {
             var elementName = currentElement.getName && currentElement.getName();
             // Added in case of the unnumbered paragraph: shift-enter should be disabled
-            if (editor.LEOS.instanceType === 'COMMISSION' && elementName === "li" && currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph" && currentElement.getAttribute(DATA_AKN_NUM) === null) {
+            if (editor.LEOS.instanceType !== 'COUNCIL' && elementName === "li" && currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph" && currentElement.getAttribute(DATA_AKN_NUM) === null) {
                 return false;
             }
             if (elementName === "ol") {
@@ -522,7 +522,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         do {
             var elementName = currentElement.getName && currentElement.getName();
             // Added in case of the unnumbered paragraph: shift-enter should be disabled
-            if (editor.LEOS.instanceType === 'COMMISSION' && elementName === "li"
+            if (editor.LEOS.instanceType !== 'COUNCIL' && elementName === "li"
                 && currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph"
                 && currentElement.getAttribute(DATA_AKN_NUM) === null
                 && currentElement.find("ol").count() !== 0) {

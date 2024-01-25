@@ -454,7 +454,7 @@ define(function leosHierarchicalElementShiftEnterHandlerFSModule(require) {
         do {
             var elementName = currentElement.getName && currentElement.getName();
             // Added in case of the unnumbered paragraph: shift-enter should be disabled
-            if (editor.LEOS.instanceType === 'COMMISSION' && elementName === "li" && currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph" && currentElement.getAttribute(DATA_AKN_NUM) === null) {
+            if (editor.LEOS.instanceType !== 'COUNCIL' && elementName === "li" && currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph" && currentElement.getAttribute(DATA_AKN_NUM) === null) {
                 return false;
             }
             if (elementName === "ol") {
