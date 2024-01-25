@@ -363,12 +363,24 @@ define(function leosTrackChangesPluginModule(require) {
                                 range.startContainer.appendHtml(previousHtml);
                                 originalBackspace = true;
                             }
+                            if (!deleteKey && range.collapsed && range.startOffset === 0 && range.endOffset === 0 && range.startContainer.type === CKEDITOR.NODE_TEXT) {
+                                var originalRange = range;
+                                while (range.startContainer.$.localName !== "p" && range.startContainer.$.localName !== "li") {
+                                    core.setToPosition(editor, range.startContainer, CKEDITOR.POSITION_BEFORE_START);
+                                    range = editor.getSelection().getRanges()[0];
+                                }
+                                if (range.startOffset !== 0 || range.endOffset !== 0) {
+                                    range = originalRange;
+                                }
+                            }
                             if (!deleteKey && range.collapsed && range.startOffset === 0 && range.endOffset === 0
                                 && range.startContainer.$.attributes && range.startContainer.$.attributes[core.DATA_AKN_ACTION_ENTER]
                                 && range.startContainer.$.attributes[core.DATA_AKN_ACTION_ENTER].value === core.INSERT_ACTION) {
+                                var previousHtml = range.startContainer.getHtml();
+                                range.startContainer.setText(" ");
+                                range.startContainer.appendHtml(previousHtml);
                                 originalBackspace = true;
                             }
-
                             if (!originalBackspace) {
 
                                 if ((range.collapsed && actions.selectElementToDelete(deleteKey, editor)) || !range.collapsed) {
