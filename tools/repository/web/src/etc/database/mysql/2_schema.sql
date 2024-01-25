@@ -268,6 +268,7 @@ CREATE TABLE PACKAGE_COLLABORATORS
     ID INT NOT NULL AUTO_INCREMENT,
     PACKAGE_ID INT NOT NULL COMMENT "Package id that the collaborator is assigned to",
     COLLABORATOR_ID INT NOT NULL COMMENT "Collaborator assigned to",
+    IS_FAVORITE INT DEFAULT 0 NOT NULL COMMENT "Flag to mention if this package is set as favorite for the user",
     AUDIT_C_BY VARCHAR(30) NOT NULL COMMENT "Audit column holding the user that created this record",
     AUDIT_C_DATE TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL COMMENT "Audit column holding the date at which this record was created",
     AUDIT_LAST_M_DATE TIMESTAMP COMMENT "Audit column holding the date of the last update on this record",

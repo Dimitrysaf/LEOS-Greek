@@ -54,6 +54,10 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
+import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
+
 
 @RestController
 @Tag(name = "Package API", description = "Package API")
@@ -198,5 +202,23 @@ public class PackageController {
         }
         response.put("timestamp", System.currentTimeMillis());
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/package/find-recent-packages-by-user/{userName}/{numberOfRecentPackages}")
+    @Operation(summary = "Find recent number of packages for username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public List<PackagesRecentlyChanged> findRecentPackagesForUser(@PathVariable("userName") String userName, @PathVariable("numberOfRecentPackages") BigDecimal numberOfRecentPackages) throws RepositoryException{
+        return packageService.findRecentPackagesForUser(userName, numberOfRecentPackages);
+    }
+
+    @GetMapping(path = "/package/find-favorite-packages/{userName}")
+    @Operation(summary = "Find favorite packages for username")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public List<PackagesFavorites> findFavoritePackagesForUser(@PathVariable("userName") String userName) throws RepositoryException{
+        return packageService.findFavoritePackagesForUser(userName);
     }
 }

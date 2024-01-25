@@ -19,6 +19,8 @@ import eu.europa.ec.leos.repository.model.LeosDocument;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
+import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
+import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
 
 public interface PackageService {
     eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName
@@ -40,4 +42,8 @@ public interface PackageService {
     eu.europa.ec.leos.repository.model.Package findPackageByDocumentRef(String documentRefId) throws RepositoryException;
 
     eu.europa.ec.leos.repository.model.Package findPackageByDocumentVersionId(String versionId) throws RepositoryException;
+
+    List<PackagesRecentlyChanged> findRecentPackagesForUser(final String userName, final BigDecimal numberOfRecentPackages) throws RepositoryException;
+
+    List<PackagesFavorites> findFavoritePackagesForUser(final String userName) throws RepositoryException;
 }
