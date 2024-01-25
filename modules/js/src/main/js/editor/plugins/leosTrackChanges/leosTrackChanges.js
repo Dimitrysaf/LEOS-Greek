@@ -182,7 +182,9 @@ define(function leosTrackChangesModule(require) {
             for (var attrName of softAttributes) {
                 element.removeAttribute(attrName);
             }
-            element.classList.remove("selectedMovedElement");
+            if (element.classList) {
+                element.classList.remove("selectedMovedElement");
+            }
         },
 
         addTrackChangesAttributes: function(editor, element, action) {
@@ -566,7 +568,9 @@ define(function leosTrackChangesModule(require) {
         },
 
         acceptChange: function(editor, element, numberModule) {
-            if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) || (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) ||
+            if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
+                this.removeEnterAndJoinLines(element, editor);
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.INSERT_ACTION || (element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) ||
                 ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM))) {
                 if ((element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION)
                     && (element.getAttribute(core.DATA_AKN_SOFTACTION) === core.SOFTACTION_MOVE_FROM)
@@ -671,7 +675,7 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
-        rejectInsertedEnter: function (element, editor) {
+        removeEnterAndJoinLines: function (element, editor) {
             var keyCodeToUse = 8;
             var ckEditorEvent = new CKEDITOR.dom.event(
                 new KeyboardEvent('key', {
@@ -700,9 +704,10 @@ define(function leosTrackChangesModule(require) {
                 || (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW
                     && element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.INSERT_ACTION
                     && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
-                this.rejectInsertedEnter(element, editor);
-            } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))
-                || element.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
+                this.removeEnterAndJoinLines(element, editor);
+            } else if (element.getAttribute(core.DATA_AKN_ACTION_ENTER) === core.DELETE_ACTION) {
+                core.removeTrackChangesAttributesForEnter(element);
+            } else if ((element.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM))) {
                 element.remove();
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 element.remove();
