@@ -91,9 +91,9 @@ public class LeosLightApiController {
 
     @Autowired
     public LeosLightApiController(SecurityContext securityContext, ValidationService validationService,
-                                  @Qualifier("proposalConverterServiceForProposalImpl") ProposalConverterService proposalConverterService,
+                                  ProposalConverterService proposalConverterService,
                                   LeosRepository leosRepository, PackageService packageService, TokenService tokenService,
-                                  @Qualifier("proposalMessageHelper") MessageHelper messageHelper, LeosLightXmlDocumentService leosLightXmlDocumentService, Properties applicationProperties) {
+                                  MessageHelper messageHelper, LeosLightXmlDocumentService leosLightXmlDocumentService, Properties applicationProperties) {
         this.validationService = validationService;
         this.proposalConverterService = proposalConverterService;
         this.leosRepository = leosRepository;
