@@ -67,6 +67,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.buildFileAttachment;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentData;
@@ -86,15 +87,13 @@ public class LeosLightApiController {
     private MessageHelper messageHelper;
     private SecurityContext securityContext;
     private LeosLightXmlDocumentService leosLightXmlDocumentService;
-
-    @Value("${leos.mapping.url}")
-    private String mappingUrl;
+    private Properties applicationProperties;
 
     @Autowired
     public LeosLightApiController(SecurityContext securityContext, ValidationService validationService,
                                   @Qualifier("proposalConverterServiceForProposalImpl") ProposalConverterService proposalConverterService,
                                   LeosRepository leosRepository, PackageService packageService, TokenService tokenService,
-                                  @Qualifier("proposalMessageHelper") MessageHelper messageHelper, LeosLightXmlDocumentService leosLightXmlDocumentService) {
+                                  @Qualifier("proposalMessageHelper") MessageHelper messageHelper, LeosLightXmlDocumentService leosLightXmlDocumentService, Properties applicationProperties) {
         this.validationService = validationService;
         this.proposalConverterService = proposalConverterService;
         this.leosRepository = leosRepository;
@@ -103,6 +102,7 @@ public class LeosLightApiController {
         this.messageHelper = messageHelper;
         this.securityContext = securityContext;
         this.leosLightXmlDocumentService = leosLightXmlDocumentService;
+        this.applicationProperties = applicationProperties;
     }
 
     @RequestMapping(value = "/importDocument", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -113,6 +113,7 @@ public class LeosLightApiController {
         LOG.info("user in security context " + securityContext.getUser());
         String inputFileName = inputFile.getOriginalFilename();
         String docRef = inputFileName.substring(0, inputFileName.lastIndexOf("-") + 1) + locale;
+        String mappingUrl =  applicationProperties.getProperty("leos.mapping.url");
         String documentReferenceUrl = mappingUrl + "/ui/document/" + docRef;
         String errorMessage;
 
