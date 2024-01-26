@@ -101,9 +101,8 @@ public class LeosPostDiffingProcessor {
         content = content.replace("<ins=\"\">", "");
         content = content.replace("<ins=\"\" class=\"revised\">", "");
         content = content.replace("<ins=\"\" class=\"verification\">", "");
-
-        Pattern p = Pattern.compile("<del[^>]*>(.*?)</del>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-        content = p.matcher(content).replaceAll("");
+        content = matchPatter("<del[^>]*?\\/>", content);
+        content = matchPatter("<del[^>]*>(.*?)</del>", content);
 
         Pattern pattern = Pattern.compile("<del>(.*?)</del>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
         Matcher matcher = pattern.matcher(content);
@@ -120,6 +119,12 @@ public class LeosPostDiffingProcessor {
         content = content.replace("&gt;", ">");
         return content;
 
+    }
+
+    private static String matchPatter(String regex, String content) {
+        Pattern p = Pattern.compile(regex, Pattern.DOTALL | Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        content = p.matcher(content).replaceAll("");
+        return content;
     }
 
     /**
