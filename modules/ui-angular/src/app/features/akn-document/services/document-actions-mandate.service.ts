@@ -117,7 +117,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       type: IRibbonToolbarType.BUTTON,
       id: STRUCTURE_RENUMBER_DOCUMENT_ID,
       label: this.translateService.instant(
-        'page.editor.actions-dropdown.renumber-document'
+        'page.editor.actions-dropdown.renumber-document',
       ),
       euiSize: 's',
       euiStyle: 'secondary',

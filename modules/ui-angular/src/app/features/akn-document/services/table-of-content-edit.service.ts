@@ -2,10 +2,8 @@ import { Injectable } from '@angular/core';
 
 import { DocumentConfig } from '@/shared';
 import {
-  CHAPTER,
   CN,
   CROSSHEADING,
-  DELETE,
   DIVISION,
   HASH_NUM_VALUE,
   INDENT,
@@ -14,12 +12,9 @@ import {
   LS,
   MOVE_TO,
   PARAGRAPH,
-  PART,
   POINT,
-  SECTION,
   SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
   SUBPARAGRAPH,
-  TITLE,
 } from '@/shared/constants/toc.constant';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import {
@@ -27,11 +22,11 @@ import {
   TableOfContentItemVO,
   TocItem,
 } from '@/shared/models/toc.model';
+import { DocumentService } from '@/shared/services/document.service';
 import {
   copyDeletedItemToTempForUndelete,
   findNodeById,
   getItemIndentLevel,
-  isLastExistingChildElement,
   isNumSoftDeleted,
 } from '@/shared/utils/toc.utils';
 
@@ -44,7 +39,14 @@ export abstract class TableOfContentEditService {
 
   private treeHistory: Array<TableOfContentItemVO[]> = [];
 
-  constructor(protected tocService: TableOfContentService) {}
+  protected constructor(
+    protected tocService: TableOfContentService,
+    protected documentService: DocumentService,
+  ) {
+    this.documentService.documentConfig$.subscribe((config) => {
+      this.documentConfig = config;
+    });
+  }
 
   public setTree(newTree: TableOfContentItemVO[]) {
     this.tocService.setToc(newTree);

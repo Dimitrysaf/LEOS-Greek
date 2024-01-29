@@ -138,6 +138,8 @@ export const DOCUMENT_ACTIONS_SERVICE =
           : DocumentActionsProposalService,
     },
     TrackChangesActionsService,
+    CKEditorService,
+    BlockDocumentEditorService,
   ],
   exports: [TrackChangesActionsComponent],
 })

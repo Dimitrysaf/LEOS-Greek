@@ -1,5 +1,9 @@
-<div euiInputGroup *ngIf="!checkboxItem.isSlider" [id]="checkboxItem.id"
-     class="eui-u-flex eui-u-flex-row p-0 flex-nowrap justify-content-between">
+<div
+  euiInputGroup
+  *ngIf="!checkboxItem.isSlider"
+  [id]="checkboxItem.id"
+  class="eui-u-flex eui-u-flex-row p-0 flex-nowrap justify-content-between"
+>
   <label euiLabel euiSize2XS>{{ checkboxItem.label }}</label>
   <input
     type="checkbox"

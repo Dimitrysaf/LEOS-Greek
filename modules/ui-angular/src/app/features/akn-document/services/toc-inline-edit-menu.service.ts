@@ -458,7 +458,7 @@ export abstract class TocInlineEditMenuService {
     this.setIsGoingToMove(false, null);
   }
 
-  isDeletedOrMoved(selectedNode: TableOfContentItemVO) {
+  private isDeletedOrMoved(selectedNode: TableOfContentItemVO) {
     if (this.isMovedNode(selectedNode) || isDeletedItem(selectedNode)) {
       this.itemsBS.next(
         this.itemsBS.value.filter((item) => item.id !== MOVE_ACTION_ID),
