@@ -172,11 +172,10 @@ export class DocumentComponent
   handleZoomChange(event: { zoomLevel: number }) {
     this.zoomLevel = event.zoomLevel;
     const scaleFactor = event.zoomLevel / 100;
-    const transformOrigin = this.zoomLevel > 100 ? 'center top' : 'top left';
 
     this.documentStyle = {
       transform: `scale(${scaleFactor})`,
-      transformOrigin,
+      transformOrigin: 'center top',
     };
 
     const zoomedDocumentHeight = MAIN_CONTAINER_WIDTH * scaleFactor;
