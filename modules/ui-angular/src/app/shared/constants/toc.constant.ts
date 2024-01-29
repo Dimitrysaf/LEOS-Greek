@@ -40,6 +40,11 @@ export const DIVISION = 'DIVISION';
 export const NUMBERED = 'Numbered';
 export const UNNUMBERED = 'Unnumbered';
 
+export const BILL = 'bill';
+export const MEMORANDUM = 'memorandum';
+export const ANNEX = 'annex';
+export const COUNCIL_EXPLANATORY = 'council_explanatory';
+
 export const ELEMENTS_TO_BE_PROCESSED_FOR_NUMBERING = [
   ARTICLE,
   PARAGRAPH,

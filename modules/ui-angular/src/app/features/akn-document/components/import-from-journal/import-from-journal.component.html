@@ -1,0 +1,135 @@
+<div class="dialog-body">
+  <!-- Search Bar -->
+  <form
+    class="search-bar eui-t-form-compact eui-u-mb-l"
+    [formGroup]="searchForm"
+    (ngSubmit)="onSearchSubmit()"
+    *ngIf="searchForm"
+  >
+    <!-- Type -->
+    <div euiInputGroup class="eui-u-width-auto">
+      <label
+        euiLabel
+        euiRequired
+        for="type"
+        translate="dialog.import-from-journal.search.type"
+      ></label>
+      <select euiSelect formControlName="type" name="type" id="type">
+        <option [value]="type" *ngFor="let type of types">{{ type }}</option>
+      </select>
+    </div>
+    <!-- Year -->
+    <div euiInputGroup class="eui-u-width-auto">
+      <label
+        euiLabel
+        euiRequired
+        for="year"
+        translate="dialog.import-from-journal.search.year"
+      ></label>
+      <select
+        class="eui-u-width-8"
+        euiSelect
+        formControlName="year"
+        name="year"
+        id="year"
+      >
+        <option [value]="year" *ngFor="let year of years">{{ year }}</option>
+      </select>
+    </div>
+    <!-- Number -->
+    <div euiInputGroup class="eui-u-width-auto">
+      <label euiLabel euiRequired for="number">
+        <eui-icon
+          euiDanger
+          euiSizeS
+          class="eui-icon eui-icon-exclamation-circle"
+          [euiTooltip]="
+            'dialog.import-from-journal.search.number-errorTooltip' | translate
+          "
+          euiTooltipDanger
+          *ngIf="
+            searchForm.controls.number.touched &&
+            searchForm.controls.number.invalid
+          "
+        ></eui-icon>
+        {{ 'dialog.import-from-journal.search.number' | translate }}
+      </label>
+      <input
+        class="eui-u-width-8"
+        euiInputText
+        formControlName="number"
+        name="number"
+        id="number"
+      />
+    </div>
+    <!-- Search Button -->
+    <div
+      euiInputGroup
+      class="eui-u-width-auto eui-u-flex-row align-items-center"
+    >
+      <button euiButton euiPrimary type="submit" [isLoading]="searching">
+        {{ 'dialog.import-from-journal.search.search-button' | translate }}
+      </button>
+      <span
+        euiIcon
+        euiInfo
+        class="eui-icon eui-icon-info-circle eui-u-ml-m"
+        [euiTooltip]="
+          'dialog.import-from-journal.search.info-tooltip' | translate
+        "
+      ></span>
+    </div>
+  </form>
+  <div translate="dialog.import-from-journal.prompt"></div>
+  <!-- Document -->
+  <div class="document-wrapper" #docContainer></div>
+</div>
+<!-- Footer -->
+<div class="eui-u-flex eui-u-flex-wrap app-u-gap-s">
+  <div
+    class="eui-u-flex eui-u-flex-start eui-u-flex-wrap eui-u-width-auto app-u-gap-s"
+  >
+    <button
+      euiButton
+      euiSecondary
+      euiOutline
+      [disabled]="!docLoaded"
+      (click)="toggleSelectAllRecitals()"
+    >
+      <span
+        euiIcon
+        [iconClass]="
+          allRecitalsSelected
+            ? 'eui-icon-checkbox'
+            : 'eui-icon-checkbox-outline'
+        "
+        [euiPrimary]="allRecitalsSelected"
+      ></span>
+      <span
+        euiLabel
+        translate="dialog.import-from-journal.footer.selectAllRecitals-button"
+      ></span>
+    </button>
+    <button
+      euiButton
+      euiSecondary
+      euiOutline
+      [disabled]="!docLoaded"
+      (click)="toggleSelectAllArticles()"
+    >
+      <span
+        euiIcon
+        [iconClass]="
+          allArticlesSelected
+            ? 'eui-icon-checkbox'
+            : 'eui-icon-checkbox-outline'
+        "
+        [euiPrimary]="allArticlesSelected"
+      ></span>
+      <span
+        euiLabel
+        translate="dialog.import-from-journal.footer.selectAllArticles-button"
+      ></span>
+    </button>
+  </div>
+</div>

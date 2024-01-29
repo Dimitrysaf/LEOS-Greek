@@ -1,0 +1,26 @@
+<div euiInputGroup *ngIf="!checkboxItem.isSlider" [id]="checkboxItem.id"
+     class="eui-u-flex eui-u-flex-row p-0 flex-nowrap justify-content-between">
+  <label euiLabel euiSize2XS>{{ checkboxItem.label }}</label>
+  <input
+    type="checkbox"
+    euiInputCheckBox
+    [checked]="checkboxItem.value"
+    [euiVariant]="checkboxItem.euiStyle"
+    [euiSizeVariant]="checkboxItem.euiSize"
+    (change)="onChange()"
+    [disabled]="checkboxItem.disabled"
+  />
+</div>
+<div
+  *ngIf="checkboxItem.isSlider"
+  class="eui-u-flex eui-u-flex-row p-0 flex-nowrap justify-content-between"
+>
+  <eui-slide-toggle
+    euiResponsive
+    euiSizeS
+    [isChecked]="checkboxItem.value"
+    (changed)="onChange()"
+    class="align-self-start"
+  ></eui-slide-toggle>
+  <div euiLabel class="align-self-end">{{ checkboxItem.label }}</div>
+</div>

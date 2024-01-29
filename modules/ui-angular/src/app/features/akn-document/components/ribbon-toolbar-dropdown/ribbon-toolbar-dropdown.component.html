@@ -1,0 +1,22 @@
+<div class="dropdown-content" [id]="dropdownItem.id">
+  <eui-dropdown-button-menu
+    [menuItems]="dropdownItem.items"
+    [euiTooltip]="dropdownItem.description"
+    [id]="dropdownItem.id"
+  >
+    <button
+      euiButton
+      euiResponsive
+      [euiVariant]="dropdownItem.euiStyle"
+      [euiSizeVariant]="dropdownItem.euiSize"
+      class="eui-u-mr-s eui-u-mb-s"
+    >
+      <span euiLabel *ngIf="!isOverflow">{{ dropdownItem.label }}</span>
+      <span
+        euiIcon
+        *ngIf="dropdownItem.iconClass"
+        [iconClass]="'eui-icon ' + dropdownItem.iconClass"
+      ></span>
+    </button>
+  </eui-dropdown-button-menu>
+</div>

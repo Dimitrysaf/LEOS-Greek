@@ -167,5 +167,12 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     this.updateTrackChangesStatus();
   }
 
+  onMenuIconClick() {
+    combineLatest([this.doc.documentConfig$, this.doc.permissions$])
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(([config, perms]) => {
+        this.setMenuState(config, perms);
+      });
+  }
   setTrackChangesEnabled() {}
 }

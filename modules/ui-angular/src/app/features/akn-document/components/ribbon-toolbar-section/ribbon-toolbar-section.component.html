@@ -1,0 +1,68 @@
+<div class="section-container" [id]="sectionItem.id">
+  <div
+    class="section-content"
+    *ngIf="
+      (!resizeMap.get(sectionItem.id) && sectionItem.children?.length > 0) ||
+      sectionItem.children.length === 1
+    "
+  >
+    <ng-template *ngTemplateOutlet="sectionItems"></ng-template>
+  </div>
+  <div
+    class="section-content"
+    *ngIf="resizeMap.get(sectionItem.id) && sectionItem.children?.length > 1"
+  >
+    <eui-dropdown class="eui-u-mr-s eui-u-mb-s">
+      <button euiButton euiSecondary euiIconButton euiSizeS>
+        <span
+          euiIcon
+          *ngIf="sectionItem.iconClass"
+          iconClass="eui-icon eui-icon-more-vertical"
+        ></span>
+        <eui-icon-svg
+          *ngIf="sectionItem.svgIconClas"
+          [euiTooltip]="sectionItem.label"
+          [set]="sectionItem.svgType"
+          [icon]="sectionItem.svgIconClas"
+        ></eui-icon-svg>
+      </button>
+      <eui-dropdown-content>
+        <div class="m-2">
+          <ng-template *ngTemplateOutlet="sectionItems"></ng-template>
+        </div>
+      </eui-dropdown-content>
+    </eui-dropdown>
+  </div>
+
+  <div
+    *ngIf="!resizeMap.get(sectionItem.id)"
+    euiLabel
+    euiSizeS
+    class="align-self-center"
+  >
+    {{ sectionItem.label }}
+  </div>
+</div>
+
+<ng-template #sectionItems>
+  <ng-container
+    *ngFor="let actionItem of sectionItem.children"
+    class="section-items"
+  >
+    <app-ribbon-toolbar-button
+      *ngIf="actionItem.type === IRibbonToolbarType.BUTTON"
+      [buttonItem]="actionItem"
+      [isOverflow]="resizeMap.get(sectionItem.id)"
+    ></app-ribbon-toolbar-button>
+    <app-ribbon-toolbar-checkbox
+      *ngIf="actionItem.type === IRibbonToolbarType.CHECKBOX"
+      [checkboxItem]="actionItem"
+      [isOverflow]="resizeMap.get(sectionItem.id)"
+    ></app-ribbon-toolbar-checkbox>
+    <app-ribbon-toolbar-dropdown
+      *ngIf="actionItem.type === IRibbonToolbarType.DROPDOWN"
+      [dropdownItem]="actionItem"
+      [isOverflow]="resizeMap.get(sectionItem.id)"
+    ></app-ribbon-toolbar-dropdown>
+  </ng-container>
+</ng-template>

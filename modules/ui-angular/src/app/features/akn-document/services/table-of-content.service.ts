@@ -32,6 +32,7 @@ export class TableOfContentService {
   documentRefAndCategoryBS = new BehaviorSubject<DocumentRefAndCategory | null>(
     null,
   );
+
   private tocBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
   private tocItemsBS = new BehaviorSubject<TocItem[]>(null);
   private selectedNodeBS = new BehaviorSubject<TableOfContentItemVO>(null);

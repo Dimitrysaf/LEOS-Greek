@@ -37,7 +37,7 @@ import { ProposalViewRoutingModule } from './proposal-view-routing.module';
     ProposalMilestoneSendCopyDialogComponent,
     MilestoneAnnotationWarningModalComponent,
   ],
-  providers: [ProposalService, DocumentService],
+  providers: [ProposalService],
   imports: [ProposalViewRoutingModule, SharedModule],
 })
 export class ProposalViewModule {}

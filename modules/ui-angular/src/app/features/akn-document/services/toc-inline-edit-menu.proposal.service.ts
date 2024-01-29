@@ -4,11 +4,6 @@ import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-m
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
-import {
-  ARTICLE_TYPE_CHANGE_ACTION_ID,
-  ARTICLE_TYPE_DEFINITION,
-  ARTICLE_TYPE_REGULAR,
-} from '@/features/akn-document/constants/inline-toc-actions.constants';
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { TableOfContentEditService } from '@/features/akn-document/services/table-of-content-edit.service';
 import { ValidateTocService } from '@/features/akn-document/services/validate-node-drop.service';
