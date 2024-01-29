@@ -30,6 +30,8 @@ import {
   DELETE,
   LEOS_TC_DELETE_ACTION,
   MAIN_BODY,
+  MOVE_FROM,
+  MOVE_TO,
 } from '@/shared/constants';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
@@ -119,8 +121,10 @@ export abstract class TocInlineEditMenuService {
     isReady: boolean,
     selectedNode: TableOfContentItemVO,
   ) {
-    this.isReadyToMove = isReady;
-    this.selectedNodeToMove = selectedNode;
+    if (this.isReadyToMove !== isReady) {
+      this.isReadyToMove = isReady;
+      this.selectedNodeToMove = selectedNode;
+    }
   }
 
   protected buildArticleItem(
@@ -158,6 +162,7 @@ export abstract class TocInlineEditMenuService {
         ...this.buildCommonItems(selectedNode),
         ...this.buildTypeSpecificItems(selectedNode),
       ]);
+      this.isDeletedOrMoved(selectedNode);
     } else {
       this.itemsBS.next([...this.buildMoveItems(selectedNode)]);
     }
@@ -451,5 +456,19 @@ export abstract class TocInlineEditMenuService {
 
   private onCancelMove() {
     this.setIsGoingToMove(false, null);
+  }
+
+  isDeletedOrMoved(selectedNode: TableOfContentItemVO) {
+    if (this.isMovedNode(selectedNode) || isDeletedItem(selectedNode)) {
+      this.itemsBS.next(
+        this.itemsBS.value.filter((item) => item.id !== MOVE_ACTION_ID),
+      );
+    }
+  }
+
+  private isMovedNode(node: TableOfContentItemVO) {
+    return (
+      node.softActionRoot && [MOVE_TO, MOVE_FROM].includes(node.softActionAttr)
+    );
   }
 }
