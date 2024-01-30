@@ -24,6 +24,7 @@ import {
 } from '@/shared/constants';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
+import { DocumentService } from '@/shared/services/document.service';
 import {
   containsItemOfOrigin,
   containsOnlySameIndentType,
@@ -43,8 +44,11 @@ import { TableOfContentEditService } from './table-of-content-edit.service';
 
 @Injectable()
 export class TableOfContentMandateEditService extends TableOfContentEditService {
-  constructor(tocService: TableOfContentService) {
-    super(tocService);
+  constructor(
+    protected tocService: TableOfContentService,
+    protected documentService: DocumentService,
+  ) {
+    super(tocService, documentService);
   }
 
   validateAddingToItem(

@@ -16,6 +16,7 @@ import {
 import { HASH_NUM_VALUE } from '@/shared/constants/toc.constant';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
+import { DocumentService } from '@/shared/services/document.service';
 import { findNodeById, softDeleteItem } from '@/shared/utils/toc.utils';
 
 import { TableOfContentService } from './table-of-content.service';
@@ -23,8 +24,11 @@ import { TableOfContentEditService } from './table-of-content-edit.service';
 
 @Injectable()
 export class TableOfContentProposalEditService extends TableOfContentEditService {
-  constructor(tocService: TableOfContentService) {
-    super(tocService);
+  constructor(
+    protected tocService: TableOfContentService,
+    protected documentService: DocumentService,
+  ) {
+    super(tocService, documentService);
   }
 
   validateAddingToItem(

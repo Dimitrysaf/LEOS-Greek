@@ -79,7 +79,6 @@ export class RibbonToolbarContainerComponent
 
   ngOnDestroy() {
     super.ngOnDestroy();
-    this.observer.disconnect();
   }
 
   async ngAfterViewInit() {
@@ -228,6 +227,8 @@ export class RibbonToolbarContainerComponent
         '3.2.1 there no elements to resize, and still overflowing, toggling scroll button',
       );
       this.showToolbarScrollButtons = true;
+    } else {
+      this.showToolbarScrollButtons = false;
     }
   }
 
