@@ -49,7 +49,6 @@ import { ImportFromJournalComponent } from '../components/import-from-journal/im
 import { SaveVersionComponent } from '../components/save-version/save-version.component';
 import {
   IRibbonToolbarButton,
-  IRibbonToolbarCheckbox,
   IRibbonToolbarItem,
   IRibbonToolbarSection,
   IRibbonToolbarType,
@@ -92,6 +91,8 @@ export abstract class DocumentActionsService {
       this.documentService.isEditorOpen$,
     ]).subscribe(([config, permissions]) => {
       this.documentConfig = config;
+      this.isTrackChangesEnabled = this.documentConfig.trackChangesEnabled;
+      this.seeTrackChanges = this.documentConfig.trackChangesShowed;
       this.permissions = permissions;
       const newActions = this.buildActions();
       this.actionItemsBS.next(newActions);
@@ -119,10 +120,6 @@ export abstract class DocumentActionsService {
 
   protected hasPermission(targetPermission: Permission) {
     return this.permissions.includes(targetPermission);
-  }
-
-  protected accept() {
-    this.dialogAcceptBS.next(null);
   }
 
   protected findItemById(
@@ -364,31 +361,27 @@ export abstract class DocumentActionsService {
         },
         {
           type: IRibbonToolbarType.CHECKBOX,
+          id: DISPLAY_TOGGLE_TRACK_CHANGES_ACTION_ID,
+          label: this.translateService.instant(
+            'page.editor.actions-dropdown.enable-track-changes',
+          ),
+          isSlider: true,
+          disabled: !this.permissions.includes('CAN_ACTIVATE_TRACK_CHANGES'),
+          value: this.isTrackChangesEnabled,
+          actionFn: () => this.toggleTrackChangesEnabled(),
+        },
+        {
+          type: IRibbonToolbarType.CHECKBOX,
           id: DISPLAY_ENABLE_TRACK_CHANGES_ACTION_ID,
           label: this.translateService.instant(
             'page.editor.actions-dropdown.see-track-changes',
           ),
           isSlider: true,
-          value: this.isTrackChangesEnabled,
+          value: this.seeTrackChanges,
           actionFn: () => this.toggleSeeTrackChanges(),
         },
       ],
     };
-
-    if (
-      !this.isClonedProposal() &&
-      this.permissions.includes('CAN_ACTIVATE_TRACK_CHANGES')
-    ) {
-      displaySection.children.push({
-        type: IRibbonToolbarType.CHECKBOX,
-        id: DISPLAY_TOGGLE_TRACK_CHANGES_ACTION_ID,
-        label: this.translateService.instant(
-          'page.editor.actions-dropdown.enable-track-changes',
-        ),
-        isSlider: true,
-        actionFn: () => this.toggleTrackChangesEnabled(),
-      } as IRibbonToolbarCheckbox);
-    }
 
     return displaySection;
   }
