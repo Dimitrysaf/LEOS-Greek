@@ -1,6 +1,9 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ɵElement } from '@angular/forms';
-import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
+import {
+  DIALOG_COMPONENT_CONFIG,
+  EuiDialogService,
+} from '@eui/components/eui-dialog';
 import { Subject } from 'rxjs';
 
 @Component({
@@ -23,8 +26,14 @@ export class SaveVersionComponent implements OnInit, OnDestroy {
   }>;
   private destroy$ = new Subject<void>();
 
-  constructor(@Inject(DIALOG_COMPONENT_CONFIG) private config) {
+  constructor(
+    @Inject(DIALOG_COMPONENT_CONFIG) private config,
+    private dialogService: EuiDialogService,
+  ) {
     this.form = config.saveForm;
+    if (this.form.invalid) {
+      this.dialogService.disableAcceptButton();
+    }
   }
 
   ngOnDestroy() {
@@ -32,5 +41,10 @@ export class SaveVersionComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.form.valueChanges.subscribe(() => {
+      if (this.form.invalid) this.dialogService.disableAcceptButton();
+      else this.dialogService.enableAcceptButton();
+    });
+  }
 }

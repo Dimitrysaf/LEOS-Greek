@@ -1,6 +1,5 @@
 import { TemplatePortal } from '@angular/cdk/portal';
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -11,15 +10,11 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
-import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, Observable, take } from 'rxjs';
 
-import { REDUCER_TOKEN } from '@/core/reducers';
-import { ImportManager } from '@/features/akn-document/components/import-from-journal-dialog/import-manager';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { ImportService } from '@/features/akn-document/services/import.service';
-import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentConfig, DocumentType, Permission } from '@/shared';
 import {
   DISPLAY_ENABLE_TRACK_CHANGES_ACTION_ID,
@@ -45,7 +40,6 @@ import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
-import { ImportFromJournalComponent } from '../components/import-from-journal/import-from-journal.component';
 import { SaveVersionComponent } from '../components/save-version/save-version.component';
 import {
   IRibbonToolbarButton,
@@ -56,6 +50,7 @@ import {
 } from '../models/document-actions.model';
 
 const LIST_OF_DISABLE_BUTTONS = [SEARCH_ACTION_ID, RELOAD_SECTION_ID];
+
 @Injectable()
 export abstract class DocumentActionsService {
   public actionsItems$: Observable<IRibbonToolbarSection[]>;
@@ -472,7 +467,7 @@ export abstract class DocumentActionsService {
   }
 
   private openSaveDocumentVersionDialog() {
-    const saveForm = this.createFormGroup();
+    const saveForm = this.createSaveForm();
     this.dialogService.openDialog(
       new EuiDialogConfig({
         dialogId: 'save-document-version-id',
@@ -490,7 +485,7 @@ export abstract class DocumentActionsService {
     );
   }
 
-  private createFormGroup() {
+  private createSaveForm() {
     return this.formBuilder.group({
       title: new FormControl('', {
         validators: [Validators.required, noWhitespaceValidator],
