@@ -278,6 +278,8 @@
   "page.editor.annotations-button.tooltip-enable": "Enable annotations' popup",
   "page.editor.annotations-button.tooltip-disable": "Disable annotations' popup",
   "page.editor.annotations-pane.label": "Annotations & document notes",
+  "page.editor.article.convert.depth.warning.title": "Conversion not allowed!",
+  "page.editor.article.convert.depth.warning.content": "Not allowed to convert article to {{newType}}, because the current depth of {{currentMaxDepth}} is exceeding the maximum allowed depth level of {{allowedDepth}}.",
   "page.editor.close-compare-view-button.tooltip": "Close compare view",
   "page.editor.create-note-button.tooltip": "New Document Note",
   "page.editor.export-email-sent": "You will receive an email shortly with {{fileType}} file(s) at {{userEmail}}",
