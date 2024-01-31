@@ -276,7 +276,6 @@ define(function leosTrackChangesModule(require) {
         isInsideTrackedDeletedOrSoftMovedToElement: function(editor) {
             var selection = editor.getSelection();
             if (selection) {
-                selection._.cache.ranges = undefined;
                 var path = selection.getRanges()[0].startPath();
                 for (var i = 0; path.elements.length > i; i++) {
                     var el = path.elements[i];
