@@ -23,7 +23,6 @@ import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -41,6 +40,7 @@ import static org.mockito.Mockito.when;
 public class XMLContentComparatorServiceImplTest extends LeosTest {
 
     private final static String CLONED_FOLDER = "/compare/cloned/";
+    private final static String PROPOSAL_FOLDER = "/compare/proposal/";
 
     @Mock
     private MessageHelper messageHelper;
@@ -146,5 +146,32 @@ public class XMLContentComparatorServiceImplTest extends LeosTest {
         Document documentResult = createXercesDocument(result.getBytes(UTF_8), false);
         result = XercesUtils.nodeToString(documentResult);
         assertEquals(squeezeXml(expectedStr), squeezeXml(result));
+    }
+
+    @Test
+    public void test_2() {
+        String oldContent = new String(TestUtils.getFileContent(PROPOSAL_FOLDER, "test_2_V0.xml"));
+        String newContent = new String(TestUtils.getFileContent(PROPOSAL_FOLDER, "test_2_V1.xml"));
+        String expectedResult = new String(TestUtils.getFileContent(PROPOSAL_FOLDER, "test_2_expected.xml"));
+        Document documentExpected = createXercesDocument(expectedResult.getBytes(UTF_8), false);
+
+        String expectedStr = XercesUtils.nodeToString(documentExpected);
+        String result = testCompare(oldContent, newContent);
+        Document documentResult = createXercesDocument(result.getBytes(UTF_8), false);
+        result = XercesUtils.nodeToString(documentResult);
+//        expectedStr = squeezeXml(expectedStr);
+//        result = squeezeXml(result);
+        assertEquals(expectedStr, result);
+    }
+
+
+    private String testCompare(String oldContent, String newContent) {
+
+        return proposalCompareService.compareContents(new ContentComparatorContext.Builder(oldContent, newContent)
+                .withAttrName(ATTR_NAME)
+                .withRemovedValue(CONTENT_REMOVED_CLASS)
+                .withAddedValue(CONTENT_ADDED_CLASS)
+                .withDisplayRemovedContentAsReadOnly(Boolean.TRUE)
+                .build());
     }
 }

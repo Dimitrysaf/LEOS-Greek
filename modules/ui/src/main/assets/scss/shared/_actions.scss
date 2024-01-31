@@ -24,6 +24,7 @@ $LIGHT_GREY: #A7A7A7;
 $BLACK_COLOR: #000000;
 $SKY_BLUE: #7bd2f6;
 $DARK_BLUE: #0066a5;
+$BLACK : #000000;
 
 %elementActions {
 
@@ -236,32 +237,44 @@ $DARK_BLUE: #0066a5;
         border: medium dotted $GREY_COLOR;
         margin: 5px;
         width: 100%;
-        & {
-            div.merge-actions-wrapper {
-                * {
-                    text-decoration: none !important;
-                    text-decoration-line: none !important;
-                }
-                > .merge-actions {
-                    position: relative;
-                    display: inline-block;
-                    float: right;
-                    cursor: pointer;
-                    > .accept, > .reject, > .undo {
-                        @extend %contributionAction;
-                    }
-                }
-                > .unselect {
-                    @extend %contributionAction;
-                    float: right;
-                    cursor: pointer;
-                }
-                > .accept, > .reject {
-                    @extend %contributionAction;
-                    color: $DARK_BLUE;
-                    float: right;
-                }
+    }
+
+    div.merge-actions-wrapper {
+        position: absolute;
+        * {
+            text-decoration: none !important;
+            text-decoration-line: none !important;
+        }
+        > .merge-actions {
+            display: inline-block;
+            float: right;
+            cursor: pointer;
+            > .accept, > .reject, > .undo {
+                @extend %contributionAction;
             }
+        }
+        > .merge-actions-icon {
+            width: 20px;
+            user-select: none;
+            color: $BLACK;
+            grid-column: 1;
+            cursor: pointer;
+            * {
+                margin-top: 3px;
+                cursor: pointer;
+                display: none;
+                font-weight: normal;
+            }
+        }
+        > .unselect {
+            @extend %contributionAction;
+            float: right;
+            cursor: pointer;
+        }
+        > .accept, > .reject {
+            @extend %contributionAction;
+            color: $BLACK;
+            float: right;
         }
     }
 

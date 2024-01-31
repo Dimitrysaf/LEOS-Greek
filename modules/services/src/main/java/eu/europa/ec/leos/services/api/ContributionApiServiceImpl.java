@@ -207,16 +207,13 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 contributionVersion.getContent().get().getSource().getBytes(), contextPath,
                 securityContext.getPermissions(contributionVersion));
 
-        String originalVersionHtml = documentContentService.getCleanDocumentAsHtml(originalVersion, contextPath,
-                securityContext.getPermissions(originalVersion));
 
         cloneContext.setContribution(Boolean.TRUE);
-        String comparedContent = comparisonDelegateAPI.getContributionComparedContent(originalVersionHtml, contributionHtml);
         final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVersion.getMetadata().get().getRef(), legFileName, contributionsVersionRef);
         final String temporaryDocument = contributionVersion.getName().replace(".xml", "");
         return new DocumentViewResponse(
                 proposal.getMetadata().get().getRef(),
-                comparedContent,
+                contributionHtml,
                 documentViewService.getVersionInfo(contributionVersion),
                 temporaryAnnotationsId, temporaryDocument);
     }

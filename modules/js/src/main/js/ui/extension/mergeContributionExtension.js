@@ -19,25 +19,21 @@ define(function mergeContributionExtensionModule(require) {
     var $ = require("jquery");
     var UTILS = require("core/leosUtils");
 
+    var MAIN_ELEMENT_SELECTOR = "article, citation, paragraph, recital, num, level, crossheading, block, akntitle, chapter, division";
     var MERGE_ACTION_ATTR = "leos:mergeAction";
     var LEOS_SOFT_ACTION = "leos:softaction";
+    var LEOS_ACTION = "leos:action";
     var CONTRIBUTION_SELECTED = "selected-contribution-wrapper";
-    var LEOS_CONTENT_REMOVED = "leos-content-removed";
     var LEOS_CONTENT_NEW = "leos-content-new";
     var MERGE_CONTRIBUTION = "merge-contribution-wrapper";
-    var AKNP = "aknp";
-    var BLOCK = "block";
-    var DELETED = "deleted_";
-    var REVISION = "revision-";
-    var REVISION_DELETED = "revision-deleted_";
     var REVISION_MOVED = "revision-moved_";
     var MERGE_ACTION_WRAPPER = ".merge-actions-wrapper";
     var MOVE_FROM = "move_from",MOVE_TO = "move_to", PARENT_AFFECTED = "parent_affected";
     var MOVE = "move", DELETE = "delete", ADD = "add", CONTENT_CHANGE = "content_change";
-    var SUB_ELEMENT = ["span","content"];
 
     var wrapperElementsList;
     var mergeActionList = new Array();
+    var zIndex = 1;
 
     function _initExtension(connector) {
         connector.refreshContributions = _refreshContributions;
@@ -56,66 +52,37 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function _registerActionTriggers(connector) {
-        var removed_elements = $(".leos-content-removed");
-        var new_elements = $(".leos-content-new");
-        var changed_element = $.merge(removed_elements, new_elements);
+        var removed_elements = $("[leos\\:action='delete'], del");
+        var new_elements = $("[leos\\:action='insert'], ins");
+        var move_elements = $("[leos\\:softaction='" + MOVE_FROM + "']");
+        var changed_element = $.merge(removed_elements, new_elements, move_elements);
         changed_element.each(function (index) {
             var $element = $(changed_element[index]);
-            if (SUB_ELEMENT.includes(UTILS.getElementTagName($element))) {
-                if (!($element.parent().hasClass(MERGE_CONTRIBUTION))) {
-                    var elementParentName = UTILS.getElementTagName($element.parent());
-                    var $parent = _getParentElement(elementParentName, $element);
-                    if ($parent) {
-                        if(!connector.getState().isAngularUI ||
-                            (connector.getState().isAngularUI && UTILS.getElementTagName($parent) !== 'docpurpose' )){
-                                $parent.attr(PARENT_AFFECTED, true);
-                                _attachWrapperActionEvents(connector, $parent)
-
-                        }
+            if ($element.attr('id').includes('revision-')) {
+                var $main_element = $element.closest(MAIN_ELEMENT_SELECTOR);
+                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== "num") {
+                    if ($main_element.attr('id') != $element.attr('id')) {
+                        $main_element.attr(PARENT_AFFECTED, "true");
+                    } else {
+                        $main_element.removeAttr(PARENT_AFFECTED);
                     }
+                    _attachWrapperActionEvents(connector, $main_element)
                 }
-            } else {
-                if(!connector.getState().isAngularUI ||
-                    (connector.getState().isAngularUI && UTILS.getElementTagName($element) !== 'attachment' )) {
-                    _attachWrapperActionEvents(connector, $element);
+                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== "num")
+                {
+                    var $parent_element = $main_element.parents(MAIN_ELEMENT_SELECTOR);
+                    if ($parent_element.length > 0 && UTILS.getElementTagName($parent_element).toLowerCase() !== "num") {
+                        $parent_element.attr(PARENT_AFFECTED, "true");
+                        _attachWrapperActionEvents(connector, $parent_element)
+                    }
                 }
             }
         });
     }
 
-    function _getParentElement(elementParentName, $element) {
-        if ((elementParentName === AKNP || elementParentName === BLOCK)) {
-            if ($element.hasClass(LEOS_CONTENT_REMOVED)) {
-                var childId = $($element.get()).children().get()[0] && $($element.get()).children().get()[0].id;
-                if (childId && childId.startsWith(REVISION_DELETED)) {
-                    var findId = childId.replace(DELETED, '');
-                    var $findElement = findId && $('#' + findId);
-                    if ($findElement && $($findElement.get()).parent().hasClass(LEOS_CONTENT_NEW)) {
-                        return;
-                    } else {
-                        return $element.parent();
-                    }
-                }
-            } else if ($element.hasClass(LEOS_CONTENT_NEW)) {
-                var childId = $($element.get()).children().get()[0] && $($element.get()).children().get()[0].id;
-                var findId = childId && childId.replace(REVISION, REVISION_DELETED,);
-                var $findElement = findId && $('#' + findId);
-                if ($findElement && $($findElement.get()).parent().hasClass(LEOS_CONTENT_REMOVED)) {
-                    return;
-                } else {
-                    return $element.parent();
-                }
-            }
-        } else {
-            return UTILS.getParentWrapper($element, wrapperElementsList);
-        }
-    }
-
     function _attachWrapperActionEvents(connector, $element) {
-       if (!($element.hasClass(MERGE_CONTRIBUTION) || ($element.parent().hasClass(LEOS_CONTENT_NEW) &&
-            $element.parent().attr(LEOS_SOFT_ACTION) !== MOVE_FROM) ||
-            $element.parent().hasClass(LEOS_CONTENT_REMOVED))) {
-            $element.addClass(MERGE_CONTRIBUTION);
+       if (!$element.hasClass(MERGE_CONTRIBUTION)) {
+           $element.addClass(MERGE_CONTRIBUTION);
             _attachActions(connector, $element);
             _createClickActions(connector, $element);
        } else if ($element.hasClass(CONTRIBUTION_SELECTED)) {
@@ -128,16 +95,58 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function _createClickActions(connector, $element) {
-        $element.on("click.actions", "[data-widget-type='accept']", _handleAction.bind(undefined, connector, "accept", $element));
-        $element.on("click.actions", "[data-widget-type='reject']", _handleAction.bind(undefined, connector, "reject", $element));
-        $element.on("click.actions", "[data-widget-type='undo']", _handleAction.bind(undefined, connector, "undo", $element));
-        $element.on("click.actions", "[data-widget-type='unselect']", _handleAction.bind(undefined, connector, "unselect", $element));
+        $($element.actions).on("click.actions", "[data-widget-type='show.all.actions']", _showActionButtons.bind(undefined, $element.actions, $element, true));
+        $($element.actions).on("click.actions", "[data-widget-type='accept']", _handleAction.bind(undefined, connector, "accept", $element));
+        $($element.actions).on("click.actions", "[data-widget-type='reject']", _handleAction.bind(undefined, connector, "reject", $element));
+        $($element.actions).on("click.actions", "[data-widget-type='undo']", _handleAction.bind(undefined, connector, "undo", $element));
+        $($element.actions).on("click.actions", "[data-widget-type='unselect']", _handleAction.bind(undefined, connector, "unselect", $element));
+        $($element.actions).on("mouseleave.actions", ".merge-actions", _showActionButtons.bind(undefined, $element.actions, $element, false));
     }
 
     function _attachActions(connector, element) {
         let actions = _getActionButtons(connector, element);
         actions.target = element;
         element.actions = actions;
+        _showActionButtons(actions, element, false);
+    }
+
+    function _getRemainingSpace($element, elementHeigh, showActionsList) {
+        let heightForSingleIcon = 31;
+        var totChildren = $element.next().children().length - 1;
+        var actionButtonsHeigh = totChildren * heightForSingleIcon;
+
+        var remainingSpace = 0;
+        if (actionButtonsHeigh > elementHeigh) {
+            remainingSpace = actionButtonsHeigh - elementHeigh;
+        }
+        return remainingSpace;
+    }
+
+    function _showActionButtons(actions, $element, showActionsList) {
+        let $actions = $(actions);
+        if ($actions.children().length) {
+            $(function() {
+                var elementHeigh = $element[0].clientHeight;
+                var remainingSpace = _getRemainingSpace($element, elementHeigh);
+                var left_position = $element.position().left + $element[0].offsetWidth - 8;
+                $actions.css({
+                    top: $element.position().top + 9,
+                    left: left_position - 13,
+                    height: elementHeigh + remainingSpace,
+                });
+            });
+        }
+
+        if(showActionsList) {
+            $actions.children().css({display: "inline-grid"})
+            $($actions.children()[0]).css({display: "none"})
+        } else {
+            $actions.children().css({display: "none"})
+            $(actions.children[0]).css({display: "inline-block"})
+        }
+        if ($actions.children().length == 1) {
+            $actions.children().css({display: "inline-block"})
+        }
     }
 
     function _generateActions(connector, processed) {
@@ -156,6 +165,10 @@ define(function mergeContributionExtensionModule(require) {
             if(canReject){
                 template.push('<span class="reject" data-widget-type="reject" title="Reject">close</span>');
             }
+        }
+        //add three dots only if any action is present
+        if(template.length > 1){
+            template.splice(1, 0, `<span class="merge-actions-icon" data-widget-type="show.all.actions" title="Show all actions">&#xe774</span>`);
         }
         template.push('</div>');
         template.push('</div>');
@@ -209,13 +222,19 @@ define(function mergeContributionExtensionModule(require) {
             elementState: elementState,
             elementId: element.id,
             elementTagName: element.localName,
+            withTrackChanges: true
         };
         if (action === 'unselect') {
             $parent.children(MERGE_ACTION_WRAPPER).remove();
             $parent.removeClass(CONTRIBUTION_SELECTED);
             let actionString = _generateActions(connector, $parent.attr(MERGE_ACTION_ATTR) && $parent.attr(MERGE_ACTION_ATTR) !== null);
             let actions = ($.parseHTML(actionString))[0];
-            $parent.prepend(actions);
+            $parent.next('div.merge-actions-wrapper').remove();
+            $(actions).insertAfter($parent);
+            actions.target = $parent;
+            $parent.actions = actions;
+            _showActionButtons(actions, $parent, false);
+            _createClickActions(connector, $parent);
             let index = mergeActionList.findIndex(element => element.elementId === data.elementId);
             if (index !== -1) {
                 mergeActionList.splice(index, 1);
@@ -229,7 +248,12 @@ define(function mergeContributionExtensionModule(require) {
             $parent.children(MERGE_ACTION_WRAPPER).remove();
             let unselectActionString = _generateUnselectAction(connector, action);
             let unseletAction = ($.parseHTML(unselectActionString))[0];
-            $parent.prepend(unseletAction);
+            $parent.next('div.merge-actions-wrapper').remove();
+            $(unseletAction).insertAfter($parent);
+            unseletAction.target = $parent;
+            $parent.actions = unseletAction;
+            _showActionButtons(unseletAction, $parent, true);
+            _createClickActions(connector, $parent);
             //in case of move there are two elements TO & FROM, element TO should not be sent for processing, only FROM
             // element is sent, FROM element is first removed from original (left side) document and then inserted at new position
             if (wrapperId !== null && wrapperId !== undefined && !wrapperId.startsWith(REVISION_MOVED)) {
@@ -246,9 +270,9 @@ define(function mergeContributionExtensionModule(require) {
         let elementState;
         if ($element.attr(LEOS_SOFT_ACTION) && ($element.attr(LEOS_SOFT_ACTION) === MOVE_FROM || $element.attr(LEOS_SOFT_ACTION) === MOVE_TO)) {
             elementState = MOVE;
-        } else if ($element.hasClass(LEOS_CONTENT_REMOVED)) {
+        } else if ($element.prop("tagName") === 'del' || $element.attr(LEOS_ACTION) === 'delete') {
             elementState = DELETE;
-        } else if ($element.hasClass(LEOS_CONTENT_NEW)) {
+        } else if ($element.prop("tagName") === 'ins' || $element.attr(LEOS_ACTION) === 'insert') {
             elementState = ADD;
         } else if (($element.attr(PARENT_AFFECTED))) {
             elementState = CONTENT_CHANGE;
@@ -263,7 +287,7 @@ define(function mergeContributionExtensionModule(require) {
             let processed = mergeActionAttrVal != null ? true : false;
             let actionString = _generateActions(connector, processed);
             actions = ($.parseHTML(actionString))[0];
-            $element.prepend(actions);
+            $(actions).insertAfter($element);
         }
         return actions;
     }
@@ -291,31 +315,24 @@ define(function mergeContributionExtensionModule(require) {
 
     function _acceptAllElements(connector) {
         mergeActionList = new Array();
-        var removed_elements = $(".leos-content-removed");
-        var new_elements = $(".leos-content-new");
-        var changed_element = $.merge(removed_elements, new_elements);
-        for (let i = 0; i < changed_element.length; i++) {
-            var $element = $(changed_element[i]);
-            if (SUB_ELEMENT.includes(UTILS.getElementTagName($element))) {
-                if ($element.parent().hasClass(MERGE_CONTRIBUTION)) {
-                    var elementParentName = UTILS.getElementTagName($element.parent());
-                    var $parent = elementParentName === "aknp" ? $element.parent() : UTILS.getParentWrapper($element, wrapperElementsList);
-                    if($parent) {
-                        $parent.attr(PARENT_AFFECTED,true);
-                        _triggerAction(connector, $parent, "accept")
-                    }
+        var removed_elements = $("[leos\\:action='delete'], del");
+        var new_elements = $("[leos\\:action='insert'], ins");
+        var move_elements = $("[leos\\:softaction='" + MOVE_FROM + "']");
+        var changed_element = $.merge(removed_elements, new_elements, move_elements);
+        changed_element.each(function (index) {
+            var $element = $(changed_element[index]);
+            if ($element.attr('id').includes('revision-')) {
+                var $main_element = $element.closest(MAIN_ELEMENT_SELECTOR);
+                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== "num") {
+                    _triggerAction(connector, $main_element, "accept")
                 }
-            } else {
-                _triggerAction(connector, $element, "accept");
             }
-        }
+        });
         return mergeActionList;
     }
 
     function _triggerAction(connector, $element, action) {
-       if (($element.hasClass(MERGE_CONTRIBUTION) || ($element.parent().hasClass(LEOS_CONTENT_NEW) &&
-            $element.parent().attr(LEOS_SOFT_ACTION) !== MOVE_FROM) ||
-            $element.parent().hasClass(LEOS_CONTENT_REMOVED))) {
+       if ($element.hasClass(MERGE_CONTRIBUTION)) {
              _executeAction(connector, action, $element)
              _handleMovedElement(connector, action, $element);
        }
