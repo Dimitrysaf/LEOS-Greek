@@ -174,6 +174,33 @@ export abstract class TocInlineEditMenuService {
     const tocItems = this.tocService.getCurrentTocItems();
     const oldHeading = this.heading;
     const oldValue = selectedNode.tocItemType;
+    // Get the maxDepth for list
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(selectedNode.node.toString(), 'application/xml');
+    const currentMaxDepth = this.getMaxDepth(xmlDoc);
+    const pointConfig = this.documentConfig.numberingConfig.find((obj) => {
+      return (newType.toUpperCase() === 'REGULAR' ? 'POINT_NUM' : newType.toUpperCase() === 'DEFINITION' ? 'POINT_NUM_DEF' : '') === obj.type;
+    });
+    const allowedDepth = pointConfig.levels.levels.length;
+
+    if (currentMaxDepth > allowedDepth) {
+      return this.dialogService.openDialog({
+        title: this.translateService.instant('page.editor.article.convert.depth.warning.title', {
+          newType,
+          currentMaxDepth,
+          allowedDepth
+        }),
+        typeClass: 'warning',
+        hasDismissButton: false,
+        content: this.translateService.instant('page.editor.article.convert.depth.warning.content', {
+          newType,
+          currentMaxDepth,
+          allowedDepth
+        }),
+        accept: () => { return; },
+        acceptLabel: this.translateService.instant('global.actions.close')
+      });
+    }
     //save snapshot of old tree
     this.tocEditService.handleNodeChanges(toc, true);
     selectedNode.tocItemType = newType;
@@ -470,5 +497,36 @@ export abstract class TocInlineEditMenuService {
     return (
       node.softActionRoot && [MOVE_TO, MOVE_FROM].includes(node.softActionAttr)
     );
+  }
+
+  private getMaxDepth(element, currentDepth = 0) {
+    let maxDepth = currentDepth;
+
+    // Check if the element has child nodes
+    if (element.childNodes && element.childNodes.length > 0) {
+      for (let i = 0; i < element.childNodes.length; i++) {
+        const childNode = element.childNodes[i];
+
+        // Check if the child node is an element node
+        if (childNode.nodeType === 1) {
+          // Check if the element is a <list> element
+          if (childNode.nodeName === 'list') {
+            // Recursively calculate the depth for each child <list> element
+            const childDepth = this.getMaxDepth(childNode, currentDepth + 1);
+
+            // Update maxDepth if the childDepth is greater
+            maxDepth = Math.max(maxDepth, childDepth);
+          } else {
+            // Recursively continue traversal for other elements
+            const childDepth = this.getMaxDepth(childNode, currentDepth);
+
+            // Update maxDepth if the childDepth is greater
+            maxDepth = Math.max(maxDepth, childDepth);
+          }
+        }
+      }
+    }
+
+    return maxDepth;
   }
 }
