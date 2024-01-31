@@ -211,12 +211,12 @@ define(function leosTrackChangesModule(require) {
         buildTrackChangeElement: function(editor, action, text, isHtml) {
             var tcElement = new CKEDITOR.dom.element(this.TRACKCHANGES_ELEMENT);
             tcElement.setAttributes(this.getTrackChangeAttributes(editor, action));
-            if (isHtml ? tcElement.setHtml(text) : tcElement.setText(text));
+            if isHtml ? tcElement.setHtml(text) : tcElement.setText(text);
             return tcElement;
         },
 
         insertTrackChangeElement: function(editor, action, text, toEnd, isHtml) {
-            editor.fire('lockSnapshot', {"dontUpdate": true});
+            editor.fire('lockSnapshot', { "dontUpdate": true });
             var tcElement = this.buildTrackChangeElement(editor, action, text, isHtml);
             var selectedElement = editor.getSelection().getStartElement();
             if (core.isTrackChangeElement(selectedElement, core.DELETE_ACTION)) {
@@ -225,9 +225,8 @@ define(function leosTrackChangesModule(require) {
             } else if (this.STYLE_ELEMENTS.includes(selectedElement.getName())) {
                 tcElement.insertAfter(selectedElement);
             } else {
-                var selection = editor.getSelection();
-                var range = selection.getRanges()[ 0 ];
-                editor.editable().insertElementIntoRange( tcElement, range );
+                var range = editor.getSelection().getRanges()[0];
+                editor.editable().insertElementIntoRange(tcElement, range);
             }
             this.setToEditablePosition(editor, tcElement, toEnd);
             editor.fire('unlockSnapshot');
@@ -236,7 +235,7 @@ define(function leosTrackChangesModule(require) {
 
         toArray: function(list) {
             var array = new Array();
-            for (var i = 0; i < list.count();i++) { array[i] = list.getItem(i); }
+            for (var i = 0; i < list.count(); i++) { array[i] = list.getItem(i); }
             return array;
         },
 
@@ -277,6 +276,7 @@ define(function leosTrackChangesModule(require) {
         isInsideTrackedDeletedOrSoftMovedToElement: function(editor) {
             var selection = editor.getSelection();
             if (selection) {
+                selection._.cache.ranges = undefined;
                 var path = selection.getRanges()[0].startPath();
                 for (var i = 0; path.elements.length > i; i++) {
                     var el = path.elements[i];
@@ -527,6 +527,8 @@ define(function leosTrackChangesModule(require) {
                 var newElement = core.insertTrackChangeElement(editor, core.INSERT_ACTION, data, core.CARET_END, true);
                 if (tcElement && tcElement[0] && (tcElement[1] === core.PARENT || tcElement[1] === core.CURRENT)) {
                     core.breakParentAndMoveTo(editor, newElement, tcElement[0], core.CARET_END);
+                } else {
+                    newElement.mergeSiblings();
                 }
             }
             return true;
