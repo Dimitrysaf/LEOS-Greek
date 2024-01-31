@@ -211,7 +211,7 @@ define(function leosTrackChangesModule(require) {
         buildTrackChangeElement: function(editor, action, text, isHtml) {
             var tcElement = new CKEDITOR.dom.element(this.TRACKCHANGES_ELEMENT);
             tcElement.setAttributes(this.getTrackChangeAttributes(editor, action));
-            if isHtml ? tcElement.setHtml(text) : tcElement.setText(text);
+            if (isHtml ? tcElement.setHtml(text) : tcElement.setText(text));
             return tcElement;
         },
 
