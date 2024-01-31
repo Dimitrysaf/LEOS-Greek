@@ -54,7 +54,7 @@
             stampit: "lib/stampit_1.2.0/stampit",
             postal: "lib/postal.js_2.0.0/postal",
             "postal.diagnostics": "lib/postal.diagnostics/postal.diagnostics",
-            mathjax: "webjars/MathJax/2.7.0/MathJax.js?config=default",
+            mathjax: "webjars/MathJax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML",
             dateFormat: "lib/dateFormat_1.2.3/dateFormat",
             nouislider: "lib/noUiSlider_10.0.0/js/nouislider",
             wnumb: "lib/wNumb_1.1.0/wNumb",
