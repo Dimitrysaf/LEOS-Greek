@@ -20,8 +20,14 @@ export class AppConfigService {
   >;
 
   constructor(private http: HttpClient) {
+    // TODO: Need to populate headers from client input parameters.
+    const options = {
+      "headers": {
+        'System-Name': 'DGT_EDIT',
+      },
+    };
     this.config = this.http
-      .get<LeosConfig>(`${apiBaseUrl}/secured/config`)
+      .get<LeosConfig>(`${apiBaseUrl}/secured/config`, options)
       .pipe(map(createLeosAppConfig))
       .pipe(shareReplay(1));
   }

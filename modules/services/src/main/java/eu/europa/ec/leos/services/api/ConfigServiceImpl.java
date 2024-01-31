@@ -19,6 +19,9 @@ import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.profile.ProfileService;
+import eu.europa.ec.leos.vo.light.Profile;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,18 +37,20 @@ public class ConfigServiceImpl implements ConfigService {
     private final SecurityContext securityContext;
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
     private final MessageHelper messageHelper;
+    private final ProfileService profileService;
 
     @Autowired
     public ConfigServiceImpl(Properties applicationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
-            Provider<StructureContext> structureContextProvider, MessageHelper messageHelper) {
+            Provider<StructureContext> structureContextProvider, MessageHelper messageHelper, ProfileService profileService) {
         this.applicationProperties = applicationProperties;
         this.securityContext = securityContext;
         this.authorityMapHelper = authorityMapHelper;
         this.messageHelper = messageHelper;
+        this.profileService = profileService;
     }
 
     @Override
-    public AppConfigResponse getApplicationConfig() {
+    public AppConfigResponse getApplicationConfig(String systemName) {
         AppConfigResponse appConfigResponse = new AppConfigResponse();
 
         String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
@@ -67,6 +72,10 @@ public class ConfigServiceImpl implements ConfigService {
         String annotatePopupDefaultStatus = applicationProperties.getProperty("annotate.popup.default.status");
         boolean collectionCloseButtonEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.collection.close.button.enabled"));
         boolean showRevisionEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.view.revision.milestone"));
+        Profile profile = null;
+        if(StringUtils.isNotEmpty(systemName)) {
+            profile = profileService.getProfile(systemName);
+        }
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -88,6 +97,9 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setAnnotatePopupDefaultStatus(annotatePopupDefaultStatus);
         appConfigResponse.setCollectionCloseButtonEnabled(collectionCloseButtonEnabled);
         appConfigResponse.setShowRevisionEnabled(showRevisionEnabled);
+        if(profile != null) {
+            appConfigResponse.setProfile(profile);
+        }
 
         return appConfigResponse;
     }
