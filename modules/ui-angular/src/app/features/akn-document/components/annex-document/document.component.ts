@@ -66,6 +66,7 @@ export class DocumentComponent
   }
 
   ngOnDestroy(): void {
+    this.documentService.setIsEditorOpen(false);
     this.bookmarkMutationObserver?.disconnect();
     this.destroy$.next('');
     this.destroy$.complete();
