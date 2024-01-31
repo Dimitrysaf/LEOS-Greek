@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.dto.response;
 
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.LeosPermission;
+import eu.europa.ec.leos.vo.light.Profile;
 
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +33,7 @@ public class AppConfigResponse {
     private String supportDocumentCatalogKey;
     private boolean supportDocumentEnabled;
     private Map<String, Set<LeosPermission>> permissionsMap;
+    private Profile profile;
     private User user;
     private String headerTitle;
     private String headerPath;
@@ -215,5 +217,13 @@ public class AppConfigResponse {
 
     public void setShowRevisionEnabled(boolean showRevisionEnabled) {
         this.showRevisionEnabled = showRevisionEnabled;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 }

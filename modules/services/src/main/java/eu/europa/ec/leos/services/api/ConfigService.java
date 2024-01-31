@@ -17,6 +17,6 @@ import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 
 public interface ConfigService {
 
-    AppConfigResponse getApplicationConfig();
+    AppConfigResponse getApplicationConfig(String systemName);
 
 }

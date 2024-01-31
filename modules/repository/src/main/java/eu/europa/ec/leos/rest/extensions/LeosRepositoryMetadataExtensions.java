@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProfileMetaData;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.StructureMetaData;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
@@ -35,6 +36,11 @@ class LeosRepositoryMetadataExtensions {
     private static class CommonMetadataProperties {
         String stage, type, purpose, template, language, docTemplate, ref;
         Boolean eeaRelevance;
+    }
+
+    static Option<ProfileMetaData> getProfileMetaDataOption(eu.europa.ec.leos.rest.support.model.LeosDocument leosDocument) {
+        return buildMetadata(leosDocument, props -> Option.some(new ProfileMetaData(props.stage,  props.type, props.purpose, props.template,
+                props.language, props.docTemplate, props.ref,null, "0.1.0", props.eeaRelevance)));
     }
 
     static Option<ProposalMetadata> getProposalMetadataOption(LeosDocument leosDocument) {

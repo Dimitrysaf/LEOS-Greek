@@ -31,8 +31,10 @@ import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.MediaDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Profile;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.Structure;
+import eu.europa.ec.leos.domain.repository.metadata.ProfileMetaData;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
@@ -136,6 +138,13 @@ public class LeosDocumentExtensions {
             case EXPORT:
                 if (type.isAssignableFrom(ExportDocument.class)) {
                     leosDocument = (T) toLeosExportDocument(document, fetchContent);
+                } else {
+                    throw new IllegalStateException("Incompatible types! [category=" + category + ", mappedType=" + ExportDocument.class.getSimpleName() + ", wantedType=" + type.getSimpleName() + ']');
+                }
+                break;
+            case LIGHT_PROFILE:
+                if (type.isAssignableFrom(Profile.class)) {
+                    leosDocument = (T) toLeosProfileDocument(document, fetchContent);
                 } else {
                     throw new IllegalStateException("Incompatible types! [category=" + category + ", mappedType=" + ExportDocument.class.getSimpleName() + ", wantedType=" + type.getSimpleName() + ']');
                 }
@@ -281,6 +290,16 @@ public class LeosDocumentExtensions {
                 Integer.toString(Objects.hash(d.getRef(), d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
                 contentOption(d, fetchContent),
                 LeosRepositoryMetadataExtensions.getStructureMetadataOption(d));
+    }
+
+    private static Profile toLeosProfileDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
+        return new Profile(d.getRef(), d.getName(), d.getCreatedBy(),
+                getCreationInstant(d),
+                d.getUpdatedBy(),
+                getLastModificationInstant(d),
+                Integer.toString(Objects.hash(d.getRef(), d.getVersionLabel(), d.getUpdatedBy())), d.getVersionLabel(), getLeosVersionLabel(d), getComments(d), getVersionType(d), d.isLatestVersion(),
+                contentOption(d, fetchContent),
+                LeosRepositoryMetadataExtensions.getProfileMetaDataOption(d));
     }
 
     private static LegDocument toLeosLegDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {
