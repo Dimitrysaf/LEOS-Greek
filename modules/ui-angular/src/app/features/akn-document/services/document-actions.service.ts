@@ -49,6 +49,7 @@ import {
 } from '../models/document-actions.model';
 
 const LIST_OF_DISABLE_BUTTONS = [SEARCH_ACTION_ID, RELOAD_SECTION_ID];
+
 @Injectable()
 export abstract class DocumentActionsService {
   public actionsItems$: Observable<IRibbonToolbarSection[]>;
@@ -459,7 +460,7 @@ export abstract class DocumentActionsService {
   }
 
   private openSaveDocumentVersionDialog() {
-    const saveForm = this.createFormGroup();
+    const saveForm = this.createSaveForm();
     this.dialogService.openDialog(
       new EuiDialogConfig({
         dialogId: 'save-document-version-id',
@@ -477,7 +478,7 @@ export abstract class DocumentActionsService {
     );
   }
 
-  private createFormGroup() {
+  private createSaveForm() {
     return this.formBuilder.group({
       title: new FormControl('', {
         validators: [Validators.required, noWhitespaceValidator],
