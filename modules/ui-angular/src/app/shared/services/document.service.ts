@@ -94,6 +94,7 @@ export class DocumentService implements OnDestroy {
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
   versionSearchOpen$: Observable<boolean>;
+  resetZoom$: Observable<void>;
   recentChanges$: Observable<Version[]>;
   documentConfig$: Observable<DocumentConfig>;
   versionId$: Observable<string | null>;
@@ -165,6 +166,7 @@ export class DocumentService implements OnDestroy {
     [DocumentViewResponse, ContributionVO]
   >(null);
   private compareModeEnabledBS = new BehaviorSubject(false);
+  private resetZoomBS = new BehaviorSubject<void>(null);
   private contributionModeEnabledBS = new BehaviorSubject(false);
   private contributionsBS = new BehaviorSubject<ContributionVO[]>([]);
   private searchPaneOpenBS = new BehaviorSubject(false);
@@ -368,6 +370,8 @@ export class DocumentService implements OnDestroy {
           : of(''),
       ),
     );
+
+    this.resetZoom$ = this.resetZoomBS.asObservable();
 
     this.collaborators$ = this.collaboratorsBS.asObservable();
     this.documentView$
@@ -1046,6 +1050,10 @@ export class DocumentService implements OnDestroy {
 
   versionView(versionNumber: string) {
     this.versionIdBS.next(versionNumber);
+  }
+
+  resetZoomValues() {
+    this.resetZoomBS.next();
   }
 
   versionExport(version: Version) {

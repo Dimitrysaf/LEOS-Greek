@@ -1,4 +1,8 @@
-<div class="main-container" [ngClass]="containerClass">
+<div
+  class="main-container"
+  [ngClass]="containerClass"
+  [ngStyle]="{ 'padding-left': paddingLeft }"
+>
   <div
     [id]="containerId"
     class="document-container"

@@ -18,7 +18,7 @@
       <button
         euiListItem
         translate="page.editor.versions.actions.view"
-        (click)="doc.versionView(version.documentId)"
+        (click)="doc.versionView(version.documentId); doc.resetZoomValues()"
       ></button>
       <button
         euiListItem

@@ -162,8 +162,8 @@ export class DocumentEditorComponent
   @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
   @ViewChild('mergeAllContributionsChangesDialog')
   mergeAllContributionsChangesDialog: EuiDialogComponent;
-  @ViewChild('markContributionAsProcessedDialog')
-  markContributionAsProcessedDialog: EuiDialogComponent;
+  //   @ViewChild('markContributionAsProcessedDialog')
+  //   markContributionAsProcessedDialog: EuiDialogComponent;
   @ViewChild('confirmAnnexStructureChangeDialog')
   annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
@@ -825,6 +825,7 @@ export class DocumentEditorComponent
   }
 
   closeVersionView(setMode = true) {
+    this.documentService.resetZoomValues();
     if (setMode) this.setPageMode(PageMode.Normal);
   }
 
@@ -975,13 +976,13 @@ export class DocumentEditorComponent
       this.mergeAllContributionsChangesDialog.openDialog();
     }
   }
-
+  /*
   onChangeProcessedToggle(_e: boolean) {
     this.processed = !this.processed;
     this.documentService.toggleIsContributionDeclinedOrProcessed();
     this.markContributionAsProcessedDialog.openDialog();
   }
-
+*/
   onAcceptMergeAllContributions() {
     this.processed = !this.processed;
     this.documentService.toggleIsContributionDeclinedOrProcessed();
@@ -992,7 +993,7 @@ export class DocumentEditorComponent
   onCancelMergeAllContributions() {
     this.mergeAllContributionsChangesDialog.closeDialog();
   }
-
+  /*
   onAcceptMarkContributionAsProcessed() {
     this.documentService
       .markContributionAsProcessed(this.contribution)
@@ -1034,6 +1035,7 @@ export class DocumentEditorComponent
     this.documentService.toggleIsContributionDeclinedOrProcessed();
     this.markContributionAsProcessedDialog.closeDialog();
   }
+*/
 
   setPageTitle() {
     this.pageTitle = [

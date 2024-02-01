@@ -47,6 +47,7 @@ export class DocumentComponent
   zoomScrollbarRef: ElementRef<HTMLDivElement>;
   documentStyle = {};
 
+  paddingLeft: string;
   zoomLevel: number;
   private bookmarkMutationObserver?: MutationObserver;
   private destroy$: Subject<any> = new Subject();
@@ -66,6 +67,7 @@ export class DocumentComponent
   }
 
   ngOnDestroy(): void {
+    this.documentService.setIsEditorOpen(false);
     this.bookmarkMutationObserver?.disconnect();
     this.destroy$.next('');
     this.destroy$.complete();
@@ -116,6 +118,12 @@ export class DocumentComponent
               elementType: string;
               elementFragment: string;
             }>(this.getElementContent(data)).asObservable();
+        });
+
+      this.documentService.resetZoom$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.resetZoom();
         });
 
       this.coEditionWSService.shouldReloadAfterUpdate
@@ -180,6 +188,25 @@ export class DocumentComponent
 
     const zoomedDocumentHeight = MAIN_CONTAINER_WIDTH * scaleFactor;
     this.containerElRef.nativeElement.style.height = `${zoomedDocumentHeight}px`;
+    this.updatePadding();
+  }
+
+  updatePadding() {
+    if (
+      this.zoomLevel > 100 &&
+      this.document.getElementById('versionContainer')
+    ) {
+      const scalePaddingFactor = 8;
+      const additionalZoom = this.zoomLevel - 100;
+      this.paddingLeft = `${additionalZoom * scalePaddingFactor}px`;
+    } else {
+      this.paddingLeft = '0px';
+    }
+  }
+
+  resetZoom() {
+    const event = { zoomLevel: 100 };
+    this.handleZoomChange(event);
   }
 
   generateTooltip(coEdits: CoEditionVO[]) {

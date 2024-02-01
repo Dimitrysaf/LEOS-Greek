@@ -34,6 +34,7 @@ export class DocumentSearchComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.doc.toggleSearchPane(!this.isSearchActive);
     this.destroy$.next();
     this.destroy$.complete();
   }
