@@ -452,7 +452,7 @@ public class BillContextService {
         //updating the first annex number if not done already
         Annex firstAnnex = getFirstIndexAnnex(annexes);
         String annexTitlePrefix = messageHelper.getMessage("document.annex.title.prefix");
-        if (firstAnnex != null && annexTitlePrefix.equals(firstAnnex.getMetadata().get().getNumber())) {
+        if (firstAnnex != null && annexTitlePrefix.equalsIgnoreCase(firstAnnex.getMetadata().get().getNumber())) {
             int firstIndex = firstAnnex.getMetadata().get().getIndex();
             annexContext.useAnnexId(firstAnnex.getId());
             annexContext.useIndex(firstIndex);
