@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AppStarterService } from './app-starter.service';
 import { CoreModule } from './core/core.module';
+import { DocumentUserGuard } from './shared/guards/document-user.guard';
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,6 +19,7 @@ import { CoreModule } from './core/core.module';
     NgxEnvModule,
   ],
   providers: [
+    DocumentUserGuard,
     AppStarterService,
     {
       provide: APP_INITIALIZER,

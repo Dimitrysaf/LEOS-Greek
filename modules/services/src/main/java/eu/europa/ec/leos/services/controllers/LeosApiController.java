@@ -264,6 +264,8 @@ public class LeosApiController {
             case ANNEX:
             case BILL:
             case MEMORANDUM:
+            case STAT_FINANC_LEGIS:
+            case COVERPAGE:
             case PROPOSAL:
                 String documentViewUrl = applicationProperties.getProperty("leos.mapping.url") +
                         applicationProperties.getProperty("leos.document.view." + document.getCategory().toString().toLowerCase() + ".uri");
