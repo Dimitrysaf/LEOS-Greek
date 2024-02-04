@@ -32,6 +32,7 @@
       ></button>
       <button
         euiListItem
+        *ngIf="isCNInstance"
         translate="page.editor.versions.actions.changeBase"
         (click)="onBaseChange(version)"
       ></button>

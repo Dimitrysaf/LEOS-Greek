@@ -29,6 +29,7 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   disabled: boolean;
   versionModalText: string;
   versionToRevert = '';
+  isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
 
   private removeEventListener?: () => void;
 
