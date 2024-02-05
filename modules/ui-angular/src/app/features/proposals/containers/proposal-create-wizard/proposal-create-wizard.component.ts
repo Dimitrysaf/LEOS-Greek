@@ -206,5 +206,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     this.stepSelected = null;
     this.currentStepIndex = 1;
     this.initCreateForm();
+    this.isNavigationAllowed = false;
   }
 }
