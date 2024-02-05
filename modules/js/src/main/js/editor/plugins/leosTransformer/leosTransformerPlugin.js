@@ -86,9 +86,10 @@ define(function leosTransformerPluginModule(require) {
     function _checkEmptyAndRemove(index, elem){
     // do not delete if it is the last editable element in the CKEditor
 
-
     // if LI and it has attribute 'refersto', do not delete it
         var isPBeforeTable = $(elem).is('p') && $(elem).prev().is('table');
+        var isGrandParentAnnexList = $(elem).parent().parent().attr('data-akn-name') === 'aknAnnexList';
+        isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList;
         if($(elem).parents('table').length === 0 && !$(elem).attr("refersto")
             && !isPBeforeTable
             && ($(elem).is(':emptyTrim') && $.trim($(elem).text()) === '')){

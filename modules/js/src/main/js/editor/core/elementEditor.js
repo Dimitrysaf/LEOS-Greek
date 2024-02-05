@@ -418,7 +418,8 @@ define(function elementEditorModule(require) {
         var sibling;
         if (bogus && bogus[0]) {
             sibling = bogus[0].previousSibling;
-            if(isLastEditableElement($(bogus[0]).parent())){
+            var noTextSibling = !(sibling && (sibling.nodeType === Node.TEXT_NODE || sibling.nodeType === Node.ELEMENT_NODE));
+            if(noTextSibling && isLastEditableElement($(bogus[0]).parent())){
                 isEmptyElementFound = true;
             }
         }
@@ -436,13 +437,25 @@ define(function elementEditorModule(require) {
 
         var isEmptyList = false;
         $("#" + elementId).find("li br").each(function(){
+
+        //verify if parent contains empty siblings besides the br
             var prevSibling = this.previousSibling;
             var isEmptyPrevSibling = !(prevSibling && ((prevSibling.nodeType === Node.TEXT_NODE && prevSibling.textContent.trim().length > 0)
                         || prevSibling.nodeType === Node.ELEMENT_NODE));
+            var childNodes = $(this).parent()[0].childNodes;
+            for(var child of childNodes){
+                if(this == child){
+                    break;
+                }
+                if(child.textContent.trim().length > 0 ){
+                    isEmptyPrevSibling = false;
+                }
+            }
+
             var sibling = this.nextSibling;
             var isSiblingOL = (sibling && sibling.nodeType === Node.ELEMENT_NODE && sibling.tagName.toLowerCase() == 'ol');
             var isLastEditable = isLastEditableElement($(this).parent());
-            if (isLastEditable || (isEmpty($(this).parent().get(0)) && ($(this).parent().attr("refersto") || (isEmptyPrevSibling && isSiblingOL)))) {
+            if ((isLastEditable && isEmptyPrevSibling) || (isEmpty($(this).parent().get(0)) && ($(this).parent().attr("refersto") || (isEmptyPrevSibling && isSiblingOL)))) {
                 isEmptyList = true;
             }
         });
