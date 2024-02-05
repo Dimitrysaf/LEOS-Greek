@@ -7,7 +7,6 @@ import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete
 import { ConfirmDialogComponent } from '@/shared/components/confirm-dialog/confirm-dialog.component';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
-import { EditTitleDialogComponent } from '../edit-title-dialog/edit-title-dialog.component';
 
 @Component({
   selector: 'app-proposal-actions-dropdown',
@@ -32,8 +31,6 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   proposalDeleteConf: ConfirmDeleteDialogComponent;
   @ViewChild('proposalDeleteCannotConf')
   proposalDeleteCannotConf: ConfirmDialogComponent;
-  @ViewChild('editTitleDialog')
-  editTitleDialog: EditTitleDialogComponent;
   canExportLW = false;
 
   private destroy$: Subject<any> = new Subject();
@@ -85,9 +82,5 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
     const activeUrl = window.location.href;
     const url = `${this.mailtoHeader}${this.subjectProp}Shared Proposal&${this.bodyProp}${activeUrl}`;
     return this.sanitizer.bypassSecurityTrustUrl(url);
-  }
-
-  openEditTitleDialog() {
-    this.editTitleDialog.openDialog();
   }
 }
