@@ -162,8 +162,6 @@ export class DocumentEditorComponent
   @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
   @ViewChild('mergeAllContributionsChangesDialog')
   mergeAllContributionsChangesDialog: EuiDialogComponent;
-  //   @ViewChild('markContributionAsProcessedDialog')
-  //   markContributionAsProcessedDialog: EuiDialogComponent;
   @ViewChild('confirmAnnexStructureChangeDialog')
   annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
@@ -976,13 +974,7 @@ export class DocumentEditorComponent
       this.mergeAllContributionsChangesDialog.openDialog();
     }
   }
-  /*
-  onChangeProcessedToggle(_e: boolean) {
-    this.processed = !this.processed;
-    this.documentService.toggleIsContributionDeclinedOrProcessed();
-    this.markContributionAsProcessedDialog.openDialog();
-  }
-*/
+
   onAcceptMergeAllContributions() {
     this.processed = !this.processed;
     this.documentService.toggleIsContributionDeclinedOrProcessed();
@@ -993,49 +985,6 @@ export class DocumentEditorComponent
   onCancelMergeAllContributions() {
     this.mergeAllContributionsChangesDialog.closeDialog();
   }
-  /*
-  onAcceptMarkContributionAsProcessed() {
-    this.documentService
-      .markContributionAsProcessed(this.contribution)
-      .subscribe({
-        next: (res) => {
-          this.appShellService.growl({
-            severity: 'success',
-            summary: this.translate.instant(
-              'global.notifications.title.success',
-            ),
-            detail: this.translate.instant(
-              'page.editor.contribution.mark-as-processed-message-success',
-            ),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-          this.documentService.getContributions();
-          this.documentService.setIsContributionDeclinedOrProcessed(true);
-        },
-        error: (res) => {
-          this.appShellService.growl({
-            severity: 'danger',
-            summary: this.translate.instant(
-              'page.editor.contribution.mark-as-processed-message-error',
-            ),
-            detail: res,
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        },
-      });
-    this.markContributionAsProcessedDialog.closeDialog();
-  }
-
-  onCancelMarkContributionAsProcessed() {
-    this.processed = !this.processed;
-    this.documentService.toggleIsContributionDeclinedOrProcessed();
-    this.markContributionAsProcessedDialog.closeDialog();
-  }
-*/
 
   setPageTitle() {
     this.pageTitle = [
@@ -1092,6 +1041,7 @@ export class DocumentEditorComponent
         setTimeout(() => {
           this.handleContributionsChanges();
           this.syncScrollingService.setSyncScroll(false);
+          this.cdkEditor.refreshStateSpecificConnectors();
         }, 100);
       }
     }

@@ -36,6 +36,7 @@ define(function SoftActionsExtensionModule(require) {
     var DOUBLE_COMPARE_PREFIX = "doubleCompare-";
     var SIMPLE_COMPARE_PREFIX = "marked-";
     var REVISION_CONTENT_PREFIX = "revision-";
+    var MERGE_CONTRIBUTION = "merge-contribution-wrapper";
 
     var SOFT_MOVE_LABEL_STYLE = "leos-soft-move-label";
     var TRANSPARENT_SOFT_MOVE_LABEL_STYLE = "leos-transparent-soft-move-label";
@@ -63,7 +64,7 @@ define(function SoftActionsExtensionModule(require) {
     // direction should be "FROM" or "TO"
     function _displaySoftMoveLabelForDirection(direction, target) {
         const firstLabels = [];
-        var moveItems = $(target).find(eval("SOFT_MOVE_" + direction.toUpperCase() + "_SELECTOR"));
+        var moveItems = $(document).find(eval("SOFT_MOVE_" + direction.toUpperCase() + "_SELECTOR"));
         var parentElement = target.parentElement;
         moveItems.each(function(i, moveItem) {
             if (moveItem.hasAttribute(SOFT_MOVE_LABEL_ATTR)) {
@@ -137,6 +138,7 @@ define(function SoftActionsExtensionModule(require) {
         span.onclick = function(event) {
             _navigateToMovedElement(id, target);
         };
+        span.classList.remove(MERGE_CONTRIBUTION);
         return span;
     }
 

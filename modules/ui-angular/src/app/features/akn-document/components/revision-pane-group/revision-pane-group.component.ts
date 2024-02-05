@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 
 import { ContributionStatus } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
+import {DocumentService} from "@/shared/services/document.service";
 
 @Component({
   selector: 'app-revision-pane-group',
@@ -17,7 +18,9 @@ export class RevisionPaneGroupComponent implements OnInit {
   status: string;
   ContributionStatus = ContributionStatus;
 
-  constructor() {}
+  constructor(
+    public documentService: DocumentService,
+  ) {}
 
   ngOnInit(): void {
     this.revisionTitle = this.formatTitle(this.contribution);
@@ -38,6 +41,16 @@ export class RevisionPaneGroupComponent implements OnInit {
       );
     } else {
       return contribution.checkinCommentVO.title;
+    }
+  }
+
+  onClickView(contribution: ContributionVO) {
+    if (contribution.contributionStatus === ContributionStatus.ContributionDone) {
+      this.documentService.viewAndMergeContribution(contribution);
+      this.documentService.updateProcessedStatus(true, contribution);
+    } else if (contribution.contributionStatus === ContributionStatus.Received) {
+      this.documentService.viewAndMergeContribution(contribution);
+      this.documentService.updateProcessedStatus(false, contribution);
     }
   }
 }
