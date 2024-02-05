@@ -74,8 +74,6 @@ class TemplateServiceImpl implements TemplateService {
     }
 
     private Catalog loadCatalog(InputStream xmlCatalog) throws IOException {
-
-        // configure XStream
         XStream xstream = new XStream(new StaxDriver());
         xstream.alias("catalog", Catalog.class);
         xstream.useAttributeFor(Catalog.class, "defaultLanguage");
@@ -94,6 +92,7 @@ class TemplateServiceImpl implements TemplateService {
         xstream.aliasField("languages", CatalogItem.class, "langMap");
         xstream.registerLocalConverter(CatalogItem.class, "langMap", new LanguageMapConverter());
         xstream.addImplicitCollection(CatalogItem.class, "itemList", CatalogItem.class);
+        xstream.allowTypesByWildcard(getAllowedTypes());
 
         // parse XML
         Catalog catalog = (Catalog) xstream.fromXML(xmlCatalog);
@@ -101,8 +100,11 @@ class TemplateServiceImpl implements TemplateService {
         if (catalog == null) {
             LOG.warn("Unable to load catalog!");
         }
-
         return catalog;
+    }
+
+    private String[] getAllowedTypes() {
+        return new String[] {"eu.europa.ec.leos.**"};
     }
 
     @Override

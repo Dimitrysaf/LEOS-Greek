@@ -22,7 +22,7 @@ public class JwtAuthenticationSuccessHandler extends SavedRequestAwareAuthentica
         cookie.setPath(request.getContextPath());
         cookie.setMaxAge(-1);
         cookie.setHttpOnly(true); // set the HttpOnly flag to prevent XSS attacks
-        cookie.setSecure(request.isSecure()); // set the Secure flag to prevent network eavesdropping
+        cookie.setSecure(true); // set the Secure flag to prevent network eavesdropping
         response.addCookie(cookie);
     }
 }
