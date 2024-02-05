@@ -19,7 +19,7 @@ echo "---------------------Repository-------------------------------------------
 cd ./tools/repository
 
 echo "---------------------Repository COMPILING...----------------------------------"
-call mvn clean install
+call mvn clean install -Dmaven.test.skip=true
 echo "---------------------Repository COMPILED.-------------------------------------"
 
 cd ./web

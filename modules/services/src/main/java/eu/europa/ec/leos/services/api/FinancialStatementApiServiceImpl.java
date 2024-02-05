@@ -19,7 +19,6 @@ import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.apache.http.MethodNotSupportedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -95,8 +94,7 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc)
-            throws MethodNotSupportedException {
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
         return null;
     }
 

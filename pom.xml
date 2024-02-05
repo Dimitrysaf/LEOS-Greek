@@ -124,9 +124,9 @@
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>2.7.22</mockito.version>
         <mathjax.version>2.7.0</mathjax.version>
-        <spring.version>5.3.19</spring.version>
+        <spring.version>5.3.31</spring.version>
         <javax.websocket.version>1.1</javax.websocket.version>
-        <spring-webmvc.version>5.3.19</spring-webmvc.version>
+        <spring-webmvc.version>5.3.31</spring-webmvc.version>
         <spring-security.version>4.2.20.RELEASE</spring-security.version>
         <spring-data.version>Codd-SR3</spring-data.version>
         <spring-boot.version>2.6.7</spring-boot.version>
@@ -152,9 +152,9 @@
         <sass-maven-plugin.version>2.22</sass-maven-plugin.version>
         <jackson-databind.version>2.15.2</jackson-databind.version>
         <cxf-maven-plugin.version>3.1.10</cxf-maven-plugin.version>
-        <jaxb2-maven-plugin.version>2.3.1</jaxb2-maven-plugin.version>
+        <jaxb.version>2.3.1</jaxb.version>
         <jaxb2-basics.version>0.11.1</jaxb2-basics.version>
-        <jvnet-jaxb2-plugin.version>0.14.0</jvnet-jaxb2-plugin.version>
+        <jvnet-jaxb2-plugin.version>0.15.3</jvnet-jaxb2-plugin.version>
         <fugue.version>4.4.0</fugue.version>
         <okhttp.version>3.7.0</okhttp.version>
         <saxon.version>9.8.0-3</saxon.version>
@@ -182,7 +182,7 @@
         <junit-platform.version>1.0.2</junit-platform.version>
         <junit-vintage.version>4.12.2</junit-vintage.version>
         <!-- httpclient -->
-        <httpclient.version>4.5.3</httpclient.version>
+       <httpclient.version>4.5.13</httpclient.version> <!--  5.4-alpha1 4.5.3-->
         <!-- Sonar -->
         <sonar-maven-plugin.version>3.9.1.2184</sonar-maven-plugin.version>
         <sonar-jacoco-plugin.version>0.8.7</sonar-jacoco-plugin.version>
@@ -637,6 +637,11 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

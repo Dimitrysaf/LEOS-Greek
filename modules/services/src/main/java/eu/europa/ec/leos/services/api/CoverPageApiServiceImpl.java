@@ -71,7 +71,6 @@ import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.http.MethodNotSupportedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -248,9 +247,8 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc)
-            throws MethodNotSupportedException {
-        throw new MethodNotSupportedException("Save toc method not allowed for Memorandum type document");
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+        throw new RuntimeException("Save toc method not allowed for Memorandum type document");
     }
 
     @Override
