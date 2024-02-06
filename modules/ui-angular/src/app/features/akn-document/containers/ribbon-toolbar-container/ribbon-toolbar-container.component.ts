@@ -10,11 +10,10 @@ import {
   AfterViewInit,
   Component,
   Inject,
-  NgZone,
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { cloneDeep, debounce, throttle } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import { Observable } from 'rxjs';
 
 import { DOCUMENT_ACTIONS_SERVICE } from '@/features/akn-document/akn-document.module';
@@ -59,37 +58,47 @@ export class RibbonToolbarContainerComponent
   resizeSectionsMap: Map<string, boolean> = new Map();
   toolbarPrevWidth: number;
   showToolbarScrollButtons = false;
-  observer: ResizeObserver;
+  observer: ResizeObserver = new ResizeObserver(async () =>
+    this.handleResizeToolbar(),
+  );
+
+  private sections: NodeListOf<any> = null;
 
   constructor(
     @Inject(DOCUMENT_ACTIONS_SERVICE)
     private documentActionsService: DocumentActionsService,
     @Inject(DOCUMENT) private document: Document,
-    private ngZone: NgZone,
   ) {
     super();
+    this.actionItems$ = this.documentActionsService.actionsItems$;
   }
 
-  ngOnInit(): void {
-    this.actionItems$ = this.documentActionsService.actionsItems$;
-    this.documentActionsService.documentActionItems.forEach((section) =>
-      this.resizeSectionsMap.set(section.id, false),
-    );
-  }
+  ngOnInit(): void {}
 
   ngOnDestroy() {
+    if (this.observer) {
+      this.observer.disconnect();
+    }
     super.ngOnDestroy();
   }
 
   async ngAfterViewInit() {
     const container = document.querySelector('.ribbon-toolbar-container');
-    if (!container) return;
-    this.toolbarPrevWidth = container.clientWidth; // Initial width
-    const callback = async () => await this.handleResizeToolbar();
-
-    this.observer = new ResizeObserver(callback);
+    console.log('view container ,', container);
+    this.initializeSections();
+    this.toolbarPrevWidth = container.clientWidth; // Initial width in order to trigger the handling
     this.observer.observe(container);
-    await this.handleResizeToolbar();
+    await this.setInitialResizing();
+  }
+
+  initializeSections() {
+    const sections = document.querySelectorAll('.section-content');
+    this.resizeSectionsMap = new Map();
+    sections.forEach((sec) => {
+      this.resizeSectionsMap.set(sec.id, false);
+    });
+    this.sections = sections;
+    console.log('sections map is now:', this.resizeSectionsMap);
   }
 
   toggleToolbar() {
@@ -136,52 +145,45 @@ export class RibbonToolbarContainerComponent
     }
   }
 
+  private async setInitialResizing() {
+    const overflownElements = this.checkIfAnySectionOverflow();
+    if (overflownElements.length > 0) {
+      await this.handleCaseToolbarIsShorterNow();
+    }
+  }
+
   private async handleResizeToolbar() {
     const container = document.querySelector('.ribbon-toolbar-container');
-    const sections = document.querySelectorAll('.section-container');
     const currentWidth = container.clientWidth;
-
+    if (!this.sections || this.sections.length === 0) {
+      this.initializeSections();
+    }
     if (currentWidth > this.toolbarPrevWidth) {
       await this.handleCaseToolbarIsWiderNow();
     } else if (currentWidth < this.toolbarPrevWidth) {
       await this.handleCaseToolbarIsShorterNow();
     } else {
-      console.log('Element width remains the same.');
     }
 
-    // Update the previousWidth for the next comparison
     this.toolbarPrevWidth = currentWidth;
   }
 
   private async handleCaseToolbarIsWiderNow() {
-    const sections = document.querySelectorAll('.section-container');
-    console.log('1. Element container has more width now.');
-    let overflownElements = this.checkIfAnySectionOverflow(sections);
+    let overflownElements = this.checkIfAnySectionOverflow();
     if (this.checkOverflowItemsHaveResized(overflownElements)) {
-      console.log('1.1. toolbar got wider but still overflows');
     } else {
-      console.log(
-        '2.1. toolbar getting wider so lets resize elements that where resized : ',
-        Array.from(this.resizeSectionsMap).filter((s) => s),
-      );
-      const sectionInOrderToBeResized = this.getSectionInOrderResized();
-      console.log(
-        '2.3 item in order to be resized :',
-        sectionInOrderToBeResized,
-      );
-      if (!sectionInOrderToBeResized) {
-        console.log('2.3.1 all items have been resized back to normal ');
-        return;
-      }
-      this.resizeSectionsMap.set(sectionInOrderToBeResized.id, false);
-      await new Promise((resolve) => setTimeout(resolve, 0));
-      overflownElements = this.checkIfAnySectionOverflow(sections);
+      do {
+        const sectionInOrderToBeResized = this.getSectionInOrderResized();
+        if (!sectionInOrderToBeResized) {
+          return;
+        }
+        this.resizeSectionsMap.set(sectionInOrderToBeResized.id, false);
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        overflownElements = this.checkIfAnySectionOverflow();
+      } while (!this.checkOverflowItemsHaveResized(overflownElements));
+      overflownElements = this.checkIfAnySectionOverflow();
       if (overflownElements.length > 0) {
-        // revert change
-        console.log(
-          '2.4 despite the overflow element now overflow so resize section with id:',
-          sectionInOrderToBeResized.id,
-        );
+        const sectionInOrderToBeResized = this.getSectionInOrderResized();
         this.resizeSectionsMap.set(sectionInOrderToBeResized.id, true);
         await new Promise((resolve) => setTimeout(resolve, 0));
       }
@@ -189,11 +191,9 @@ export class RibbonToolbarContainerComponent
   }
 
   private async handleCaseToolbarIsShorterNow() {
-    const sections = document.querySelectorAll('.section-container');
-    console.log('3. Element has less width now.');
-    let overflowItems = this.checkIfAnySectionOverflow(sections);
+    const sections = document.querySelectorAll('.section-content');
+    let overflowItems = this.checkIfAnySectionOverflow();
     if (this.checkOverflowItemsHaveResized(overflowItems)) {
-      console.log('3.1.1 Some elements still overflow');
       do {
         const sectionInOrderToBeResized =
           this.getSectionInOrderToResizeNotResized();
@@ -202,30 +202,21 @@ export class RibbonToolbarContainerComponent
         );
         if (!getResizeStatusOfSection) {
           if (!sectionInOrderToBeResized) {
-            console.log(
-              '3.1.2 All elements have been resized to take less space',
-            );
             return;
           }
           this.resizeSectionsMap.set(sectionInOrderToBeResized.id, true);
           await new Promise((resolve) => setTimeout(resolve, 0));
-          console.log('3.1.3 Element resized ', sectionInOrderToBeResized.id);
-          overflowItems = this.checkIfAnySectionOverflow(sections);
+          overflowItems = this.checkIfAnySectionOverflow();
         } else {
-          console.log('element already resized');
         }
-        overflowItems = this.checkIfAnySectionOverflow(sections);
+        overflowItems = this.checkIfAnySectionOverflow();
       } while (this.checkOverflowItemsHaveResized(overflowItems));
-      console.log('3.1.4 All elements that where overflowing are now resized');
     }
     // in case al the elements have been resized and we don't have more space show button t scroll the overflown elements
     if (
       Array.from(this.resizeSectionsMap.values()).filter((value) => !value)
         .length === 0
     ) {
-      console.log(
-        '3.2.1 there no elements to resize, and still overflowing, toggling scroll button',
-      );
       this.showToolbarScrollButtons = true;
     } else {
       this.showToolbarScrollButtons = false;
@@ -252,21 +243,11 @@ export class RibbonToolbarContainerComponent
     )[0];
   }
 
-  private checkIfAnySectionOverflow(sections: NodeListOf<any>) {
-    const visibleElements = Array.from(sections).filter((section) =>
-      this.checkElementIsFullyVisible(section.id),
-    );
-
-    const notVisible = Array.from(sections).filter(
-      (section) => !this.checkElementIsFullyVisible(section.id),
-    );
-    console.log('visible elements are:', visibleElements);
-    console.log('non visible elements are:', notVisible);
+  private checkIfAnySectionOverflow() {
+    const sections = this.sections;
     const overflownElements = Array.from(sections).filter(
-      (section) => !this.checkElementIsFullyVisible(section.id),
+      (section) => !this.checkElementIsFullyVisibleInContainer(section.id),
     );
-    console.log('elements that are overflown are : ', overflownElements);
-
     return overflownElements;
   }
 
@@ -286,17 +267,21 @@ export class RibbonToolbarContainerComponent
     );
   }
 
-  private checkElementIsFullyVisible(elementId: string): boolean {
+  private checkElementIsFullyVisibleInContainer(elementId: string): boolean {
+    const container = document.getElementById('toolbar-content-id');
     const element = document.getElementById(elementId);
 
-    if (!element) console.log('not found element with id', elementId);
-    const rect = element.getBoundingClientRect();
+    if (!element) {
+      console.log('Element not found with id', elementId);
+      return false;
+    }
+
+    const containerRect = container.getBoundingClientRect();
+    const elementRect = element.getBoundingClientRect();
+
     return (
-      rect.top >= 0 &&
-      rect.left >= 0 &&
-      rect.bottom <=
-        (window.innerHeight || document.documentElement.clientHeight) &&
-      rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+      elementRect.left >= containerRect.left &&
+      elementRect.right <= containerRect.right
     );
   }
 }

@@ -81,6 +81,7 @@ export abstract class ValidateTocService {
             targetItem: response.result.targetItem,
             sourceItem: nodeDragged,
             messageKey: 'toc.edit.window.drop.success.message',
+            action: moveAction,
           };
           const resultOfValidation = this.validateAddingItemAsChildOrSibling(
             validationResult,

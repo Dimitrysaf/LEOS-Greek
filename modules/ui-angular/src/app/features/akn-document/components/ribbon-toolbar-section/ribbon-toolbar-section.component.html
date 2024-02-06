@@ -1,5 +1,7 @@
-<div class="section-container" [id]="sectionItem.id">
+<div class="section-container">
+  <!-- Normal rendering for items not resized or sections with one children in this case children = section -->
   <div
+    [id]="sectionItem.id"
     class="section-content"
     *ngIf="
       (!resizeMap.get(sectionItem.id) && sectionItem.children?.length > 0) ||
@@ -8,11 +10,13 @@
   >
     <ng-template *ngTemplateOutlet="sectionItems"></ng-template>
   </div>
+  <!-- Case where the item gets resized (sections with more than 1 children) -->
   <div
     class="section-content"
+    [id]="sectionItem.id"
     *ngIf="resizeMap.get(sectionItem.id) && sectionItem.children?.length > 1"
   >
-    <eui-dropdown class="eui-u-mr-s eui-u-mb-s">
+    <eui-dropdown class="eui-u-mb-s">
       <button euiButton euiSecondary euiIconButton euiSizeS>
         <span
           euiIcon
@@ -33,7 +37,7 @@
       </eui-dropdown-content>
     </eui-dropdown>
   </div>
-
+  <!-- Label (only shown when not resized) -->
   <div
     *ngIf="!resizeMap.get(sectionItem.id)"
     euiLabel
