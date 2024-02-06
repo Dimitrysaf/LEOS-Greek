@@ -1,10 +1,11 @@
 <div
+  id="toolbar-container-id"
   class="ribbon-toolbar-container"
-  *ngIf="(actionItems$ | async)?.length > 0"
 >
   <div
+    id="toolbar-content-id"
     class="ribbon-toolbar-content eui-u-shadow-3 m-2"
-    *ngIf="actionItems$ | async"
+    *ngIf="(actionItems$ | async)?.length > 0"
     [@toggleToolbarAnimation]="isToolbarOpen ? 'open' : 'closed'"
   >
     <ng-container *ngFor="let section of actionItems$ | async">
@@ -54,15 +55,16 @@
     euiSecondary
     class="align-self-end"
     (click)="toggleToolbar()"
+    *ngIf="(actionItems$ | async)?.length > 0"
   >
     <eui-icon-svg
-      *ngIf="isToolbarOpen"
+      *ngIf="!isToolbarOpen"
       set="sharp"
       size="xs"
       icon="chevron-down"
     ></eui-icon-svg>
     <eui-icon-svg
-      *ngIf="!isToolbarOpen"
+      *ngIf="isToolbarOpen"
       set="sharp"
       size="xs"
       icon="chevron-up"

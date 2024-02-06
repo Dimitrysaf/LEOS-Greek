@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Observable, combineLatest, take } from 'rxjs';
+import { BehaviorSubject, combineLatest, Observable, take } from 'rxjs';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { ImportService } from '@/features/akn-document/services/import.service';
@@ -240,6 +240,9 @@ export abstract class DocumentActionsService {
           type: IRibbonToolbarType.BUTTON,
           id: IMPORT_OJ_ACTION_ID,
           label: this.translateService.instant(
+            'page.editor.actions-dropdown.import-short',
+          ),
+          description: this.translateService.instant(
             'page.editor.actions-dropdown.import',
           ),
           euiSize: 's',

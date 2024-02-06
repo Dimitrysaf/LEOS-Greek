@@ -9,7 +9,7 @@ export interface NodeValidation {
   messageKey: string;
   sourceItem: TableOfContentItemVO;
   targetItem: TableOfContentItemVO;
-  action?: NodeMoveAction;
+  action: NodeMoveAction;
 }
 
 export interface NodeMoveAction {

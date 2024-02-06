@@ -276,19 +276,6 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     this.tocEditService.setTree(event.newTree);
   }
 
-  handlePlaceAt(nodeTarget: TableOfContentItemVO, position: string) {
-    const nodeTargetParent = findNodeById(
-      this.treeControl.dataNodes,
-      nodeTarget.parentItem,
-    );
-    this.validateAndMove(null, nodeTarget, nodeTargetParent, position);
-  }
-
-  handleMove(node: TableOfContentItemVO) {
-    this.selectedNodeToMove = node;
-    this.handleNodeSelect(node);
-  }
-
   isNodeSelected() {
     return this.selectedNode !== null;
   }
@@ -745,6 +732,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
         targetItem: nodeTarget,
         sourceItem: nodeDragged,
         messageKey: 'toc.edit.window.drop.success.message',
+        action: null,
       };
 
       const parentNode = findNodeById(
