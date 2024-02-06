@@ -172,10 +172,6 @@ export abstract class DocumentActionsService {
   }
 
   private buildActions(): IRibbonToolbarSection[] {
-    if (
-      this.isDocumentTypeTheSame(this.documentService.documentType, 'COVERPAGE')
-    )
-      return [];
     const commonItems = this.buildCommonItems();
     const instanceSpecificItems = this.getInstanceSpecificItem(commonItems);
     const items = [...commonItems, ...instanceSpecificItems].filter(Boolean);
