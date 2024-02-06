@@ -545,6 +545,12 @@ export class DocumentService implements OnDestroy {
     );
   }
 
+  getDocumentForUser(ref: string, user: string) {
+    return this.http.get(
+      `${apiBaseUrl}/secured/search/${user}/${ref}`,
+    );
+  }
+
   getIntermediateVersions(version: Version, pageIndex, pageSize) {
     return this.getIntermediateDocumentVersionsData(
       this.documentType,
