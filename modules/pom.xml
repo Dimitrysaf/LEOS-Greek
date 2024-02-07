@@ -28,7 +28,7 @@
     <name>Modules</name>
     <modules>
         <module>usecases</module>
-<!--        <module>repository</module>-->
+        <module>repository</module>
         <module>domain</module>
         <module>security</module>
         <module>security-preauth</module>
@@ -37,7 +37,7 @@
         <module>i18n</module>
         <module>services</module>
         <module>ui</module>
-<!--        <module>ui-angular</module>-->
+        <module>ui-angular</module>
         <module>testSupport</module>
         <module>js</module>
         <module>config</module>

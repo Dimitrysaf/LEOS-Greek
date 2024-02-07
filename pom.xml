@@ -97,7 +97,7 @@
         <maven-war-plugin.version>3.0.0</maven-war-plugin.version>
         <maven-source-plugin.version>3.0.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.0.0</maven-javadoc-plugin.version>
-        <jetty-maven-plugin.version>9.4.46.v20220331</jetty-maven-plugin.version>
+        <jetty-maven-plugin.version>9.4.53.v20231009</jetty-maven-plugin.version>
         <tomcat7-maven-plugin.version>2.2</tomcat7-maven-plugin.version>
         <jasmine-maven-plugin.version>2.2</jasmine-maven-plugin.version>
         <frontend-maven-plugin.version>1.13.4</frontend-maven-plugin.version>
@@ -129,7 +129,7 @@
         <spring-webmvc.version>5.3.31</spring-webmvc.version>
         <spring-security.version>4.2.20.RELEASE</spring-security.version>
         <spring-data.version>Codd-SR3</spring-data.version>
-        <spring-boot.version>2.6.7</spring-boot.version>
+        <spring-boot.version>2.6.15</spring-boot.version>
         <hibernate-orm.version>4.2.10.Final</hibernate-orm.version><!--UPGRADE PENDING-->
         <auth0.version>3.2.0</auth0.version>
         <jboss-logging.version>3.3.0.Final</jboss-logging.version>
@@ -150,8 +150,9 @@
         <cuid.version>0.1.1</cuid.version>
         <jsoup.version>1.14.3</jsoup.version>
         <sass-maven-plugin.version>2.22</sass-maven-plugin.version>
-        <jackson-databind.version>2.15.2</jackson-databind.version>
+        <jackson-databind.version>2.16.1</jackson-databind.version>
         <cxf-maven-plugin.version>3.1.10</cxf-maven-plugin.version>
+        <jaxb2-maven-plugin.version>2.3.1</jaxb2-maven-plugin.version>
         <jaxb.version>2.3.1</jaxb.version>
         <jaxb2-basics.version>0.11.1</jaxb2-basics.version>
         <jvnet-jaxb2-plugin.version>0.15.3</jvnet-jaxb2-plugin.version>
