@@ -160,18 +160,13 @@ export class AuthService implements OnDestroy {
       .subscribe(() => {
         const { expiresIn } = this.loadTokenData();
 
-        if (this.isExpired(expiresIn)) {
-          console.debug(
-            '[auth.service] monitorExpiryInStorage - expired token',
-          ); // DEBUG
-          this.monitorExpirySub?.unsubscribe();
-          this.showExpiredTokenPopup();
-        } else if (this.tokenExpiresSoon(expiresIn)) {
+        if (this.isTokenToRenew(expiresIn)) {
           console.debug(
             '[auth.service] monitorExpiryInStorage - renew expiring token',
-          ); // DEBUG
+          );
           this.renewAccessToken();
         }
+
       });
   }
 
@@ -269,5 +264,15 @@ export class AuthService implements OnDestroy {
   private tokenExpiresSoon(expiresIn: number) {
     const timeToExpiry = expiresIn - Date.now();
     return timeToExpiry < AuthService.RENEW_WINDOW;
+  }
+
+  /**
+   * Returns 'true' if current time + AuthService.RENEW_WINDOW is more than token's expiration time
+   * @param expiresIn
+   * @private
+   */
+  private isTokenToRenew(expiresIn: number) {
+    const now_plus_RENEW_WINDOW = Date.now() + AuthService.RENEW_WINDOW;
+    return now_plus_RENEW_WINDOW > expiresIn;
   }
 }
