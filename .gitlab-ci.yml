@@ -1,6 +1,6 @@
-include:
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Dependency-Scanning.gitlab-ci.yml
+# include:
+#   - template: Security/SAST.gitlab-ci.yml
+#   - template: Security/Dependency-Scanning.gitlab-ci.yml
 
 variables:
   CI_DEBUG_TRACE: "true"
@@ -16,6 +16,7 @@ variables:
 stages:
   - build
   - test
+  - deploy
 
 java-build:
   image: maven:3.8-openjdk-8
@@ -29,12 +30,17 @@ java-build:
       - .m2/
       - "modules/web/target/"
 
+include:
+  - project: 'digit.s.1/sa/security-scan-template'
+    file: '.gitlab-ci-security-scan.yml'
+    ref: main
+
 # SpotBugs cannot generate the war file for analysisi because it requires JAVA 8. SpotBugs only supports version 11 or 17 https://docs.gitlab.com/ee/user/application_security/sast/#analyzer-settings
 # It is necessary to precompile files in order to execute SpotBugs https://docs.gitlab.com/ee/user/application_security/sast/#pre-compilation
-spotbugs-sast:
-  dependencies:
-    - java-build
-  variables:
-    MAVEN_REPO_PATH: $CI_PROJECT_DIR/.m2/repository
-    COMPILE: "false"
-  timeout: 10h 0m
+# spotbugs-sast:
+#   dependencies:
+#     - java-build
+#   variables:
+#     MAVEN_REPO_PATH: $CI_PROJECT_DIR/.m2/repository
+#     COMPILE: "false"
+#   timeout: 10h 0m
