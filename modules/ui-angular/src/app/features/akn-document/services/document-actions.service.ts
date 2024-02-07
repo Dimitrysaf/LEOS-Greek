@@ -11,7 +11,13 @@ import { Router } from '@angular/router';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, combineLatest, Observable, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  Observable,
+  take,
+  takeUntil,
+} from 'rxjs';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { ImportService } from '@/features/akn-document/services/import.service';
@@ -56,6 +62,7 @@ export abstract class DocumentActionsService {
   isTrackChangesEnabled = true;
   seeTrackChanges = true;
   dialogAcceptBS = new BehaviorSubject<void>(null);
+  isUserGuidanceEnabled = false;
 
   protected documentConfig: DocumentConfig;
   protected isEditorOpen = false;
@@ -79,6 +86,10 @@ export abstract class DocumentActionsService {
     this.documentService.isEditorOpen$.subscribe((isOpen) => {
       this.isEditorOpen = isOpen;
     });
+
+    this.documentService.userGuidanceVisible$.subscribe(
+      (value) => (this.isUserGuidanceEnabled = value),
+    );
 
     combineLatest([
       this.documentService.documentConfig$,
@@ -351,6 +362,8 @@ export abstract class DocumentActionsService {
             'page.editor.actions-dropdown.see-user-guidance',
           ),
           isSlider: true,
+          value: this.isUserGuidanceEnabled,
+
           actionFn: () => this.toggleUserGuidance(),
         },
         {
