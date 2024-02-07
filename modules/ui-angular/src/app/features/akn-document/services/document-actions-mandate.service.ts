@@ -75,12 +75,9 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       structureSection.type !== IRibbonToolbarType.SECTION
     )
       return;
-
-    if (
-      // todo uncomment this ...
-      // this.isMandateBillOrAnnex() &&
-      this.hasPermission('CAN_UPDATE')
-    ) {
+    if (this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL'))
+      structureSection.children.pop();
+    if (this.isMandateBillOrAnnex() && this.hasPermission('CAN_RENUMBER')) {
       const renumberDocumentComponent = this.buildRenumberDocumentButtonItem();
       structureSection.children.push(renumberDocumentComponent);
     }
@@ -189,8 +186,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
 
   private isMandateBillOrAnnex(): boolean {
     return (
-      this.environmentService.isCouncil() &&
-      this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL') &&
+      this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL') ||
       this.isDocumentTypeTheSame(this.documentService.documentType, 'ANNEX')
     );
   }
