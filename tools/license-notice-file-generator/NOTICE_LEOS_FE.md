@@ -1,4 +1,4 @@
-Copyright 2023 European Commission
+Copyright 2012, 2024 European Union
 
 Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");<br/>
 You may not use this work except in compliance with the Licence.<br/>
@@ -86,7 +86,7 @@ __Ref2Link 1.2.3__
  * https://ec.europa.eu/isa2/solutions/ref2link_en
  * License: EUPL
  * Copyright:
-   * Copyright 2019 European Commission
+   * Copyright 2024 European Union
 
 __requirejs-domready 2.0.1__
  * http://github.com/requirejs/domReady
