@@ -23,7 +23,7 @@ export const DOCUMENT_STYLES = {
   'financial-statement': 'stat_financ_legis',
 };
 
-export interface Profile {
+export type Profile = {
   name: string
   breadcrumb: boolean
   tocEdition: boolean
@@ -35,7 +35,7 @@ export interface Profile {
   callbackPresent: boolean
   annotations: boolean
   importOJ: boolean
-}
+};
 
 export type LeosConfig = {
   headerTitle: string;
