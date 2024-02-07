@@ -53,6 +53,10 @@ public class XercesUtils {
     public static Document createXercesDocument(byte[] xmlContent, boolean namespaceEnabled) {
         try {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
+            builderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            builderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            builderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+            builderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             builderFactory.setNamespaceAware(namespaceEnabled);
             DocumentBuilder builder = builderFactory.newDocumentBuilder();
 

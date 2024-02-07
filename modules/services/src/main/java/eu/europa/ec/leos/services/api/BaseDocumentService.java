@@ -38,7 +38,6 @@ import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemType;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.MethodNotSupportedException;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
@@ -74,8 +73,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType);
 
-    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc)
-            throws MethodNotSupportedException;
+    List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc);
 
     List<SearchMatchVO> searchTextInDocument(String documentRef, String searchText, boolean matchCase,
                                              boolean completeWords, String tempUpdatedContentXML) throws Exception;

@@ -66,7 +66,6 @@ import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import org.apache.http.MethodNotSupportedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,8 +166,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
-        throw new MethodNotSupportedException("Delete isn't supported");
+    public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) {
+        throw new RuntimeException("Delete isn't supported");
     }
 
     @Override
@@ -217,9 +216,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc)
-            throws MethodNotSupportedException {
-        throw new MethodNotSupportedException("Save toc method not allowed for Memorandum type document");
+    public List<TableOfContentItemVO> saveToC(String documentRef, List<TableOfContentItemVO> toc) {
+        throw new RuntimeException("Save toc method not allowed for Memorandum type document");
     }
 
     @Override
