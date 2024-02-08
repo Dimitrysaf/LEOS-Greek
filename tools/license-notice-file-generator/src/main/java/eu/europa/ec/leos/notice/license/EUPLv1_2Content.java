@@ -2,7 +2,7 @@ package eu.europa.ec.leos.notice.license;
 
 public class EUPLv1_2Content {
     private static final String EUPL_TEXT =
-            "Copyright 2023 European Commission\n\n" +
+            "Copyright 2024 European Union\n\n" +
             "Licensed under the EUPL, Version 1.2 or – as soon they will be approved by the European Commission - subsequent versions of the EUPL (the \"Licence\");<br/>\n" +
             "You may not use this work except in compliance with the Licence.<br/>\n" +
             "You may obtain a copy of the Licence at:<br/>\n" +
