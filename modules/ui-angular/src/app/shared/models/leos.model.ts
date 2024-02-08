@@ -23,6 +23,21 @@ export const DOCUMENT_STYLES = {
   'financial-statement': 'stat_financ_legis',
 };
 
+export type Profile = {
+  name: string;
+  breadcrumb: boolean;
+  tocEdition: boolean;
+  internalReference: boolean;
+  authorialNote: boolean;
+  showLoggedUser: boolean;
+  trackChangesEnabled: boolean;
+  closeDocument: boolean;
+  callbackPresent: boolean;
+  annotations: boolean;
+  importOJ: boolean;
+  markAsDoneAvailable: boolean;
+};
+
 export type LeosConfig = {
   headerTitle: string;
   headerPath: string | null;
@@ -45,6 +60,7 @@ export type LeosConfig = {
   annotatePopupDefaultStatus: 'ON' | 'OFF';
   collectionCloseButtonEnabled: boolean;
   showRevisionEnabled: boolean;
+  profile?: Profile;
 };
 
 export type LeosAppConfig = LeosConfig & {
