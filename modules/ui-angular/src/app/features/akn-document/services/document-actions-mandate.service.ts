@@ -75,8 +75,6 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       structureSection.type !== IRibbonToolbarType.SECTION
     )
       return;
-    if (this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL'))
-      structureSection.children.pop();
     if (this.isMandateBillOrAnnex() && this.hasPermission('CAN_RENUMBER')) {
       const renumberDocumentComponent = this.buildRenumberDocumentButtonItem();
       structureSection.children.push(renumberDocumentComponent);
@@ -114,12 +112,15 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       type: IRibbonToolbarType.BUTTON,
       id: STRUCTURE_RENUMBER_DOCUMENT_ID,
       label: this.translateService.instant(
-        'page.editor.actions-dropdown.renumber-document',
+        'page.editor.actions-dropdown.apply-continuous-numbering',
+      ),
+      description: this.translateService.instant(
+        'page.editor.actions-dropdown.apply-continuous-numbering',
       ),
       euiSize: 's',
       euiStyle: 'secondary',
       svgType: 'sharp',
-      svgIconClas: '',
+      svgIconClas: 'arrow-down',
       actionFn: () => this.onApplyContinuousNumberingSelect(),
     };
   }

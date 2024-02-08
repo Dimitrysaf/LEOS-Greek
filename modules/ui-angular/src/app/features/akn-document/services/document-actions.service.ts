@@ -185,13 +185,14 @@ export abstract class DocumentActionsService {
   private buildActions(): IRibbonToolbarSection[] {
     const commonItems = this.buildCommonItems();
     const instanceSpecificItems = this.getInstanceSpecificItem(commonItems);
-    const items = [...commonItems, ...instanceSpecificItems].filter(Boolean);
+    const items = [...commonItems, ...instanceSpecificItems].filter(
+      (section) => section && section.children?.length > 0,
+    );
     this.onEditorDisableButtons(LIST_OF_DISABLE_BUTTONS);
     return items.sort((a, b) => a.order - b.order);
   }
 
   private buildCommonItems(): IRibbonToolbarSection[] {
-    const documentType = this.documentService.documentType;
     const saveSection = !this.isMandateMemorandum() && this.buildSaveSection();
     const searchSection = this.buildSearchSection();
     const importOJSection =
@@ -199,13 +200,7 @@ export abstract class DocumentActionsService {
       this.buildImportOJSection();
     const exportSection = this.buildExportSection();
     const displaySection = this.buildDisplaySection();
-    const structureSection =
-      (this.isDocumentTypeTheSame(documentType, 'ANNEX') ||
-        this.isDocumentTypeTheSame(
-          this.documentService.documentType,
-          'BILL',
-        )) &&
-      this.buildStructureSection();
+    const editSection = this.editSection();
     const reloadSection = this.buildReloadSection();
 
     return [
@@ -214,9 +209,9 @@ export abstract class DocumentActionsService {
       searchSection,
       exportSection,
       displaySection,
-      structureSection,
+      editSection,
       reloadSection,
-    ].filter(Boolean);
+    ];
   }
 
   private buildSaveSection(): IRibbonToolbarSection {
@@ -396,19 +391,25 @@ export abstract class DocumentActionsService {
     return displaySection;
   }
 
-  private buildStructureSection(): IRibbonToolbarSection {
-    return {
+  private editSection(): IRibbonToolbarSection {
+    const section: IRibbonToolbarSection = {
       type: IRibbonToolbarType.SECTION,
       id: STRUCTURE_SECTION_ID,
-      label: this.translateService.instant(
-        'page.editor.actions-dropdown.structure',
-      ),
+      label: this.translateService.instant('global.actions.edit'),
       order: 6,
-      svgIconClas: 'build',
-      svgType: 'outline',
+      svgIconClas: 'pencil',
+      svgType: 'sharp',
       resizeOrder: 3,
-      children: [this.buildChangeAnnexStructure()],
+      children: [],
     };
+
+    if (
+      this.isDocumentTypeTheSame(this.documentService.documentType, 'ANNEX')
+    ) {
+      section.children.push(this.buildChangeAnnexStructure());
+    }
+
+    return section;
   }
 
   private buildChangeAnnexStructure(): IRibbonToolbarButton {
@@ -416,6 +417,9 @@ export abstract class DocumentActionsService {
       type: IRibbonToolbarType.BUTTON,
       id: STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID,
       label: this.translateService.instant(
+        'page.editor.actions-dropdown.change-document-structure',
+      ),
+      description: this.translateService.instant(
         'page.editor.actions-dropdown.change-document-structure',
       ),
       euiStyle: 'secondary',
@@ -559,11 +563,8 @@ export abstract class DocumentActionsService {
   }
 
   private reloadComponent() {
-    // TODO: reload document and services without page reload
-    const currentUrl = this.router.url;
-    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
-      this.router.navigate([currentUrl]);
-    });
+    this.documentService.reloadDocument();
+    this.documentService.reloadView();
   }
 
   private handleReload() {
