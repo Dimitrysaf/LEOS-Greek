@@ -268,7 +268,7 @@ define(function leosUtilsModule(require) {
                 }
                 tcStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'], " +
                     "[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:before { color: " + userColors[0] + " !important; &:hover, span." +
-                    (isDocTcStyle ? "math" : "cke_widget_mathjax") + ":hover { background-color: " + userColors[1] + "; } " +
+                    (isDocTcStyle ? "MathJax_CHTML" : "cke_widget_mathjax") + ":hover { background-color: " + userColors[1] + "; } " +
                     "  &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):hover { background-color: white; }" +
                     " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover) { background-color: white;  }"+
                     " &:not(:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover)):not(&:hover) { background-color: white;  }" +
@@ -279,7 +279,7 @@ define(function leosUtilsModule(require) {
             tcStyle = (isDocTcStyle ? "ins, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
             tcStyle += (isDocTcStyle ? "del, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
             tcStyle += "tr[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { box-shadow: none !important; }\n";
-            tcStyle += (isDocTcStyle ? "ins mref, ins authorialnote, ins span.math " :
+            tcStyle += (isDocTcStyle ? "ins mref, ins authorialnote, ins span.MathJax_CHTML " :
                     "[" + actionAttr + "='insert'] mref, [" + actionAttr + "='insert'] span.authorialnote, [" + actionAttr + "='insert'] span.cke_widget_mathjax ") +
                 "{ box-shadow: none !important; }\n";
         }
