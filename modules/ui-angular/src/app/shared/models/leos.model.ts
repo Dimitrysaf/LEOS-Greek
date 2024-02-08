@@ -24,17 +24,18 @@ export const DOCUMENT_STYLES = {
 };
 
 export type Profile = {
-  name: string
-  breadcrumb: boolean
-  tocEdition: boolean
-  internalReference: boolean
-  authorialNote: boolean
-  showLoggedUser: boolean
-  trackChangesEnabled: boolean
-  closeDocument: boolean
-  callbackPresent: boolean
-  annotations: boolean
-  importOJ: boolean
+  name: string;
+  breadcrumb: boolean;
+  tocEdition: boolean;
+  internalReference: boolean;
+  authorialNote: boolean;
+  showLoggedUser: boolean;
+  trackChangesEnabled: boolean;
+  closeDocument: boolean;
+  callbackPresent: boolean;
+  annotations: boolean;
+  importOJ: boolean;
+  markAsDoneAvailable: boolean;
 };
 
 export type LeosConfig = {
