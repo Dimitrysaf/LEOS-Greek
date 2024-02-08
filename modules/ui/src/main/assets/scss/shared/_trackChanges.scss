@@ -55,7 +55,7 @@
   ins, [leos\:action="insert"] {
     text-decoration: underline;
     white-space: break-spaces;
-    mref, authorialnote, span.math {
+    mref, authorialnote, span.MathJax_CHTML {
       box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);
     }
     &[leos\:uid="anonymous"] {
@@ -69,7 +69,7 @@
   del, [leos\:action="delete"], [leos\:action="delete"] num {
     text-decoration: line-through;
     white-space: break-spaces;
-    mref, authorialnote, span.math {
+    mref, authorialnote, span.MathJax_CHTML {
       box-shadow: inset 0 0 0 2px rgba(255, 0, 0, 0.5);
     }
     &[leos\:uid="anonymous"] {
