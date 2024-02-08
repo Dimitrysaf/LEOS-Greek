@@ -200,7 +200,11 @@ export abstract class DocumentActionsService {
     const exportSection = this.buildExportSection();
     const displaySection = this.buildDisplaySection();
     const structureSection =
-      this.isDocumentTypeTheSame(documentType, 'ANNEX') &&
+      (this.isDocumentTypeTheSame(documentType, 'ANNEX') ||
+        this.isDocumentTypeTheSame(
+          this.documentService.documentType,
+          'BILL',
+        )) &&
       this.buildStructureSection();
     const reloadSection = this.buildReloadSection();
 
@@ -363,7 +367,6 @@ export abstract class DocumentActionsService {
           ),
           isSlider: true,
           value: this.isUserGuidanceEnabled,
-
           actionFn: () => this.toggleUserGuidance(),
         },
         {
@@ -404,20 +407,22 @@ export abstract class DocumentActionsService {
       svgIconClas: 'build',
       svgType: 'outline',
       resizeOrder: 3,
-      children: [
-        {
-          type: IRibbonToolbarType.BUTTON,
-          id: STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID,
-          label: this.translateService.instant(
-            'page.editor.actions-dropdown.change-document-structure',
-          ),
-          euiStyle: 'secondary',
-          euiSize: 's',
-          svgIconClas: 'construct',
-          svgType: 'outline',
-          actionFn: () => this.confirmAnnexStructureChange(),
-        },
-      ],
+      children: [this.buildChangeAnnexStructure()],
+    };
+  }
+
+  private buildChangeAnnexStructure(): IRibbonToolbarButton {
+    return {
+      type: IRibbonToolbarType.BUTTON,
+      id: STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID,
+      label: this.translateService.instant(
+        'page.editor.actions-dropdown.change-document-structure',
+      ),
+      euiStyle: 'secondary',
+      euiSize: 's',
+      svgIconClas: 'construct',
+      svgType: 'outline',
+      actionFn: () => this.confirmAnnexStructureChange(),
     };
   }
 
