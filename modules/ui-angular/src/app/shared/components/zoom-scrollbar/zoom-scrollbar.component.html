@@ -8,6 +8,7 @@
       [max]="maxDisplayValue"
       [value]="zoomLevel"
       (input)="onZoomChange($event)"
+      (mousedown)="clearTextSelection()"
       step="1"
     />
     <span class="eui-icon eui-icon-add" (click)="zoomIn()"></span>

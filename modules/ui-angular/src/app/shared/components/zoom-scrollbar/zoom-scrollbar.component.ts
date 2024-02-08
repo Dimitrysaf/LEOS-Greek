@@ -91,4 +91,16 @@ export class ZoomScrollbarComponent implements OnInit {
       STARTING_VALUE + (offsetFromMiddle / actualRangeHalf) * displayRangeHalf
     );
   }
+
+  clearTextSelection() {
+    if (window.getSelection) {
+      if (window.getSelection().empty) {
+        window.getSelection().empty();
+      } else if (window.getSelection().removeAllRanges) {
+        window.getSelection().removeAllRanges();
+      }
+    } else if ((document as any).selection) {
+      (document as any).selection.empty();
+    }
+  }
 }

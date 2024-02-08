@@ -10,6 +10,13 @@
   width: 100%;
 }
 
+.zoom-value {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .zoom-range::-webkit-slider-runnable-track {
   background: black;
   cursor: pointer;
@@ -62,17 +69,7 @@
   top: 50%;
   transform: translate(-50%, -50%);
   width: 2px;
-}
-
-.zoom-controls::after {
-  background-color: black;
-  content: '';
-  height: 10px;
-  left: 50%;
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 2px;
+  pointer-events: none;
 }
 
 .eui-icon-minus {
