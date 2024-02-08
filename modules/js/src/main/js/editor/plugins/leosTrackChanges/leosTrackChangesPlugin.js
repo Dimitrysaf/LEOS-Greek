@@ -769,7 +769,7 @@ define(function leosTrackChangesPluginModule(require) {
                     }, 2500);
                 }
                 if (isTrackChangesEnabled) {
-                    var rootElement = editor.editable().$.firstChild;
+                    var rootElement = editor.editable().$;
                     if (rootElement && !rootElement.mutationObserver) {
                         rootElement.mutationObserver = new MutationObserver(processMutations);
                         rootElement.mutationObserver.observe(rootElement, { childList: true, subtree: true,
