@@ -112,4 +112,15 @@
         </entry>
     </tocRules>
 
+    <referenceConfig>
+        <refConfig language="en">
+            <internalRef>true</internalRef>
+            <authorialNote>true</authorialNote>
+        </refConfig>
+        <refConfig language="default">
+            <internalRef>false</internalRef>
+            <authorialNote>false</authorialNote>
+        </refConfig>
+    </referenceConfig>
+
 </structure>
