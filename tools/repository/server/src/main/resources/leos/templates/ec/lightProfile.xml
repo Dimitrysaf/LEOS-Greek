@@ -15,10 +15,11 @@
             <authorialNote>true</authorialNote>
             <showLoggedUser>false</showLoggedUser>
             <trackChangesEnabled>false</trackChangesEnabled>
-            <closeDocument>true</closeDocument>
+            <closeDocument>false</closeDocument>
             <callbackPresent>true</callbackPresent>
             <annotations>true</annotations>
             <importOJ>true</importOJ>
+            <markAsDoneAvailable>false</markAsDoneAvailable>
         </profile>
 
         <profile>
@@ -33,6 +34,7 @@
             <callbackPresent>true</callbackPresent>
             <annotations>true</annotations>
             <importOJ>false</importOJ>
+            <markAsDoneAvailable>true</markAsDoneAvailable>
         </profile>
 
     </profileList>

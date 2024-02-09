@@ -19,6 +19,7 @@
             <callbackPresent>true</callbackPresent>
             <annotations>true</annotations>
             <importOJ>true</importOJ>
+            <markAsDoneAvailable>false</markAsDoneAvailable>
         </profile>
 
         <profile>
@@ -33,6 +34,7 @@
             <callbackPresent>true</callbackPresent>
             <annotations>true</annotations>
             <importOJ>false</importOJ>
+            <markAsDoneAvailable>false</markAsDoneAvailable>
         </profile>
 
     </profileList>

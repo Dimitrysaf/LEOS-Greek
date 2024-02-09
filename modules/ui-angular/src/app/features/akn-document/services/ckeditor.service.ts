@@ -12,6 +12,7 @@ import { ActionManagerConnector } from '@/features/akn-document/services/action-
 import { ChangeDetailsConnector } from '@/features/akn-document/services/change-details-connector';
 import { LeosEditorConnector } from '@/features/akn-document/services/leos-editor-connector';
 import { MathJaxConnector } from '@/features/akn-document/services/math-jax-connector';
+import { MergeActionsService } from "@/features/akn-document/services/merge-actions.service";
 import { RefToLinkConnector } from '@/features/akn-document/services/ref-to-link-connector';
 import { SoftActionsConnector } from '@/features/akn-document/services/soft-actions-connector';
 import { TrackChangesConnector } from '@/features/akn-document/services/track-changes-connector';
@@ -32,7 +33,6 @@ import { CheckBoxesConnector } from './check-boxes-connector';
 import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './table-of-content.service';
-import {MergeActionsService} from "@/features/akn-document/services/merge-actions.service";
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -533,8 +533,9 @@ export class CKEditorService implements OnDestroy {
     );
     delete config['spellCheckerEnabled'];
 
-    config['isTrackChangesShowed'] = oldConfig.trackChangesShowed;
-    config['isTrackChangesEnabled'] = oldConfig.trackChangesEnabled;
+    const profileTCEnabled = !oldConfig.profile || oldConfig.profile.trackChangesEnabled;
+    config['isTrackChangesShowed'] = profileTCEnabled && oldConfig.trackChangesShowed;
+    config['isTrackChangesEnabled'] = profileTCEnabled && oldConfig.trackChangesEnabled;
     config['permissions'] = oldConfig.userAppPermissions;
 
     if (!oldConfig.spellCheckerServiceUrl) {

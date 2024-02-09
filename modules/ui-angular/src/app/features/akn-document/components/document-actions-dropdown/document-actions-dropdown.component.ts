@@ -14,10 +14,11 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { combineLatest, Subject, takeUntil } from 'rxjs';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { ImportFromJournalDialogComponent } from '@/features/akn-document/components/import-from-journal-dialog/import-from-journal-dialog.component';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
-import { DocumentConfig, Permission } from '@/shared';
+import { DocumentConfig, LeosAppConfig, Permission } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
@@ -60,6 +61,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     public ckEditorService: CKEditorService,
     public dialogService: EuiDialogService,
     public translateService: TranslateService,
+    public app: AppConfigService,
   ) {}
 
   ngOnDestroy(): void {
@@ -68,10 +70,10 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    combineLatest([this.doc.documentConfig$, this.doc.permissions$])
+    combineLatest([this.app.config, this.doc.documentConfig$, this.doc.permissions$])
       .pipe(takeUntil(this.destroy$))
-      .subscribe(([config, perms]) => {
-        this.setMenuState(config, perms);
+      .subscribe(([appConfig, config, perms]) => {
+        this.setMenuState(appConfig, config, perms);
       });
   }
 
@@ -121,10 +123,10 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     });
   }
 
-  setMenuState(config: DocumentConfig, permissions: Permission[]) {
+  setMenuState(appConfig: LeosAppConfig, config: DocumentConfig, permissions: Permission[]) {
     this.documentConfig = config;
     const isClonedProposal = this.documentConfig?.clonedProposal;
-    const isTCEnabled = this.documentConfig?.trackChangesEnabled;
+    const isTCEnabled = (!appConfig.profile || appConfig.profile.trackChangesEnabled) && this.documentConfig?.trackChangesEnabled;
 
     const isCN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
     const isAnnex = this.doc.documentType === 'annex';
@@ -168,10 +170,10 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   onMenuIconClick() {
-    combineLatest([this.doc.documentConfig$, this.doc.permissions$])
+    combineLatest([this.app.config, this.doc.documentConfig$, this.doc.permissions$])
       .pipe(takeUntil(this.destroy$))
-      .subscribe(([config, perms]) => {
-        this.setMenuState(config, perms);
+      .subscribe(([appConfig, config, perms]) => {
+        this.setMenuState(appConfig, config, perms);
       });
   }
   setTrackChangesEnabled() {}

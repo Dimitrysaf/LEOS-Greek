@@ -25,6 +25,7 @@
   "global.actions.show": "Montrer",
   "global.actions.hide": "Cacher",
   "global.actions.undo": "Annuler",
+  "global.actions.mark.done": "Marquer comme fait",
   "global.language.en": "Anglais",
   "global.language.fr": "Français",
   "global.notifications.title.error": "Erreur",

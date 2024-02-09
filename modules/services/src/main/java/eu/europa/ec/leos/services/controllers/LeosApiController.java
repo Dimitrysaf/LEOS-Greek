@@ -59,7 +59,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -586,7 +585,7 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/config", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getConfig(@RequestHeader(value = "System-Name", required = false) String systemName) {
+    public ResponseEntity<Object> getConfig(@RequestParam(value = "systemName", required = false) String systemName) {
         try {
             AppConfigResponse appConfigResponse = configService.getApplicationConfig(systemName);
             return new ResponseEntity<>(appConfigResponse, HttpStatus.OK);

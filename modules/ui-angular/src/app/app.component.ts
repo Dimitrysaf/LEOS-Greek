@@ -15,6 +15,7 @@ import { Observable, Subscription } from 'rxjs';
 import { AppConfigService } from '@/core/services/app-config.service';
 import { AppLocalStorageService } from '@/core/services/app-local-storage.service';
 
+import { Profile } from './shared/models/leos.model';
 import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
 
 @Component({
@@ -40,6 +41,7 @@ export class AppComponent implements OnInit, OnDestroy {
   subs: Subscription[] = [];
   i18nState: Observable<I18nState>;
   userPreferencesState: Observable<UserPreferences>;
+  profile: Profile;
 
   constructor(
     private store: Store<any>,
@@ -64,7 +66,10 @@ export class AppComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UpdateUserPreferencesAction({ lang }));
     this.subs.push(
       this.config.config.subscribe(
-        (config) => (this.headerTitleHtml = config.headerTitle),
+        (config) => {
+          this.headerTitleHtml = config.headerTitle;
+          this.profile = config.profile;
+        },
       ),
     );
 
@@ -74,6 +79,10 @@ export class AppComponent implements OnInit, OnDestroy {
         this.storage.set('lang', state.activeLang);
       }),
     );
+  }
+
+  get showLoggedUser() {
+    return !this.profile || this.profile.showLoggedUser;
   }
 
   ngOnDestroy() {
