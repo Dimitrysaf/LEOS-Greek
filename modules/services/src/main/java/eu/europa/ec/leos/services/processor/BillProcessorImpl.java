@@ -96,7 +96,7 @@ public class BillProcessorImpl implements BillProcessor {
                 updatedContent = numberService.renumberRecitals(updatedContent);
                 break;
             case ARTICLE:
-                template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, ARTICLE), StructureConfigUtils.HASH_NUM_VALUE, "Article heading...", messageHelper);
+                template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, ARTICLE), StructureConfigUtils.HASH_NUM_VALUE, messageHelper.getMessage("toc.item.type.article.heading"), messageHelper);
                 String updatedTemplate = insertListIdAttr(template, items);
                 updatedContent = insertNewElement(document, elementId, before, tagName, updatedTemplate);
                 updatedContent = numberService.renumberArticles(updatedContent);
