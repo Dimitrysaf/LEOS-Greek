@@ -334,8 +334,12 @@ public class XmlHelper {
     }
 
     public static String getTemplate(TocItem tocItem, String num, String heading, MessageHelper messageHelper) {
-        return getTemplate(tocItem, ImmutableMap.of(NUM, Collections.singletonMap(NUM_PLACEHOLDER_ESCAPED, StringUtils.isNotEmpty(num) && tocItem.isNumWithType() ? StringUtils.capitalize(tocItem.getAknTag().value()) + " " + num : num),
-                HEADING, Collections.singletonMap(HEADING_PLACEHOLDER_ESCAPED, heading), CONTENT, Collections.singletonMap(CONTENT_TEXT_PLACEHOLDER_ESCAPED, getDefaultContentText(tocItem.getAknTag().value(), messageHelper))));
+        return getTemplate(tocItem, ImmutableMap.of(NUM, Collections.singletonMap(NUM_PLACEHOLDER_ESCAPED, StringUtils.isNotEmpty(num)
+                        && tocItem.isNumWithType()
+                        ? StringUtils.capitalize(messageHelper.getMessage("toc.item.type." + tocItem.getAknTag().value() + ".number"))
+                        + " " + num : num),
+                HEADING, Collections.singletonMap(HEADING_PLACEHOLDER_ESCAPED, heading), CONTENT,
+                Collections.singletonMap(CONTENT_TEXT_PLACEHOLDER_ESCAPED, getDefaultContentText(tocItem.getAknTag().value(), messageHelper))));
     }
 
     public static String getTemplateForFinancialStatement(TocItem tocItem, MessageHelper messageHelper) {
