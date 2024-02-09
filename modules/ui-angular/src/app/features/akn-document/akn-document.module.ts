@@ -16,14 +16,15 @@ import { RevisionPaneComponent } from '@/features/akn-document/containers/revisi
 import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
 import { DocumentActionsMandateService } from '@/features/akn-document/services/document-actions-mandate.service';
 import { DocumentActionsProposalService } from '@/features/akn-document/services/document-actions-proposal.service';
+import { MergeActionsService } from '@/features/akn-document/services/merge-actions.service';
 import { TocInlineEditMenuMandateService } from '@/features/akn-document/services/toc-inline-edit-menu.mandate.service';
 import { TocInlineEditMenuProposalService } from '@/features/akn-document/services/toc-inline-edit-menu.proposal.service';
 import { TocInlineEditMenuService } from '@/features/akn-document/services/toc-inline-edit-menu.service';
 import { TrackChangesActionsService } from '@/features/akn-document/services/track-changes-actions.service';
 import { ValidateTocMandateService } from '@/features/akn-document/services/validate-node-drop.mandate.service';
 import { LeosLegacyModule } from '@/features/leos-legacy/leos-legacy.module';
+import { MergeActionsComponent } from '@/shared/components/merge-actions/merge-actions.component';
 import { CN } from '@/shared/constants';
-import { DocumentService } from '@/shared/services/document.service';
 import { SharedModule } from '@/shared/shared.module';
 
 import { AknRouteReUseStrategy } from './akn-route-strategy';
@@ -37,6 +38,7 @@ import { NodeTocActionsComponent } from './components/node-toc-actions/node-toc-
 import { RibbonToolbarBaseComponent } from './components/ribbon-toolbar-base/ribbon-toolbar-base.component';
 import { RibbonToolbarButtonComponent } from './components/ribbon-toolbar-button/ribbon-toolbar-button.component';
 import { RibbonToolbarCheckboxComponent } from './components/ribbon-toolbar-checkbox/ribbon-toolbar-checkbox.component';
+import { RibbonToolbarLabelComponent } from './components/ribbon-toolbar-label/ribbon-toolbar-label.component';
 import { RibbonToolbarSectionComponent } from './components/ribbon-toolbar-section/ribbon-toolbar-section.component';
 import { SaveVersionComponent } from './components/save-version/save-version.component';
 import { SaveVersionDialogComponent } from './components/save-version-dialog/save-version-dialog.component';
@@ -52,14 +54,11 @@ import { RibbonToolbarContainerComponent } from './containers/ribbon-toolbar-con
 import { VersionsPaneComponent } from './containers/versions-pane/versions-pane.component';
 import { BlockDocumentEditorService } from './services/block-document-editor.service';
 import { CKEditorService } from './services/ckeditor.service';
-import { SyncDocumentScrollService } from './services/sync-document-scroll.service';
 import { TableOfContentMandateEditService } from './services/table-of-content-edit.mandate.service';
 import { TableOfContentProposalEditService } from './services/table-of-content-edit.proposal.service';
 import { TableOfContentEditService } from './services/table-of-content-edit.service';
 import { ValidateTocProposalService } from './services/validate-node-drop.proposal.service';
 import { ValidateTocService } from './services/validate-node-drop.service';
-import {MergeActionsService} from "@/features/akn-document/services/merge-actions.service";
-import {MergeActionsComponent} from "@/shared/components/merge-actions/merge-actions.component";
 
 export const DOCUMENT_ACTIONS_SERVICE =
   new InjectionToken<DocumentActionsService>('DocumentActionsService');
@@ -98,6 +97,7 @@ export const DOCUMENT_ACTIONS_SERVICE =
     DocumentActionsDropdownComponent,
     ImportFromJournalComponent,
     DownloadEconsiliumComponent,
+    RibbonToolbarLabelComponent,
   ],
   imports: [
     CommonModule,
@@ -110,7 +110,6 @@ export const DOCUMENT_ACTIONS_SERVICE =
     MatTooltipModule,
   ],
   providers: [
-    SyncDocumentScrollService,
     { provide: RouteReuseStrategy, useClass: AknRouteReUseStrategy },
     {
       provide: ValidateTocService,

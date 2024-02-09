@@ -10,15 +10,20 @@ import {
   AfterViewInit,
   Component,
   Inject,
+  Input,
   OnDestroy,
   OnInit,
 } from '@angular/core';
 import { cloneDeep } from 'lodash-es';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { DOCUMENT_ACTIONS_SERVICE } from '@/features/akn-document/akn-document.module';
-import { IRibbonToolbarSection } from '@/features/akn-document/models/document-actions.model';
+import {
+  IRibbonToolbarItem,
+  IRibbonToolbarSection,
+} from '@/features/akn-document/models/document-actions.model';
 import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
+import { DocumentService } from '@/shared/services/document.service';
 
 import { RibbonToolbarBaseComponent } from '../../components/ribbon-toolbar-base/ribbon-toolbar-base.component';
 
@@ -50,7 +55,6 @@ import { RibbonToolbarBaseComponent } from '../../components/ribbon-toolbar-base
   ],
 })
 export class RibbonToolbarContainerComponent
-  extends RibbonToolbarBaseComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
   actionItems$: Observable<IRibbonToolbarSection[]>;
@@ -63,13 +67,14 @@ export class RibbonToolbarContainerComponent
   );
 
   private sections: NodeListOf<any> = null;
+  private destroy$ = new Subject<void>();
 
   constructor(
     @Inject(DOCUMENT_ACTIONS_SERVICE)
     private documentActionsService: DocumentActionsService,
+    private documentService: DocumentService,
     @Inject(DOCUMENT) private document: Document,
   ) {
-    super();
     this.actionItems$ = this.documentActionsService.actionsItems$;
   }
 
@@ -79,7 +84,8 @@ export class RibbonToolbarContainerComponent
     if (this.observer) {
       this.observer.disconnect();
     }
-    super.ngOnDestroy();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   async ngAfterViewInit() {

@@ -1,26 +1,28 @@
 <button
-  [id]="buttonItem.id"
-  euiButton
-  euiResponsive
-  [euiDisabled]="buttonItem.disabled"
-  [euiVariant]="buttonItem.euiStyle"
-  [euiSizeVariant]="buttonItem.euiSize"
-  (click)="buttonItem.actionFn()"
-  [euiTooltip]="buttonItem.description"
-  class="eui-u-mr-s eui-u-mb-s"
+        [id]="item.id"
+        euiButton
+        euiResponsive
+        [euiIconButton]="!itemLabelValue || itemLabelValue.length === 0"
+        [euiDisabled]="isItemDisabled"
+        [euiBasicButton]="item.basicButton"
+        [euiVariant]="item.euiStyle"
+        [euiSizeVariant]="item.euiSize"
+        (click)="item.actionFn()"
+        [euiTooltip]="item.description"
+        class="eui-u-mr-s eui-u-mb-s"
 >
   <span
-    euiIcon
-    *ngIf="buttonItem.iconClass"
-    [iconClass]="'eui-icon ' + buttonItem.iconClass"
+          euiIcon
+          *ngIf="item.iconClass"
+          [iconClass]="'eui-icon ' + item.iconClass"
   ></span>
-  <eui-icon-svg
-    *ngIf="buttonItem.svgIconClas"
-    [set]="buttonItem.svgType"
-    [icon]="buttonItem.svgIconClas"
-    class="eui-u-mr-xs"
-  ></eui-icon-svg>
-  <div euiLabel euiSizeS *ngIf="!isOverflow">
-    {{ buttonItem?.label | translate }}
-  </div>
+    <eui-icon-svg
+            *ngIf="item.svgIconClas"
+            [set]="item.svgType"
+            [icon]="item.svgIconClas"
+            class="eui-u-mr-xs"
+    ></eui-icon-svg>
+    <div euiLabel euiSizeS *ngIf="!isOverflow && item.label">
+        {{ itemLabelValue | translate }}
+    </div>
 </button>

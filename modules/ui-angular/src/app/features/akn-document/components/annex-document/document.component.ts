@@ -86,27 +86,27 @@ export class DocumentComponent
   }
 
   ngOnInit(): void {
-    this.documentService.documentView$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((documentView) => {
-        if (!this.contributionView) {
-          this.loadDocument(documentView.editableXml);
-        }
-      });
-
-    this.documentService.refreshView$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((documentView) => {
-        if (documentView && !this.contributionView) {
-          this.loadDocument(documentView.editableXml);
-        }
-      });
-
-    this.documentService.reloadTrigger$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((trigger) => trigger !== 0 && this.loadDocument(this.xml));
-
     if (!this.readonly) {
+      this.documentService.documentView$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((documentView) => {
+          if (!this.contributionView) {
+            this.loadDocument(documentView.editableXml);
+          }
+        });
+
+      this.documentService.refreshView$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((documentView) => {
+          if (documentView && !this.contributionView) {
+            this.loadDocument(documentView.editableXml);
+          }
+        });
+
+      this.documentService.reloadTrigger$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((trigger) => trigger !== 0 && this.loadDocument(this.xml));
+
       this.documentService.updateElementContent$
         .pipe(takeUntil(this.destroy$))
         .subscribe((data) => {
@@ -252,16 +252,17 @@ export class DocumentComponent
         .querySelectorAll('meta, coverPage')
         .forEach((el) => el.remove());
 
-      akomantosoEl
-          .querySelectorAll('docPurpose')
-          .forEach((el) => {
-            let docInnerHTML = el.textContent;
-            if(docInnerHTML){
-              docInnerHTML = docInnerHTML.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
-              docInnerHTML = docInnerHTML.replace(/<\/?ins[^>]*?>/gi, '');
-              el.innerHTML = docInnerHTML;
-            }
-          });
+      akomantosoEl.querySelectorAll('docPurpose').forEach((el) => {
+        let docInnerHTML = el.textContent;
+        if (docInnerHTML) {
+          docInnerHTML = docInnerHTML.replace(
+            /<del[^>]*?>[\s\S]*?<\/del>/gi,
+            '',
+          );
+          docInnerHTML = docInnerHTML.replace(/<\/?ins[^>]*?>/gi, '');
+          el.innerHTML = docInnerHTML;
+        }
+      });
     }
 
     if (akomantosoId) {

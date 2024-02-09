@@ -17,7 +17,13 @@ import {
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
 import { ImportService } from '@/features/akn-document/services/import.service';
+import { PageModeService } from '@/features/akn-document/services/page-mode.service';
+import { SyncDocumentScrollService } from '@/features/akn-document/services/sync-document-scroll.service';
+import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
 import {
+  COMPARE_EXPORT_DROPDOWN_EXPORT_DOCUWRITE,
+  COMPARE_EXPORT_DROPDOWN_ID,
+  COMPARE_SECTION_ID,
   EXPORT_DROPDOWN_EXPORT_CLEAN_VERSION_ID,
   EXPORT_DROPDOWN_EXPORT_TO_ECONSILIUM,
   EXPORT_SECTION_DROPDOWN_ID,
@@ -31,6 +37,8 @@ import {
 } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 
+import { ViewVersionService } from './view-version.service';
+
 @Injectable()
 export class DocumentActionsMandateService extends DocumentActionsService {
   constructor(
@@ -43,6 +51,10 @@ export class DocumentActionsMandateService extends DocumentActionsService {
     protected dialogService: EuiDialogService,
     protected environmentService: EnvironmentService,
     protected importService: ImportService,
+    protected versionCompareService: VersionCompareService,
+    protected viewVersionService: ViewVersionService,
+    protected syncScrollService: SyncDocumentScrollService,
+    protected pageModeService: PageModeService,
     protected appConfigService: AppConfigService,
   ) {
     super(
@@ -55,6 +67,10 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       environmentService,
       formBuilder,
       importService,
+      versionCompareService,
+      viewVersionService,
+      syncScrollService,
+      pageModeService,
       appConfigService,
     );
   }
@@ -62,9 +78,46 @@ export class DocumentActionsMandateService extends DocumentActionsService {
   getInstanceSpecificItem(
     commonItems: IRibbonToolbarItem[] = [],
   ): IRibbonToolbarSection[] {
+    this.addCompareMandateItems(commonItems);
     this.addExportSectionMandateItems(commonItems);
     this.addStructureSectionMandateItems(commonItems);
     return [];
+  }
+
+  private addCompareMandateItems(commonItems: IRibbonToolbarItem[]) {
+    const exportDropdownSection = this.findItemById(
+      COMPARE_SECTION_ID,
+      commonItems,
+    );
+    if (
+      !exportDropdownSection ||
+      exportDropdownSection.type !== IRibbonToolbarType.SECTION
+    )
+      return;
+    const exportDropdowns = this.findItemById(
+      COMPARE_EXPORT_DROPDOWN_ID,
+      exportDropdownSection.children,
+    );
+
+    if (
+      !exportDropdowns ||
+      exportDropdowns.type !== IRibbonToolbarType.DROPDOWN
+    )
+      return;
+    exportDropdowns.items.shift();
+
+    if (this.hasPermission('CAN_WORK_WITH_EXPORT_PACKAGE')) {
+      const docuWriteExportItem = this.buildExportToDocuwriteButtonItem();
+      exportDropdowns.items.unshift(docuWriteExportItem);
+    }
+
+    if (
+      !this.isMandateMemorandum() &&
+      this.hasPermission('CAN_WORK_WITH_EXPORT_PACKAGE')
+    ) {
+      const econsiliumExportItem = this.buildExportToEConsiliumButtonItem();
+      exportDropdowns.items.unshift(econsiliumExportItem);
+    }
   }
 
   private addStructureSectionMandateItems(commonItems: IRibbonToolbarItem[]) {
@@ -105,7 +158,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       !this.isMandateMemorandum() &&
       this.hasPermission('CAN_WORK_WITH_EXPORT_PACKAGE')
     ) {
-      const econsiliumExportItem = this.buildExportToEConsilium();
+      const econsiliumExportItem = this.buildExportToEConsiliumButtonItem();
       exportDropdown.items.push(econsiliumExportItem);
     }
   }
@@ -140,7 +193,17 @@ export class DocumentActionsMandateService extends DocumentActionsService {
     };
   }
 
-  private buildExportToEConsilium(): EuiDropdownButtonMenuItem {
+  private buildExportToDocuwriteButtonItem(): EuiDropdownButtonMenuItem {
+    return {
+      id: COMPARE_EXPORT_DROPDOWN_EXPORT_DOCUWRITE,
+      label: this.translateService.instant(
+        'page.editor.versions.compare.actions.download-docuwrite',
+      ),
+      command: () => this.versionCompareService.downloadVersionOfFile(),
+    };
+  }
+
+  private buildExportToEConsiliumButtonItem(): EuiDropdownButtonMenuItem {
     let exportOptions: DownloadEConsiliumOptions = null;
     return {
       id: EXPORT_DROPDOWN_EXPORT_TO_ECONSILIUM,

@@ -1,8 +1,10 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
+import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 
 import { RibbonToolbarBaseComponent } from '@/features/akn-document/components/ribbon-toolbar-base/ribbon-toolbar-base.component';
 
 import {
+  IRibbonToolbarItem,
   IRibbonToolbarSection,
   IRibbonToolbarType,
 } from '../../models/document-actions.model';
@@ -13,12 +15,13 @@ import {
   styleUrls: ['./ribbon-toolbar-section.component.scss'],
 })
 export class RibbonToolbarSectionComponent
-  extends RibbonToolbarBaseComponent
+  extends RibbonToolbarBaseComponent<IRibbonToolbarSection>
   implements OnInit, AfterViewInit
 {
-  @Input() sectionItem: IRibbonToolbarSection;
   @Input() resizeMap: Map<string, boolean>;
   isSectionOverflow = false;
+
+  didDropdownRenderedAsRibbonItems = false;
 
   constructor() {
     super();
@@ -26,7 +29,25 @@ export class RibbonToolbarSectionComponent
 
   ngAfterViewInit(): void {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    super.ngOnInit();
+  }
+
+  mapEuiDropdownMenuItemToRibbonToolbarItems(
+    items: EuiDropdownButtonMenuItem[],
+  ): IRibbonToolbarItem[] {
+    this.didDropdownRenderedAsRibbonItems = true;
+    return items.map(
+      (euiItem) =>
+        ({
+          type: IRibbonToolbarType.BUTTON,
+          id: euiItem.id,
+          label: euiItem.label,
+          actionFn: () => euiItem.command(),
+          euiSize: 's',
+        } as IRibbonToolbarItem),
+    );
+  }
 
   protected readonly IRibbonToolbarType = IRibbonToolbarType;
 

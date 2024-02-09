@@ -176,29 +176,43 @@ export abstract class TocInlineEditMenuService {
     const oldValue = selectedNode.tocItemType;
     // Get the maxDepth for list
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(selectedNode.node.toString(), 'application/xml');
+    const xmlDoc = parser.parseFromString(
+      selectedNode.node.toString(),
+      'application/xml',
+    );
     const currentMaxDepth = this.getMaxDepth(xmlDoc);
-    const pointConfig = this.documentConfig.numberingConfig.find((obj) => {
-      return (newType.toUpperCase() === 'REGULAR' ? 'POINT_NUM' : newType.toUpperCase() === 'DEFINITION' ? 'POINT_NUM_DEF' : '') === obj.type;
-    });
+    const pointConfig = this.documentConfig.numberingConfig.find(
+      (obj) =>
+        (newType.toUpperCase() === 'REGULAR'
+          ? 'POINT_NUM'
+          : newType.toUpperCase() === 'DEFINITION'
+          ? 'POINT_NUM_DEF'
+          : '') === obj.type,
+    );
     const allowedDepth = pointConfig.levels.levels.length;
 
     if (currentMaxDepth > allowedDepth) {
       return this.dialogService.openDialog({
-        title: this.translateService.instant('page.editor.article.convert.depth.warning.title', {
-          newType,
-          currentMaxDepth,
-          allowedDepth
-        }),
+        title: this.translateService.instant(
+          'page.editor.article.convert.depth.warning.title',
+          {
+            newType,
+            currentMaxDepth,
+            allowedDepth,
+          },
+        ),
         typeClass: 'warning',
         hasDismissButton: false,
-        content: this.translateService.instant('page.editor.article.convert.depth.warning.content', {
-          newType,
-          currentMaxDepth,
-          allowedDepth
-        }),
-        accept: () => { return; },
-        acceptLabel: this.translateService.instant('global.actions.close')
+        content: this.translateService.instant(
+          'page.editor.article.convert.depth.warning.content',
+          {
+            newType,
+            currentMaxDepth,
+            allowedDepth,
+          },
+        ),
+        accept: () => null,
+        acceptLabel: this.translateService.instant('global.actions.close'),
       });
     }
     //save snapshot of old tree
@@ -487,9 +501,10 @@ export abstract class TocInlineEditMenuService {
 
   private isDeletedOrMoved(selectedNode: TableOfContentItemVO) {
     if (this.isMovedNode(selectedNode) || isDeletedItem(selectedNode)) {
-      this.itemsBS.next(
-        this.itemsBS.value.filter((item) => item.id !== MOVE_ACTION_ID),
+      const value = this.itemsBS.value.filter(
+        (item) => item.id !== MOVE_ACTION_ID,
       );
+      this.itemsBS.next(value);
     }
   }
 

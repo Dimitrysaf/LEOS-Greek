@@ -6,14 +6,21 @@
   padding-right: var(--eui-base-spacing-xs);
   position: relative; /* Ensure relative positioning for the pseudo-element */
   width: 100%;
+  border-radius: var(--eui-base-border-radius);
+
+  .section-close-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
 
   &::after {
     background-color: var(--eui-base-color-primary-140);
-    bottom: 10%; /* Adjust the bottom margin/padding/distance */
+    bottom: 8%; /* Adjust the bottom margin/padding/distance */
     content: '';
     position: absolute;
     right: 0;
-    top: 10%; /* Adjust the top margin/padding/distance */
+    top: 8%; /* Adjust the top margin/padding/distance */
     width: 0.5px;
   }
 
@@ -25,4 +32,37 @@
     flex-grow: 1;
     justify-content: center;
   }
+}
+
+.max-width-400 {
+  width: 380px;
+}
+
+@mixin overlay-style($bg-color, $border-color) {
+  margin: var(--eui-base-spacing-2xs);
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 3px 4px 0 rgba(0, 0, 0, .14), 0 1px 8px 0 rgba(0, 0, 0, .12);
+  background-color: $bg-color;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 2px; // Adjust the width of the border
+    height: 100%;
+    background-color: $border-color;
+  }
+}
+
+.overlay-versions-compare {
+  @include overlay-style(rgba(172, 194, 230, 0.2), rgb(82, 120, 168)); // Light green color with adjusted opacity
+}
+
+.overlay-view-version {
+  @include overlay-style(rgba(172, 194, 230, 0.2), rgb(82, 120, 168)); // Light green color with adjusted opacity
+  max-width: 250px;
+}
+
+.overlay-merge-contribution {
+  @include overlay-style(rgba(132, 117, 117, 0.2), rgb(132, 117, 117)); // Very faint red color with adjusted opacity
 }

@@ -269,6 +269,7 @@
   "page.editor.actions-dropdown.hide-user-guidance": "Hide user guidance",
   "page.editor.actions-dropdown.display": "Display",
   "page.editor.actions-dropdown.see-navigation": "See navigation panel",
+  "page.editor.toolbar-actions.section.track-changes.label": "Track-changes",
   "page.editor.actions-dropdown.enable-track-changes": "Enable track changes",
   "page.editor.actions-dropdown.see-track-changes": "See track changes",
   "page.editor.actions-dropdown.renumber-document": "Renumber Document",

@@ -339,7 +339,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     const updatedTitle = response.updatedTitle;
     if (updatedTitle) {
       this.documentService.updateTitle(updatedTitle);
-      console.log(`Title updated to: ${updatedTitle}`);
     }
   }
 

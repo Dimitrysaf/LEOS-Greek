@@ -1,73 +1,73 @@
 <div
-  id="toolbar-container-id"
-  class="ribbon-toolbar-container"
+        id="toolbar-container-id"
+        class="ribbon-toolbar-container"
 >
-  <div
-    id="toolbar-content-id"
-    class="ribbon-toolbar-content eui-u-shadow-3 m-2"
-    *ngIf="(actionItems$ | async)?.length > 0"
-    [@toggleToolbarAnimation]="isToolbarOpen ? 'open' : 'closed'"
-  >
-    <ng-container *ngFor="let section of actionItems$ | async">
-      <button
-        euiButton
-        euiCompact
-        euiIconButton
-        euiOutline
-        euiSecondary
-        euiSizeS
-        class="scroll-button-left eui-u-p-none eui-u-m-none eui-u-z-index-max"
-        *ngIf="showScrollContentButton('left')"
-        (click)="scrollContent('left')"
-      >
-        <eui-icon-svg set="sharp" icon="chevron-back" size="xs"></eui-icon-svg>
-      </button>
-      <app-ribbon-toolbar-section
-        [sectionItem]="section"
-        [resizeMap]="resizeSectionsMap"
-      ></app-ribbon-toolbar-section>
-      <button
-        euiButton
-        euiCompact
-        euiOutline
-        euiIconButton
-        euiSecondary
-        euiSizeS
-        class="scroll-button-right eui-u-z-index-max"
-        *ngIf="showScrollContentButton('right')"
-        (click)="scrollContent('right')"
-      >
-        <eui-icon-svg
-          set="sharp"
-          icon="chevron-forward"
-          size="xs"
-        ></eui-icon-svg>
-      </button>
-    </ng-container>
-  </div>
+    <div
+            id="toolbar-content-id"
+            class="ribbon-toolbar-content eui-u-shadow-3 m-2"
+            *ngIf="(actionItems$ | async)?.length > 0"
+            [@toggleToolbarAnimation]="isToolbarOpen ? 'open' : 'closed'"
+    >
+        <ng-container *ngFor="let section of actionItems$ | async">
+            <button
+                    euiButton
+                    euiCompact
+                    euiIconButton
+                    euiOutline
+                    euiSecondary
+                    euiSizeS
+                    class="scroll-button-left eui-u-p-none eui-u-m-none eui-u-z-index-max"
+                    *ngIf="showScrollContentButton('left')"
+                    (click)="scrollContent('left')"
+            >
+                <eui-icon-svg set="sharp" icon="chevron-back" size="xs"></eui-icon-svg>
+            </button>
+            <app-ribbon-toolbar-section
+                    [item]="section"
+                    [resizeMap]="resizeSectionsMap"
+            ></app-ribbon-toolbar-section>
+            <button
+                    euiButton
+                    euiCompact
+                    euiOutline
+                    euiIconButton
+                    euiSecondary
+                    euiSizeS
+                    class="scroll-button-right eui-u-z-index-max"
+                    *ngIf="showScrollContentButton('right')"
+                    (click)="scrollContent('right')"
+            >
+                <eui-icon-svg
+                        set="sharp"
+                        icon="chevron-forward"
+                        size="xs"
+                ></eui-icon-svg>
+            </button>
+        </ng-container>
+    </div>
 
-  <button
-    euiButton
-    euiRounded
-    euiIconButton
-    euiSizeS
-    euiBasicButton
-    euiSecondary
-    class="align-self-end"
-    (click)="toggleToolbar()"
-    *ngIf="(actionItems$ | async)?.length > 0"
-  >
-    <eui-icon-svg
-      *ngIf="!isToolbarOpen"
-      set="sharp"
-      size="xs"
-      icon="chevron-down"
-    ></eui-icon-svg>
-    <eui-icon-svg
-      *ngIf="isToolbarOpen"
-      set="sharp"
-      size="xs"
-      icon="chevron-up"
-    ></eui-icon-svg>
-  </button>
+    <button
+            euiButton
+            euiRounded
+            euiIconButton
+            euiSizeS
+            euiBasicButton
+            euiSecondary
+            class="align-self-end"
+            (click)="toggleToolbar()"
+            *ngIf="(actionItems$ | async)?.length > 0"
+    >
+        <eui-icon-svg
+                *ngIf="!isToolbarOpen"
+                set="sharp"
+                size="xs"
+                icon="chevron-down"
+        ></eui-icon-svg>
+        <eui-icon-svg
+                *ngIf="isToolbarOpen"
+                set="sharp"
+                size="xs"
+                icon="chevron-up"
+        ></eui-icon-svg>
+    </button>
 </div>

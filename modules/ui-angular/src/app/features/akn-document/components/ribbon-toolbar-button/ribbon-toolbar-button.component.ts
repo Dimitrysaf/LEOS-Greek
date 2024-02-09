@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Observable, takeUntil } from 'rxjs';
 
 import { IRibbonToolbarButton } from '../../models/document-actions.model';
 import { RibbonToolbarBaseComponent } from '../ribbon-toolbar-base/ribbon-toolbar-base.component';
@@ -9,13 +10,16 @@ import { RibbonToolbarBaseComponent } from '../ribbon-toolbar-base/ribbon-toolba
   styleUrls: ['./ribbon-toolbar-button.component.scss'],
 })
 export class RibbonToolbarButtonComponent
-  extends RibbonToolbarBaseComponent
+  extends RibbonToolbarBaseComponent<IRibbonToolbarButton>
   implements OnInit
 {
-  @Input() buttonItem: IRibbonToolbarButton;
   @Input() isOverflow = false;
 
   constructor() {
     super();
+  }
+
+  ngOnInit() {
+    super.ngOnInit();
   }
 }

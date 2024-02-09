@@ -1,10 +1,13 @@
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
+import { Observable } from 'rxjs';
 
 export enum IRibbonToolbarType {
   'BUTTON',
   'DROPDOWN',
   'CHECKBOX',
   'SECTION',
+  'GROUP',
+  'LABEL',
 }
 
 export type TypeClass =
@@ -35,24 +38,39 @@ export interface IBaseRibbonToolbarItem {
   iconClass?: string; // used for eui icons
   svgIconClas?: string;
   svgType?: SvgType;
-  disabled?: boolean;
+  disabled?: boolean | Observable<boolean>;
   actionFn?: (...args) => void; // callable action
-  cssClasses?: string[]; // used for adding different styles to the item
-  label?: string; //no need for every section to have a name
+  cssClasses?: string; // used for adding different styles to the item
+  label?: Observable<string> | string; //no need for every section to have a name
   description?: string; //used for a tooltip ?
   euiStyle?: TypeClass;
   euiSize?: SizeClass;
-  resizeOrder?: number;
+}
+
+export interface IRibbonToolbarLabel extends IBaseRibbonToolbarItem {
+  type: IRibbonToolbarType.LABEL;
+  truncatedLabel?: string;
 }
 
 export interface IRibbonToolbarSection extends IBaseRibbonToolbarItem {
   type: IRibbonToolbarType.SECTION;
   order: number;
+  resizeOrder: number;
+  children: IRibbonToolbarItem[];
+  closable?: boolean;
+  closeFn?: (...args) => void;
+  closableBtnStyle?: TypeClass;
+  sectionContainerCssClasses?: string;
+}
+
+export interface IRibbonToolbarGroup extends IBaseRibbonToolbarItem {
+  type: IRibbonToolbarType.GROUP;
   children: IRibbonToolbarItem[];
 }
 
 export interface IRibbonToolbarButton extends IBaseRibbonToolbarItem {
   type: IRibbonToolbarType.BUTTON;
+  basicButton?: boolean;
 }
 
 export interface IRibbonToolbarDropdown extends IBaseRibbonToolbarItem {
@@ -62,7 +80,7 @@ export interface IRibbonToolbarDropdown extends IBaseRibbonToolbarItem {
 
 export interface IRibbonToolbarCheckbox extends IBaseRibbonToolbarItem {
   type: IRibbonToolbarType.CHECKBOX;
-  value?: boolean;
+  value?: boolean | Observable<boolean>;
   isSlider?: boolean;
 }
 
@@ -70,4 +88,6 @@ export type IRibbonToolbarItem =
   | IRibbonToolbarButton
   | IRibbonToolbarDropdown
   | IRibbonToolbarCheckbox
-  | IRibbonToolbarSection;
+  | IRibbonToolbarSection
+  | IRibbonToolbarGroup
+  | IRibbonToolbarLabel;

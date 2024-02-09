@@ -1,31 +1,33 @@
 <div
-  euiInputGroup
-  *ngIf="!checkboxItem.isSlider"
-  [id]="checkboxItem.id"
-  class="eui-u-flex eui-u-flex-row p-0 flex-nowrap justify-content-between"
+        euiInputGroup
+        *ngIf="!item.isSlider"
+        [id]="item.id"
+        [ngClass]="item.cssClasses"
+        class="eui-u-flex eui-u-flex-row p-0 flex-nowrap justify-content-between"
 >
-  <label euiLabel euiSize2XS>{{ checkboxItem.label }}</label>
-  <input
-    type="checkbox"
-    euiInputCheckBox
-    [checked]="checkboxItem.value"
-    [euiVariant]="checkboxItem.euiStyle"
-    [euiSizeVariant]="checkboxItem.euiSize"
-    (change)="onChange()"
-    [disabled]="checkboxItem.disabled"
-  />
+    <label euiLabel euiSize2XS>{{ itemLabelValue }}</label>
+    <input
+            type="checkbox"
+            euiInputCheckBox
+            [checked]="checkboxValue"
+            [euiVariant]="item.euiStyle"
+            [euiSizeVariant]="item.euiSize"
+            (change)="onChange()"
+            [disabled]="item.disabled"
+    />
 </div>
 <div
-  *ngIf="checkboxItem.isSlider"
-  class="eui-u-flex eui-u-flex-row p-0 flex-nowrap justify-content-between"
+        *ngIf="item.isSlider"
+        class="eui-u-flex eui-u-flex-row p-0 flex-nowrap justify-content-between"
+        [ngClass]="item.cssClasses"
 >
-  <eui-slide-toggle
-    euiResponsive
-    euiSizeS
-    [disabled]="checkboxItem.disabled"
-    [isChecked]="checkboxItem.value"
-    (changed)="onChange()"
-    class="align-self-start"
-  ></eui-slide-toggle>
-  <div euiLabel class="align-self-end">{{ checkboxItem.label }}</div>
+    <eui-slide-toggle
+            euiResponsive
+            euiSizeS
+            [disabled]="isItemDisabled"
+            [isChecked]="checkboxValue"
+            (changed)="onChange()"
+            class="align-self-start"
+    ></eui-slide-toggle>
+    <div euiLabel class="align-self-end">{{ item.label }}</div>
 </div>

@@ -4,6 +4,7 @@ import { orderBy } from 'lodash-es';
 import { Observable, of } from 'rxjs';
 
 import { Version } from '@/features/akn-document/models/versions';
+import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
@@ -23,7 +24,7 @@ export class SearchVersionsPaneComponent implements OnInit {
 
   constructor(
     private translate: TranslateService,
-    public docService: DocumentService,
+    public versionCompareService: VersionCompareService,
   ) {}
 
   ngOnInit(): void {
@@ -36,7 +37,7 @@ export class SearchVersionsPaneComponent implements OnInit {
 
   protected onSelectVersion(version: Version, inputChangeEvent: Event) {
     const checked = (inputChangeEvent.target as HTMLInputElement).checked;
-    const currentVersions = this.docService.getVersionCompareIds();
+    const currentVersions = this.versionCompareService.getVersionCompareIds();
     let newVersions: Version[];
     if (!checked) {
       newVersions = currentVersions.filter(
@@ -65,16 +66,16 @@ export class SearchVersionsPaneComponent implements OnInit {
         newVersions = [minVersion, maxVersion];
       }
     }
-    this.docService.setVersionCompareIds(newVersions);
+    this.versionCompareService.setVersionCompareIds(newVersions);
   }
 
   protected isCompareCheckboxChecked(version: Version): boolean {
-    const currentVersions = this.docService.getVersionCompareIds();
+    const currentVersions = this.versionCompareService.getVersionCompareIds();
     return currentVersions.some((v) => v.documentId === version.documentId);
   }
 
   protected isCompareCheckboxDisabled(version: Version): boolean {
-    const currentVersions = this.docService.getVersionCompareIds();
+    const currentVersions = this.versionCompareService.getVersionCompareIds();
     if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
       return (
         currentVersions.length === 3 &&
@@ -114,7 +115,7 @@ export class SearchVersionsPaneComponent implements OnInit {
 
     this.title = this.getTitle();
     this.subtitle = this.getSubtitle();
-    const currentVersions = this.docService.getVersionCompareIds();
+    const currentVersions = this.versionCompareService.getVersionCompareIds();
     if (currentVersions.length > 0) {
       const sortedCurrentVersions = this.sortVersions(...currentVersions);
       const maxSortedVersion = this.sortVersions(
