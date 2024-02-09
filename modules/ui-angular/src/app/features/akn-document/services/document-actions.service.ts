@@ -19,9 +19,10 @@ import {
   takeUntil,
 } from 'rxjs';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { ImportService } from '@/features/akn-document/services/import.service';
-import { DocumentConfig, DocumentType, Permission } from '@/shared';
+import { DocumentConfig, DocumentType, Permission, Profile } from '@/shared';
 import {
   DISPLAY_ENABLE_TRACK_CHANGES_ACTION_ID,
   DISPLAY_SECTION_ID,
@@ -67,6 +68,7 @@ export abstract class DocumentActionsService {
   protected documentConfig: DocumentConfig;
   protected isEditorOpen = false;
 
+  private profile: Profile;
   private permissions: Permission[];
   private actionItemsBS = new BehaviorSubject<IRibbonToolbarSection[]>([]);
 
@@ -80,6 +82,7 @@ export abstract class DocumentActionsService {
     protected environmentService: EnvironmentService,
     protected formBuilder: FormBuilder,
     protected importService: ImportService,
+    protected appConfigService: AppConfigService,
   ) {
     this.actionsItems$ = this.actionItemsBS.asObservable();
 
@@ -92,13 +95,15 @@ export abstract class DocumentActionsService {
     );
 
     combineLatest([
+      this.appConfigService.config,
       this.documentService.documentConfig$,
       this.documentService.permissions$,
       this.documentService.isEditorOpen$,
-    ]).subscribe(([config, permissions]) => {
+    ]).subscribe(([appConfig, config, permissions]) => {
+      this.profile = appConfig.profile;
       this.documentConfig = config;
-      this.isTrackChangesEnabled = this.documentConfig.trackChangesEnabled;
-      this.seeTrackChanges = this.documentConfig.trackChangesShowed;
+      this.isTrackChangesEnabled = (!this.profile || this.profile.trackChangesEnabled) && this.documentConfig.trackChangesEnabled;
+      this.seeTrackChanges = (!this.profile || this.profile.trackChangesEnabled) && this.documentConfig.trackChangesShowed;
       this.permissions = permissions;
       const newActions = this.buildActions();
       this.actionItemsBS.next(newActions);
@@ -196,6 +201,7 @@ export abstract class DocumentActionsService {
     const saveSection = !this.isMandateMemorandum() && this.buildSaveSection();
     const searchSection = this.buildSearchSection();
     const importOJSection =
+      (!this.profile || this.profile.importOJ) && 
       this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL') &&
       this.buildImportOJSection();
     const exportSection = this.buildExportSection();
@@ -364,6 +370,11 @@ export abstract class DocumentActionsService {
           value: this.isUserGuidanceEnabled,
           actionFn: () => this.toggleUserGuidance(),
         },
+      ],
+    };
+
+    if(!this.profile || this.profile.trackChangesEnabled) {
+      displaySection.children.push(
         {
           type: IRibbonToolbarType.CHECKBOX,
           id: DISPLAY_TOGGLE_TRACK_CHANGES_ACTION_ID,
@@ -385,8 +396,8 @@ export abstract class DocumentActionsService {
           value: this.seeTrackChanges,
           actionFn: () => this.toggleSeeTrackChanges(),
         },
-      ],
-    };
+      )
+    }
 
     return displaySection;
   }

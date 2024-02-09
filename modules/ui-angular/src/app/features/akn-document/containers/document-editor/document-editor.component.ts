@@ -44,7 +44,7 @@ import { DocumentTocComponent } from '@/features/akn-document/containers/documen
 import { Version } from '@/features/akn-document/models';
 import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
 import { TocInlineEditMenuService } from '@/features/akn-document/services/toc-inline-edit-menu.service';
-import { ContributionStatus, DOCUMENT_STYLES, DocumentConfig } from '@/shared';
+import { ContributionStatus, DOCUMENT_STYLES, DocumentConfig, Profile } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
@@ -97,6 +97,7 @@ const compareClasses = [
 export class DocumentEditorComponent
   implements OnDestroy, OnInit, AfterViewInit
 {
+  profile: Profile;
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
@@ -252,9 +253,11 @@ export class DocumentEditorComponent
     this.presenterId = uuidv4();
     this.coEditionWSService.setPresenterId(this.presenterId);
     this.isSyncScrollEnabled$ = this.syncScrollingService.isSyncScrollEnabled$;
-    combineLatest([this.route.params, this.route.data, this.config.config])
+    
+    this.config.config
       .pipe(takeUntil(this.destroy$))
-      .subscribe(([params, data, config]) => {
+      .subscribe((config) => {
+        this.profile = config.profile;
         this.connectedEntity = (
           config.user.connectedEntity ?? config.user.defaultEntity
         ).name;
@@ -264,6 +267,7 @@ export class DocumentEditorComponent
           this.documentType,
         );
       });
+    
     this.loadStyleSheet();
 
     this.documentService.documentView$
@@ -1375,7 +1379,7 @@ export class DocumentEditorComponent
     }
   }
 
-  public setPageTitle() {
+  private setPageTitle() {
     this.pageTitle = [
       this.documentConfig.proposalMetadata.stage,
       this.documentConfig.proposalMetadata.type,
@@ -1595,5 +1599,25 @@ export class DocumentEditorComponent
       }
     });
     this.navigationAnchorsList = navigationAnchors;
+  }
+
+  get showBreadcrumb() {
+    return !this.profile || this.profile.breadcrumb;
+  }
+
+  get showCloseButton() {
+    return !this.profile || this.profile.closeDocument;
+  }
+
+  get showMarkAsDoneButton() {
+    return this.profile && this.profile.callbackPresent && this.profile.markAsDoneAvailable;
+  }
+
+  get showTocEditButton() {
+    return !this.profile || this.profile.tocEdition;
+  }
+
+  get showAnnotations() {
+    return !this.profile || this.profile.annotations;
   }
 }

@@ -29,7 +29,7 @@ define(function leosTrackChangesPluginModule(require) {
     var pluginDefinition = {
         init: function init(editor) {
             // Plugin not allowed COUNCIL
-            if (editor.LEOS.instanceType === "COUNCIL") {
+            if (editor.LEOS.instanceType === "COUNCIL" || !editor.LEOS.isTrackChangesEnabled) {
                 return;
             }
 

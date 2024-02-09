@@ -6,6 +6,7 @@ import { EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { TranslateService } from '@ngx-translate/core';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import { DownloadEconsiliumComponent } from '@/features/akn-document/components/download-econsilium/download-econsilium.component';
 import {
   IRibbonToolbarButton,
@@ -42,6 +43,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
     protected dialogService: EuiDialogService,
     protected environmentService: EnvironmentService,
     protected importService: ImportService,
+    protected appConfigService: AppConfigService,
   ) {
     super(
       router,
@@ -53,6 +55,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       environmentService,
       formBuilder,
       importService,
+      appConfigService,
     );
   }
 

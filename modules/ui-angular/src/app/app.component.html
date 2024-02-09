@@ -18,7 +18,7 @@
         <div class="eui-toolbar-app" [innerHTML]="headerTitleHtml"></div>
       </eui-toolbar-items>
       <eui-toolbar-items euiPositionRight>
-        <eui-toolbar-item-user-profile></eui-toolbar-item-user-profile>
+        <eui-toolbar-item-user-profile *ngIf="showLoggedUser"></eui-toolbar-item-user-profile>
       </eui-toolbar-items>
     </eui-toolbar>
   </eui-app-toolbar>

@@ -7,6 +7,7 @@ import { EuiDialogService } from '@eui/components/eui-dialog';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 
+import { AppConfigService } from '@/core/services/app-config.service';
 import {
   IRibbonToolbarItem,
   IRibbonToolbarSection,
@@ -30,6 +31,7 @@ export class DocumentActionsProposalService extends DocumentActionsService {
     protected dialogService: EuiDialogService,
     protected environmentService: EnvironmentService,
     protected importService: ImportService,
+    protected appConfigService: AppConfigService,
   ) {
     super(
       router,
@@ -41,6 +43,7 @@ export class DocumentActionsProposalService extends DocumentActionsService {
       environmentService,
       formBuilder,
       importService,
+      appConfigService,
     );
   }
 
