@@ -14,6 +14,7 @@
                 <xs:element name="numberingConfigs" type="numberingConfigs"/>
                 <xs:element name="alternateConfigs" type="alternateConfigs"/>
                 <xs:element name="tocRules" type="tocRules" minOccurs="0"/>
+                <xs:element name="referenceConfig" type="referenceConfig" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -264,6 +265,20 @@
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="referenceConfig">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="refConfig" type="refConfig"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="refConfig">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="internalRef" type="xs:boolean"/>
+            <xs:element name="authorialNote" type="xs:boolean"/>
+        </xs:sequence>
+        <xs:attribute name="language" type="xs:string" default="default"/>
     </xs:complexType>
 
     <xs:complexType name="tocItemTypes">
