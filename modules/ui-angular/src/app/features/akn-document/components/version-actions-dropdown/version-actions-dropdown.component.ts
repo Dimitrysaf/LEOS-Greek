@@ -16,6 +16,8 @@ import { Version } from '@/features/akn-document/models/versions';
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { DocumentService } from '@/shared/services/document.service';
 
+import { ViewVersionService } from '../../services/view-version.service';
+
 @Component({
   selector: 'app-version-actions-dropdown',
   templateUrl: './version-actions-dropdown.component.html',
@@ -38,6 +40,7 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
     private elementRef: ElementRef<HTMLElement>,
     private translate: TranslateService,
     private tableOfContentService: TableOfContentService,
+    public viewVersionService: ViewVersionService,
   ) {}
 
   ngOnInit(): void {
@@ -84,6 +87,13 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
 
   handleReload() {
     this.doc.reloadDocument();
+  }
+
+  handleCheckboxClick(version: Version) {
+    setTimeout(() => {
+      this.viewVersionService.setVersionIdToView(version.documentId);
+    });
+    this.doc.resetZoomValues();
   }
 
   /**

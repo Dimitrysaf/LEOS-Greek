@@ -11,19 +11,26 @@ import { Router } from '@angular/router';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { TranslateService } from '@ngx-translate/core';
-import {
-  BehaviorSubject,
-  combineLatest,
-  Observable,
-  take,
-  takeUntil,
-} from 'rxjs';
+import { BehaviorSubject, combineLatest, map, Observable, take } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { ImportService } from '@/features/akn-document/services/import.service';
+import {
+  PageMode,
+  PageModeService,
+} from '@/features/akn-document/services/page-mode.service';
+import { SyncDocumentScrollService } from '@/features/akn-document/services/sync-document-scroll.service';
+import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
 import { DocumentConfig, DocumentType, Permission, Profile } from '@/shared';
 import {
+  COMPARE_EXPORT_DROPDOWN_EXPORT_PDF,
+  COMPARE_EXPORT_DROPDOWN_EXPORT_XML,
+  COMPARE_EXPORT_DROPDOWN_ID,
+  COMPARE_NEXT_CHANGE_ACTION_ID,
+  COMPARE_PREV_CHANGE_ACTION_ID,
+  COMPARE_SECTION_ID,
+  COMPARE_SYNC_PANELS_ACTION,
   DISPLAY_ENABLE_TRACK_CHANGES_ACTION_ID,
   DISPLAY_SECTION_ID,
   DISPLAY_TOGGLE_TRACK_CHANGES_ACTION_ID,
@@ -35,13 +42,14 @@ import {
   IMPORT_OJ_ACTION_ID,
   IMPORT_OJ_SECTION_ID,
   RELOAD_SECTION_ID,
-  RELOAD_SECTION_RELOAD_ACTION_ID,
   SAVE_DOCUMENT_ACTION_ID,
   SAVE_DOCUMENT_SECTION_ID,
   SEARCH_ACTION_ID,
   SEARCH_SECTION_ID,
   STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID,
   STRUCTURE_SECTION_ID,
+  VIEW_SYNC_PANELS_ACTION,
+  VIEW_VERSION_SECTION_ID,
 } from '@/shared/constants/document-actions.constants';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
@@ -54,22 +62,22 @@ import {
   IRibbonToolbarSection,
   IRibbonToolbarType,
 } from '../models/document-actions.model';
+import { ViewVersionService } from './view-version.service';
 
 const LIST_OF_DISABLE_BUTTONS = [SEARCH_ACTION_ID, RELOAD_SECTION_ID];
 
 @Injectable()
 export abstract class DocumentActionsService {
   public actionsItems$: Observable<IRibbonToolbarSection[]>;
-  isTrackChangesEnabled = true;
-  seeTrackChanges = true;
-  dialogAcceptBS = new BehaviorSubject<void>(null);
-  isUserGuidanceEnabled = false;
-
+  protected pageMode: PageMode;
   protected documentConfig: DocumentConfig;
   protected isEditorOpen = false;
 
   private profile: Profile;
   private permissions: Permission[];
+  private isTrackChangesEnabled = true;
+  private seeTrackChanges = true;
+
   private actionItemsBS = new BehaviorSubject<IRibbonToolbarSection[]>([]);
 
   protected constructor(
@@ -82,6 +90,10 @@ export abstract class DocumentActionsService {
     protected environmentService: EnvironmentService,
     protected formBuilder: FormBuilder,
     protected importService: ImportService,
+    protected versionCompareService: VersionCompareService,
+    protected viewVersionService: ViewVersionService,
+    protected syncScrollService: SyncDocumentScrollService,
+    protected pageModeService: PageModeService,
     protected appConfigService: AppConfigService,
   ) {
     this.actionsItems$ = this.actionItemsBS.asObservable();
@@ -90,20 +102,21 @@ export abstract class DocumentActionsService {
       this.isEditorOpen = isOpen;
     });
 
-    this.documentService.userGuidanceVisible$.subscribe(
-      (value) => (this.isUserGuidanceEnabled = value),
-    );
-
     combineLatest([
       this.appConfigService.config,
       this.documentService.documentConfig$,
       this.documentService.permissions$,
       this.documentService.isEditorOpen$,
-    ]).subscribe(([appConfig, config, permissions]) => {
-      this.profile = appConfig.profile;
+      this.pageModeService.pageMode$,
+    ]).subscribe(([appConfig, config, permissions, _, pageMode]) => {
       this.documentConfig = config;
-      this.isTrackChangesEnabled = (!this.profile || this.profile.trackChangesEnabled) && this.documentConfig.trackChangesEnabled;
-      this.seeTrackChanges = (!this.profile || this.profile.trackChangesEnabled) && this.documentConfig.trackChangesShowed;
+      this.pageMode = pageMode;
+      this.isTrackChangesEnabled =
+        (!this.profile || this.profile.trackChangesEnabled) &&
+        this.documentConfig.trackChangesEnabled;
+      this.seeTrackChanges =
+        (!this.profile || this.profile.trackChangesEnabled) &&
+        this.documentConfig.trackChangesShowed;
       this.permissions = permissions;
       const newActions = this.buildActions();
       this.actionItemsBS.next(newActions);
@@ -164,7 +177,7 @@ export abstract class DocumentActionsService {
 
   protected isMandateExplanatory(): boolean {
     return (
-      this.isCN(),
+      this.isCN() &&
       this.isDocumentTypeTheSame(
         this.documentService.documentType,
         'COUNCIL_EXPLANATORY',
@@ -201,13 +214,17 @@ export abstract class DocumentActionsService {
     const saveSection = !this.isMandateMemorandum() && this.buildSaveSection();
     const searchSection = this.buildSearchSection();
     const importOJSection =
-      (!this.profile || this.profile.importOJ) && 
+      (!this.profile || this.profile.importOJ) &&
       this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL') &&
       this.buildImportOJSection();
     const exportSection = this.buildExportSection();
     const displaySection = this.buildDisplaySection();
+    const trackChangesSection = this.buildTrackChangesSection();
     const editSection = this.editSection();
-    const reloadSection = this.buildReloadSection();
+    const compareSection =
+      this.pageMode === PageMode.CompareVersions && this.buildCompareSection();
+    const viewVersionSection =
+      this.pageMode === PageMode.ViewVersion && this.buildViewVersionSection();
 
     return [
       saveSection,
@@ -215,8 +232,10 @@ export abstract class DocumentActionsService {
       searchSection,
       exportSection,
       displaySection,
+      trackChangesSection,
       editSection,
-      reloadSection,
+      compareSection,
+      viewVersionSection,
     ];
   }
 
@@ -356,7 +375,6 @@ export abstract class DocumentActionsService {
       ),
       order: 5,
       resizeOrder: 2,
-      cssClasses: ['ribbon-section-checkbox'],
       svgIconClas: 'eye',
       svgType: 'default',
       children: [
@@ -367,14 +385,31 @@ export abstract class DocumentActionsService {
             'page.editor.actions-dropdown.see-user-guidance',
           ),
           isSlider: true,
-          value: this.isUserGuidanceEnabled,
+          value: this.documentService.userGuidanceVisible$,
           actionFn: () => this.toggleUserGuidance(),
         },
       ],
     };
 
-    if(!this.profile || this.profile.trackChangesEnabled) {
-      displaySection.children.push(
+    return displaySection;
+  }
+
+  private buildTrackChangesSection(): IRibbonToolbarSection {
+    return {
+      type: IRibbonToolbarType.SECTION,
+      id: 'SEE-TRACK_CHANGES-ID',
+      label: this.translateService.instant(
+        'page.editor.toolbar-actions.section.track-changes.label',
+      ),
+      children: [...this.buildTrackChangesSectionItems()],
+      order: 5,
+      resizeOrder: 3,
+    };
+  }
+
+  private buildTrackChangesSectionItems(): IRibbonToolbarItem[] {
+    if (!this.profile || this.profile.trackChangesEnabled) {
+      return [
         {
           type: IRibbonToolbarType.CHECKBOX,
           id: DISPLAY_TOGGLE_TRACK_CHANGES_ACTION_ID,
@@ -396,10 +431,8 @@ export abstract class DocumentActionsService {
           value: this.seeTrackChanges,
           actionFn: () => this.toggleSeeTrackChanges(),
         },
-      )
+      ];
     }
-
-    return displaySection;
   }
 
   private editSection(): IRibbonToolbarSection {
@@ -408,9 +441,9 @@ export abstract class DocumentActionsService {
       id: STRUCTURE_SECTION_ID,
       label: this.translateService.instant('global.actions.edit'),
       order: 6,
+      resizeOrder: 3,
       svgIconClas: 'pencil',
       svgType: 'sharp',
-      resizeOrder: 3,
       children: [],
     };
 
@@ -441,27 +474,134 @@ export abstract class DocumentActionsService {
     };
   }
 
-  private buildReloadSection(): IRibbonToolbarSection {
+  private buildCompareSection(): IRibbonToolbarSection {
     return {
       type: IRibbonToolbarType.SECTION,
-      id: RELOAD_SECTION_ID,
+      id: COMPARE_SECTION_ID,
+      cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
+      sectionContainerCssClasses: 'overlay-versions-compare',
+      children: this.buildCompareSectionItems(),
+      label: this.versionCompareService.versionsComparisonForViewHeaderTitle$,
+      svgType: 'sharp',
+      svgIconClas: 'documents',
+      closable: true,
+      closableBtnStyle: 'primary',
+      closeFn: () => this.versionCompareService.closeVersionComparisonView(),
       order: 7,
-      resizeOrder: 5,
-      children: [this.buildReloadButtonItem()],
+      resizeOrder: 6,
     };
   }
 
-  private buildReloadButtonItem(): IRibbonToolbarButton {
+  private buildViewVersionSection(): IRibbonToolbarSection {
     return {
-      type: IRibbonToolbarType.BUTTON,
-      id: RELOAD_SECTION_RELOAD_ACTION_ID,
-      svgType: 'outline',
-      svgIconClas: 'reload',
-      euiStyle: 'secondary',
-      euiSize: 's',
-      disabled: this.isEditorOpen,
-      actionFn: () => this.handleReload(),
+      type: IRibbonToolbarType.SECTION,
+      id: VIEW_VERSION_SECTION_ID,
+      cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
+      sectionContainerCssClasses: 'overlay-view-version',
+      label: this.viewVersionService.versionViewLabel$,
+      children: [...this.buildViewVersionSectionItems()],
+      svgType: 'sharp',
+      svgIconClas: 'documents',
+      resizeOrder: 2,
+      order: 6,
+      closable: true,
+      closableBtnStyle: 'primary',
+      closeFn: () => this.viewVersionService.closeVersionView(),
     };
+  }
+
+  private buildCompareSectionItems(): IRibbonToolbarItem[] {
+    return [
+      {
+        type: IRibbonToolbarType.GROUP,
+        id: 'id',
+        cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
+        children: [
+          {
+            type: IRibbonToolbarType.BUTTON,
+            id: COMPARE_PREV_CHANGE_ACTION_ID,
+            iconClass: 'eui-icon-sort-asc',
+            euiSize: 's',
+            euiStyle: 'primary',
+            basicButton: true,
+            actionFn: () => this.versionCompareService.handlePrevChange(),
+            disabled: this.versionCompareService.hasPrevChangesDisabled$,
+            description: this.translateService.instant(
+              'page.editor.versions.compare.actions.prev-change',
+            ),
+          },
+          {
+            type: IRibbonToolbarType.BUTTON,
+            id: COMPARE_NEXT_CHANGE_ACTION_ID,
+            iconClass: 'eui-icon-sort-desc',
+            euiSize: 's',
+            euiStyle: 'primary',
+            basicButton: true,
+            actionFn: () => this.versionCompareService.handleNextChange(),
+            disabled: this.versionCompareService.hasNextChangeDisabled$,
+            description: this.translateService.instant(
+              'page.editor.versions.compare.actions.next-change',
+            ),
+          },
+        ],
+      },
+      {
+        type: IRibbonToolbarType.CHECKBOX,
+        id: COMPARE_SYNC_PANELS_ACTION,
+        label: 'Sync panels',
+        isSlider: true,
+        value: this.syncScrollService.isSyncScrollEnabled$,
+        actionFn: () => this.versionCompareService.toggleSyncScroll(),
+        cssClasses:
+          'eui-u-flex eui-u-flex-column eui-u-flex-justify-content-center',
+      },
+      {
+        type: IRibbonToolbarType.DROPDOWN,
+        id: COMPARE_EXPORT_DROPDOWN_ID,
+        euiSize: 's',
+        euiStyle: 'secondary',
+        label: 'Export',
+        iconClass: 'eui-icon-more-vertical',
+        disabled: this.versionCompareService.versionCompareIds$.pipe(
+          map((versions) => versions.length <= 1),
+        ),
+        items: this.buildCompareSectionExportOptions(),
+      },
+    ];
+  }
+
+  private buildCompareSectionExportOptions(): EuiDropdownButtonMenuItem[] {
+    return [
+      {
+        id: COMPARE_EXPORT_DROPDOWN_EXPORT_PDF,
+        label: this.translateService.instant(
+          'page.editor.versions.compare.actions.download-pdf',
+        ),
+        command: () => this.versionCompareService.downloadPdfFile(),
+      },
+      {
+        id: COMPARE_EXPORT_DROPDOWN_EXPORT_XML,
+        label: this.translateService.instant(
+          'page.editor.versions.compare.actions.download-xml-files',
+        ),
+        command: () => this.versionCompareService.downloadXmlFile(),
+      },
+    ];
+  }
+
+  private buildViewVersionSectionItems(): IRibbonToolbarItem[] {
+    return [
+      {
+        type: IRibbonToolbarType.CHECKBOX,
+        id: VIEW_SYNC_PANELS_ACTION,
+        label: 'Sync panels',
+        isSlider: true,
+        value: this.syncScrollService.isSyncScrollEnabled$,
+        actionFn: () => this.viewVersionService.toggleSyncScroll(),
+        cssClasses:
+          'eui-u-flex eui-u-flex-column eui-u-flex-justify-content-center',
+      },
+    ];
   }
 
   private toggleUserGuidance() {

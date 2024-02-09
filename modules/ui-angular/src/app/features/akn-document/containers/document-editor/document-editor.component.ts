@@ -1,4 +1,3 @@
-import { TemplatePortal } from '@angular/cdk/portal';
 import { DOCUMENT } from '@angular/common';
 import {
   AfterViewInit,
@@ -24,13 +23,8 @@ import { cloneDeep } from 'lodash-es';
 import {
   BehaviorSubject,
   combineLatest,
-  combineLatestWith,
   debounceTime,
-  distinctUntilChanged,
-  map,
-  merge,
   Observable,
-  of,
   Subject,
   take,
   takeUntil,
@@ -39,11 +33,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DOCUMENT_ACTIONS_SERVICE } from '@/features/akn-document/akn-document.module';
-import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
 import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
-import { TocInlineEditMenuService } from '@/features/akn-document/services/toc-inline-edit-menu.service';
+import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
 import { ContributionStatus, DOCUMENT_STYLES, DocumentConfig, Profile } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
@@ -62,31 +55,16 @@ import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LoadingService } from '@/shared/services/loading.service';
-import { parentHasClass } from '@/shared/utils';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
 import { BlockDocumentEditorService } from '../../services/block-document-editor.service';
 import { CKEditorService } from '../../services/ckeditor.service';
+import { PageMode, PageModeService } from '../../services/page-mode.service';
 import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
-
-enum PageMode {
-  Normal,
-  ViewVersion,
-  CompareVersions,
-  Contribution,
-}
-
-const compareClasses = [
-  'leos-content-removed',
-  'leos-content-removed-cn',
-  'leos-content-new',
-  'leos-content-new-cn',
-  'leos-double-compare-removed',
-  'leos-double-compare-added',
-];
+import { ViewVersionService } from '../../services/view-version.service';
 
 @Component({
   selector: 'app-document-editor',
@@ -97,14 +75,13 @@ const compareClasses = [
 export class DocumentEditorComponent
   implements OnDestroy, OnInit, AfterViewInit
 {
+  pageTitle$: Observable<string>;
   profile: Profile;
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
   documentRef: string;
   documentType: string;
-  pageTitle: string;
-  pageSubTitle: string;
   proposalRef: string;
   showStatusFilter: boolean;
   loadDocument: boolean;
@@ -112,7 +89,6 @@ export class DocumentEditorComponent
   versionForView: string;
   versionForViewHeaderTitle: string;
   versionsComparisonForView: string;
-  versionsComparisonForViewHeaderTitle$: Observable<string>;
   documentConfig: DocumentConfig;
   contributionForView: string;
 
@@ -129,10 +105,6 @@ export class DocumentEditorComponent
 
   isEditMode = false;
   isReady = false;
-  compareChanges: NodeListOf<HTMLElement>;
-  navigationAnchorsList: HTMLElement[];
-  navigationAnchorIndex = -1;
-  arrowClicked = false;
   tooltipsDelay = 1000;
 
   versionSearchForm = new FormGroup({
@@ -143,7 +115,6 @@ export class DocumentEditorComponent
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
 
   id: string;
-  baseECVersion = '0.1.0';
 
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
@@ -170,10 +141,7 @@ export class DocumentEditorComponent
   protected milestoneViewDialog: ProposalMilestoneViewComponent;
   protected milestoneViewData: MilestoneDescriptor = null;
   protected PageMode = PageMode;
-  protected pageMode = PageMode.Normal;
-
-  @ViewChild('eConsiliumModal')
-  eConsiliumModal: DownloadEconsiliumModalComponent;
+  protected pageMode: PageMode;
 
   @ViewChild('tocPane', { read: ElementRef }) tocPaneElement: ElementRef;
   @ViewChild('documentPane', { read: ElementRef })
@@ -214,16 +182,17 @@ export class DocumentEditorComponent
     public breadcrumbService: EuiBreadcrumbService,
     public environmentService: EnvironmentService,
     private loadingService: LoadingService,
-    private tableOfContentService: TableOfContentService,
     private domSanitizer: DomSanitizer,
     public tocService: TableOfContentService,
     private tocEditService: TableOfContentEditService,
-    private tocInlineMenu: TocInlineEditMenuService,
     private hostElRef: ElementRef,
     private syncScrollingService: SyncDocumentScrollService,
     @Inject(DOCUMENT) private document: Document,
     @Inject(DOCUMENT_ACTIONS_SERVICE)
     private documentActions: DocumentActionsService,
+    public versionCompareService: VersionCompareService,
+    private viewVersionService: ViewVersionService,
+    private pageModeService: PageModeService,
   ) {
     combineLatest([this.route.params, this.route.data])
       .pipe(take(1))
@@ -245,6 +214,18 @@ export class DocumentEditorComponent
         this.cdkEditor.refreshStateAllAvailableConnectors();
       });
 
+    this.pageModeService.pageMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((pageMode) => {
+        this.pageMode = pageMode;
+        window.requestAnimationFrame(() => {
+          const documentPanes =
+            this.hostElRef?.nativeElement.querySelectorAll('.document-pane') ??
+            [];
+          [...documentPanes].forEach((el) => (el.style.flexBasis = ''));
+        });
+      });
+
     this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
   }
@@ -253,7 +234,7 @@ export class DocumentEditorComponent
     this.presenterId = uuidv4();
     this.coEditionWSService.setPresenterId(this.presenterId);
     this.isSyncScrollEnabled$ = this.syncScrollingService.isSyncScrollEnabled$;
-    
+
     this.config.config
       .pipe(takeUntil(this.destroy$))
       .subscribe((config) => {
@@ -267,7 +248,7 @@ export class DocumentEditorComponent
           this.documentType,
         );
       });
-    
+
     this.loadStyleSheet();
 
     this.documentService.documentView$
@@ -276,13 +257,6 @@ export class DocumentEditorComponent
         this.loadingService.setTaskOver('refresh', this.documentRef);
         this.documentService.setDidDocumentLoadAndRender(true);
         this.loadDocument = true;
-        this.setPageSubTitle(
-          documentView.versionInfoVO.documentVersion,
-          `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`,
-          documentView.versionInfoVO.lastModificationInstant,
-          documentView.versionInfoVO.baseVersionTitle,
-          documentView.versionInfoVO.revisedBaseVersion,
-        );
         this.proposalRef = documentView.proposalRef;
       });
 
@@ -300,43 +274,57 @@ export class DocumentEditorComponent
           this.dragItems = this.buildTocItemToTOC(tocItems);
       });
 
-    this.documentService.versionView$
+    this.viewVersionService.versionView$
       .pipe(takeUntil(this.destroy$))
       .subscribe((versionView) => {
-        if (versionView !== null) {
-          this.setPageMode(PageMode.ViewVersion);
+        if (versionView) {
           this.versionForView = this.cleanupAndSerializeXML(
             versionView.editableXml,
             `doubleCompare-${this.documentRef}`,
           );
-          this.setVersionForViewHeader(versionView.versionInfoVO);
         }
       });
 
-    this.documentService.cleanVersionView$
+    this.versionCompareService.versionCompareView$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((cleanVersionView) => {
-        this.setPageMode(PageMode.ViewVersion);
-        if (!!cleanVersionView && !!cleanVersionView.editableXml) {
-          this.versionForView = this.cleanupAndSerializeXML(
-            cleanVersionView.editableXml,
-            `doubleCompare-${this.documentRef}`,
+      .subscribe((versionCompareXML) => {
+        if (versionCompareXML) {
+          this.versionsComparisonForView = this.cleanupAndSerializeXML(
+            versionCompareXML,
+            `marked-${this.documentRef}`,
           );
-          this.setVersionForViewHeader(cleanVersionView.versionInfoVO);
+        } else {
+          this.versionCompareService.clearVersionComparisonView();
         }
       });
 
-    this.documentService.compareModeEnabled$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((enabled) => {
-        this.setPageMode(enabled ? PageMode.CompareVersions : PageMode.Normal);
-      });
+    this.pageTitle$ = this.documentService.pageTitle$.pipe(
+      takeUntil(this.destroy$),
+    );
 
-    this.documentService.contributionModeEnabled$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((enabled) => {
-        this.setPageMode(enabled ? PageMode.Contribution : PageMode.Normal);
-      });
+    // this.viewVersionService.cleanVersionView$
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe((cleanVersionView) => {
+    //     this.setPageMode(PageMode.ViewVersion);
+    //     if (!!cleanVersionView && !!cleanVersionView.editableXml) {
+    //       this.versionForView = this.cleanupAndSerializeXML(
+    //         cleanVersionView.editableXml,
+    //         `doubleCompare-${this.documentRef}`,
+    //       );
+    //       setTimeout(() => {
+    //         this.syncScrollingService.setSyncScroll(false);
+    //       });
+    //       this.setVersionForViewHeader(cleanVersionView.versionInfoVO);
+    //     } else {
+    //       this.syncScrollingService.setSyncScroll(true);
+    //     }
+    //   });
+
+    // this.documentService.contributionModeEnabled$
+    //   .pipe(takeUntil(this.destroy$))
+    //   .subscribe((enabled) => {
+    //     this.setPageMode(enabled ? PageMode.Contribution : PageMode.Normal);
+    //   });
 
     this.documentService.contributionViewAndMerge$
       .pipe(takeUntil(this.destroy$))
@@ -345,38 +333,11 @@ export class DocumentEditorComponent
         this.contribution = contribution;
       });
 
-    this.versionsComparisonForViewHeaderTitle$ =
-      this.documentService.versionCompareIds$.pipe(
-        takeUntil(this.destroy$),
-        distinctUntilChanged(),
-        combineLatestWith(merge(of(null), this.translate.onLangChange)),
-        map(([versions]) => this.getVersionComparisonViewHeaderTitle(versions)),
-      );
-
     this.documentService.documentConfig$
       .pipe(takeUntil(this.destroy$))
       .subscribe((config) => {
         this.documentConfig = config;
-        this.setPageTitle();
         this.manageBreadCrumbsDocumentScreen();
-      });
-
-    this.documentService.versionCompareView$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((versionCompareXML) => {
-        if (versionCompareXML) {
-          this.versionsComparisonForView = this.cleanupAndSerializeXML(
-            versionCompareXML,
-            `marked-${this.documentRef}`,
-          );
-          setTimeout(() => {
-            this.syncScrollingService.setSyncScroll(true);
-            this.handleCompareChanges();
-          });
-        } else {
-          this.syncScrollingService.setSyncScroll(false);
-          this.clearVersionComparisonView();
-        }
       });
 
     this.documentService.contributions$
@@ -400,17 +361,6 @@ export class DocumentEditorComponent
           this.contribution = contribution;
         }
       });
-
-    this.documentService.versionLatest$.subscribe((version) => {
-      if (version)
-        this.setPageSubTitle(
-          this.formatVersionNumber(version),
-          version.createdBy,
-          version.updatedDate,
-          null,
-          null,
-        );
-    });
   }
 
   ngAfterViewInit(): void {
@@ -491,83 +441,11 @@ export class DocumentEditorComponent
           });
         }
       });
-
-    this.documentService.titlePageBS
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((title) => {
-        this.pageTitle = this.sanitizePageTitle(title);
-      });
   }
 
   onSearch() {
     const values = this.versionSearchForm.value;
     this.documentService.setVersionSearchParams(values);
-  }
-
-  toggleSyncScroll() {
-    this.syncScrollingService.setSyncScroll(
-      !this.syncScrollingService.isSyncScrollEnabled,
-    );
-  }
-
-  downloadXmlFile(v: any) {
-    this.documentService.versionCompareIds$
-      .pipe(take(1))
-      .subscribe((versions) => {
-        this.documentService.compareDocumentsDownloadXML(
-          versions[1],
-          versions[0],
-          this.getIntermediateVersion(versions),
-        );
-      });
-  }
-
-  downloadPdfFile() {
-    this.documentService.versionCompareIds$
-      .pipe(take(1))
-      .subscribe((versions) => {
-        this.documentService.compareDocumentsExportAsPdf(
-          versions[1],
-          versions[0],
-          this.getIntermediateVersion(versions),
-        );
-      });
-  }
-
-  downloadVersionOfFile() {
-    this.documentService.versionCompareIds$
-      .pipe(take(1))
-      .subscribe((versions) => {
-        this.documentService.compareDocumentsDownloadDocuwrite(
-          versions[1],
-          versions[0],
-          this.getIntermediateVersion(versions),
-        );
-      });
-  }
-
-  downloadVersionOfPDF() {
-    this.documentService.versionCompareIds$
-      .pipe(take(1))
-      .subscribe((versions) => {
-        this.documentService.compareDocumentsDownloadPDF(
-          versions[1],
-          versions[0],
-          this.getIntermediateVersion(versions),
-        );
-      });
-  }
-
-  downloadVersionOfFileEConsil() {
-    this.documentService.versionCompareIds$
-      .pipe(take(1))
-      .subscribe((versions) => {
-        this.eConsiliumModal.open({
-          currentVersion: versions[1],
-          originalVersion: versions[0],
-          intermediateVersion: this.getIntermediateVersion(versions),
-        });
-      });
   }
 
   ngOnDestroy() {
@@ -576,8 +454,8 @@ export class DocumentEditorComponent
     this.coEditionWSService.setShouldReloadAfterUpdate();
     this.coEditionWSService.removeDocumentCoEditInfo(this.documentRef);
     this.coEditionWSService.removeSession();
-    this.closeVersionView();
-    this.closeVersionComparisonView();
+    this.viewVersionService.closeVersionView();
+    this.versionCompareService.closeVersionComparisonView();
     this.closeContributionsView();
     this.destroy$.next(null);
     this.destroy$.complete();
@@ -673,76 +551,6 @@ export class DocumentEditorComponent
     }
   }
 
-  confirmAnnexStructureChange() {
-    const nextAnnexStructure =
-      this.documentConfig.documentsMetadata.find(
-        (d) => d.ref === this.documentRef,
-      ).template === 'SG-018'
-        ? 'level'
-        : 'article';
-
-    const content = this.tranlsateService.instant(
-      `editor-switch-annex-structure-to-${nextAnnexStructure}-content`,
-    );
-    const conteSanitized = this.domSanitizer.bypassSecurityTrustHtml(content);
-
-    this.dialogService.openDialog({
-      title: this.tranlsateService.instant(
-        'editor.annex-structure-change-title',
-      ),
-      content: conteSanitized as TemplatePortal,
-      acceptLabel: 'Confirm',
-      accept: () => {
-        this.handleAnnexChangeStructure();
-      },
-    });
-  }
-
-  handlePrevChange() {
-    if (this.navigationAnchorIndex > -1) {
-      // this.isScrollFromButton = true;
-      // const filteredParents = this.getFilteredParents();
-      const prevIndex =
-        this.navigationAnchorIndex - 1 < 0 ? 0 : this.navigationAnchorIndex - 1;
-      const targetElement = this.navigationAnchorsList[prevIndex];
-      requestAnimationFrame(() => {
-        // Scroll the target element into view
-        targetElement.scrollIntoView({
-          block: 'start',
-        });
-      });
-
-      setTimeout(() => {
-        this.syncScrollingService.syncScrollByNavigationChange(targetElement);
-      });
-      this.navigationAnchorIndex--;
-      this.arrowClicked = true;
-    }
-  }
-
-  handleNextChange() {
-    if (
-      this.navigationAnchorIndex !== this.navigationAnchorsList.length - 1 &&
-      this.navigationAnchorsList.length > 0
-    ) {
-      const targetElement =
-        this.navigationAnchorsList[this.navigationAnchorIndex + 1];
-      requestAnimationFrame(() => {
-        // Scroll the target element into view
-        targetElement.scrollIntoView({
-          block: 'start',
-        });
-      });
-
-      setTimeout(() => {
-        this.syncScrollingService.syncScrollByNavigationChange(targetElement);
-      });
-
-      this.navigationAnchorIndex++;
-      this.arrowClicked = true;
-    }
-  }
-
   handleSave() {
     const toc = cloneDeep(this.tocStructure);
     this.prepareTocForSave(toc);
@@ -826,27 +634,8 @@ export class DocumentEditorComponent
     this.documentTocComponent.expandAll();
   }
 
-  closeVersionView(setMode = true) {
-    this.documentService.resetZoomValues();
-    if (setMode) this.setPageMode(PageMode.Normal);
-  }
-
   toggleVersionComparisonView() {
-    this.documentService.toggleCompareMode();
-  }
-
-  closeVersionComparisonView(setMode = true) {
-    if (setMode) this.setPageMode(PageMode.Normal);
-    this.clearVersionComparisonView();
-    this.documentService.toggleCompareMode(false);
-  }
-
-  clearVersionComparisonView() {
-    this.compareChanges = null;
-    this.navigationAnchorsList = [];
-    this.navigationAnchorIndex = -1;
-    this.removeAllPins();
-    this.versionsComparisonForView = null;
+    this.versionCompareService.toggleCompareMode();
   }
 
   handleClose() {
@@ -857,15 +646,6 @@ export class DocumentEditorComponent
       this.cdkEditor.closeElementEditor();
       this.router.navigate([`/collection/${proposalRef}`]);
     }
-  }
-
-  handleAnnexChangeStructure() {
-    this.documentService
-      .switchDocumentStructure()
-      .pipe(take(1))
-      .subscribe(() => {
-        this.reloadComponent();
-      });
   }
 
   onCancelClose() {
@@ -922,7 +702,7 @@ export class DocumentEditorComponent
   }
 
   closeContributionsView(setMode = true) {
-    if (setMode) this.setPageMode(PageMode.Normal);
+    if (setMode) this.pageModeService.setPageMode(PageMode.Normal);
     if (
       this.contribution &&
       this.contribution.contributionStatus ===
@@ -1070,160 +850,12 @@ export class DocumentEditorComponent
     this.contributionChangesBS.next(elemList);
   }
 
-  private handleCompareChanges() {
-    this.navigationAnchorIndex = -1;
-    const nodeListCN = document.querySelectorAll(
-      '.leos-content-new-cn:not(num), .leos-content-removed-cn:not(num)',
-    );
-    const nodeList = document.querySelectorAll(
-      '.leos-content-new:not(num), .leos-content-removed:not(num)',
-    );
-    const nodeListCNDoubleCompare = document.querySelectorAll(
-      '.leos-double-compare-removed:not(num), .leos-double-compare-added:not(num)',
-    );
-    this.compareChanges = (
-      nodeList && nodeList.length > 0
-        ? nodeList
-        : nodeListCN && nodeListCN.length > 0
-        ? nodeListCN
-        : nodeListCNDoubleCompare
-    ) as NodeListOf<HTMLElement>;
-    const container = this.document.getElementById(
-      'versionComparisonContainer',
-    );
-    if (!container) return;
-    this.handlePins(container);
-    this.getNavigationAnchors();
-  }
-
-  private handlePins(container: HTMLElement) {
-    const pinContainer = this.document.createElement('div');
-    pinContainer.classList.add('pin-container');
-    pinContainer.classList.add('pin-right');
-    container.appendChild(pinContainer);
-    const selectorStyleMap = {
-      '.leos-marker-content-removed': 'pin-leos-marker-content-removed',
-      '.leos-marker-content-added': 'pin-leos-marker-content-added',
-      '.leos-content-removed': 'pin-leos-content-removed',
-      '.leos-content-removed-cn': 'pin-leos-content-removed',
-      '.leos-content-new': 'pin-leos-content-new',
-      '.leos-content-new-cn': 'pin-leos-content-new',
-      '.leos-double-compare-removed': 'pin-leos-marker-content-removed',
-      '.leos-double-compare-added': 'pin-leos-marker-content-added',
-    };
-    this.addPins(container, pinContainer, selectorStyleMap);
-  }
-
   private reloadComponent() {
     // TODO: reload document and services without page reload
     const currentUrl = this.router.url;
     this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.router.navigate([currentUrl]);
     });
-  }
-
-  private addPins(
-    target: HTMLElement,
-    pinContainer: HTMLElement,
-    selectorStyleMap: { [key: string]: string },
-  ): HTMLElement[] {
-    this.removeAllPins();
-    const pins: HTMLElement[] = [];
-    Object.keys(selectorStyleMap).forEach((selector) => {
-      const elements = target.querySelectorAll(selector);
-      elements.forEach((el, elIndex) => {
-        const pinElement = this.createPin(
-          pins.length + 1,
-          el as HTMLElement,
-          selectorStyleMap[selector],
-          target,
-        );
-        if (this.uniquePin(pins, pinElement)) {
-          this.attachTo(pinContainer, pinElement);
-          pins.push(pinElement);
-        }
-      });
-    });
-    return pins;
-  }
-
-  private uniquePin(pins: HTMLElement[], el: HTMLElement): boolean {
-    const top = el.style.top;
-    const className = el.className;
-    return pins.every(
-      (pin) => top !== pin.style.top || className !== pin.className,
-    );
-  }
-
-  private createPin(
-    index: number,
-    refToElement: HTMLElement,
-    pinStyle: string,
-    target: HTMLElement,
-  ): HTMLElement {
-    const pinDiv = document.createElement('div');
-    this.addClass(pinDiv, 'pin');
-    this.addClass(pinDiv, pinStyle);
-    pinDiv.setAttribute('data-index', index.toString());
-    pinDiv.setAttribute('ref-to', refToElement.id); // add custom attribute
-    pinDiv.style.top = this.getPercentageDistanceFromTop(refToElement, target);
-    pinDiv.addEventListener('click', () =>
-      this.scrollToChange(refToElement, target),
-    );
-    return pinDiv;
-  }
-
-  private getPercentageDistanceFromTop(
-    element: HTMLElement,
-    target: HTMLElement,
-  ): string {
-    const totalHeight = target.scrollHeight;
-    const elementPosFromTargetTop = this.getElementDistanceFromTop(
-      element,
-      target,
-    );
-    return `${((100 * elementPosFromTargetTop) / totalHeight).toFixed(2)}%`;
-  }
-
-  private _roundOffTo(floatNumber, digitsAfterDecimal) {
-    return floatNumber.toFixed(digitsAfterDecimal);
-  }
-
-  private addClass(el: HTMLElement, className: string) {
-    if (el.classList) {
-      el.classList.add(className);
-    } else {
-      el.className += ` ${className}`;
-    }
-  }
-
-  private attachTo(container: HTMLElement, el: HTMLElement) {
-    container.appendChild(el);
-  }
-
-  private getElementDistanceFromTop(
-    el: HTMLElement,
-    target: HTMLElement,
-  ): number {
-    let distance = 0;
-    while (el && el !== target) {
-      if (el.hidden) el = el.parentElement;
-      else {
-        distance += el.offsetTop;
-        el = el.offsetParent as HTMLElement;
-      }
-    }
-    return distance;
-  }
-
-  private scrollToChange(el: HTMLElement, target: HTMLElement) {
-    const topOffset = this.getElementDistanceFromTop(el, target) - 106;
-    target.scrollTop = topOffset;
-  }
-
-  private removeAllPins() {
-    const pins = document.querySelectorAll('.pin-container .pin');
-    pins.forEach((pin) => pin.remove());
   }
 
   private disableDocument() {
@@ -1345,111 +977,13 @@ export class DocumentEditorComponent
     return akomantosoEl.outerHTML;
   }
 
-  private setPageSubTitle(
-    documentVersion,
-    updatedBy,
-    updatedDate,
-    baseVersionTitle,
-    revisedBaseVersion,
-  ) {
-    if (this.isCNInstance && this.baseECVersion !== revisedBaseVersion) {
-      this.translate
-        .get('page.editor.base.revision.toolbar.info', {
-          version: documentVersion,
-          updatedByFull: updatedBy,
-          updatedOn: updatedDate,
-          baseVersionTitle,
-          revisedBaseVersion,
-        })
-        .pipe(takeUntil(this.destroy$), take(1))
-        .subscribe((subTitle: string) => {
-          this.pageSubTitle = subTitle;
-        });
-    } else {
-      this.translate
-        .get('page.editor.subtitle', {
-          version: documentVersion,
-          updatedByFull: updatedBy,
-          updatedOn: updatedDate,
-        })
-        .pipe(takeUntil(this.destroy$), take(1))
-        .subscribe((subTitle: string) => {
-          this.pageSubTitle = subTitle;
-        });
-    }
-  }
-
-  private setPageTitle() {
-    this.pageTitle = [
-      this.documentConfig.proposalMetadata.stage,
-      this.documentConfig.proposalMetadata.type,
-      this.documentConfig.proposalMetadata.purpose,
-    ]
-      .filter(Boolean)
-      .join(' ');
-    this.pageTitle = this.sanitizePageTitle(this.pageTitle);
-  }
-
   private sanitizePageTitle(title: string): string {
-    if(!title){
+    if (!title) {
       return title;
     }
-    let resultTitle =  title.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
+    let resultTitle = title.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
     resultTitle = resultTitle.replace(/<\/?ins[^>]*?>/gi, '');
     return this.domSanitizer.sanitize(SecurityContext.HTML, resultTitle) || '';
-  }
-
-  private setVersionForViewHeader(versionInfo: VersionInfoVO) {
-    this.translate
-      .get('version.view.header', {
-        version: versionInfo.documentVersion,
-        updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
-        updatedOn: versionInfo.lastModificationInstant,
-      })
-      .pipe(takeUntil(this.destroy$), take(1))
-      .subscribe((header: string) => {
-        this.versionForViewHeaderTitle = header;
-      });
-  }
-
-  private getVersionComparisonViewHeaderTitle(versions: Version[]) {
-    if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
-      if (versions.length === 2) {
-        return this.translate.instant('version.compare.header', {
-          oldVersion: this.formatVersionNumber(versions[0]),
-          newVersion: this.formatVersionNumber(versions[1]),
-        });
-      }
-      if (versions.length === 3) {
-        return this.translate.instant('version.double.compare.header', {
-          oldestVersion: this.formatVersionNumber(versions[0]),
-          newVersion: this.formatVersionNumber(versions[1]),
-          newestVersion: this.formatVersionNumber(versions[2]),
-        });
-      } else {
-        return this.translate.instant('version.compare.header.default.cn');
-      }
-    } else {
-      return versions.length === 2
-        ? this.translate.instant('version.compare.header', {
-            oldVersion: this.formatVersionNumber(versions[0]),
-            newVersion: this.formatVersionNumber(versions[1]),
-          })
-        : this.translate.instant('version.compare.header.default');
-    }
-  }
-
-  private getFormValues(): VersionSearchParams {
-    const { type, author } = this.versionSearchForm.getRawValue();
-    return {
-      type: type ?? 'all',
-      author: author ?? '',
-    };
-  }
-
-  private formatVersionNumber(version: Version): string {
-    const { major, intermediate, minor } = version.versionNumber;
-    return `${major}.${intermediate}.${minor}`;
   }
 
   private getBreadCrumbsDocumentName(name: string): string {
@@ -1489,135 +1023,23 @@ export class DocumentEditorComponent
     ]);
   }
 
-  private getIntermediateVersion(versions): Version {
-    if (process.env.NG_APP_LEOS_INSTANCE === 'cn' && versions.length === 3) {
-      return versions[2];
+    get showBreadcrumb() {
+        return !this.profile || this.profile.breadcrumb;
     }
-    return null;
-  }
 
-  private setPageMode(mode: PageMode) {
-    if (this.pageMode === PageMode.ViewVersion) {
-      this.closeVersionView(false);
+    get showCloseButton() {
+        return !this.profile || this.profile.closeDocument;
     }
-    if (this.pageMode === PageMode.CompareVersions) {
-      this.closeVersionComparisonView(false);
+
+    get showMarkAsDoneButton() {
+        return this.profile && this.profile.callbackPresent && this.profile.markAsDoneAvailable;
     }
-    if (this.pageMode === PageMode.Contribution) {
-      this.closeContributionsView(false);
+
+    get showTocEditButton() {
+        return !this.profile || this.profile.tocEdition;
     }
-    this.pageMode = mode;
 
-    window.requestAnimationFrame(() => {
-      const documentPanes =
-        this.hostElRef?.nativeElement.querySelectorAll('.document-pane') ?? [];
-      [...documentPanes].forEach((el) => (el.style.flexBasis = ''));
-    });
-  }
-
-  private getFilteredParents(): HTMLElement[] {
-    const filteredParents: HTMLElement[] = [];
-    this.compareChanges.forEach((change) => {
-      const parent = change.parentElement;
-      if (
-        parent &&
-        !parent.classList.contains('leos-content-new-cn') &&
-        !parent.classList.contains('leos-content-removed-cn') &&
-        !parent.classList.contains('leos-content-new') &&
-        !parent.classList.contains('leos-content-removed') &&
-        !parent.classList.contains('leos-double-compare-removed') &&
-        !parent.classList.contains('leos-double-compare-added')
-      ) {
-        filteredParents.push(parent);
-      }
-    });
-    return filteredParents;
-  }
-
-  private getNavigationAnchors() {
-    const navigationAnchors: HTMLElement[] = [];
-    this.compareChanges.forEach((elem) => {
-      if (elem.tagName.toLowerCase() === 'span') {
-        if (!parentHasClass(elem, compareClasses)) {
-          if (
-            !navigationAnchors.find(
-              (element) => element.id === elem.parentElement.id,
-            )
-          ) {
-            navigationAnchors.push(elem.parentElement);
-          }
-        }
-        if (
-          parentHasClass(elem, compareClasses) &&
-          !parentHasClass(elem.parentElement, compareClasses)
-        ) {
-          if (
-            !navigationAnchors.find(
-              (element) => element.id === elem.parentElement.id,
-            )
-          ) {
-            navigationAnchors.push(elem.parentElement);
-          }
-        }
-
-        if (
-          parentHasClass(elem, compareClasses) &&
-          parentHasClass(elem.parentElement, compareClasses) &&
-          !parentHasClass(elem.parentElement.parentElement, compareClasses)
-        ) {
-          if (
-            !navigationAnchors.find(
-              (element) => element.id === elem.parentElement.parentElement.id,
-            )
-          ) {
-            navigationAnchors.push(elem.parentElement.parentElement);
-          }
-        }
-        if (
-          parentHasClass(elem, compareClasses) &&
-          parentHasClass(elem.parentElement, compareClasses) &&
-          parentHasClass(elem.parentElement.parentElement, compareClasses) &&
-          !parentHasClass(
-            elem.parentElement.parentElement.parentElement,
-            compareClasses,
-          )
-        ) {
-          if (
-            !navigationAnchors.find(
-              (element) =>
-                element.id ===
-                elem.parentElement.parentElement.parentElement.id,
-            )
-          ) {
-            navigationAnchors.push(
-              elem.parentElement.parentElement.parentElement,
-            );
-          }
-        }
-      } else {
-        navigationAnchors.push(elem);
-      }
-    });
-    this.navigationAnchorsList = navigationAnchors;
-  }
-
-  get showBreadcrumb() {
-    return !this.profile || this.profile.breadcrumb;
-  }
-
-  get showCloseButton() {
-    return !this.profile || this.profile.closeDocument;
-  }
-
-  get showMarkAsDoneButton() {
-    return this.profile && this.profile.callbackPresent && this.profile.markAsDoneAvailable;
-  }
-
-  get showTocEditButton() {
-    return !this.profile || this.profile.tocEdition;
-  }
-
-  get showAnnotations() {
-    return !this.profile || this.profile.annotations;
-  }
+    get showAnnotations() {
+        return !this.profile || this.profile.annotations;
+    }
 }

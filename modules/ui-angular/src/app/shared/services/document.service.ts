@@ -27,6 +27,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
+import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
 import {
   AnnotateOperationMode,
   Collaborator,
@@ -79,17 +80,18 @@ export type DocumentRefAndCategory = {
   category: string;
 };
 
+const BASE_EC_VERSION = '0.1.0';
+
 @Injectable({
   providedIn: 'root',
 })
 export class DocumentService implements OnDestroy {
-  compareModeEnabled$: Observable<boolean>;
+  pageTitle$: Observable<string>;
   contributionModeEnabled$: Observable<boolean>;
   documentView$: Observable<DocumentViewResponse | null>;
   didDocumentLoadAndRender$: Observable<boolean>;
-  versionView$: Observable<DocumentViewResponse | null>;
+  // versionView$: Observable<DocumentViewResponse | null>;
   cleanVersionView$: Observable<DocumentViewResponse | null>;
-  versionCompareView$: Observable<string>;
   searchPaneOpen$: Observable<boolean>;
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
@@ -97,8 +99,7 @@ export class DocumentService implements OnDestroy {
   resetZoom$: Observable<void>;
   recentChanges$: Observable<Version[]>;
   documentConfig$: Observable<DocumentConfig>;
-  versionId$: Observable<string | null>;
-  versionCompareIds$: Observable<Version[]>;
+  // versionId$: Observable<string | null>;
   searchResultIndexArray: any[];
   focusedSearchResult: any | null;
   currentSearchResults: Array<SearchMatchVO>;
@@ -152,7 +153,6 @@ export class DocumentService implements OnDestroy {
   }>;
   pageSize = 10;
   isReloadRequired = false;
-  titlePageBS = new BehaviorSubject<string | null>(null);
   public trackChangesStatus$: Observable<{
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
@@ -162,10 +162,10 @@ export class DocumentService implements OnDestroy {
     false,
     undefined,
   ]);
+  private documentPageTitleBS = new BehaviorSubject<string>('');
   private contributionViewAndMergeBS = new BehaviorSubject<
     [DocumentViewResponse, ContributionVO]
   >(null);
-  private compareModeEnabledBS = new BehaviorSubject(false);
   private resetZoomBS = new BehaviorSubject<void>(null);
   private contributionModeEnabledBS = new BehaviorSubject(false);
   private contributionsBS = new BehaviorSubject<ContributionVO[]>([]);
@@ -180,8 +180,7 @@ export class DocumentService implements OnDestroy {
   private totalNumVersionBS = new BehaviorSubject<number>(0);
   private versionLatestBS = new BehaviorSubject<Version>(null);
   private versionSearchOpenBS = new BehaviorSubject(false);
-  private versionIdBS = new BehaviorSubject<string | null>(null);
-  private versionCompareIdsBS = new BehaviorSubject<Version[]>([]);
+  // private versionIdBS = new BehaviorSubject<string | null>(null);
   private versionSearchParamsBS = new BehaviorSubject({
     type: 'all',
     author: '',
@@ -270,6 +269,7 @@ export class DocumentService implements OnDestroy {
     this.isContributionDeclinedOrProcessed$ =
       this.isContributionDeclinedOrProcessedBS.asObservable();
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
+    this.pageTitle$ = this.documentPageTitleBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
       .asObservable()
       .pipe(filter(Boolean), distinctUntilChanged());
@@ -290,7 +290,6 @@ export class DocumentService implements OnDestroy {
     );
     this.contributions$ = this.contributionsBS.asObservable();
 
-    this.compareModeEnabled$ = this.compareModeEnabledBS.asObservable();
     this.contributionModeEnabled$ =
       this.contributionModeEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
@@ -302,8 +301,7 @@ export class DocumentService implements OnDestroy {
     this.versionLatest$ = this.versionLatestBS
       .asObservable()
       .pipe(filter(Boolean));
-    this.versionId$ = this.versionIdBS.asObservable();
-    this.versionCompareIds$ = this.versionCompareIdsBS.asObservable();
+    // this.versionId$ = this.versionIdBS.asObservable();
     this.versionFilter$ = this.versionFilterBS.asObservable();
     this.searchParams$ = this.searchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
@@ -338,38 +336,35 @@ export class DocumentService implements OnDestroy {
       )
       .subscribe(() => this.setVersionSearchParams({ author: '' }));
 
-    this.versionView$ = this.versionId$.pipe(
-      takeUntil(this.destroy$),
-      skip(1),
-      combineLatestWith(this.documentRefAndCategory$),
-      mergeMap(([versionId, option]) =>
-        this.getDocumentVersion(option.category, versionId),
-      ),
-    );
+    // this.versionView$ = this.versionId$.pipe(
+    //   takeUntil(this.destroy$),
+    //   skip(1),
+    //   combineLatestWith(this.documentRefAndCategory$),
+    //   mergeMap(([versionId, option]) =>
+    //     this.getDocumentVersion(option.category, versionId),
+    //   ),
+    // );
 
-    this.versionCompareView$ = this.versionCompareIds$.pipe(
-      takeUntil(this.destroy$),
-      distinctUntilChanged(),
-      combineLatestWith(this.documentRefAndCategory$),
-      mergeMap(([versionToCompare, option]) =>
-        versionToCompare.length > 2
-          ? this.getDocumentVersionsDoubleComparison(
-              option.ref,
-              option.category,
-              versionToCompare[2],
-              versionToCompare[1] !== undefined ? versionToCompare[1] : null,
-              versionToCompare[0],
-            )
-          : versionToCompare.length > 1
-          ? this.getDocumentVersionsSimpleComparison(
-              option.ref,
-              option.category,
-              versionToCompare[1],
-              versionToCompare[0],
-            )
-          : of(''),
-      ),
-    );
+    this.versionLatest$.subscribe((version) => {
+      if (version)
+        this.setPageSubTitle(
+          this.formatVersionNumber(version),
+          version.createdBy,
+          version.updatedDate,
+          null,
+          null,
+        );
+    });
+
+    this.documentView$.subscribe((documentView) => {
+      this.setPageSubTitle(
+        documentView.versionInfoVO.documentVersion,
+        `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`,
+        documentView.versionInfoVO.lastModificationInstant,
+        documentView.versionInfoVO.baseVersionTitle,
+        documentView.versionInfoVO.revisedBaseVersion,
+      );
+    });
 
     this.resetZoom$ = this.resetZoomBS.asObservable();
 
@@ -546,9 +541,7 @@ export class DocumentService implements OnDestroy {
   }
 
   getDocumentForUser(ref: string, user: string) {
-    return this.http.get(
-      `${apiBaseUrl}/secured/search/${user}/${ref}`,
-    );
+    return this.http.get(`${apiBaseUrl}/secured/search/${user}/${ref}`);
   }
 
   getIntermediateVersions(version: Version, pageIndex, pageSize) {
@@ -984,22 +977,11 @@ export class DocumentService implements OnDestroy {
   }
 
   setVersionCompareIds(versions: Version[]) {
-    this.versionCompareIdsBS.next(versions);
-  }
-
-  getVersionCompareIds() {
-    return this.versionCompareIdsBS.value;
+    // this.compares.next(versions);
   }
 
   setVersionFilter(filterValue: string) {
     this.versionFilterBS.next(filterValue);
-  }
-
-  toggleCompareMode(enabled?: boolean) {
-    this.toggleSubject(this.compareModeEnabledBS, enabled);
-    this.compareModeEnabledBS.pipe(take(1)).subscribe((e) => {
-      if (!e) this.setVersionCompareIds([]);
-    });
   }
 
   toggleSearchPane(open?: boolean) {
@@ -1054,9 +1036,9 @@ export class DocumentService implements OnDestroy {
       });
   }
 
-  versionView(versionNumber: string) {
-    this.versionIdBS.next(versionNumber);
-  }
+  // versionView(versionNumber: string) {
+  //   this.versionIdBS.next(versionNumber);
+  // }
 
   resetZoomValues() {
     this.resetZoomBS.next();
@@ -1103,33 +1085,6 @@ export class DocumentService implements OnDestroy {
       .subscribe(() => {
         this.setDocumentRefAndCategory(this.documentRef, this.documentType);
       });
-  }
-
-  validateNodeDrop(
-    draggedNodeId: string[],
-    draggedNodeTagName: string,
-    targetNodeId: string,
-    targetNodeTagName: string,
-    parentNodeId: string,
-    parentNodeTagName: string,
-    position: string,
-    documentType: string,
-    documentRef: string,
-  ) {
-    return this.http.post<NodeValidationResponse>(
-      `${apiBaseUrl}/secured/toc/${documentRef}/validate-node-drop`,
-      {
-        draggedNodeId,
-        draggedNodeTagName,
-        targetNodeId,
-        targetNodeTagName,
-        parentNodeId,
-        parentNodeTagName,
-        position: position.toUpperCase(),
-        documentRef,
-        documentType: documentType.toUpperCase(),
-      },
-    );
   }
 
   get documentRef() {
@@ -1270,53 +1225,6 @@ export class DocumentService implements OnDestroy {
     );
   }
 
-  getDocumentVersion(documentType: string, versionId: string) {
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<DocumentViewResponse>(
-      `${apiBaseUrl}/secured/${documentType}/${versionId}/show-version`,
-    );
-  }
-
-  getDocumentVersionsDoubleComparison(
-    documentRef: string,
-    documentType: string,
-    newVersion: Version,
-    intermediateVersion: Version,
-    oldVersion: Version,
-  ) {
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    //TODO : We should split logic for CN instnaces on services to DocumentServiceMandate (Council) && DocumentServiceProposal (Commision) see the proposed MR for more
-    if (
-      process.env.NG_APP_LEOS_INSTANCE === 'cn' &&
-      intermediateVersion !== null
-    ) {
-      return this.http.post<string>(
-        `${apiBaseUrl}/secured/document/double-compare/${documentType}/${documentRef}`,
-        {
-          originalProposalId: this.getVersionReferenceString(oldVersion),
-          intermediateMajorId:
-            this.getVersionReferenceString(intermediateVersion) ?? null,
-          currentId: this.getVersionReferenceString(newVersion),
-        },
-        { responseType: 'text' as 'json' },
-      );
-    }
-  }
-
-  getDocumentVersionsSimpleComparison(
-    documentRef: string,
-    documentType: string,
-    newVersion: Version,
-    oldVersion: Version,
-  ) {
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    //TODO : We should split logic for CN instnaces on services to DocumentServiceMandate (Council) && DocumentServiceProposal (Commision) see the proposed MR for more
-    return this.http.get<string>(
-      `${apiBaseUrl}/secured/${documentType}/${newVersion.documentId}/compare/${oldVersion.documentId}`,
-      { responseType: 'text' as 'json' },
-    );
-  }
-
   renumberDocument() {
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
@@ -1441,7 +1349,7 @@ export class DocumentService implements OnDestroy {
   }
 
   updateTitle(newTitle: string): void {
-    this.titlePageBS.next(newTitle);
+    this.documentPageTitleBS.next(newTitle);
   }
 
   viewAndMergeContribution(contribution: ContributionVO) {
@@ -1861,5 +1769,44 @@ export class DocumentService implements OnDestroy {
     return v
       ? `${v.versionNumber.major}.${v.versionNumber.intermediate}.${v.versionNumber.minor}`
       : null;
+  }
+
+  private setPageSubTitle(
+    documentVersion,
+    updatedBy,
+    updatedDate,
+    baseVersionTitle,
+    revisedBaseVersion,
+  ) {
+    if (this.isCNInstance() && BASE_EC_VERSION !== revisedBaseVersion) {
+      this.translate
+        .get('page.editor.base.revision.toolbar.info', {
+          version: documentVersion,
+          updatedByFull: updatedBy,
+          updatedOn: updatedDate,
+          baseVersionTitle,
+          revisedBaseVersion,
+        })
+        .pipe(takeUntil(this.destroy$), take(1))
+        .subscribe((subTitle: string) => {
+          this.documentPageTitleBS.next(subTitle);
+        });
+    } else {
+      this.translate
+        .get('page.editor.subtitle', {
+          version: documentVersion,
+          updatedByFull: updatedBy,
+          updatedOn: updatedDate,
+        })
+        .pipe(takeUntil(this.destroy$), take(1))
+        .subscribe((subTitle: string) => {
+          this.documentPageTitleBS.next(subTitle);
+        });
+    }
+  }
+
+  private formatVersionNumber(version: Version): string {
+    const { major, intermediate, minor } = version.versionNumber;
+    return `${major}.${intermediate}.${minor}`;
   }
 }

@@ -7,17 +7,15 @@ export class SyncDocumentScrollService {
   public isSyncScrollEnabled$: Observable<boolean>;
   private scrollables = new Map<HTMLElement, () => void>();
 
-  private isSyncScrollEnabledBS = new BehaviorSubject<boolean>(true);
+  private isSyncScrollEnabledBS = new BehaviorSubject<boolean>(false);
 
   constructor(@Inject(DOCUMENT) private document: Document) {
     this.isSyncScrollEnabled$ = this.isSyncScrollEnabledBS.asObservable();
-    this.isSyncScrollEnabled$.subscribe((value) => {
-      this.toggleSyncScroll(value);
-    });
   }
 
   public setSyncScroll(value: boolean) {
     this.isSyncScrollEnabledBS.next(value);
+    this.toggleSyncScroll(value);
   }
 
   public syncScrollByNavigationChange(sender: HTMLElement) {

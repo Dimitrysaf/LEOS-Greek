@@ -30,7 +30,7 @@
       [version]="version"
       [isMilestone]="isMilestone"
       (exploreMilestone)="exploreMilestone.emit($event)"
-      *ngIf="(docService.compareModeEnabled$ | async) === false"
+      *ngIf="(versionCompareService.compareModeEnabled$ | async) === false"
     ></app-version-actions-dropdown>
     <input
       id="select-{{ this.version.documentId }}"
@@ -39,7 +39,7 @@
       [checked]="isCompareCheckboxChecked(version)"
       [disabled]="isCompareCheckboxDisabled(version)"
       (change)="onSelectVersion(version, $event)"
-      *ngIf="docService.compareModeEnabled$ | async"
+      *ngIf="versionCompareService.compareModeEnabled$ | async"
     />
   </div>
 </div>
@@ -53,7 +53,7 @@
   <div>
     <app-version-actions-dropdown
       [version]="version"
-      *ngIf="(docService.compareModeEnabled$ | async) === false"
+      *ngIf="(versionCompareService.compareModeEnabled$ | async) === false"
     ></app-version-actions-dropdown>
     <input
       id="select-{{ version.documentId }}"
@@ -62,7 +62,7 @@
       [checked]="isCompareCheckboxChecked(version)"
       [disabled]="isCompareCheckboxDisabled(version)"
       (change)="onSelectVersion(version, $event)"
-      *ngIf="docService.compareModeEnabled$ | async"
+      *ngIf="versionCompareService.compareModeEnabled$ | async"
     />
   </div>
 </div>

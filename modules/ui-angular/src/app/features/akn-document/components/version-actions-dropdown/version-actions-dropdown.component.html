@@ -1,64 +1,64 @@
 <eui-dropdown isDropDownRightAligned>
-  <button
-    euiButton
-    euiBasicButton
-    euiRounded
-    euiIconButton
-    euiSizeS
-    [title]="'page.editor.versions.actions-button.tooltip' | translate"
-    [attr.aria-label]="
+    <button
+            euiButton
+            euiBasicButton
+            euiRounded
+            euiIconButton
+            euiSizeS
+            [title]="'page.editor.versions.actions-button.tooltip' | translate"
+            [attr.aria-label]="
       'page.editor.versions.actions-button.tooltip' | translate
     "
-    [disabled]="disabled"
-  >
-    <span euiIcon iconClass="eui-icon-more-vertical"></span>
-  </button>
-  <eui-dropdown-content>
-    <div euiList>
-      <button
-        euiListItem
-        translate="page.editor.versions.actions.view"
-        (click)="doc.versionView(version.documentId); doc.resetZoomValues()"
-      ></button>
-      <button
-        euiListItem
-        translate="page.editor.versions.actions.revert"
-        (click)="onVersionRevert(version.documentId, version.versionNumber)"
-      ></button>
-      <button
-        euiListItem
-        translate="page.editor.versions.actions.export"
-        (click)="doc.versionExport(version)"
-      ></button>
-      <button
-        euiListItem
-        *ngIf="isCNInstance"
-        translate="page.editor.versions.actions.changeBase"
-        (click)="onBaseChange(version)"
-      ></button>
-      <button
-        euiListItem
-        translate="page.editor.versions.actions.explore"
-        (click)="exploreMilestone.emit(version)"
-        *ngIf="isMilestone"
-      ></button>
-    </div>
-  </eui-dropdown-content>
+            [disabled]="disabled"
+    >
+        <span euiIcon iconClass="eui-icon-more-vertical"></span>
+    </button>
+    <eui-dropdown-content>
+        <div euiList>
+            <button
+                    euiListItem
+                    translate="page.editor.versions.actions.view"
+                    (click)="handleCheckboxClick(version)"
+            ></button>
+            <button
+                    euiListItem
+                    translate="page.editor.versions.actions.revert"
+                    (click)="onVersionRevert(version.documentId, version.versionNumber)"
+            ></button>
+            <button
+                    euiListItem
+                    translate="page.editor.versions.actions.export"
+                    (click)="doc.versionExport(version)"
+            ></button>
+            <button
+                    euiListItem
+                    *ngIf="isCNInstance"
+                    translate="page.editor.versions.actions.changeBase"
+                    (click)="onBaseChange(version)"
+            ></button>
+            <button
+                    euiListItem
+                    translate="page.editor.versions.actions.explore"
+                    (click)="exploreMilestone.emit(version)"
+                    *ngIf="isMilestone"
+            ></button>
+        </div>
+    </eui-dropdown-content>
 </eui-dropdown>
 <eui-dialog
-  #versionRevertDialog
-  [title]="'page.editor.versions.restore.modal-title' | translate"
-  [acceptLabel]="'page.editor.versions.restore.modal-button' | translate"
-  [dismissLabel]="'global.actions.cancel' | translate"
-  [width]="'25vw'"
-  [isHandleCloseOnAccept]="true"
-  [isHandleCloseOnDismiss]="true"
-  [hasCloseButton]="false"
-  (clickOutside)="onCancel()"
-  (close)="onCancel()"
-  (accept)="onAccept()"
-  (dismiss)="onCancel()"
+    #versionRevertDialog
+    [title]="'page.editor.versions.restore.modal-title' | translate"
+    [acceptLabel]="'page.editor.versions.restore.modal-button' | translate"
+    [dismissLabel]="'global.actions.cancel' | translate"
+    [width]="'25vw'"
+    [isHandleCloseOnAccept]="true"
+    [isHandleCloseOnDismiss]="true"
+    [hasCloseButton]="false"
+    (clickOutside)="onCancel()"
+    (close)="onCancel()"
+    (accept)="onAccept()"
+    (dismiss)="onCancel()"
 >
-  <p>{{ versionModalText }}</p>
-  <p>{{ 'page.editor.versions.restore.modal-text' | translate }}</p>
+    <p>{{ versionModalText }}</p>
+    <p>{{ 'page.editor.versions.restore.modal-text' | translate }}</p>
 </eui-dialog>

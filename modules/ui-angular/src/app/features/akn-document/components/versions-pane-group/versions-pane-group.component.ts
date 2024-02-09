@@ -13,6 +13,7 @@ import { Observable, of } from 'rxjs';
 import { isEmpty } from 'rxjs/operators';
 
 import { Version } from '@/features/akn-document/models/versions';
+import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
 import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
@@ -47,6 +48,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
 
   constructor(
     private translate: TranslateService,
+    public versionCompareService: VersionCompareService,
     public docService: DocumentService,
   ) {}
 
@@ -92,7 +94,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
 
   protected onSelectVersion(version: Version, inputChangeEvent: Event) {
     const checked = (inputChangeEvent.target as HTMLInputElement).checked;
-    const currentVersions = this.docService.getVersionCompareIds();
+    const currentVersions = this.versionCompareService.getVersionCompareIds();
     let newVersions: Version[];
     if (!checked) {
       newVersions = currentVersions.filter(
@@ -121,16 +123,16 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
         newVersions = [minVersion, maxVersion];
       }
     }
-    this.docService.setVersionCompareIds(newVersions);
+    this.versionCompareService.setVersionCompareIds(newVersions);
   }
 
   protected isCompareCheckboxChecked(version: Version): boolean {
-    const currentVersions = this.docService.getVersionCompareIds();
+    const currentVersions = this.versionCompareService.getVersionCompareIds();
     return currentVersions.some((v) => v.documentId === version.documentId);
   }
 
   protected isCompareCheckboxDisabled(version: Version): boolean {
-    const currentVersions = this.docService.getVersionCompareIds();
+    const currentVersions = this.versionCompareService.getVersionCompareIds();
     if (process.env.NG_APP_LEOS_INSTANCE === 'cn') {
       return (
         currentVersions.length === 3 &&
@@ -269,7 +271,7 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
 
     this.title = this.getTitle();
     this.subtitle = this.getSubtitle();
-    const currentVersions = this.docService.getVersionCompareIds();
+    const currentVersions = this.versionCompareService.getVersionCompareIds();
     if (
       this.isRecent &&
       this.subVersions.length > 0 &&

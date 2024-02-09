@@ -22,7 +22,7 @@
         [version]="majorVersion"
         [isMilestone]="isMilestone"
         (exploreMilestone)="exploreMilestone.emit($event)"
-        *ngIf="!isRecent && (docService.compareModeEnabled$ | async) === false"
+        *ngIf="!isRecent && (versionCompareService.compareModeEnabled$ | async) === false"
       ></app-version-actions-dropdown>
       <input
         id="select-{{ majorVersion.documentId }}"
@@ -31,7 +31,7 @@
         [checked]="isCompareCheckboxChecked(majorVersion)"
         [disabled]="isCompareCheckboxDisabled(majorVersion)"
         (change)="onSelectVersion(majorVersion, $event)"
-        *ngIf="!isRecent && (docService.compareModeEnabled$ | async)"
+        *ngIf="!isRecent && (versionCompareService.compareModeEnabled$ | async)"
       />
     </eui-card-header-right-content>
   </eui-card-header>
@@ -55,7 +55,7 @@
           <app-version-actions-dropdown
             [version]="version"
             *ngIf="
-              (docService.compareModeEnabled$ | async) === false &&
+              (versionCompareService.compareModeEnabled$ | async) === false &&
               isLatestRecentVersion(version) === false
             "
           ></app-version-actions-dropdown>
@@ -66,7 +66,7 @@
             [checked]="isCompareCheckboxChecked(version)"
             [disabled]="isCompareCheckboxDisabled(version)"
             (change)="onSelectVersion(version, $event)"
-            *ngIf="docService.compareModeEnabled$ | async"
+            *ngIf="versionCompareService.compareModeEnabled$ | async"
           />
         </div>
       </div>

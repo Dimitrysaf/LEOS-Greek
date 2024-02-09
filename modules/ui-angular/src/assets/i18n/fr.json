@@ -270,6 +270,7 @@
   "page.editor.actions-dropdown.hide-user-guidance": "Cacher les conseils d'utilisation",
   "page.editor.actions-dropdown.display": "[FR] Display",
   "page.editor.actions-dropdown.see-navigation": "Voir le panneau de navigation",
+  "page.editor.toolbar-actions.section.track-changes.label": "[FR] Track-changes",
   "page.editor.actions-dropdown.enable-track-changes": "Suivis des modifications",
   "page.editor.actions-dropdown.see-track-changes": "Afficher le suivis des modifications",
   "page.editor.actions-dropdown.renumber-document": "[FR]Renumber Document",

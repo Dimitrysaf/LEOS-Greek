@@ -1,45 +1,45 @@
 <eui-page *ngIf="loadDocument" euiNoContentPadding>
-  <eui-page-breadcrumb euiNoContentPadding class="p-0" *ngIf="showBreadcrumb">
-    <eui-breadcrumb>
-      <eui-breadcrumb-item
-        *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
-        [id]="item.id"
-        [link]="item.link"
-        [label]="item.label"
-      >
-      </eui-breadcrumb-item>
-    </eui-breadcrumb>
-  </eui-page-breadcrumb>
-  <eui-page-content
-    [ngClass]="{
+    <eui-page-content
+            [ngClass]="{
       'eui-page-content--blocked':
         blockDocumentEditorService.isDocumentEditorBlocked$ | async
     }"
   >
     <eui-page-column-header-collapsed-content>
-      <!-- Search & Refresh -->
-      <div class="eui-u-flex eui-u-flex-row justify-content-between" [ngStyle]="{'padding': showBreadcrumb ? '0' : '0.5rem'}">
-        <h4
-          class="subtitle eui-u-font-size-s flex-grow-1 eui-u-mh-xs text-left"
-        >
-          {{ pageSubTitle }}
-        </h4>
-        <button
-          *ngIf="showCloseButton && !showMarkAsDoneButton && documentConfig?.proposalMetadata"
-          class="eui-u-ml-xs eui-u-mr-xs"
-          euiButton
-          euiSizeS
-          euiPrimary
-          translate="global.actions.close"
-          (click)="handleClose()"
-        ></button>
-        <button 
-          *ngIf="showMarkAsDoneButton && !showCloseButton" 
-          class="eui-u-ml-xs eui-u-mr-xs" 
-          euiButton 
-          euiSizeS 
-          euiPrimary
-          translate="global.actions.mark.done"></button>
+      <div class="eui-u-flex eui-u-flex-column eui-u-width-100">
+        <div class="eui-u-flex eui-u-flex-row justify-content-between">
+          <eui-breadcrumb *ngIf="showBreadcrumb">
+            <eui-breadcrumb-item
+              *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
+              [id]="item.id"
+              [link]="item.link"
+              [label]="item.label"
+            >
+            </eui-breadcrumb-item>
+          </eui-breadcrumb>
+          <h4
+            class="subtitle eui-u-font-size-s flex-grow-1 eui-u-mh-xs eui-u-text-center"
+          >
+            {{ pageTitle$ | async }}
+          </h4>
+            <button
+                    *ngIf="showCloseButton && !showMarkAsDoneButton && documentConfig?.proposalMetadata"
+                    class="eui-u-ml-xs eui-u-mr-xs"
+                    euiButton
+                    euiSizeS
+                    euiPrimary
+                    translate="global.actions.close"
+                    (click)="handleClose()"
+            ></button>
+            <button
+                    *ngIf="showMarkAsDoneButton && !showCloseButton"
+                    class="eui-u-ml-xs eui-u-mr-xs"
+                    euiButton
+                    euiSizeS
+                    euiPrimary
+                    translate="global.actions.mark.done"></button>
+        </div>
+        <app-ribbon-toolbar-container class="eui-u-width-100"></app-ribbon-toolbar-container>
       </div>
     </eui-page-column-header-collapsed-content>
 
@@ -96,79 +96,79 @@
                 [position]="'right'"
                 (click)="handleEdit()"
                 *ngIf="
-                  showTocEditButton && 
+                  showTocEditButton &&
                   !isEditMode &&
                   !['coverPage', 'memorandum', 'stat_financ_legis'].includes(
                     documentType
                   )
                 "
-              >
-                <span class="eui-icon eui-icon-edit"></span>
-              </button>
-              <!-- Actions menu-->
-              <app-toc-actions-buttons
-                [isEditMode]="isEditMode"
-                [isUndoDisabled]="disableUndoButton()"
-                [isSaveDisabled]="disableSaveButton()"
-                [isCollapseToc]="isCollapseToc"
-                [isAnnotationsPaneCollapsed]="isAnnotationsPaneCollapsed"
-                [isVersionsPaneCollapsed]="isVersionsPaneCollapsed"
-                (handleExpandAll)="expandAll()"
-                (handleUndo)="handleUndo()"
-                (handleSave)="handleSave()"
-                (handleCancel)="handleCancel()"
-                (handleSaveAndClose)="handleSaveAndClose()"
-              >
-              </app-toc-actions-buttons>
-            </div>
-            <app-document-toc
-              [isEditMode]="isEditMode"
-              [tocItems]="tocItems"
-              [documentType]="documentType"
-              [documentRef]="documentRef"
-              (reBuildTocItems)="onRebuildTocItems($event)"
-            ></app-document-toc>
-          </eui-fieldset>
-          <!-- versions -->
-          <hr />
-          <eui-fieldset
-            class="eui-u-mt-s"
-            label="{{ 'page.editor.versions-pane.label' | translate }}"
-            isExpandable
-            [isExpanded]="isVersionsPaneExpanded"
-            (expanded)="onVersionsPaneExpanded($event)"
-          >
-            <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
-              <button
-                euiButton
-                euiIconButton
-                euiSecondary
-                euiOutline
-                euiSizeS
-                [title]="
-                  ((documentService.compareModeEnabled$ | async)
+                            >
+                                <span class="eui-icon eui-icon-edit"></span>
+                            </button>
+                            <!-- Actions menu-->
+                            <app-toc-actions-buttons
+                                    [isEditMode]="isEditMode"
+                                    [isUndoDisabled]="disableUndoButton()"
+                                    [isSaveDisabled]="disableSaveButton()"
+                                    [isCollapseToc]="isCollapseToc"
+                                    [isAnnotationsPaneCollapsed]="isAnnotationsPaneCollapsed"
+                                    [isVersionsPaneCollapsed]="isVersionsPaneCollapsed"
+                                    (handleExpandAll)="expandAll()"
+                                    (handleUndo)="handleUndo()"
+                                    (handleSave)="handleSave()"
+                                    (handleCancel)="handleCancel()"
+                                    (handleSaveAndClose)="handleSaveAndClose()"
+                            >
+                            </app-toc-actions-buttons>
+                        </div>
+                        <app-document-toc
+                                [isEditMode]="isEditMode"
+                                [tocItems]="tocItems"
+                                [documentType]="documentType"
+                                [documentRef]="documentRef"
+                                (reBuildTocItems)="onRebuildTocItems($event)"
+                        ></app-document-toc>
+                    </eui-fieldset>
+                    <!-- versions -->
+                    <hr/>
+                    <eui-fieldset
+                            class="eui-u-mt-s"
+                            label="{{ 'page.editor.versions-pane.label' | translate }}"
+                            isExpandable
+                            [isExpanded]="isVersionsPaneExpanded"
+                            (expanded)="onVersionsPaneExpanded($event)"
+                    >
+                        <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
+                            <button
+                                    euiButton
+                                    euiIconButton
+                                    euiSecondary
+                                    euiOutline
+                                    euiSizeS
+                                    [title]="
+                  ((versionCompareService.compareModeEnabled$ | async)
                     ? 'page.editor.versions.compare-button.tooltip-disable'
                     : 'page.editor.versions.compare-button.tooltip-enable'
                   ) | translate
                 "
                 [attr.aria-label]="
-                  ((documentService.compareModeEnabled$ | async)
+                  ((versionCompareService.compareModeEnabled$ | async)
                     ? 'page.editor.versions.compare-button.tooltip-disable'
                     : 'page.editor.versions.compare-button.tooltip-enable'
                   ) | translate
                 "
-                (click)="toggleVersionComparisonView()"
-              >
-                <eui-icon-svg icon="documents"></eui-icon-svg>
-              </button>
+                                    (click)="toggleVersionComparisonView()"
+                            >
+                                <eui-icon-svg icon="documents"></eui-icon-svg>
+                            </button>
 
-              <button
-                euiButton
-                euiIconButton
-                euiSecondary
-                euiOutline
-                euiSizeS
-                [title]="
+                            <button
+                                    euiButton
+                                    euiIconButton
+                                    euiSecondary
+                                    euiOutline
+                                    euiSizeS
+                                    [title]="
                   ((documentService.versionSearchOpen$ | async)
                     ? 'page.editor.versions.search-button.tooltip-disable'
                     : 'page.editor.versions.search-button.tooltip-enable'
@@ -196,7 +196,7 @@
                     <div class="row g-0">
                       <div class="col-md-3 version-search-form-type-label">
                         {{
-                          'page.editor.versions.search.form.type' | translate
+                        'page.editor.versions.search.form.type' | translate
                         }}:
                       </div>
                       <div class="col-md-7 no-g">
@@ -250,14 +250,14 @@
                     <div class="row g-0">
                       <div class="col-md-4 version-search-form-author-label">
                         <label for="author"
-                          >{{
-                            'page.editor.versions.search.form.author'
-                              | translate
+                        >{{
+                          'page.editor.versions.search.form.author'
+                            | translate
                           }}:</label
                         >
                       </div>
                       <div class="col-md-8">
-                        <input id="author" formControlName="author" />
+                        <input id="author" formControlName="author"/>
                         <button
                           type="button"
                           class="eui-button eui-button--basic eui-button--icon-only eui-button--rounded eui-button--size-s ng-star-inserted"
@@ -296,7 +296,7 @@
             ></app-versions-pane>
           </eui-fieldset>
           <!-- contributions -->
-          <hr *ngIf="showContributionsPane" />
+          <hr *ngIf="showContributionsPane"/>
           <eui-fieldset
             class="eui-u-mt-s"
             label="{{ 'page.editor.contribution-pane.label' | translate }}"
@@ -322,15 +322,11 @@
         [rightEl]="documentPaneElement?.nativeElement"
         *ngIf="(documentService.navigationSidebarCollapsed$ | async) === false"
       ></app-resize-handle>
-
       <eui-page-column
         #documentPane
         class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
         [interactiveScrollbars]="false"
       >
-        <eui-page-column-header-body>
-          <app-ribbon-toolbar-container></app-ribbon-toolbar-container>
-        </eui-page-column-header-body>
         <!-- leos-editing-pane is used in leosFloatingSpacePlugin.js -->
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1 leos-editing-pane"
@@ -411,34 +407,6 @@
         [interactiveScrollbars]="false"
         *ngIf="pageMode === PageMode.ViewVersion"
       >
-        <eui-page-column-header-body>
-          <div
-            class="eui-u-flex eui-u-flex-row justify-content-between w-100 app-u-gap-xs"
-            style="min-height: 35.99px"
-          >
-            <button
-              euiButton
-              euiIconButton
-              euiSizeS
-              [euiPrimary]="isSyncScrollEnabled$ | async"
-              [euiSecondary]="(isSyncScrollEnabled$ | async) === false"
-              (click)="toggleSyncScroll()"
-            >
-              <span euiSizeS class="eui-icon eui-icon-sync"></span>
-            </button>
-            <h4 class="eui-u-font-size-s">{{ versionForViewHeaderTitle }}</h4>
-            <button
-              euiButton
-              euiIconButton
-              euiSecondary
-              euiSizeS
-              euiOutline
-              (click)="closeVersionView()"
-            >
-              <eui-icon euiSizeS iconClass="eui-icon-close-m"></eui-icon>
-            </button>
-          </div>
-        </eui-page-column-header-body>
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
         >
@@ -467,153 +435,6 @@
         [interactiveScrollbars]="false"
         *ngIf="pageMode === PageMode.CompareVersions"
       >
-        <eui-page-column-header-body>
-          <div
-            class="eui-u-flex eui-u-flex-row justify-content-between w-100 app-u-gap-xs"
-            style="min-height: 35.99px"
-          >
-            <div
-              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
-              style="max-width: fit-content"
-            >
-              <button
-                euiButton
-                euiIconButton
-                euiSizeS
-                [euiPrimary]="isSyncScrollEnabled$ | async"
-                [euiSecondary]="(isSyncScrollEnabled$ | async) === false"
-                *ngIf="versionsComparisonForView"
-                (click)="toggleSyncScroll()"
-                [euiTooltip]="
-                  ((isSyncScrollEnabled$ | async)
-                    ? 'page.editor.versions.compare.actions.synchronous-scrolling.disable'
-                    : 'page.editor.versions.compare.actions.synchronous-scrolling.enable'
-                  ) | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <eui-icon euiSizeS iconClass="eui-icon-sync"></eui-icon>
-              </button>
-              <button
-                id="prev-change"
-                euiButton
-                euiIconButton
-                euiBasicButton
-                euiPrimary
-                euiSizeS
-                *ngIf="versionsComparisonForView"
-                (click)="handlePrevChange()"
-                [disabled]="navigationAnchorIndex === -1"
-                [euiTooltip]="
-                  'page.editor.versions.compare.actions.prev-change' | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <span class="eui-icon eui-icon-sort-asc"></span>
-              </button>
-
-              <button
-                id="next-change"
-                euiButton
-                euiIconButton
-                euiBasicButton
-                euiPrimary
-                euiSizeS
-                *ngIf="versionsComparisonForView"
-                [disabled]="
-                  navigationAnchorsList.length - 1 === navigationAnchorIndex
-                "
-                (click)="handleNextChange()"
-                [euiTooltip]="
-                  'page.editor.versions.compare.actions.next-change' | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <span class="eui-icon eui-icon-sort-desc"></span>
-              </button>
-            </div>
-            <h4 class="eui-u-font-size-s">
-              {{ versionsComparisonForViewHeaderTitle$ | async }}
-            </h4>
-            <div
-              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
-              style="max-width: fit-content"
-            >
-              <button
-                euiButton
-                euiBasicButton
-                euiSecondary
-                euiSizeS
-                *ngIf="versionsComparisonForView"
-                (click)="downloadXmlFile(versionsComparisonForView)"
-                [euiTooltip]="
-                  'page.editor.versions.compare.actions.download-xml-files'
-                    | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <eui-icon-svg
-                  icon="cloud-download"
-                  set="sharp"
-                  size="m"
-                  fillColor="grey-100"
-                ></eui-icon-svg>
-              </button>
-              <button
-                euiButton
-                euiBasicButton
-                euiSecondary
-                euiSizeS
-                *ngIf="versionsComparisonForView && isCNInstance"
-                (click)="downloadVersionOfFileEConsil()"
-                [euiTooltip]="
-                  'page.editor.versions.compare.actions.download-eConsilium'
-                    | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <span
-                  class="eui-icon eui-icon-filetype-unknown"
-                  euiIconColored
-                ></span>
-              </button>
-              <button
-                euiButton
-                euiBasicButton
-                euiSecondary
-                euiSizeS
-                *ngIf="versionsComparisonForView"
-                (click)="
-                  isCNInstance
-                    ? downloadVersionOfFile()
-                    : downloadVersionOfPDF()
-                "
-                euiTooltip="{{
-                  (isCNInstance
-                    ? 'page.editor.versions.compare.actions.download-docuwrite'
-                    : 'page.editor.versions.compare.actions.download-pdf'
-                  ) | translate
-                }}"
-                [showDelay]="tooltipsDelay"
-              >
-                <span
-                  class="eui-icon eui-icon-ecl-download"
-                  euiIconColored
-                ></span>
-              </button>
-              <button
-                euiButton
-                euiIconButton
-                euiSecondary
-                euiSizeS
-                euiOutline
-                (click)="closeVersionComparisonView()"
-              >
-                <eui-icon euiSizeS iconClass="eui-icon-close-m"></eui-icon>
-              </button>
-            </div>
-          </div>
-        </eui-page-column-header-body>
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center"
           style="position: relative; overflow: auto"
@@ -627,7 +448,7 @@
               'sync-scroll': true,
               'leos-simple-comparison-content':
                 isCNInstance &&
-                (documentService.versionCompareIds$ | async)?.length === 2
+                (versionCompareService.versionCompareIds$ | async)?.length === 2
             }"
           ></app-document>
         </eui-page-column-body>
@@ -656,31 +477,30 @@
         *ngIf="
           pageMode === PageMode.CompareVersions && !isAnnotationsPaneCollapsed
         "
-      ></app-resize-handle>
-      <!-- document annotations -->
-      <eui-page-column
-        #annotationsPane
-        class="eui-page-column--right-column annotations-pane"
-        [label]="'page.editor.annotations-pane.label' | translate"
-        isCollapsible
-        [isCollapsed]="isAnnotationsPaneCollapsed"
-        (collapsed)="onToggleAnnotationsPaneCollapsed()"
-        style="flex-basis: 580px"
-        *ngIf="showAnnotations"
-      >
-        <eui-page-column-body class="flex-grow-1">
-          <app-document-annotations
-            [containerId]="containerId"
-            [connectedEntity]="connectedEntity"
-            [proposalRef]="proposalRef"
-            [permissions]="documentService.permissions$ | async"
-            [showStatusFilter]="showStatusFilter"
-            [collapsed]="isAnnotationsPaneCollapsed"
-            (sidebarShown)="onSidebarShown()"
-            *ngIf="!milestoneViewData"
-          ></app-document-annotations>
-        </eui-page-column-body>
-      </eui-page-column>
+            ></app-resize-handle>
+            <!-- document annotations -->
+            <eui-page-column
+                #annotationsPane
+                class="eui-page-column--right-column annotations-pane"
+                [label]="'page.editor.annotations-pane.label' | translate"
+                isCollapsible
+                [isCollapsed]="isAnnotationsPaneCollapsed"
+                (collapsed)="onToggleAnnotationsPaneCollapsed()"
+                style="flex-basis: 580px"
+            *ngIf="showAnnotations">
+                <eui-page-column-body class="flex-grow-1">
+                    <app-document-annotations
+                            [containerId]="containerId"
+                            [connectedEntity]="connectedEntity"
+                            [proposalRef]="proposalRef"
+                            [permissions]="documentService.permissions$ | async"
+                            [showStatusFilter]="showStatusFilter"
+                            [collapsed]="isAnnotationsPaneCollapsed"
+                            (sidebarShown)="onSidebarShown()"
+                            *ngIf="!milestoneViewData"
+                    ></app-document-annotations>
+                </eui-page-column-body>
+            </eui-page-column>
 
       <!-- splitter: document annotations & document:contribution
                  Note: It actually resizes the two document panes -->
@@ -696,145 +516,6 @@
         [interactiveScrollbars]="false"
         *ngIf="pageMode === PageMode.Contribution"
       >
-        <eui-page-column-header-body>
-          <div
-            class="eui-u-flex eui-u-flex-row eui-u-overflow-auto justify-content-between w-100 app-u-gap-xs"
-            style="min-height: 35.99px"
-          >
-            <div
-              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
-              style="max-width: fit-content"
-            >
-              <button
-                euiButton
-                euiIconButton
-                euiSizeS
-                [euiPrimary]="isSyncScrollEnabled$ | async"
-                [euiSecondary]="(isSyncScrollEnabled$ | async) === false"
-                *ngIf="contributionForView"
-                (click)="toggleSyncScroll()"
-                [euiTooltip]="
-                  ((isSyncScrollEnabled$ | async)
-                    ? 'page.editor.contribution.view.actions.synchronous-scrolling.disable'
-                    : 'page.editor.contribution.view.actions.synchronous-scrolling.enable'
-                  ) | translate
-                "
-                [showDelay]="tooltipsDelay"
-                [disabled]="
-                  documentService.isContributionDeclinedOrProcessed$ | async
-                "
-              >
-                <eui-icon euiSizeS iconClass="eui-icon-sync"></eui-icon>
-              </button>
-              <button
-                id="prev-change-contribution"
-                euiButton
-                euiIconButton
-                euiBasicButton
-                euiPrimary
-                euiSizeS
-                *ngIf="contributionForView"
-                (click)="handlePrevChangeContribution()"
-                [euiTooltip]="
-                  'page.editor.contribution.view.actions.prev-change'
-                    | translate
-                "
-                [showDelay]="tooltipsDelay"
-                [disabled]="
-                  documentService.isContributionDeclinedOrProcessed$ | async
-                "
-              >
-                <span class="eui-icon eui-icon-sort-asc"></span>
-              </button>
-
-              <button
-                id="next-change-contribution"
-                euiButton
-                euiIconButton
-                euiBasicButton
-                euiPrimary
-                euiSizeS
-                *ngIf="contributionForView"
-                (click)="handleNextChangeContribution()"
-                [euiTooltip]="
-                  'page.editor.contribution.view.actions.next-change'
-                    | translate
-                "
-                [showDelay]="tooltipsDelay"
-                [disabled]="
-                  documentService.isContributionDeclinedOrProcessed$ | async
-                "
-              >
-                <span class="eui-icon eui-icon-sort-desc"></span>
-              </button>
-            </div>
-            <h4
-              class="eui-u-font-size-s"
-              *ngIf="(documentService.contributionSelections$ | async) === 0"
-            >
-              {{
-                'page.editor.contribution.view.text.select-revisions'
-                  | translate
-              }}
-            </h4>
-            <h4
-              class="eui-u-font-size-s"
-              *ngIf="(documentService.contributionSelections$ | async) > 0"
-            >
-              {{
-                'page.editor.contribution.view.text.revisions-selected'
-                  | translate
-                    : {
-                        selected:
-                          documentService.contributionSelections$ | async,
-                        all: (contributionChanges$ | async).length
-                      }
-              }}
-            </h4>
-            <div
-              class="eui-u-flex eui-u-flex-row app-u-gap-xs"
-              style="max-width: fit-content"
-            >
-              <app-revision-actions-dropdown
-                [contribution]="contribution"
-                class="col-md-3"
-              ></app-revision-actions-dropdown>
-              <button
-                euiButton
-                euiPrimary
-                euiSizeS
-                *ngIf="contributionForView"
-                (click)="handleMerge()"
-                [euiTooltip]="
-                  'page.editor.contribution.view.actions.apply' | translate
-                "
-                [showDelay]="tooltipsDelay"
-                [disabled]="
-                  ((documentService.contributionSelections$ | async) === 0 &&
-                    contributionActionSelected === 'accept_selected') ||
-                  (documentService.isContributionDeclinedOrProcessed$ | async)
-                "
-              >
-                {{ 'page.editor.contribution.view.actions.apply' | translate }}
-              </button>
-
-              <button
-                euiButton
-                euiIconButton
-                euiSecondary
-                euiSizeS
-                euiOutline
-                (click)="closeContributionsView()"
-                [euiTooltip]="
-                  'page.editor.contribution.view.actions.close-view' | translate
-                "
-                [showDelay]="tooltipsDelay"
-              >
-                <eui-icon euiSizeS iconClass="eui-icon-close-m"></eui-icon>
-              </button>
-            </div>
-          </div>
-        </eui-page-column-header-body>
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center"
           style="position: relative; overflow: auto"
@@ -898,83 +579,83 @@
 </eui-page>
 
 <app-download-econsilium-modal
-  *ngIf="documentRef"
-  #eConsiliumModal
+        *ngIf="documentRef"
+        #eConsiliumModal
 ></app-download-econsilium-modal>
 <app-proposal-milestone-view
-  #milestoneViewDialog
-  [milestone]="milestoneViewData"
-  (closed)="onMilestoneViewDialogClosed()"
-  *ngIf="milestoneViewData"
+    #milestoneViewDialog
+    [milestone]="milestoneViewData"
+    (closed)="onMilestoneViewDialogClosed()"
+    *ngIf="milestoneViewData"
 ></app-proposal-milestone-view>
 <eui-dialog
-  #openEditorDialog
-  [title]="'page.editor.open.editor.dialog.title' | translate"
-  [acceptLabel]="'global.actions.confirm' | translate"
-  [width]="'25vw'"
-  [isHandleCloseOnAccept]="true"
-  [isHandleCloseOnDismiss]="true"
-  [hasCloseButton]="false"
-  (clickOutside)="onCancelClose()"
-  (close)="onCancelClose()"
-  (accept)="onConfirmClose()"
-  (dismiss)="onCancelClose()"
+    #openEditorDialog
+    [title]="'page.editor.open.editor.dialog.title' | translate"
+    [acceptLabel]="'global.actions.confirm' | translate"
+    [width]="'25vw'"
+    [isHandleCloseOnAccept]="true"
+    [isHandleCloseOnDismiss]="true"
+    [hasCloseButton]="false"
+    (clickOutside)="onCancelClose()"
+    (close)="onCancelClose()"
+    (accept)="onConfirmClose()"
+    (dismiss)="onCancelClose()"
 >
-  <p>{{ 'page.editor.open.editor.dialog.body' | translate }}</p>
+    <p>{{ 'page.editor.open.editor.dialog.body' | translate }}</p>
 </eui-dialog>
 <eui-dialog
-  #mergeAllContributionsChangesDialog
-  [title]="
+    #mergeAllContributionsChangesDialog
+    [title]="
     'page.editor.contribution.view.merge-contributions.accept-all.modal-title'
       | translate
   "
-  [acceptLabel]="'global.actions.continue' | translate"
-  [dismissLabel]="'global.actions.cancel' | translate"
-  [width]="'25vw'"
-  [isHandleCloseOnAccept]="true"
-  [isHandleCloseOnDismiss]="true"
-  [hasCloseButton]="false"
-  (clickOutside)="onCancelMergeAllContributions()"
-  (close)="onCancelMergeAllContributions()"
-  (accept)="onAcceptMergeAllContributions()"
-  (dismiss)="onCancelMergeAllContributions()"
+    [acceptLabel]="'global.actions.continue' | translate"
+    [dismissLabel]="'global.actions.cancel' | translate"
+    [width]="'25vw'"
+    [isHandleCloseOnAccept]="true"
+    [isHandleCloseOnDismiss]="true"
+    [hasCloseButton]="false"
+    (clickOutside)="onCancelMergeAllContributions()"
+    (close)="onCancelMergeAllContributions()"
+    (accept)="onAcceptMergeAllContributions()"
+    (dismiss)="onCancelMergeAllContributions()"
 >
-  <p class="eui-u-mb-s">
-    {{
-      'page.editor.contribution.view.merge-contributions.accept-all.modal-text'
-        | translate
-    }}
-  </p>
+    <p class="eui-u-mb-s">
+        {{
+        'page.editor.contribution.view.merge-contributions.accept-all.modal-text'
+            | translate
+        }}
+    </p>
 </eui-dialog>
 
 <!-- unsaved data dialog -->
 <eui-dialog
-  #unSavedDialog
-  [title]="getTranlsations('page.editor.toc.unsaved-changes-dialog.title')"
-  [isHandleCloseOnAccept]="true"
-  [isHandleCloseOnDismiss]="true"
+    #unSavedDialog
+    [title]="getTranlsations('page.editor.toc.unsaved-changes-dialog.title')"
+    [isHandleCloseOnAccept]="true"
+    [isHandleCloseOnDismiss]="true"
 >
-  <p euiSizeXL>
-    {{ 'page.editor.toc.unsaved-changes-dialog.body' | translate }}
-  </p>
-  <eui-dialog-footer>
-    <div class="d-flex flex-row justify-content-end" style="gap: 0.5rem">
-      <button
-        euiButton
-        class="mr-2"
-        euiSecondary
-        (click)="hanldeUnSaveDialogClose(false)"
-      >
-        {{ 'page.editor.toc.unsaved-changes-dialog.close' | translate }}
-      </button>
-      <button
-        class=""
-        euiButton
-        euiPrimary
-        (click)="hanldeUnSaveDialogClose(true)"
-      >
-        {{ 'page.editor.toc.unsaved-changes-dialog.save' | translate }}
-      </button>
-    </div>
-  </eui-dialog-footer>
+    <p euiSizeXL>
+        {{ 'page.editor.toc.unsaved-changes-dialog.body' | translate }}
+    </p>
+    <eui-dialog-footer>
+        <div class="d-flex flex-row justify-content-end" style="gap: 0.5rem">
+            <button
+                    euiButton
+                    class="mr-2"
+                    euiSecondary
+                    (click)="hanldeUnSaveDialogClose(false)"
+            >
+                {{ 'page.editor.toc.unsaved-changes-dialog.close' | translate }}
+            </button>
+            <button
+                    class=""
+                    euiButton
+                    euiPrimary
+                    (click)="hanldeUnSaveDialogClose(true)"
+            >
+                {{ 'page.editor.toc.unsaved-changes-dialog.save' | translate }}
+            </button>
+        </div>
+    </eui-dialog-footer>
 </eui-dialog>
