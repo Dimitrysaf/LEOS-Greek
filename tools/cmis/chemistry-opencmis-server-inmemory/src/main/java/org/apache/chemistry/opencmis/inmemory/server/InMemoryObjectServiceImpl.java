@@ -270,7 +270,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         objectStore.setContent(so, null);
         if (null != changeToken) {
             String changeTokenVal = so.getChangeToken();
-            LOG.debug("deleteContentStream(), new change token is: " + changeTokenVal);
             changeToken.setValue(changeTokenVal);
         }
         LOG.debug("stop deleteContentStream()");
@@ -809,7 +808,6 @@ public class InMemoryObjectServiceImpl extends InMemoryAbstractServiceImpl {
         so.updateSystemBasePropertiesWhenModified(null, context.getUsername());
         if (null != changeToken) {
             String changeTokenVal = so.getChangeToken();
-            LOG.debug("appendContentStream(), new change token is: " + changeTokenVal);
             changeToken.setValue(changeTokenVal);
         }
     }
