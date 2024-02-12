@@ -179,16 +179,15 @@ define(function leosTrackChangesTableModule(require) {
 
                 return cursorPosition;
             } else if (selectionOrRow instanceof CKEDITOR.dom.element) {
-                table = selectionOrRow.getAscendant("table");
-
-                if (!selectionOrRow.getId()) {
+                if (!selectionOrRow.hasAttribute(core.UID_ATTR)) {
+                    core.addTrackChangesAttributes(editor, selectionOrRow, core.DELETE_ACTION);
+                } else if (selectionOrRow.getAttribute(core.UID_ATTR) === core.getUserId(editor)) {
+                    table = selectionOrRow.getAscendant("table");
                     if (table.$.rows.length == 1) {
                         table.remove();
                     } else {
                         selectionOrRow.remove();
                     }
-                } else if (!selectionOrRow.getAttribute(core.UID_ATTR)) {
-                    core.addTrackChangesAttributes(editor, selectionOrRow, core.DELETE_ACTION);
                 }
             }
 
@@ -277,14 +276,20 @@ define(function leosTrackChangesTableModule(require) {
 
             var range = editor.createRange();
             range.moveToPosition(table, CKEDITOR.POSITION_BEFORE_START);
+            var removeTable = true;
             if (table.getId()) {
+                var currentUserId = core.getUserId(editor);
                 var rows = table.$.querySelectorAll("tr");
-                rows.forEach(function (row) {
-                    if (!row.getAttribute(core.UID_ATTR)) {
+                rows.forEach(function(row) {
+                    if (!row.hasAttribute(core.UID_ATTR)) {
+                        removeTable = false;
                         core.addTrackChangesAttributes(editor, row, core.DELETE_ACTION);
+                    } else if (row.getAttribute(core.UID_ATTR) != currentUserId) {
+                        removeTable = false;
                     }
                 });
-            } else {
+            }
+            if (removeTable) {
                 table.remove();
             }
             range.select();
