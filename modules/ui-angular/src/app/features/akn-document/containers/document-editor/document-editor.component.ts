@@ -37,7 +37,12 @@ import { DocumentTocComponent } from '@/features/akn-document/containers/documen
 import { Version } from '@/features/akn-document/models';
 import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
 import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
-import { ContributionStatus, DOCUMENT_STYLES, DocumentConfig, Profile } from '@/shared';
+import {
+  ContributionStatus,
+  DOCUMENT_STYLES,
+  DocumentConfig,
+  Profile,
+} from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import {
@@ -235,19 +240,17 @@ export class DocumentEditorComponent
     this.coEditionWSService.setPresenterId(this.presenterId);
     this.isSyncScrollEnabled$ = this.syncScrollingService.isSyncScrollEnabled$;
 
-    this.config.config
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((config) => {
-        this.profile = config.profile;
-        this.connectedEntity = (
-          config.user.connectedEntity ?? config.user.defaultEntity
-        ).name;
-        this.showStatusFilter = config.annotateAuthority === 'LEOS';
-        this.documentService.setDocumentRefAndCategory(
-          this.documentRef,
-          this.documentType,
-        );
-      });
+    this.config.config.pipe(takeUntil(this.destroy$)).subscribe((config) => {
+      this.profile = config.profile;
+      this.connectedEntity = (
+        config.user.connectedEntity ?? config.user.defaultEntity
+      ).name;
+      this.showStatusFilter = config.annotateAuthority === 'LEOS';
+      this.documentService.setDocumentRefAndCategory(
+        this.documentRef,
+        this.documentType,
+      );
+    });
 
     this.loadStyleSheet();
 
@@ -302,29 +305,25 @@ export class DocumentEditorComponent
       takeUntil(this.destroy$),
     );
 
-    // this.viewVersionService.cleanVersionView$
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((cleanVersionView) => {
-    //     this.setPageMode(PageMode.ViewVersion);
-    //     if (!!cleanVersionView && !!cleanVersionView.editableXml) {
-    //       this.versionForView = this.cleanupAndSerializeXML(
-    //         cleanVersionView.editableXml,
-    //         `doubleCompare-${this.documentRef}`,
-    //       );
-    //       setTimeout(() => {
-    //         this.syncScrollingService.setSyncScroll(false);
-    //       });
-    //       this.setVersionForViewHeader(cleanVersionView.versionInfoVO);
-    //     } else {
-    //       this.syncScrollingService.setSyncScroll(true);
-    //     }
-    //   });
+    this.viewVersionService.cleanVersionView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((cleanVersionView) => {
+        if (!!cleanVersionView && !!cleanVersionView.editableXml) {
+          this.versionForView = this.cleanupAndSerializeXML(
+            cleanVersionView.editableXml,
+            `doubleCompare-${this.documentRef}`,
+          );
+          setTimeout(() => this.syncScrollingService.setSyncScroll(true));
+        }
+      });
 
-    // this.documentService.contributionModeEnabled$
-    //   .pipe(takeUntil(this.destroy$))
-    //   .subscribe((enabled) => {
-    //     this.setPageMode(enabled ? PageMode.Contribution : PageMode.Normal);
-    //   });
+    this.documentService.contributionModeEnabled$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((enabled) => {
+        this.pageModeService.setPageMode(
+          enabled ? PageMode.Contribution : PageMode.Normal,
+        );
+      });
 
     this.documentService.contributionViewAndMerge$
       .pipe(takeUntil(this.destroy$))
@@ -1023,23 +1022,27 @@ export class DocumentEditorComponent
     ]);
   }
 
-    get showBreadcrumb() {
-        return !this.profile || this.profile.breadcrumb;
-    }
+  get showBreadcrumb() {
+    return !this.profile || this.profile.breadcrumb;
+  }
 
-    get showCloseButton() {
-        return !this.profile || this.profile.closeDocument;
-    }
+  get showCloseButton() {
+    return !this.profile || this.profile.closeDocument;
+  }
 
-    get showMarkAsDoneButton() {
-        return this.profile && this.profile.callbackPresent && this.profile.markAsDoneAvailable;
-    }
+  get showMarkAsDoneButton() {
+    return (
+      this.profile &&
+      this.profile.callbackPresent &&
+      this.profile.markAsDoneAvailable
+    );
+  }
 
-    get showTocEditButton() {
-        return !this.profile || this.profile.tocEdition;
-    }
+  get showTocEditButton() {
+    return !this.profile || this.profile.tocEdition;
+  }
 
-    get showAnnotations() {
-        return !this.profile || this.profile.annotations;
-    }
+  get showAnnotations() {
+    return !this.profile || this.profile.annotations;
+  }
 }

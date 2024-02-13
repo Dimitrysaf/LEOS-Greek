@@ -70,7 +70,11 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    combineLatest([this.app.config, this.doc.documentConfig$, this.doc.permissions$])
+    combineLatest([
+      this.app.config,
+      this.doc.documentConfig$,
+      this.doc.permissions$,
+    ])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([appConfig, config, perms]) => {
         this.setMenuState(appConfig, config, perms);
@@ -95,7 +99,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   showCleanVersion() {
-    this.doc.showCleanVersion();
+    // this.doc.showCleanVersion();
   }
 
   toggleTrackChangesEnabled() {
@@ -123,10 +127,16 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     });
   }
 
-  setMenuState(appConfig: LeosAppConfig, config: DocumentConfig, permissions: Permission[]) {
+  setMenuState(
+    appConfig: LeosAppConfig,
+    config: DocumentConfig,
+    permissions: Permission[],
+  ) {
     this.documentConfig = config;
     const isClonedProposal = this.documentConfig?.clonedProposal;
-    const isTCEnabled = (!appConfig.profile || appConfig.profile.trackChangesEnabled) && this.documentConfig?.trackChangesEnabled;
+    const isTCEnabled =
+      (!appConfig.profile || appConfig.profile.trackChangesEnabled) &&
+      this.documentConfig?.trackChangesEnabled;
 
     const isCN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
     const isAnnex = this.doc.documentType === 'annex';
@@ -170,11 +180,16 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
   }
 
   onMenuIconClick() {
-    combineLatest([this.app.config, this.doc.documentConfig$, this.doc.permissions$])
+    combineLatest([
+      this.app.config,
+      this.doc.documentConfig$,
+      this.doc.permissions$,
+    ])
       .pipe(takeUntil(this.destroy$))
       .subscribe(([appConfig, config, perms]) => {
         this.setMenuState(appConfig, config, perms);
       });
   }
+
   setTrackChangesEnabled() {}
 }

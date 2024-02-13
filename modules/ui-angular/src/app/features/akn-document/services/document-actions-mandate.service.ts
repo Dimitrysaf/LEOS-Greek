@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { TranslateService } from '@ngx-translate/core';
+import { map } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DownloadEconsiliumComponent } from '@/features/akn-document/components/download-econsilium/download-econsilium.component';
@@ -24,8 +25,10 @@ import {
   COMPARE_EXPORT_DROPDOWN_EXPORT_DOCUWRITE,
   COMPARE_EXPORT_DROPDOWN_ID,
   COMPARE_SECTION_ID,
+  DISPLAY_SECTION_ID,
+  DISPLAY_SHOW_CLEAN_VERSION,
   EXPORT_DROPDOWN_EXPORT_CLEAN_VERSION_ID,
-  EXPORT_DROPDOWN_EXPORT_TO_ECONSILIUM,
+  EXPORT_DROPDOWN_EXPORT_TO_ECONSILIUM_ID,
   EXPORT_SECTION_DROPDOWN_ID,
   EXPORT_SECTION_ID,
   STRUCTURE_RENUMBER_DOCUMENT_ID,
@@ -206,7 +209,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
   private buildExportToEConsiliumButtonItem(): EuiDropdownButtonMenuItem {
     let exportOptions: DownloadEConsiliumOptions = null;
     return {
-      id: EXPORT_DROPDOWN_EXPORT_TO_ECONSILIUM,
+      id: EXPORT_DROPDOWN_EXPORT_TO_ECONSILIUM_ID,
       label: this.translateService.instant(
         'page.editor.actions-dropdown.export-econsilium',
       ),

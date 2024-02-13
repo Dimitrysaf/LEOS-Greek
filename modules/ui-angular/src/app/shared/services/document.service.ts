@@ -90,8 +90,6 @@ export class DocumentService implements OnDestroy {
   contributionModeEnabled$: Observable<boolean>;
   documentView$: Observable<DocumentViewResponse | null>;
   didDocumentLoadAndRender$: Observable<boolean>;
-  // versionView$: Observable<DocumentViewResponse | null>;
-  cleanVersionView$: Observable<DocumentViewResponse | null>;
   searchPaneOpen$: Observable<boolean>;
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
@@ -99,7 +97,6 @@ export class DocumentService implements OnDestroy {
   resetZoom$: Observable<void>;
   recentChanges$: Observable<Version[]>;
   documentConfig$: Observable<DocumentConfig>;
-  // versionId$: Observable<string | null>;
   searchResultIndexArray: any[];
   focusedSearchResult: any | null;
   currentSearchResults: Array<SearchMatchVO>;
@@ -216,9 +213,6 @@ export class DocumentService implements OnDestroy {
   private contributionViewAndMergeCollapsedBS = new BehaviorSubject<boolean>(
     true,
   );
-  private cleanVersionViewBS = new BehaviorSubject<DocumentViewResponse | null>(
-    null,
-  );
   /* 1-indexed */
   private annexDocNumber = 0;
   private isClonedProposalBS = new BehaviorSubject<boolean>(false);
@@ -301,7 +295,6 @@ export class DocumentService implements OnDestroy {
     this.versionLatest$ = this.versionLatestBS
       .asObservable()
       .pipe(filter(Boolean));
-    // this.versionId$ = this.versionIdBS.asObservable();
     this.versionFilter$ = this.versionFilterBS.asObservable();
     this.searchParams$ = this.searchParamsBS.pipe(
       distinctUntilChanged(DocumentService.searchStateComparator),
@@ -335,15 +328,6 @@ export class DocumentService implements OnDestroy {
         filter((x) => !x),
       )
       .subscribe(() => this.setVersionSearchParams({ author: '' }));
-
-    // this.versionView$ = this.versionId$.pipe(
-    //   takeUntil(this.destroy$),
-    //   skip(1),
-    //   combineLatestWith(this.documentRefAndCategory$),
-    //   mergeMap(([versionId, option]) =>
-    //     this.getDocumentVersion(option.category, versionId),
-    //   ),
-    // );
 
     this.versionLatest$.subscribe((version) => {
       if (version)
@@ -413,7 +397,6 @@ export class DocumentService implements OnDestroy {
     this.contributionViewAndMergeCollapsed$ =
       this.contributionViewAndMergeCollapsedBS.asObservable();
     this.isEditorOpen$ = this.isEditorOpenBS.asObservable();
-    this.cleanVersionView$ = this.cleanVersionViewBS.asObservable();
     this.getElementContent$ = this.getElementContentBS.asObservable();
     this.updateElementContent$ = this.updateElementContentBS.asObservable();
   }
@@ -471,17 +454,6 @@ export class DocumentService implements OnDestroy {
         },
       )
       .subscribe((resp) => this.handleDownloadResponse(resp));
-  }
-
-  showCleanVersion() {
-    const documentType = this.documentType;
-    const documentRef = this.documentRef;
-
-    this.http
-      .get<DocumentViewResponse>(
-        `${apiBaseUrl}/secured/${documentType}/${documentRef}/clean-version`,
-      )
-      .subscribe((resp) => this.cleanVersionViewBS.next(resp));
   }
 
   toggleTrackChangesEnabled(trackChangedEnabled) {

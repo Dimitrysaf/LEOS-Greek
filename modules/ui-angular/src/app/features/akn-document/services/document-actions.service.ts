@@ -33,8 +33,10 @@ import {
   COMPARE_SYNC_PANELS_ACTION,
   DISPLAY_ENABLE_TRACK_CHANGES_ACTION_ID,
   DISPLAY_SECTION_ID,
+  DISPLAY_SHOW_CLEAN_VERSION,
   DISPLAY_TOGGLE_TRACK_CHANGES_ACTION_ID,
   DISPLAY_USER_GUIDANCE_ACTION_ID,
+  EXPORT_DROPDOWN_EXPORT_CLEAN_VERSION_ID,
   EXPORT_DROPDOWN_EXPORT_VERSION_ID,
   EXPORT_DROPDOWN_EXPORT_VERSION_WITH_ANNOTATIONS_ID,
   EXPORT_SECTION_DROPDOWN_ID,
@@ -317,7 +319,15 @@ export abstract class DocumentActionsService {
     const exportVersionWithAnnotations =
       !this.isMandateMemorandum() &&
       this.buildExportVersionWithAnnotationsItem();
-    return [versionExport, exportVersionWithAnnotations].filter(Boolean);
+    const exportCleanVersion =
+      (!this.isMandateMemorandum() || this.isClonedProposal()) &&
+      this.buildExportCleanVersionButtonItem();
+
+    return [
+      versionExport,
+      exportVersionWithAnnotations,
+      exportCleanVersion,
+    ].filter(Boolean);
   }
 
   private buildExportVersionItem(): EuiDropdownButtonMenuItem {
@@ -328,6 +338,18 @@ export abstract class DocumentActionsService {
       ),
       iconClass: 'eui-icon-ecl-download',
       command: () => this.documentService.download(),
+    };
+  }
+
+  private buildExportCleanVersionButtonItem(): EuiDropdownButtonMenuItem {
+    return {
+      id: EXPORT_DROPDOWN_EXPORT_CLEAN_VERSION_ID,
+      label: this.translateService.instant(
+        'page.editor.actions-dropdown.export-clean-version',
+      ),
+      command: () => {
+        this.documentService.downloadCleanVersion();
+      },
     };
   }
 
@@ -391,7 +413,28 @@ export abstract class DocumentActionsService {
       ],
     };
 
+    if (!this.isMandateMemorandum() || this.isClonedProposal()) {
+      displaySection.children.push(this.buildShowCleanVersionItem());
+    }
     return displaySection;
+  }
+
+  private buildShowCleanVersionItem(): IRibbonToolbarButton {
+    return {
+      type: IRibbonToolbarType.BUTTON,
+      id: DISPLAY_SHOW_CLEAN_VERSION,
+      label: this.translateService.instant(
+        'page.editor.actions-dropdown.show-clean-version',
+      ),
+      disabled: this.viewVersionService.cleanVersionView$.pipe(
+        map((view) => view !== null),
+      ),
+      euiStyle: 'secondary',
+      euiSize: 's',
+      actionFn: () => {
+        this.viewVersionService.toggleViewCleanVersion();
+      },
+    };
   }
 
   private buildTrackChangesSection(): IRibbonToolbarSection {
