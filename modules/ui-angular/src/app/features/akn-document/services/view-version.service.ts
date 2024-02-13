@@ -31,6 +31,7 @@ export class ViewVersionService {
   versionViewLabel$: Observable<string>;
   versionView$: Observable<DocumentViewResponse | null>;
   versionId$: Observable<string | null>;
+  cleanVersionView$: Observable<DocumentViewResponse | null>;
 
   private versionIdBS = new Subject<string | null>();
   private versionViewBS = new BehaviorSubject<DocumentViewResponse>(null);
@@ -47,6 +48,7 @@ export class ViewVersionService {
   ) {
     this.versionId$ = this.versionIdBS.asObservable();
     this.versionView$ = this.versionViewBS.asObservable();
+    this.cleanVersionView$ = this.cleanVersionViewBS.asObservable();
 
     combineLatest([
       this.versionId$,
@@ -67,9 +69,16 @@ export class ViewVersionService {
         this.initViewVersion(versionView);
       });
 
-    this.versionViewLabel$ = this.versionView$.pipe(
-      filter((versionView) => !!versionView),
-      map((versionView) => this.getVersionViewTitle(versionView.versionInfoVO)),
+    this.versionViewLabel$ = combineLatest([
+      this.versionView$,
+      this.cleanVersionView$,
+    ]).pipe(
+      filter(([vv, cvv]) => !!vv || !!cvv),
+      map(([versionView, cleanVersionView]) => {
+        if (versionView)
+          return this.getVersionViewTitle(versionView.versionInfoVO);
+        else return this.getVersionViewTitle(cleanVersionView.versionInfoVO);
+      }),
     );
   }
 
@@ -79,6 +88,7 @@ export class ViewVersionService {
     this.versionIdBS.next(null);
     this.syncScrollService.setSyncScroll(false);
     this.pageModeService.setPageMode(PageMode.Normal);
+    this.cleanVersionViewBS.next(null);
   }
 
   toggleSyncScroll() {
@@ -90,17 +100,19 @@ export class ViewVersionService {
     this.versionIdBS.next(versionNumber);
   }
 
+  public toggleViewCleanVersion(): void {
+    const nextIsViewEnabled = !this.cleanVersionViewBS.value;
+    if (!nextIsViewEnabled) {
+      this.clearCleanVersionView();
+    } else {
+      this.initCleanVersionView();
+    }
+  }
+
   private initViewVersion(versionView: DocumentViewResponse) {
     this.versionViewBS.next(versionView);
     this.syncScrollService.setSyncScroll(true);
     this.pageModeService.setPageMode(PageMode.ViewVersion);
-  }
-
-  private getDocumentVersion(documentType: string, versionId: string) {
-    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    return this.http.get<DocumentViewResponse>(
-      `${apiBaseUrl}/secured/${documentType}/${versionId}/show-version`,
-    );
   }
 
   private getVersionViewTitle(versionInfo: VersionInfoVO) {
@@ -109,5 +121,35 @@ export class ViewVersionService {
       updatedByFull: `${versionInfo.lastModifiedBy} (${versionInfo.entity})`,
       updatedOn: versionInfo.lastModificationInstant,
     });
+  }
+
+  private clearCleanVersionView() {
+    this.pageModeService.setPageMode(PageMode.Normal);
+    this.cleanVersionViewBS.next(null);
+    this.syncScrollService.setSyncScroll(false);
+  }
+
+  private initCleanVersionView() {
+    this.fetchViewCleanVersion().subscribe((cleanVersion) => {
+      this.pageModeService.setPageMode(PageMode.ViewVersion);
+      this.cleanVersionViewBS.next(cleanVersion);
+      this.syncScrollService.setSyncScroll(true);
+    });
+  }
+
+  private fetchViewCleanVersion() {
+    const documentType = this.documentService.documentType;
+    const documentRef = this.documentService.documentRef;
+
+    return this.http.get<DocumentViewResponse>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/clean-version`,
+    );
+  }
+
+  private getDocumentVersion(documentType: string, versionId: string) {
+    documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
+    return this.http.get<DocumentViewResponse>(
+      `${apiBaseUrl}/secured/${documentType}/${versionId}/show-version`,
+    );
   }
 }
