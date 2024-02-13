@@ -507,6 +507,7 @@ define(function leosTrackChangesPluginModule(require) {
                     case "rowInsertAfter":
                         if (isTrackChangesEnabled) {
                             table.execCustomCommand(editor, event.data.name);
+                            editor.fire("change");
                             return false;
                         }
                         break;

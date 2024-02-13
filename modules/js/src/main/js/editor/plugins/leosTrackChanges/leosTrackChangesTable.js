@@ -181,7 +181,8 @@ define(function leosTrackChangesTableModule(require) {
             } else if (selectionOrRow instanceof CKEDITOR.dom.element) {
                 if (!selectionOrRow.hasAttribute(core.UID_ATTR)) {
                     core.addTrackChangesAttributes(editor, selectionOrRow, core.DELETE_ACTION);
-                } else if (selectionOrRow.getAttribute(core.UID_ATTR) === core.getUserId(editor)) {
+                } else if ((selectionOrRow.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) &&
+                    (selectionOrRow.getAttribute(core.UID_ATTR) === core.getUserId(editor))) {
                     table = selectionOrRow.getAscendant("table");
                     if (table.$.rows.length == 1) {
                         table.remove();
