@@ -440,8 +440,8 @@ define(function leosTrackChangesModule(require) {
             if (!element.getAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER)) {
                 if (!element.getAttribute(leosPluginUtils.ID)) {
                     element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, core.NEW);
-                } else if (previousNumber) {
-                    element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, previousNumber);
+                } else {
+                    element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, previousNumber ? previousNumber : core.UNNUMBERED);
                 }
             }
         },
