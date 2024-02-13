@@ -1,4 +1,3 @@
-
 INSERT INTO CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('CONFIG','Configuration','LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
 INSERT INTO CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('STRUCTURE','Structure','LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
 INSERT INTO CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('TEMPLATE_PROPOSAL','Template',
@@ -13,6 +12,9 @@ INSERT INTO CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DA
                                                                                                                               'LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
 INSERT INTO CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('TEMPLATE_STAT_FINANC_LEGIS','Template',
                                                                                                                               'LEOS_REPOSITORY',to_timestamp('06-04-23 12:26:17.000000000','DD-MM-RR HH24:MI:SSXFF'),null,null);
+
+INSERT INTO CONFIG_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE)
+VALUES ('LIGHT_PROFILE','Template for Light Profile',CURRENT_USER(),CURRENT_TIMESTAMP,null,null);
 
 INSERT INTO CONFIG (NAME,OBJECT_ID,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE,LANGUAGE,CATEGORY_ID) VALUES ('structure_01',734758,'admin/admin',to_timestamp('30-03-23 07:38:37.451000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',to_timestamp('30-03-23 07:38:37.496000000','DD-MM-RR HH24:MI:SSXFF'),null,(SELECT id from CONFIG_CATEGORIES WHERE CATEGORY_CODE='STRUCTURE'));
 INSERT INTO CONFIG (NAME,OBJECT_ID,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE,LANGUAGE,CATEGORY_ID) VALUES ('structure_02',734753,'admin/admin',to_timestamp('30-03-23 07:38:36.388000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',to_timestamp('30-03-23 07:38:36.472000000','DD-MM-RR HH24:MI:SSXFF'),null,(SELECT id from CONFIG_CATEGORIES WHERE CATEGORY_CODE='STRUCTURE'));
@@ -55,6 +57,11 @@ INSERT INTO CONFIG (NAME,OBJECT_ID,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT
 INSERT INTO CONFIG (NAME,OBJECT_ID,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE,LANGUAGE,CATEGORY_ID) VALUES ('CE-001-CONF','0','admin/admin',to_timestamp('22-01-21 08:25:40.328000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',to_timestamp('22-01-21 08:25:40.328000000','DD-MM-RR HH24:MI:SSXFF'),'EN',(SELECT id from CONFIG_CATEGORIES WHERE CATEGORY_CODE='CONFIG'));
 INSERT INTO CONFIG (NAME,OBJECT_ID,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE,LANGUAGE,CATEGORY_ID) VALUES ('CE-002-CONF','0','admin/admin',to_timestamp('22-01-21 08:25:40.328000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',to_timestamp('22-01-21 08:25:40.328000000','DD-MM-RR HH24:MI:SSXFF'),'EN',(SELECT id from CONFIG_CATEGORIES WHERE CATEGORY_CODE='CONFIG'));
 INSERT INTO CONFIG (NAME,OBJECT_ID,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE,LANGUAGE,CATEGORY_ID) VALUES ('CE-003-CONF','0','admin/admin',to_timestamp('22-01-21 08:25:40.328000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',to_timestamp('22-01-21 08:25:40.328000000','DD-MM-RR HH24:MI:SSXFF'),'EN',(SELECT id from CONFIG_CATEGORIES WHERE CATEGORY_CODE='CONFIG'));
+INSERT INTO CONFIG
+(NAME,OBJECT_ID,CATEGORY_ID, LANGUAGE, AUDIT_C_BY,AUDIT_C_DATE)
+VALUES
+    ('lightProfile','0',(SELECT id from CONFIG_CATEGORIES WHERE CATEGORY_CODE='LIGHT_PROFILE'),'EN', CURRENT_USER(), CURRENT_TIMESTAMP);
+
 
 INSERT INTO CONFIG_VERSION (CONFIG_ID,VERSION_LABEL,VERSION_SERIES_ID,VERSION_TYPE,IS_LATEST_MAJOR_VERSION,IS_LATEST_VERSION,IS_MAJOR_VERSION,IS_VERSION_SERIES_CHECKED_OUT,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_DATE,AUDIT_LAST_M_BY,IS_IMMUTABLE) VALUES ((SELECT id from CONFIG WHERE NAME='structure_01'),'1.0','1',null,1,1,1,0,'admin/admin',to_timestamp('30-03-23 07:38:37.451000000','DD-MM-RR HH24:MI:SSXFF'),to_timestamp('30-03-23 07:38:37.496000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',0);
 INSERT INTO CONFIG_VERSION (CONFIG_ID,VERSION_LABEL,VERSION_SERIES_ID,VERSION_TYPE,IS_LATEST_MAJOR_VERSION,IS_LATEST_VERSION,IS_MAJOR_VERSION,IS_VERSION_SERIES_CHECKED_OUT,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_DATE,AUDIT_LAST_M_BY,IS_IMMUTABLE) VALUES ((SELECT id from CONFIG WHERE NAME='structure_02'),'1.0','1',null,1,1,1,0,'admin/admin',to_timestamp('30-03-23 07:38:37.451000000','DD-MM-RR HH24:MI:SSXFF'),to_timestamp('30-03-23 07:38:37.496000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',0);
@@ -97,7 +104,59 @@ INSERT INTO CONFIG_VERSION (CONFIG_ID,VERSION_LABEL,VERSION_SERIES_ID,VERSION_TY
 INSERT INTO CONFIG_VERSION (CONFIG_ID,VERSION_LABEL,VERSION_SERIES_ID,VERSION_TYPE,IS_LATEST_MAJOR_VERSION,IS_LATEST_VERSION,IS_MAJOR_VERSION,IS_VERSION_SERIES_CHECKED_OUT,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_DATE,AUDIT_LAST_M_BY,IS_IMMUTABLE) VALUES ((SELECT id from CONFIG WHERE NAME='CE-001-CONF'),'1.0','1',null,1,1,1,0,'admin/admin',to_timestamp('30-03-23 07:38:37.451000000','DD-MM-RR HH24:MI:SSXFF'),to_timestamp('30-03-23 07:38:37.496000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',0);
 INSERT INTO CONFIG_VERSION (CONFIG_ID,VERSION_LABEL,VERSION_SERIES_ID,VERSION_TYPE,IS_LATEST_MAJOR_VERSION,IS_LATEST_VERSION,IS_MAJOR_VERSION,IS_VERSION_SERIES_CHECKED_OUT,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_DATE,AUDIT_LAST_M_BY,IS_IMMUTABLE) VALUES ((SELECT id from CONFIG WHERE NAME='CE-002-CONF'),'1.0','1',null,1,1,1,0,'admin/admin',to_timestamp('30-03-23 07:38:37.451000000','DD-MM-RR HH24:MI:SSXFF'),to_timestamp('30-03-23 07:38:37.496000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',0);
 INSERT INTO CONFIG_VERSION (CONFIG_ID,VERSION_LABEL,VERSION_SERIES_ID,VERSION_TYPE,IS_LATEST_MAJOR_VERSION,IS_LATEST_VERSION,IS_MAJOR_VERSION,IS_VERSION_SERIES_CHECKED_OUT,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_DATE,AUDIT_LAST_M_BY,IS_IMMUTABLE) VALUES ((SELECT id from CONFIG WHERE NAME='CE-003-CONF'),'1.0','1',null,1,1,1,0,'admin/admin',to_timestamp('30-03-23 07:38:37.451000000','DD-MM-RR HH24:MI:SSXFF'),to_timestamp('30-03-23 07:38:37.496000000','DD-MM-RR HH24:MI:SSXFF'),'admin/admin',0);
+INSERT INTO CONFIG_VERSION
+(CONFIG_ID,VERSION_LABEL,VERSION_SERIES_ID,VERSION_TYPE,IS_LATEST_MAJOR_VERSION,IS_LATEST_VERSION,IS_MAJOR_VERSION,IS_VERSION_SERIES_CHECKED_OUT,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_DATE,AUDIT_LAST_M_BY,IS_IMMUTABLE)
+VALUES
+    ((SELECT id from CONFIG WHERE NAME='lightProfile'),'1.0','1',null,1,1,1,0,CURRENT_USER(),CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,CURRENT_USER(),0);
 
+Insert into config_content
+(VERSION_ID,CONTENT,CONTENT_STREAM_MIME_TYPE,CONTENT_STREAM_FILENAME,CONTENT_STREAM_ID,CONTENT_STREAM_LENGTH,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_DATE,AUDIT_LAST_M_BY)
+values ((select id from config_version where config_id = (SELECT id from CONFIG WHERE NAME='lightProfile')),
+        '[<?xml version="1.0" encoding="UTF-8"?>
+        <container xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ lightProfile.xsd">
+            <name>lightProfileTest.xml</name>
+            <description>Profile description for various clients in Leos Light</description>
+            <version>1.0.0</version>
+            <profileList>
+                <profile>
+                    <name>DECISION_EDIT</name>
+                    <breadcrumb>true</breadcrumb>
+                    <tocEdition>true</tocEdition>
+                    <internalReference>true</internalReference>
+                    <authorialNote>true</authorialNote>
+                    <showLoggedCURRENT_USER()>false</showLoggedCURRENT_USER()>
+                    <trackChangesEnabled>false</trackChangesEnabled>
+                    <closeDocument>false</closeDocument>
+                    <callbackPresent>true</callbackPresent>
+                    <annotations>true</annotations>
+                    <importOJ>true</importOJ>
+                    <markAsDoneAvailable>false</markAsDoneAvailable>
+                </profile>
+                <profile>
+                    <name>DGT_EDIT</name>
+                    <breadcrumb>false</breadcrumb>
+                    <tocEdition>false</tocEdition>
+                    <internalReference>false</internalReference>
+                    <authorialNote>false</authorialNote>
+                    <showLoggedCURRENT_USER()>true</showLoggedCURRENT_USER()>
+                    <trackChangesEnabled>false</trackChangesEnabled>
+                    <closeDocument>false</closeDocument>
+                    <callbackPresent>true</callbackPresent>
+                    <annotations>true</annotations>
+                    <importOJ>false</importOJ>
+                    <markAsDoneAvailable>true</markAsDoneAvailable>
+                </profile>
+            </profileList>
+        </container>
+        ]',
+        'text/json',
+        'lightProfile','1',0,CURRENT_USER(),CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,CURRENT_USER());
+
+update config_content
+set content_stream_length = length(content)
+where version_id = (select id from config_version where config_id = (SELECT id from CONFIG WHERE NAME='lightProfile'));
 
 INSERT INTO DOCUMENT_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('ANNEX','Annex','LEOS_REPOSITORY',to_timestamp('23-04-23 14:47:44.235316000','DD-MM-RR HH24:MI:SSXFF'),null,null);
 INSERT INTO DOCUMENT_CATEGORIES (CATEGORY_CODE,CATEGORY_DESC,AUDIT_C_BY,AUDIT_C_DATE,AUDIT_LAST_M_BY,AUDIT_LAST_M_DATE) VALUES ('BILL','Bill or Legal Act','LEOS_REPOSITORY',to_timestamp('23-04-23 14:47:44.235316000','DD-MM-RR HH24:MI:SSXFF'),null,null);
