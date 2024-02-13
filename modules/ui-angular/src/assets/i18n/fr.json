@@ -528,7 +528,7 @@
   "page.error.unathorized.home": " [FR] Go to Home",
   "page.error.unathorized.title": "[FR] 401 | Unauthorized",
   "page.error.page-not-found.home": " [FR] Go to Home",
-  "page.error.page-not-found.tilte": "[FR] 404 | Page not found",
+  "page.error.page-not-found.title": "[FR] 404 | Page not found",
   "dialog.download-econsilium.dialog-title": "[FR] Export to eConsilium",
   "dialog.download-econsilium.relevantElements": "[FR] Include",
   "dialog.download-econsilium.relevantElements.error": "[FR] Select at least one element",
