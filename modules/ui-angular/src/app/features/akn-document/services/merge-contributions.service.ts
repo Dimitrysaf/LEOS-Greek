@@ -136,7 +136,6 @@ export class MergeContributionsService {
 
   closeContributionMergeView() {
     this.documentService.resetZoomValues();
-    this.contributionsBS.next(null);
     this.contributionViewAndMergeBS.next(null);
     this.syncScrollService.setSyncScroll(false);
     this.pageModeService.setPageMode(PageMode.Normal);
