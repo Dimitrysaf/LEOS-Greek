@@ -21,6 +21,7 @@ define(function leosTablePluginModule(require) {
 
     // load module dependencies
     var pluginTools = require('plugins/pluginTools');
+    var leosPluginUtils = require("plugins/leosPluginUtils");
     var leosTableTransformerStamp = require('plugins/leosTableTransformer/leosTableTransformer');
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
@@ -72,6 +73,8 @@ define(function leosTablePluginModule(require) {
             editor.on('selectionChange', _onSelectionChange);
             editor.on("toHtml", _removeEmptyTableHeading, null, null, 15);
 
+            editor.on( 'insertElement', _onInsertElement, this, null, 1 );
+
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -87,7 +90,42 @@ define(function leosTablePluginModule(require) {
             });
         }
     };
-    
+
+    function _onInsertElement(event) {
+        if(event.data.getName() === 'table'){
+            var editor = event.editor;
+            var range = editor.getSelection().getRanges()[0];
+            if(range.collapsed){
+                var container = range.startContainer;
+                var parentElem = (container && container.type === CKEDITOR.NODE_TEXT) ? container.getParent() : container;
+                var isParentUnnumberedParagraph  = parentElem && parentElem.getName() === 'li'
+                   && parentElem.getAttribute('data-akn-element') === 'paragraph'
+                   && parentElem.getAttribute('data-akn-num') === null;
+                if(isParentUnnumberedParagraph){
+                    // For annex there is no need to insert a new list;
+                    // The application transforms by default, automatically, the new paragraph
+                    var isGrandParentNOTAnnexList = parentElem.getParent().getName() == 'ol'
+                        && parentElem.getParent().getAttribute("data-akn-name") !== 'aknAnnexList';
+                    if(isGrandParentNOTAnnexList){
+                        var newElement = new CKEDITOR.dom.element(leosPluginUtils.HTML_POINT);
+                        newElement.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
+                        newElement.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
+                        newElement.insertAfter(parentElem);
+                        setToPosition(editor, newElement, CKEDITOR.POSITION_AFTER_START);
+                    }
+                }
+            }
+        }
+    }
+
+    function setToPosition(editor, element, position) {
+        if ((element !== null) && (element.type !== null)) {
+            var range = editor.createRange();
+            range.moveToPosition(element, position);
+            range.select();
+        }
+    }
+
     function _tableDelete(editor) { // This is a copy of ckeditor plugins/table/plugin.js 'tableDelete' exec command function and modified
 		var path = editor.elementPath(), // to avoid remove 'li' parent table element (check parent condition, 'li' element was added)
 		table = path.contains( 'table', 1 );

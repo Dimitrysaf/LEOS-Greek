@@ -348,7 +348,7 @@ export class DocumentComponent
       return {
         elementId: data.elementId,
         elementType: data.elementType,
-        elementFragment: this.cleanForTransformation(elt.outerHTML),
+        elementFragment: elt === null ? null: this.cleanForTransformation(elt.outerHTML),
       };
     }
     return {
