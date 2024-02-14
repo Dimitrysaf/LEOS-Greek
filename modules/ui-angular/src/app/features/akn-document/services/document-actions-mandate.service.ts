@@ -18,6 +18,7 @@ import {
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
 import { ImportService } from '@/features/akn-document/services/import.service';
+import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import { PageModeService } from '@/features/akn-document/services/page-mode.service';
 import { SyncDocumentScrollService } from '@/features/akn-document/services/sync-document-scroll.service';
 import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
@@ -57,6 +58,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
     protected versionCompareService: VersionCompareService,
     protected viewVersionService: ViewVersionService,
     protected syncScrollService: SyncDocumentScrollService,
+    protected mergeContributionService: MergeContributionsService,
     protected pageModeService: PageModeService,
     protected appConfigService: AppConfigService,
   ) {
@@ -73,6 +75,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       versionCompareService,
       viewVersionService,
       syncScrollService,
+      mergeContributionService,
       pageModeService,
       appConfigService,
     );

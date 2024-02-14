@@ -1,14 +1,17 @@
+import { MergeActionsService } from '@/features/akn-document/services/merge-actions.service';
+import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import { Permission } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import {
-  CONTRIBUTION_SELECTED, ContributionActionAttrValue, MERGE_ACTION_ATTR,
+  CONTRIBUTION_SELECTED,
+  ContributionActionAttrValue,
+  MERGE_ACTION_ATTR,
   MergeActionItem,
   MergeActionVO,
 } from '@/shared/models/merge-action-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
-import {MergeActionsService} from "@/features/akn-document/services/merge-actions.service";
 
 export type MergeContributionConnectorState = LeosJavaScriptExtensionState & {
   tocItemsJsonArray: string; // json
@@ -42,6 +45,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     private documentService: DocumentService,
     private options: MergeContributionConnectorOptions,
     private mergeActionsService: MergeActionsService,
+    private mergeContributionsService: MergeContributionsService,
   ) {
     super(
       { ...staticExtensionState, isAngularUI: true, ...state },
@@ -51,6 +55,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
       this.updateMergeActionList(action);
     });
   }
+
   requestTocItemList() {
     this.populateTocItemList();
   }
@@ -61,7 +66,11 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     this.mergeActionsService.removeMergeActionList(element);
   }
 
-  showActionMenu(event: MouseEvent, element: HTMLElement, actions: HTMLElement) {
+  showActionMenu(
+    event: MouseEvent,
+    element: HTMLElement,
+    actions: HTMLElement,
+  ) {
     this.mergeActionsService.showMenu(event, element, actions);
   }
 
@@ -80,15 +89,17 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     });
 
     if (mergeActionVOs) {
-      this.documentService.mergeContributions(
-        mergeActionVOs,
-        this.acceptAllContributions,
-      );
+      // this.mergeContributionsService.mergeContributions(
+      //   mergeActionVOs,
+      //   this.acceptAllContributions,
+      // );
     }
   }
 
   handleContributionSelection(selectionData: { selected: boolean }) {
-    this.documentService.handleContributionSelectCount(selectionData.selected);
+    this.mergeContributionsService.handleContributionSelectCount(
+      selectionData.selected,
+    );
   }
 
   setAcceptAllContributions(acceptAllContributions: boolean) {

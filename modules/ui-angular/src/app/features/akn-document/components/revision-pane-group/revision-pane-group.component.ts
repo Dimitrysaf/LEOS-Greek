@@ -1,8 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 
+import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import { ContributionStatus } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
-import {DocumentService} from "@/shared/services/document.service";
+import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
   selector: 'app-revision-pane-group',
@@ -20,12 +21,27 @@ export class RevisionPaneGroupComponent implements OnInit {
 
   constructor(
     public documentService: DocumentService,
+    public mergeContributionsService: MergeContributionsService,
   ) {}
 
   ngOnInit(): void {
     this.revisionTitle = this.formatTitle(this.contribution);
     this.revisionVersion = this.formatVersionNumber(this.contribution);
     this.originatingApplication = this.contribution.contributionCreator;
+  }
+
+  onClickView(contribution: ContributionVO) {
+    if (
+      contribution.contributionStatus === ContributionStatus.ContributionDone
+    ) {
+      this.mergeContributionsService.viewAndMergeContribution(contribution);
+      this.mergeContributionsService.updateProcessedStatus(true, contribution);
+    } else if (
+      contribution.contributionStatus === ContributionStatus.Received
+    ) {
+      this.mergeContributionsService.viewAndMergeContribution(contribution);
+      this.mergeContributionsService.updateProcessedStatus(false, contribution);
+    }
   }
 
   protected formatVersionNumber(contribution: ContributionVO): string {
@@ -41,16 +57,6 @@ export class RevisionPaneGroupComponent implements OnInit {
       );
     } else {
       return contribution.checkinCommentVO.title;
-    }
-  }
-
-  onClickView(contribution: ContributionVO) {
-    if (contribution.contributionStatus === ContributionStatus.ContributionDone) {
-      this.documentService.viewAndMergeContribution(contribution);
-      this.documentService.updateProcessedStatus(true, contribution);
-    } else if (contribution.contributionStatus === ContributionStatus.Received) {
-      this.documentService.viewAndMergeContribution(contribution);
-      this.documentService.updateProcessedStatus(false, contribution);
     }
   }
 }

@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
-  Component, HostListener,
+  Component,
+  HostListener,
   Input,
   OnDestroy,
   OnInit,
@@ -10,17 +11,17 @@ import { Subject, takeUntil } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
+import { MergeActionsService } from '@/features/akn-document/services/merge-actions.service';
 import { DocumentConfig, LeosConfig, Permission } from '@/shared';
-import { DocumentService } from '@/shared/services/document.service';
-
-import {MergeActionsService} from "@/features/akn-document/services/merge-actions.service";
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import {
   CONTRIBUTION_SELECTED,
   ContributionActionAttrValue,
   MERGE_ACTION_ATTR,
-  MERGE_CONTRIBUTION, MergeActionVO
-} from "@/shared/models/merge-action-vo.model";
-import {ContributionVO} from "@/shared/models/contribution-vo.model";
+  MERGE_CONTRIBUTION,
+  MergeActionVO,
+} from '@/shared/models/merge-action-vo.model';
+import { DocumentService } from '@/shared/services/document.service';
 
 @Component({
   selector: 'app-merge-actions',
@@ -28,35 +29,10 @@ import {ContributionVO} from "@/shared/models/contribution-vo.model";
   templateUrl: './merge-actions.component.html',
 })
 export class MergeActionsComponent implements OnInit, OnDestroy {
-  documentConfig: DocumentConfig;
-  leosConfig: LeosConfig;
-  @Input()
-  contribution: ContributionVO;
-
-  isShown = false;
-  canAcceptTrackChanges: boolean;
-  canRejectTrackChanges: boolean;
-  currentElement: HTMLElement;
-  actions: HTMLElement;
-  movedToId: string;
-  movedFromId: string;
   private screenHeight: number;
   private screenWidth: number;
 
-  @HostListener('document:click', ['$event'])
-  clickout(event) {
-    if(this.actions && !this.actions.contains(event.target)) {
-      this.clickedOutside();
-    }
-  }
-  @HostListener('window:resize', ['$event'])
-  onResize(event?) {
-    this.screenHeight = window.innerHeight;
-    this.screenWidth = window.innerWidth;
-  }
-
   private destroy$ = new Subject();
-
   private mouseLocation: { left: number; top: number } = { left: 0, top: 0 };
 
   constructor(
@@ -72,6 +48,32 @@ export class MergeActionsComponent implements OnInit, OnDestroy {
         this.showMenu(data);
       }
     });
+  }
+
+  documentConfig: DocumentConfig;
+  leosConfig: LeosConfig;
+  @Input()
+  contribution: ContributionVO;
+
+  isShown = false;
+  canAcceptTrackChanges: boolean;
+  canRejectTrackChanges: boolean;
+  currentElement: HTMLElement;
+  actions: HTMLElement;
+  movedToId: string;
+  movedFromId: string;
+
+  @HostListener('document:click', ['$event'])
+  clickout(event) {
+    if (this.actions && !this.actions.contains(event.target)) {
+      this.clickedOutside();
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event?) {
+    this.screenHeight = window.innerHeight;
+    this.screenWidth = window.innerWidth;
   }
 
   ngOnInit() {
@@ -105,14 +107,16 @@ export class MergeActionsComponent implements OnInit, OnDestroy {
 
   get locationCss() {
     const menuWidth = 270;
-    let left = (this.mouseLocation.left + menuWidth > this.screenWidth) ? this.screenWidth - menuWidth
-      : this.mouseLocation.left;
+    const left =
+      this.mouseLocation.left + menuWidth > this.screenWidth
+        ? this.screenWidth - menuWidth
+        : this.mouseLocation.left;
     return {
       position: 'fixed',
       display: this.isShown ? 'block' : 'none',
       left: left + 'px',
       top: this.mouseLocation.top + 'px',
-      width: (menuWidth-20) + 'px',
+      width: menuWidth - 20 + 'px',
       zIndex: 99,
     };
   }
@@ -122,15 +126,16 @@ export class MergeActionsComponent implements OnInit, OnDestroy {
   }
 
   // show the menu and set the location of the mouse
-  showMenu(data: {event: MouseEvent, element: HTMLElement, actions: HTMLElement}) {
+  showMenu(data: {
+    event: MouseEvent;
+    element: HTMLElement;
+    actions: HTMLElement;
+  }) {
     this.isShown = true;
-    this.currentElement = data.element;
-    this.actions = data.actions;
     this.mouseLocation = {
       left: data.event.clientX,
       top: data.event.clientY,
     };
-    this.mergeActionsService.getAction(this.currentElement);
     this.ref.markForCheck();
   }
 
@@ -140,48 +145,6 @@ export class MergeActionsComponent implements OnInit, OnDestroy {
 
   canUserRejectChanges() {
     return this.canRejectTrackChanges;
-  }
-
-  onAccept() {
-    this.currentElement.classList.add(CONTRIBUTION_SELECTED);
-    this.currentElement.setAttribute(MERGE_ACTION_ATTR, ContributionActionAttrValue.ACCEPT);
-    let action: MergeActionVO = {action: "", contributionVO: undefined, elementId: "", elementState: "", elementTagName: "", withTrackChanges: false};
-    action.elementId = this.currentElement.getAttribute('id').replace('revision-', '');
-    action.elementState = this.mergeActionsService.getAction(this.currentElement);
-    action.action = ContributionActionAttrValue.ACCEPT;
-    action.withTrackChanges = false;
-    action.elementTagName = this.currentElement.tagName.toLowerCase();
-    action.contributionVO = this.contribution;
-
-    this.mergeActionsService.addMergeActionList(action);
-  }
-
-  onAcceptWithTC() {
-    this.currentElement.classList.add(CONTRIBUTION_SELECTED);
-    this.currentElement.setAttribute(MERGE_ACTION_ATTR, ContributionActionAttrValue.ACCEPT_TC);
-    let action: MergeActionVO = {action: "", contributionVO: undefined, elementId: "", elementState: "", elementTagName: "", withTrackChanges: false};
-    action.elementId = this.currentElement.getAttribute('id').replace('revision-', '');
-    action.elementState = this.mergeActionsService.getAction(this.currentElement);
-    action.action = ContributionActionAttrValue.ACCEPT_TC;
-    action.withTrackChanges = true;
-    action.elementTagName = this.currentElement.tagName.toLowerCase();
-    action.contributionVO = this.contribution;
-
-    this.mergeActionsService.addMergeActionList(action);
-  }
-
-  onMarkProcessed() {
-    this.currentElement.classList.add(CONTRIBUTION_SELECTED);
-    this.currentElement.setAttribute(MERGE_ACTION_ATTR, ContributionActionAttrValue.PROCESSED);
-    let action: MergeActionVO = {action: "", contributionVO: undefined, elementId: "", elementState: "", elementTagName: "", withTrackChanges: false};
-    action.elementId = this.currentElement.getAttribute('id').replace('revision-', '');
-    action.elementState = this.mergeActionsService.getAction(this.currentElement);
-    action.action = ContributionActionAttrValue.PROCESSED;
-    action.withTrackChanges = true;
-    action.elementTagName = this.currentElement.tagName.toLowerCase();
-    action.contributionVO = this.contribution;
-
-    this.mergeActionsService.addMergeActionList(action);
   }
 
   ngOnDestroy(): void {

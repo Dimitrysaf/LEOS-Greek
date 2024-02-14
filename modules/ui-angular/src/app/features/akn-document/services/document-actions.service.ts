@@ -16,13 +16,20 @@ import { BehaviorSubject, combineLatest, map, Observable, take } from 'rxjs';
 import { AppConfigService } from '@/core/services/app-config.service';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { ImportService } from '@/features/akn-document/services/import.service';
+import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import {
   PageMode,
   PageModeService,
 } from '@/features/akn-document/services/page-mode.service';
 import { SyncDocumentScrollService } from '@/features/akn-document/services/sync-document-scroll.service';
 import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
-import { DocumentConfig, DocumentType, Permission, Profile } from '@/shared';
+import {
+  DocumentConfig,
+  DocumentType,
+  LeosConfig,
+  Permission,
+  Profile,
+} from '@/shared';
 import {
   COMPARE_EXPORT_DROPDOWN_EXPORT_PDF,
   COMPARE_EXPORT_DROPDOWN_EXPORT_XML,
@@ -43,6 +50,13 @@ import {
   EXPORT_SECTION_ID,
   IMPORT_OJ_ACTION_ID,
   IMPORT_OJ_SECTION_ID,
+  MERGE_CONTRIBUTION_APPLY_CHANGES_ID,
+  MERGE_CONTRIBUTION_APPLY_CHANGES_TC_ID,
+  MERGE_CONTRIBUTION_GROUP_PREV_NEXT_ID,
+  MERGE_CONTRIBUTION_MARK_AS_PROCESSED_ID,
+  MERGE_CONTRIBUTION_NEXT_CHANGE_ID,
+  MERGE_CONTRIBUTION_PREV_CHANGE_ID,
+  MERGE_SECTION_ID,
   RELOAD_SECTION_ID,
   SAVE_DOCUMENT_ACTION_ID,
   SAVE_DOCUMENT_SECTION_ID,
@@ -72,6 +86,7 @@ const LIST_OF_DISABLE_BUTTONS = [SEARCH_ACTION_ID, RELOAD_SECTION_ID];
 export abstract class DocumentActionsService {
   public actionsItems$: Observable<IRibbonToolbarSection[]>;
   protected pageMode: PageMode;
+  protected leosConfig: LeosConfig;
   protected documentConfig: DocumentConfig;
   protected isEditorOpen = false;
 
@@ -95,6 +110,7 @@ export abstract class DocumentActionsService {
     protected versionCompareService: VersionCompareService,
     protected viewVersionService: ViewVersionService,
     protected syncScrollService: SyncDocumentScrollService,
+    protected mergeContributionService: MergeContributionsService,
     protected pageModeService: PageModeService,
     protected appConfigService: AppConfigService,
   ) {
@@ -227,6 +243,9 @@ export abstract class DocumentActionsService {
       this.pageMode === PageMode.CompareVersions && this.buildCompareSection();
     const viewVersionSection =
       this.pageMode === PageMode.ViewVersion && this.buildViewVersionSection();
+    const mergeContributionsSection =
+      this.pageMode === PageMode.Contribution &&
+      this.buildMergeContributionsSection();
 
     return [
       saveSection,
@@ -238,6 +257,7 @@ export abstract class DocumentActionsService {
       editSection,
       compareSection,
       viewVersionSection,
+      mergeContributionsSection,
     ];
   }
 
@@ -647,6 +667,121 @@ export abstract class DocumentActionsService {
     ];
   }
 
+  private buildMergeContributionsSection(): IRibbonToolbarSection {
+    return {
+      type: IRibbonToolbarType.SECTION,
+      id: MERGE_SECTION_ID,
+      label: this.translateService.instant(
+        'page.editor.contribution.actions.view.and.merge',
+      ),
+      sectionContainerCssClasses: 'overlay-merge-contribution',
+      cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
+      children: [...this.buildMergeContributionsSectionItems()],
+      svgIconClas: 'git-merge',
+      svgType: 'sharp',
+      closable: true,
+      closableBtnStyle: 'secondary',
+      closeFn: () => this.mergeContributionService.closeContributionMergeView(),
+      order: 7,
+      resizeOrder: 6,
+    };
+  }
+
+  private buildMergeContributionsSectionItems(): IRibbonToolbarItem[] {
+    return [
+      {
+        type: IRibbonToolbarType.GROUP,
+        id: MERGE_CONTRIBUTION_GROUP_PREV_NEXT_ID,
+        cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
+        children: [
+          {
+            type: IRibbonToolbarType.BUTTON,
+            id: MERGE_CONTRIBUTION_PREV_CHANGE_ID,
+            iconClass: 'eui-icon-sort-asc',
+            euiSize: 's',
+            euiStyle: 'secondary',
+            basicButton: true,
+            actionFn: () =>
+              this.mergeContributionService.handlePrevChangeContribution(),
+            disabled: this.mergeContributionService.hasPrevChangesDisabled$,
+            description: this.translateService.instant(
+              'page.editor.versions.compare.actions.prev-change',
+            ),
+          },
+          {
+            type: IRibbonToolbarType.BUTTON,
+            id: MERGE_CONTRIBUTION_NEXT_CHANGE_ID,
+            iconClass: 'eui-icon-sort-desc',
+            euiSize: 's',
+            euiStyle: 'secondary',
+            basicButton: true,
+            actionFn: () =>
+              this.mergeContributionService.handleNextChangeContribution(),
+            disabled: this.mergeContributionService.hasNextChangeDisabled$,
+            description: this.translateService.instant(
+              'page.editor.versions.compare.actions.next-change',
+            ),
+          },
+        ],
+      },
+      {
+        type: IRibbonToolbarType.CHECKBOX,
+        id: COMPARE_SYNC_PANELS_ACTION,
+        label: this.translateService.instant(
+          'page.editor.contribution.view.actions.synchronous-scrolling',
+        ),
+        isSlider: true,
+        value: this.syncScrollService.isSyncScrollEnabled$,
+        actionFn: () => this.mergeContributionService.toggleSyncScroll(),
+        cssClasses:
+          'eui-u-flex eui-u-flex-column eui-u-flex-justify-content-center',
+      },
+      {
+        type: IRibbonToolbarType.DROPDOWN,
+        id: COMPARE_EXPORT_DROPDOWN_ID,
+        euiSize: 's',
+        euiStyle: 'secondary',
+        label: 'Apply',
+        iconClass: 'eui-icon-more-vertical',
+        items: this.buildMergeContributionApplyDropdownOptions(),
+      },
+      {
+        type: IRibbonToolbarType.BUTTON,
+        id: 'send-feedback-id',
+        euiSize: 's',
+        euiStyle: 'secondary',
+        label: 'Send feedback',
+        actionFn: () => null,
+      },
+    ];
+  }
+
+  private buildMergeContributionApplyDropdownOptions(): EuiDropdownButtonMenuItem[] {
+    return [
+      {
+        id: MERGE_CONTRIBUTION_APPLY_CHANGES_ID,
+        command: () => null,
+        label: this.translateService.instant(
+          'page.editor.contribution.actions.view.and.merge.actions.apply.changes',
+        ),
+      },
+      {
+        id: MERGE_CONTRIBUTION_APPLY_CHANGES_TC_ID,
+        command: () => null,
+        label: this.translateService.instant(
+          'page.editor.contribution.actions.view.and.merge.actions.apply.changes.tc',
+        ),
+      },
+      {
+        id: MERGE_CONTRIBUTION_MARK_AS_PROCESSED_ID,
+        command: () => null,
+        label: this.translateService.instant(
+          'page.editor.contribution.actions.view.and.merge.actions.mark',
+        ),
+      },
+    ];
+  }
+
   private toggleUserGuidance() {
     this.ckEditorService.toggleUserGuidance();
   }
@@ -767,5 +902,18 @@ export abstract class DocumentActionsService {
 
   private isCN() {
     return this.environmentService.isCouncil();
+  }
+
+  private canAcceptTrackChanges() {
+    return (
+      this.permissions.includes('CAN_ACCEPT_CHANGES') &&
+      (!this.documentConfig?.clonedProposal ||
+        (this.documentConfig?.clonedProposal &&
+          this.leosConfig?.user.roles.includes('SUPPORT')))
+    );
+  }
+
+  private canRejectTrackChanges() {
+    return this.permissions.includes('CAN_REJECT_CHANGES');
   }
 }
