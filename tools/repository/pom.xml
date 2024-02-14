@@ -39,6 +39,7 @@
         <tomcat.version>9.0.36</tomcat.version>
         <buildnumber-maven-plugin.version>3.2.0</buildnumber-maven-plugin.version>
         <spring-boot.run.jvmArguments>-Dfile.encoding=UTF-8</spring-boot.run.jvmArguments>
+        <spring-security.version>5.8.9</spring-security.version>
     </properties>
 
     <modules>
