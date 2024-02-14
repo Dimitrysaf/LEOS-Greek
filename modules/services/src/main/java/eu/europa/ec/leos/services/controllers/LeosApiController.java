@@ -266,6 +266,7 @@ public class LeosApiController {
             case STAT_FINANC_LEGIS:
             case COVERPAGE:
             case PROPOSAL:
+            case COUNCIL_EXPLANATORY:
                 String documentViewUrl = applicationProperties.getProperty("leos.mapping.url") +
                         applicationProperties.getProperty("leos.document.view." + document.getCategory().toString().toLowerCase() + ".uri");
                 return new ResponseEntity<>(Collections.singletonMap("url", MessageFormat.format(documentViewUrl, documentRef)), HttpStatus.OK);
