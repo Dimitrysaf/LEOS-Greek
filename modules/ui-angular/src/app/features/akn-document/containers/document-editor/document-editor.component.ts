@@ -36,7 +36,9 @@ import { DOCUMENT_ACTIONS_SERVICE } from '@/features/akn-document/akn-document.m
 import { DocumentTocComponent } from '@/features/akn-document/containers/document-toc/document-toc.component';
 import { Version } from '@/features/akn-document/models';
 import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
+import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
+import { ViewVersionService } from '@/features/akn-document/services/view-version.service';
 import {
   ContributionStatus,
   DOCUMENT_STYLES,
@@ -69,7 +71,6 @@ import { PageMode, PageModeService } from '../../services/page-mode.service';
 import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
-import { ViewVersionService } from '../../services/view-version.service';
 
 @Component({
   selector: 'app-document-editor',
@@ -198,7 +199,10 @@ export class DocumentEditorComponent
     public versionCompareService: VersionCompareService,
     private viewVersionService: ViewVersionService,
     private pageModeService: PageModeService,
+    private mergeContributionService: MergeContributionsService,
   ) {
+    this.contributionChanges$ = this.contributionChangesBS.asObservable();
+
     combineLatest([this.route.params, this.route.data])
       .pipe(take(1))
       .subscribe(([params, data]) => {
@@ -207,6 +211,10 @@ export class DocumentEditorComponent
 
         //init services
         this.tocService.setDocumentRefAndCategory(
+          this.documentRef,
+          this.documentType,
+        );
+        this.documentService.setDocumentRefAndCategory(
           this.documentRef,
           this.documentType,
         );
@@ -231,8 +239,13 @@ export class DocumentEditorComponent
         });
       });
 
+    this.contributionChanges$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((changes) => {
+        this.mergeContributionService.updateContributionChanges(changes);
+      });
+
     this.applyActionDisabled$ = this.applyActionDisabledBS.asObservable();
-    this.contributionChanges$ = this.contributionChangesBS.asObservable();
   }
 
   ngOnInit(): void {
@@ -246,10 +259,6 @@ export class DocumentEditorComponent
         config.user.connectedEntity ?? config.user.defaultEntity
       ).name;
       this.showStatusFilter = config.annotateAuthority === 'LEOS';
-      this.documentService.setDocumentRefAndCategory(
-        this.documentRef,
-        this.documentType,
-      );
     });
 
     this.loadStyleSheet();
@@ -317,19 +326,13 @@ export class DocumentEditorComponent
         }
       });
 
-    this.documentService.contributionModeEnabled$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((enabled) => {
-        this.pageModeService.setPageMode(
-          enabled ? PageMode.Contribution : PageMode.Normal,
-        );
-      });
-
-    this.documentService.contributionViewAndMerge$
+    this.mergeContributionService.contributionViewAndMerge$
       .pipe(takeUntil(this.destroy$))
       .subscribe(([contributionView, contribution]) => {
         this.handleContributionView(contributionView, contribution);
         this.contribution = contribution;
+        setTimeout(() => this.syncScrollingService.setSyncScroll(true));
+        this.mergeContributionService.checkHandleNavCompareBtnDisabled();
       });
 
     this.documentService.documentConfig$
@@ -339,21 +342,20 @@ export class DocumentEditorComponent
         this.manageBreadCrumbsDocumentScreen();
       });
 
-    this.documentService.contributions$
+    this.mergeContributionService.contributions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((contributions) => {
         this.contributions = contributions;
         this.showContributionsPane = this.contributions.length > 0;
-        this.greyContributions();
       });
 
-    this.documentService.processed$
+    this.mergeContributionService.processed$
       .pipe(takeUntil(this.destroy$))
       .subscribe(([processed, contribution]) => {
         this.processed = processed;
         if (contribution) {
           this.handleGreyedContribution(contribution, processed);
-          this.documentService.setIsContributionDeclinedOrProcessed(
+          this.mergeContributionService.setIsContributionDeclinedOrProcessed(
             contribution.contributionStatus ===
               ContributionStatus.ContributionDone,
           );
@@ -455,6 +457,7 @@ export class DocumentEditorComponent
     this.coEditionWSService.removeSession();
     this.viewVersionService.closeVersionView();
     this.versionCompareService.closeVersionComparisonView();
+    this.mergeContributionService.closeContributionMergeView();
     this.closeContributionsView();
     this.destroy$.next(null);
     this.destroy$.complete();
@@ -709,49 +712,25 @@ export class DocumentEditorComponent
     ) {
       this.syncScrollingService.setSyncScroll(true);
     }
-    this.documentService.handleContributionSelectCount(false, true);
-    this.documentService.setContributionViewAndMergeCollapsed(true);
-  }
-
-  handleNextChangeContribution() {
-    if (
-      this.contributionIndex !==
-      this.contributionChangesBS.value.length - 1
-    ) {
-      const nextChange = this.contributionIndex + 1;
-      this.contributionChangesBS.value[nextChange]?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'nearest',
-      });
-      this.contributionIndex++;
-    }
-  }
-
-  handlePrevChangeContribution() {
-    if (this.contributionIndex > 0) {
-      {
-        const prevChange = this.contributionIndex - 1;
-        this.contributionChangesBS.value[prevChange]?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-        });
-        this.contributionIndex--;
-      }
-    }
+    this.mergeContributionService.handleContributionSelectCount(false, true);
+    this.mergeContributionService.setContributionViewAndMergeCollapsed(true);
   }
 
   onSelectAction(e: any) {
     this.contributionActionSelected = e.target.value;
-    this.documentService.contributionSelections$.subscribe((selections) => {
-      if (selections > 0) {
-        this.applyActionDisabledBS.next(false);
-      }
-    });
+    this.mergeContributionService.contributionSelections$.subscribe(
+      (selections) => {
+        if (selections > 0) {
+          this.applyActionDisabledBS.next(false);
+        }
+      },
+    );
   }
 
   handleMerge() {
     if (this.contributionActionSelected === 'accept_selected') {
       this.processed = !this.processed;
+      this.mergeContributionService.handleContributionSelectCount(false, true);
       this.cdkEditor.handleMergeContributionsActions(false, this.contribution);
     } else {
       this.mergeAllContributionsChangesDialog.openDialog();
@@ -760,7 +739,7 @@ export class DocumentEditorComponent
 
   onAcceptMergeAllContributions() {
     this.processed = !this.processed;
-    this.documentService.toggleIsContributionDeclinedOrProcessed();
+    this.mergeContributionService.toggleIsContributionDeclinedOrProcessed();
     this.cdkEditor.handleMergeContributionsActions(true, this.contribution);
     this.mergeAllContributionsChangesDialog.closeDialog();
   }
@@ -796,22 +775,18 @@ export class DocumentEditorComponent
         (match) => `${match}revision-`,
       );
       this.isViewContributionPaneCollapsed = false;
-      this.documentService.setContributionViewAndMergeCollapsed(false);
-      this.documentService.setIsContributionDeclinedOrProcessed(
+      this.mergeContributionService.setContributionViewAndMergeCollapsed(false);
+      this.mergeContributionService.setIsContributionDeclinedOrProcessed(
         contribution.contributionStatus === ContributionStatus.ContributionDone,
       );
       if (
         contribution.contributionStatus === ContributionStatus.ContributionDone
       ) {
         this.handleGreyedContribution(contribution, true);
-        setTimeout(() => {
-          this.syncScrollingService.setSyncScroll(true);
-        }, 100);
       } else {
         this.cdkEditor.triggerMergeContributionConnectorStateChange();
         setTimeout(() => {
           this.handleContributionsChanges();
-          this.syncScrollingService.setSyncScroll(false);
           this.cdkEditor.refreshStateSpecificConnectors();
         }, 100);
       }
@@ -827,17 +802,6 @@ export class DocumentEditorComponent
   ) {
     contribution.greyed = greyed;
     return contribution;
-  }
-
-  private greyContributions() {
-    this.contributions = this.contributions.map((c) => {
-      if (c.contributionStatus === ContributionStatus.ContributionDone) {
-        c.greyed = true;
-      } else {
-        c.greyed = false;
-      }
-      return c;
-    });
   }
 
   private handleContributionsChanges() {

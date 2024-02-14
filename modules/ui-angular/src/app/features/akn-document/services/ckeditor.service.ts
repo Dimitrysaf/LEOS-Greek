@@ -12,7 +12,8 @@ import { ActionManagerConnector } from '@/features/akn-document/services/action-
 import { ChangeDetailsConnector } from '@/features/akn-document/services/change-details-connector';
 import { LeosEditorConnector } from '@/features/akn-document/services/leos-editor-connector';
 import { MathJaxConnector } from '@/features/akn-document/services/math-jax-connector';
-import { MergeActionsService } from "@/features/akn-document/services/merge-actions.service";
+import { MergeActionsService } from '@/features/akn-document/services/merge-actions.service';
+import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import { RefToLinkConnector } from '@/features/akn-document/services/ref-to-link-connector';
 import { SoftActionsConnector } from '@/features/akn-document/services/soft-actions-connector';
 import { TrackChangesConnector } from '@/features/akn-document/services/track-changes-connector';
@@ -69,6 +70,7 @@ export class CKEditorService implements OnDestroy {
     @Inject(DOCUMENT) private domDocument: Document,
     private blockDocumentEditorService: BlockDocumentEditorService,
     private mergeActionsService: MergeActionsService,
+    private mergeContributionService: MergeContributionsService,
   ) {}
 
   ngOnDestroy() {
@@ -179,7 +181,6 @@ export class CKEditorService implements OnDestroy {
     this.mergeContributionConnector?.populateMergeActionList(
       acceptAllContributions,
     );
-    this.documentService.handleContributionSelectCount(false, true);
   }
 
   private initActionManager(
@@ -337,7 +338,7 @@ export class CKEditorService implements OnDestroy {
     leosState: any,
     rootElement: HTMLElement,
   ) {
-    this.documentService.contributions$.subscribe((contributions) => {
+    this.mergeContributionService.contributions$.subscribe((contributions) => {
       if (contributions.length > 0) {
         this.mergeContributionConnector = new MergeContributionConnector(
           leosState,
@@ -346,6 +347,7 @@ export class CKEditorService implements OnDestroy {
             rootElement,
           },
           this.mergeActionsService,
+          this.mergeContributionService,
         );
 
         require(['extension/mergeContributionExtension'], (

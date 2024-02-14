@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
-import {BehaviorSubject, Observable} from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-import {MergeActionItem, MergeActionVO} from "@/shared/models/merge-action-vo.model";
+import {
+  MergeActionItem,
+  MergeActionVO,
+} from '@/shared/models/merge-action-vo.model';
 
 export enum TrackChangeAction {
   ADD,
@@ -10,7 +13,9 @@ export enum TrackChangeAction {
   MOVED_FROM,
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class MergeActionsService {
   private LEOS_UID_ATTR = 'leos\\:uid';
   private LEOS_TRACK_ACTION = 'leos\\:action';
@@ -24,18 +29,25 @@ export class MergeActionsService {
 
   private mergeActionList: MergeActionVO[] = new Array();
 
-  public showMenu$: Observable<{event: MouseEvent, element: HTMLElement, actions: HTMLElement}>;
-  private showMenuBS = new BehaviorSubject<{event: MouseEvent, element: HTMLElement, actions: HTMLElement}>(null);
+  public showMenu$: Observable<{
+    event: MouseEvent;
+    element: HTMLElement;
+    actions: HTMLElement;
+  }>;
+  private showMenuBS = new BehaviorSubject<{
+    event: MouseEvent;
+    element: HTMLElement;
+    actions: HTMLElement;
+  }>(null);
   public updateMergeActionList$: Observable<MergeActionVO>;
   private updateMergeActionListBS = new BehaviorSubject<MergeActionVO>(null);
 
-  constructor(
-  ) {
+  constructor() {
     this.showMenu$ = this.showMenuBS.asObservable();
     this.updateMergeActionList$ = this.updateMergeActionListBS.asObservable();
   }
 
-  public getMergeActionList():MergeActionItem[] {
+  public getMergeActionList(): MergeActionItem[] {
     return this.mergeActionList;
   }
 
@@ -48,7 +60,7 @@ export class MergeActionsService {
     this.mergeActionList = this.mergeActionList.filter((action) => {
       action.elementId !== element.getAttribute('id').replace('revision-', '');
     });
-    let action = this.mergeActionList.find((action) => {
+    const action = this.mergeActionList.find((action) => {
       action.elementId === element.getAttribute('id').replace('revision-', '');
     });
     this.updateMergeActionListBS.next(action);
@@ -59,7 +71,10 @@ export class MergeActionsService {
     const action = elt.getAttribute(this.LEOS_TRACK_ACTION);
     const softAction = elt.getAttribute(this.LEOS_SOFT_ACTION);
     const parentAffected = elt.getAttribute('parent_affected');
-    if (softAction && (softAction === this.MOVE_FROM || softAction === this.MOVE_TO)) {
+    if (
+      softAction &&
+      (softAction === this.MOVE_FROM || softAction === this.MOVE_TO)
+    ) {
       elementState = this.MOVE;
     } else if (action === 'delete') {
       elementState = this.DELETE;
@@ -71,7 +86,11 @@ export class MergeActionsService {
     return elementState;
   }
 
-  public showMenu(event: MouseEvent, element: HTMLElement, actions: HTMLElement) {
-    this.showMenuBS.next({event: event, element: element, actions: actions});
+  public showMenu(
+    event: MouseEvent,
+    element: HTMLElement,
+    actions: HTMLElement,
+  ) {
+    this.showMenuBS.next({ event, element, actions });
   }
 }

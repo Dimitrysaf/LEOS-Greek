@@ -35,7 +35,6 @@ import {
   LeosAppConfig,
   Permission,
 } from '@/shared';
-import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LoadingService } from '@/shared/services/loading.service';
@@ -46,8 +45,6 @@ import {
   DocumentViewResponse,
   FetchElementResponse,
 } from '../models/document-view-response.model';
-import { NodeValidationResponse } from '../models/drop-response.model';
-import { MergeActionVO } from '../models/merge-action-vo.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
 
@@ -87,7 +84,6 @@ const BASE_EC_VERSION = '0.1.0';
 })
 export class DocumentService implements OnDestroy {
   pageTitle$: Observable<string>;
-  contributionModeEnabled$: Observable<boolean>;
   documentView$: Observable<DocumentViewResponse | null>;
   didDocumentLoadAndRender$: Observable<boolean>;
   searchPaneOpen$: Observable<boolean>;
@@ -124,13 +120,7 @@ export class DocumentService implements OnDestroy {
   currentIndex: number;
   displayedCurrentIndex: number;
   setAnnotationMode?: (mode: AnnotateOperationMode) => void;
-  contributions$: Observable<ContributionVO[]>;
-  processed$: Observable<[boolean, ContributionVO]>;
-  contributionViewAndMerge$: Observable<[DocumentViewResponse, ContributionVO]>;
-  contributionSelections$: Observable<number>;
-  contributionViewAndMergeCollapsed$: Observable<boolean>;
   isClonedProposal$: Observable<boolean>;
-  isContributionDeclinedOrProcessed$: Observable<boolean>;
   isEditorOpen$: Observable<boolean>;
   updateElementContent$: Observable<{
     elementId: string;
@@ -154,18 +144,10 @@ export class DocumentService implements OnDestroy {
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
   }>;
+  public annexDocNumber = 0;
 
-  private processedBS = new BehaviorSubject<[boolean, ContributionVO]>([
-    false,
-    undefined,
-  ]);
   private documentPageTitleBS = new BehaviorSubject<string>('');
-  private contributionViewAndMergeBS = new BehaviorSubject<
-    [DocumentViewResponse, ContributionVO]
-  >(null);
   private resetZoomBS = new BehaviorSubject<void>(null);
-  private contributionModeEnabledBS = new BehaviorSubject(false);
-  private contributionsBS = new BehaviorSubject<ContributionVO[]>([]);
   private searchPaneOpenBS = new BehaviorSubject(false);
   private searchParamsBS = new BehaviorSubject({
     searchText: '',
@@ -209,16 +191,7 @@ export class DocumentService implements OnDestroy {
   private updatedContentToSaveAfterReplace: string = null;
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private searchResultsCounterBS = new BehaviorSubject<number>(0);
-  private contributionSelectionsBS = new BehaviorSubject<number>(0);
-  private contributionViewAndMergeCollapsedBS = new BehaviorSubject<boolean>(
-    true,
-  );
-  /* 1-indexed */
-  private annexDocNumber = 0;
   private isClonedProposalBS = new BehaviorSubject<boolean>(false);
-  private isContributionDeclinedOrProcessedBS = new BehaviorSubject<boolean>(
-    false,
-  );
   private isEditorOpenBS = new BehaviorSubject<boolean>(false);
   private getElementContentBS = new BehaviorSubject<{
     elementId: string;
@@ -260,8 +233,6 @@ export class DocumentService implements OnDestroy {
   ) {
     this.trackChangesStatus$ = this.trackChangesStatusBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
-    this.isContributionDeclinedOrProcessed$ =
-      this.isContributionDeclinedOrProcessedBS.asObservable();
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
     this.pageTitle$ = this.documentPageTitleBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
@@ -270,9 +241,6 @@ export class DocumentService implements OnDestroy {
 
     this.documentView$ = this.documentRefAndCategory$.pipe(
       tap((res) => {
-        if (res.category !== 'coverpage') {
-          this.getContributions();
-        }
         this.tocService.reload();
         this.getRecentChanges(res.category, res.ref, 0, 1);
         this.countDocumentVersionsData(res.category, res.ref);
@@ -282,10 +250,6 @@ export class DocumentService implements OnDestroy {
       switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
       shareReplay(1),
     );
-    this.contributions$ = this.contributionsBS.asObservable();
-
-    this.contributionModeEnabled$ =
-      this.contributionModeEnabledBS.asObservable();
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
     this.documentConfig$ = this.documentConfigBS
       .asObservable()
@@ -389,13 +353,6 @@ export class DocumentService implements OnDestroy {
       shareReplay(1),
     );
     this.searchResultsCounter$ = this.searchResultsCounterBS.asObservable();
-    this.processed$ = this.processedBS.asObservable();
-    this.contributionViewAndMerge$ = this.contributionViewAndMergeBS.pipe(
-      filter(Boolean),
-    );
-    this.contributionSelections$ = this.contributionSelectionsBS.asObservable();
-    this.contributionViewAndMergeCollapsed$ =
-      this.contributionViewAndMergeCollapsedBS.asObservable();
     this.isEditorOpen$ = this.isEditorOpenBS.asObservable();
     this.getElementContent$ = this.getElementContentBS.asObservable();
     this.updateElementContent$ = this.updateElementContentBS.asObservable();
@@ -974,28 +931,6 @@ export class DocumentService implements OnDestroy {
     this.toggleSubject(this.versionSearchOpenBS, open);
   }
 
-  toggleContributionMode(enabled?: boolean) {
-    this.toggleSubject(this.contributionModeEnabledBS, enabled);
-  }
-
-  handleContributionSelectCount(selected: boolean, reset?: boolean) {
-    if (reset) {
-      this.contributionSelectionsBS.next(0);
-    } else if (selected) {
-      this.contributionSelectionsBS.next(
-        this.contributionSelectionsBS.value + 1,
-      );
-    } else {
-      if (this.contributionSelectionsBS.value - 1 >= 0) {
-        this.contributionSelectionsBS.next(
-          this.contributionSelectionsBS.value - 1,
-        );
-      } else {
-        this.contributionSelectionsBS.next(0);
-      }
-    }
-  }
-
   versionRevert(versionNumber: string) {
     this.loadingService.setLoading(true);
     this.http
@@ -1234,231 +1169,17 @@ export class DocumentService implements OnDestroy {
     this.isDocumentLoadedBS.next(loaded);
   }
 
-  setContributionViewAndMergeCollapsed(collapsed: boolean) {
-    this.contributionViewAndMergeCollapsedBS.next(collapsed);
-  }
-
   setIsClonedProposal(cloned: boolean) {
     this.isClonedProposalBS.next(cloned);
     this.tocService.setIsClonedProposal(cloned);
-  }
-
-  setIsContributionDeclinedOrProcessed(declined: boolean) {
-    this.isContributionDeclinedOrProcessedBS.next(declined);
-  }
-
-  toggleIsContributionDeclinedOrProcessed() {
-    this.isContributionDeclinedOrProcessedBS.next(
-      !this.isContributionDeclinedOrProcessedBS.value,
-    );
   }
 
   getUserPermissions() {
     return this.permissionsBS.value;
   }
 
-  getContributions() {
-    const documentRef = this.documentRef;
-    const documentType =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    const queryString = `?annexIndex=${this.annexDocNumber}`;
-    return this.http
-      .get<ContributionVO[]>(
-        `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
-      )
-      .subscribe((contributions) => {
-        this.contributionsBS.next(contributions);
-      });
-  }
-
-  declineContribution(contribution: ContributionVO) {
-    const documentRef = contribution.versionedReference;
-    const documentType =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    const versionLabel = `${contribution.versionNumber.major}.${contribution.versionNumber.intermediate}.${contribution.versionNumber.minor}`;
-
-    return this.http
-      .post<{ contributionStatus: string }>(
-        `${apiBaseUrl}/secured/contribution/decline-contributions/${documentRef}/${documentType}`,
-        {},
-        { params: { versionLabel } },
-      )
-      .subscribe({
-        next: () => {
-          this.appShell.growl({
-            severity: 'success',
-            summary: this.translate.instant(
-              'global.notifications.title.success',
-            ),
-            detail: this.translate.instant(
-              'page.editor.contribution.decline-contribution-message-success',
-            ),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-          this.setIsContributionDeclinedOrProcessed(true);
-          this.contributionSelectionsBS.next(0);
-          this.getContributions();
-        },
-        error: (res) => {
-          this.appShell.growl({
-            severity: 'danger',
-            summary: this.translate.instant(
-              'page.editor.contribution.decline-contribution-message-error',
-            ),
-            detail: res,
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        },
-      });
-  }
-
-  updateProcessedStatus(process: boolean, contribution: ContributionVO) {
-    this.processedBS.next([process, contribution]);
-  }
-
   updateTitle(newTitle: string): void {
     this.documentPageTitleBS.next(newTitle);
-  }
-
-  viewAndMergeContribution(contribution: ContributionVO) {
-    this.contributionModeEnabledBS.next(true);
-    this.handleContributionSelectCount(false, true);
-    const contributionVersionRef = contribution.versionedReference;
-    const legFileName = contribution.legFileName;
-    const documentRef = this.documentRef;
-    const documentType =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    this.http
-      .get<DocumentViewResponse>(
-        `${apiBaseUrl}/secured/contribution/view-merge-pane/${documentRef}/${documentType}?contributionVersionRef=${contributionVersionRef}&legFileName=${legFileName}`,
-        {},
-      )
-      .subscribe({
-        next: (res) => {
-          this.contributionViewAndMergeBS.next([res, contribution]);
-        },
-        error: (res) => {
-          this.appShell.growl({
-            severity: 'danger',
-            summary: this.translate.instant(
-              'page.editor.contribution.view-contribution-message-error',
-            ),
-            detail: res,
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        },
-      });
-  }
-
-  markContributionAsProcessed(contribution: ContributionVO) {
-    const contributionVersionRef = contribution.versionedReference;
-    const documentType =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-
-    return this.http.post(
-      `${apiBaseUrl}/secured/contribution/mark-as-processed/${contributionVersionRef}/${documentType}`,
-      {},
-    );
-  }
-
-  mergeContributions(
-    mergeActions: MergeActionVO[],
-    acceptAllContributions: boolean,
-  ) {
-    const documentRef = this.documentRef;
-    const documentType =
-      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-
-    this.http
-      .post(
-        `${apiBaseUrl}/secured/contribution/merge-contributions/${documentRef}/${documentType}`,
-        {
-          mergeActions,
-          acceptAllContributions,
-        },
-        { responseType: 'text' as 'json' },
-      )
-      .subscribe({
-        next: () => {
-          this.appShell.growl({
-            severity: 'success',
-            summary: this.translate.instant(
-              'global.notifications.title.success',
-            ),
-            detail: this.translate.instant(
-              'page.editor.contribution.merge-contribution-message-success',
-            ),
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-          this.handleContributionUI();
-          if (!acceptAllContributions)
-            this.updateProcessedStatus(false, mergeActions[0].contributionVO);
-          this.reloadDocument();
-          this.getContributions();
-        },
-        error: (res) => {
-          this.appShell.growl({
-            severity: 'danger',
-            summary: this.translate.instant(
-              'page.editor.contribution.merge-contribution-message-error',
-            ),
-            detail: res,
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
-        },
-      });
-  }
-
-  handleContributionUI() {
-    const changes = this.document.querySelectorAll(
-      '.selected-contribution-wrapper',
-    );
-    if (changes.length > 0) {
-      changes.forEach((item) => {
-        if (!item.classList.contains('contribution-wrapper-after-merge')) {
-          item.classList.add('contribution-wrapper-after-merge');
-
-          for (const child of item.children) {
-            if (child.classList.contains('merge-actions-wrapper')) {
-              for (const innerChild of child.children) {
-                if (innerChild.classList.contains('accept')) {
-                  innerChild.setAttribute(
-                    'title',
-                    this.translate.instant(
-                      'page.editor.contribution.view.merge-contributions.accepted-change',
-                    ),
-                  );
-                }
-                if (innerChild.classList.contains('reject')) {
-                  innerChild.setAttribute(
-                    'title',
-                    this.translate.instant(
-                      'page.editor.contribution.view.merge-contributions.rejected-change',
-                    ),
-                  );
-                }
-              }
-            }
-          }
-        }
-      });
-    } else {
-      this.document
-        .querySelectorAll('contribution-wrapper-after-merge')
-        .forEach((item) => {
-          item.classList.remove('contribution-wrapper-after-merge');
-        });
-    }
   }
 
   setIsEditorOpen(val: boolean) {

@@ -103,7 +103,7 @@ export class ViewVersionService {
   public toggleViewCleanVersion(): void {
     const nextIsViewEnabled = !this.cleanVersionViewBS.value;
     if (!nextIsViewEnabled) {
-      this.clearCleanVersionView();
+      this.closeVersionView();
     } else {
       this.initCleanVersionView();
     }
@@ -130,6 +130,7 @@ export class ViewVersionService {
   }
 
   private initCleanVersionView() {
+    this.versionViewBS.next(null);
     this.fetchViewCleanVersion().subscribe((cleanVersion) => {
       this.pageModeService.setPageMode(PageMode.ViewVersion);
       this.cleanVersionViewBS.next(cleanVersion);
