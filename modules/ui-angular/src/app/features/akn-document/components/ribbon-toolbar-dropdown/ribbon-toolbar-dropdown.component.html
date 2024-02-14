@@ -1,23 +1,22 @@
-<div class="dropdown-content" [id]="item.id">
-    <eui-dropdown-button-menu
-            [menuItems]="item.items"
-            [euiTooltip]="item.description"
-            [id]="item.id"
-    >
-        <button
-                euiButton
-                euiResponsive
-                [euiVariant]="item.euiStyle"
-                [euiSizeVariant]="item.euiSize"
-                class="eui-u-mr-s eui-u-mb-s"
-                [euiDisabled]="isItemDisabled"
-        >
-            <span euiLabel *ngIf="!isOverflow">{{ itemLabelValue }}</span>
-            <span
-                    euiIcon
-                    *ngIf="item.iconClass"
-                    [iconClass]="'eui-icon ' + item.iconClass"
-            ></span>
-        </button>
-    </eui-dropdown-button-menu>
-</div>
+<eui-dropdown-button-menu
+  [menuItems]="item.items"
+  [euiTooltip]="item.description"
+  [id]="item.id"
+  [euiDisabled]="isItemDisabled"
+>
+  <button
+    euiButton
+    euiResponsive
+    [euiVariant]="item.euiStyle"
+    [euiSizeVariant]="item.euiSize"
+    class="eui-u-mr-s eui-u-mb-s"
+    [euiDisabled]="isItemDisabled"
+  >
+    <span euiLabel *ngIf="!isOverflow">{{ itemLabelValue }}</span>
+    <span
+      euiIcon
+      *ngIf="item.iconClass"
+      [iconClass]="'eui-icon ' + item.iconClass"
+    ></span>
+  </button>
+</eui-dropdown-button-menu>
