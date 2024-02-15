@@ -340,7 +340,8 @@ export abstract class DocumentActionsService {
       !this.isMandateMemorandum() &&
       this.buildExportVersionWithAnnotationsItem();
     const exportCleanVersion =
-      (!this.isMandateMemorandum() || this.isClonedProposal()) &&
+      ((!this.isMandateMemorandum() && this.isCN()) ||
+        this.isClonedProposal()) &&
       this.buildExportCleanVersionButtonItem();
 
     return [
@@ -433,7 +434,10 @@ export abstract class DocumentActionsService {
       ],
     };
 
-    if (!this.isMandateMemorandum() || this.isClonedProposal()) {
+    if (
+      (!this.isMandateMemorandum() && this.isCN()) ||
+      this.isClonedProposal()
+    ) {
       displaySection.children.push(this.buildShowCleanVersionItem());
     }
     return displaySection;
