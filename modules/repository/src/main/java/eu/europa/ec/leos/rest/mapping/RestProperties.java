@@ -67,6 +67,7 @@ public class RestProperties implements RepositoryPropertiesMapper {
         ids.put(LIVE_DIFFING_REQUIRED, "liveDiffingRequired");
         ids.put(TRACK_CHANGES_ENABLED, "trackChangesEnabled");
         ids.put(CALLBACK_ADDRESS, "callbackAddress");
+        ids.put(IMPORTED, "imported");
     }
 
     @Override

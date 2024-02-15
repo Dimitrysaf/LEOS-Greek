@@ -910,6 +910,21 @@
         <cmis:orderable>false</cmis:orderable>
         <cmis:defaultValue/>
     </cmis:propertyStringDefinition>
+    <cmis:propertyStringDefinition>
+        <cmis:id>leos:imported</cmis:id>
+        <cmis:localName>leos:imported</cmis:localName>
+        <cmis:displayName>Is LEOS document imported</cmis:displayName>
+        <cmis:queryName>leos:imported</cmis:queryName>
+        <cmis:description>Imported status of a document</cmis:description>
+        <cmis:propertyType>boolean</cmis:propertyType>
+        <cmis:cardinality>single</cmis:cardinality>
+        <cmis:updatability>readwrite</cmis:updatability>
+        <cmis:inherited>false</cmis:inherited>
+        <cmis:required>false</cmis:required>
+        <cmis:queryable>true</cmis:queryable>
+        <cmis:orderable>false</cmis:orderable>
+        <cmis:defaultValue>false</cmis:defaultValue>
+    </cmis:propertyStringDefinition>
     <cmis:versionable>true</cmis:versionable>
     <cmis:contentStreamAllowed>allowed</cmis:contentStreamAllowed>
 </cmis:type>

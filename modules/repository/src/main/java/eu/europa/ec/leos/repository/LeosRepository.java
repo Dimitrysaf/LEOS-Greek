@@ -345,6 +345,8 @@ public interface LeosRepository {
      */
     <D extends LeosDocument> D findDocumentByRef(String ref, Class<? extends D> type);
 
+    Map<String, Object> findDocumentMetadataByRef(String ref, Class type);
+
     <D extends LeosDocument> List<D> findAllMinorsForIntermediate(Class<? extends D> type, String docRef, String currIntVersion, int startIndex, int maxResults);
     
     <D extends LeosDocument> int findAllMinorsCountForIntermediate(Class<? extends D> type, String docRef, String currIntVersion);

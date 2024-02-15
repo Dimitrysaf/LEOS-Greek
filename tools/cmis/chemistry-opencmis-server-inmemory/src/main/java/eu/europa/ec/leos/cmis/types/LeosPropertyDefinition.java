@@ -120,4 +120,7 @@ class LeosPropertyDefinition {
     static final PropertyDefinition<String> LEOS_CALLBACK_ADDRESS =
             PropertyCreationHelper.createStringDefinition("leos:callbackAddress", "LEOS document callback address", Updatability.READWRITE);
 
+    static final PropertyDefinition<String> LEOS_IMPORTED =
+            PropertyCreationHelper.createStringDefinition("leos:imported", "LEOS document import status", Updatability.READWRITE);
+
 }

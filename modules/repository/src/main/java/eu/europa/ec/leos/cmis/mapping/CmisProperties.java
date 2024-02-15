@@ -22,42 +22,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.ANNEX_CLONED_REF;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.ANNEX_INDEX;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.ANNEX_NUMBER;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.ANNEX_TITLE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.BASE_REVISION_ID;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.CALLBACK_ADDRESS;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.CLONED_FROM;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.CLONED_MILESTONE_ID;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.CLONED_PROPOSAL;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.COLLABORATORS;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.COMMENTS;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.CONTAINED_DOCUMENTS;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.CONTRIBUTION_STATUS;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.DOCUMENT_CATEGORY;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.DOCUMENT_LANGUAGE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.DOCUMENT_TEMPLATE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.DOCUMENT_TITLE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.INITIAL_CREATED_BY;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.INITIAL_CREATION_DATE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.JOB_DATE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.JOB_ID;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.LIVE_DIFFING_REQUIRED;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_DOCTEMPLATE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_EEA_RELEVANCE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_PROCEDURE_TYPE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_PURPOSE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_REF;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_STAGE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.METADATA_TYPE;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.MILESTONE_COMMENTS;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.ORIGIN_REF;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.REVISION_STATUS;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.STATUS;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.TRACK_CHANGES_ENABLED;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.VERSION_LABEL;
-import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.VERSION_TYPE;
+import static eu.europa.ec.leos.repository.mapping.RepositoryProperties.*;
 
 @Component
 @RepositoryProfile(repositoryProfiles = {RepositoryProfileType.DEFAULT, RepositoryProfileType.CMIS})
@@ -101,6 +66,7 @@ public class CmisProperties implements RepositoryPropertiesMapper {
         ids.put(LIVE_DIFFING_REQUIRED, "leos:liveDiffingRequired");
         ids.put(TRACK_CHANGES_ENABLED, "leos:trackChangesEnabled");
         ids.put(CALLBACK_ADDRESS, "leos:callbackAddress");
+        ids.put(IMPORTED, "leos:imported");
     }
 
     @Override

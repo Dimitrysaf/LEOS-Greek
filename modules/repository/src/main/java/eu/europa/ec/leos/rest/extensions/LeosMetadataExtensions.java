@@ -125,6 +125,7 @@ public class LeosMetadataExtensions {
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_LANGUAGE), leosMetadata.getLanguage());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_DOCTEMPLATE), leosMetadata.getDocTemplate());
         leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CALLBACK_ADDRESS), leosMetadata.getCallbackAddress());
+        leosProperties.put(repositoryPropertiesMapper.getId(RepositoryProperties.IMPORTED), leosMetadata.isImported());
 
 
         String ref = leosMetadata.getRef();

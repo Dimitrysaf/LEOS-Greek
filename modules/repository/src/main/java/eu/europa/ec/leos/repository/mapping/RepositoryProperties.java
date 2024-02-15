@@ -50,5 +50,6 @@ public enum RepositoryProperties {
     BASE_REVISION_ID,
     LIVE_DIFFING_REQUIRED,
     TRACK_CHANGES_ENABLED,
-    CALLBACK_ADDRESS;
+    CALLBACK_ADDRESS,
+    IMPORTED;
 }
