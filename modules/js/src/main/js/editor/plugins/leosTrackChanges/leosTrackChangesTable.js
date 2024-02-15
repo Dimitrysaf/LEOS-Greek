@@ -285,7 +285,7 @@ define(function leosTrackChangesTableModule(require) {
                     if (!row.hasAttribute(core.UID_ATTR)) {
                         removeTable = false;
                         core.addTrackChangesAttributes(editor, row, core.DELETE_ACTION);
-                    } else if (row.getAttribute(core.UID_ATTR) != currentUserId) {
+                    } else if ((row.getAttribute(core.UID_ATTR) != currentUserId) || (row.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION)) {
                         removeTable = false;
                     }
                 });

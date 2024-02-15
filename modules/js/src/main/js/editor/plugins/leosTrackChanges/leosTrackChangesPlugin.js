@@ -37,7 +37,7 @@ define(function leosTrackChangesPluginModule(require) {
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
             var deleteTcStyle = new CKEDITOR.style({ element: core.TRACKCHANGES_ELEMENT, attributes: core.getTrackChangeAttributes(editor, core.DELETE_ACTION) });
-            var selectedElement, handleMutations = false;
+            var originalSelectedElement, selectedElement, handleMutations = false;
             var handleMutationsDoneBySpellChecker = false, spellCheckerOriginalText, spellCheckerReplacementText;
 
             // Add toggle display
@@ -139,6 +139,7 @@ define(function leosTrackChangesPluginModule(require) {
                     }
                 });
                 editor.contextMenu.addListener(function(element) {
+                    originalSelectedElement = element;
                     var elementWithPseudoElt = core.getClosestElementWithPseudoElt(element, core.BEFORE);
                     if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
                         && !elementWithPseudoElt.getAttribute(core.ACTION_ATTR) && core.isMouseOverPseudoElt(elementWithPseudoElt, core.BEFORE, editor.LEOS.mousePosition)) {
@@ -506,7 +507,12 @@ define(function leosTrackChangesPluginModule(require) {
                     case "rowInsertBefore":
                     case "rowInsertAfter":
                         if (isTrackChangesEnabled) {
+                            if (editor.getSelection().isCollapsed() && originalSelectedElement) {
+                                editor.getSelection().fake(originalSelectedElement);
+                                originalSelectedElement = null;
+                            }
                             table.execCustomCommand(editor, event.data.name);
+                            editor.getSelection().fake(new CKEDITOR.dom.element(editor.editable().$.firstChild));
                             editor.fire("change");
                             return false;
                         }
@@ -533,7 +539,7 @@ define(function leosTrackChangesPluginModule(require) {
                     if (elementToRemoveAttribute) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
-                        event.editor.fire("handleTcIndent", {data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM)});
+                        event.editor.fire("handleTcIndent", { data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM) });
                     }
                 }
             }, null, null, 15);
