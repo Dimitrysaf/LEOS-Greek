@@ -97,6 +97,7 @@ export interface DocumentConfig {
   internalRef: string;
   listNumberConfigJsonArray: any;
   numberingConfig: NumberingConfig[];
+  refConfigs: RefConfig[];
   tocItems: TocItem[];
   proposalMetadata: LeosMetadata;
   alternateConfigs: AlternateConfig;
@@ -105,6 +106,7 @@ export interface DocumentConfig {
   trackChangesEnabled: boolean;
   trackChangesShowed: boolean;
   clonedProposal: boolean;
+  language: string;
 }
 
 export interface TocRules {
@@ -145,6 +147,11 @@ export interface NumberingConfig {
   sequence: string;
   suffix: string;
   type: NumberingType;
+}
+export interface RefConfig {
+  internalRef: boolean;
+  authorialNote: boolean;
+  language: string;
 }
 export interface Levels {
   levels: Level[];

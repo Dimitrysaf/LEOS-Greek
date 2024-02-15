@@ -535,6 +535,9 @@ export class CKEditorService implements OnDestroy {
     );
     delete config['spellCheckerEnabled'];
 
+    config['refConfigs'] = oldConfig.refConfigs;
+    config['language'] = oldConfig.language;
+
     const profileTCEnabled = !oldConfig.profile || oldConfig.profile.trackChangesEnabled;
     config['isTrackChangesShowed'] = profileTCEnabled && oldConfig.trackChangesShowed;
     config['isTrackChangesEnabled'] = profileTCEnabled && oldConfig.trackChangesEnabled;

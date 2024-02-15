@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.structure;
 
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class TocStructure {
     private Map<TocItem, List<TocItem>> tocRules = new HashMap<>();
     private List<NumberingConfig> numberingConfigs;
     private List<AlternateConfig> alternateConfigs;
+    private List<RefConfig> refConfigs;
     private String structureName;
     private String structureVersion;
     private String structureDescription;
@@ -51,6 +53,14 @@ public class TocStructure {
 
     public void setAlternateConfigs(List<AlternateConfig> alternateConfigs) {
         this.alternateConfigs = alternateConfigs;
+    }
+
+    public List<RefConfig> getRefConfigs() {
+        return refConfigs;
+    }
+
+    public void setRefConfigs(List<RefConfig> refConfigs) {
+        this.refConfigs = refConfigs;
     }
 
     public String getStructureName() {

@@ -274,7 +274,7 @@
     </xs:complexType>
 
     <xs:complexType name="refConfig">
-        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+        <xs:sequence>
             <xs:element name="internalRef" type="xs:boolean"/>
             <xs:element name="authorialNote" type="xs:boolean"/>
         </xs:sequence>

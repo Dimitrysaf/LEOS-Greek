@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.structure;
 
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -53,5 +54,11 @@ public class StructureContext {
         Validate.notNull(docTemplate, "Document template is required!");
         LOG.trace("Retrieving alternate configuration...");
         return structureService.getAlternateConfigs(docTemplate);
+    }
+
+    public List<RefConfig> getRefConfigs() {
+        Validate.notNull(docTemplate, "Document template is required!");
+        LOG.trace("Retrieving reference configuration...");
+        return structureService.getRefConfigs(docTemplate);
     }
 }

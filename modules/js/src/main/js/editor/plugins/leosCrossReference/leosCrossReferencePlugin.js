@@ -18,6 +18,7 @@ define(function leosCrossReferencePluginModule(require) {
     // load module dependencies
     var CKEDITOR = require("promise!ckEditor");
     var pluginTools = require("plugins/pluginTools");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
     var jsTree = require("jsTree");
     var dialogDefinition = require("./leosCrossReferenceDialog");
     var leosCrossReferenceWidget = require("./leosCrossReferenceWidget");
@@ -30,6 +31,10 @@ define(function leosCrossReferencePluginModule(require) {
         lang: 'en',
         requires : "dialog",
         init : function(editor) {
+            var refConfig = leosPluginUtils.getRefConfig(editor);
+            if(refConfig && !refConfig.authorialNote) {
+                return;
+            }
 
             // adds dialog
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);

@@ -1430,6 +1430,19 @@ define(function leosPluginUtilsModule(require) {
             i--;
         }
     }
+
+    function _getRefConfig(editor) {
+        var refConfig;
+        var language = editor.LEOS.language;
+        if(editor.LEOS.refConfigs) {
+             refConfig = editor.LEOS.refConfigs.find(refConfig => refConfig.language === language);
+            if(!refConfig) {
+                refConfig = editor.LEOS.refConfigs.find(refConfig => refConfig.language === 'default');
+            }
+        }
+        return refConfig;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1503,6 +1516,7 @@ define(function leosPluginUtilsModule(require) {
         checkPointsInList: _checkPointsInList,
 		manageNestedSubparagraphs: _manageNestedSubparagraphs,
         selectCorrectPathForList: _selectCorrectPathForList,
+        getRefConfig: _getRefConfig,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,

@@ -84,6 +84,7 @@ import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -378,11 +379,12 @@ public class BillApiServiceImpl implements BillApiService {
         List<TocItem> tocItems = structure.getTocItems();
         List<NumberingConfig> numberConfigs = structure.getNumberingConfigs();
         List<AlternateConfig> alternateConfigs = structure.getAlternateConfigs();
+        List<RefConfig> refConfigs = structure.getRefConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(bill.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
 
         return new DocumentConfigResponse(
-                documentsMetadata, numberConfigs, tocItems, alternateConfigs,
+                documentsMetadata, numberConfigs, tocItems, alternateConfigs, refConfigs,
                 StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef(),
                 proposal.getMetadata().getOrNull(), structure.getTocRules(),
