@@ -1,24 +1,20 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { UxAppShellService } from '@eui/core';
-import { TranslateService } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
-
-import { AppConfigService } from '@/core/services/app-config.service';
-import { AddMilestoneDialogComponent } from '@/features/proposal-view/components/add-milestone-dialog/add-milestone-dialog.component';
-import { MilestoneAnnotationWarningModalComponent } from '@/features/proposal-view/components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
-import {
-  Milestone,
-  MilestoneStatus,
-} from '@/features/proposal-view/models/milestone.model';
-import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
-import { Document, LeosAppConfig, Permission } from '@/shared';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {UxAppShellService} from '@eui/core';
+import {TranslateService} from '@ngx-translate/core';
+import {Subject, takeUntil} from 'rxjs';
+import {AppConfigService} from '@/core/services/app-config.service';
+import {AddMilestoneDialogComponent} from '@/features/proposal-view/components/add-milestone-dialog/add-milestone-dialog.component';
+import {MilestoneAnnotationWarningModalComponent} from '@/features/proposal-view/components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
+import {Milestone, MilestoneStatus,} from '@/features/proposal-view/models/milestone.model';
+import {ProposalDetailsService} from '@/features/proposal-view/services/proposal-details.service';
+import {Document, LeosAppConfig, Permission} from '@/shared';
 import {
   MilestoneDescriptor,
   ProposalMilestoneViewComponent,
 } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
-import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
-
-import { ProposalMilestoneSendCopyDialogComponent } from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
+import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.service';
+import {ProposalMilestoneSendCopyDialogComponent} from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
+import {EuiDialogService} from "@eui/components/eui-dialog";
 
 const MILESTONE_RELOAD_INTERVAL = 10000;
 
@@ -62,6 +58,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     private uxAppService: UxAppShellService,
     private proposalMilestonesService: ProposalMilestonesService,
     private appConfigService: AppConfigService,
+    protected dialogService: EuiDialogService,
   ) {}
 
   ngOnInit(): void {
@@ -163,6 +160,15 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   onDownloadMilestone(milestone: Milestone) {
+    if (milestone?.status != MilestoneStatus.Ready) {
+      return this.dialogService.openDialog({
+        typeClass: 'warning',
+        title: this.translateService.instant('global.notifications.title.warning'),
+        content: this.translateService.instant('page.collection.milestones.download.while.not.file.ready'),
+        accept: () => { this.proposalMilestonesService.downloadLegFileAnyStatus(milestone?.legFileId); },
+        dismiss: () => { return; }
+      });
+    }
     if (milestone?.legFileId) {
       this.proposalMilestonesService.downloadLegFile(milestone?.legFileId);
     }
