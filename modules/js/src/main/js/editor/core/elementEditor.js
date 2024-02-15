@@ -181,7 +181,6 @@ define(function elementEditorModule(require) {
                 documentRef: connector.getState().documentRef,
                 isClonedProposal: params.isClonedProposal,
                 proposalRef: proposalRef,
-                language: connector.getState().language,
                 isTrackChangesEnabled: connector.getState().isTrackChangesEnabled,
                 isTrackChangesShowed: connector.getState().isTrackChangesShowed,
                 isTrackChangesStyleFormattingEnabled: connector.getState().isTrackChangesStyleFormattingEnabled,

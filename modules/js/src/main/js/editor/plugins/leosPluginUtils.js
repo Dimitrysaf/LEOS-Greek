@@ -1433,11 +1433,13 @@ define(function leosPluginUtilsModule(require) {
 
     function _getRefConfig(editor) {
         var refConfig;
-        var language = editor.LEOS.language;
-        if(editor.LEOS.refConfigs) {
-             refConfig = editor.LEOS.refConfigs.find(refConfig => refConfig.language === language);
+        var docType = editor.LEOS.type?.toUpperCase();
+        var documentMetadata = editor.LEOS.documentsMetadata?.find(data => data.category === docType);
+
+        if(editor.LEOS.refConfigs && documentMetadata) {
+             refConfig = editor.LEOS.refConfigs.find(refConfig => refConfig.language.toLowerCase() === documentMetadata.language.toLowerCase());
             if(!refConfig) {
-                refConfig = editor.LEOS.refConfigs.find(refConfig => refConfig.language === 'default');
+                refConfig = editor.LEOS.refConfigs.find(refConfig => refConfig.language.toLowerCase() === 'default');
             }
         }
         return refConfig;

@@ -1222,20 +1222,9 @@ export class DocumentService implements OnDestroy {
 
   private getDocumentConfig(documentRef: string, documentType: string) {
     documentType = documentType === 'coverpage' ? 'coverPage' : documentType;
-    let lang = 'default';
-    const refSplits = documentRef.split('-');
-    if(refSplits && refSplits.length > 1) {
-      lang = refSplits[2];
-    }
     return this.http
       .get<DocumentConfig>(
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
-      ).pipe(
-        map(value => {
-          value = {...value, language: lang};
-          console.log('Document Config: ', value);
-          return value;
-        })
       )
       .subscribe((config) => this.documentConfigBS.next(config));
   }
