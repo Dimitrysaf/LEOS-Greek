@@ -613,7 +613,6 @@ define(function elementEditorModule(require) {
             for (var name in CKEDITOR.instances) {
                 if (CKEDITOR.instances.hasOwnProperty(name)) {
                     editor = CKEDITOR.instances[name];
-                    editor.focus();
                     break;
                 }
             }
