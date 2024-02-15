@@ -118,7 +118,7 @@
         <wagon-ftp-extension.version>2.2</wagon-ftp-extension.version>
         <!-- Libraries -->
         <slf4j.version>1.7.36</slf4j.version>
-        <logback.version>1.4.14</logback.version>
+        <logback.version>1.2.11</logback.version>
         <log4j.version>2.17.2</log4j.version>
         <junit.version>4.12</junit.version>
         <hamcrest.version>1.3</hamcrest.version>
