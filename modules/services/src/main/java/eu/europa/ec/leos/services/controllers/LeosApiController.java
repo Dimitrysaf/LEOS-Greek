@@ -310,6 +310,36 @@ public class LeosApiController {
 
     }
 
+    @RequestMapping(value = "/secured/searchlegfile/anystatus/{legFileId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getLegFileAnyStatus(@PathVariable("legFileId") String legFileId) {
+        boolean isStatusUpdated = false;
+        LeosLegStatus currentStatus = null;
+        try {
+            LegDocument legDocument = legService.findLegDocumentById(legFileId);
+            currentStatus = legDocument.getStatus();
+            byte[] file = legDocument.getContent().get().getSource().getBytes();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set(CONTENT_DISPOSITION, ATTACHMENT_FILENAME + legDocument.getName() + "\"");
+            headers.setContentLength(file.length);
+            LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, LeosLegStatus.EXPORTED);
+            leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
+            isStatusUpdated = true;
+            return new ResponseEntity<>(file, headers, HttpStatus.OK);
+        } catch (Exception ex) {
+            // in case of any exception reverting to current status
+            if (isStatusUpdated) {
+                LegDocument legDocument = legService.findLegDocumentById(legFileId);
+                LegDocument updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legFileId, currentStatus);
+                leosApplicationEventBus.post(new MilestoneUpdatedEvent(updatedLegDocument, true));
+            }
+            LOG.error("Exception occurred in downloading leg file " + ex.getMessage());
+            return new ResponseEntity<>("Error Occurred while sending the leg file  for Leg File Id " +
+                    legFileId, HttpStatus.NOT_FOUND);
+        }
+
+    }
+
     @RequestMapping(value = "/secured/renditionfromleg", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getPdfFromLegFile(@RequestParam("legFile") MultipartFile legFile, @RequestParam("type") String type) {

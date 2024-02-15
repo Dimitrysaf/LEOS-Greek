@@ -126,6 +126,7 @@
   "page.collection.milestones.actions.view-milestone": "Afficher",
   "page.collection.milestones.actions.view-contribution": "Voir la contribution",
   "page.collection.milestones.actions.send-copy-for-contribution": "Envoyer une copie pour contribution",
+  "page.collection.milestones.download.while.not.file.ready":"Le milestone est toujours en préparation, donc si vous continuez à télécharger, le fichier .leg ne contiendra pas le rendu pdf !",
   "page.collection.milestones.send-copy-for-contribution-dialog.title": "Envoyer une copie du milestone pour contribution",
   "page.collection.milestones.send-copy-for-contribution-dialog.target-user": "[FR] Target user",
   "page.collection.milestones.send-copy-for-contribution-dialog.info-message": "[FR] <span>This action will make a copy of the milestone allowing the addressee to propose changes by editing the text of the copy.</span></br></br><span>Afterwards, you will be able to merge the proposed changes into your live text.</span>",
