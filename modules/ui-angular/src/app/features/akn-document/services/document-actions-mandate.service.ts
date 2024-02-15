@@ -155,11 +155,6 @@ export class DocumentActionsMandateService extends DocumentActionsService {
     if (!exportDropdown || exportDropdown.type !== IRibbonToolbarType.DROPDOWN)
       return;
 
-    if (!this.isMandateMemorandum()) {
-      const exportCleanExportItem = this.buildCleanExportButtonItem();
-      exportDropdown.items.push(exportCleanExportItem);
-    }
-
     if (
       !this.isMandateMemorandum() &&
       this.hasPermission('CAN_WORK_WITH_EXPORT_PACKAGE')
