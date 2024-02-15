@@ -77,6 +77,7 @@ import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -475,11 +476,12 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         populateCloneProposalMetadata(annex);
         List<TocItem> tocItems = context.getTocItems();
         List<NumberingConfig> numberConfigs = context.getNumberingConfigs();
+        List<RefConfig> refConfigs = context.getRefConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
 
         return new DocumentConfigResponse(
-                documentsMetadata, numberConfigs, tocItems, null,
+                documentsMetadata, numberConfigs, tocItems, null, refConfigs,
                 StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(),
                 proposal.getMetadata().getOrNull(), context.getTocRules(),

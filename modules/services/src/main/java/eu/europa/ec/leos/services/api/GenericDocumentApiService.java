@@ -51,6 +51,7 @@ import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -202,6 +203,7 @@ public class GenericDocumentApiService {
 
         List<TocItem> tocItems = structure.getTocItems();
         List<NumberingConfig> numberConfigs = structure.getNumberingConfigs();
+        List<RefConfig> refConfigs = structure.getRefConfigs();
         Proposal proposal = this.getDocProposal(document);
 
         return new DocumentConfigResponse(
@@ -209,6 +211,7 @@ public class GenericDocumentApiService {
                 numberConfigs,
                 tocItems,
                 structure.getAlternateConfigs(),
+                refConfigs,
                 StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems),
                 document.getMetadata().get().getRef(),

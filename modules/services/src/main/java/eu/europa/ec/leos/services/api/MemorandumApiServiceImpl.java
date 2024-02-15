@@ -383,7 +383,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
 
         return new DocumentConfigResponse(
-                documentsMetadata, null, tocItems, null,
+                documentsMetadata, null, tocItems, null, null,
                 StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(),
                 proposal.getMetadata().getOrNull(), context1.getTocRules(),

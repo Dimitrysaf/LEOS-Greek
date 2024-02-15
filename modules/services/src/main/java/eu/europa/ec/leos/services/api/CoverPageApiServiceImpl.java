@@ -399,7 +399,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 proposal.getMetadata().get().getRef());
 
         return new DocumentConfigResponse(
-                documentsMetadata, null, tocItems, null,
+                documentsMetadata, null, tocItems, null, null,
                 StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems), proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().getOrNull(), structureContext1.getTocRules(),

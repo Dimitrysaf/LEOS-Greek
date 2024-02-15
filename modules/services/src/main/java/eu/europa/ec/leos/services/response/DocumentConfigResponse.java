@@ -6,6 +6,7 @@ import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.Level;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 
@@ -18,6 +19,7 @@ public class DocumentConfigResponse {
     private List<LeosMetadata> documentsMetadata;
     private List<NumberingConfig> numberingConfig;
     private List<AlternateConfig> alternateConfigs;
+    private List<RefConfig> refConfigs;
     private List<TocItem> tocItems;
     private Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray;
     private Map<String, Attribute> articleTypesConfig;
@@ -28,7 +30,7 @@ public class DocumentConfigResponse {
     private boolean isClonedProposal;
 
     public DocumentConfigResponse(List<LeosMetadata> documentsMetadata, List<NumberingConfig> numberingConfig, List<TocItem> tocItems,
-                                  List<AlternateConfig> alternateConfigs, Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray,
+                                  List<AlternateConfig> alternateConfigs, List<RefConfig> refConfigs, Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray,
                                   Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata,
                                   Map<TocItem, List<TocItem>> tocRules, boolean isTrackChangesEnabled, boolean isTrackChangesShowed,
                                   boolean isClonedProposal) {
@@ -38,6 +40,7 @@ public class DocumentConfigResponse {
         this.listNumberConfigJsonArray = listNumberConfigJsonArray;
         this.articleTypesConfig = articleTypesConfig;
         this.alternateConfigs = alternateConfigs;
+        this.refConfigs = refConfigs;
         this.internalRef = internalRef;
         this.proposalMetadata = proposalMetadata;
         this.tocRules = transformMap(tocRules);
@@ -60,6 +63,14 @@ public class DocumentConfigResponse {
 
     public void setNumberingConfig(List<NumberingConfig> numberingConfig) {
         this.numberingConfig = numberingConfig;
+    }
+
+    public List<RefConfig> getRefConfigs() {
+        return refConfigs;
+    }
+
+    public void setRefConfigs(List<RefConfig> refConfigs) {
+        this.refConfigs = refConfigs;
     }
 
     public List<TocItem> getTocItems() {

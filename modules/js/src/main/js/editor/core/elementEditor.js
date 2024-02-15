@@ -175,6 +175,7 @@ define(function elementEditorModule(require) {
                 tocItemsList: params.tocItemsList,
                 numberingConfigs: params.numberingConfigs,
                 listNumberConfig: params.listNumberConfig,
+                refConfigs: connector.getState().refConfigs,
                 articleTypesConfig: params.articleTypesConfig,
                 documentsMetadata: JSON.parse(connector.getState().documentsMetadataJsonArray),
                 documentRef: connector.getState().documentRef,

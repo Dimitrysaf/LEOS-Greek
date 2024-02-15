@@ -11,6 +11,7 @@ import {
   distinctUntilChanged,
   filter,
   finalize,
+  map,
   mergeMap,
   Observable,
   of,

@@ -20,6 +20,7 @@ import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.ObjectFactory;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.Structure;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocRules;
@@ -65,6 +66,13 @@ public class StructureServiceImpl implements StructureService {
         loadTocStructure(docTemplate);
         return tocStructureMap.get(docTemplate).getNumberingConfigs();
     }
+
+    @Override
+    @Cacheable(value = "refConfigs")
+    public List<RefConfig> getRefConfigs(String docTemplate) {
+        loadTocStructure(docTemplate);
+        return tocStructureMap.get(docTemplate).getRefConfigs();
+    }
     
     @Override
     @Cacheable(value = "alternateConfList")
@@ -105,6 +113,9 @@ public class StructureServiceImpl implements StructureService {
         tocStructure.setStructureDescription(structure.getDescription());
         tocStructure.setNumberingConfigs(structure.getNumberingConfigs().getNumberingConfigs());
         tocStructure.setAlternateConfigs(structure.getAlternateConfigs().getAlternateConfigs());
+        if(structure.getReferenceConfig() != null) {
+            tocStructure.setRefConfigs(structure.getReferenceConfig().getRefConfigs());
+        }
 
         List<TocItem> tocItems = structure.getTocItems().getTocItems();
         tocStructure.setTocItems(tocItems);

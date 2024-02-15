@@ -18,6 +18,7 @@ define(function aknAuthorialNotePluginModule(require) {
     // load module dependencies
     var CKEDITOR = require("promise!ckEditor");
     var pluginTools = require("plugins/pluginTools");
+    var leosPluginUtils = require("plugins/leosPluginUtils");
     var $ = require('jquery');
 
     var authorialNoteWidgetDefinition = require("./authorialNoteWidget");
@@ -37,6 +38,10 @@ define(function aknAuthorialNotePluginModule(require) {
         requires : "widget,dialog",
         icons : widgetName.toLowerCase(),
         init : function init(editor) {
+            var refConfig = leosPluginUtils.getRefConfig(editor);
+            if(refConfig && !refConfig.authorialNote) {
+                return;
+            }
             pluginTools.addDialog(dialogName, initializeDialog);
             editor.on("receiveData", _handleAuthNotes); //LEOS-2114
             editor.on("toHtml", _manageSpacesForMpsBeforeTranform, null, null, 4);  // LEOS-4492

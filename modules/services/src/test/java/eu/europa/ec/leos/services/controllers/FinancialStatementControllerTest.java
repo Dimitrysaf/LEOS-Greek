@@ -105,6 +105,7 @@ public class FinancialStatementControllerTest {
                 new ArrayList<>(),
                 new ArrayList<>(),
                 new ArrayList<>(),
+                new ArrayList<>(),
                 new HashMap<>(),
                 new HashMap<>(),
                 "testRef",

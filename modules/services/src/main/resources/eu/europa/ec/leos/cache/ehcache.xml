@@ -50,6 +50,15 @@
         timeToLiveSeconds="3600"
         memoryStoreEvictionPolicy="LFU"/>
 
+    <!-- TOC structure reference config cache policy -->
+    <cache name="refConfigs"
+           eternal="false"
+           maxElementsInMemory="25"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
+
     <!-- TOC structure alternate config cache policy -->
     <cache name="alternateConfList"
         eternal="false"

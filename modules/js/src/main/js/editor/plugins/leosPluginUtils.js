@@ -1430,6 +1430,21 @@ define(function leosPluginUtilsModule(require) {
             i--;
         }
     }
+
+    function _getRefConfig(editor) {
+        var refConfig;
+        var docType = editor.LEOS.type?.toUpperCase();
+        var documentMetadata = editor.LEOS.documentsMetadata?.find(data => data.category === docType);
+
+        if(editor.LEOS.refConfigs && documentMetadata) {
+             refConfig = editor.LEOS.refConfigs.find(refConfig => refConfig.language.toLowerCase() === documentMetadata.language.toLowerCase());
+            if(!refConfig) {
+                refConfig = editor.LEOS.refConfigs.find(refConfig => refConfig.language.toLowerCase() === 'default');
+            }
+        }
+        return refConfig;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1503,6 +1518,7 @@ define(function leosPluginUtilsModule(require) {
         checkPointsInList: _checkPointsInList,
 		manageNestedSubparagraphs: _manageNestedSubparagraphs,
         selectCorrectPathForList: _selectCorrectPathForList,
+        getRefConfig: _getRefConfig,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
