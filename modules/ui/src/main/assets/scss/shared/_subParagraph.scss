@@ -56,7 +56,24 @@ $LIST_SPACING: 40px;
 
 //------------------------------- Editor Styles -----------------------------//
 %editorSubParagraph {
-  ol > li[data-akn-name="aknNumberedParagraph"], ol[data-akn-name="aknAnnexList"] > li {
+  ol > li[data-akn-name="aknNumberedParagraph"]:not([data-akn-num]), ol[data-akn-name="aknAnnexList"] > li:not([data-akn-num]) {
+    & > p:first-child {
+      padding-top: 0;
+    }
+    & > p:not([data-akn-element="subparagraph"]) {
+      @extend %paddedText;
+    }
+    & > p[data-akn-element="subparagraph"] {
+      @extend %paddedText;
+    }
+    & > p:last-child {
+      padding-bottom: 0;
+    }
+    & > p.selectedMovedElement {
+      @extend %moveSubElement;
+    }
+  }
+  ol > li[data-akn-name="aknNumberedParagraph"][data-akn-num], ol[data-akn-name="aknAnnexList"] > li[data-akn-num] {
     & > p:first-child {
       padding-top: 0;
     }

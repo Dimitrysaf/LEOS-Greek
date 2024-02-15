@@ -51,6 +51,7 @@ define(function aknNumberedParagraphPluginModule(require) {
     var NUMBERED = CKEDITOR.TRISTATE_ON;
     var UNNUMBERED = CKEDITOR.TRISTATE_OFF;
     var PARA_MODE = NUMBERED;
+    var SWITCHED = false;
     var PARA_SELECTOR = "*[data-akn-name='aknNumberedParagraph']";
 
     var DELETED = "deleted_";
@@ -64,19 +65,19 @@ define(function aknNumberedParagraphPluginModule(require) {
         icons: pluginName.toLowerCase(),
         init : function init(editor) {
             renumberModule.init(editor);
-            
+
             editor.ui.addButton(pluginName, {
                 label: 'Paragraph mode',
                 command: CMD_NAME,
                 toolbar: 'paragraphmode'
             });
-            
+
             var paraCommand = editor.addCommand(CMD_NAME, {
                 exec: function(editor) {
                    _changeParaMode(this, editor);
                 }
             });
-            
+
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -124,7 +125,7 @@ define(function aknNumberedParagraphPluginModule(require) {
             editor.on('selectionChange', _onSelectionChange, null, null, 11);
         }
     };
-    
+
     function _onEnterKey(context) {
         LOG.debug("ENTER event intercepted: ", context.event);
         var selection = context.event.editor.getSelection();
@@ -243,15 +244,16 @@ define(function aknNumberedParagraphPluginModule(require) {
         if (paragraphs.length > 0) {
             PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM)
             && !(paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).startsWith(DELETED))
-            && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM) !== leosTrackChanges.core.UNNUMBERED
+            && paragraphs[0].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER) !== leosTrackChanges.core.DELETE_ACTION
                 ? NUMBERED : UNNUMBERED;
         }
         cmd.setState(PARA_MODE);
     }
-    
+
     //This method toggle the existing paragraph mode (Numbered -> Un-numbered & vice-versa) based on user input.
     function _changeParaMode(cmd, editor) {
         PARA_MODE = cmd.state === NUMBERED ? UNNUMBERED : NUMBERED;
+        SWITCHED = true;
         cmd.setState(PARA_MODE);
         if (PARA_MODE === UNNUMBERED) {
             transformSubparagraphs(editor);
@@ -269,14 +271,38 @@ define(function aknNumberedParagraphPluginModule(require) {
         var paragraphs = jqEditor.find(PARA_SELECTOR);
         if (paragraphs.length > 0) {
             if (PARA_MODE === NUMBERED) {
-                renumberModule.updateNumbers([paragraphs[0].parentElement], renumberModule.getSequences('Paragraph'));
+                var renumber = true;
+                for (var ii = 0; ii < paragraphs.length; ii++) {
+                    var dataAknNum = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                    leosTrackChanges.core.setOriginalNumber(paragraphs[ii], dataAknNum);
+                    if (SWITCHED && dataAknNum && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.UNNUMBERED) {
+                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                        leosTrackChanges.core.removeTrackChangesAttributesForNumbering(paragraphs[ii]);
+                        renumber = false;
+                    }
+                }
+                if (renumber) {
+                    renumberModule.updateNumbers([paragraphs[0].parentElement], renumberModule.getSequences('Paragraph'));
+                }
             } else {
                 for (var ii = 0; ii < paragraphs.length; ii++) {
                     if (ckEditor.LEOS.isTrackChangesEnabled) {
-                        var previousNumber = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM);
-                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
-                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
-                        ckEditor.fire("handleTcIndent", {data: paragraphs[ii], previousNumber: previousNumber});
+                        var dataAknNum = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                        leosTrackChanges.core.setOriginalNumber(paragraphs[ii], dataAknNum);
+                        if (dataAknNum && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.UNNUMBERED) {
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                            leosTrackChanges.core.removeTrackChangesAttributesForNumbering(paragraphs[ii]);
+                        } else if (SWITCHED
+                            || (!dataAknNum
+                                && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) !== leosTrackChanges.core.UNNUMBERED
+                                && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) !== leosTrackChanges.core.NEW)
+                            || (dataAknNum
+                                && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.UNNUMBERED
+                                && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER) === leosTrackChanges.core.INSERT_ACTION)) {
+                            leosTrackChanges.core.addTrackChangesAttributesForNumbering(ckEditor, paragraphs[ii], leosTrackChanges.core.DELETE_ACTION);
+                        }
                     } else {
                         if (paragraphs[ii].getAttribute(leosPluginUtils.DATA_ORIGIN) === "ec") {
                             var numId = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
@@ -291,6 +317,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                 }
             }
         }
+        SWITCHED = false;
         if (!!ckEditor.getCommand('indent') && !!ckEditor.elementPath()) {
             ckEditor.getCommand('indent').refresh(ckEditor, ckEditor.elementPath());
         }
