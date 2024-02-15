@@ -166,27 +166,38 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         addAnnotateToZipContent(contentToZip, fileName.replace(".xml", ""), fileName, exportOptions, null);
         contentToZip.put("content.json", outputDescriptor.getBytes(StandardCharsets.UTF_8));
         File file = ZipPackageUtil.zipFiles("document.zip", contentToZip, null);
-        ByteArrayResource bar = new ByteArrayResource(Files.readAllBytes(file.toPath())) {
-            @Override
-            public String getFilename() {
-                return file.getName();
-            }
-        };
-
-        map.add("inputFile", bar);
         map.add("outputDescriptor", outputDescriptor);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.ALL));
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
-        ResponseEntity<byte[]> response = restTemplate.postForEntity(uri, requestEntity, byte[].class);
+        ResponseEntity<byte[]> response = getResponseEntity(uri, file, map);
         if (response.getStatusCode().is2xxSuccessful()) {
             byte[] bytesToWrite = response.getBody();
             return bytesToWrite;
         }
         LOG.error("Not successful conversion using the external service Akn4EU");
         throw new IllegalStateException("Not successful conversion using the external service Akn4EU");
+    }
+
+    @Override
+    public ResponseEntity<byte[]> sendZipFileToCallbackUrlAsync(File file, String callbackUrl) throws IOException {
+        MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+        ResponseEntity<byte[]> response = getResponseEntity(callbackUrl,file, map);
+        return response;
+    }
+
+    private ResponseEntity<byte[]> getResponseEntity(String uri, File file, MultiValueMap<String, Object> map) throws IOException {
+
+        ByteArrayResource bar = new ByteArrayResource(Files.readAllBytes(file.toPath())) {
+            @Override
+            public String getFilename() {
+                return file.getName();
+            }
+        };
+        map.add("inputFile", bar);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.ALL));
+        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
+        return restTemplate.postForEntity(uri, requestEntity, byte[].class);
     }
 
     private void addAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName, ExportOptions exportOptions, String proposalRef) {

@@ -20,6 +20,7 @@ public abstract class LeosMetadata {
     private String procedureType;
     private String actType;
     private String callbackAddress;
+    protected boolean imported;
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String objectId, String docVersion,
@@ -103,6 +104,14 @@ public abstract class LeosMetadata {
 
     public void setActType(String actType) {
         this.actType = actType;
+    }
+
+    public boolean isImported() {
+        return imported;
+    }
+
+    public void setImported(boolean imported) {
+        this.imported = imported;
     }
 
     @Override

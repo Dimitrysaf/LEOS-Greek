@@ -679,6 +679,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public Map<String, Object> findDocumentMetadataByRef(String ref, Class type) {
+        return null;
+    }
+
+    @Override
     public <D extends LeosDocument> List<D> findAllMinorsForIntermediate(Class<? extends D> type, String docRef, String currIntVersion, int startIndex, int maxResults) {
         String primaryType = LeosMapper.leosPrimaryType(type);
         Stream<Document> documents = repository.findAllMinorsForIntermediate(primaryType, docRef, currIntVersion, startIndex, maxResults);

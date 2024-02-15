@@ -33,6 +33,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Map;
+
 
 public class DocumentApiUtil {
 
@@ -55,6 +57,12 @@ public class DocumentApiUtil {
         Class docType = getDocumentType(docRef);
         LeosDocument savedDocument = leosRepository.findDocumentByRef(docRef, docType);
         return savedDocument;
+    }
+
+    public static Map<String, Object> getDocumentMetadata(String docURL, LeosRepository leosRepository) {
+        String docRef = docURL.substring(docURL.lastIndexOf('/') + 1);
+        Class docType = getDocumentType(docRef);
+        return leosRepository.findDocumentMetadataByRef(docRef, docType);
     }
 
     public static Pair<Class, LeosMetadata> getDocumentData(DocumentVO documentVO, MetadataVO metadataVO, String locale, String docRef) {

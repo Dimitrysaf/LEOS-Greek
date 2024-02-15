@@ -780,6 +780,17 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
+    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator", condition = "#root.target.cacheEnabled")
+    public Map<String, Object> findDocumentMetadataByRef(String ref, Class type) {
+        logger.trace("Finding document with ref... [ref=" + ref + ']');
+        Set<LeosCategory> categories = LeosMapper.leosCategories(type);
+        LeosCategory category = (LeosCategory) CollectionUtils.get(categories, 0);
+        eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByRef(ref, String.valueOf(category));
+        return doc.getMetadata();
+    }
+
+    @Override
+    @PerformanceLogger
     public <D extends LeosDocument> List<D> searchVersions(Class<? extends D> type, String docRef, List<String> logins, String versionType) {
         logger.trace("Finding versions. [docRef={}, versionType={}]", docRef, versionType);
         LeosDocumentList docs = repository.searchVersions(docRef, logins, versionType);

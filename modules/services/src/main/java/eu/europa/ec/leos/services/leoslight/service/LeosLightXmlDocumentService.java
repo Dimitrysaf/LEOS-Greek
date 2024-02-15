@@ -14,7 +14,9 @@
 package eu.europa.ec.leos.services.leoslight.service;
 
 import eu.europa.ec.leos.services.export.ExportOptions;
+import org.springframework.http.ResponseEntity;
 
+import java.io.File;
 import java.util.Map;
 
 public interface LeosLightXmlDocumentService {
@@ -22,5 +24,7 @@ public interface LeosLightXmlDocumentService {
     void addDocumentHtmlRendition(Map<String, Object> contentToZip, String xmlDocumentName, byte[] xmlContent, String styleSheetName);
 
     byte[] convert(byte[] documentContent, String fileName, String outputDescriptor, ExportOptions exportOptions) throws Exception;
+
+    ResponseEntity<byte[]> sendZipFileToCallbackUrlAsync(File file, String callbackUrl) throws Exception;
 
 }

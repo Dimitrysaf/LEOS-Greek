@@ -13,9 +13,6 @@
  */
 package eu.europa.ec.leos.services.controllers;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.Claim;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.common.collect.ImmutableMap;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -26,31 +23,24 @@ import eu.europa.ec.leos.domain.vo.ErrorVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.LeosRepository;
-import eu.europa.ec.leos.security.AuthClient;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
-import eu.europa.ec.leos.services.leoslight.util.AsyncZipFileSender;
 import eu.europa.ec.leos.services.leoslight.util.ByteChecksumComparator;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,6 +61,7 @@ import java.util.Properties;
 
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.buildFileAttachment;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentData;
+import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentMetadata;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosDocument;
 
 @RestController
@@ -83,7 +74,6 @@ public class LeosLightApiController {
     private ProposalConverterService proposalConverterService;
     private LeosRepository leosRepository;
     private PackageService packageService;
-    private TokenService tokenService;
     private MessageHelper messageHelper;
     private SecurityContext securityContext;
     private LeosLightXmlDocumentService leosLightXmlDocumentService;
@@ -92,13 +82,12 @@ public class LeosLightApiController {
     @Autowired
     public LeosLightApiController(SecurityContext securityContext, ValidationService validationService,
                                   ProposalConverterService proposalConverterService,
-                                  LeosRepository leosRepository, PackageService packageService, TokenService tokenService,
-                                  MessageHelper messageHelper, LeosLightXmlDocumentService leosLightXmlDocumentService, Properties applicationProperties) {
+                                  LeosRepository leosRepository, PackageService packageService, MessageHelper messageHelper,
+                                  LeosLightXmlDocumentService leosLightXmlDocumentService, Properties applicationProperties) {
         this.validationService = validationService;
         this.proposalConverterService = proposalConverterService;
         this.leosRepository = leosRepository;
         this.packageService = packageService;
-        this.tokenService = tokenService;
         this.messageHelper = messageHelper;
         this.securityContext = securityContext;
         this.leosLightXmlDocumentService = leosLightXmlDocumentService;
@@ -113,7 +102,7 @@ public class LeosLightApiController {
         LOG.info("user in security context " + securityContext.getUser());
         String inputFileName = inputFile.getOriginalFilename();
         String docRef = inputFileName.substring(0, inputFileName.lastIndexOf("-") + 1) + locale;
-        String mappingUrl =  applicationProperties.getProperty("leos.mapping.url");
+        String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
         String documentReferenceUrl = mappingUrl + "/ui/document/" + docRef;
         String errorMessage;
 
@@ -134,6 +123,7 @@ public class LeosLightApiController {
                 Class docType = result.left();
                 LeosMetadata docMetaData = result.right();
                 docMetaData.setCallbackAddress(callbackAddress);
+                docMetaData.setImported(true);
                 LeosDocument savedDocument = null;
                 try {
                     savedDocument = leosRepository.findDocumentByRef(docRef, docType);
@@ -143,6 +133,8 @@ public class LeosLightApiController {
                 if (savedDocument != null) {
                     if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), documentVO.getSource())) {
                         errorMessage = messageHelper.getMessage("leoslight.document.duplicate");
+                        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
+                                ImmutableMap.of("documentUrl", documentReferenceUrl, "result", errorMessage));
                     } else {
                         leosRepository.updateDocument(savedDocument.getId(), docMetaData, documentVO.getSource(), VersionType.MAJOR, "no comment", result.left());
                         return ResponseEntity.status(HttpStatus.OK).body(
@@ -169,37 +161,16 @@ public class LeosLightApiController {
                 ImmutableMap.of("documentUrl", "", "result", errorMessage));
     }
 
-    @GetMapping(value = "/editDocument", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> editDocument(@RequestParam String encryptedProfile) {
-
-        AuthClient authClient = tokenService.validateClientByJwtToken(encryptedProfile);
-        String docURL = "";
-        String role_permission = "";
-        if (authClient != null) {
-            DecodedJWT decodedToken = JWT.decode(encryptedProfile);
-            Claim url = decodedToken.getClaim("documentURL");
-            Claim role = decodedToken.getClaim("role_permission");
-            Validate.notNull(url, "document url claim cannot be null");
-            Validate.notNull(role, "role permission claim cannot be null");
-            docURL = url.asString();
-            role_permission = role.asString();
-        } else {
-            return new ResponseEntity<Object>(messageHelper.getMessage("leoslight.service.edit.permission.denied"), HttpStatus.FORBIDDEN);
-        }
-        LeosDocument savedDocument = getLeosDocument(docURL, leosRepository);
-        if (savedDocument != null && !savedDocument.getContent().isEmpty()) {
-            byte[] contentDocument = savedDocument.getContent().get().getSource().getBytes();
-        } else {
-            return new ResponseEntity<>(messageHelper.getMessage("leoslight.document.not.found"), HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(messageHelper.getMessage("leoslight.status.ok"), HttpStatus.OK);
-    }
-
     @PostMapping(value = "/exportDocument", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Object> exportDocument(@RequestParam("documentUrl") String documentUrl, @RequestParam String outputDescriptor,
                                                  @RequestParam(required = false) String callbackAddress) throws IOException {
+
+
+        Map<String, Object> documentMetadata = getDocumentMetadata(documentUrl, leosRepository);
+        if(StringUtils.isEmpty(callbackAddress)) {
+            callbackAddress = String.valueOf(documentMetadata.get("callbackAddress"));
+        }
 
         LeosDocument savedDocument = getLeosDocument(documentUrl, leosRepository);
         if (savedDocument == null) {
@@ -230,7 +201,11 @@ public class LeosLightApiController {
 
         //5.send response
         if (StringUtils.isNotEmpty(callbackAddress)) {
-            AsyncZipFileSender.sendZipFileToCallbackUrlAsync(FileUtils.readFileToByteArray(file), callbackAddress);
+            try {
+                leosLightXmlDocumentService.sendZipFileToCallbackUrlAsync(file, callbackAddress);
+            } catch (Exception exception) {
+                LOG.error("Error occurred sending response to callback: " + callbackAddress + exception.getMessage());
+            }
             return new ResponseEntity<>("Asynchronously exported to address: " + callbackAddress, HttpStatus.OK);
         } else {
             return buildFileAttachment(FileUtils.readFileToByteArray(file), file.getName());
