@@ -450,8 +450,10 @@ export class DocumentEditorComponent
   }
 
   ngOnDestroy() {
-    //remove every session related actions from the user and clean the document relaod if it is present
     this.tocService.setIsEditMode(false);
+    // called on every document view page destruction in order to avoid multiple instances of ckeditor
+    this.cdkEditor.destroyEditorInstance();
+    //remove every session related actions from the user and clean the document relaod if it is present
     this.coEditionWSService.setShouldReloadAfterUpdate();
     this.coEditionWSService.removeDocumentCoEditInfo(this.documentRef);
     this.coEditionWSService.removeSession();

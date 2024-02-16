@@ -183,6 +183,16 @@ export class CKEditorService implements OnDestroy {
     );
   }
 
+  /*
+  This function destroys the instance of the active ckeditor instance on each document page.
+   */
+  destroyEditorInstance() {
+    this.leosEditorConnector.onUnregister(
+      this.leosEditorConnector,
+      'onUnregister',
+    );
+  }
+
   private initActionManager(
     require: Require,
     leosState: any,
@@ -537,9 +547,12 @@ export class CKEditorService implements OnDestroy {
 
     config['refConfigs'] = oldConfig.refConfigs;
 
-    const profileTCEnabled = !oldConfig.profile || oldConfig.profile.trackChangesEnabled;
-    config['isTrackChangesShowed'] = profileTCEnabled && oldConfig.trackChangesShowed;
-    config['isTrackChangesEnabled'] = profileTCEnabled && oldConfig.trackChangesEnabled;
+    const profileTCEnabled =
+      !oldConfig.profile || oldConfig.profile.trackChangesEnabled;
+    config['isTrackChangesShowed'] =
+      profileTCEnabled && oldConfig.trackChangesShowed;
+    config['isTrackChangesEnabled'] =
+      profileTCEnabled && oldConfig.trackChangesEnabled;
     config['permissions'] = oldConfig.userAppPermissions;
 
     if (!oldConfig.spellCheckerServiceUrl) {
