@@ -153,11 +153,14 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
 
   protected formatTitle(version: Version): string {
     if (version.checkinCommentVO.checkinElement) {
-      return (
-        version.checkinCommentVO.checkinElement.elementLabel +
-        ' ' +
-        version.checkinCommentVO.checkinElement.actionType.toLowerCase()
-      );
+      if (version.checkinCommentVO.checkinElement.elementLabel === null)
+        return version.checkinCommentVO.checkinElement.actionType.toLowerCase();
+      else
+        return (
+          version.checkinCommentVO.checkinElement.elementLabel +
+          ' ' +
+          version.checkinCommentVO.checkinElement.actionType.toLowerCase()
+        );
     } else {
       return version.checkinCommentVO.title;
     }
