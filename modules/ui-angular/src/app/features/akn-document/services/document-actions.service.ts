@@ -434,10 +434,7 @@ export abstract class DocumentActionsService {
       ],
     };
 
-    if (
-      (!this.isMandateMemorandum() && this.isCN()) ||
-      this.isClonedProposal()
-    ) {
+    if (this.showCleanVersion()) {
       displaySection.children.push(this.buildShowCleanVersionItem());
     }
     return displaySection;
@@ -906,6 +903,15 @@ export abstract class DocumentActionsService {
 
   private isCN() {
     return this.environmentService.isCouncil();
+  }
+
+  private showCleanVersion() {
+    return (
+      ((!this.isMandateMemorandum() &&
+        !this.isMandateExplanatory()) &&
+        this.isCN()) ||
+      this.isClonedProposal()
+    );
   }
 
   private canAcceptTrackChanges() {
