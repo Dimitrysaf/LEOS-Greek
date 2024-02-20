@@ -237,7 +237,7 @@ export abstract class DocumentActionsService {
       this.buildImportOJSection();
     const exportSection = this.buildExportSection();
     const displaySection = this.buildDisplaySection();
-    const trackChangesSection = this.buildTrackChangesSection();
+    const trackChangesSection = !this.isCN() && this.buildTrackChangesSection();
     const editSection = this.editSection();
     const compareSection =
       this.pageMode === PageMode.CompareVersions && this.buildCompareSection();
