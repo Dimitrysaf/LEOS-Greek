@@ -1228,7 +1228,7 @@ define(function leosPluginUtilsModule(require) {
     }
 
     function _handleIndentAttributes(node, editor) {
-        if (editor.LEOS.isClonedProposal && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
+        if (editor.LEOS.isTrackChangesEnabled && !INLINE_FROM_MATCH.test(node.getName()) && node.getAttribute(DATA_AKN_ELEMENT)) {
             var elementName = node.getAttribute(DATA_AKN_ELEMENT).toUpperCase();
             switch(elementName) {
                 case "ALINEA":
