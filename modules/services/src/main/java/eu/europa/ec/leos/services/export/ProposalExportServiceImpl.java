@@ -15,11 +15,13 @@ package eu.europa.ec.leos.services.export;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.integration.AKN4EUService;
 import eu.europa.ec.leos.integration.ToolBoxService;
 import eu.europa.ec.leos.model.notification.pdfGeneration.PDFGenerationNotification;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.repository.store.WorkspaceRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.document.TransformationService;
@@ -62,17 +64,19 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
     private NotificationService notificationService;
     protected final static String ZIP_PACKAGE_NAME = "AkomaNtoso2LegisWrite";
     protected CloneContext cloneContext;
+    protected WorkspaceRepository workspaceRepository;
 
     @Autowired
     ProposalExportServiceImpl(LegService legService, PackageService packageService, Optional<ToolBoxService> toolBoxServiceO,
                               SecurityContext securityContext, ExportHelper exportHelper, BillService billService,
                               AnnexService annexService, TransformationService transformationService, NotificationService notificationService,
-                              AKN4EUService akn4euService, CloneContext cloneContext) {
+                              AKN4EUService akn4euService, CloneContext cloneContext, WorkspaceRepository workspaceRepository) {
         super(legService, packageService, securityContext, exportHelper, billService, annexService, transformationService);
         toolBoxServiceO.ifPresent(service -> this.toolBoxService = service);
         this.notificationService = notificationService;
         this.akn4euService = akn4euService;
         this.cloneContext = cloneContext;
+        this.workspaceRepository = workspaceRepository;
     }
 
     /**
@@ -249,7 +253,8 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
         LegPackage legPackage = null;
         try {
             exportOptions.setDocuwrite(false);
-            if (cloneContext.isClonedProposal()) {
+            Proposal proposal = workspaceRepository.findDocumentById(proposalId, Proposal.class, true);
+            if (proposal.isClonedProposal()) {
                 legPackage = legService.createLegPackageForClone(proposalId, exportOptions);
             } else {
                 legPackage = legService.createLegPackage(proposalId, exportOptions);
