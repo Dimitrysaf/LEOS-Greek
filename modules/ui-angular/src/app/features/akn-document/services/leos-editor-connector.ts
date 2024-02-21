@@ -200,8 +200,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
             });
         },
         dismiss: () => {
-          // this.connector.releaseElement();
-          // TODO: should probably also call this.actionManagerConnector?.cancelActionElement(elementId);
+          this.documentService.resetDocument();
         },
       });
     } else {
