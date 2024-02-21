@@ -160,7 +160,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   onDownloadMilestone(milestone: Milestone) {
-    if (milestone?.status != MilestoneStatus.Ready) {
+    if (milestone?.status === MilestoneStatus.InPreparation) {
       return this.dialogService.openDialog({
         typeClass: 'warning',
         title: this.translateService.instant('global.notifications.title.warning'),
