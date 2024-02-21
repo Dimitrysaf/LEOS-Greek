@@ -7,6 +7,7 @@ import org.jaxen.dom.DOMXPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.xml.SimpleNamespaceContext;
+import org.springframework.web.util.UriUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1247,5 +1248,9 @@ public class XercesUtils {
             return is(node, SUBPARAGRAPH) && isInsideAList && isLastElement;
         }
         return false;
+    }
+
+    public static String encodeParam(String value) {
+        return UriUtils.encodePath(value, StandardCharsets.UTF_8);
     }
 }
