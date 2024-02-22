@@ -15,8 +15,6 @@
 define(function elementEditorModule(require) {
     "use strict";
 
-
-
     // load module dependencies
     var _ = require("lodash");
     var $ = require("jquery");
@@ -210,8 +208,6 @@ define(function elementEditorModule(require) {
             };
             editor.setData(params.elementFragment, options);
 
-            // register EmptyTrimSelector
-            UTILS.registerEmptyTrimSelector(params.tocItemsList);
             $("button.ui-datepicker-trigger").attr("disabled", true);
             $("inline[name='checked']").off();
             $("inline[name='unchecked']").off();
@@ -412,8 +408,9 @@ define(function elementEditorModule(require) {
         var isEmptyElementFound = false;
 
         var emptyElements = $("#" + elementId + ", p[data-akn-id='" + elementId + "'], h2[data-akn-heading-id='" + elementId + "'], p[data-akn-num-id='" + elementId + "']"
-            + ", li[refersto]").find(":emptyTrim");
-
+            + ", li[refersto]").find("*").addBack().filter(function() {
+            return UTILS.isEmptyElement(this);
+        });
 
         var bogus = $("#" + elementId).find(leosPluginUtils.BOGUS);
         var sibling;

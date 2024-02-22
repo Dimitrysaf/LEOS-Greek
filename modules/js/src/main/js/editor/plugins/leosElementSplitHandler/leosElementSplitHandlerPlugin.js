@@ -18,8 +18,8 @@ define(function leosElementSplitHandlerPluginModule(require) {
     // load module dependencies
     var CKEDITOR = require("promise!ckEditor");
     var pluginTools = require("plugins/pluginTools");
-    var leosPluginUtils = require("plugins/leosPluginUtils");
     var $ = require("jquery");
+    var UTILS = require("core/leosUtils");
 
     var pluginName = "leosElementSplitHandler";
     var config = {
@@ -73,12 +73,14 @@ define(function leosElementSplitHandlerPluginModule(require) {
             var rootTableElements = rootElement.find("> table");
             var rootNoTableParElements = rootElement.find("> *:not(table,p)");
             var rootElementText = rootElement.clone().children().remove().end().text();
-            if (rootTableElements.length > 1 || rootParElements.length > 1 || (rootElementText !== '' && rootTableElements.length)
+            if ((rootTableElements.length > 1) || (rootParElements.length > 1) || ((rootElementText !== '') && rootTableElements.length)
                     || (rootNoTableParElements.length && rootTableElements.length)) {
-                var emptyParElements = rootElement.find("> p:emptyTrim");
+                var emptyParElements = rootParElements.filter(function() {
+                    return UTILS.isEmptyElement(this);
+                });
                 if (emptyParElements) {
                     emptyParElements.each(function() {
-                        if(this.getAttribute('data-akn-element') === 'crossHeading' || this.getAttribute('data-akn-name') === 'crossHeading') {
+                        if ((this.getAttribute('data-akn-element') === 'crossHeading') || (this.getAttribute('data-akn-name') === 'crossHeading')) {
                             this.innerText = "CrossHeading...";
                         } else {
                             this.innerText = "Text...";

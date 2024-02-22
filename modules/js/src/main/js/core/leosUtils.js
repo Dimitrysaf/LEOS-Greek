@@ -65,59 +65,53 @@ define(function leosUtilsModule(require) {
         return null;
     }
 
-    function _registerEmptyTrimSelector(tocItemsList) {
-        jQuery.extend(jQuery.expr[':'], {
-            emptyTrim: function (el) {
-                var elementsToBeChecked = [PARAGRAPH_POINT_TAG, SUBPARAGRAPH_SUBPOINT_TAG];
-                var childElementsToBeChecked = [LINE_BREAK_TAG, BOLD_TEXT_TAG, EMPHATIZED_TEXT_TAG, SUB_TEXT_TAG, SUP_TEXT_TAG];
-                if (el.tagName === HEADING_TAG) {
-                    var tocItem = _getParentTocItem(el, tocItemsList);
-                    if (tocItem && tocItem.itemHeading === "MANDATORY") {
-                        elementsToBeChecked.push(HEADING_TAG);
-                    }
-                }
-                if (elementsToBeChecked.includes(el.tagName)) {
-                    if(!$.trim(el.innerText)) {
-                        if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
-                                && (el.parentElement.tagName === TABLE_CELL_TAG || el.parentElement.tagName === TABLE_CELL_HEADER_TAG)) {
-                            return false;
-                        } else if (el.children.length > 0 && _containsOnlyChildrenOf(el, childElementsToBeChecked)
-                                && (el.previousElementSibling && el.previousElementSibling.tagName === TABLE_TAG)) {
-                            return false;
-                        } else if (el.children.length > 0 && el.children[0].tagName === HEADING_TAG) {
-                            return el.children[0].innerText.trim().length === 0;
-                        } else {
-                            return el.children.length === 0 || _containsOnlyChildrenOf(el, childElementsToBeChecked);
-                        }
-                    }
-                    if(el.childNodes[0].nodeName === LINE_BREAK_TAG) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
-    }
-
-    function _getParentTocItem(el, tocItemsList) {
-        var currentElem = el;
-        var parentTocItem;
-        do {
-            parentTocItem = tocItemsList.find(function (elem) {
-                return elem.aknTag.toLowerCase() === currentElem.parentElement.tagName.toLowerCase()
-                // Added title tag special condition in the scope of LEOS-6070
-                || (elem.aknTag.toLowerCase() === 'title' && currentElem.parentElement.tagName.toLowerCase() === 'akntitle');
-            });
-            currentElem = currentElem.parentElement;
-        } while (!parentTocItem && currentElem.parentElement);
-        return parentTocItem;
-    }
-
-    function _containsOnlyChildrenOf(element, tagElements) {
-        for (var j = 0; j < element.children.length; j++) {
-            if (!tagElements.includes(element.children[j].tagName)) { return false; }
+    function _isEmptyElement(el) {
+        function _getParentTocItem(el, tocItemsList) {
+            var currentElem = el;
+            var parentTocItem;
+            do {
+                parentTocItem = tocItemsList.find(function(elem) {
+                    return elem.aknTag.toLowerCase() === currentElem.parentElement.tagName.toLowerCase()
+                        // Added title tag special condition in the scope of LEOS-6070
+                        || (elem.aknTag.toLowerCase() === 'title' && currentElem.parentElement.tagName.toLowerCase() === 'akntitle');
+                });
+                currentElem = currentElem.parentElement;
+            } while (!parentTocItem && currentElem.parentElement);
+            return parentTocItem;
         }
-        return true;
+        function _containsOnlyChildrenOf(element, tagElements) {
+            for (var j = 0; j < element.children.length; j++) {
+                if (!tagElements.includes(element.children[j].tagName)) { return false; }
+            }
+            return true;
+        }
+        var childElementsToBeChecked = [LINE_BREAK_TAG, BOLD_TEXT_TAG, EMPHATIZED_TEXT_TAG, SUB_TEXT_TAG, SUP_TEXT_TAG];
+        var elementsToBeChecked = [PARAGRAPH_POINT_TAG, SUBPARAGRAPH_SUBPOINT_TAG];
+        if (el.tagName === HEADING_TAG) {
+            var tocItem = _getParentTocItem(el, CKEDITOR.currentInstance.LEOS.tocItemsList);
+            if (tocItem && tocItem.itemHeading === "MANDATORY") {
+                elementsToBeChecked.push(HEADING_TAG);
+            }
+        }
+        if (elementsToBeChecked.includes(el.tagName)) {
+            if (!$.trim(el.innerText)) {
+                if ((el.tagName === PARAGRAPH_POINT_TAG || el.tagName === SUBPARAGRAPH_SUBPOINT_TAG)
+                    && (el.parentElement.tagName === TABLE_CELL_TAG || el.parentElement.tagName === TABLE_CELL_HEADER_TAG)) {
+                    return false;
+                } else if (el.children.length > 0 && _containsOnlyChildrenOf(el, childElementsToBeChecked)
+                    && (el.previousElementSibling && el.previousElementSibling.tagName === TABLE_TAG)) {
+                    return false;
+                } else if (el.children.length > 0 && el.children[0].tagName === HEADING_TAG) {
+                    return el.children[0].innerText.trim().length === 0;
+                } else {
+                    return el.children.length === 0 || _containsOnlyChildrenOf(el, childElementsToBeChecked);
+                }
+            }
+            if (el.childNodes[0].nodeName === LINE_BREAK_TAG) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function _setItemInStorage(key, value) {
@@ -325,7 +319,7 @@ define(function leosUtilsModule(require) {
     return {
         getParentElement: _getParentElement,
         getElementOrigin : _getElementOrigin,
-        registerEmptyTrimSelector: _registerEmptyTrimSelector,
+        isEmptyElement: _isEmptyElement,
         setItemInStorage : _setItemInStorage,
         getItemStorage : _getItemStorage,
         clearItemStorage : _clearItemStorage,

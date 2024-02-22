@@ -20,10 +20,10 @@ define(function leosTransformerPluginModule(require) {
     // load module dependencies
     var pluginTools = require("plugins/pluginTools");
     var numberModule = require("plugins/leosNumber/listItemNumberModule");
+    var UTILS = require("core/leosUtils");
 
     var pluginName = "leosTransformer";
     var ORDERED_LIST_SELECTOR = "ol[data-akn-name='aknOrderedList']";
-    var PARA_SELECTOR = "*[data-akn-name='aknNumberedParagraph']";
 
     var pluginDefinition = {
         init: function init(editor) {
@@ -62,17 +62,19 @@ define(function leosTransformerPluginModule(require) {
         var eventDataAsObject = $(data);
         var elementsToRemove =  eventDataAsObject
             .find("li, p[data-akn-id], h2[data-akn-heading-id], p[data-akn-num-id], p[data-akn-element='subparagraph']")
-            .find(":emptyTrim")
-            .addBack(":emptyTrim");
+            .find("*").addBack().filter(function() {
+                return UTILS.isEmptyElement(this);
+            });
 
         elementsToRemove.each(_checkEmptyAndRemove);
-/*
-- empty node is the last point of a List removing it means removing also the List.
-- the list contains an intro subparagraph remove it outside the list structure
-*/
+
+        /*
+        - empty node is the last point of a List removing it means removing also the List.
+        - the list contains an intro subparagraph remove it outside the list structure
+        */
         eventDataAsObject.find("ol[data-akn-name='aknOrderedList']").each(function( index, elem ){
-            if(this.childElementCount == 1 && this.childNodes[0].getAttribute("data-akn-element") !== "point"){
-                for(var i = 0; i < this.firstChild.childNodes.length; i++){
+            if (this.childElementCount == 1 && this.childNodes[0].getAttribute("data-akn-element") !== "point"){
+                for (var i = 0; i < this.firstChild.childNodes.length; i++){
                     this.parentElement.appendChild(this.firstChild.childNodes[i]);
                 }
                 this.remove();
@@ -84,16 +86,14 @@ define(function leosTransformerPluginModule(require) {
     }
 
     function _checkEmptyAndRemove(index, elem){
-    // do not delete if it is the last editable element in the CKEditor
-
-    // if LI and it has attribute 'refersto', do not delete it
+        // do not delete if it is the last editable element in the CKEditor
+        // if LI and it has attribute 'refersto', do not delete it
         var isPBeforeTable = $(elem).is('p') && $(elem).prev().is('table');
         var isGrandParentAnnexList = $(elem).parent().parent().attr('data-akn-name') === 'aknAnnexList';
         isPBeforeTable = isPBeforeTable && !isGrandParentAnnexList;
-        if($(elem).parents('table').length === 0 && !$(elem).attr("refersto")
-            && !isPBeforeTable
-            && ($(elem).is(':emptyTrim') && $.trim($(elem).text()) === '')){
-            var parent =  $(elem).parent();
+        if (($(elem).parents('table').length === 0) && !$(elem).attr("refersto") && !isPBeforeTable &&
+            UTILS.isEmptyElement(elem) && ($.trim($(elem).text()) === '')) {
+            var parent = $(elem).parent();
             $(elem).remove();
             _checkEmptyAndRemove(0, parent);
         }
