@@ -7,10 +7,11 @@ import {
   HttpRequest,
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable, take, tap, throwError } from 'rxjs';
+import {catchError, from, Observable, throwError} from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 import { AuthService } from './auth.service';
+import {TokenData} from "@/core/models";
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -25,22 +26,44 @@ export class AuthInterceptor implements HttpInterceptor {
       : next.handle(req);
   }
 
+  /**
+   * Add token
+   * - if localstore token is valid then it is used
+   * - if token has expired: renew the token in synchronous manner
+   */
+  private async addTokenToRequest (request: HttpRequest<any>) {
+    let tokenData = this.authService.loadTokenData();
+    let expiresIn = tokenData.expiresIn;
+    if (this.authService.isTokenToRenew(expiresIn)) {
+      console.debug(
+        '[auth.service] monitorExpiryInStorage - renew expiring token before connection',
+      );
+      await this.authService.renewAccessTokenAsync();
+      //get the renewed token
+      tokenData = this.authService.loadTokenData();
+    }
+    return this.addToken(request, tokenData);
+  }
+
   /** Appends the **Access Token** as `Authorization` header to the request. */
-  private handleWithToken(req: HttpRequest<any>, next: HttpHandler) {
-    let accessToken: string | null = null;
-    return this.authService.accessToken$.pipe(
-      take(1),
-      tap((token) => (accessToken = token)),
-      switchMap((token) => next.handle(this.addToken(req, token))),
-      catchError((e) => this.errorHandler(e, accessToken)),
+  handleWithToken(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Make addTokenToRequest asynchronous and return an Observable
+    return from(this.addTokenToRequest(request)).pipe(
+      switchMap((authRequest:HttpRequest<any>) => {
+        // Pass on the cloned request instead of the original request
+        return next.handle(authRequest).pipe(
+          catchError((e) => this.errorHandler(e, this.authService.loadTokenData().accessToken))
+        );
+      })
     );
   }
 
   /** Adds the `Authorization` header to the request. */
-  private addToken(req: HttpRequest<any>, token: string) {
+  private addToken(req: HttpRequest<any>, token: TokenData) {
+    let accessToken = token.accessToken;
     return req.clone({
       setHeaders: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     });
   }
