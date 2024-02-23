@@ -11,7 +11,7 @@ import {
   BehaviorSubject,
   distinctUntilChanged,
   filter,
-  interval,
+  interval, lastValueFrom,
   Observable,
   Subject,
   Subscription,
@@ -51,10 +51,10 @@ export class AuthService implements OnDestroy {
    * exp3 --------b--
    * ```
    */
-  accessToken$: Observable<string>;
+  accessToken$: Observable<TokenData>;
 
   /** The current **Access Token**. */
-  private accessTokenBS = new BehaviorSubject<string | null>(null);
+  private accessTokenBS = new BehaviorSubject<TokenData | null>(null);
   private destroy$ = new Subject<void>();
   private http: HttpClient; // without interceptors!
   private monitorExpirySub?: Subscription;
@@ -182,8 +182,8 @@ export class AuthService implements OnDestroy {
     });
   }
 
-  private setAccessToken({ accessToken }: TokenData) {
-    this.accessTokenBS.next(accessToken);
+  private setAccessToken( tokenData : TokenData) {
+    this.accessTokenBS.next(tokenData);
   }
 
   /**
@@ -222,6 +222,40 @@ export class AuthService implements OnDestroy {
   }
 
   /**
+   * call get token API and return a Promise
+   */
+  private async callAccessTokenAsync(): Promise<AccessTokenResponse>  {
+    const options = process.env.NG_APP_REFRESH_TOKEN
+      ? {
+        headers: {
+          'grant-type': 'jwt-bearer',
+          assertion: process.env.NG_APP_REFRESH_TOKEN,
+        },
+      }
+      : undefined;
+    return await lastValueFrom(this.http.get<AccessTokenResponse>(`${apiBaseUrl}/token`, options));
+  }
+
+  /**
+   * Synchronously wait for the return of the get Token API call to store the token
+   */
+  public async renewAccessTokenAsync() {
+    try {
+      const tokenResponse = await this.callAccessTokenAsync();
+      const tokenData : TokenData = { accessToken: tokenResponse.accessToken, expiresIn:tokenResponse.expiresIn };
+      this.storeTokenData(tokenData);
+      console.debug('[auth.service] renewAccessTokenAsync - token renewed', tokenData); // DEBUG
+    } catch (error) {
+      console.debug(
+        '[auth.getRenewTokenSync] getRenewTokenSync - token renewal failed',
+        error,
+      ); // DEBUG
+      this.handleRenewTokenError(error);
+    }
+
+  }
+
+  /**
    * Handles the **Access Token** renewal failure. It either shows a popup for
    * known errors or it throws an `HttpErrorResponse`.
    */
@@ -254,7 +288,7 @@ export class AuthService implements OnDestroy {
    * "expired" one. It is shared across all tabs running the application (same
    * origin and path).
    */
-  private loadTokenData(): TokenData {
+  public loadTokenData(): TokenData {
     return this.storage.get(AuthService.TOKEN_KEY) ?? { expiresIn: 0 };
   }
 
@@ -271,7 +305,7 @@ export class AuthService implements OnDestroy {
    * @param expiresIn
    * @private
    */
-  private isTokenToRenew(expiresIn: number) {
+  public isTokenToRenew(expiresIn: number) {
     const now_plus_RENEW_WINDOW = Date.now() + AuthService.RENEW_WINDOW;
     return now_plus_RENEW_WINDOW > expiresIn;
   }
