@@ -27,4 +27,27 @@ public class XmlHelperTest extends LeosTest {
         assertEquals(squeezeXml(expected), squeezeXml(str));
     }
 
+    @Test
+    public void test_encodeParam() {
+        String str = "x.y";
+        str = XmlHelper.encodeParam(str);
+        assertEquals("x.y", str);
+
+        str = "x/y";
+        str = XmlHelper.encodeParam(str);
+        assertEquals("x/y", str);
+
+        str = "x<y";
+        str = XmlHelper.encodeParam(str);
+        assertEquals("x%3Cy", str);
+
+        str = "x>y";
+        str = XmlHelper.encodeParam(str);
+        assertEquals("x%3Ey", str);
+
+        str = "x\\y";
+        str = XmlHelper.encodeParam(str);
+        assertEquals("x%5Cy", str);
+    }
+
 }
