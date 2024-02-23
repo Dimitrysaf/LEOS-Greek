@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.jsoup.Jsoup;
 import org.jsoup.parser.Parser;
+import org.springframework.web.util.UriUtils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -772,5 +773,9 @@ public class XmlHelper {
             content = content.replace(tagAndContent, cleanTagAndContent);
         }
         return content.getBytes(StandardCharsets.UTF_8);
+    }
+
+    public static String encodeParam(String value) {
+        return UriUtils.encodePath(value, StandardCharsets.UTF_8);
     }
 }

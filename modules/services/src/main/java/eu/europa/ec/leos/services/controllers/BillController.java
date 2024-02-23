@@ -58,7 +58,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static eu.europa.ec.leos.services.support.XercesUtils.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping("/secured/bill/")
@@ -87,7 +87,7 @@ public class BillController {
             elementName = encodeParam(elementName);
             elementId = encodeParam(elementId);
             presenterId = encodeParam(presenterId);
-            elementContent = encodeParam(elementContent);
+//            elementContent = encodeParam(elementContent);
             SaveElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName, elementContent, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
@@ -142,7 +142,7 @@ public class BillController {
             documentRef = encodeParam(documentRef);
             elementTag = encodeParam(elementTag);
             elementId = encodeParam(elementId);
-            elementContent = encodeParam(elementContent);
+//            elementContent = encodeParam(elementContent);
             DocumentViewResponse bill = this.billApiService.mergeElement(documentRef, elementContent, elementTag, elementId);
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
@@ -157,8 +157,7 @@ public class BillController {
                                                    @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
-            List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef,
-                    pageIndex, pageSize);
+            List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex, pageSize);
             return ResponseEntity.ok().body(recentMinorVersions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
@@ -187,8 +186,7 @@ public class BillController {
         try {
             documentRef = encodeParam(documentRef);
             saveEvent.setCheckinComment(encodeParam(saveEvent.getCheckinComment()));
-            List<VersionVO> versions = this.billApiService.saveDocument(documentRef, saveEvent.getCheckinComment(),
-                    saveEvent.getVersionType());
+            List<VersionVO> versions = this.billApiService.saveDocument(documentRef, saveEvent.getCheckinComment(), saveEvent.getVersionType());
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting recent changes - " + e.getMessage());
@@ -203,8 +201,7 @@ public class BillController {
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef,
-                    saveTocRequestEvent.getTableOfContentItemVOs());
+            List<TableOfContentItemVO> toc = this.billApiService.saveToC(documentRef, saveTocRequestEvent.getTableOfContentItemVOs());
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while saving toc - " + e.getMessage());
@@ -219,8 +216,7 @@ public class BillController {
                                                        @RequestParam int pageSize) {
         try {
             documentRef = encodeParam(documentRef);
-            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
-                    pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill versioning data - " + e.getMessage());
@@ -249,8 +245,7 @@ public class BillController {
         try {
             documentRef = encodeParam(documentRef);
             currIntVersion = encodeParam(currIntVersion);
-            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef,
-                    currIntVersion, pageIndex, pageSize);
+            List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef, currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex versioning data - " + e.getMessage());
@@ -340,10 +335,9 @@ public class BillController {
                                                    @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
             documentRef = encodeParam(documentRef);
-            searchText = encodeParam(searchText);
-            tempUpdatedContentXML = encodeParam(tempUpdatedContentXML);
-            List<SearchMatchVO> bill = this.billApiService.searchTextInDocument(documentRef, searchText, matchCase,
-                    completeWords, tempUpdatedContentXML);
+//            searchText = encodeParam(searchText);
+//            tempUpdatedContentXML = encodeParam(tempUpdatedContentXML);
+            List<SearchMatchVO> bill = this.billApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(bill);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill search results - " + e.getMessage());
@@ -489,10 +483,10 @@ public class BillController {
     public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
                                                  @RequestBody ReplaceMatchRequest request) {
         try {
-            request.setReplaceText(encodeParam(request.getReplaceText()));
-            request.setSearchText(encodeParam(request.getSearchText()));
+//            request.setReplaceText(encodeParam(request.getReplaceText()));
+//            request.setSearchText(encodeParam(request.getSearchText()));
             request.setDocumentRef(encodeParam(request.getDocumentRef()));
-            request.setTempUpdatedContentXML(encodeParam(request.getTempUpdatedContentXML()));
+//            request.setTempUpdatedContentXML(encodeParam(request.getTempUpdatedContentXML()));
             byte[] response = this.billApiService.replaceOneTextInDocument(request);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
@@ -506,10 +500,10 @@ public class BillController {
     public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
                                                  @RequestBody ReplaceAllMatchRequest request) {
         try {
-            request.setReplaceText(encodeParam(request.getReplaceText()));
-            request.setSearchText(encodeParam(request.getSearchText()));
+//            request.setReplaceText(encodeParam(request.getReplaceText()));
+//            request.setSearchText(encodeParam(request.getSearchText()));
             request.setDocumentRef(encodeParam(request.getDocumentRef()));
-            request.setTempUpdatedContentXML(encodeParam(request.getTempUpdatedContentXML()));
+//            request.setTempUpdatedContentXML(encodeParam(request.getTempUpdatedContentXML()));
             byte[] response = this.billApiService.replaceAllTextInDocument(request);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
