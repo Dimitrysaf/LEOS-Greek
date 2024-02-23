@@ -1251,6 +1251,7 @@ public class XercesUtils {
     }
 
     public static String encodeParam(String value) {
-        return UriUtils.encodePath(value, StandardCharsets.UTF_8);
+        //return UriUtils.encodePath(value, StandardCharsets.UTF_8);
+        return value;
     }
 }
