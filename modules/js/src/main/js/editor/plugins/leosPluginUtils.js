@@ -87,8 +87,6 @@ define(function leosPluginUtilsModule(require) {
     var DATA_INDENT_ORIGIN_TYPE = "data-indent-origin-type";
 
     var DATA_AKN_TC_ORIGINAL_NUMBER = "data-akn-tc-original-number";
-    var UNNUMBERED = "UNNUMBERED";
-    var NEW = "NEW";
 
     var LEOS_SOFTACTION = "leos:softaction";
     var DATA_AKN_NUM_SOFTACTION = "data-akn-num-attr-softaction";
