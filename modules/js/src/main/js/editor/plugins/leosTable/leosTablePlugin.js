@@ -102,11 +102,15 @@ define(function leosTablePluginModule(require) {
                    && parentElem.getAttribute('data-akn-element') === 'paragraph'
                    && parentElem.getAttribute('data-akn-num') === null;
                 if(isParentUnnumberedParagraph){
-                    // For annex there is no need to insert a new list;
+                    // For annex and Revision there is no need to insert a new list;
                     // The application transforms by default, automatically, the new paragraph
-                    var isGrandParentNOTAnnexList = parentElem.getParent().getName() == 'ol'
-                        && parentElem.getParent().getAttribute("data-akn-name") !== 'aknAnnexList';
-                    if(isGrandParentNOTAnnexList){
+                    var grandParentName = (parentElem.getParent().getName() == 'ol');
+                    var grandParentAknName = parentElem.getParent().getAttribute("data-akn-name");
+                    var isRightType = (grandParentName
+                        && grandParentAknName !== 'aknAnnexList'
+                        && grandParentAknName !== 'aknNumberedParagraphMandate');
+
+                    if(isRightType){
                         var newElement = new CKEDITOR.dom.element(leosPluginUtils.HTML_POINT);
                         newElement.setAttribute(leosPluginUtils.DATA_AKN_NAME, leosPluginUtils.AKN_NUMBERED_PARAGRAPH);
                         newElement.setAttribute(leosPluginUtils.DATA_AKN_ELEMENT, leosPluginUtils.PARAGRAPH);
