@@ -26,10 +26,11 @@ export class AppStarterService {
   start(): Observable<any> {
     const lang = this.storage.get('lang');
 
+    this.i18nService.init({ activeLang: lang });
+
     return zip(
       this.configService.config,
       this.initUserService(),
-      (config, user) => this.i18nService.init({ activeLang: lang }),
     );
   }
 

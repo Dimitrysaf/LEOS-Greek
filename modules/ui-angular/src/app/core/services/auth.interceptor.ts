@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { Location } from '@angular/common';
 import {
   HttpErrorResponse,
   HttpEvent,
@@ -10,12 +11,13 @@ import { Injectable } from '@angular/core';
 import {catchError, from, Observable, throwError} from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
-import { AuthService } from './auth.service';
 import {TokenData} from "@/core/models";
+
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private location: Location) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -26,6 +28,19 @@ export class AuthInterceptor implements HttpInterceptor {
       : next.handle(req);
   }
 
+  /** Appends the **Access Token** as `Authorization` header to the request. */
+  handleWithToken(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // Make addTokenToRequest asynchronous and return an Observable
+    return from(this.addTokenToRequest(request)).pipe(
+      switchMap((authRequest:HttpRequest<any>) => 
+        // Pass on the cloned request instead of the original request
+         next.handle(authRequest).pipe(
+          catchError((e) => this.errorHandler(e, this.authService.loadTokenData().accessToken))
+        )
+      )
+    );
+  }
+
   /**
    * Add token
    * - if localstore token is valid then it is used
@@ -33,7 +48,7 @@ export class AuthInterceptor implements HttpInterceptor {
    */
   private async addTokenToRequest (request: HttpRequest<any>) {
     let tokenData = this.authService.loadTokenData();
-    let expiresIn = tokenData.expiresIn;
+    const expiresIn = tokenData.expiresIn;
     if (this.authService.isTokenToRenew(expiresIn)) {
       console.debug(
         '[auth.service] monitorExpiryInStorage - renew expiring token before connection',
@@ -45,26 +60,21 @@ export class AuthInterceptor implements HttpInterceptor {
     return this.addToken(request, tokenData);
   }
 
-  /** Appends the **Access Token** as `Authorization` header to the request. */
-  handleWithToken(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // Make addTokenToRequest asynchronous and return an Observable
-    return from(this.addTokenToRequest(request)).pipe(
-      switchMap((authRequest:HttpRequest<any>) => {
-        // Pass on the cloned request instead of the original request
-        return next.handle(authRequest).pipe(
-          catchError((e) => this.errorHandler(e, this.authService.loadTokenData().accessToken))
-        );
-      })
-    );
-  }
-
   /** Adds the `Authorization` header to the request. */
   private addToken(req: HttpRequest<any>, token: TokenData) {
-    let accessToken = token.accessToken;
+    const accessToken = token.accessToken;
+    const url = new URL(document.baseURI + this.location.path());
+    const urlParams = new URLSearchParams(url.search);
+    const clientContext = urlParams.get('clientContext');
+
+    const headers = {};
+    headers['Authorization'] = `Bearer ${accessToken}`;
+    if(clientContext) {
+      headers['Client-Context'] = clientContext;
+    }
+
     return req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${accessToken}`,
-      },
+      setHeaders: headers,
     });
   }
 

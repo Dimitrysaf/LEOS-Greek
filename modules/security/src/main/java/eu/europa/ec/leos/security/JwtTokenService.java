@@ -14,6 +14,7 @@ import java.util.Properties;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -192,6 +193,35 @@ class JwtTokenService implements TokenService {
     }
 
     @Override
+    public boolean validateClientContextToken(String token) {
+        return registeredClients.stream().anyMatch(authClient -> isClientContextTokenValid(authClient.getClientId(), authClient.getSecret(), token));
+    }
+
+    @Override
+    public boolean validateUserFromClientContext(String contextToken, String accessToken) {
+        String userFromContextToken = extractUserFromToken(contextToken);
+        return StringUtils.isNotBlank(userFromContextToken) && userFromContextToken.equalsIgnoreCase(extractUserFromToken(accessToken));
+    }
+
+    @Override
+    public String extractUserRoleFromToken(String token) {
+        Claim claim = JWT.decode(token).getClaim("role");
+        if(claim.isNull()){
+            return "";
+        }
+        return claim.asString();
+    }
+
+    @Override
+    public String extractUserSystemNameFromToken(String token) {
+        Claim claim = JWT.decode(token).getClaim("systemName");
+        if(claim.isNull()){
+            return "";
+        }
+        return claim.asString();
+    }
+
+    @Override
     public String extractUserFromToken(String token) {
         Claim claim = JWT.decode(token).getClaim("user");
         if(claim.isNull()){
@@ -205,6 +235,21 @@ class JwtTokenService implements TokenService {
             JWT.require(Algorithm.HMAC256(secret))
                     .withIssuer(clientId)
                     .acceptExpiresAt(accessTokenExpirationInMin)
+                    .build()
+                    .verify(token);
+            return true;
+        } catch (SignatureVerificationException e) {
+            return false; //wrong token
+        } catch (Exception e) {
+            LOG.error(VALIDATION_ERROR, e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean isClientContextTokenValid(String clientId, String secret, String token) {
+        try {
+            JWT.require(Algorithm.HMAC256(secret))
+                    .withIssuer(clientId)
                     .build()
                     .verify(token);
             return true;

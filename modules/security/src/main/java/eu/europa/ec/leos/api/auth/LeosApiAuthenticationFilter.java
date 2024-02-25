@@ -28,6 +28,7 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
     
     private static final Logger LOG = LoggerFactory.getLogger(LeosApiAuthenticationFilter.class);
     private static final String AUTHORIZATION = "Authorization";
+    private static final String LIGHT_BEARER_PARAMETER = "Client-Context";
     private TokenService tokenService;
     private SecurityUserProvider securityUserProvider;
     
@@ -67,13 +68,27 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
             return getAuthenticationManager().authenticate(authRequest);
         }
 
+        String contextToken = request.getHeader(LIGHT_BEARER_PARAMETER);
+        String contextRole = null;
+        if(StringUtils.isNotBlank(contextToken)) {
+            if (!tokenService.validateClientContextToken(contextToken)) {
+                LOG.warn("Authorization failed! Wrong contextToken");
+                throw new LeosApiAuthenticationException("Authorization failed! Wrong contextToken");
+            }
+            if(!tokenService.validateUserFromClientContext(contextToken, token)) {
+                LOG.warn("Authorization failed! User mismatch in accessToken & contextToken");
+                throw new LeosApiAuthenticationException("Authorization failed! User mismatch in accessToken & contextToken");
+            }
+            contextRole = tokenService.extractUserRoleFromToken(contextToken);
+        }
+
         user = securityUserProvider.getUserByLogin(userLogin);
 
         if(user == null) {
             throw new LeosApiAuthenticationException("The provided user login cannot be validated: user login not found");
         }
 
-        preAuthRequest = new PreAuthenticatedAuthenticationToken(user,"", getAuthorities(user));
+        preAuthRequest = new PreAuthenticatedAuthenticationToken(user,"", getAuthorities(user, contextRole));
         preAuthRequest.setAuthenticated(true);
         return getAuthenticationManager().authenticate(preAuthRequest);
     }
@@ -85,9 +100,11 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
         chain.doFilter(request, response);
     }
 
-    private Collection<GrantedAuthority> getAuthorities(User user) {
+    private Collection<GrantedAuthority> getAuthorities(User user, String role) {
         List<GrantedAuthority> allRoles = new ArrayList<>();
-        if(user instanceof SecurityUser) {
+        if(StringUtils.isNotBlank(role)) {
+            allRoles.add(new SimpleGrantedAuthority(role));
+        } else if(user instanceof SecurityUser) {
             List<String> leosRoles = ((SecurityUser) user).getRoles();
             leosRoles.forEach(auth -> allRoles.add(new SimpleGrantedAuthority(auth)));
         }

@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import { Location } from '@angular/common';
 import {
   HttpBackend,
   HttpClient,
@@ -60,7 +61,8 @@ export class AuthService implements OnDestroy {
   private monitorExpirySub?: Subscription;
 
   constructor(
-    private handler: HttpBackend,
+    private handler: HttpBackend, 
+    private location: Location,
     private dialogService: EuiDialogService,
     private translateService: TranslateService,
     private storage: AppLocalStorageService,
@@ -97,6 +99,45 @@ export class AuthService implements OnDestroy {
         '[auth.service] markTokenAsExpired - already updated in localStorage',
       ); // DEBUG
     }
+  }
+
+  /**
+   * Reads the stored **Token Data** from the local storage or creates an empty
+   * "expired" one. It is shared across all tabs running the application (same
+   * origin and path).
+   */
+  loadTokenData(): TokenData {
+    return this.storage.get(AuthService.TOKEN_KEY) ?? { expiresIn: 0 };
+  }
+
+  /**
+   * Synchronously wait for the return of the get Token API call to store the token
+   */
+  async renewAccessTokenAsync() {
+    try {
+      const tokenResponse = await this.callAccessTokenAsync();
+      const tokenData : TokenData = { accessToken: tokenResponse.accessToken, expiresIn:tokenResponse.expiresIn };
+      this.storeTokenData(tokenData);
+      console.debug('[auth.service] renewAccessTokenAsync - token renewed', tokenData); // DEBUG
+    } catch (error) {
+      console.debug(
+        '[auth.getRenewTokenSync] getRenewTokenSync - token renewal failed',
+        error,
+      ); // DEBUG
+      this.handleRenewTokenError(error);
+    }
+
+  }
+
+  /**
+   * Returns 'true' if current time + AuthService.RENEW_WINDOW is more than token's expiration time
+   *
+   * @param expiresIn
+   * @private
+   */
+  isTokenToRenew(expiresIn: number) {
+    const now_plus_RENEW_WINDOW = Date.now() + AuthService.RENEW_WINDOW;
+    return now_plus_RENEW_WINDOW > expiresIn;
   }
 
   /**
@@ -170,6 +211,18 @@ export class AuthService implements OnDestroy {
       });
   }
 
+  private showErrorPopup(msg) {
+    return this.dialogService.openDialog({
+      title: this.translateService.instant('global.notifications.title.error'),
+      content: msg,
+      hasCloseButton: false,
+      hasDismissButton: false,
+      accept: () => {
+        location.reload();
+      },
+    });
+  }
+
   private showExpiredTokenPopup() {
     return this.dialogService.openDialog({
       title: this.translateService.instant('popup.token.expired.title'),
@@ -192,16 +245,21 @@ export class AuthService implements OnDestroy {
    * 2. on failure: shows a popup for known errors or throws error
    */
   private renewAccessToken() {
-    const options = process.env.NG_APP_REFRESH_TOKEN
-      ? {
-          headers: {
-            'grant-type': 'jwt-bearer',
-            assertion: process.env.NG_APP_REFRESH_TOKEN,
-          },
-        }
-      : undefined;
+    const headers = {};
+    if (process.env.NG_APP_REFRESH_TOKEN) {
+      headers['grant-type'] = 'jwt-bearer';
+      headers['assertion'] = process.env.NG_APP_REFRESH_TOKEN;
+    }
+
+    const url = new URL(document.baseURI + this.location.path());
+    const urlParams = new URLSearchParams(url.search);
+    const clientContext = urlParams.get('clientContext');
+    if (clientContext) {
+      headers[ "Client-Context"] = clientContext;
+    }
+
     this.http
-      .get<AccessTokenResponse>(`${apiBaseUrl}/token`, options)
+      .get<AccessTokenResponse>(`${apiBaseUrl}/token`, { headers })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: ({ accessToken, expiresIn }) => {
@@ -237,25 +295,6 @@ export class AuthService implements OnDestroy {
   }
 
   /**
-   * Synchronously wait for the return of the get Token API call to store the token
-   */
-  public async renewAccessTokenAsync() {
-    try {
-      const tokenResponse = await this.callAccessTokenAsync();
-      const tokenData : TokenData = { accessToken: tokenResponse.accessToken, expiresIn:tokenResponse.expiresIn };
-      this.storeTokenData(tokenData);
-      console.debug('[auth.service] renewAccessTokenAsync - token renewed', tokenData); // DEBUG
-    } catch (error) {
-      console.debug(
-        '[auth.getRenewTokenSync] getRenewTokenSync - token renewal failed',
-        error,
-      ); // DEBUG
-      this.handleRenewTokenError(error);
-    }
-
-  }
-
-  /**
    * Handles the **Access Token** renewal failure. It either shows a popup for
    * known errors or it throws an `HttpErrorResponse`.
    */
@@ -265,6 +304,14 @@ export class AuthService implements OnDestroy {
       setTimeout(() => {
         this.showExpiredTokenPopup();
       });
+    } else if (requestError.status >= 400) {
+      if (requestError.error instanceof Blob) {
+        requestError.error.text().then((text) => {
+          this.showErrorPopup(text);
+        });
+      } else {
+        this.showErrorPopup(`${requestError.error}`);
+      }
     } else {
       console.warn(
         'stub:',
@@ -283,30 +330,4 @@ export class AuthService implements OnDestroy {
     this.storage.set(AuthService.TOKEN_KEY, tokenData);
   }
 
-  /**
-   * Reads the stored **Token Data** from the local storage or creates an empty
-   * "expired" one. It is shared across all tabs running the application (same
-   * origin and path).
-   */
-  public loadTokenData(): TokenData {
-    return this.storage.get(AuthService.TOKEN_KEY) ?? { expiresIn: 0 };
-  }
-
-  /**
-   * Returns `true` if the **Access Token** is expiring soon.
-   */
-  private tokenExpiresSoon(expiresIn: number) {
-    const timeToExpiry = expiresIn - Date.now();
-    return timeToExpiry < AuthService.RENEW_WINDOW;
-  }
-
-  /**
-   * Returns 'true' if current time + AuthService.RENEW_WINDOW is more than token's expiration time
-   * @param expiresIn
-   * @private
-   */
-  public isTokenToRenew(expiresIn: number) {
-    const now_plus_RENEW_WINDOW = Date.now() + AuthService.RENEW_WINDOW;
-    return now_plus_RENEW_WINDOW > expiresIn;
-  }
 }

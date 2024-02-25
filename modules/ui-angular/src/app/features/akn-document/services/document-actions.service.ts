@@ -127,6 +127,7 @@ export abstract class DocumentActionsService {
       this.documentService.isEditorOpen$,
       this.pageModeService.pageMode$,
     ]).subscribe(([appConfig, config, permissions, _, pageMode]) => {
+      this.profile = appConfig.profile;
       this.documentConfig = config;
       this.pageMode = pageMode;
       this.isTrackChangesEnabled =
@@ -496,6 +497,8 @@ export abstract class DocumentActionsService {
           actionFn: () => this.toggleSeeTrackChanges(),
         },
       ];
+    } else {
+      return [];
     }
   }
 
