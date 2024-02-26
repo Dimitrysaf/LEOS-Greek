@@ -87,7 +87,7 @@ define(function leosUtilsModule(require) {
         }
         var childElementsToBeChecked = [LINE_BREAK_TAG, BOLD_TEXT_TAG, EMPHATIZED_TEXT_TAG, SUB_TEXT_TAG, SUP_TEXT_TAG];
         var elementsToBeChecked = [PARAGRAPH_POINT_TAG, SUBPARAGRAPH_SUBPOINT_TAG];
-        if (el.tagName === HEADING_TAG) {
+        if (el.tagName === HEADING_TAG && CKEDITOR.currentInstance) {
             var tocItem = _getParentTocItem(el, CKEDITOR.currentInstance.LEOS.tocItemsList);
             if (tocItem && tocItem.itemHeading === "MANDATORY") {
                 elementsToBeChecked.push(HEADING_TAG);
