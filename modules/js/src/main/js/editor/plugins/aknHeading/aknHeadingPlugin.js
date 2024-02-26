@@ -34,65 +34,45 @@ define(function aknChapterPluginModule(require) {
                 editor : editor,
                 eventType : 'key',
                 key : ENTER_KEY,
-                action : _onEnterKey
+                action : _cancelEvent
             });
 
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
                 key : SHIFT_ENTER,
-                action : _onShiftEnterKey
+                action : _cancelEvent
             });
             
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
                 key : UNDERLINE,
-                action : _onCtrlUKey
+                action : _cancelEvent
             });
 
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
                 key : BOLD,
-                action : _onCtrlBKey
+                action : _cancelEvent
             });
 
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
                 key : ITALIC,
-                action : _onCtrlIKey
+                action : _cancelEvent
             });
         }
     };
 
-    function _onEnterKey(context) {
+    function _cancelEvent(context) {
         var selection = context.event.editor.getSelection();
         var startElement = leosKeyHandler.getSelectedElement(selection);
-        if(startElement.getName() === 'h2') {
+        if (startElement.getName() === 'h2') {
             context.event.cancel();
         }
-    }
-
-    function _onShiftEnterKey(context) {
-        var selection = context.event.editor.getSelection();
-        var startElement = leosKeyHandler.getSelectedElement(selection);
-        if(startElement.getName() === 'h2') {
-            context.event.cancel();
-        }
-    }
-
-    function _onCtrlUKey(context) {
-        context.event.cancel();
-    }
-
-    function _onCtrlBKey(context) {
-        context.event.cancel();
-    }
-
-    function _onCtrlIKey(context) {
-        context.event.cancel();
     }
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
