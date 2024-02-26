@@ -38,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+
 @RestController
 @RequestMapping(path = "/secured/proposal")
 public class CollaboratorController {
@@ -61,6 +63,7 @@ public class CollaboratorController {
     @ResponseBody
     public ResponseEntity<Object> getAllCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
+            proposalRef = encodeParam(proposalRef);
             Proposal proposal = proposalService.findProposalByRef(proposalRef);
             List<CollaboratorDTO> collaborators = collaboratorService.getCollaborators(proposal);
             return new ResponseEntity<>(collaborators, HttpStatus.OK);
@@ -76,6 +79,7 @@ public class CollaboratorController {
     }
 
     private String addCollaborator(String proposalRef, CollaboratorRequest collaboratorRequest) {
+        proposalRef = encodeParam(proposalRef);
         final String userId = collaboratorRequest.getUserId();
         final String roleName = collaboratorRequest.getRoleName();
         final String connectedDG = collaboratorRequest.getConnectedDG();
@@ -88,6 +92,7 @@ public class CollaboratorController {
     @ResponseBody
     public ResponseEntity<Object> addCollaboratorToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         try {
+            proposalRef = encodeParam(proposalRef);
             addCollaborator(proposalRef, collaboratorRequest);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
@@ -105,6 +110,7 @@ public class CollaboratorController {
     @ResponseBody
     public ResponseEntity<Object> addBulkCollaboratorsToProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
+            proposalRef = encodeParam(proposalRef);
             for (CollaboratorRequest collaborators : collaboratorsRequest.getCollaborators()) {
                 addCollaborator(proposalRef, collaborators);
             }
@@ -121,6 +127,7 @@ public class CollaboratorController {
     }
 
     private String editCollaborator(String proposalRef, CollaboratorRequest collaboratorRequest) {
+        proposalRef = encodeParam(proposalRef);
         final String userId = collaboratorRequest.getUserId();
         final String roleName = collaboratorRequest.getRoleName();
         final String connectedDG = collaboratorRequest.getConnectedDG();
@@ -133,6 +140,7 @@ public class CollaboratorController {
     @ResponseBody
     public ResponseEntity<Object> editCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         try {
+            proposalRef = encodeParam(proposalRef);
             editCollaborator(proposalRef, collaboratorRequest);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
@@ -150,6 +158,7 @@ public class CollaboratorController {
     @ResponseBody
     public ResponseEntity<Object> editBulkCollaboratorsFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
+            proposalRef = encodeParam(proposalRef);
             for (CollaboratorRequest collaborators : collaboratorsRequest.getCollaborators()) {
                 editCollaborator(proposalRef, collaborators);
             }
@@ -178,6 +187,7 @@ public class CollaboratorController {
     @ResponseBody
     public ResponseEntity<Object> removeCollaboratorFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorRequest collaboratorRequest) {
         try {
+            proposalRef = encodeParam(proposalRef);
             removeCollaborator(proposalRef, collaboratorRequest);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (CollaboratorException | SendNotificationException e) {
@@ -195,6 +205,7 @@ public class CollaboratorController {
     @ResponseBody
     public ResponseEntity<Object> removeBulkCollaboratorsFromProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CollaboratorsRequest collaboratorsRequest) {
         try {
+            proposalRef = encodeParam(proposalRef);
             for (CollaboratorRequest collaborator : collaboratorsRequest.getCollaborators()) {
                 removeCollaborator(proposalRef, collaborator);
             }

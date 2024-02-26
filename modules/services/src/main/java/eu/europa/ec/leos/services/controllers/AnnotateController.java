@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+
 @RestController
 @RequestMapping("/secured/annotation")
 public class AnnotateController {
@@ -48,6 +50,8 @@ public class AnnotateController {
     @ResponseBody
     public ResponseEntity<Object> requestUserPermissions(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef) {
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
 
             List<LeosPermission> documentPermissions = annotateApiService.requestUserPermissions(documentRef, documentCategory);
@@ -76,6 +80,8 @@ public class AnnotateController {
     @ResponseBody
     public ResponseEntity<Object> requestDocumentMetadata(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef) {
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
 
             AnnotateMetadata documentMetadata = annotateApiService.requestDocumentMetadata(documentRef, documentCategory);
@@ -105,6 +111,8 @@ public class AnnotateController {
     public ResponseEntity<Object> requestMergeSuggestion(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                          @RequestBody AnnotateMergeSuggestionRequest mergeSuggestionRequest) {
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
             final String origText = mergeSuggestionRequest.getOrigText();
             final String newText = mergeSuggestionRequest.getNewText();

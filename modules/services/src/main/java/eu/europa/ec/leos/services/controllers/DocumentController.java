@@ -44,6 +44,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+
 @RestController
 @RequestMapping("/secured/document")
 public class DocumentController {
@@ -66,6 +68,8 @@ public class DocumentController {
     public ResponseEntity<Object> downloadVersion(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                   @RequestBody DownloadVersionRequest downloadVersionRequest) {
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             final boolean isWithAnnotations = downloadVersionRequest.isWithAnnotations();
             final String filteredAnnotations = downloadVersionRequest.getAnnotations();
@@ -88,6 +92,8 @@ public class DocumentController {
     public ResponseEntity<Object> exportToEconsilium(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                      @RequestBody ExportToConsiliumRequest exportToConsiliumRequest) {
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             LeosExportStatus processedStatus = documentApiService.exportToConsilium(documentCategory, documentRef, exportToConsiliumRequest);
             return new ResponseEntity<>(processedStatus, HttpStatus.OK);
@@ -102,6 +108,8 @@ public class DocumentController {
     public ResponseEntity<Object> downloadComparedVersionXMLFile(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                                  @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             DownloadVersionResponse response = documentApiService.downloadXMLComparisonFiles(documentCategory, documentRef, downloadComparedVersionRequest);
 
@@ -121,6 +129,8 @@ public class DocumentController {
     public ResponseEntity<Object> exportComparedVersionAsPDF(@PathVariable("documentType") String documentType, @PathVariable("documentRef") String documentRef,
                                                              @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             LeosExportStatus processedStatus = documentApiService.exportComparedVersionAsPDF(documentCategory, documentRef, downloadComparedVersionRequest);
             return new ResponseEntity<>(processedStatus, HttpStatus.OK);
@@ -136,6 +146,8 @@ public class DocumentController {
                                                                      @PathVariable("documentRef") String documentRef,
                                                                      @RequestBody DownloadComparedVersionRequest downloadComparedVersionRequest) {
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
 
             DownloadVersionResponse response = documentApiService.downloadComparedVersionAsDocuwrite(documentCategory, documentRef,
@@ -158,6 +170,8 @@ public class DocumentController {
                                                 @PathVariable("documentRef") String documentRef,
                                                 @RequestBody DoubleCompareRequest doubleCompareRequest) {
         try {
+            documentType = encodeParam(documentType);
+            documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.caseInsensitiveValueOf(documentType);
             String response = documentApiService.doubleCompare(documentCategory, documentRef,
                     doubleCompareRequest.getOriginalProposalId(), doubleCompareRequest.getIntermediateMajorId(), doubleCompareRequest.getCurrentId());
@@ -175,6 +189,8 @@ public class DocumentController {
                                                       @RequestParam List<String> references,
                                                       @RequestParam String currentElementId, @RequestParam boolean capital) {
         try {
+            documentRef = encodeParam(documentRef);
+            currentElementId = encodeParam(currentElementId);
             String response = documentApiService.fetchReferenceLabel(documentRef, references, currentElementId, capital);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -188,6 +204,9 @@ public class DocumentController {
     public ResponseEntity<Object> requestElement(@PathVariable("documentRef") String documentRef,
                                                  @RequestParam String elementId, @RequestParam String elementTagName) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementId = encodeParam(elementId);
+            elementTagName = encodeParam(elementTagName);
             FetchElementResponse response = documentApiService.fetchElement(elementId, elementTagName, documentRef);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -203,6 +222,10 @@ public class DocumentController {
             @PathVariable("documentId") String documentId,
             @RequestParam String versionLabel, @RequestParam String versionComment) {
         try {
+            documentRef = encodeParam(documentRef);
+            documentId = encodeParam(documentId);
+            versionLabel = encodeParam(versionLabel);
+            versionComment = encodeParam(versionComment);
             final LeosCategory documentCategory = LeosCategory.caseInsensitiveValueOf(documentType);
             DocumentViewResponse response = documentApiService.changeBaseVersion(documentRef, documentCategory, documentId, versionLabel, versionComment);
             return ResponseEntity.ok().body(response);

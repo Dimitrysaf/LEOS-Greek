@@ -50,6 +50,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+
 @RestController
 @RequestMapping(value = "/secured/proposal")
 public class ProposalApiController {
@@ -70,6 +72,7 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> updateProposalMetadata(@PathVariable String proposalRef, @RequestBody UpdateProposalRequest request) {
         try {
+            proposalRef = encodeParam(proposalRef);
             return new ResponseEntity<>(apiService.updateProposalMetadata(proposalRef, request), HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while updating proposal title - " + e.getMessage());
@@ -81,6 +84,7 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> deleteProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
+            proposalRef = encodeParam(proposalRef);
             apiService.deleteCollection(proposalRef);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -136,6 +140,7 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> getExports(@PathVariable String proposalRef) {
         try {
+            proposalRef = encodeParam(proposalRef);
             List<ExportPackageVO> exports = apiService.getExportDocuments(proposalRef);
             return new ResponseEntity<>(exports, HttpStatus.OK);
         } catch (Exception e) {
@@ -149,6 +154,8 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> updateExport(@PathVariable String proposalRef, @PathVariable String exportId, @RequestBody List<String> comments) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            exportId = encodeParam(exportId);
             List<ExportPackageVO> exports = apiService.updateExportDocument(proposalRef, exportId, comments);
             return new ResponseEntity<>(exports, HttpStatus.OK);
         } catch (Exception e) {
@@ -162,6 +169,8 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> deleteExport(@PathVariable String proposalRef, @PathVariable String exportId) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            exportId = encodeParam(exportId);
             List<ExportPackageVO> exports = apiService.deleteExportDocument(proposalRef, exportId);
             return new ResponseEntity<>(exports, HttpStatus.OK);
         } catch (Exception e) {
@@ -175,6 +184,8 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> notifyExport(@PathVariable String proposalRef, @PathVariable String exportId) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            exportId = encodeParam(exportId);
             apiService.notifyExportPackage(proposalRef, exportId);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
@@ -188,6 +199,8 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> previewExport(@PathVariable String proposalRef, @PathVariable String exportId) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            exportId = encodeParam(exportId);
             byte[] result = apiService.downloadExportPackage(proposalRef, exportId);
             final String jobFileName = "Proposal_" + exportId + "_AKN2DW_" + System.currentTimeMillis() + ".docx";
             // create the HttpHeaders object and set the Content-Type header
@@ -206,6 +219,8 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<Object> deleteExplanatory(@PathVariable String proposalRef, @PathVariable String explanatoryRef) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            explanatoryRef = encodeParam(explanatoryRef);
             apiService.deleteExplanatoryDocument(proposalRef, explanatoryRef);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (Exception e) {
@@ -221,6 +236,8 @@ public class ProposalApiController {
             @PathVariable("proposalRef") String proposalRef,
             @RequestParam String exportOutput) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            exportOutput = encodeParam(exportOutput);
             String jobId = apiService.exportProposal(proposalRef, exportOutput);
             return new ResponseEntity<>(jobId, HttpStatus.OK);
         } catch (Exception e) {
@@ -267,6 +284,7 @@ public class ProposalApiController {
     @PostMapping(value = "{proposalRef}/create-financial-statement", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void createFinancialStatement(@PathVariable("proposalRef") String proposalRef){
+        proposalRef = encodeParam(proposalRef);
         this.financialStatementService.createFinancialStatementFromProposal(proposalRef);
     }
 
@@ -274,6 +292,8 @@ public class ProposalApiController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteFinancialStatement(@PathVariable("proposalRef") String proposalRef,
                                          @PathVariable("financialStatementRef") String financialStatementRef){
+        proposalRef = encodeParam(proposalRef);
+        financialStatementRef = encodeParam(financialStatementRef);
         this.financialStatementService.deleteFinancialStatement(proposalRef, financialStatementRef);
     }
 }
