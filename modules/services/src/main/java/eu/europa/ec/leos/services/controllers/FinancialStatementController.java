@@ -41,6 +41,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+
 // This controller is going to be used as a Generic controller for all documents
 // The 'financial-statement' request path will be replaced by any document category.
 @RestController
@@ -64,6 +66,7 @@ public class FinancialStatementController {
     @ResponseStatus(HttpStatus.OK)
     public DocumentViewResponse getDocumentByRef(@PathVariable("reference") String reference) {
         // When the controller will be used as generic document controller the category will be part of the path.
+        reference = encodeParam(reference);
         DocumentViewResponse response = this.genericDocumentApiService.getDocumentByRef(reference);
         return response;
     }
@@ -74,6 +77,7 @@ public class FinancialStatementController {
     public List<TableOfContentItemVO> getToc(@PathVariable("documentRef") String docRef,
                                              @RequestParam("tocMode") TocMode tocMode) {
         // When the controller will be used as generic document controller the category will be part of the path.
+        docRef = encodeParam(docRef);
         List<TableOfContentItemVO> tableOfContent = this.genericDocumentApiService.getTableOfContent(docRef, tocMode);
         return tableOfContent;
     }
@@ -82,6 +86,7 @@ public class FinancialStatementController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public List<TocItem> getTocItems(@PathVariable("documentRef") String documentRef) {
+        documentRef = encodeParam(documentRef);
         List<TocItem> tocItems = this.genericDocumentApiService.getTocItems(documentRef);
         return tocItems;
     }
@@ -92,6 +97,7 @@ public class FinancialStatementController {
                                                     @RequestParam String authorKey,
                                                     @RequestParam String type) {
         try {
+            documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
@@ -107,6 +113,7 @@ public class FinancialStatementController {
     @ResponseStatus(HttpStatus.OK)
     public List<VersionVO> getMajorVersionsData(@PathVariable("documentRef") String documentRef,
                                                 @RequestParam int pageIndex, @RequestParam int pageSize) {
+        documentRef = encodeParam(documentRef);
         return this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex, pageSize);
     }
 
@@ -114,6 +121,7 @@ public class FinancialStatementController {
     @ResponseBody
     public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
@@ -128,6 +136,7 @@ public class FinancialStatementController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public DocumentConfigResponse getDocumentConfig(@PathVariable("documentRef") String documentRef) {
+        documentRef = encodeParam(documentRef);
         DocumentConfigResponse config = this.genericDocumentApiService.getDocumentConfig(documentRef);
         return config;
     }
@@ -137,6 +146,7 @@ public class FinancialStatementController {
     @ResponseStatus(HttpStatus.OK)
     public List<VersionVO> getRecentChanges(@PathVariable("documentRef") String documentRef,
                                             @RequestParam int pageIndex, @RequestParam int pageSize) {
+        documentRef = encodeParam(documentRef);
         List<VersionVO> recentMinorVersions = this.genericDocumentApiService.getRecentMinorVersions(documentRef,
                 pageIndex, pageSize);
         return recentMinorVersions;
@@ -146,6 +156,7 @@ public class FinancialStatementController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public int countRecentChanges(@PathVariable("documentRef") String documentRef) {
+        documentRef = encodeParam(documentRef);
         return this.genericDocumentApiService.countRecentMinorVersions(documentRef);
     }
 
@@ -155,6 +166,8 @@ public class FinancialStatementController {
                                                              @RequestParam String currIntVersion,
                                                              @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
+            documentRef = encodeParam(documentRef);
+            currIntVersion = encodeParam(currIntVersion);
             List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef,
                     currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
@@ -171,6 +184,8 @@ public class FinancialStatementController {
     public ResponseEntity<Object> getIntermediateVersionData(@PathVariable("documentRef") String documentRef,
                                                              @RequestParam String currIntVersion) {
         try {
+            documentRef = encodeParam(documentRef);
+            currIntVersion = encodeParam(currIntVersion);
             int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
@@ -186,6 +201,7 @@ public class FinancialStatementController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public DocumentViewResponse getVersion(@PathVariable("versionId") String versionId) {
+        versionId = encodeParam(versionId);
         DocumentViewResponse version = this.genericDocumentApiService.getVersion(versionId);
         return version;
     }
@@ -195,6 +211,7 @@ public class FinancialStatementController {
     @ResponseStatus(HttpStatus.OK)
     public List<VersionVO> saveVersion(@PathVariable("documentRef") String documentRef,
                                        @RequestBody SaveIntermediateVersionRequest request) {
+        documentRef = encodeParam(documentRef);
         List<VersionVO> versions = this.genericDocumentApiService.saveDocument(documentRef, request.getVersionType(),
                 request.getCheckinComment());
         return versions;
@@ -215,6 +232,8 @@ public class FinancialStatementController {
     @ResponseStatus(HttpStatus.OK)
     public DocumentViewResponse restoreVersion(@PathVariable("documentRef") String documentRef,
                                                @PathVariable("targetVersion") String targetVersion) {
+        documentRef = encodeParam(documentRef);
+        targetVersion = encodeParam(targetVersion);
         DocumentViewResponse response = this.genericDocumentApiService.restoreToVersion(documentRef, targetVersion);
         return response;
     }
@@ -229,6 +248,7 @@ public class FinancialStatementController {
                                               @RequestHeader("presenterId") String presenterId,
                                               @RequestBody String elementContent) throws Exception {
         try {
+            documentRef = encodeParam(documentRef);
             SaveElementResponse response = this.genericDocumentApiService.saveElement(documentRef, elementId,
                     elementName, elementContent);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, response);
@@ -247,6 +267,9 @@ public class FinancialStatementController {
     public EditElementResponse getElement(@PathVariable("documentRef") String documentRef,
                                           @PathVariable("elementId") String elementId,
                                           @PathVariable("elementTagName") String elementTagName) {
+        documentRef = encodeParam(documentRef);
+        elementId = encodeParam(elementId);
+        elementTagName = encodeParam(elementTagName);
         EditElementResponse response = this.genericDocumentApiService.getElement(documentRef, elementId,
                 elementTagName);
         return response;
@@ -256,6 +279,7 @@ public class FinancialStatementController {
     @ResponseBody
     @ResponseStatus(HttpStatus.OK)
     public String getUserGuidance(@PathVariable("documentRef") String documentRef) {
+        documentRef = encodeParam(documentRef);
         String userGuidance = this.genericDocumentApiService.getUserGuidance(documentRef);
         return userGuidance;
     }
@@ -269,6 +293,7 @@ public class FinancialStatementController {
                                                 @RequestParam boolean completeWords,
                                                 @RequestBody(required = false) String tempUpdatedContentXML)
             throws Exception {
+        documentRef = encodeParam(documentRef);
         return this.genericDocumentApiService.searchTextInDocument(documentRef, searchText, matchCase, completeWords,
                 tempUpdatedContentXML);
     }
@@ -278,6 +303,8 @@ public class FinancialStatementController {
     public ResponseEntity<Object> compareDocumentVersions(@PathVariable("newVersionId") String newVersionId,
                                                           @PathVariable("oldVersionId") String oldVersionId) {
         try {
+            newVersionId = encodeParam(newVersionId);
+            oldVersionId = encodeParam(oldVersionId);
             String contentHtml = this.genericDocumentApiService.compare(newVersionId, oldVersionId);
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
@@ -334,6 +361,7 @@ public class FinancialStatementController {
     @ResponseBody
     public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             byte[] cleanVersion = this.genericDocumentApiService.downloadCleanVersion(documentRef);
             final String jobFileName = documentRef + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             // create the HttpHeaders object and set the Content-Type header
@@ -353,6 +381,7 @@ public class FinancialStatementController {
     @ResponseBody
     public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             DocumentViewResponse cleanVersion = this.genericDocumentApiService.showCleanVersion(documentRef);
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
@@ -368,6 +397,7 @@ public class FinancialStatementController {
                                                            @RequestBody ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest
     ) {
         try {
+            documentRef = encodeParam(documentRef);
             boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
             boolean response = financialStatementApiService.toggleTrackChangeEnabled(isTrackChangesEnabled,
                     documentRef);

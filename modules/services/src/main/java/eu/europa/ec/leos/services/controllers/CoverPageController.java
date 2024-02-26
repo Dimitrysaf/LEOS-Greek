@@ -54,6 +54,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+
 
 @RestController
 @RequestMapping("/secured/coverPage/")
@@ -74,6 +76,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> getCoverPage(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             DocumentViewResponse coverPageDocument = this.coverPageApiService.getDocument(documentRef);
             return ResponseEntity.ok().body(coverPageDocument);
         } catch (Exception e) {
@@ -90,6 +93,7 @@ public class CoverPageController {
                                          @RequestParam("tocMode") TocMode tocMode
     ) {
         try {
+            documentRef = encodeParam(documentRef);
             List<TableOfContentItemVO> toc = this.coverPageApiService.getToc(documentRef, tocMode);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
@@ -104,6 +108,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             List<TocItem> tocItems = this.coverPageApiService.getTocItems(documentRef);
             return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
@@ -123,6 +128,10 @@ public class CoverPageController {
                                                        @RequestHeader("presenterId") String presenterId,
                                                        @RequestBody String elementContent) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
+            presenterId = encodeParam(presenterId);
             SaveCoverPageElementResponse updatedElement = (SaveCoverPageElementResponse) this.coverPageApiService.saveElement(
                     documentRef, elementId,
                     elementName, elementContent, isSplit);
@@ -142,6 +151,9 @@ public class CoverPageController {
                                                          @PathVariable("elementName") String elementName,
                                                          @PathVariable("elementId") String elementId) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
             DocumentViewResponse coverPage = this.coverPageApiService.deleteBlock(documentRef, elementName, elementId);
             return ResponseEntity.ok().body(coverPage);
         } catch (Exception e) {
@@ -161,6 +173,9 @@ public class CoverPageController {
                                                          @PathVariable("elementId") String elementId,
                                                          @RequestBody InsertElementRequest request) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
             DocumentViewResponse coverPage = this.coverPageApiService.insertElement(documentRef, elementName, elementId,
                     request.getPosition());
             return ResponseEntity.ok().body(coverPage);
@@ -179,6 +194,9 @@ public class CoverPageController {
                                                         @PathVariable("elementId") String elementId,
                                                         @RequestBody String elementContent) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementTag = encodeParam(elementTag);
+            elementId = encodeParam(elementId);
             DocumentViewResponse coverPage = this.coverPageApiService.mergeElement(documentRef, elementContent,
                     elementTag, elementId);
             return ResponseEntity.ok().body(coverPage);
@@ -195,6 +213,7 @@ public class CoverPageController {
     public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
                                                    @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
+            documentRef = encodeParam(documentRef);
             List<VersionVO> coverPagees = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex,
                     pageSize);
             return ResponseEntity.ok().body(coverPagees);
@@ -210,6 +229,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> countRecentChanges(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             int count = this.genericDocumentApiService.countRecentMinorVersions(documentRef);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
@@ -226,6 +246,7 @@ public class CoverPageController {
                                                        @RequestBody SaveIntermediateVersionRequest saveEvent
     ) {
         try {
+            documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.coverPageApiService.saveDocument(documentRef, saveEvent.getCheckinComment(),
                     saveEvent.getVersionType());
             return ResponseEntity.ok().body(versions);
@@ -243,6 +264,7 @@ public class CoverPageController {
                                                        @RequestBody SaveTocRequestEvent saveTocRequestEvent
     ) {
         try {
+            documentRef = encodeParam(documentRef);
             List<TableOfContentItemVO> toc = this.coverPageApiService.saveToC(documentRef,
                     saveTocRequestEvent.getTableOfContentItemVOs());
             return ResponseEntity.ok().body(toc);
@@ -260,6 +282,7 @@ public class CoverPageController {
                                                     @RequestParam String authorKey,
                                                     @RequestParam String type) {
         try {
+            documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
@@ -276,6 +299,7 @@ public class CoverPageController {
                                                        @RequestParam int pageIndex,
                                                        @RequestParam int pageSize) {
         try {
+            documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
                     pageSize);
             return ResponseEntity.ok().body(versions);
@@ -291,6 +315,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
@@ -307,6 +332,8 @@ public class CoverPageController {
                                                              @RequestParam String currIntVersion,
                                                              @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
+            documentRef = encodeParam(documentRef);
+            currIntVersion = encodeParam(currIntVersion);
             List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef,
                     currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
@@ -323,6 +350,7 @@ public class CoverPageController {
     public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef,
                                                                @RequestParam String currIntVersion) {
         try {
+            documentRef = encodeParam(documentRef);
             int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
@@ -341,6 +369,7 @@ public class CoverPageController {
                                                    @RequestParam boolean completeWords,
                                                    @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
+            documentRef = encodeParam(documentRef);
             List<SearchMatchVO> coverPage = this.coverPageApiService.searchTextInDocument(documentRef, searchText,
                     matchCase, completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(coverPage);
@@ -356,6 +385,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> showCoverPageVersion(@PathVariable("versionId") String versionId) {
         try {
+            versionId = encodeParam(versionId);
             DocumentViewResponse contentHtml = this.coverPageApiService.showVersion(versionId);
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
@@ -371,6 +401,8 @@ public class CoverPageController {
     public ResponseEntity<Object> compareCoverPageVersions(@PathVariable("newVersionId") String newVersionId,
                                                            @PathVariable("oldVersionId") String oldVersionId) {
         try {
+            newVersionId = encodeParam(newVersionId);
+            oldVersionId = encodeParam(oldVersionId);
             String contentHtml = this.coverPageApiService.compare(newVersionId, oldVersionId);
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
@@ -386,6 +418,8 @@ public class CoverPageController {
     public ResponseEntity<Object> restoreCoverPageVersion(@PathVariable("documentRef") String documentRef,
                                                           @PathVariable("targetVersion") String targetVersion) {
         try {
+            documentRef = encodeParam(documentRef);
+            targetVersion = encodeParam(targetVersion);
             DocumentViewResponse coverPage = this.coverPageApiService.restoreToVersion(documentRef, targetVersion);
             return ResponseEntity.ok().body(coverPage);
         } catch (Exception e) {
@@ -402,6 +436,9 @@ public class CoverPageController {
                                                       @PathVariable("elementId") String elementId,
                                                       @PathVariable("elementTagName") String elementTagName) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementId = encodeParam(elementId);
+            elementTagName = encodeParam(elementTagName);
             EditElementResponse response = this.coverPageApiService.editElement(documentRef, elementId, elementTagName);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
@@ -416,6 +453,7 @@ public class CoverPageController {
     public ResponseEntity<Object> downloadCurrentVersion(@PathVariable("documentRef") String documentRef,
                                                          @RequestParam("isWithAnnotation") boolean isWithAnnotation) {
         try {
+            documentRef = encodeParam(documentRef);
             byte[] response = this.coverPageApiService.downloadVersion(documentRef, isWithAnnotation);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
@@ -430,6 +468,8 @@ public class CoverPageController {
     public ResponseEntity<Object> downloadXmlVersion(@PathVariable("documentRef") String documentRef,
                                                      @RequestParam("versionId") String versionId) {
         try {
+            documentRef = encodeParam(documentRef);
+            versionId = encodeParam(versionId);
             byte[] response = this.coverPageApiService.downloadXmlVersionFiles(documentRef, versionId);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
@@ -482,6 +522,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             DocumentConfigResponse view = this.coverPageApiService.getDocumentConfig(documentRef);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
@@ -495,6 +536,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             String userGuidance = this.coverPageApiService.fetchUserGuidance(documentRef);
             return ResponseEntity.ok().body(userGuidance);
         } catch (Exception e) {
@@ -508,6 +550,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             byte[] cleanVersion = this.coverPageApiService.downloadCleanVersion(documentRef);
             final String jobFileName = documentRef + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             // create the HttpHeaders object and set the Content-Type header
@@ -525,6 +568,7 @@ public class CoverPageController {
     @ResponseBody
     public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             DocumentViewResponse cleanVersion = this.coverPageApiService.showCleanVersion(documentRef);
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
@@ -540,6 +584,7 @@ public class CoverPageController {
                                                            @RequestBody() ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest
     ) {
         try {
+            documentRef = encodeParam(documentRef);
             boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
             boolean response = coverPageApiService.toggleTrackChangeEnabled(isTrackChangesEnabled, documentRef);
             return ResponseEntity.ok().body(response);

@@ -85,6 +85,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_N
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping
@@ -234,6 +235,8 @@ public class LeosApiController {
                                                       @RequestParam(value = "proposalId", defaultValue = "") String proposalId,
                                                       @RequestParam(value = "legFileStatus", defaultValue = "") String legFileStatus) {
         try {
+            userId = encodeParam(userId);
+            proposalId = encodeParam(proposalId);
             return new ResponseEntity<>(legService.getLegDocumentDetailsByUserId(userId, proposalId, legFileStatus).toArray(), HttpStatus.OK);
         } catch (Exception ex) {
             LOG.error("Exception occurred in search " + ex.getMessage());
@@ -246,6 +249,7 @@ public class LeosApiController {
     public ResponseEntity<Object> getDocumentForUser(@PathVariable("userId") String userId, @PathVariable("documentRef") String documentRef) {
         XmlDocument document = null;
         try {
+            documentRef = encodeParam(documentRef);
             document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
         } catch (Exception ex) {
             LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId + ". " + ex.getMessage());
@@ -282,6 +286,7 @@ public class LeosApiController {
         boolean isStatusUpdated = false;
         LeosLegStatus currentStatus = null;
         try {
+            legFileId = encodeParam(legFileId);
             LegDocument legDocument = legService.findLegDocumentById(legFileId);
             currentStatus = legDocument.getStatus();
             if (!(currentStatus == LeosLegStatus.IN_PREPARATION || currentStatus == LeosLegStatus.FILE_ERROR)) {
@@ -316,6 +321,7 @@ public class LeosApiController {
         boolean isStatusUpdated = false;
         LeosLegStatus currentStatus = null;
         try {
+            legFileId = encodeParam(legFileId);
             LegDocument legDocument = legService.findLegDocumentById(legFileId);
             currentStatus = legDocument.getStatus();
             byte[] file = legDocument.getContent().get().getSource().getBytes();
@@ -378,6 +384,7 @@ public class LeosApiController {
     public ResponseEntity<Object> getLegFilesForProposal(@PathVariable("proposalRef") String proposalRef) {
         Proposal proposal = null;
         try {
+            proposalRef = encodeParam(proposalRef);
             proposal = workspaceService.findDocumentByRef(proposalRef, Proposal.class);
         } catch (Exception ex) {
             LOG.error("Error occurred while getting proposal {}. {}", proposalRef, ex.getMessage(), ex);
@@ -423,6 +430,9 @@ public class LeosApiController {
                                                        @RequestParam("iscRef") String iscRef) {
         CreateCollectionResult createCollectionResult;
         try {
+            targetUser = encodeParam(targetUser);
+            connectedEntity = encodeParam(connectedEntity);
+            iscRef = encodeParam(iscRef);
             File content = new File(legFile.getOriginalFilename());
 
             try (FileOutputStream fos = new FileOutputStream(content)) {
@@ -446,6 +456,8 @@ public class LeosApiController {
                                                                      @RequestParam("legFileName") String legFileName) {
         Result<?> result;
         try {
+            cloneProposalId = encodeParam(cloneProposalId);
+            legFileName = encodeParam(legFileName);
             result = createCollectionService.updateOriginalProposalAfterRevisionDone(cloneProposalId, legFileName);
         } catch (Exception ex) {
             LOG.error("Error Occurred while getting revision done status: " + ex.getMessage(), ex);
@@ -459,6 +471,7 @@ public class LeosApiController {
     public ResponseEntity<Object> getExportPackage(@PathVariable("proposalRef") String proposalRef, @PathVariable("exportPackageId") String exportPackageId) {
         ExportDocument exportDocument = null;
         try {
+            exportPackageId = encodeParam(exportPackageId);
             exportDocument = exportPackageService.findExportDocumentById(exportPackageId, true);
             byte[] file = exportDocument.getContent().get().getSource().getBytes();
             HttpHeaders headers = new HttpHeaders();
@@ -475,6 +488,7 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/proposals/{proposalRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getProposalDetails(@PathVariable String proposalRef) {
+        proposalRef = encodeParam(proposalRef);
         Optional<DocumentVO> requestedProposal = apiService.getProposalDetails(proposalRef);
         if (requestedProposal.isPresent()) {
             return ResponseEntity.ok(requestedProposal.get());
@@ -488,6 +502,7 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> downloadProposal(@PathVariable("proposalRef") String proposalRef) {
         try {
+            proposalRef = encodeParam(proposalRef);
             return new ResponseEntity<>(apiService.downloadProposal(proposalRef), HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - " + e.getMessage());
@@ -500,6 +515,7 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> createProposalAnnex(@PathVariable("proposalRef") String proposalRef) {
         try {
+            proposalRef = encodeParam(proposalRef);
             this.apiService.createProposalAnnex(proposalRef);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -514,6 +530,9 @@ public class LeosApiController {
     public ResponseEntity<Object> updateAnnexTitle(@PathVariable("proposalRef") String proposalRef, @PathVariable("annexId") String annexId,
                                                    @RequestParam("title") String title) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            annexId = encodeParam(annexId);
+            title = encodeParam(title);
             this.apiService.updateAnnexTitle(proposalRef, annexId, title);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -530,6 +549,9 @@ public class LeosApiController {
                                                          @PathVariable String docId,
                                                          @RequestParam String title) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            docId = encodeParam(docId);
+            title = encodeParam(title);
             this.apiService.updateExplanatoryTitle(proposalRef, docId, title);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -542,6 +564,7 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> getProposalMilestones(@PathVariable("proposalRef") String proposalRef) {
         try {
+            proposalRef = encodeParam(proposalRef);
             return new ResponseEntity<>(apiService.getProposalMilestones(proposalRef), HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while generating milestones - " + e.getMessage());
@@ -554,6 +577,8 @@ public class LeosApiController {
     public ResponseEntity<Object> deleteAnnex(@PathVariable("proposalRef") String proposalRef,
                                               @PathVariable("annexRef") String annexRef) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            annexRef = encodeParam(annexRef);
             apiService.deleteAnnex(proposalRef, annexRef);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -567,6 +592,9 @@ public class LeosApiController {
     public ResponseEntity<Object> updateProposalAnnexOrder(@PathVariable("proposalRef") String proposalRef, @PathVariable("annexRef") String annexRef,
                                                            @RequestParam String moveDirection, @RequestParam Integer timesToMove) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            annexRef = encodeParam(annexRef);
+            moveDirection = encodeParam(moveDirection);
             apiService.updateAnnexOrder(proposalRef, annexRef, moveDirection, timesToMove);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -579,6 +607,8 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> createMilestone(@PathVariable("proposalRef") String proposalRef, @RequestBody String milestoneComment) {
         try {
+            proposalRef = encodeParam(proposalRef);
+            milestoneComment = encodeParam(milestoneComment);
             return new ResponseEntity<>(apiService.createMilestone(proposalRef, milestoneComment), HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error while creating new milestone - " + e.getMessage());
@@ -602,6 +632,7 @@ public class LeosApiController {
     public ResponseEntity<Object> getDocument(@PathVariable("documentRef") String documentRef) {
         XmlDocument document = null;
         try {
+            documentRef = encodeParam(documentRef);
             document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
             if (document != null) {
                 DocumentVO vo = new DocumentVO(document);
@@ -631,6 +662,8 @@ public class LeosApiController {
     public ResponseEntity<Object> getListMilestoneDocumentViews(@PathVariable("documentRef") String documentRef,
                                                                 @RequestParam("legFileName") String legFileName) {
         try {
+            documentRef = encodeParam(documentRef);
+            legFileName = encodeParam(legFileName);
             MilestoneViewResponse milestonesView = apiService.listMilestoneDocuments(documentRef, legFileName);
             return new ResponseEntity<>(milestonesView, HttpStatus.OK);
         } catch (Exception e) {
@@ -644,6 +677,8 @@ public class LeosApiController {
     public ResponseEntity<Object> getListMilestoneDocumentViewsFromDoc(@PathVariable("documentRef") String documentRef,
                                                                 @RequestParam("versionedReference") String versionedReference) {
         try {
+            documentRef = encodeParam(documentRef);
+            versionedReference = encodeParam(versionedReference);
             MilestoneViewResponse milestonesView = apiService.listMilestoneDocumentsFromVersionRef(documentRef, versionedReference);
             return new ResponseEntity<>(milestonesView, HttpStatus.OK);
         } catch (Exception e) {
@@ -657,6 +692,8 @@ public class LeosApiController {
     public ResponseEntity<Object> getMilestoneExportPDF(@PathVariable("documentRef") String documentRef,
                                                         @RequestParam("legFileName") String legFileName) {
         try {
+            documentRef = encodeParam(documentRef);
+            legFileName = encodeParam(legFileName);
             MilestonePDFDownloadResponse response = apiService.downloadMilestonePDF(documentRef, legFileName);
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
@@ -675,6 +712,8 @@ public class LeosApiController {
     public ResponseEntity<Object> getMilestoneExportPDFFromVersion(@PathVariable("documentRef") String documentRef,
                                                                    @RequestParam("versionedReference") String versionedReference) {
         try {
+            documentRef = encodeParam(documentRef);
+            versionedReference = encodeParam(versionedReference);
             MilestonePDFDownloadResponse response = apiService.downloadMilestonePDFFromVersion(documentRef, versionedReference);
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();

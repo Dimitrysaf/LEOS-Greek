@@ -45,6 +45,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+
 @RestController
 @RequestMapping("/secured/memorandum/")
 public class MemorandumController {
@@ -61,6 +63,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> getMemorandum(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             DocumentViewResponse memorandumDocument = this.memorandumApiService.getDocument(documentRef);
             return ResponseEntity.ok().body(memorandumDocument);
         } catch (Exception e) {
@@ -77,6 +80,7 @@ public class MemorandumController {
                                          @RequestParam("tocMode") TocMode tocMode
     ) {
         try {
+            documentRef = encodeParam(documentRef);
             List<TableOfContentItemVO> toc = this.memorandumApiService.getToc(documentRef, tocMode);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
@@ -91,6 +95,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             List<TocItem> tocItems = this.memorandumApiService.getTocItems(documentRef);
             return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
@@ -110,6 +115,10 @@ public class MemorandumController {
                                                         @RequestParam(required = false) boolean isSplit,
                                                         @RequestBody String elementContent) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
+            presenterId = encodeParam(presenterId);
             SaveElementResponse updatedElement = this.memorandumApiService.saveElement(documentRef, elementId,
                     elementName, elementContent, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
@@ -128,6 +137,9 @@ public class MemorandumController {
                                                           @PathVariable("elementName") String elementName,
                                                           @PathVariable("elementId") String elementId) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
             DocumentViewResponse memorandum = this.memorandumApiService.deleteBlock(documentRef, elementName,
                     elementId);
             return ResponseEntity.ok().body(memorandum);
@@ -148,6 +160,9 @@ public class MemorandumController {
                                                           @PathVariable("elementId") String elementId,
                                                           @RequestBody InsertElementRequest request) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
             DocumentViewResponse memorandum = this.memorandumApiService.insertElement(documentRef, elementName,
                     elementId, request.getPosition());
             return ResponseEntity.ok().body(memorandum);
@@ -166,6 +181,9 @@ public class MemorandumController {
                                                          @PathVariable("elementId") String elementId,
                                                          @RequestBody String elementContent) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementTag = encodeParam(elementTag);
+            elementId = encodeParam(elementId);
             DocumentViewResponse memorandum = this.memorandumApiService.mergeElement(documentRef, elementContent,
                     elementTag, elementId);
             return ResponseEntity.ok().body(memorandum);
@@ -182,6 +200,7 @@ public class MemorandumController {
     public ResponseEntity<Object> getRecentChanges(@PathVariable("documentRef") String documentRef,
                                                    @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
+            documentRef = encodeParam(documentRef);
             List<VersionVO> memorandumes = this.genericDocumentApiService.getRecentMinorVersions(documentRef, pageIndex,
                     pageSize);
             return ResponseEntity.ok().body(memorandumes);
@@ -197,6 +216,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> countRecentChanges(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             int count = this.genericDocumentApiService.countRecentMinorVersions(documentRef);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
@@ -213,6 +233,7 @@ public class MemorandumController {
                                                         @RequestBody SaveIntermediateVersionRequest saveEvent
     ) {
         try {
+            documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.memorandumApiService.saveDocument(documentRef,
                     saveEvent.getCheckinComment(), saveEvent.getVersionType());
             return ResponseEntity.ok().body(versions);
@@ -230,6 +251,7 @@ public class MemorandumController {
                                                         @RequestBody SaveTocRequestEvent saveTocRequestEvent
     ) {
         try {
+            documentRef = encodeParam(documentRef);
             List<TableOfContentItemVO> toc = this.memorandumApiService.saveToC(documentRef,
                     saveTocRequestEvent.getTableOfContentItemVOs());
             return ResponseEntity.ok().body(toc);
@@ -247,6 +269,7 @@ public class MemorandumController {
                                                     @RequestParam String authorKey,
                                                     @RequestParam String type) {
         try {
+            documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.searchVersions(documentRef, authorKey, type);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
@@ -263,6 +286,7 @@ public class MemorandumController {
                                                        @RequestParam int pageIndex,
                                                        @RequestParam int pageSize) {
         try {
+            documentRef = encodeParam(documentRef);
             List<VersionVO> versions = this.genericDocumentApiService.getMajorVersionsData(documentRef, pageIndex,
                     pageSize);
             return ResponseEntity.ok().body(versions);
@@ -278,6 +302,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> countMajorVersionsData(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             int versions = this.genericDocumentApiService.countMajorVersionsData(documentRef);
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
@@ -294,6 +319,8 @@ public class MemorandumController {
                                                              @RequestParam String currIntVersion,
                                                              @RequestParam int pageIndex, @RequestParam int pageSize) {
         try {
+            documentRef = encodeParam(documentRef);
+            currIntVersion = encodeParam(currIntVersion);
             List<VersionVO> versions = this.genericDocumentApiService.getIntermediateVersionsData(documentRef,
                     currIntVersion, pageIndex, pageSize);
             return ResponseEntity.ok().body(versions);
@@ -310,6 +337,8 @@ public class MemorandumController {
     public ResponseEntity<Object> countIntermediateVersionData(@PathVariable("documentRef") String documentRef,
                                                                @RequestParam String currIntVersion) {
         try {
+            documentRef = encodeParam(documentRef);
+            currIntVersion = encodeParam(currIntVersion);
             int count = this.genericDocumentApiService.countIntermediateVersionsData(documentRef, currIntVersion);
             return ResponseEntity.ok().body(count);
         } catch (Exception e) {
@@ -328,6 +357,7 @@ public class MemorandumController {
                                                    @RequestParam boolean completeWords,
                                                    @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
+            documentRef = encodeParam(documentRef);
             List<SearchMatchVO> memorandum = this.memorandumApiService.searchTextInDocument(documentRef, searchText,
                     matchCase, completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(memorandum);
@@ -343,6 +373,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> showMemorandumVersion(@PathVariable("versionId") String versionId) {
         try {
+            versionId = encodeParam(versionId);
             DocumentViewResponse contentHtml = this.memorandumApiService.showVersion(versionId);
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
@@ -358,6 +389,8 @@ public class MemorandumController {
     public ResponseEntity<Object> compareMemorandumVersions(@PathVariable("newVersionId") String newVersionId,
                                                             @PathVariable("oldVersionId") String oldVersionId) {
         try {
+            newVersionId = encodeParam(newVersionId);
+            oldVersionId = encodeParam(oldVersionId);
             String contentHtml = this.memorandumApiService.compare(newVersionId, oldVersionId);
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
@@ -373,6 +406,8 @@ public class MemorandumController {
     public ResponseEntity<Object> restoreMemorandumVersion(@PathVariable("documentRef") String documentRef,
                                                            @PathVariable("targetVersion") String targetVersion) {
         try {
+            documentRef = encodeParam(documentRef);
+            targetVersion = encodeParam(targetVersion);
             DocumentViewResponse memorandum = this.memorandumApiService.restoreToVersion(documentRef, targetVersion);
             return ResponseEntity.ok().body(memorandum);
         } catch (Exception e) {
@@ -389,6 +424,9 @@ public class MemorandumController {
                                                        @PathVariable("elementId") String elementId,
                                                        @PathVariable("elementTagName") String elementTagName) {
         try {
+            documentRef = encodeParam(documentRef);
+            elementId = encodeParam(elementId);
+            elementTagName = encodeParam(elementTagName);
             EditElementResponse response = this.memorandumApiService.editElement(documentRef, elementId,
                     elementTagName);
             return ResponseEntity.ok().body(response);
@@ -404,6 +442,7 @@ public class MemorandumController {
     public ResponseEntity<Object> downloadCurrentVersion(@PathVariable("documentRef") String documentRef,
                                                          @RequestParam("isWithAnnotation") boolean isWithAnnotation) {
         try {
+            documentRef = encodeParam(documentRef);
             byte[] response = this.memorandumApiService.downloadVersion(documentRef, isWithAnnotation);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
@@ -418,6 +457,8 @@ public class MemorandumController {
     public ResponseEntity<Object> downloadXmlVersion(@PathVariable("documentRef") String documentRef,
                                                      @RequestParam("versionId") String versionId) {
         try {
+            documentRef = encodeParam(documentRef);
+            versionId = encodeParam(versionId);
             byte[] response = this.memorandumApiService.downloadXmlVersionFiles(documentRef, versionId);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
@@ -473,6 +514,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             DocumentConfigResponse view = this.memorandumApiService.getDocumentConfig(documentRef);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
@@ -499,6 +541,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             byte[] cleanVersion = this.memorandumApiService.downloadCleanVersion(documentRef);
             final String jobFileName = documentRef + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             // create the HttpHeaders object and set the Content-Type header
@@ -516,6 +559,7 @@ public class MemorandumController {
     @ResponseBody
     public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
         try {
+            documentRef = encodeParam(documentRef);
             DocumentViewResponse cleanVersion = this.memorandumApiService.showCleanVersion(documentRef);
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
@@ -531,6 +575,7 @@ public class MemorandumController {
                                                            @RequestBody ToggleTrackChangeEnabledRequest toggleTrackChangeEnabledRequest
     ) {
         try {
+            documentRef = encodeParam(documentRef);
             boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
             boolean response = memorandumApiService.toggleTrackChangeEnabled(isTrackChangesEnabled, documentRef);
             return ResponseEntity.ok().body(response);

@@ -30,6 +30,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+
 @RestController
 @RequestMapping(path = "/secured/contribution")
 public class ContributionController {
@@ -45,6 +47,7 @@ public class ContributionController {
     @PostMapping(value = "/create-clone-proposal/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> createCloneProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CloneProposalRequest cloneRequest) {
+        proposalRef = encodeParam(proposalRef);
         try {
             CreateCollectionResult response = contributionApiService.createCloneProposal(proposalRef, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
             return new ResponseEntity<>(response, HttpStatus.OK);
@@ -57,6 +60,7 @@ public class ContributionController {
     @PostMapping(value = "/revision-done/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> updateClonedProposalRevisionStatus(@PathVariable("proposalRef") String proposalRef, @RequestBody String legFilename) {
+        proposalRef = encodeParam(proposalRef);
         Result result = contributionApiService.updateClonedProposalRevisionStatus(proposalRef, legFilename);
         if (result.isOk()) {
             return new ResponseEntity<>(HttpStatus.OK);
@@ -70,6 +74,7 @@ public class ContributionController {
     public ResponseEntity<Object> listContributionsForDocument(@PathVariable("documentRef") String documentRef,
                                                                @PathVariable("documentType") String documentType,
                                                                @RequestParam Integer annexIndex) {
+        documentRef = encodeParam(documentRef);
         List<ContributionVO> contributions = this.contributionApiService.listContributionsForDocument(documentRef, annexIndex);
         return new ResponseEntity<>(contributions, HttpStatus.OK);
     }
@@ -81,6 +86,9 @@ public class ContributionController {
                                                               @PathVariable("documentType") String documentType,
                                                               @RequestParam String contributionVersionRef,
                                                               @RequestParam String legFileName) {
+        documentRef = encodeParam(documentRef);
+        contributionVersionRef = encodeParam(contributionVersionRef);
+        legFileName = encodeParam(legFileName);
         DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(
                 request.getContextPath(),
                 documentRef,
@@ -92,6 +100,7 @@ public class ContributionController {
     @ResponseBody
     public ResponseEntity<DeclineContributionResponse> declineContribution(@PathVariable("documentVersionedRef") String documentVersionedRef,
                                                                            @PathVariable("documentType") String documentType) {
+        documentVersionedRef = encodeParam(documentVersionedRef);
         this.contributionApiService.declineContribution(documentVersionedRef);
         return ResponseEntity.ok(new DeclineContributionResponse(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()));
     }
@@ -100,6 +109,7 @@ public class ContributionController {
     @ResponseBody
     public ResponseEntity<byte[]> mergeContribution(@PathVariable("documentRef") String documentRef,
                                                     @RequestBody ApplyContributionsRequest applyContributionsRequest) throws IOException {
+        documentRef = encodeParam(documentRef);
         byte[] mergedContent = this.contributionApiService.mergeContribution(documentRef, applyContributionsRequest);
         return ResponseEntity.ok(mergedContent);
     }
@@ -108,6 +118,7 @@ public class ContributionController {
     @ResponseBody
     public ResponseEntity<Object> markAsProcessed(@PathVariable("contributionVersionRef") String contributionVersionRef,
                                                   @PathVariable("documentType") String documentType) {
+        contributionVersionRef = encodeParam(contributionVersionRef);
         this.contributionApiService.markContributionAsProcessed(contributionVersionRef);
         return ResponseEntity.ok().build();
     }
@@ -116,6 +127,8 @@ public class ContributionController {
     public ResponseEntity<Object> getClonedMilestoneContribution(@PathVariable("proposalRef") String proposalRef,
                                                                  @PathVariable("legFileName") String legFileName){
         try {
+            proposalRef = encodeParam(proposalRef);
+            legFileName = encodeParam(legFileName);
             MilestoneViewResponse milestoneView = apiService.listContributionsView(proposalRef, legFileName);
             return new ResponseEntity<>(milestoneView, HttpStatus.OK);
         } catch (Exception e) {
