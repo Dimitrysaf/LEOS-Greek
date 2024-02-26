@@ -272,14 +272,16 @@ define(function aknNumberedParagraphPluginModule(require) {
         if (paragraphs.length > 0) {
             if (PARA_MODE === NUMBERED) {
                 var renumber = true;
-                for (var ii = 0; ii < paragraphs.length; ii++) {
-                    var dataAknNum = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM);
-                    leosTrackChanges.core.setOriginalNumber(paragraphs[ii], dataAknNum);
-                    if (SWITCHED && dataAknNum && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.UNNUMBERED) {
-                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
-                        paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
-                        leosTrackChanges.core.removeTrackChangesAttributesForNumbering(paragraphs[ii]);
-                        renumber = false;
+                if (ckEditor.LEOS.isTrackChangesEnabled) {
+                    for (var ii = 0; ii < paragraphs.length; ii++) {
+                        var dataAknNum = paragraphs[ii].getAttribute(leosPluginUtils.DATA_AKN_NUM);
+                        leosTrackChanges.core.setOriginalNumber(paragraphs[ii], dataAknNum);
+                        if (SWITCHED && dataAknNum && paragraphs[ii].getAttribute(leosTrackChanges.core.DATA_AKN_TC_ORIGINAL_NUMBER) === leosTrackChanges.core.UNNUMBERED) {
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM);
+                            paragraphs[ii].removeAttribute(leosPluginUtils.DATA_AKN_NUM_ID);
+                            leosTrackChanges.core.removeTrackChangesAttributesForNumbering(paragraphs[ii]);
+                            renumber = false;
+                        }
                     }
                 }
                 if (renumber) {
