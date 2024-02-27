@@ -24,5 +24,13 @@ public interface TokenService {
     
     boolean validateAccessToken(String token);
 
+    boolean validateClientContextToken(String token);
+
+    boolean validateUserFromClientContext(String contextToken, String accessToken);
+
+    String extractUserRoleFromToken(String token);
+
+    String extractUserSystemNameFromToken(String token);
+
     String extractUserFromToken(String token);
 }

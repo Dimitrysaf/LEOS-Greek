@@ -25,6 +25,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.security.AuthClient;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.api.ApiService;
@@ -116,6 +117,7 @@ public class LeosApiController {
     private static final String GRANT_TYPE = "grant-type";
     private static final String BEARER_GRANT_TYPE = "jwt-bearer";
     private static final String BEARER_PARAMETER = "assertion";
+    private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
 
     @Value("${leos.api.jwt.auth.access.token.expire.min}")
     private String accessTokenExpirationInMin;
@@ -148,16 +150,17 @@ public class LeosApiController {
         response.setHeader("Cache-Control", "no-store");
         response.setHeader("Pragma", "no-cache");
         String contextPath = request.getContextPath();
+        final String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
         final String grantType = request.getHeader(GRANT_TYPE);
         if (!StringUtils.isEmpty(grantType) && grantType.contains(BEARER_GRANT_TYPE)) {
             String token = request.getHeader(BEARER_PARAMETER);
-            return validateAndGenerateAccessToken(token, response, contextPath);
+            return validateAndGenerateAccessToken(token, clientContextToken, response, contextPath);
         } else {
             Cookie[] cookies = request.getCookies();
             if (cookies != null) {
                 for (Cookie cookie : cookies) {
                     if (cookie.getName().equals("Authorization")) {
-                        return validateAndGenerateAccessToken(cookie.getValue(), response, contextPath);
+                        return validateAndGenerateAccessToken(cookie.getValue(), clientContextToken, response, contextPath);
                     } else {
                         LOG.warn("Authorization failed! Wrong Headers: No authorization cookie found");
                     }
@@ -166,14 +169,25 @@ public class LeosApiController {
                 LOG.warn("Authorization failed! Wrong Headers: '{}' is missing or contains no cookie is found", GRANT_TYPE);
             }
         }
-        return new ResponseEntity<>("Wrong Headers!", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>("Wrong Headers!", HttpStatus.BAD_REQUEST);
     }
 
-    private ResponseEntity<Object> validateAndGenerateAccessToken(String token, HttpServletResponse response, String contextPath) {
+    private ResponseEntity<Object> validateAndGenerateAccessToken(String token, String clientContextToken, HttpServletResponse response, String contextPath) {
         AuthClient authClient = tokenService.validateClientByJwtToken(token);
         if (authClient.isVerified()) {
             LOG.debug("Client '{}' correctly validated with jwt-bearer token provided", authClient.getName());
             String user = tokenService.extractUserFromToken(token);
+            if(StringUtils.isNotBlank(clientContextToken)) {
+                if(!tokenService.validateClientContextToken(clientContextToken)) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    return new ResponseEntity<>("Wrong client context token! Token is invalid!", HttpStatus.BAD_REQUEST);
+                }
+                if(!tokenService.validateUserFromClientContext(clientContextToken, token)) {
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    return new ResponseEntity<>("Wrong client context token! User mismatch!", HttpStatus.BAD_REQUEST);
+                }
+            }
+
             int accessTokenExpirationInMinInt = getAccessTokenExpirationInMinInt();
             long expiresInMilliSec = System.currentTimeMillis() + accessTokenExpirationInMinInt * 60 * 1000;
             JsonTokenReponse jsonToken = new JsonTokenReponse(tokenService.getAccessToken(user), "jwt", expiresInMilliSec, null, null);
@@ -181,10 +195,10 @@ public class LeosApiController {
             return new ResponseEntity<>(jsonToken, HttpStatus.OK);
         } else {
             LOG.warn("Authorization failed! A client is asking for an accessToken, but the provided '{}' token is not valid!", BEARER_GRANT_TYPE);
-            response.setStatus(HttpServletResponse.SC_FORBIDDEN); // set 403 status code
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // set 400 status code
             response.setHeader("Set-Cookie", "Authorization=; Path=" + contextPath + "; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "Authorization" cookie
             response.setHeader("Set-Cookie", "JSESSIONID=; Path=" + contextPath + "; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT; HttpOnly"); // delete the "JSESSIONID" cookie
-            return new ResponseEntity<>("Wrong jwt-bearer token!", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("Wrong jwt-bearer token!", HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -256,9 +270,7 @@ public class LeosApiController {
             return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId, HttpStatus.NOT_FOUND);
         }
 
-        Optional<Collaborator> userAsCollaborator = document.getCollaborators().stream()
-                .filter(x -> x.getLogin().equalsIgnoreCase(userId)).findAny();
-        if (!userAsCollaborator.isPresent()) {
+        if (!securityContext.hasPermission(document, LeosPermission.CAN_READ)) {
             LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId + ". User not allowed to access the document.");
             return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId, HttpStatus.FORBIDDEN);
         }
@@ -647,8 +659,13 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/config", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getConfig(@RequestParam(value = "systemName", required = false) String systemName) {
+    public ResponseEntity<Object> getConfig(HttpServletRequest request) {
         try {
+            String systemName = null;
+            String token = request.getHeader(CLIENT_CONTEXT_PARAMETER);
+            if(tokenService.validateClientContextToken(token)) {
+                systemName = tokenService.extractUserSystemNameFromToken(token);
+            }
             AppConfigResponse appConfigResponse = configService.getApplicationConfig(systemName);
             return new ResponseEntity<>(appConfigResponse, HttpStatus.OK);
         } catch (Exception e) {

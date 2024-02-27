@@ -1,4 +1,3 @@
-import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { map, Observable, shareReplay } from 'rxjs';
@@ -20,23 +19,9 @@ export class AppConfigService {
     }
   >;
 
-  constructor(private http: HttpClient, private location: Location) {
-    // TODO: Need to populate headers from client input parameters.
-    const url = new URL(document.baseURI + this.location.path());
-    const urlParams = new URLSearchParams(url.search);
-    const systemName = urlParams.get('systemName');
-
-    const httpParams = {};
-    if (systemName) {
-      httpParams['systemName'] = systemName;
-    }
-
-    const options = {
-      params: httpParams,
-    };
-
+  constructor(private http: HttpClient) {
     this.config = this.http
-      .get<LeosConfig>(`${apiBaseUrl}/secured/config`, options)
+      .get<LeosConfig>(`${apiBaseUrl}/secured/config`)
       .pipe(map(createLeosAppConfig))
       .pipe(shareReplay(1));
   }

@@ -16,6 +16,7 @@ package eu.europa.ec.leos.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import eu.europa.ec.leos.test.support.LeosTest;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -103,6 +104,25 @@ public class TokenServiceTest extends LeosTest {
         assertNotNull(authClient);
         assertTrue(authClient.isVerified());
     }
+
+    @Test
+    public void test_validate_client_context_token() throws Exception {
+        String clientId = "dgtClientId";
+        String clientSecret = "dgtSecret";
+        String clientSubject = "acc:demo@demo";
+        String clientUser = "luke";
+        String clioentRole = "OWNER";
+        String clientSystemName = "DGT_EDIT";
+
+        List<AuthClient> registeredClients = Arrays.asList(new AuthClient("DGT", "dgtClientId", "dgtSecret"));
+        ReflectionTestUtils.setField(tokenService, "registeredClients", registeredClients);
+
+        String token = generateJwtTokenWithLightSecurityContext(clientId, clientSecret, clientSubject, clientUser, clioentRole, clientSystemName);
+
+        boolean result = tokenService.validateClientContextToken(token);
+
+        assertTrue(result);
+    }
     
     private String generateJwtToken(String issuer, String secret, String subject, String user) throws UnsupportedEncodingException {
         Date now = Calendar.getInstance().getTime();
@@ -115,28 +135,54 @@ public class TokenServiceTest extends LeosTest {
                 .sign(algorithm);
         return token;
     }
-    
+
+    private String generateJwtTokenWithLightSecurityContext(String issuer, String secret, String subject, String user, String role, String systemName) throws UnsupportedEncodingException {
+        Date now = Calendar.getInstance().getTime();
+        Algorithm algorithm = Algorithm.HMAC256(secret);
+        String token = com.auth0.jwt.JWT.create()
+                .withIssuer(issuer)
+                .withSubject(subject)
+                .withIssuedAt(now)
+                .withClaim("user", user)
+                .withClaim("role", role)
+                .withClaim("systemName", systemName)
+                .sign(algorithm);
+        return token;
+    }
+
+    @Ignore
+    @Test
+    public void test_printTokenWithLightSecurityContext() throws Exception {
+        String clientId = "dgtClientId";
+        String clientSecret = "dgtSecret";
+        String clientSubject = "acc:demo@demo";
+        String clientUser = "luke";
+        String clioentRole = "OWNER";
+        String clientSystemName = "DGT_EDIT";
+
+        String token = generateJwtTokenWithLightSecurityContext(clientId, clientSecret, clientSubject, clientUser, clioentRole, clientSystemName);
+        System.out.println(token);
+    }
+
     @Ignore
     @Test
     public void test_printToken() throws Exception {
-        //LOCAL Annotation
-//        String clientId = "AnnotateIssuedClientId";
-//        String clientSecret = "AnnotateIssuedSecret";
-//        String clientSubject = "acct:jane@LEOS";
-
-        //DEV Annotation
-//        String clientId = "4d8ca472-f23d-11e7-9793-376d993d81da";
-//        String clientSecret = "NHVOpl8rAzzTOVzIf3_HrL0N_e4QshPEt2__zhBEdHQ";
-//        String clientSubject = "acct:insert_your_user@LEOS";
-
         //LOCAL/DEV ISC
-        String clientId = "iscClientId";
-        String clientSecret = "iscSecret";
+        String clientId = "dgtClientId";
+        String clientSecret = "dgtSecret";
         String clientSubject = "acc:demo@demo";
-        String clientUser = "jane";
+        String clientUser = "admin";
 
         String token = generateJwtToken(clientId, clientSecret, clientSubject, clientUser);
         System.out.println(token);
+    }
+
+    @Ignore
+    @Test
+    public void test_printDecodedToken(){
+        String token = "insert_token_here";
+        DecodedJWT decodedToken = JWT.decode(token);
+        System.out.println(decodedToken);
     }
 
 }
