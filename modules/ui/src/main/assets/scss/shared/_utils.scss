@@ -19,7 +19,6 @@ $OUTLINE_OFFSET: 4px;
 $G_BORDER_COLOR: #B7B7B7;
 $W_BG_COLOR: #FFFAFD;
 $BLUE_BORDER_COLOR: #ADBDCE;
-$EDITOR_MARGIN_OFFSET: 40px;
 
 @mixin borderStyle($width, $pattern) {
     border: $width $pattern;
@@ -77,13 +76,11 @@ $EDITOR_MARGIN_OFFSET: 40px;
     &.leos-editor-focus {
         background-color: $W_BG_COLOR;
         border-color: $BLUE_BORDER_COLOR;
-        margin-top: $EDITOR_MARGIN_OFFSET;
     }
 
     &.leos-editor-focus-double {
         background-color: $W_BG_COLOR;
         border-color: $BLUE_BORDER_COLOR;
-        margin-top: 2 * $EDITOR_MARGIN_OFFSET;
     }
 }
 
