@@ -565,11 +565,11 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
             case COUNCIL_EXPLANATORY:
                 document = explanatoryService.updateExplanatory((Explanatory) document, xmlContent, message);
                 break;
-            case COVERPAGE:
+            case PROPOSAL:
                 document = proposalService.updateProposal((Proposal) document, xmlContent, message);
                 break;
             default:
-                throw new UnsupportedOperationException("Invalid Document Type");
+                throw new UnsupportedOperationException("Invalid Document Type category : " + document.getCategory());
         }
         try {
             document = updateInternalReferencesAsync(document, LeosCategoryClass.caseInsensitiveValueOf(document.getCategory().name()));
