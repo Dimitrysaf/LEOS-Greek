@@ -23,6 +23,7 @@ import { getInstanceType, isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
+import { ActionManagerConnector } from "@/features/akn-document/services/action-manager-connector";
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
@@ -87,6 +88,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     private loadingService: LoadingService,
     private environmentService: EnvironmentService,
     private setEditorOpenState: (state: EditorOpenState) => void,
+    private actionManagerConnector: ActionManagerConnector
   ) {
     super(
       {
@@ -200,7 +202,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
             });
         },
         dismiss: () => {
-          this.documentService.resetDocument();
+          this.actionManagerConnector.cancelActionElement(data.elementId);
         },
       });
     } else {
