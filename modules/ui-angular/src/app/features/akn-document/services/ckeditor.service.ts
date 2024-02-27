@@ -234,6 +234,7 @@ export class CKEditorService implements OnDestroy {
       (state: EditorOpenState) => {
         this.openStateSubj.next(state);
       },
+      this.actionManagerConnector
     );
     require(['js/editor/leosEditorExtension'], (leosEditor) => {
       leosEditor.init(this.leosEditorConnector);
