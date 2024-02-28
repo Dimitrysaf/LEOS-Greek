@@ -282,7 +282,7 @@ define(function annotateExtensionModule(require) {
             "displayMetadataCondition": {"ISCReference": "Consultation Reference", "responseVersion": "Response Version", "responseId": "Consulted Unit"},
             "oauthClientId": `${annotateState.oauthClientId}`,
             "assetRoot": `${annotateState.anotClient}`,
-            "sidebarAppUrl": `${annotateState.anotHost}/app.html`,
+            "sidebarAppUrl": `${annotateState.anotClient}/index.html`,
             "services": [{
                 "authority": `${annotateState.authority}`,
                 "apiUrl": `${annotateState.anotHost}/api/`,
@@ -302,7 +302,10 @@ define(function annotateExtensionModule(require) {
                "id": `${annotateState.temporaryDataId}`,
                "document": `${annotateState.temporaryDataDocument}`
             }
-        };
+        }
+        if (!annotateState.anotClient.endsWith("angular")) {
+            innerHtmlJson["sidebarAppUrl"] = annotateState.anotHost + "/app.html";
+        }
 
         script.innerHTML = JSON.stringify(innerHtmlJson);
         if (addElement) {
