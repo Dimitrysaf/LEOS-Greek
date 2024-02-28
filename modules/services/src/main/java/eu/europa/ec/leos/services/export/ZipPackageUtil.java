@@ -38,6 +38,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.DOC_FILE_NAME_SEPARATOR;
+import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -96,6 +97,7 @@ public class ZipPackageUtil {
             Object value = entry.getValue();
             if (value instanceof File) {
                 File fileValue = (File) value;
+                validatePath(fileValue.getAbsolutePath());
                 ZipEntry ze = new ZipEntry(key);
                 zipOutputStream.putNextEntry(ze);
                 try(FileInputStream fileInputStream = new FileInputStream(fileValue)){
@@ -191,6 +193,7 @@ public class ZipPackageUtil {
         String fileExtension = "." + FilenameUtils.getExtension(singleZipEntryName);
         String fileName = FilenameUtils.getBaseName(singleZipEntryName);
         File unzippedFile = File.createTempFile(fileName + "_", fileExtension);
+        validatePath(unzippedFile.getAbsolutePath());
         FileOutputStream fos = new FileOutputStream(unzippedFile);
         baos.writeTo(fos);
         return unzippedFile;

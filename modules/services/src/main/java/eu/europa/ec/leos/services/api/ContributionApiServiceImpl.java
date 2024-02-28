@@ -60,6 +60,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
+
 @Service
 public class ContributionApiServiceImpl implements ContributionApiService {
     private static final Logger LOG = LoggerFactory.getLogger(ContributionApiServiceImpl.class);
@@ -149,6 +151,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         CreateCollectionResult createCollectionResult = null;
         Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         try {
+            validatePath(legDocumentName);
             File content = new File(legDocumentName);
             writeContentToFile(legDocument, content);
             userService.switchUser(user.getLogin());

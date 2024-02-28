@@ -87,6 +87,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @RestController
 @RequestMapping
@@ -418,6 +419,7 @@ public class LeosApiController {
     public ResponseEntity<Object> createCollectionFromLeg(@RequestParam("file") MultipartFile file) {
         CreateCollectionResult createCollectionResult;
         try {
+            validatePath(file.getOriginalFilename());
             File content = new File(applicationProperties.getProperty("leos.mandate.upload.path") + file.getOriginalFilename());
 
             try (FileOutputStream fos = new FileOutputStream(content)) {
@@ -446,6 +448,7 @@ public class LeosApiController {
             targetUser = encodeParam(targetUser);
             connectedEntity = encodeParam(connectedEntity);
             iscRef = encodeParam(iscRef);
+            validatePath(legFile.getOriginalFilename());
             File content = new File(legFile.getOriginalFilename());
 
             try (FileOutputStream fos = new FileOutputStream(content)) {

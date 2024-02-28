@@ -18,6 +18,7 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +26,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.util.HashMap;
 import java.util.Map;
@@ -80,6 +82,7 @@ public class ZipUtil {
                 File fileValue = (File) value;
                 ZipEntry ze = new ZipEntry(key);
                 zipOutputStream.putNextEntry(ze);
+                validatePath(fileValue.getAbsolutePath());
                 FileInputStream fileInputStream = new FileInputStream(fileValue);
                 IOUtils.copy(fileInputStream, zipOutputStream);
                 fileInputStream.close();
@@ -227,5 +230,16 @@ public class ZipUtil {
             throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
         }
         return destFile;
+    }
+
+    public static String encodeParam(String value) {
+        return UriUtils.encodePath(value, StandardCharsets.UTF_8);
+    }
+
+    public static void validatePath(String path) {
+        if (path != null && path.contains("../")) {
+            path = encodeParam(path);
+            throw new SecurityException("you are not allowed to write in the path:" + path);
+        }
     }
 }

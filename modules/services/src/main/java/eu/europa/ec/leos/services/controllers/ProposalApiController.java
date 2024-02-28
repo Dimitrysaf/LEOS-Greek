@@ -51,6 +51,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @RestController
 @RequestMapping(value = "/secured/proposal")
@@ -252,6 +253,7 @@ public class ProposalApiController {
     public ResponseEntity<Object> uploadProposal(@RequestParam("legFile") MultipartFile legFile) {
         CreateCollectionResult createCollectionResult;
         try {
+            validatePath(legFile.getName());
             File content = new File(legFile.getName());
             try (FileOutputStream fos = new FileOutputStream(content)) {
                 fos.write(legFile.getBytes());
@@ -270,6 +272,7 @@ public class ProposalApiController {
     @RequestMapping(value = "/validateLegFile", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<LegFileValidation> validateLegFile(@RequestParam("legFile") MultipartFile legFile) {
+        validatePath(legFile.getName());
         File content = new File(legFile.getName());
         try (FileOutputStream fos = new FileOutputStream(content)) {
             fos.write(legFile.getBytes());
