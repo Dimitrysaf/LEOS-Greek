@@ -249,6 +249,9 @@ public class FinancialStatementController {
                                               @RequestBody String elementContent) throws Exception {
         try {
             documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
+            presenterId = encodeParam(presenterId);
             SaveElementResponse response = this.genericDocumentApiService.saveElement(documentRef, elementId,
                     elementName, elementContent);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, response);

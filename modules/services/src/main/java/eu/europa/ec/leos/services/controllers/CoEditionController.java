@@ -37,8 +37,9 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 
 @Controller
@@ -71,7 +72,8 @@ public class CoEditionController {
         if (simpDestination.startsWith(TOPIC_DOCUMENT_SLASH)) {
             String[] parts = simpDestination.split("/");
             String documentId = parts[3];
-            simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT_SLASH + documentId, this.coEditionService.getCurrentEditInfo(documentId));
+            String destination = encodeParam(documentId);
+            simpMessagingTemplate.convertAndSend(destination, this.coEditionService.getCurrentEditInfo(documentId));
         }
     }
 
@@ -83,7 +85,8 @@ public class CoEditionController {
         this.coEditionService.removeUserEditInfo(sessionId);
         simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, coEditionService.getAllEditInfo());
         for (CoEditionVO coEdit : sessionEdits) {
-            simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT_SLASH + coEdit.getDocumentId(), coEditionService.getCurrentEditInfo(coEdit.getDocumentId()));
+            String destination = encodeParam(TOPIC_DOCUMENT_SLASH + coEdit.getDocumentId());
+            simpMessagingTemplate.convertAndSend(destination, coEditionService.getCurrentEditInfo(coEdit.getDocumentId()));
 
         }
     }
@@ -94,9 +97,10 @@ public class CoEditionController {
         LOG.info("Received message from user {} on documentId {} with type {}", event.getUserId(), event.getDocumentId(), event.getInfoType());
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(message);
         User user = this.userService.getUser(event.getUserId());
+        String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
         CoEditionActionInfo coEditionActionInfo = this.coEditionService.storeUserEditInfo(headerAccessor.getSessionId(), event.getPresenterId(), user, event.getDocumentId(), event.getElementId(), event.getInfoType());
         simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
-        simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT_SLASH + event.getDocumentId(), coEditionActionInfo);
+        simpMessagingTemplate.convertAndSend(destination, coEditionActionInfo);
     }
 
     @MessageMapping("/remove/document")
@@ -105,9 +109,10 @@ public class CoEditionController {
         LOG.info("Received message from user {} on documentId {} with type {} for remove", event.getUserId(), event.getDocumentId(), event.getInfoType());
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor.wrap(message);
         User user = this.userService.getUser(event.getUserId());
+        String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
         CoEditionActionInfo coEditionActionInfo = this.coEditionService.removeUserEditInfo(event.getPresenterId(), event.getDocumentId(), event.getElementId(), event.getInfoType());
         simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
-        simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT_SLASH + event.getDocumentId(), coEditionActionInfo);
+        simpMessagingTemplate.convertAndSend(destination, coEditionActionInfo);
     }
 
     @MessageMapping("/update/document")
@@ -120,7 +125,8 @@ public class CoEditionController {
         if(event.getElementFragment() != null) {
             elements.add(new Element(event.getElementId(), event.getElementTagName(), event.getElementFragment()));
         }
-        simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT_SLASH + event.getDocumentId(),
+        String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
+        simpMessagingTemplate.convertAndSend(destination,
                 new UpdateCoEditionResponse(user, event.getPresenterId(), event.getDocumentId(), InfoType.DOCUMENT_UPDATED, elements));
     }
 
@@ -132,7 +138,8 @@ public class CoEditionController {
         CoEditionActionInfo coEditionActionInfo = this.coEditionService.removeUserEditInfo(event.getSessionId());
         simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
         if (coEditionActionInfo.sucesss()) {
-            simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT_SLASH + event.getDocumentId(), coEditionActionInfo.getCoEditionVos());
+            String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
+            simpMessagingTemplate.convertAndSend(destination, coEditionActionInfo.getCoEditionVos());
         }
     }
 }
