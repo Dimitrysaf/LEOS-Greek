@@ -282,7 +282,7 @@ define(function annotateExtensionModule(require) {
             "displayMetadataCondition": {"ISCReference": "Consultation Reference", "responseVersion": "Response Version", "responseId": "Consulted Unit"},
             "oauthClientId": `${annotateState.oauthClientId}`,
             "assetRoot": `${annotateState.anotClient}`,
-            "sidebarAppUrl": `${annotateState.anotHost}/app.html`,
+            "sidebarAppUrl": `${annotateState.anotHost}/client-angular/index.html`,
             "services": [{
                 "authority": `${annotateState.authority}`,
                 "apiUrl": `${annotateState.anotHost}/api/`,
