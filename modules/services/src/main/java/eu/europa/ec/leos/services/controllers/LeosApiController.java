@@ -548,7 +548,7 @@ public class LeosApiController {
         try {
             proposalRef = encodeParam(proposalRef);
             annexId = encodeParam(annexId);
-            title = encodeParam(title);
+//            title = encodeParam(title);
             this.apiService.updateAnnexTitle(proposalRef, annexId, title);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
@@ -567,7 +567,7 @@ public class LeosApiController {
         try {
             proposalRef = encodeParam(proposalRef);
             docId = encodeParam(docId);
-            title = encodeParam(title);
+//            title = encodeParam(title);
             this.apiService.updateExplanatoryTitle(proposalRef, docId, title);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
