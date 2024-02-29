@@ -194,6 +194,30 @@ define(function elementEditorModule(require) {
             editor.on('selectionChange', _removeZeroWidthSpacesOnFocus.bind(undefined, connector, params.elementId));
             editor.on('canBeSaved', _canBeSaved.bind(undefined, connector, params.elementId));
 
+            editor.on('instanceReady', function(event) {
+                if (event.editor.container.$ && event.editor.container.$.getAttribute("class")) {
+                    if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-double") >= 0
+                        || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first-double") >= 0) {
+                        document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop + 80;
+                    } else if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus") >= 0
+                        || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first") >= 0) {
+                        document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop + 40;
+                    }
+                }
+            });
+
+            editor.on('destroy', function(event) {
+                if (event.editor.container.$ && event.editor.container.$.getAttribute("class")) {
+                    if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-double") >= 0
+                        || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first-double") >= 0) {
+                        document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop - 80;
+                    } else if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus") >= 0
+                        || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first") >= 0) {
+                        document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop - 40;
+                    }
+                }
+            });
+
             // load XML fragment in editor
             var options = {
                 internal: true,

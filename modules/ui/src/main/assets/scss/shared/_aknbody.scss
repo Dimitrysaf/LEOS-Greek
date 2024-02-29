@@ -15,22 +15,12 @@
 
 $EDITOR_MARGIN_OFFSET: 40px;
 
-//------------------------------- XML Styles --------------------------------//
-citations {
-    display:block;
-    &:has(div[class~='leos-editor-focus-first']) {
+//--------------------------------XML aknbody--------------------------------/
+%xmlAknbody {
+    aknbody:has(div[class~='leos-editor-focus-first']) {
         padding-top: $EDITOR_MARGIN_OFFSET;
     }
-    &:has(div[class~='leos-editor-focus-first-double']) {
+    aknbody:has(div[class~='leos-editor-focus-first-double']) {
         padding-top: 2 * $EDITOR_MARGIN_OFFSET;
-    }
-}
-//------------------------------- Editor Styles -----------------------------//
-
-
-//------------------------------- Showblock Styles --------------------------//
-%showblockCitations {
-    div[data-akn-name=citations] {
-        @include blockOutline("CITATIONS");
     }
 }

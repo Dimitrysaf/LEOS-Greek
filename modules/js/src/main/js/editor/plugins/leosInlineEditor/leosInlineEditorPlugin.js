@@ -166,12 +166,11 @@ define(function leosInlineEditorPluginModule(require) {
 
             function _paddParent(element) {
                 let ICON_COUNT_THRESHOLD_SECOND_LINE = 19;
-                let EDITOR_MARGIN_OFFSET = 40;
                 let iconCount = _getIconsCount(editor);
                 if (iconCount <= ICON_COUNT_THRESHOLD_SECOND_LINE) {
-                    element.getParent().setStyle('padding-top', EDITOR_MARGIN_OFFSET + 'px');
+                    element.addClass("leos-editor-focus-first");
                 } else {
-                    element.getParent().setStyle('padding-top', 2 * EDITOR_MARGIN_OFFSET + 'px');
+                    element.addClass("leos-editor-focus-first-double");
                 }
             }
 
