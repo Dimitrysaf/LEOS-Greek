@@ -76,7 +76,7 @@
 </p>
 <p>
 	You have to use a CMIS client to use this application. An example for
-	such a client is the <a href="http://chemistry.apache.org/java/developing/tools/dev-tools-workbench.html"> CMIS Workbench.</a>
+	such a client is the <a href="https://chemistry.apache.org/java/developing/tools/dev-tools-workbench.html"> CMIS Workbench.</a>
 </p>
 <table>
 <tr><th>Server-Name</th><td>Apache-Chemistry-OpenCMIS-InMemory</td></tr>
