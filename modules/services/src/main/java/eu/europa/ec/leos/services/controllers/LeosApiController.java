@@ -262,17 +262,18 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> getDocumentForUser(@PathVariable("userId") String userId, @PathVariable("documentRef") String documentRef) {
         XmlDocument document = null;
+        final String finalUserId = encodeParam(userId);
+        documentRef = encodeParam(documentRef);
         try {
-            documentRef = encodeParam(documentRef);
             document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
         } catch (Exception ex) {
-            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId + ". " + ex.getMessage());
-            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId, HttpStatus.NOT_FOUND);
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + finalUserId + ". " + ex.getMessage());
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + finalUserId, HttpStatus.NOT_FOUND);
         }
 
         if (!securityContext.hasPermission(document, LeosPermission.CAN_READ)) {
-            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId + ". User not allowed to access the document.");
-            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId, HttpStatus.FORBIDDEN);
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + finalUserId + ". User not allowed to access the document.");
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + finalUserId, HttpStatus.FORBIDDEN);
         }
 
         switch (document.getCategory()) {
