@@ -778,4 +778,11 @@ public class XmlHelper {
     public static String encodeParam(String value) {
         return UriUtils.encodePath(value, StandardCharsets.UTF_8);
     }
+
+    public static void validatePath(String path) {
+        if (path != null && path.contains("../")) {
+            path = encodeParam(path);
+            throw new SecurityException("you are not allowed to write in the path:" + path);
+        }
+    }
 }

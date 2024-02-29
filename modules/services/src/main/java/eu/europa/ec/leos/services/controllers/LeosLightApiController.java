@@ -63,6 +63,7 @@ import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.buildFil
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentData;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentMetadata;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosDocument;
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
 @RequestMapping("/secured/editlight/")
@@ -100,10 +101,13 @@ public class LeosLightApiController {
                                                  @RequestParam(required = false) String callbackAddress) {
 
         LOG.info("user in security context " + securityContext.getUser());
-        String inputFileName = inputFile.getOriginalFilename();
+        locale = encodeParam(locale);
+        String inputFileName = encodeParam(inputFile.getOriginalFilename());
         String docRef = inputFileName.substring(0, inputFileName.lastIndexOf("-") + 1) + locale;
         String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
         String documentReferenceUrl = mappingUrl + "/ui/document/" + docRef;
+        documentReferenceUrl = encodeParam(documentReferenceUrl);
+        docRef = encodeParam(docRef);
         String errorMessage;
 
         DocumentVO documentVO = null;
@@ -165,8 +169,8 @@ public class LeosLightApiController {
     @ResponseBody
     public ResponseEntity<Object> exportDocument(@RequestParam("documentUrl") String documentUrl, @RequestParam String outputDescriptor,
                                                  @RequestParam(required = false) String callbackAddress) throws IOException {
-
-
+        documentUrl = encodeParam(documentUrl);
+//        outputDescriptor = encodeParam(outputDescriptor);
         Map<String, Object> documentMetadata = getDocumentMetadata(documentUrl, leosRepository);
         if(StringUtils.isEmpty(callbackAddress)) {
             callbackAddress = String.valueOf(documentMetadata.get("callbackAddress"));
@@ -206,6 +210,7 @@ public class LeosLightApiController {
             } catch (Exception exception) {
                 LOG.error("Error occurred sending response to callback: " + callbackAddress + exception.getMessage());
             }
+            callbackAddress = encodeParam(callbackAddress);
             return new ResponseEntity<>("Asynchronously exported to address: " + callbackAddress, HttpStatus.OK);
         } else {
             return buildFileAttachment(FileUtils.readFileToByteArray(file), file.getName());

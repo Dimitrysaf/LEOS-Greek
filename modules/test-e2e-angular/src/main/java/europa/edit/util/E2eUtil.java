@@ -523,6 +523,7 @@ public class E2eUtil {
             bos = new BufferedOutputStream(outStream);
         }
         if (TestParameters.getInstance().getMode().equalsIgnoreCase("local")) {
+            validatePath(filePath.getAbsolutePath());
             bos = new BufferedOutputStream(new FileOutputStream(filePath));
         }
         if (null != bos) {

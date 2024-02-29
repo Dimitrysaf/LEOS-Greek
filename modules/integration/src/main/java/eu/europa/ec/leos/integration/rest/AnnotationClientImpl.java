@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.integration.rest;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import eu.europa.ec.leos.integration.AnnotationProvider;
 import eu.europa.ec.leos.integration.rest.AnnotationsSearchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.UriUtils;
 
 @Component
 public class AnnotationClientImpl implements AnnotationProvider {
@@ -59,9 +61,14 @@ public class AnnotationClientImpl implements AnnotationProvider {
         HttpHeaders headers = new HttpHeaders();
         TokenJson tokenJson = authenticationProvider.getToken(jwtToken, proposalRef);
         // FIX ME In ticket LEOS-2862 Annotations: improve authentication provider
-        headers.set("Authorization", "Bearer " + tokenJson.getAccessToken());
+        String token  = encodeParam(tokenJson.getAccessToken());
+        headers.set("Authorization", "Bearer " + token);
         headers.set("Accept", "application/json");
         return headers;
+    }
+
+    public static String encodeParam(String value) {
+        return UriUtils.encodePath(value, StandardCharsets.UTF_8);
     }
 
 }

@@ -54,6 +54,7 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.D
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.EXPLANATORY_TITLE_PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 public abstract class ProposalConverterServiceImpl implements ProposalConverterService {
 
@@ -252,6 +253,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         try {
             // we must clean also the folder.
             for (String parent : parentFolders) {
+                validatePath(parent);
                 FileUtils.deleteDirectory(new File(parent));
             }
         } catch (IOException e) {

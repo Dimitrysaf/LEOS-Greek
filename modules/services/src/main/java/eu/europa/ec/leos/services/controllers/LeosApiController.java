@@ -87,6 +87,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @RestController
 @RequestMapping
@@ -262,17 +263,18 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> getDocumentForUser(@PathVariable("userId") String userId, @PathVariable("documentRef") String documentRef) {
         XmlDocument document = null;
+        final String finalUserId = encodeParam(userId);
+        documentRef = encodeParam(documentRef);
         try {
-            documentRef = encodeParam(documentRef);
             document = workspaceService.findDocumentByRef(documentRef, XmlDocument.class);
         } catch (Exception ex) {
-            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId + ". " + ex.getMessage());
-            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId, HttpStatus.NOT_FOUND);
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + finalUserId + ". " + ex.getMessage());
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + finalUserId, HttpStatus.NOT_FOUND);
         }
 
         if (!securityContext.hasPermission(document, LeosPermission.CAN_READ)) {
-            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId + ". User not allowed to access the document.");
-            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + userId, HttpStatus.FORBIDDEN);
+            LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + finalUserId + ". User not allowed to access the document.");
+            return new ResponseEntity<>(ERROR_OCCURRED_WHILE_GETTING_DOCUMENT + documentRef + FOR_USER + finalUserId, HttpStatus.FORBIDDEN);
         }
 
         switch (document.getCategory()) {
@@ -417,6 +419,7 @@ public class LeosApiController {
     public ResponseEntity<Object> createCollectionFromLeg(@RequestParam("file") MultipartFile file) {
         CreateCollectionResult createCollectionResult;
         try {
+            validatePath(file.getOriginalFilename());
             File content = new File(applicationProperties.getProperty("leos.mandate.upload.path") + file.getOriginalFilename());
 
             try (FileOutputStream fos = new FileOutputStream(content)) {
@@ -445,6 +448,7 @@ public class LeosApiController {
             targetUser = encodeParam(targetUser);
             connectedEntity = encodeParam(connectedEntity);
             iscRef = encodeParam(iscRef);
+            validatePath(legFile.getOriginalFilename());
             File content = new File(legFile.getOriginalFilename());
 
             try (FileOutputStream fos = new FileOutputStream(content)) {

@@ -28,6 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+
 public class LeosCorsFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosCorsFilter.class);
@@ -45,6 +47,7 @@ public class LeosCorsFilter implements Filter {
 
         if (!StringUtils.isEmpty(originHeader)) {
             HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+            originHeader = encodeParam(originHeader);
             httpServletResponse.setHeader("Access-Control-Allow-Origin", originHeader);
             httpServletResponse.setHeader("Access-Control-Allow-Methods", "*");
             httpServletResponse.setHeader("Access-Control-Allow-Headers", "*");
