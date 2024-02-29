@@ -20,7 +20,6 @@ import {
   Subject,
   switchMap,
   take,
-  takeUntil,
   tap,
 } from 'rxjs';
 
@@ -83,7 +82,7 @@ const BASE_EC_VERSION = '0.1.0';
 @Injectable({
   providedIn: 'root',
 })
-export class DocumentService implements OnDestroy {
+export class DocumentService {
   pageTitle$: Observable<string>;
   documentView$: Observable<DocumentViewResponse | null>;
   didDocumentLoadAndRender$: Observable<boolean>;
@@ -165,6 +164,7 @@ export class DocumentService implements OnDestroy {
     type: 'all',
     author: '',
   });
+  private documentViewBS = new BehaviorSubject<DocumentViewResponse>(null);
   private versionSearchResultsIsEmpty = true;
   private versionFilterBS = new BehaviorSubject<string>('All');
   private searchAndReplaceTextBS = new BehaviorSubject<string>('');
@@ -219,8 +219,6 @@ export class DocumentService implements OnDestroy {
 
   private getAnnotations?: () => Promise<string>;
 
-  private destroy$ = new Subject<void>();
-
   constructor(
     private http: HttpClient,
     @Inject(DOCUMENT) private document: Document,
@@ -238,19 +236,24 @@ export class DocumentService implements OnDestroy {
     this.pageTitle$ = this.documentPageTitleBS.asObservable();
     this.documentRefAndCategory$ = this.documentRefAndCategoryBS
       .asObservable()
-      .pipe(filter(Boolean), distinctUntilChanged());
+      .pipe(filter(Boolean));
 
-    this.documentView$ = this.documentRefAndCategory$.pipe(
-      tap((res) => {
-        this.tocService.reload();
-        this.getRecentChanges(res.category, res.ref, 0, 1);
-        this.countDocumentVersionsData(res.category, res.ref);
-        this.getDocumentConfig(res.ref, res.category);
-      }),
-      filter(Boolean),
-      switchMap((option) => this.getDocumentByRef(option.ref, option.category)),
-      shareReplay(1),
-    );
+    this.documentRefAndCategory$
+      .pipe(
+        filter(Boolean),
+        tap((res) => {
+          this.tocService.reload();
+          this.getRecentChanges(res.category, res.ref, 0, 1);
+          this.countDocumentVersionsData(res.category, res.ref);
+          this.getDocumentConfig(res.ref, res.category);
+        }),
+        switchMap((option) =>
+          this.getDocumentByRef(option.ref, option.category),
+        ),
+        tap((view) => this.documentViewBS.next(view)),
+      )
+      .subscribe();
+
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
     this.documentConfig$ = this.documentConfigBS
       .asObservable()
@@ -277,21 +280,15 @@ export class DocumentService implements OnDestroy {
     this.versionSearchOpen$ = this.versionSearchOpenBS.asObservable();
 
     this.searchPaneOpen$
-      .pipe(
-        takeUntil(this.destroy$),
-        filter((x) => !x),
-      )
+      .pipe(filter((x) => !x))
       .subscribe(() => this.setSearchParams({ searchText: '' }));
 
     this.searchParams$
-      .pipe(takeUntil(this.destroy$), skip(2), debounceTime(500))
+      .pipe(skip(2), debounceTime(500))
       .subscribe((params) => this.doSearch(params));
 
     this.versionSearchOpen$
-      .pipe(
-        takeUntil(this.destroy$),
-        filter((x) => !x),
-      )
+      .pipe(filter((x) => !x))
       .subscribe(() => this.setVersionSearchParams({ author: '' }));
 
     this.versionLatest$.subscribe((version) => {
@@ -305,7 +302,9 @@ export class DocumentService implements OnDestroy {
         );
     });
 
-    this.documentView$.subscribe((documentView) => {
+    this.documentView$ = this.documentViewBS.asObservable();
+
+    this.documentView$.pipe(filter(Boolean)).subscribe((documentView) => {
       this.setPageSubTitle(
         documentView.versionInfoVO.documentVersion,
         `${documentView.versionInfoVO.lastModifiedBy} (${documentView.versionInfoVO.entity})`,
@@ -320,13 +319,13 @@ export class DocumentService implements OnDestroy {
     this.collaborators$ = this.collaboratorsBS.asObservable();
     this.documentView$
       .pipe(
-        takeUntil(this.destroy$),
+        filter(Boolean),
         mergeMap((doc) => this.getCollaborators(doc.proposalRef)),
       )
       .subscribe((collaborators) => this.collaboratorsBS.next(collaborators));
     this.permissions$ = this.permissionsBS.asObservable();
     this.collaborators$
-      .pipe(takeUntil(this.destroy$), combineLatestWith(this.appConfig.config))
+      .pipe(combineLatestWith(this.appConfig.config))
       .subscribe(([collaborators, config]) => {
         const permissions = this.resolvePermissions(collaborators, config);
         this.permissionsBS.next(permissions);
@@ -359,9 +358,11 @@ export class DocumentService implements OnDestroy {
     this.updateElementContent$ = this.updateElementContentBS.asObservable();
   }
 
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
+  clearDocumentState() {
+    this.documentPageTitleBS.next(null);
+    this.documentConfigBS.next(null);
+    this.isDocumentLoadedBS.next(false);
+    this.documentViewBS.next(null);
     this.getAnnotations = null;
     this.setAnnotationMode = null;
   }
@@ -424,7 +425,7 @@ export class DocumentService implements OnDestroy {
           trackChangedEnabled,
         },
       )
-      .subscribe((resp) => resp);
+      .subscribe((resp) => this.getDocumentConfig(documentRef, documentType));
   }
 
   async downloadEConsilium(options: DownloadEConsiliumOptions) {
@@ -691,7 +692,6 @@ export class DocumentService implements OnDestroy {
           responseType: 'text' as any,
         },
       )
-      .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         console.log(res);
         this.updatedContentToSaveAfterReplace = res;
@@ -745,7 +745,6 @@ export class DocumentService implements OnDestroy {
         },
         { responseType: 'text' as 'json' },
       )
-      .pipe(takeUntil(this.destroy$))
       .subscribe((res) => {
         this.updatedContentToSaveAfterReplace = res;
         this.replacedTextPresent = true;
@@ -1481,7 +1480,7 @@ export class DocumentService implements OnDestroy {
           baseVersionTitle,
           revisedBaseVersion,
         })
-        .pipe(takeUntil(this.destroy$), take(1))
+        .pipe(take(1))
         .subscribe((subTitle: string) => {
           this.documentPageTitleBS.next(subTitle);
         });
@@ -1492,7 +1491,7 @@ export class DocumentService implements OnDestroy {
           updatedByFull: updatedBy,
           updatedOn: updatedDate,
         })
-        .pipe(takeUntil(this.destroy$), take(1))
+        .pipe(take(1))
         .subscribe((subTitle: string) => {
           this.documentPageTitleBS.next(subTitle);
         });

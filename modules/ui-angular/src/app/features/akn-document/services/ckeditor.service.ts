@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/member-ordering */
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Inject, Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
-import { combineLatest, map, Subject, take, takeUntil } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Subject } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { ActionManagerConnector } from '@/features/akn-document/services/action-manager-connector';
@@ -38,7 +37,7 @@ import { TableOfContentService } from './table-of-content.service';
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
 @Injectable()
-export class CKEditorService implements OnDestroy {
+export class CKEditorService {
   private actionManagerConnector?: ActionManagerConnector;
   private leosEditorConnector?: LeosEditorConnector;
   private userGuidanceConnector?: UserGuidanceConnector;
@@ -52,9 +51,6 @@ export class CKEditorService implements OnDestroy {
   private checkBoxesConnector?: CheckBoxesConnector;
 
   private openStateSubj = new Subject<EditorOpenState>();
-  private destroy$ = new Subject<void>();
-
-  public openState$ = this.openStateSubj.asObservable();
 
   constructor(
     private leosLegacyService: LeosLegacyService,
@@ -73,7 +69,8 @@ export class CKEditorService implements OnDestroy {
     private mergeContributionService: MergeContributionsService,
   ) {}
 
-  ngOnDestroy() {
+  destroyDocumentEditor() {
+    this.destroyEditorInstance();
     this.leosEditorConnector?.destroy();
     this.actionManagerConnector?.destroy();
     this.userGuidanceConnector?.destroy();
@@ -85,16 +82,40 @@ export class CKEditorService implements OnDestroy {
     this.mergeContributionConnector?.destroy();
     this.datePickerConnector?.destroy();
     this.checkBoxesConnector?.destroy();
-    this.destroy$.next();
-    this.destroy$.complete();
+  }
+
+  get openState$() {
+    return this.openStateSubj.asObservable();
+  }
+
+  // called from document-actions-dropdown.component.html
+  toggleUserGuidance() {
+    this.documentService.seeUserGuidance().subscribe((userGuidance) => {
+      if (!userGuidance) {
+        this.userGuidanceConnector.enableUserGuidance(false);
+      } else {
+        this.userGuidanceConnector.receiveUserGuidance(
+          JSON.stringify(userGuidance),
+        );
+        this.userGuidanceConnector.enableUserGuidance(true);
+      }
+    });
+  }
+
+  // called from document-editor.component
+  closeElementEditor() {
+    this.leosEditorConnector?.closeElement();
   }
 
   init() {
     // TODO: this should not be hardcoded
     const rootElement = this.domDocument.getElementById('docContainer');
-
     combineLatest([this.leosLegacyService.require$, this.getLeosState()])
-      .pipe(take(1))
+      .pipe(
+        distinctUntilChanged(
+          (a, b) => JSON.stringify(a[1]) === JSON.stringify(b[1]),
+        ),
+      )
       .subscribe(([require, leosState]) => {
         require(['js/leosModulesBootstrap']);
         this.initActionManager(require, leosState, rootElement);
@@ -112,11 +133,9 @@ export class CKEditorService implements OnDestroy {
         }
       });
 
-    this.documentService.documentView$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.refreshStateAllAvailableConnectors();
-      });
+    this.documentService.documentView$.subscribe(() => {
+      this.refreshStateAllAvailableConnectors();
+    });
   }
 
   refreshStateAllAvailableConnectors() {
@@ -131,12 +150,13 @@ export class CKEditorService implements OnDestroy {
     this.mergeContributionConnector?.$triggerStateChange();
     if (this.datePickerConnector) {
       const rootElement = this.domDocument.getElementById('docContainer');
-      combineLatest([this.leosLegacyService.require$, this.getLeosState()])
-        .pipe(take(1))
-        .subscribe(([require, leosState]) => {
-          require(['js/leosModulesBootstrap']);
-          this.initDatePicker(require, leosState, rootElement);
-        });
+      combineLatest([
+        this.leosLegacyService.require$,
+        this.getLeosState(),
+      ]).subscribe(([require, leosState]) => {
+        require(['js/leosModulesBootstrap']);
+        this.initDatePicker(require, leosState, rootElement);
+      });
     }
     this.datePickerConnector?.$triggerStateChange();
     this.checkBoxesConnector?.$triggerStateChange();
@@ -164,6 +184,8 @@ export class CKEditorService implements OnDestroy {
   changeEnableTrackChangesState(isTrackChangesEnabled) {
     this.leosEditorConnector.getState().isTrackChangesEnabled =
       isTrackChangesEnabled;
+    this.leosEditorConnector.$triggerStateChange();
+    this.trackChangesConnector.$triggerStateChange();
   }
 
   getSeeTrackChangesState() {
@@ -184,9 +206,9 @@ export class CKEditorService implements OnDestroy {
   }
 
   /*
-  This function destroys the instance of the active ckeditor instance on each document page.
-   */
-  destroyEditorInstance() {
+      This function destroys the instance of the active ckeditor instance on each document page.
+     */
+  private destroyEditorInstance() {
     this.leosEditorConnector.onUnregister(
       this.leosEditorConnector,
       'onUnregister',
@@ -421,32 +443,11 @@ export class CKEditorService implements OnDestroy {
     });
   }
 
-  // called from document-actions-dropdown.component.html
-  toggleUserGuidance() {
-    this.documentService.seeUserGuidance().subscribe((userGuidance) => {
-      if (!userGuidance) {
-        this.userGuidanceConnector.enableUserGuidance(false);
-      } else {
-        this.userGuidanceConnector.receiveUserGuidance(
-          JSON.stringify(userGuidance),
-        );
-        this.userGuidanceConnector.enableUserGuidance(true);
-      }
-    });
-  }
-
-  // called from document-editor.component
-  closeElementEditor() {
-    this.leosEditorConnector?.closeElement();
-  }
-
   private getLeosState() {
     return combineLatest([
       this.appConfig.config,
       this.documentService.documentConfig$,
     ]).pipe(
-      takeUntil(this.destroy$),
-      take(1),
       map(([config, extraConfig]) =>
         this.renameConfigKeysForEditor({ ...config, ...extraConfig }),
       ),

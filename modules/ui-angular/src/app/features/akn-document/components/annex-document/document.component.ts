@@ -70,6 +70,9 @@ export class DocumentComponent
   ngOnDestroy(): void {
     this.documentService.setIsEditorOpen(false);
     this.bookmarkMutationObserver?.disconnect();
+    if (!this.readonly) {
+      this.documentService.clearDocumentState();
+    }
     this.destroy$.next('');
     this.destroy$.complete();
   }
@@ -91,7 +94,7 @@ export class DocumentComponent
         .pipe(takeUntil(this.destroy$))
         .subscribe((documentView) => {
           if (!this.contributionView) {
-            this.loadDocument(documentView.editableXml);
+            this.loadDocument(documentView?.editableXml ?? '');
           }
         });
 
@@ -247,6 +250,7 @@ export class DocumentComponent
     const xmlDoc = parser.parseFromString(xml, 'text/html');
     const akomantosoEl = xmlDoc.querySelector('akomantoso');
 
+    if (!akomantosoEl) return xml;
     if (this.documentType !== 'coverPage' && akomantosoEl) {
       akomantosoEl
         .querySelectorAll('meta, coverPage')
@@ -348,7 +352,8 @@ export class DocumentComponent
       return {
         elementId: data.elementId,
         elementType: data.elementType,
-        elementFragment: elt === null ? null: this.cleanForTransformation(elt.outerHTML),
+        elementFragment:
+          elt === null ? null : this.cleanForTransformation(elt.outerHTML),
       };
     }
     return {
