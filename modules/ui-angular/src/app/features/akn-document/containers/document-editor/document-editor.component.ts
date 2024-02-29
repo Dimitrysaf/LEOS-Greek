@@ -24,6 +24,7 @@ import {
   BehaviorSubject,
   combineLatest,
   debounceTime,
+  filter,
   Observable,
   Subject,
   take,
@@ -264,7 +265,7 @@ export class DocumentEditorComponent
     this.loadStyleSheet();
 
     this.documentService.documentView$
-      .pipe(takeUntil(this.destroy$))
+      .pipe(takeUntil(this.destroy$), filter(Boolean))
       .subscribe((documentView) => {
         this.loadingService.setTaskOver('refresh', this.documentRef);
         this.documentService.setDidDocumentLoadAndRender(true);
@@ -452,7 +453,7 @@ export class DocumentEditorComponent
   ngOnDestroy() {
     this.tocService.setIsEditMode(false);
     // called on every document view page destruction in order to avoid multiple instances of ckeditor
-    this.cdkEditor.destroyEditorInstance();
+    this.cdkEditor.destroyDocumentEditor();
     //remove every session related actions from the user and clean the document relaod if it is present
     this.coEditionWSService.setShouldReloadAfterUpdate();
     this.coEditionWSService.removeDocumentCoEditInfo(this.documentRef);

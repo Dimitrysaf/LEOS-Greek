@@ -481,7 +481,9 @@ export abstract class DocumentActionsService {
             'page.editor.actions-dropdown.enable-track-changes',
           ),
           isSlider: true,
-          disabled: !this.permissions.includes('CAN_ACTIVATE_TRACK_CHANGES'),
+          disabled:
+            !this.permissions.includes('CAN_ACTIVATE_TRACK_CHANGES') ||
+            this.documentService.isEditorOpen$,
           value: this.isTrackChangesEnabled,
           actionFn: () => this.toggleTrackChangesEnabled(),
         },
@@ -491,6 +493,7 @@ export abstract class DocumentActionsService {
           label: this.translateService.instant(
             'page.editor.actions-dropdown.see-track-changes',
           ),
+          disabled: this.documentService.isEditorOpen$,
           isSlider: true,
           value: this.seeTrackChanges,
           actionFn: () => this.toggleSeeTrackChanges(),
@@ -907,8 +910,8 @@ export abstract class DocumentActionsService {
 
   private showCleanVersion() {
     return (
-      ((!this.isMandateMemorandum() &&
-        !this.isMandateExplanatory()) &&
+      (!this.isMandateMemorandum() &&
+        !this.isMandateExplanatory() &&
         this.isCN()) ||
       this.isClonedProposal()
     );
