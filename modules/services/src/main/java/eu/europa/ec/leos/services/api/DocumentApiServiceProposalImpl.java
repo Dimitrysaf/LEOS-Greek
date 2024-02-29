@@ -87,7 +87,7 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
     @Override
     protected ExportOptions getExportOptions(XmlDocument original, XmlDocument currentDocument, Class<XmlDocument> clazz, boolean isWithAnnotations) {
         ExportOptions exportOptions = new ExportLW(ExportOptions.Output.PDF, clazz, isWithAnnotations);
-        exportOptions.setExportVersions(new ExportVersions<>(isClonedProposal(original) ? original : null, currentDocument));
+        exportOptions.setExportVersions(new ExportVersions<>( null, currentDocument));
         return exportOptions;
     }
 
