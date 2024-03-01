@@ -40,7 +40,7 @@ export class DocumentAnnotationsComponent
 {
   @Input() documentId: string;
   @Input() connectedEntity?: string;
-  @Input() containerId = 'docContainer';
+  @Input() containerId;
   @Input() operationMode: AnnotateOperationMode = 'NORMAL';
   @Input() permissions: Permission[] = [];
   @Input() proposalRef?: string;

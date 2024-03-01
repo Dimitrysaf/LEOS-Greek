@@ -36,6 +36,7 @@ export class DocumentComponent
   implements OnInit, AfterViewInit, OnDestroy, OnChanges
 {
   @Input() containerId: string;
+  @Input() mainContainerId: string;
   @Input() containerClass: NgClass['ngClass'] = '';
   @Input() documentType: string;
   @Input() xml: string;
