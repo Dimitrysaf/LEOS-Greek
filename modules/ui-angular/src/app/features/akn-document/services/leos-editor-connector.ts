@@ -140,7 +140,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     const documentType = this.documentService.documentType;
     this.elementUnderEdit = data.elementId;
     this.documentService.setIsEditorOpen(true);
-    const isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
     if (
       this.coEditionService.checkForCoEdition(
         'EDIT_ELEMENT',
