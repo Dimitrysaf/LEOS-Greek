@@ -94,8 +94,8 @@ export class DocumentComponent
       this.documentService.documentView$
         .pipe(takeUntil(this.destroy$))
         .subscribe((documentView) => {
-          if (!this.contributionView) {
-            this.loadDocument(documentView?.editableXml ?? '');
+          if (documentView && !this.contributionView) {
+            this.loadDocument(documentView.editableXml);
           }
         });
 
