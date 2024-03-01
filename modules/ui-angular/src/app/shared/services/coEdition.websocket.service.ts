@@ -241,6 +241,10 @@ export class CoEditionServiceWS {
     return this.coEditionForDocument.asObservable();
   }
 
+  getDocCoEditionInfoData() {
+    return this.coEditionForDocument.getValue();
+  }
+
   get allCoEditionInfo(): Observable<Record<string, CoEditionVO[]>> {
     return this.groupedCoEditionsById.asObservable();
   }
