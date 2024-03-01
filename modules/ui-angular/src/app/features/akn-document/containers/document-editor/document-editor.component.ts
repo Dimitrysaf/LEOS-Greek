@@ -87,6 +87,7 @@ export class DocumentEditorComponent
   presenterId: string;
   connectedEntity: string;
   containerId = 'docContainer';
+  mainContainerId = 'mainContainer';
   documentRef: string;
   documentType: string;
   proposalRef: string;

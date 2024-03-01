@@ -381,6 +381,7 @@
           <!-- Document with editor -->
           <app-document
             [containerId]="containerId"
+            [mainContainerId]="mainContainerId"
             [documentType]="documentType"
             [readonly]="
               environmentService.isCouncil() &&
@@ -412,6 +413,7 @@
         >
           <app-document
             containerId="versionContainer"
+            [mainContainerId]="mainContainerId"
             [xml]="versionForView"
             [containerClass]="{
               'leos-double-comparison-content': isCNInstance,
@@ -441,6 +443,7 @@
         >
           <app-document
             containerId="versionComparisonContainer"
+            [mainContainerId]="mainContainerId"
             [xml]="versionsComparisonForView"
             [containerClass]="{
               'leos-double-comparison-content': isCNInstance,
@@ -490,7 +493,7 @@
             *ngIf="showAnnotations">
                 <eui-page-column-body class="flex-grow-1">
                     <app-document-annotations
-                            [containerId]="containerId"
+                            [containerId]="mainContainerId"
                             [connectedEntity]="connectedEntity"
                             [proposalRef]="proposalRef"
                             [permissions]="documentService.permissions$ | async"
@@ -523,6 +526,7 @@
           <app-document
             #contributionViewContainer
             containerId="contributionViewContainer"
+            [mainContainerId]="mainContainerId"
             [xml]="contributionForView"
             [contributionView]=true
             [containerClass]="{
