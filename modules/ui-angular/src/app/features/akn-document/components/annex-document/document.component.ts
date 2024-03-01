@@ -241,6 +241,7 @@ export class DocumentComponent
       this.documentService.setDidDocumentLoadAndRender(true);
     }
     if (!this.readonly) {
+      this.showElementsBeingEdited(this.coEditionWSService.getDocCoEditionInfoData());
       this.initTrackChangesActions();
       this.ckeditorService.refreshStateAllAvailableConnectors();
     }
