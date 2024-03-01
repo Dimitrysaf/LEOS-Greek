@@ -58,7 +58,7 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
 
         String targetName = actualTargetItem.getTocItem().getAknTag().value();
         result.setSourceItem(sourceItem);
-        result.setTargetItem(actualTargetItem);
+        result.setTargetItem(targetItem);
         boolean indentAllowed;
 
         switch (droppedElementTagName) {
