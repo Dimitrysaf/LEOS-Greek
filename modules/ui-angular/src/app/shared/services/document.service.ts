@@ -47,6 +47,7 @@ import {
 } from '../models/document-view-response.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
+import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 
 export enum RelevantElements {
   ALL = 'ALL',

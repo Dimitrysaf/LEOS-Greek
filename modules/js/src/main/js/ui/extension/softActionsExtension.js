@@ -74,9 +74,9 @@ define(function SoftActionsExtensionModule(require) {
                 id = _resolveId(id, direction, parentElement);
                 var movedElement = _findMovedElementById(id);
                 if (movedElement) { // See LEOS-5227 point 5
-                    var containsLabel = (firstLabels.indexOf(label) > -1);
+                    var containsLabel = (firstLabels.indexOf({label,id}) > -1);
                     if(!containsLabel) {
-                        firstLabels.push(label);
+                        firstLabels.push({label,id});
                         var nums = $(moveItem).children(NUM);
                         var contents = $(moveItem).children(CONTENT);
                         var subparagraphs = $(moveItem).children(SUBPARAGRAPH);
@@ -178,10 +178,19 @@ define(function SoftActionsExtensionModule(require) {
         return movedElement;
     }
     
-    function _displaySoftMoveLabels(target) {
+    function _displaySoftMoveLabels(target, otherTargets) {
         if(target != null) {
             _displaySoftMoveLabelForDirection("TO", target);
             _displaySoftMoveLabelForDirection("FROM", target);
+        }
+        if (!!otherTargets && otherTargets.length > 0) {
+            for (const t of otherTargets) {
+                const targetElt = document.getElementById(t);
+                if (!!targetElt) {
+                    _displaySoftMoveLabelForDirection("TO", targetElt);
+                    _displaySoftMoveLabelForDirection("FROM", targetElt);
+                }
+            }
         }
     }
 
@@ -194,7 +203,7 @@ define(function SoftActionsExtensionModule(require) {
         var connector = this;
         log.debug("Soft Actions extension state changed...");
         setTimeout(function(){ 
-            _displaySoftMoveLabels(connector.target);
+            _displaySoftMoveLabels(connector.target, connector.otherTargets);
         }, 1000);
     }
 

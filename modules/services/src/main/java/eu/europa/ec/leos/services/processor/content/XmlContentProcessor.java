@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.model.xml.Element;
@@ -28,6 +29,8 @@ import java.util.Map;
 public interface XmlContentProcessor {
 
     byte[] addTrackChangesAttributes(byte[] xmlContent);
+
+    byte[] addTrackChangesAttributes(byte[] xmlContent, String elementId);
 
     byte[] anonymizeTrackChanges(byte[] xmlContent);
 
@@ -90,6 +93,8 @@ public interface XmlContentProcessor {
     byte[] applyDeleteActionOnElement(byte[] xmlContent, String elementId, boolean accept);
 
     byte[] applyAddActionOnElement(byte[] xmlContent, String elementId, boolean accept);
+
+    byte[] restoreNumElementOnIntermediateNodes(byte[] xmlContent, String originId, String destId, String tagName);
 
     /**
      * Finds the first element with the id,if there are others, XML is incorrect
@@ -358,4 +363,7 @@ public interface XmlContentProcessor {
     byte[] convertAlineasInDocumentContent(byte[] xmlContent);
 
     byte[] removeDuplicateIds(byte[] xmlContent, boolean namespaceEnabled);
+
+    byte[] addTrackChangesAttributesForMovedElement(byte[] xmlContent, String elementId, SoftActionType direction, String trackUser, String softUser,
+                                                    String title);
 }

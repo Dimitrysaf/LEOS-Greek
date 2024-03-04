@@ -84,6 +84,8 @@ const LIST_OF_DISABLE_BUTTONS = [SEARCH_ACTION_ID, RELOAD_SECTION_ID];
 
 @Injectable()
 export abstract class DocumentActionsService {
+  applyDisabled$: Observable<boolean>;
+
   public actionsItems$: Observable<IRibbonToolbarSection[]>;
   protected pageMode: PageMode;
   protected leosConfig: LeosConfig;
@@ -94,8 +96,10 @@ export abstract class DocumentActionsService {
   private permissions: Permission[];
   private isTrackChangesEnabled = true;
   private seeTrackChanges = true;
+  private mergeWithTrackChanges = false;
 
   private actionItemsBS = new BehaviorSubject<IRibbonToolbarSection[]>([]);
+  private applyDisabledBS = new BehaviorSubject<boolean>(true);
 
   protected constructor(
     protected router: Router,
@@ -115,9 +119,18 @@ export abstract class DocumentActionsService {
     protected appConfigService: AppConfigService,
   ) {
     this.actionsItems$ = this.actionItemsBS.asObservable();
+    this.applyDisabled$ = this.applyDisabledBS.asObservable();
 
     this.documentService.isEditorOpen$.subscribe((isOpen) => {
       this.isEditorOpen = isOpen;
+    });
+
+    this.mergeContributionService.contributionSelected$.subscribe((value) => {
+      if (value || !this.canAcceptTrackChanges()) {
+        this.applyDisabledBS.next(true);
+      } else {
+        this.applyDisabledBS.next(false);
+      }
     });
 
     combineLatest([
@@ -136,6 +149,7 @@ export abstract class DocumentActionsService {
       this.seeTrackChanges =
         (!this.profile || this.profile.trackChangesEnabled) &&
         this.documentConfig.trackChangesShowed;
+      this.updateTrackChangesStatus();
       this.permissions = permissions;
       const newActions = this.buildActions();
       this.actionItemsBS.next(newActions);
@@ -748,17 +762,34 @@ export abstract class DocumentActionsService {
         id: COMPARE_EXPORT_DROPDOWN_ID,
         euiSize: 's',
         euiStyle: 'secondary',
-        label: 'Apply',
+        description: this.translateService.instant(
+          'page.editor.contribution.actions-button.tooltip',
+        ),
         iconClass: 'eui-icon-more-vertical',
         items: this.buildMergeContributionApplyDropdownOptions(),
+        cssClasses:
+          'eui-button--basic eui-button--icon-only',
+      },
+      {
+        type: IRibbonToolbarType.BUTTON,
+        id: 'apply-id',
+        euiSize: 's',
+        euiStyle: 'secondary',
+        label: this.translateService.instant(
+          'page.editor.contribution.view.actions.apply',
+        ),
+        disabled: this.applyDisabled$,
+        actionFn: () => this.handleMerge(),
       },
       {
         type: IRibbonToolbarType.BUTTON,
         id: 'send-feedback-id',
         euiSize: 's',
         euiStyle: 'secondary',
-        label: 'Send feedback',
-        actionFn: () => null,
+        label: this.translateService.instant(
+          'page.editor.contribution.actions.view.and.merge.actions.send.feedback',
+        ),
+        actionFn: () => this.mergeContributionService.onClickSendFeedback(),
       },
     ];
   }
@@ -767,26 +798,70 @@ export abstract class DocumentActionsService {
     return [
       {
         id: MERGE_CONTRIBUTION_APPLY_CHANGES_ID,
-        command: () => null,
+        command: () => this.onClickApplyAllChanges(),
         label: this.translateService.instant(
           'page.editor.contribution.actions.view.and.merge.actions.apply.changes',
         ),
+        disabled: !this.canAcceptTrackChanges(),
       },
       {
         id: MERGE_CONTRIBUTION_APPLY_CHANGES_TC_ID,
-        command: () => null,
+        command: () => this.onClickApplyAllChangesWithTC(),
         label: this.translateService.instant(
           'page.editor.contribution.actions.view.and.merge.actions.apply.changes.tc',
         ),
+        disabled: !this.canAcceptTrackChanges(),
       },
       {
         id: MERGE_CONTRIBUTION_MARK_AS_PROCESSED_ID,
-        command: () => null,
+        command: () => this.mergeContributionService.onClickMarkAsProcessed(),
         label: this.translateService.instant(
           'page.editor.contribution.actions.view.and.merge.actions.mark',
         ),
+        disabled: !this.canRejectTrackChanges(),
       },
     ];
+  }
+
+  private onClickApplyAllChanges() {
+    this.mergeWithTrackChanges = false;
+    this.openMergeAllContributionsChangesDialog();
+  }
+
+  private onClickApplyAllChangesWithTC() {
+    this.mergeWithTrackChanges = true;
+    this.openMergeAllContributionsChangesDialog();
+  }
+
+  private openMergeAllContributionsChangesDialog() {
+    const content = this.translateService.instant(
+      `page.editor.contribution.view.merge-contributions.accept-all.modal-text`,
+    );
+    const conteSanitized = this.domSanitizer.bypassSecurityTrustHtml(content);
+
+    this.dialogService.openDialog({
+      title: this.translateService.instant(
+        'page.editor.contribution.view.merge-contributions.accept-all.modal-title',
+      ),
+      content: conteSanitized as TemplatePortal,
+      acceptLabel: this.translateService.instant('global.actions.continue'),
+      dismissLabel: this.translateService.instant('global.actions.cancel'),
+      accept: () => {
+        this.onAcceptMergeAllContributions();
+      },
+    });
+  }
+
+  private onAcceptMergeAllContributions() {
+    this.ckEditorService.handleMergeContributionsActions(this.mergeWithTrackChanges, true);
+  }
+
+  private onCancelMergeAllContributions() {
+  }
+
+  private handleMerge() {
+    this.ckEditorService.handleMergeContributionsActions(this.mergeWithTrackChanges, false);
+    this.mergeContributionService.handleContributionSelectCount(false, true);
   }
 
   private toggleUserGuidance() {

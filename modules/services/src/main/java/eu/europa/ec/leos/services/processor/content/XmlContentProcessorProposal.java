@@ -319,7 +319,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Override
     public byte[] removeElementById(byte[] xmlContent, String elementId, boolean isTrackChangesEnabled) {
-        if (isTrackChangesEnabled()) {
+        if (isTrackChangesEnabled) {
             Element element = getElementById(xmlContent, elementId);
             if (element == null) {
                 return xmlContent;
@@ -450,6 +450,13 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         for (int i = 0; i < children.size(); i++) {
             restoreNodeStructure(children.get(i));
         }
+    }
+
+    @Override
+    public byte[] restoreNumElementOnIntermediateNodes(byte[] xmlContent, String originId, String destId, String tagName) {
+        Document document = createXercesDocument(xmlContent);
+        document = restoreNumElementOnIntermediateNodes(document, originId, destId, tagName);
+        return nodeToByteArray(document);
     }
 
     private Document restoreNumElementOnIntermediateNodes(Document doc, String originId, String destId, String tagName) {

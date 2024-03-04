@@ -30,6 +30,7 @@ import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.exception.NotFoundException;
+import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -196,7 +197,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     @Override
     public DocumentViewResponse compareAndShowRevision(String contextPath,
                                                        String documentRef,
-                                                       String contributionsVersionRef, String legFileName) {
+                                                       String contributionsVersionRef, String legFileName) throws IOException {
         XmlDocument document = this.findDocumentByRef(documentRef);
         Class<? extends XmlDocument> docClass = LeosCategoryClass.getClass(document.getCategory());
         XmlDocument contributionVersion = Optional.ofNullable(this.contributionService.findVersionByVersionedReference(contributionsVersionRef, docClass))
@@ -204,10 +205,14 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         XmlDocument originalVersion = Optional.ofNullable(this.leosRepository.findFirstVersion(docClass, contributionVersion.getMetadata().get().getRef()))
                 .orElseThrow(() -> new RuntimeException(String.format("First version not found for document %s", documentRef)));
         LeosPackage leosPackage = this.leosRepository.findPackageByDocumentId(originalVersion.getId());
+        LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
+        Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().
+                getSource().getBytes());
+        byte[] contributionContent = (byte[]) legContent.get(contributionVersion.getName());
         Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
 
         String contributionHtml = documentContentService.getDocumentForContributionAsHtml(
-                contributionVersion.getContent().get().getSource().getBytes(), contextPath,
+                contributionContent, contextPath,
                 securityContext.getPermissions(contributionVersion));
 
 

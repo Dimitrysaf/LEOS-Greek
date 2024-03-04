@@ -30,6 +30,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFr
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
+import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.manageListContainingOnlySubpoints;
@@ -1271,6 +1272,12 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             }
         }
     }
+
+    @Override
+    public byte[] restoreNumElementOnIntermediateNodes(byte[] xmlContent, String originId, String destId, String tagName) {
+        return xmlContent;
+    }
+
 
     @Override
     public byte[] applyMoveActionOnElement(byte[] xmlContent, String elementId, boolean accept) {

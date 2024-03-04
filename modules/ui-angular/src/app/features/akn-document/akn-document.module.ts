@@ -8,7 +8,6 @@ import { RouteReuseStrategy } from '@angular/router';
 import { AknDocumentRoutingModule } from '@/features/akn-document/akn-document-routing.module';
 import { DownloadEconsiliumComponent } from '@/features/akn-document/components/download-econsilium/download-econsilium.component';
 import { DownloadEconsiliumModalComponent } from '@/features/akn-document/components/download-econsilium-modal/download-econsilium-modal.component';
-import { RevisionActionsDropdownComponent } from '@/features/akn-document/components/revision-actions-dropdown/revision-actions-dropdown.component';
 import { RevisionPaneGroupComponent } from '@/features/akn-document/components/revision-pane-group/revision-pane-group.component';
 import { RibbonToolbarDropdownComponent } from '@/features/akn-document/components/ribbon-toolbar-dropdown/ribbon-toolbar-dropdown.component';
 import { SearchVersionsPaneComponent } from '@/features/akn-document/components/search-versions-pane/search-versions-pane.component';
@@ -16,7 +15,6 @@ import { RevisionPaneComponent } from '@/features/akn-document/containers/revisi
 import { DocumentActionsService } from '@/features/akn-document/services/document-actions.service';
 import { DocumentActionsMandateService } from '@/features/akn-document/services/document-actions-mandate.service';
 import { DocumentActionsProposalService } from '@/features/akn-document/services/document-actions-proposal.service';
-import { MergeActionsService } from '@/features/akn-document/services/merge-actions.service';
 import { TocInlineEditMenuMandateService } from '@/features/akn-document/services/toc-inline-edit-menu.mandate.service';
 import { TocInlineEditMenuProposalService } from '@/features/akn-document/services/toc-inline-edit-menu.proposal.service';
 import { TocInlineEditMenuService } from '@/features/akn-document/services/toc-inline-edit-menu.service';
@@ -82,7 +80,6 @@ export const DOCUMENT_ACTIONS_SERVICE =
     SaveVersionDialogComponent,
     RevisionPaneComponent,
     RevisionPaneGroupComponent,
-    RevisionActionsDropdownComponent,
     TrackChangesActionsComponent,
     RibbonToolbarContainerComponent,
     RibbonToolbarButtonComponent,
@@ -142,7 +139,6 @@ export const DOCUMENT_ACTIONS_SERVICE =
     TrackChangesActionsService,
     CKEditorService,
     BlockDocumentEditorService,
-    MergeActionsService,
   ],
   exports: [TrackChangesActionsComponent, MergeActionsComponent],
 })

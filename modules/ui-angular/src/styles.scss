@@ -189,6 +189,14 @@ article.leos-content-soft-new[leos\:softaction='add']
 }
 
 /* stylelint-disable-next-line selector-id-pattern */
+#contributionViewContainer span.leos-soft-move-label {
+  background-color: #808080;
+  cursor: pointer;
+  height: 18px;
+  padding: 2px 5px;
+}
+
+/* stylelint-disable-next-line selector-id-pattern */
 #docContainer .leos-soft-move-title {
   margin-left: 0;
 }
@@ -200,7 +208,21 @@ article.leos-content-soft-new[leos\:softaction='add']
 }
 
 /* stylelint-disable-next-line selector-id-pattern */
+#contributionViewContainer span.leos-transparent-soft-move-label {
+  background-color: #fff;
+  visibility: hidden;
+}
+
+/* stylelint-disable-next-line selector-id-pattern */
 #docContainer span.leos-toc-tree span.leos-soft-move-label {
+  font-family: 'Times New Roman', Times, serif;
+  font-weight: normal;
+  height: 16px;
+  padding: 2px;
+}
+
+/* stylelint-disable-next-line selector-id-pattern */
+#contributionViewContainer span.leos-soft-move-label {
   font-family: 'Times New Roman', Times, serif;
   font-weight: normal;
   height: 16px;
@@ -224,6 +246,19 @@ article.leos-content-soft-new[leos\:softaction='add']
 
 /* stylelint-disable-next-line selector-id-pattern */
 #docContainer span.leos-soft-move-label,
+.leos span.leos-transparent-soft-move-label {
+  border-radius: 4px;
+  color: #fff !important;
+  display: inline-block;
+  font-size: 15px;
+  font-style: normal;
+  line-height: 1;
+  margin: 0 2px;
+  text-decoration: none !important;
+}
+
+/* stylelint-disable-next-line selector-id-pattern */
+#contributionViewContainer span.leos-soft-move-label,
 .leos span.leos-transparent-soft-move-label {
   border-radius: 4px;
   color: #fff !important;
@@ -518,14 +553,24 @@ body {
 //create temporary ui rule for merged contributions
 // TODO: move this to document-editor.component.scss
 .contribution-view-merge-pane .contribution-wrapper-after-merge {
-  background-color: rgb(166 166 166 / 80%);
+  background-color: rgb(166 166 166 / 80%) !important;
   border: #8c8c8c thin solid;
+  [leos\:mergeAction]:not([leos\:selectedAction]), [leos\:mergeaction]:not([leos\:selectedaction]), ins, del, num {
+    background-color: rgb(166 166 166 / 0%) !important;
+  }
 
   .accept {
-    background-color: #f7f7f7;
+    background-color: #f7f7f7 !important;
+    [leos\:uid] {
+      background-color: #f7f7f7 !important;
+    }
   }
 
   .reject {
-    background-color: #f7f7f7;
+    background-color: #f7f7f7 !important;
+    [leos\:uid] {
+      background-color: #f7f7f7 !important;
+    }
   }
 }
+

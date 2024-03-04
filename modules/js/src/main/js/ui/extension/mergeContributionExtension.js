@@ -20,10 +20,20 @@ define(function mergeContributionExtensionModule(require) {
     var UTILS = require("core/leosUtils");
 
     var MAIN_ELEMENT_SELECTOR = "";
+    var REVISION_PREFIX = "revision-";
+    var MOVED_PREFIX = "moved_";
+    var DELETED_PREFIX = "deleted_";
     var MERGE_ACTION_ATTR = "leos:mergeAction";
+    var SELECTED_ACTION_ATTR = "leos:selectedAction";
+    var TRACK_ACTION_ATTR = "leos:action";
+    var SOFT_ACTION_ATTR = "leos:softaction";
     var MERGE_CONTRIBUTION = "merge-contribution-wrapper";
     var MERGE_ACTION_WRAPPER = ".merge-actions-wrapper";
-    var MOVE_FROM = "move_from",MOVE_TO = "move_to", PARENT_AFFECTED = "parent_affected";
+    var ACTION_DONE_CLASS = "contribution-wrapper-after-merge";
+    var SELECTED_CONTRIBUTION_CLASS = "selected-contribution-wrapper";
+    var MOVE_FROM = "move_from", INSERT = "insert", DELETE = "delete", PARENT_AFFECTED = "parent_affected", UNDO = "UNDO"
+        , PROCESSED = "PROCESSED", ACCEPT = "ACCEPT", ACCEPT_TC = "ACCEPT_TC";
+    var NUM = "num";
 
     var callback = (mutationList, observer) => {
         var $elements = $('.' + MERGE_CONTRIBUTION);
@@ -49,18 +59,17 @@ define(function mergeContributionExtensionModule(require) {
         var connector = this;
         log.debug("Change details extension state changed...");
         _requestTocItemList(connector);
+        _refreshContributions(connector);
     }
 
     function _registerActionTriggers(connector) {
-        var removed_elements = $("[leos\\:action='delete'], del");
-        var new_elements = $("[leos\\:action='insert'], ins");
-        var move_elements = $("[leos\\:softaction='" + MOVE_FROM + "']");
-        var changed_element = $.merge(removed_elements, new_elements, move_elements);
-        changed_element.each(function (index) {
-            var $element = $(changed_element[index]);
-            if ($element.attr('id').includes('revision-')) {
+        const $changed_element = $("[leos\\:action='" + DELETE + "'], del, [leos\\:action='" + INSERT + "'], ins, [leos\\:softaction='" + MOVE_FROM + "']");
+        var $parent_element;
+        for (let i = 0; i < $changed_element.length; i++) {
+            var $element = $($changed_element[i]);
+            if ($element.length > 0 && $element.attr('id') && $element.attr('id').includes(REVISION_PREFIX)) {
                 var $main_element = $element.closest(MAIN_ELEMENT_SELECTOR);
-                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== "num") {
+                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== NUM) {
                     if ($main_element.attr('id') != $element.attr('id')) {
                         $main_element.attr(PARENT_AFFECTED, "true");
                     } else {
@@ -68,41 +77,109 @@ define(function mergeContributionExtensionModule(require) {
                     }
                     _attachWrapperActionEvents(connector, $main_element)
                 }
-                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== "num")
-                {
-                    var $parent_element = $main_element.parents(MAIN_ELEMENT_SELECTOR);
-                    if ($parent_element.length > 0 && UTILS.getElementTagName($parent_element).toLowerCase() !== "num") {
+                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== NUM) {
+                    $parent_element = $main_element.parents(MAIN_ELEMENT_SELECTOR);
+                    if ($parent_element.length > 0 && UTILS.getElementTagName($parent_element).toLowerCase() !== NUM && $changed_element.index($parent_element) === -1) {
                         $parent_element.attr(PARENT_AFFECTED, "true");
                         _attachWrapperActionEvents(connector, $parent_element)
                     }
                 }
+                if (!!$parent_element && $parent_element.length > 0 && UTILS.getElementTagName($parent_element).toLowerCase() !== NUM
+                    && $changed_element.index($parent_element) === -1) {
+                    checkIfAlreadyProcessedAndSetCssClass($changed_element, $element, $parent_element);
+                }
+                if (UTILS.getElementTagName($main_element).toLowerCase() !== NUM) {
+                    checkIfAlreadyProcessedAndSetCssClass($changed_element, $element, $main_element);
+                }
             }
-        });
+        }
+        _checkAndRemoveInvalidActions();
+    }
+
+    function checkIfAlreadyProcessedAndSetCssClass($changed_elements, $element, $main_element) {
+        const $originalElementWithChangedID =$("#" + $element.attr('id').replace(REVISION_PREFIX, ''));
+        const $originalElement =$("#" + $element.attr('id').replace(REVISION_PREFIX, '').replace(MOVED_PREFIX, '').replace(DELETED_PREFIX, ''));
+        const action = $main_element.attr(MERGE_ACTION_ATTR);
+        if (!action && !$main_element.hasClass(SELECTED_CONTRIBUTION_CLASS)) {
+            if ($originalElementWithChangedID.length > 0 && $changed_elements.index($originalElementWithChangedID) !== -1 &&
+                ($element.attr(TRACK_ACTION_ATTR) === $originalElementWithChangedID.attr(TRACK_ACTION_ATTR)
+                    || $element.attr(SOFT_ACTION_ATTR) === $originalElementWithChangedID.attr(SOFT_ACTION_ATTR))) {
+                $main_element.addClass(ACTION_DONE_CLASS);
+            } else if ($originalElement.length === 0 && $changed_elements.index($originalElement) === -1 && $element.attr(TRACK_ACTION_ATTR) === DELETE) {
+                $main_element.addClass(ACTION_DONE_CLASS);
+            } else if ($originalElement.length > 0 && $changed_elements.index($originalElement) === -1  && $element.attr(TRACK_ACTION_ATTR) === INSERT && !$element.attr(SOFT_ACTION_ATTR)) {
+                $main_element.addClass(ACTION_DONE_CLASS);
+            }
+        } else if (!!action) {
+            $main_element.addClass(ACTION_DONE_CLASS);
+        } else {
+            $main_element.removeClass(ACTION_DONE_CLASS);
+        }
     }
 
     function _refreshActions($element, $actions) {
         const action = $element.attr(MERGE_ACTION_ATTR);
+        const selectedAction = $element.attr(SELECTED_ACTION_ATTR);
+        if (!!action && !selectedAction) {
+            $element.addClass(ACTION_DONE_CLASS);
+        }
         if ($actions.length > 0) {
-            if (!!action) {
+            if (!action && !selectedAction && $element.hasClass(ACTION_DONE_CLASS)) {
+                $actions.css({display: "none"});
+            } else if (!!selectedAction && !!action && action !== UNDO) {
                 const accepted = $actions.find("[data-widget-type='accepted']");
                 const accepted_tc = $actions.find("[data-widget-type='accepted_tc']");
                 const processed = $actions.find("[data-widget-type='processed']");
-                if ($actions.children()[0].style.display !== 'none') {
-                    $actions.children().css({display: "inline-block"});
-                    $($actions.children()[0]).css({display: "none"});
-                    if (action === 'ACCEPT') {
-                        accepted.css({display: "inline-block"});
-                        accepted_tc.css({display: "none"});
-                        processed.css({display: "none"});
-                    } else if (action === 'ACCEPT_TC') {
-                        accepted.css({display: "none"});
-                        accepted_tc.css({display: "inline-block"});
-                        processed.css({display: "none"});
-                    } else if (action === 'PROCESSED') {
-                        accepted.css({display: "none"});
-                        accepted_tc.css({display: "none"});
-                        processed.css({display: "inline-block"});
-                    }
+                $actions.children().css({display: "inline-block"});
+                $($actions.children()[0]).css({display: "none"});
+                accepted.css({display: "none"});
+                accepted_tc.css({display: "none"});
+                processed.css({display: "none"});
+            } else if (!!selectedAction && (!action || action === UNDO)) {
+                const accepted = $actions.find("[data-widget-type='accepted']");
+                const accepted_tc = $actions.find("[data-widget-type='accepted_tc']");
+                const processed = $actions.find("[data-widget-type='processed']");
+                $actions.children().css({display: "inline-block"});
+                $($actions.children()[0]).css({display: "none"});
+                if (selectedAction === ACCEPT) {
+                    accepted.css({display: "inline-block"});
+                    accepted_tc.css({display: "none"});
+                    processed.css({display: "none"});
+                } else if (selectedAction === ACCEPT_TC) {
+                    accepted.css({display: "none"});
+                    accepted_tc.css({display: "inline-block"});
+                    processed.css({display: "none"});
+                } else if (selectedAction === PROCESSED) {
+                    accepted.css({display: "none"});
+                    accepted_tc.css({display: "none"});
+                    processed.css({display: "inline-block"});
+                } else if (selectedAction === UNDO) {
+                    accepted.css({display: "none"});
+                    accepted_tc.css({display: "none"});
+                    processed.css({display: "none"});
+                }
+            } else if (!selectedAction && !!action && action !== UNDO) {
+                const accepted = $actions.find("[data-widget-type='accepted']");
+                const accepted_tc = $actions.find("[data-widget-type='accepted_tc']");
+                const processed = $actions.find("[data-widget-type='processed']");
+                $actions.children().css({display: "inline-block"});
+                $($actions.children()[0]).css({display: "none"});
+                if (action === ACCEPT) {
+                    accepted.css({display: "inline-block"});
+                    accepted_tc.css({display: "none"});
+                    processed.css({display: "none"});
+                } else if (action === ACCEPT_TC) {
+                    accepted.css({display: "none"});
+                    accepted_tc.css({display: "inline-block"});
+                    processed.css({display: "none"});
+                } else if (action === PROCESSED) {
+                    accepted.css({display: "none"});
+                    accepted_tc.css({display: "none"});
+                    processed.css({display: "inline-block"});
+                } else if (action === UNDO) {
+                    accepted.css({display: "none"});
+                    accepted_tc.css({display: "none"});
+                    processed.css({display: "none"});
                 }
             } else {
                 if ($actions.children()[1].style.display !== 'none') {
@@ -111,6 +188,60 @@ define(function mergeContributionExtensionModule(require) {
                 }
             }
         }
+    }
+
+    function _checkAndRemoveInvalidActions() {
+        const $wrappedElements = $("." + MERGE_CONTRIBUTION);
+
+        for (let i = 0; i < $wrappedElements.length; i++) {
+            const $wrappedElement = $($wrappedElements[i]);
+            const $wrappedParent = $wrappedElement.parents("." + MERGE_CONTRIBUTION);
+            let $wrappedChildren = null;
+            if (!!$wrappedParent && !!$wrappedParent.length > 0) {
+                $wrappedChildren = $wrappedParent.find("." + MERGE_CONTRIBUTION);
+            }
+
+            // If this is there only one action included in parent, no need to wrap the child
+            if (!!$wrappedChildren && $wrappedChildren.length === 1 && !$wrappedParent.attr(SOFT_ACTION_ATTR) && !$wrappedParent.attr(TRACK_ACTION_ATTR)
+                && $wrappedParent.attr(MERGE_ACTION_ATTR) === $wrappedElement.attr(MERGE_ACTION_ATTR)) {
+                _removeWrapperAndAction($wrappedElement);
+            }
+
+            // Checks if sub element has been moved to an added element
+            if (!!$wrappedParent && $wrappedParent.length > 0) {
+                const id = $wrappedElement.attr('id');
+                if (!!id && id.includes(MOVED_PREFIX)) {
+                    const $moveDestElt = $('#' + id.replaceAll(MOVED_PREFIX, ''));
+                    if ($moveDestElt.length === 1) {
+                        const $wrappedDestParent = $moveDestElt.parents("." + MERGE_CONTRIBUTION);
+                        if ($wrappedDestParent.length === 1 && !$wrappedDestParent.hasClass(ACTION_DONE_CLASS)
+                            && !!$wrappedDestParent.attr(TRACK_ACTION_ATTR) && $wrappedDestParent.attr(TRACK_ACTION_ATTR) === INSERT) {
+                            _removeWrapperAndAction($wrappedElement);
+                            // If action is not on parent and all children are not wrapped anymore, remove action on parent
+                            const $updatedMrappedChildren = $wrappedParent.find("." + MERGE_CONTRIBUTION);
+                            if ($updatedMrappedChildren.length === 0 && !$wrappedParent.attr(TRACK_ACTION_ATTR) && !$wrappedParent.attr(SOFT_ACTION_ATTR)) {
+                                _removeWrapperAndAction($wrappedParent);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Checks if sub element is included in element not yet added, action should be made on added parent
+            if ($wrappedParent.length === 1 && !$wrappedParent.hasClass(ACTION_DONE_CLASS)
+                && !!$wrappedParent.attr(TRACK_ACTION_ATTR) && $wrappedParent.attr(TRACK_ACTION_ATTR) === INSERT) {
+                _removeWrapperAndAction($wrappedElement);
+            }
+        }
+    }
+
+    function _removeWrapperAndAction($element) {
+        $element.removeClass(MERGE_CONTRIBUTION);
+        let $actions = $element.next(MERGE_ACTION_WRAPPER);
+        if (!!$actions && $actions.length > 0) {
+            $actions.remove();
+        }
+        $element.actions = null;
     }
 
     function _attachWrapperActionEvents(connector, $element) {
@@ -171,7 +302,6 @@ define(function mergeContributionExtensionModule(require) {
             $actions.css({
                 top: $element.position().top + 9,
                 left: left_position + 5 - actionsWidth,
-                height: elementHeigh + remainingSpace,
             });
         }
     }
@@ -212,7 +342,7 @@ define(function mergeContributionExtensionModule(require) {
     function _getActionButtons(connector, $element) {
         let actions = $element.actions;
         if (!actions) {
-            let mergeActionAttrVal = $element.attr(MERGE_ACTION_ATTR);
+            let mergeActionAttrVal = $element.attr(MERGE_ACTION_ATTR) || $element.attr(SELECTED_ACTION_ATTR);
             let action = mergeActionAttrVal != null ? true : false;
             let actionString = _generateActions(action);
             actions = ($.parseHTML(actionString))[0];

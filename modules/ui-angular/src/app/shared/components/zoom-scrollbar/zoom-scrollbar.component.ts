@@ -63,6 +63,18 @@ export class ZoomScrollbarComponent implements OnInit {
     this.onZoomChange({ target: { value: this._zoomLevel } });
   }
 
+  clearTextSelection() {
+    if (window.getSelection) {
+      if (window.getSelection().empty) {
+        window.getSelection().empty();
+      } else if (window.getSelection().removeAllRanges) {
+        window.getSelection().removeAllRanges();
+      }
+    } else if ((document as any).selection) {
+      (document as any).selection.empty();
+    }
+  }
+
   private emitZoomChange(zoomLevel: number) {
     const width = DOCUMENT_WIDTH * (zoomLevel / 100);
     const height = DOCUMENT_HEIGHT * (zoomLevel / 100);
@@ -90,17 +102,5 @@ export class ZoomScrollbarComponent implements OnInit {
     return (
       STARTING_VALUE + (offsetFromMiddle / actualRangeHalf) * displayRangeHalf
     );
-  }
-
-  clearTextSelection() {
-    if (window.getSelection) {
-      if (window.getSelection().empty) {
-        window.getSelection().empty();
-      } else if (window.getSelection().removeAllRanges) {
-        window.getSelection().removeAllRanges();
-      }
-    } else if ((document as any).selection) {
-      (document as any).selection.empty();
-    }
   }
 }

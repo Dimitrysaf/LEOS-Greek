@@ -13,11 +13,15 @@ export type SoftActionsConnectorOptions = {
 };
 
 export class SoftActionsConnector extends AbstractJavaScriptComponent<SoftActionsConnectorState> {
+  public otherTargets: string[];
+
   constructor(
     state: SoftActionsConnectorInitialState,
+    otherTargets: string[],
     private options: SoftActionsConnectorOptions,
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
+    this.otherTargets = otherTargets;
   }
 }
 

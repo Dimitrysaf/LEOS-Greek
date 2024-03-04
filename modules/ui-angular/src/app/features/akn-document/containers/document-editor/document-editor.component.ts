@@ -140,8 +140,6 @@ export class DocumentEditorComponent
   @ViewChild(DocumentTocComponent) documentTocComponent: DocumentTocComponent;
   @ViewChild('unSavedDialog') unSavedDialog: EuiDialogComponent;
   @ViewChild('openEditorDialog') openEditorDialog: EuiDialogComponent;
-  @ViewChild('mergeAllContributionsChangesDialog')
-  mergeAllContributionsChangesDialog: EuiDialogComponent;
   @ViewChild('confirmAnnexStructureChangeDialog')
   annexStructureChangeDialog: ConfirmDeleteDialogComponent;
 
@@ -201,7 +199,7 @@ export class DocumentEditorComponent
     public versionCompareService: VersionCompareService,
     private viewVersionService: ViewVersionService,
     private pageModeService: PageModeService,
-    private mergeContributionService: MergeContributionsService,
+    public mergeContributionService: MergeContributionsService,
   ) {
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
 
@@ -335,6 +333,7 @@ export class DocumentEditorComponent
         this.contribution = contribution;
         setTimeout(() => this.syncScrollingService.setSyncScroll(true));
         this.mergeContributionService.checkHandleNavCompareBtnDisabled();
+        this.cdkEditor.refreshStateAllAvailableConnectors();
       });
 
     this.documentService.documentConfig$
@@ -349,6 +348,12 @@ export class DocumentEditorComponent
       .subscribe((contributions) => {
         this.contributions = contributions;
         this.showContributionsPane = this.contributions.length > 0;
+        if (this.contribution) {
+          this.contribution = contributions.find((c) => c.legFileName === this.contribution.legFileName);
+          if (this.pageMode === PageMode.Contribution) {
+            this.mergeContributionService.viewAndMergeContribution(this.contribution);
+          }
+        }
       });
 
     this.mergeContributionService.processed$
@@ -731,27 +736,6 @@ export class DocumentEditorComponent
     );
   }
 
-  handleMerge() {
-    if (this.contributionActionSelected === 'accept_selected') {
-      this.processed = !this.processed;
-      this.mergeContributionService.handleContributionSelectCount(false, true);
-      this.cdkEditor.handleMergeContributionsActions(false, this.contribution);
-    } else {
-      this.mergeAllContributionsChangesDialog.openDialog();
-    }
-  }
-
-  onAcceptMergeAllContributions() {
-    this.processed = !this.processed;
-    this.mergeContributionService.toggleIsContributionDeclinedOrProcessed();
-    this.cdkEditor.handleMergeContributionsActions(true, this.contribution);
-    this.mergeAllContributionsChangesDialog.closeDialog();
-  }
-
-  onCancelMergeAllContributions() {
-    this.mergeAllContributionsChangesDialog.closeDialog();
-  }
-
   protected exploreMilestone(version: Version) {
     this.milestoneViewData = {
       createdBy: version.createdBy,
@@ -809,10 +793,10 @@ export class DocumentEditorComponent
   }
 
   private handleContributionsChanges() {
-    const nodeList =
+    const nodeList = this.contributionViewContainerElement ?
       this.contributionViewContainerElement.nativeElement?.querySelectorAll(
         '.merge-contribution-wrapper',
-      );
+      ) : [];
     const elemList = nodeList ? [...nodeList] : [];
     this.contributionChangesBS.next(elemList);
   }

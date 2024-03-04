@@ -120,7 +120,7 @@ public class ContributionControllerTest {
     }
 
     @Test
-    public void test_viewMergePane(){
+    public void test_viewMergePane() throws IOException {
         String TEST_CONTEXT_PATH = "/test-content-path";
         String TEST_DOCUMENT_REF = "documentRef";
         String TEST_DOCUMENT_TYPE = "documentType";

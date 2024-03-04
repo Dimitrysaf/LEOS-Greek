@@ -3,8 +3,6 @@ import { EuiDropdownButtonMenuComponent } from '@eui/components/eui-dropdown-but
 
 import { RibbonToolbarBaseComponent } from '@/features/akn-document/components/ribbon-toolbar-base/ribbon-toolbar-base.component';
 import {
-  IBaseRibbonToolbarItem,
-  IRibbonToolbarCheckbox,
   IRibbonToolbarDropdown,
 } from '@/features/akn-document/models/document-actions.model';
 

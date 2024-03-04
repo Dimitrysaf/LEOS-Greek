@@ -85,7 +85,7 @@ public class ContributionController {
                                                               @PathVariable("documentRef") String documentRef,
                                                               @PathVariable("documentType") String documentType,
                                                               @RequestParam String contributionVersionRef,
-                                                              @RequestParam String legFileName) {
+                                                              @RequestParam String legFileName) throws IOException {
         documentRef = encodeParam(documentRef);
         contributionVersionRef = encodeParam(contributionVersionRef);
         legFileName = encodeParam(legFileName);

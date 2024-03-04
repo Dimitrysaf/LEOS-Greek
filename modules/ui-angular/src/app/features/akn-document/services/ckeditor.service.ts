@@ -11,7 +11,6 @@ import { ActionManagerConnector } from '@/features/akn-document/services/action-
 import { ChangeDetailsConnector } from '@/features/akn-document/services/change-details-connector';
 import { LeosEditorConnector } from '@/features/akn-document/services/leos-editor-connector';
 import { MathJaxConnector } from '@/features/akn-document/services/math-jax-connector';
-import { MergeActionsService } from '@/features/akn-document/services/merge-actions.service';
 import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import { RefToLinkConnector } from '@/features/akn-document/services/ref-to-link-connector';
 import { SoftActionsConnector } from '@/features/akn-document/services/soft-actions-connector';
@@ -20,7 +19,6 @@ import { UserGuidanceConnector } from '@/features/akn-document/services/user-gui
 import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentConfig } from '@/shared/models';
-import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { LeosAppConfig } from '@/shared/models/leos.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
@@ -33,6 +31,7 @@ import { CheckBoxesConnector } from './check-boxes-connector';
 import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './table-of-content.service';
+import {MergeActionVO} from "@/shared/models/merge-action-vo.model";
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -65,7 +64,6 @@ export class CKEditorService {
     private environmentService: EnvironmentService,
     @Inject(DOCUMENT) private domDocument: Document,
     private blockDocumentEditorService: BlockDocumentEditorService,
-    private mergeActionsService: MergeActionsService,
     private mergeContributionService: MergeContributionsService,
   ) {}
 
@@ -193,16 +191,19 @@ export class CKEditorService {
   }
 
   handleMergeContributionsActions(
-    acceptAllContributions: boolean,
-    contribution: ContributionVO,
+    withTrackChanges: boolean,
+    all: boolean,
   ) {
-    this.mergeContributionConnector?.setAcceptAllContributions(
-      acceptAllContributions,
-    );
-    this.mergeContributionConnector?.setContributionToMerge(contribution);
-    this.mergeContributionConnector?.populateMergeActionList(
-      acceptAllContributions,
-    );
+    if (all) {
+      this.mergeContributionConnector?.acceptAndMergeAllChanges(withTrackChanges);
+    } else {
+      this.mergeContributionConnector?.handleMergeAction();
+    }
+  }
+
+  addMergeActionList(action: MergeActionVO) {
+    this.mergeContributionService.addMergeActionList(action);
+    this.mergeContributionConnector?.doUpdateMergeActionList({action: action, select: true});
   }
 
   /*
@@ -323,9 +324,11 @@ export class CKEditorService {
     leosState: any,
     rootElement: HTMLElement,
   ) {
+    const otherTargets = ['contributionViewContainer'];
     this.softActionsConnector = new SoftActionsConnector(
       //TODO pass only required state
       leosState,
+      otherTargets,
       {
         rootElement,
       },
@@ -379,8 +382,8 @@ export class CKEditorService {
           {
             rootElement,
           },
-          this.mergeActionsService,
           this.mergeContributionService,
+          this.domDocument,
         );
 
         require(['extension/mergeContributionExtension'], (

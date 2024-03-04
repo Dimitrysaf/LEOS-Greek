@@ -398,6 +398,16 @@ public class XercesUtils {
         return deletedNodes;
     }
 
+    public static void removeElementKeepingChildren(Node node) {
+        Validate.notNull(node, "Node cannot be null!");
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            node.getParentNode().insertBefore(child, node);
+        }
+        node.getParentNode().removeChild(node);
+    }
+
     public static Node replaceElement(Node newNode, Node oldNode) {
         Validate.notNull(newNode, "New node cannot be null!");
         Validate.notNull(oldNode, "Old node cannot be null!");
@@ -409,13 +419,13 @@ public class XercesUtils {
         Node fakeNodeWithNewContent = createNodeFromXmlFragment(node.getOwnerDocument(), ("<fake>" + newContent + "</fake>").getBytes(UTF_8), false);
         NodeList fakeNodeChildNodes = fakeNodeWithNewContent.getChildNodes();
         boolean isInline = false;
-        for (int i = fakeNodeChildNodes.getLength() - 1; i >= 0; i--) {
+        for (int i = fakeNodeChildNodes.getLength() - 1; i >= 0 ; i--) {
             Node childNode = fakeNodeChildNodes.item(i);
             if(childNode != null && childNode.getNodeName().equalsIgnoreCase(INLINE)) {
                 replaceElement(childNode, node);
                 isInline = true;
             } else {
-                addSibling(fakeNodeChildNodes.item(i), node, false);
+                addSibling(childNode, node, false);
             }
         }
         if(!isInline) {
@@ -497,9 +507,9 @@ public class XercesUtils {
         if (before) {
             newNode = parentNode.insertBefore(newNode, node);
         } else {
-            node = getNextSibling(node);
-            if (node != null) {
-                newNode = parentNode.insertBefore(newNode, node);
+            Node nextSibling = node.getNextSibling();
+            if (nextSibling != null) {
+                newNode = parentNode.insertBefore(newNode, nextSibling);
             } else {
                 newNode = parentNode.appendChild(newNode);
             }

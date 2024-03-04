@@ -3,9 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, filter, map, Observable, switchMap, tap } from 'rxjs';
+import {BehaviorSubject, filter, map, Observable, Subject, tap} from 'rxjs';
 
-import { MergeActionsService } from '@/features/akn-document/services/merge-actions.service';
 import {
   PageMode,
   PageModeService,
@@ -14,25 +13,25 @@ import { SyncDocumentScrollService } from '@/features/akn-document/services/sync
 import { ContributionStatus } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
-import {
-  CONTRIBUTION_SELECTED,
-  ContributionActionAttrValue,
-  MERGE_ACTION_ATTR,
-  MergeActionVO,
-} from '@/shared/models/merge-action-vo.model';
+import {MergeActionItem, MergeActionVO} from '@/shared/models/merge-action-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
-import { parentHasClass } from '@/shared/utils/dom';
 
 import { apiBaseUrl } from '../../../../config';
-
-const compareClasses = [
-  'leos-content-removed',
-  'leos-content-removed-cn',
-  'leos-content-new',
-  'leos-content-new-cn',
-  'leos-double-compare-removed',
-  'leos-double-compare-added',
-];
+import {EuiDialogService} from "@eui/components/eui-dialog";
+import {TemplatePortal} from "@angular/cdk/portal";
+import {DomSanitizer} from "@angular/platform-browser";
+import {
+  ADD_ATTR, CONTENT_CHANGE, CONTRIBUTION_SELECTED, ContributionActionAttrValue,
+  DELETE_ATTR,
+  ID, INSERT_ATTR,
+  LEOS_SOFT_ACTION,
+  LEOS_TRACK_ACTION, MERGE_CONTRIBUTION,
+  MOVE_ATTR,
+  MOVE_FROM_ATTR, MOVE_PREFIX,
+  MOVE_TO_ATTR,
+  PARENT_AFFECTED,
+  REVISION_PREFIX, SELECTED_ACTION_ATTR
+} from "@/shared/constants/fork-merge.constants";
 
 @Injectable({
   providedIn: 'root',
@@ -47,17 +46,22 @@ export class MergeContributionsService {
   isContributionDeclinedOrProcessed$: Observable<boolean>;
   hasNextChangeDisabled$: Observable<boolean>;
   hasPrevChangesDisabled$: Observable<boolean>;
+  contributionSelected$: Observable<boolean>;
   contributionChanges$: Observable<HTMLElement[]>;
+  showMenu$: Observable<{event: MouseEvent, element: HTMLElement, actions: HTMLElement}>;
+  undo$: Observable<{element: HTMLElement, contribution: ContributionVO}>;
 
   contributionIndex = 0;
 
-  private currentElement: HTMLElement;
-  private actions: HTMLElement;
+  private mergeActionList: MergeActionVO[] = new Array();
+  private showMenuBS = new Subject<{event: MouseEvent, element: HTMLElement, actions: HTMLElement}>();
 
   private documentType: string;
   private documentRef: string;
 
-  private contributionSelectionsBS = new BehaviorSubject<number>(0);
+  private contribution: ContributionVO;
+
+  private undoBS = new BehaviorSubject<{element: HTMLElement, contribution: ContributionVO}>(null);
   private contributionViewAndMergeCollapsedBS = new BehaviorSubject<boolean>(
     true,
   );
@@ -77,17 +81,23 @@ export class MergeContributionsService {
   private hasNextChangeDisabledBS = new BehaviorSubject<boolean>(true);
   private hasPrevChangesDisabledBS = new BehaviorSubject<boolean>(true);
   private contributionChangesBS = new BehaviorSubject<HTMLElement[]>([]);
+  private contributionSelectionsBS = new BehaviorSubject<number>(0);
+  private contributionSelectedBS = new BehaviorSubject<boolean>(false);
 
   constructor(
-    private mergeActionsService: MergeActionsService,
     private http: HttpClient,
     private pageModeService: PageModeService,
     private translate: TranslateService,
     private appShell: UxAppShellService,
     private documentService: DocumentService,
     private syncScrollService: SyncDocumentScrollService,
+    private dialogService: EuiDialogService,
+    private appShellService: UxAppShellService,
+    protected domSanitizer: DomSanitizer,
     @Inject(DOCUMENT) private document: Document,
   ) {
+    this.undo$ = this.undoBS.asObservable();
+    this.showMenu$ = this.showMenuBS.asObservable();
     this.hasNextChangeDisabled$ = this.hasNextChangeDisabledBS.asObservable();
     this.hasPrevChangesDisabled$ = this.hasPrevChangesDisabledBS.asObservable();
     this.contributions$ = this.contributionsBS.asObservable();
@@ -95,6 +105,7 @@ export class MergeContributionsService {
       this.contributionModeEnabledBS.asObservable();
     this.processed$ = this.processedBS.asObservable();
     this.contributionSelections$ = this.contributionSelectionsBS.asObservable();
+    this.contributionSelected$ = this.contributionSelectedBS.asObservable();
     this.isContributionDeclinedOrProcessed$ =
       this.isContributionDeclinedOrProcessedBS.asObservable();
     this.contributionViewAndMerge$ = this.contributionViewAndMergeBS.pipe(
@@ -110,12 +121,6 @@ export class MergeContributionsService {
         } else this.clearContributionMerge();
       }),
     );
-
-    this.mergeActionsService.showMenu$.subscribe((data) => {
-      if (data) {
-        this.setMergeState(data);
-      }
-    });
 
     this.documentService.documentRefAndCategory$
       .pipe(
@@ -172,6 +177,7 @@ export class MergeContributionsService {
         this.contributionSelectionsBS.next(0);
       }
     }
+    this.contributionSelectedBS.next(this.contributionSelectionsBS.value === 0);
   }
 
   setContributionViewAndMergeCollapsed(collapsed: boolean) {
@@ -197,6 +203,14 @@ export class MergeContributionsService {
     this.isContributionDeclinedOrProcessedBS.next(
       !this.isContributionDeclinedOrProcessedBS.value,
     );
+  }
+
+  getCurrentContribution() {
+    return this.contribution;
+  }
+
+  setCurrentContribution(contribution: ContributionVO) {
+    this.contribution = contribution;
   }
 
   getContributions() {
@@ -261,6 +275,7 @@ export class MergeContributionsService {
     mergeActions: MergeActionVO[],
     acceptAllContributions: boolean,
   ) {
+    const contribution = mergeActions.length > 0 ? mergeActions[0].contributionVO : null;
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
@@ -288,11 +303,9 @@ export class MergeContributionsService {
             isGrowlSticky: false,
             position: 'bottom-right',
           });
-          this.handleContributionUI();
-          if (!acceptAllContributions)
-            this.updateProcessedStatus(false, mergeActions[0].contributionVO);
+          if (!acceptAllContributions && contribution)
+            this.updateProcessedStatus(false, contribution);
           this.documentService.reloadDocument();
-          this.getContributions();
         },
         error: (res) => {
           this.appShell.growl({
@@ -340,6 +353,7 @@ export class MergeContributionsService {
             position: 'bottom-right',
           });
           this.setIsContributionDeclinedOrProcessed(true);
+          this.contributionSelectedBS.next(true);
           this.contributionSelectionsBS.next(0);
           this.getContributions();
         },
@@ -358,88 +372,58 @@ export class MergeContributionsService {
       });
   }
 
-  contributionMergeOnAccept() {
-    this.currentElement.classList.add(CONTRIBUTION_SELECTED);
-    this.currentElement.setAttribute(
-      MERGE_ACTION_ATTR,
-      ContributionActionAttrValue.ACCEPT,
-    );
-    const action: MergeActionVO = {
-      action: '',
-      contributionVO: undefined,
-      elementId: '',
-      elementState: '',
-      elementTagName: '',
-      withTrackChanges: false,
-    };
-    action.elementId = this.currentElement
-      .getAttribute('id')
-      .replace('revision-', '');
-    action.elementState = this.mergeActionsService.getAction(
-      this.currentElement,
-    );
-    action.action = ContributionActionAttrValue.ACCEPT;
-    action.withTrackChanges = false;
-    action.elementTagName = this.currentElement.tagName.toLowerCase();
-    // action.contributionVO = this.contribution;
-
-    this.mergeActionsService.addMergeActionList(action);
+  onClickSendFeedback() {
+    // do nothing for the moment
   }
 
-  contributionMergeOnAcceptWithTC() {
-    this.currentElement.classList.add(CONTRIBUTION_SELECTED);
-    this.currentElement.setAttribute(
-      MERGE_ACTION_ATTR,
-      ContributionActionAttrValue.ACCEPT_TC,
-    );
-    const action: MergeActionVO = {
-      action: '',
-      contributionVO: undefined,
-      elementId: '',
-      elementState: '',
-      elementTagName: '',
-      withTrackChanges: false,
-    };
-    action.elementId = this.currentElement
-      .getAttribute('id')
-      .replace('revision-', '');
-    action.elementState = this.mergeActionsService.getAction(
-      this.currentElement,
-    );
-    action.action = ContributionActionAttrValue.ACCEPT_TC;
-    action.withTrackChanges = true;
-    action.elementTagName = this.currentElement.tagName.toLowerCase();
-    // action.contributionVO = this.contribution;
-
-    this.mergeActionsService.addMergeActionList(action);
+  onClickMarkAsProcessed() {
+    this.toggleIsContributionDeclinedOrProcessed();
+    this.openMarkContributionAsProcessedDialog();
   }
 
-  onMarkProcessed() {
-    this.currentElement.classList.add(CONTRIBUTION_SELECTED);
-    this.currentElement.setAttribute(
-      MERGE_ACTION_ATTR,
-      ContributionActionAttrValue.PROCESSED,
-    );
-    const action: MergeActionVO = {
-      action: '',
-      contributionVO: undefined,
-      elementId: '',
-      elementState: '',
-      elementTagName: '',
-      withTrackChanges: false,
-    };
-    action.elementId = this.currentElement
-      .getAttribute('id')
-      .replace('revision-', '');
-    action.elementState = this.mergeActionsService.getAction(
-      this.currentElement,
-    );
-    action.action = ContributionActionAttrValue.PROCESSED;
-    action.withTrackChanges = true;
-    action.elementTagName = this.currentElement.tagName.toLowerCase();
-    // action.contributionVO = this.contribution;
+  onCancelMarkContributionAsProcessed() {
+    this.toggleIsContributionDeclinedOrProcessed();
+  }
 
-    this.mergeActionsService.addMergeActionList(action);
+  onAcceptMarkContributionAsProcessed() {
+    this
+      .markContributionAsProcessed(this.contribution)
+      .subscribe({
+        next: (res) => {
+          this.appShellService.growl({
+            severity: 'success',
+            summary: this.translate.instant(
+              'global.notifications.title.success',
+            ),
+            detail: this.translate.instant(
+              'page.editor.contribution.mark-as-processed-message-success',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+          this.getContributions();
+          this.setIsContributionDeclinedOrProcessed(
+            true,
+          );
+          this.updateProcessedStatus(
+            true,
+            this.contribution,
+          );
+        },
+        error: (res) => {
+          this.appShellService.growl({
+            severity: 'danger',
+            summary: this.translate.instant(
+              'page.editor.contribution.mark-as-processed-message-error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+      });
   }
 
   viewAndMergeContribution(contribution: ContributionVO) {
@@ -449,6 +433,7 @@ export class MergeContributionsService {
     this.handleContributionSelectCount(false, true);
     this.fetchDocumentViewForContribution(contribution).subscribe({
       next: (res) => {
+        this.contribution = contribution;
         this.contributionViewAndMergeBS.next([res, contribution]);
       },
       error: (res) => {
@@ -466,6 +451,28 @@ export class MergeContributionsService {
     });
   }
 
+  openMarkContributionAsProcessedDialog() {
+    const content = this.translate.instant(
+      `page.editor.contribution.view.mark-contribution-as-processed.modal-text`,
+    );
+    const conteSanitized = this.domSanitizer.bypassSecurityTrustHtml(content);
+
+    this.dialogService.openDialog({
+      title: this.translate.instant(
+        'page.editor.contribution.view.mark-contribution-as-processed.modal-title',
+      ),
+      content: conteSanitized as TemplatePortal,
+      acceptLabel: this.translate.instant('global.actions.continue'),
+      dismissLabel: this.translate.instant('global.actions.cancel'),
+      accept: () => {
+        this.onAcceptMarkContributionAsProcessed();
+      },
+      dismiss: () => {
+        this.onCancelMarkContributionAsProcessed();
+      },
+    });
+  }
+
   private fetchDocumentViewForContribution(contribution: ContributionVO) {
     const contributionVersionRef = contribution.versionedReference;
     const legFileName = contribution.legFileName;
@@ -478,58 +485,6 @@ export class MergeContributionsService {
     );
   }
 
-  private handleContributionUI() {
-    const changes = this.document.querySelectorAll(
-      '.selected-contribution-wrapper',
-    );
-    if (changes.length > 0) {
-      changes.forEach((item) => {
-        if (!item.classList.contains('contribution-wrapper-after-merge')) {
-          item.classList.add('contribution-wrapper-after-merge');
-
-          for (const child of item.children) {
-            if (child.classList.contains('merge-actions-wrapper')) {
-              for (const innerChild of child.children) {
-                if (innerChild.classList.contains('accept')) {
-                  innerChild.setAttribute(
-                    'title',
-                    this.translate.instant(
-                      'page.editor.contribution.view.merge-contributions.accepted-change',
-                    ),
-                  );
-                }
-                if (innerChild.classList.contains('reject')) {
-                  innerChild.setAttribute(
-                    'title',
-                    this.translate.instant(
-                      'page.editor.contribution.view.merge-contributions.rejected-change',
-                    ),
-                  );
-                }
-              }
-            }
-          }
-        }
-      });
-    } else {
-      this.document
-        .querySelectorAll('contribution-wrapper-after-merge')
-        .forEach((item) => {
-          item.classList.remove('contribution-wrapper-after-merge');
-        });
-    }
-  }
-
-  private setMergeState(data: {
-    event: MouseEvent;
-    element: HTMLElement;
-    actions: HTMLElement;
-  }) {
-    this.currentElement = data.element;
-    this.actions = data.actions;
-    this.mergeActionsService.getAction(this.currentElement);
-  }
-
   private greyContributions(contributions: ContributionVO[]) {
     return contributions.map((c) => {
       if (c.contributionStatus === ContributionStatus.ContributionDone) {
@@ -539,5 +494,81 @@ export class MergeContributionsService {
       }
       return c;
     });
+  }
+
+  public getMergeActionList():MergeActionItem[] {
+    return this.mergeActionList;
+  }
+
+  public addMergeActionList(action: MergeActionVO) {
+    this.mergeActionList.push(action);
+  }
+
+  public removeMergeActionList(element: HTMLElement): MergeActionVO {
+    const removedAction = this.mergeActionList.find((action) => action.elementId === element.getAttribute(ID).replace(REVISION_PREFIX, ''));
+    this.mergeActionList = this.mergeActionList.filter((action) => action.elementId !== element.getAttribute(ID).replace(REVISION_PREFIX, ''));
+    return removedAction;
+  }
+
+  public emptyMergeActionList() {
+    this.mergeActionList = [];
+  }
+
+  public getAction(elt: HTMLElement) {
+    let elementState;
+    const action = elt.getAttribute(LEOS_TRACK_ACTION);
+    const softAction = elt.getAttribute(LEOS_SOFT_ACTION);
+    const parentAffected = elt.getAttribute(PARENT_AFFECTED);
+    if (softAction && (softAction === MOVE_FROM_ATTR || softAction === MOVE_TO_ATTR)) {
+      elementState = MOVE_ATTR;
+    } else if (action === DELETE_ATTR) {
+      elementState = DELETE_ATTR;
+    } else if (action === INSERT_ATTR) {
+      elementState = ADD_ATTR;
+    } else if (parentAffected) {
+      elementState = CONTENT_CHANGE;
+    }
+    return elementState;
+  }
+
+  public showMenu(event: MouseEvent, element: HTMLElement, actions: HTMLElement) {
+    this.showMenuBS.next({event, element, actions});
+  }
+
+  public manageSelectedElements(element: HTMLElement, contributionActionAttrValue: ContributionActionAttrValue) {
+    const elementState = this.getAction(element);
+    if (elementState === MOVE_ATTR) {
+      if (element.getAttribute(ID).includes(MOVE_PREFIX)) {
+        const movedFromElement = document.getElementById(element.getAttribute(ID).replace(MOVE_PREFIX, ''));
+        movedFromElement.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+        movedFromElement.classList.add(CONTRIBUTION_SELECTED);
+        const list = this.getImpactedElements(movedFromElement);
+        list.forEach(e => {
+          let elt =  e as HTMLElement;
+          elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+          elt.classList.add(CONTRIBUTION_SELECTED);
+        });
+      } else {
+        const movedToElement = document.getElementById(REVISION_PREFIX + MOVE_PREFIX + element.getAttribute(ID).replace(REVISION_PREFIX, ''));
+        movedToElement.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+        movedToElement.classList.add(CONTRIBUTION_SELECTED);
+      }
+    }
+    element.classList.add(CONTRIBUTION_SELECTED);
+    element.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+    const list = this.getImpactedElements(element);
+    list.forEach(e => {
+      let elt =  e as HTMLElement;
+      elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+      elt.classList.add(CONTRIBUTION_SELECTED);
+    });
+  }
+
+  public getImpactedElements(element: HTMLElement): NodeList {
+    return element.querySelectorAll('.' + MERGE_CONTRIBUTION);
+  }
+
+  public undo(element: HTMLElement, contribution: ContributionVO) {
+    this.undoBS.next({element, contribution});
   }
 }
