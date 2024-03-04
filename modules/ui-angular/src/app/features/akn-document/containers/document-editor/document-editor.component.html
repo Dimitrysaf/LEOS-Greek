@@ -414,6 +414,7 @@
           <app-document
             containerId="versionContainer"
             [mainContainerId]="mainContainerId"
+            [documentType]="documentType"
             [xml]="versionForView"
             [containerClass]="{
               'leos-double-comparison-content': isCNInstance,
@@ -445,6 +446,7 @@
             containerId="versionComparisonContainer"
             [mainContainerId]="mainContainerId"
             [xml]="versionsComparisonForView"
+            [documentType]="documentType"
             [containerClass]="{
               'leos-double-comparison-content': isCNInstance,
               'leos-marked-content': !isCNInstance,
