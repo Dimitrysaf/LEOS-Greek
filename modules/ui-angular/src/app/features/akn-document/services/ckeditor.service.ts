@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash-es';
-import { combineLatest, distinctUntilChanged, map, Subject } from 'rxjs';
+import { cloneDeep, isEqual } from 'lodash-es';
+import { combineLatest, distinctUntilChanged, map, Subject, take } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { ActionManagerConnector } from '@/features/akn-document/services/action-manager-connector';
@@ -20,6 +20,7 @@ import { Require } from '@/features/leos-legacy/models/requirejs';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentConfig } from '@/shared/models';
 import { LeosAppConfig } from '@/shared/models/leos.model';
+import { MergeActionVO } from '@/shared/models/merge-action-vo.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
@@ -31,7 +32,6 @@ import { CheckBoxesConnector } from './check-boxes-connector';
 import { DatePickerConnector } from './date-picker-connector';
 import { MergeContributionConnector } from './merge-contribution-connector';
 import { TableOfContentService } from './table-of-content.service';
-import {MergeActionVO} from "@/shared/models/merge-action-vo.model";
 
 export type EditorOpenState = 'OPEN' | 'CLOSE';
 
@@ -109,11 +109,7 @@ export class CKEditorService {
     // TODO: this should not be hardcoded
     const rootElement = this.domDocument.getElementById('docContainer');
     combineLatest([this.leosLegacyService.require$, this.getLeosState()])
-      .pipe(
-        distinctUntilChanged(
-          (a, b) => JSON.stringify(a[1]) === JSON.stringify(b[1]),
-        ),
-      )
+      .pipe(take(1))
       .subscribe(([require, leosState]) => {
         require(['js/leosModulesBootstrap']);
         this.initActionManager(require, leosState, rootElement);
@@ -190,12 +186,11 @@ export class CKEditorService {
     return this.trackChangesConnector.getState().isTrackChangesShowed;
   }
 
-  handleMergeContributionsActions(
-    withTrackChanges: boolean,
-    all: boolean,
-  ) {
+  handleMergeContributionsActions(withTrackChanges: boolean, all: boolean) {
     if (all) {
-      this.mergeContributionConnector?.acceptAndMergeAllChanges(withTrackChanges);
+      this.mergeContributionConnector?.acceptAndMergeAllChanges(
+        withTrackChanges,
+      );
     } else {
       this.mergeContributionConnector?.handleMergeAction();
     }
@@ -203,12 +198,15 @@ export class CKEditorService {
 
   addMergeActionList(action: MergeActionVO) {
     this.mergeContributionService.addMergeActionList(action);
-    this.mergeContributionConnector?.doUpdateMergeActionList({action: action, select: true});
+    this.mergeContributionConnector?.doUpdateMergeActionList({
+      action,
+      select: true,
+    });
   }
 
   /*
-      This function destroys the instance of the active ckeditor instance on each document page.
-     */
+                                    This function destroys the instance of the active ckeditor instance on each document page.
+                                   */
   private destroyEditorInstance() {
     this.leosEditorConnector.onUnregister(
       this.leosEditorConnector,
@@ -257,7 +255,7 @@ export class CKEditorService {
       (state: EditorOpenState) => {
         this.openStateSubj.next(state);
       },
-      this.actionManagerConnector
+      this.actionManagerConnector,
     );
     require(['js/editor/leosEditorExtension'], (leosEditor) => {
       leosEditor.init(this.leosEditorConnector);
