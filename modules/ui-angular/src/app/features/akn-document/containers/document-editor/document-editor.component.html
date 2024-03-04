@@ -519,6 +519,36 @@
         [interactiveScrollbars]="false"
         *ngIf="pageMode === PageMode.Contribution"
       >
+        <eui-page-column-header-body>
+          <div
+                  class="eui-u-overflow-auto justify-content-between w-100 app-u-gap-xs"
+                  style="min-height: 35.99px; text-align: center;"
+          >
+            <h4
+                    class="eui-u-font-size-s"
+                    *ngIf="(mergeContributionService.contributionSelections$ | async) === 0"
+            >
+              {{
+              'page.editor.contribution.view.text.select-revisions'
+                      | translate
+              }}
+            </h4>
+            <h4
+                    class="eui-u-font-size-s"
+                    *ngIf="(mergeContributionService.contributionSelections$ | async) > 0"
+            >
+              {{
+              'page.editor.contribution.view.text.revisions-selected'
+                      | translate
+                      : {
+                        selected:
+                          mergeContributionService.contributionSelections$ | async,
+                        all: (contributionChanges$ | async).length
+                      }
+              }}
+            </h4>
+          </div>
+        </eui-page-column-header-body>
         <eui-page-column-body
           class="eui-u-flex eui-u-flex-column align-items-center"
           style="position: relative; overflow: auto"
@@ -606,30 +636,6 @@
     (dismiss)="onCancelClose()"
 >
     <p>{{ 'page.editor.open.editor.dialog.body' | translate }}</p>
-</eui-dialog>
-<eui-dialog
-    #mergeAllContributionsChangesDialog
-    [title]="
-    'page.editor.contribution.view.merge-contributions.accept-all.modal-title'
-      | translate
-  "
-    [acceptLabel]="'global.actions.continue' | translate"
-    [dismissLabel]="'global.actions.cancel' | translate"
-    [width]="'25vw'"
-    [isHandleCloseOnAccept]="true"
-    [isHandleCloseOnDismiss]="true"
-    [hasCloseButton]="false"
-    (clickOutside)="onCancelMergeAllContributions()"
-    (close)="onCancelMergeAllContributions()"
-    (accept)="onAcceptMergeAllContributions()"
-    (dismiss)="onCancelMergeAllContributions()"
->
-    <p class="eui-u-mb-s">
-        {{
-        'page.editor.contribution.view.merge-contributions.accept-all.modal-text'
-            | translate
-        }}
-    </p>
 </eui-dialog>
 
 <!-- unsaved data dialog -->

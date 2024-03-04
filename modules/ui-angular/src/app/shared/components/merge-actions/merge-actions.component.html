@@ -1,53 +1,53 @@
-<!--<div [style]="locationCss" class="tc_panel tc_menu_panel">-->
-<!--  <button-->
-<!--    class="tc_menuitem tc_menubutton"-->
-<!--    width="100%"-->
-<!--    style="white-space: normal"-->
-<!--    euiButton-->
-<!--    euiIconButton-->
-<!--    euiBasicButton-->
-<!--    [title]="'page.editor.contribution.merge.actions.accept' | translate"-->
-<!--    [attr.aria-label]="'page.editor.contribution.merge.actions.accept' | translate"-->
-<!--    [disabled]="!this.canRejectTrackChanges"-->
-<!--    (click)="onAccept()"-->
-<!--  >-->
-<!--    <img src="assets/images/accept.png" alt="" height="16"/>-->
-<!--    <span class="tc_menubutton_label">{{-->
-<!--      'page.editor.contribution.merge.actions.accept' | translate-->
-<!--    }}</span>-->
-<!--  </button>-->
-<!--  <button-->
-<!--    class="tc_menuitem tc_menubutton"-->
-<!--    width="100%"-->
-<!--    style="white-space: normal"-->
-<!--    euiButton-->
-<!--    euiIconButton-->
-<!--    euiBasicButton-->
-<!--    [title]="'page.editor.contribution.merge.actions.accept.tc' | translate"-->
-<!--    [attr.aria-label]="'page.editor.contribution.merge.actions.accept.tc' | translate"-->
-<!--    [disabled]="!this.canRejectTrackChanges"-->
-<!--    (click)="onAcceptWithTC()"-->
-<!--  >-->
-<!--    <img src="assets/images/accept_tc.png" alt="" height="16"/>-->
-<!--    <span class="tc_menubutton_label">{{-->
-<!--      'page.editor.contribution.merge.actions.accept.tc' | translate-->
-<!--      }}</span>-->
-<!--  </button>-->
-<!--  <button-->
-<!--    class="tc_menuitem tc_menubutton"-->
-<!--    width="100%"-->
-<!--    style="white-space: normal"-->
-<!--    euiButton-->
-<!--    euiIconButton-->
-<!--    euiBasicButton-->
-<!--    [title]="'page.editor.contribution.merge.actions.mark.processed' | translate"-->
-<!--    [attr.aria-label]="'page.editor.contribution.merge.actions.mark.processed' | translate"-->
-<!--    [disabled]="!this.canAcceptTrackChanges"-->
-<!--    (click)="onMarkProcessed()"-->
-<!--  >-->
-<!--    <img src="assets/images/ok.png" alt="" />-->
-<!--    <span class="tc_menubutton_label">{{-->
-<!--      'page.editor.contribution.merge.actions.mark.processed' | translate-->
-<!--    }}</span>-->
-<!--  </button>-->
-<!--</div>-->
+<div [style]="locationCss" class="tc_panel tc_menu_panel">
+  <button
+    class="tc_menuitem tc_menubutton"
+    width="100%"
+    style="white-space: normal"
+    euiButton
+    euiIconButton
+    euiBasicButton
+    [title]="'page.editor.contribution.merge.actions.accept' | translate"
+    [attr.aria-label]="'page.editor.contribution.merge.actions.accept' | translate"
+    [disabled]="!this.canAcceptTrackChanges"
+    (click)="onAccept()"
+  >
+    <img src="assets/images/accept.png" alt="" height="16"/>
+    <span class="tc_menubutton_label">{{
+      'page.editor.contribution.merge.actions.accept' | translate
+    }}</span>
+  </button>
+  <button
+    class="tc_menuitem tc_menubutton"
+    width="100%"
+    style="white-space: normal"
+    euiButton
+    euiIconButton
+    euiBasicButton
+    [title]="'page.editor.contribution.merge.actions.accept.tc' | translate"
+    [attr.aria-label]="'page.editor.contribution.merge.actions.accept.tc' | translate"
+    [disabled]="!this.canAcceptTrackChanges"
+    (click)="onAcceptWithTC()"
+  >
+    <img src="assets/images/accept_tc.png" alt="" height="16"/>
+    <span class="tc_menubutton_label">{{
+      'page.editor.contribution.merge.actions.accept.tc' | translate
+      }}</span>
+  </button>
+  <button
+    class="tc_menuitem tc_menubutton"
+    width="100%"
+    style="white-space: normal"
+    euiButton
+    euiIconButton
+    euiBasicButton
+    [title]="'page.editor.contribution.merge.actions.mark.processed' | translate"
+    [attr.aria-label]="'page.editor.contribution.merge.actions.mark.processed' | translate"
+    [disabled]="!this.canRejectTrackChanges"
+    (click)="onMarkProcessed()"
+  >
+    <img src="assets/images/ok.png" alt="" />
+    <span class="tc_menubutton_label">{{
+      'page.editor.contribution.merge.actions.mark.processed' | translate
+    }}</span>
+  </button>
+</div>

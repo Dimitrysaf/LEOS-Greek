@@ -1,9 +1,11 @@
+/* eslint-disable simple-import-sort/imports */
 import { Component, Input, OnInit } from '@angular/core';
 
 import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import { ContributionStatus } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
-import { DocumentService } from '@/shared/services/document.service';
+import {DocumentService} from "@/shared/services/document.service";
+import {PageMode, PageModeService} from "@/features/akn-document/services/page-mode.service";
 
 @Component({
   selector: 'app-revision-pane-group',
@@ -22,6 +24,7 @@ export class RevisionPaneGroupComponent implements OnInit {
   constructor(
     public documentService: DocumentService,
     public mergeContributionsService: MergeContributionsService,
+    private pageModeService: PageModeService,
   ) {}
 
   ngOnInit(): void {
@@ -31,6 +34,7 @@ export class RevisionPaneGroupComponent implements OnInit {
   }
 
   onClickView(contribution: ContributionVO) {
+    this.pageModeService.setPageMode(PageMode.Contribution);
     if (
       contribution.contributionStatus === ContributionStatus.ContributionDone
     ) {

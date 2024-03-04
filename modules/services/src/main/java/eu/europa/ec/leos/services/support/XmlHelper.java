@@ -145,6 +145,7 @@ public class XmlHelper {
     public static final String LEOS_REF_BROKEN_ATTR = "leos:broken";
     public static final String LEOS_DEPTH_ATTR = "leos:depth";
 
+    // Track Changes
     public static final String LEOS_ACTION_ATTR = "leos:action";
     public static final String LEOS_TITLE_ATTR = "leos:title";
     public static final String LEOS_UID_ATTR = "leos:uid";
@@ -162,6 +163,7 @@ public class XmlHelper {
     public static final String LEOS_TC_MOVE_TO_ORIGIN_ACTION = "move-to-origin";
     public static final String LEOS_TC_DELETE_ELEMENT_NAME = "del";
     public static final String LEOS_TC_INSERT_ELEMENT_NAME = "ins";
+
     public static final String LEOS_LIST_TYPE_ATTR = "leos:list-type";
     public static final String LEOS_CROSSHEADING_TYPE = "leos:crossheading-type";
 

@@ -145,6 +145,31 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected CoEditionContext coEditionContext;
 
     @Override
+    public byte[] addTrackChangesAttributesForMovedElement(byte[] xmlContent, String elementId, SoftActionType direction, String trackUser, String softUser,
+                                                           String title) {
+        Document document = createXercesDocument(xmlContent);
+        Node node = XercesUtils.getElementById(document, direction.equals(SoftActionType.MOVE_TO) ? SOFT_DELETE_PLACEHOLDER_ID_PREFIX + elementId : elementId);
+        if (node != null) {
+            addAttribute(node, LEOS_UID, trackUser);
+            addAttribute(node, LEOS_TITLE, title);
+            addAttribute(node, LEOS_SOFT_ACTION_ROOT_ATTR, "true");
+            if (direction.equals(SoftActionType.MOVE_FROM)) {
+                removeAttribute(node, LEOS_ACTION_ATTR);
+                removeAttribute(node, LEOS_UID);
+                addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.MOVE_FROM.getSoftAction());
+                addAttribute(node, LEOS_SOFT_MOVE_FROM, SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elementId);
+                addAttribute(node, LEOS_SOFT_USER_ATTR, softUser);
+            } else if (direction.equals(SoftActionType.MOVE_TO)) {
+                addAttribute(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
+                addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.MOVE_TO.getSoftAction());
+                addAttribute(node, LEOS_SOFT_MOVE_TO, elementId);
+                addAttribute(node, XMLID, SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elementId);
+            }
+        }
+        return nodeToByteArray(document);
+    }
+
+    @Override
     public byte[] addTrackChangesAttributes(byte[] xmlContent) {
         if(!trackChangesContext.isTrackChangesEnabled()) {
             return  xmlContent;
@@ -153,6 +178,18 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         List<Node> nodeList = XercesUtils.getDescendants(document, ELEMENTS_IN_TOC);
         for (int i = 0; i < nodeList.size(); i++) {
             final Node node = nodeList.get(i);
+            addAttribute(node, LEOS_UID, securityContext.getUser().getLogin());
+            addAttribute(node, LEOS_TITLE, getTitleValue(securityContext));
+            addAttribute(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
+        }
+        return nodeToByteArray(document);
+    }
+
+    @Override
+    public byte[] addTrackChangesAttributes(byte[] xmlContent, String elementId) {
+        Document document = createXercesDocument(xmlContent);
+        Node node = XercesUtils.getElementById(xmlContent, elementId);
+        if (node != null) {
             addAttribute(node, LEOS_UID, securityContext.getUser().getLogin());
             addAttribute(node, LEOS_TITLE, getTitleValue(securityContext));
             addAttribute(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION);
@@ -2000,7 +2037,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     leosAction = null;
 
             }
-            XercesUtils.addAttribute(node, LEOS_UID_ATTR, userLogin);
+            if (!XercesUtils.hasAttribute(node, LEOS_UID_ATTR)) {
+                XercesUtils.addAttribute(node, LEOS_UID_ATTR, userLogin);
+            }
             XercesUtils.addAttribute(node, LEOS_ACTION_ATTR, leosAction);
         }
     }

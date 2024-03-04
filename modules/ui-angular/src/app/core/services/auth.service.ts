@@ -61,7 +61,7 @@ export class AuthService implements OnDestroy {
   private monitorExpirySub?: Subscription;
 
   constructor(
-    private handler: HttpBackend, 
+    private handler: HttpBackend,
     private location: Location,
     private dialogService: EuiDialogService,
     private translateService: TranslateService,

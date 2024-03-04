@@ -519,9 +519,7 @@ export abstract class TocInlineEditMenuService {
 
     // Check if the element has child nodes
     if (element.childNodes && element.childNodes.length > 0) {
-      for (let i = 0; i < element.childNodes.length; i++) {
-        const childNode = element.childNodes[i];
-
+      for (const childNode of element.childNodes) {
         // Check if the child node is an element node
         if (childNode.nodeType === 1) {
           // Check if the element is a <list> element

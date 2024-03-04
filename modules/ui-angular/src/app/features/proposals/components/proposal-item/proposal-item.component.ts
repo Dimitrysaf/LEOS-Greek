@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, SecurityContext} from '@angular/core';
+/* eslint-disable simple-import-sort/imports */
+import {
+  Component,
+  Input,
+  OnInit,
+  SecurityContext
+} from '@angular/core';
 import { Document } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
