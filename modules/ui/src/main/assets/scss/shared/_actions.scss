@@ -78,6 +78,7 @@ $BLACK : #000000;
         }
         heading {
             @extend %elementEditable;
+            @extend %paddedText;
         }
 
     }
