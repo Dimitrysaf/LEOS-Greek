@@ -1,5 +1,5 @@
 import { HttpEventType } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,23 +7,23 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
 import { EuiFileUploadComponent } from '@eui/components/eui-file-upload';
 import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
-import { ErrorVO } from '@/features/proposals/models';
-import { EnvironmentService } from '@/shared/services/enviroment.service';
-import { noWhitespaceValidator } from '@/shared/utils/validators';
-
-import { GLOBAL } from '../../../../../config/global';
+import { ProposalService } from '@/features/proposals/services/proposal.service';
 import {
   CatalogItem,
   CreateProposalBody,
+  ErrorVO,
   UpdateProposalMetadataModel,
-} from '../../models';
-import { ProposalService } from '../../services/proposal.service';
+} from '@/shared/models';
+import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
+
+import { GLOBAL } from '../../../../config/global';
 
 @Component({
   selector: 'app-proposal-upload-wizard',
@@ -42,13 +42,13 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   errorsVO: ErrorVO[];
   step1Complete = false;
   fileName = '';
-  @ViewChild('uploadWizard') uploadWizard: EuiDialogComponent;
   @ViewChild('uploadFile') uploadEuiFile: EuiFileUploadComponent;
   public progress = 0;
 
   private destroy$ = new Subject();
 
   constructor(
+    @Inject(DIALOG_COMPONENT_CONFIG) private config,
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private router: Router,
@@ -118,10 +118,6 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     this.stepSelected = event;
   }
 
-  openUploadWizard() {
-    this.uploadWizard.openDialog();
-  }
-
   onCreate() {
     const legFile = this.uploadForm.get('legFile').value[0];
     this.proposalService.uploadProposal(legFile).subscribe((e) => {
@@ -150,7 +146,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    this.uploadWizard.closeDialog();
+    this.config.closeDialog();
     this.resetInitials();
   }
 

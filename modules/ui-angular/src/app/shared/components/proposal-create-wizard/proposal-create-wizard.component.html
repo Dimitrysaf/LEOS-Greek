@@ -1,48 +1,34 @@
 <ux-wizard-steps
-        *ngIf="!fromProposal"
         (selectStep)="onSelectStepRemoteNav($event)"
         [activeStepIndex]="currentStepIndex"
         [isNavigationAllowed]="isNavigationAllowed"
 >
     <ux-wizard-step
             label="Template selection"
-            [isCompleted]="!!selectedTemplate"
+            [isCompleted]="!!(selectedTemplate && selectedLanguage)"
     >
         <uxWizardStepContent>
             <app-proposal-create-template-selector
                 #templateSelector
+                (navigationClick)="onNavigation(+1)"
                 (selectTemplate)="handleSelectTemplate($event)"
                 (selectLanguage)="handleSelectLanguage($event)"
-                translationKey="draft"
             ></app-proposal-create-template-selector>
         </uxWizardStepContent>
     </ux-wizard-step>
-    <ux-wizard-step
-            label="{{ 'page.workspace.create-form.draft.label' | translate }}"
-            [isCompleted]="createForm.valid"
-    >
+    <ux-wizard-step label="Document metadata" [isCompleted]="createForm.valid">
         <uxWizardStepContent>
             <app-proposal-create-form
                     [createForm]="createForm"
-                    translationKey="draft"
             ></app-proposal-create-form>
         </uxWizardStepContent>
     </ux-wizard-step>
 </ux-wizard-steps>
-<ng-container *ngIf="fromProposal">
-    <app-proposal-create-template-selector
-        #templateSelector
-        (selectTemplate)="handleSelectTemplate($event)"
-        (selectLanguage)="handleSelectLanguage($event)"
-    ></app-proposal-create-template-selector>
-</ng-container>
-
 <div class="app-dialog-footer-content">
     <button euiButton (click)="closeDialog()">
         {{ 'global.actions.cancel' | translate }}
     </button>
     <button
-            *ngIf="!fromProposal"
             euiButton
             type="button"
             [disabled]="currentStepIndex === 1 || !isNavigationAllowed"
@@ -54,7 +40,6 @@
         </span>
     </button>
     <button
-            *ngIf="!fromProposal"
             euiButton
             type="button"
             [disabled]="currentStepIndex === stepsCount || !isNavigationAllowed"

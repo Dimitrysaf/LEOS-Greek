@@ -24,6 +24,7 @@ import { ConfirmDeleteDialogComponent } from '@/shared/components/confirm-delete
 import { ProposalCreateDraftComponent } from '@/shared/components/proposal-create-draft/proposal-create-draft.component';
 import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
+import { CreateProposalService } from '@/shared/services/create-proposal.service';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
@@ -57,8 +58,6 @@ export class ProposalDraftsComponent
   editExplanatoryTitleDialog: EuiDialogComponent;
   explanatoryTitle: string;
   explanatoryTitleActiveId: string;
-  @ViewChild('createDraftDialog')
-  createDraftDialog: ProposalCreateDraftComponent;
   @ViewChild('confirmationForDelete')
   confirmDeleteComp: ConfirmDeleteDialogComponent;
 
@@ -71,6 +70,7 @@ export class ProposalDraftsComponent
   private destroy$: Subject<void> = new Subject();
 
   constructor(
+    private createProposalService: CreateProposalService,
     private proposalDetailsService: ProposalDetailsService,
     private route: ActivatedRoute,
     private coEditionService: CoEditionServiceWS,
@@ -176,7 +176,7 @@ export class ProposalDraftsComponent
   }
 
   handleCreateDraft() {
-    this.createDraftDialog.openCreateWizard();
+    this.createProposalService.openProposalCreateDraftDialog();
   }
 
   drop(event: CdkDragDrop<any[]>) {

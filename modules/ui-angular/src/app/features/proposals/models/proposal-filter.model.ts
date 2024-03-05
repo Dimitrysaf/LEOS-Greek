@@ -24,5 +24,6 @@ export interface ProposalFilter {
 
 export const DEFAULT_SEARCH = '';
 export const DEFAULT_LIMIT = 50;
+export const DEFAULT_HOME_LIMIT = 5;
 export const DEFAULT_PAGE = 0;
 export const DEFAULT_SORT_ORDER = false;

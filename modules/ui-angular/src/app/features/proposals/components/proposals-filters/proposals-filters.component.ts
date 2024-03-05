@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { getI18nState } from '@eui/core';
-import { ProcedureType, Role } from '@leos/shared';
+import { CatalogItem, ProcedureType, Role } from '@leos/shared';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -29,7 +29,6 @@ import {
 } from '@/shared/constants/toc.constant';
 
 import {
-  CatalogItem,
   FilterOption,
   ProposalFilter,
   ProposalFilterGroup,

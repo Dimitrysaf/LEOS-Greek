@@ -5,11 +5,10 @@ import { UxAppShellService } from '@eui/core';
 import {
   Collaborator,
   CollaboratorRequest,
-  Document,
+ CreateDraftBody, CreateDraftResponse,  Document,
   LeosAppConfig,
   Permission,
-  User,
-} from '@leos/shared';
+  User } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
 import {
@@ -28,10 +27,6 @@ import { apiBaseUrl } from 'src/config';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { IS_ERROR_INTERCEPTION_ENABLED } from '@/core/services/error-handler.interceptor';
-import {
-  CreateDraftBody,
-  CreateDraftResponse,
-} from '@/features/proposals/models';
 import { MilestoneDescriptor } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';

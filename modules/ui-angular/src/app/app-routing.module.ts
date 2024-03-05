@@ -7,8 +7,8 @@ import { UnathorizedComponent } from './features/error/components/unathorized/un
 import { DocumentUserGuard } from './shared/guards/document-user.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'workspace', pathMatch: 'full' },
-  { path: 'index.jsp', redirectTo: 'workspace' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'index.jsp', redirectTo: 'home' },
   {
     path: 'error/page-not-found',
     component: PageNotFoundComponent,
@@ -20,6 +20,13 @@ const routes: Routes = [
   {
     path: 'error/forbidden',
     component: ForbiddenComponent,
+  },
+  {
+    path: 'home',
+    loadChildren: () =>
+      import('./features/landing-page/landing-page.module').then(
+        (m) => m.LandingPageModule,
+      ),
   },
   {
     path: 'workspace',

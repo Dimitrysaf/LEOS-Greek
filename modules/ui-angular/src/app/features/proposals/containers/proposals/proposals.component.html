@@ -1,111 +1,126 @@
 <eui-page>
-  <eui-page-breadcrumb euiNoContentPadding class="p-0">
-    <eui-breadcrumb>
-      <eui-breadcrumb-item
-        *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
-        [id]="item.id"
-        [link]="item.link"
-        [label]="item.label"
-      >
-      </eui-breadcrumb-item>
-    </eui-breadcrumb>
-  </eui-page-breadcrumb>
+    <eui-page-breadcrumb euiNoContentPadding class="p-0">
+        <eui-breadcrumb>
+            <eui-breadcrumb-item
+                    *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
+                    [id]="item.id"
+                    [link]="item.link"
+                    [label]="item.label"
+            >
+            </eui-breadcrumb-item>
+        </eui-breadcrumb>
+    </eui-page-breadcrumb>
 
-  <eui-page-content class="p-0">
-    <eui-page-columns class="p-0">
-      <!-- Filters column -->
-      <eui-page-column
-        class="pb-10"
-        interactiveScrollbars
-        [hasHeaderBodyShrinkable]="true"
-        [isCollapsible]="true"
-        [isCollapsed]="isFilterCollapsed"
-        (collapsed)="onToggleTOCColumnCollapsed()"
-        [label]="'page.workspace.filter.filters' | translate"
-        size="4xl"
-      >
-        <eui-page-column-header-right-content>
-          <button
-            euiButton
-            euiBasicButton
-            class="eui-u-font-s mr-4"
-            (click)="resetFilter()"
-          >
+    <eui-page-content class="p-0">
+        <eui-page-columns class="p-0">
+            <!-- Filters column -->
+            <eui-page-column
+                    class="pb-10"
+                    interactiveScrollbars
+                    [hasHeaderBodyShrinkable]="true"
+                    [isCollapsible]="true"
+                    [isCollapsed]="isFilterCollapsed"
+                    (collapsed)="onToggleTOCColumnCollapsed()"
+                    [label]="'page.workspace.filter.filters' | translate"
+                    size="4xl"
+            >
+                <eui-page-column-header-right-content>
+                    <button
+                            euiButton
+                            euiBasicButton
+                            class="eui-u-font-s mr-4"
+                            (click)="resetFilter()"
+                    >
             <span class="eui-u-color-primary-100">
               {{ 'page.workspace.filter.reset' | translate }}
             </span>
-          </button>
-        </eui-page-column-header-right-content>
-        <eui-page-column-body class="p-0">
-          <app-proposals-filters
-            #filters
-            class="col-md-3 eui-u-p-none"
-          ></app-proposals-filters>
-        </eui-page-column-body>
-      </eui-page-column>
+                    </button>
+                </eui-page-column-header-right-content>
+                <eui-page-column-body class="p-0">
+                    <app-proposals-filters
+                        #filters
+                        class="col-md-3 eui-u-p-none"
+                    ></app-proposals-filters>
+                </eui-page-column-body>
+            </eui-page-column>
 
-      <!-- Results column -->
-      <eui-page-column>
-        <eui-page-column-body class="p-0 w-100">
-          <!-- "Create" actions -->
-          <div class="eui-u-flex eui-u-flex-justify-content-end app-u-gap-m">
-            <app-proposal-upload-wizard
-              *ngIf="canUpload || canCreateMandate"
-            ></app-proposal-upload-wizard>
-            <app-proposal-create-wizard
-              *ngIf="canCreateProposal"
-            ></app-proposal-create-wizard>
-            <app-proposal-create-draft
-              [fromProposal]="false"
-              *ngIf="canCreateDraft"
-            ></app-proposal-create-draft>
-          </div>
+            <!-- Results column -->
+            <eui-page-column>
+                <eui-page-column-body class="p-0 w-100">
+                    <!-- "Create" actions -->
+                    <div class="eui-u-flex eui-u-flex-justify-content-end app-u-gap-m">
+                        <button
+                                euiButton
+                                [euiPrimary]="environmentService.isCouncil()"
+                                [euiSecondary]="!environmentService.isCouncil()"
+                                (click)="createProposalService.openProposalUploadDialog()"
+                        >
+                            {{
+                            (environmentService.isCouncil()
+                                    ? 'page.workspace.upload-cn.button.text'
+                                    : 'page.workspace.upload.button.text'
+                            ) | translate
+                            }}
+                        </button>
+                        <button euiButton euiPrimary (click)="createProposalService.openProposalCreateDialog()">
+                            {{ 'page.workspace.create-button' | translate }}
+                        </button>
+                        <!-- TODO: this is set to false should be adjusted to CN instance  -->
+                        <button
+                                euiButton
+                                euiPrimary
+                                (click)="createProposalService.openProposalCreateDraftDialog()"
+                                *ngIf="false"
+                        >
+                            {{ 'page.workspace.create-draft' | translate }}
+                        </button>
+                    </div>
 
-          <!-- Results list -->
-          <div class="eui-u-ph-m eui-u-pb-2xl w-100">
-            <div [class.eui-u-display-hidden]="(proposals$ | async) === null">
-              <div
-                class="total-results-sort eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center eui-u-pt-l"
-              >
-                <div class="totalResults">
-                  <h4 class="eui-u-font-bold">
-                    {{ 'page.workspace.results.title' | translate }}
-                  </h4>
-                  <div>
-                    {{ totalResults$ | async }}
-                    {{ 'page.workspace.results.proposals-found' | translate }}
-                  </div>
-                </div>
-                <div class="sort-btn">
-                  <button euiButton (click)="toggleSortOrder()">
+                    <!-- Results list -->
+                    <div class="eui-u-ph-m eui-u-pb-2xl w-100">
+                        <div [class.eui-u-display-hidden]="(proposals$ | async) === null">
+                            <div
+                                    class="total-results-sort eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center eui-u-pt-l"
+                            >
+                                <div class="totalResults">
+                                    <h4 class="eui-u-font-bold">
+                                        {{ 'page.workspace.results.title' | translate }}
+                                    </h4>
+                                    <div>
+                                        {{ totalResults$ | async }}
+                                        {{ 'page.workspace.results.proposals-found' | translate }}
+                                    </div>
+                                </div>
+                                <div class="sort-btn">
+                                    <button euiButton (click)="toggleSortOrder()">
                     <span euiLabel>{{
-                      'page.workspace.results.sort' | translate
-                    }}</span>
-                    <span
-                      euiIcon
-                      iconClass="eui-icon"
-                      [ngClass]="[
+                        'page.workspace.results.sort' | translate
+                        }}</span>
+                                        <span
+                                                euiIcon
+                                                iconClass="eui-icon"
+                                                [ngClass]="[
                         sortOrder ? 'eui-icon-arrow-down' : 'eui-icon-arrow-up'
                       ]"
-                    ></span>
-                  </button>
-                </div>
-              </div>
-              <app-proposals-list
-                *ngIf="proposals$ | async"
-                [proposals]="proposals$ | async"
-              ></app-proposals-list>
-              <eui-paginator
-                #paginatorComponent
-                class="eui-u-pv-2xs"
-                [pageSize]="limit$ | async"
-                [length]="totalResults$ | async"
-                (pageChange)="handlePagerChange($event)"
-              ></eui-paginator>
-            </div>
-          </div>
-        </eui-page-column-body>
-      </eui-page-column>
-    </eui-page-columns>
-  </eui-page-content>
+                                        ></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <app-proposals-list
+                                    *ngIf="proposals$ | async"
+                                    [proposals]="proposals$ | async"
+                            ></app-proposals-list>
+                            <eui-paginator
+                                #paginatorComponent
+                                class="eui-u-pv-2xs"
+                                [pageSize]="limit$ | async"
+                                [length]="totalResults$ | async"
+                                (pageChange)="handlePagerChange($event)"
+                            ></eui-paginator>
+                        </div>
+                    </div>
+                </eui-page-column-body>
+            </eui-page-column>
+        </eui-page-columns>
+    </eui-page-content>
 </eui-page>
