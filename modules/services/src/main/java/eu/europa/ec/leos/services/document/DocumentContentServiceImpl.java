@@ -25,8 +25,11 @@ import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.messaging.UpdateInternalReferencesMessage;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.collection.CollectionContextService;
+import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
@@ -43,8 +46,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 
+import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
@@ -69,6 +74,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     private final XmlDocumentService xmlDocumentService;
     protected XmlNodeProcessor xmlNodeProcessor;
     protected final XPathCatalog xPathCatalog;
+    private Provider<CollectionContextService> proposalContextProvider;
 
     @Autowired
     public DocumentContentServiceImpl(TransformationService transformationService,
@@ -76,7 +82,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                                       BillService billService, MemorandumService memorandumService, ExplanatoryService explanatoryService,
                                       FinancialStatementService financialStatementService, ProposalService proposalService,
                                       XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
-                                        XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog) {
+                                        XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog, Provider<CollectionContextService> proposalContextProvider) {
         this.transformationService = transformationService;
         this.compareService = compareService;
         this.annexService = annexService;
@@ -89,6 +95,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xPathCatalog = xPathCatalog;
         this.financialStatementService = financialStatementService;
+        this.proposalContextProvider = proposalContextProvider;
     }
 
     protected boolean isComparisonRequired(XmlDocument xmlDocument, SecurityContext securityContext) {
@@ -567,6 +574,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 break;
             case PROPOSAL:
                 document = proposalService.updateProposal((Proposal) document, xmlContent, message);
+                udpateDocPurposeInChildDocuments((Proposal) document, message);
                 break;
             case STAT_FINANC_LEGIS:
                 document = financialStatementService.updateFinancialStatement((FinancialStatement) document, xmlContent, message);
@@ -592,5 +600,19 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         LOG.debug("updateInternalReferences processed for {}: ", document.getMetadata().get().getRef());
         //fetch updated version
         return getDocumentById(document.getId(), category);
+    }
+
+    private void udpateDocPurposeInChildDocuments(Proposal proposal, String message) {
+        byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
+        List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(proposalContent,
+                Arrays.asList("docPurpose"), true);
+        String docPurpose = docPurposeElements.get(0).getElementFragment();
+        CollectionContextService context = proposalContextProvider.get();
+        context.useProposal(proposal);
+        context.usePurpose(docPurpose);
+        context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+        context.useActionMessage(ContextActionService.METADATA_UPDATED, message);
+        context.useActionComment(message);
+        context.executeUpdateDocumentsAssociatedToProposal();
     }
 }

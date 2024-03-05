@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.compare.processor.LeosPostDiffingProcessor;
@@ -31,6 +32,8 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.inject.Provider;
 
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_SOFT_ADDED_CLASS;
@@ -48,9 +51,10 @@ public class DocumentContentServiceMandateImpl extends DocumentContentServiceImp
                                              ContentComparatorService compareService, AnnexService annexService, BillService billService,
                                              MemorandumService memorandumService, ExplanatoryService explanatoryService,
                                              ProposalService proposalService, FinancialStatementService financialStatementService,
-                                             XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService, XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog) {
+                                             XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
+            XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog, Provider<CollectionContextService> proposalContextProvider) {
         super(transformationService, compareService, annexService, billService, memorandumService, explanatoryService, financialStatementService,
-                proposalService, xmlContentProcessor, xmlDocumentService, xmlNodeProcessor, xPathCatalog);
+                proposalService, xmlContentProcessor, xmlDocumentService, xmlNodeProcessor, xPathCatalog, proposalContextProvider);
     }
 
     @Override
