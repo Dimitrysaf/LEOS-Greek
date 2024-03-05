@@ -25,6 +25,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
+import eu.europa.ec.leos.services.dto.request.ExportDocumentRequest;
 import eu.europa.ec.leos.services.export.ExportLW;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
@@ -38,10 +39,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,6 +52,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -145,8 +149,9 @@ public class LeosLightApiController {
                                 ImmutableMap.of("documentUrl", documentReferenceUrl, "result", messageHelper.getMessage("leoslight.document.updated.major.version")));
                     }
                 } else {
-                    leosRepository.createDocumentFromContent(packageService.createPackage().getPath(), docRef + ".xml",
+                    savedDocument = leosRepository.createDocumentFromContent(packageService.createPackage().getPath(), docRef + ".xml",
                             docMetaData, docType, documentVO.getCategory().name(), documentVO.getSource());
+                    leosRepository.updateDocument(savedDocument.getId(), docMetaData, documentVO.getSource(), VersionType.INTERMEDIATE, "Document created", docType);
                     return ResponseEntity.status(HttpStatus.OK).body(
                             ImmutableMap.of("documentUrl", documentReferenceUrl, "result", messageHelper.getMessage("leoslight.document.created")));
                 }
@@ -165,13 +170,21 @@ public class LeosLightApiController {
                 ImmutableMap.of("documentUrl", "", "result", errorMessage));
     }
 
-    @PostMapping(value = "/exportDocument", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PostMapping(value = "/exportDocument", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
-    public ResponseEntity<Object> exportDocument(@RequestParam("documentUrl") String documentUrl, @RequestParam String outputDescriptor,
-                                                 @RequestParam(required = false) String callbackAddress) throws IOException {
-        documentUrl = encodeParam(documentUrl);
-//        outputDescriptor = encodeParam(outputDescriptor);
+    public ResponseEntity<Object> exportDocument(@RequestBody ExportDocumentRequest exportDocumentRequest) throws IOException {
+        String documentUrl = encodeParam(exportDocumentRequest.getDocumentUrl());
+        if(StringUtils.isBlank(documentUrl)) {
+            return ResponseEntity.badRequest().body("documentUrl is mandatory!");
+        }
+
+        String outputDescriptor = exportDocumentRequest.getOutputDescriptor();
+        if(StringUtils.isBlank(outputDescriptor)) {
+            return ResponseEntity.badRequest().body("outputDescriptor is mandatory!");
+        }
+
         Map<String, Object> documentMetadata = getDocumentMetadata(documentUrl, leosRepository);
+        String callbackAddress = exportDocumentRequest.getCallbackAddress();
         if(StringUtils.isEmpty(callbackAddress)) {
             callbackAddress = String.valueOf(documentMetadata.get("callbackAddress"));
         }
@@ -198,6 +211,7 @@ public class LeosLightApiController {
             contentToZip.put("exports.zip", leosLightXmlDocumentService.convert(docContent, docName, outputDescriptor, exportOptions));
         } catch (Exception exception) {
             LOG.error("Error occurred while xml file conversion" + exception.getMessage());
+            return ResponseEntity.internalServerError().body(exception.getMessage());
         }
 
         //4.final packaging
@@ -209,9 +223,12 @@ public class LeosLightApiController {
                 leosLightXmlDocumentService.sendZipFileToCallbackUrlAsync(file, callbackAddress);
             } catch (Exception exception) {
                 LOG.error("Error occurred sending response to callback: " + callbackAddress + exception.getMessage());
+                return ResponseEntity.internalServerError().body(exception.getMessage());
             }
-            callbackAddress = encodeParam(callbackAddress);
-            return new ResponseEntity<>("Asynchronously exported to address: " + callbackAddress, HttpStatus.OK);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            return new ResponseEntity<>(ImmutableMap.of("result", "Successfully exported to callback address!"), headers, HttpStatus.OK);
         } else {
             return buildFileAttachment(FileUtils.readFileToByteArray(file), file.getName());
         }

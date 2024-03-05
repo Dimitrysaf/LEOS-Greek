@@ -24,6 +24,7 @@ import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -381,13 +382,15 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(
                 memorandum.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
+        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
+        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
 
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, null,
                 StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(),
-                proposal.getMetadata().getOrNull(), context1.getTocRules(),
-                memorandum.isTrackChangesEnabled(), true, proposal.isClonedProposal()
+                proposalMetadata, context1.getTocRules(),
+                memorandum.isTrackChangesEnabled(), true, isClonedProposal
         );
     }
 

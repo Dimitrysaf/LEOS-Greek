@@ -117,6 +117,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
         List<ContributionLegDocumentVO<T>> documentVersions = new ArrayList<>();
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, filterType);
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
+        if(proposal == null) {
+            return new ArrayList<>();
+        }
         final List<String> clonedMilestoneIds = proposal.getClonedMilestoneIds();
         for (String clonedMilestoneId : clonedMilestoneIds) {
             String proposalRef = clonedMilestoneId.split(LeosDomainUtil.CMIS_PROPERTY_SPLITTER)[0];

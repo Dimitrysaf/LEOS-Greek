@@ -40,6 +40,7 @@ import {
   DownloadEConsiliumOptions,
 } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { LeosLightService } from '@/shared/services/leos-light.service';
 
 import { ViewVersionService } from './view-version.service';
 
@@ -61,6 +62,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
     protected mergeContributionService: MergeContributionsService,
     protected pageModeService: PageModeService,
     protected appConfigService: AppConfigService,
+    protected leosLightService: LeosLightService,
   ) {
     super(
       router,
@@ -78,6 +80,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       mergeContributionService,
       pageModeService,
       appConfigService,
+      leosLightService
     );
   }
 
