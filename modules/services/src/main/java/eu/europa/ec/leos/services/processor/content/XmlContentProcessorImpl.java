@@ -1952,7 +1952,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 Node child = nodeList.item(i);
                 String id = getId(child);
                 if (id != null) {
-                    elements.add(new Element(id, child.getNodeName(), withContent ? nodeToString(document) : null));
+                    elements.add(new Element(id, child.getNodeName(), withContent ? nodeToString(child) : null));
                 }
             }
         }

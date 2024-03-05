@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -27,6 +28,7 @@ import eu.europa.ec.leos.services.support.XPathCatalog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Provider;
 import java.util.Properties;
 
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
@@ -47,9 +49,9 @@ public class DocumentContentServiceProposalImpl extends DocumentContentServiceIm
                                               XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
                                               XmlNodeProcessor xmlNodeProcessor,
                                               CloneContext cloneContext, XPathCatalog xPathCatalog,
-                                              Properties applicationProperties) {
+                                              Properties applicationProperties, Provider<CollectionContextService> proposalContextProvider) {
         super(transformationService, compareService, annexService, billService, memorandumService, null, financialStatementService, proposalService,
-                xmlContentProcessor, xmlDocumentService, xmlNodeProcessor, xPathCatalog);
+                xmlContentProcessor, xmlDocumentService, xmlNodeProcessor, xPathCatalog, proposalContextProvider);
         this.cloneContext = cloneContext;
         this.applicationProperties = applicationProperties;
     }
