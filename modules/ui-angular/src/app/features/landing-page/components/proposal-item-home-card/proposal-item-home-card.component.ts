@@ -1,11 +1,11 @@
 import { Component, Input, OnInit, SecurityContext } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-proposal-item-home-card',
   templateUrl: './proposal-item-home-card.component.html',
-  styleUrls: ['./proposal-item-home-card.component.css'],
+  styleUrls: ['./proposal-item-home-card.component.scss'],
 })
 export class ProposalItemHomeCardComponent implements OnInit {
   @Input() proposal: any;
@@ -13,6 +13,7 @@ export class ProposalItemHomeCardComponent implements OnInit {
   @Input() originRef: string | null;
 
   title: string;
+
   constructor(
     private translateService: TranslateService,
     private domSanitizer: DomSanitizer,
