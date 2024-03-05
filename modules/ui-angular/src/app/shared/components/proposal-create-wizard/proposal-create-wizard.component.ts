@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -6,21 +6,19 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
 import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
-import { ProposalCreateTemplateSelectorComponent } from '@/shared/components/proposal-create-template-selector/proposal-create-template-selector.component';
-import { createPromise } from '@/shared/utils';
-import { noWhitespaceValidator } from '@/shared/utils/validators';
-
+import { ProposalService } from '@/features/proposals/services/proposal.service';
 import {
   CatalogItem,
   CreateProposalBody,
   CreateProposalResponse,
-} from '../../models';
-import { ProposalService } from '../../services/proposal.service';
+} from '@/shared/models';
+import { createPromise } from '@/shared/utils';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 @Component({
   selector: 'app-proposal-create-wizard',
@@ -36,13 +34,11 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   createForm: FormGroup;
   selectedTemplate: CatalogItem | null;
   selectedLanguage: string;
-  @ViewChild('createWizardDialog') createWizard: EuiDialogComponent;
-  @ViewChild('templateSelector')
-  templateSelector: ProposalCreateTemplateSelectorComponent;
 
   private destroy$ = new Subject();
 
   constructor(
+    @Inject(DIALOG_COMPONENT_CONFIG) private config,
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private router: Router,
@@ -113,17 +109,13 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     this.stepSelected = event;
   }
 
-  openCreateWizard() {
-    this.createWizard.openDialog();
-  }
-
   async onCreate() {
     const { resolve, reject, promise } =
       createPromise<CreateProposalResponse>();
 
     this.proposalService.createProposal(this.getDataForCreate()).subscribe({
       next: async (response) => {
-        this.createWizard.closeDialog();
+        this.config.closeDialog();
         this.resetInitials();
         await this.router.navigate([`collection/${response.proposalId}`]);
         resolve(response);
@@ -135,7 +127,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    this.createWizard.closeDialog();
     this.resetInitials();
   }
 
@@ -201,7 +192,6 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   private resetInitials() {
-    this.templateSelector.reset();
     this.createForm.reset();
     this.stepSelected = null;
     this.currentStepIndex = 1;

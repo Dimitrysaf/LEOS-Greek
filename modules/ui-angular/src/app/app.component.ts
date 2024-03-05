@@ -43,6 +43,13 @@ export class AppComponent implements OnInit, OnDestroy {
   userPreferencesState: Observable<UserPreferences>;
   profile: Profile;
 
+  listSupportButtons = [
+    { id: 1, label: 'app.support.contact-us' },
+    { id: 2, label: 'app.support.learn' },
+    { id: 3, label: 'app.support.go-pro' },
+    { id: 4, label: 'app.support.decide' },
+  ];
+
   constructor(
     private store: Store<any>,
     private config: AppConfigService,
@@ -65,12 +72,10 @@ export class AppComponent implements OnInit, OnDestroy {
     const lang = this.storage.get('lang');
     this.store.dispatch(new UpdateUserPreferencesAction({ lang }));
     this.subs.push(
-      this.config.config.subscribe(
-        (config) => {
-          this.headerTitleHtml = config.headerTitle;
-          this.profile = config.profile;
-        },
-      ),
+      this.config.config.subscribe((config) => {
+        this.headerTitleHtml = config.headerTitle;
+        this.profile = config.profile;
+      }),
     );
 
     this.subs.push(
@@ -89,5 +94,32 @@ export class AppComponent implements OnInit, OnDestroy {
     this.webSocket.removeSession();
     this.webSocket.disconnect();
     this.subs.forEach((s: Subscription) => s.unsubscribe());
+  }
+
+  onListItemClicked(item) {
+    switch (item.id) {
+      case 1: {
+        window.location.href =
+          'mailto:SG-DECIDE-FORMATION-SUPPORT@ec.europa.eu';
+        break;
+      }
+
+      case 2: {
+        window.location.href =
+          'https://eceuropaeu.sharepoint.com/teams/GRP-PRO-SG-EU-PMH-IT-training-support/SitePages/Edit.aspx';
+        break;
+      }
+      case 3: {
+        window.location.href =
+          'https://webgate.ec.europa.eu/fpfis/wikis/pages/viewpage.action?spaceKey=REGISTRY&title=Home';
+        break;
+      }
+
+      case 4: {
+        window.location.href =
+          'https://intragate.ec.europa.eu/decide/sep/entrance';
+        break;
+      }
+    }
   }
 }

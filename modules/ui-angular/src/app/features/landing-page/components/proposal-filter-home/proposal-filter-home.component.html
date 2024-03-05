@@ -1,0 +1,28 @@
+<div *ngIf="searchTerm !== undefined" class="search-container">
+  <div euiInputGroup class="input-label-container">
+    <eui-label class="eui-u-mt-s eui-u-mb-xs eui-u-font-xl eui-u-font-bold">
+      {{ 'page.home.search-act' | translate }}
+    </eui-label>
+  </div>
+  <div class="input-button-layout">
+    <div class="eui-input-group-addon">
+      <input
+        euiInputText
+        id="searchInput"
+        placeholder="Search for a proposal"
+        (keydown.enter)="buttonWatchForChanges()"
+        [(ngModel)]="searchTerm"
+      />
+      <button
+        euiButton
+        class="input-container p-2"
+        (click)="buttonWatchForChanges()"
+      >
+        <span euiIcon iconClass="eui-icon eui-icon-search"></span>
+      </button>
+    </div>
+    <button euiButton euiPrimary (click)="workspaceRoute()">
+      {{ 'page.home.search.button' | translate }}
+    </button>
+  </div>
+</div>

@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { DocumentService } from '@/shared/services/document.service';
-
 import { ProposalService } from '../proposals/services/proposal.service';
 import { AddMilestoneDialogComponent } from './components/add-milestone-dialog/add-milestone-dialog.component';
 import { MilestoneAnnotationWarningModalComponent } from './components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';

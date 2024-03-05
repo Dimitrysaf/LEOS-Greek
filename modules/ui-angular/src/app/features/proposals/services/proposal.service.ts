@@ -1,7 +1,21 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { GLOBAL_CONFIG_TOKEN, GlobalConfig, I18nService } from '@eui/core';
-import { Document, LeosMetadata } from '@leos/shared';
+import {
+  CatalogItem,
+  CreateExplanatoryDocument,
+  CreateProposalBody,
+  CreateProposalResponse,
+  Document,
+  GetTemplatesResponse,
+  LegFileValidationResponse,
+  LeosMetadata,
+  ListProposalsWithFilterBody,
+  ListProposalsWithFilterBodyFilter,
+  ListProposalsWithFilterResponse,
+  UpdateProposalMetadataModel,
+  UploadProposalResposne,
+} from '@leos/shared';
 import {
   BehaviorSubject,
   combineLatest,
@@ -21,26 +35,11 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { LoadingService } from '@/shared/services/loading.service';
 
 import {
-  CatalogItem,
-  CreateDraftBody,
-  CreateDraftResponse,
-  CreateExplanatoryDocument,
-  CreateProposalBody,
-  CreateProposalResponse,
   DEFAULT_LIMIT,
   DEFAULT_PAGE,
   DEFAULT_SORT_ORDER,
-  GetTemplatesResponse,
-  ListProposalsWithFilterBody,
-  ListProposalsWithFilterBodyFilter,
-  ListProposalsWithFilterResponse,
   ProposalFilter,
-  UpdateProposalMetadataModel,
 } from '../models';
-import {
-  LegFileValidationResponse,
-  UploadProposalResposne,
-} from '../models/upload-response.model';
 
 const initialFilters: ProposalFilter = {
   searchTerm: '',

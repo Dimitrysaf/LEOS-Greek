@@ -1,4 +1,11 @@
-import { Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  Inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -6,19 +13,19 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
 import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
 import { ProposalDetailsService } from '@/features/proposal-view/services/proposal-details.service';
-import { noWhitespaceValidator } from '@/shared/utils/validators';
-
 import {
   CatalogItem,
   CreateDraftBody,
   CreateExplanatoryDocument,
-} from '../../../features/proposals/models';
+} from '@/shared';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
+
 import { ProposalService } from '../../../features/proposals/services/proposal.service';
 import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-template-selector/proposal-create-template-selector.component';
 
@@ -37,13 +44,13 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
   createForm: FormGroup;
   selectedTemplate: CatalogItem | null;
   selectedLanguage: string;
-  @ViewChild('createWizardDialog') createWizard: EuiDialogComponent;
   @ViewChild('templateSelector')
   templateSelector: ProposalCreateTemplateSelectorComponent;
 
   private destroy$ = new Subject();
 
   constructor(
+    @Inject(DIALOG_COMPONENT_CONFIG) private config,
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private proposalDetailsService: ProposalDetailsService,
@@ -157,10 +164,6 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     this.stepSelected = event;
   }
 
-  openCreateWizard() {
-    this.createWizard.openDialog();
-  }
-
   onCreate() {
     if (!this.fromProposal) {
       this.proposalService
@@ -182,7 +185,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
         .createExplanatory(this.getDataForCreateExplanatory())
         .subscribe({
           next: async (response) => {
-            this.createWizard.closeDialog();
+            this.closeDialog();
             this.resetInitials();
             if (this.fromProposal)
               this.route.params
@@ -199,7 +202,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    this.createWizard.closeDialog();
+    this.config.closeDialog();
     this.resetInitials();
   }
 

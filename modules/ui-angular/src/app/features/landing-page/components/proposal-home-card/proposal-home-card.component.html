@@ -1,0 +1,94 @@
+<ng-container *ngIf="shouldShowIcon">
+  <eui-card
+    euiCollapsible="true"
+    euiCollapsed="false"
+    class="card-container eui-u-shadow-2"
+  >
+    <eui-card-header>
+      <eui-card-header-title class="label-icon-container">
+        <span [class]="iconClass"></span>
+        <span>{{ labelKey | translate }}</span>
+      </eui-card-header-title>
+      <eui-card-header-right-content> </eui-card-header-right-content>
+      <eui-card-header-body> </eui-card-header-body>
+    </eui-card-header>
+
+    <eui-card-content>
+      <div class="proposals-list-container">
+        <app-proposal-item-home-card
+          *ngFor="let proposal of proposals; let i = index"
+          [proposal]="proposal"
+        ></app-proposal-item-home-card>
+      </div>
+    </eui-card-content>
+  </eui-card>
+</ng-container>
+<ng-container *ngIf="!shouldShowIcon">
+  <eui-card class="card-container eui-u-shadow-1">
+    <eui-card-header>
+      <eui-card-header-title class="label-icon-container">
+        <div
+          class="total-results-sort eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center"
+        >
+          <div class="totalResults">
+            <div>
+              {{ totalResults$ | async }}
+              {{ 'page.home.results.found' | translate }}
+            </div>
+          </div>
+          <div class="sort-btn">
+            <span>{{ 'page.home.sort-by' | translate }} </span>
+            <eui-dropdown>
+              <button euiButton>
+                <span euiLabel>{{ 'page.home.sort.date' | translate }}</span>
+                <span
+                  euiIcon
+                  euiIconButton
+                  iconClass="eui-icon-caret-down"
+                ></span>
+              </button>
+              <eui-dropdown-content> </eui-dropdown-content>
+            </eui-dropdown>
+
+            <button euiButton (click)="toggleSortOrder()">
+              <span
+                euiIcon
+                iconClass="eui-icon"
+                [ngClass]="[
+                  sortOrder ? 'eui-icon-arrow-down' : 'eui-icon-arrow-up'
+                ]"
+              ></span>
+            </button>
+          </div>
+        </div>
+      </eui-card-header-title>
+      <eui-card-header-right-content> </eui-card-header-right-content>
+      <eui-card-header-body> </eui-card-header-body>
+    </eui-card-header>
+
+    <eui-card-content>
+      <div class="proposals-list-container">
+        <ng-container
+          *ngFor="
+            let proposal of proposals;
+            trackBy: trackProposal;
+            let i = index
+          "
+        >
+          <app-proposal-item-home-card
+            [proposal]="proposal"
+            [status]="geContributionStatus(proposal)"
+            [originRef]="proposal.cloneProposalMetadataVO?.originRef ?? null"
+          ></app-proposal-item-home-card>
+        </ng-container>
+      </div>
+    </eui-card-content>
+  </eui-card>
+  <eui-paginator
+    #paginatorComponent
+    [pageSize]="limit$ | async"
+    [length]="totalResults$ | async"
+    class="eui-u-pv-2xs pagination"
+    (pageChange)="handlePagerChange($event)"
+  ></eui-paginator>
+</ng-container>

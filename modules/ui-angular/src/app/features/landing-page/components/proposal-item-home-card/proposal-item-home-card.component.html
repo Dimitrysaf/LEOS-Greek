@@ -1,0 +1,44 @@
+<eui-card class="eui-u-mt-m">
+  <eui-card-header
+    class="eui-u-flex-align-items-start"
+    [isHeaderMultilines]="true"
+  >
+    <eui-card-header-title class="align-self-start eui-u-color-primary-100">
+      <a [routerLink]="['/collection', proposal.ref]" [innerHTML]="title"></a>
+    </eui-card-header-title>
+    <eui-card-header-subtitle>
+      {{
+        'page.workspace.proposal-item.updated-by'
+          | translate
+            : {
+                updatedOn: proposal.updatedOn | date : 'dd/MM/yyyy h:mm',
+                updatedBy: proposal.updatedBy
+              }
+      }}
+    </eui-card-header-subtitle>
+    <eui-card-header-right-content
+      class="eui-u-flex-column col-2 eui-u-flex-align-items-start"
+    >
+      <div
+        class="eui-u-font-m eui-u-font-bold eui-u-color-grey-75 eui-u-mb-2xs h-25"
+        *ngIf="originRef"
+      >
+        {{ originRef }}
+      </div>
+      <div *ngIf="status">
+        <div class="eui-u-font-l eui-u-font-bold eui-u-color-grey-100">
+          {{ 'page.workspace.proposal-item.contribution-status' | translate }}
+        </div>
+        <eui-chip
+          euiSize2XL
+          euiOutline
+          [euiSuccess]="status === 'ready'"
+          [euiSecondary]="status === 'sent'"
+          class="eui-u-mr-2xs eui-u-mb-2xs"
+        >
+          <span euiLabel *ngIf="status">{{ getStatus(status) }}</span>
+        </eui-chip>
+      </div>
+    </eui-card-header-right-content>
+  </eui-card-header>
+</eui-card>

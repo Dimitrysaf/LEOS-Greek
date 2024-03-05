@@ -23,6 +23,8 @@ import {
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { Document } from '@/shared/models/document.model';
+import { CreateProposalService } from '@/shared/services/create-proposal.service';
+import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 import { ProposalsFiltersComponent } from '../../components';
 import {
@@ -74,6 +76,8 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
     private appConfig: AppConfigService,
     public breadcrumbService: EuiBreadcrumbService,
     public translateService: TranslateService,
+    public createProposalService: CreateProposalService,
+    public environmentService: EnvironmentService,
   ) {
     this.filters$ = this.proposalService.filters$;
     this.page$ = this.proposalService.page$;

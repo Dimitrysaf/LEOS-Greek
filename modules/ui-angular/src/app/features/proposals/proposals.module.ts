@@ -7,11 +7,7 @@ import {
   ProposalsFiltersComponent,
   ProposalsListComponent,
 } from './components';
-import {
-  ProposalCreateWizardComponent,
-  ProposalsComponent,
-} from './containers';
-import { ProposalUploadWizardComponent } from './containers/proposal-upload-wizard/proposal-upload-wizard.component';
+import { ProposalsComponent } from './containers';
 import { ProposalsRoutingModule } from './proposals-routing.module';
 import { ProposalService } from './services/proposal.service';
 
@@ -21,8 +17,6 @@ import { ProposalService } from './services/proposal.service';
     ProposalsFiltersComponent,
     ProposalsListComponent,
     ProposalItemComponent,
-    ProposalCreateWizardComponent,
-    ProposalUploadWizardComponent,
   ],
   providers: [ProposalService],
   imports: [SharedModule, ReactiveFormsModule, ProposalsRoutingModule],

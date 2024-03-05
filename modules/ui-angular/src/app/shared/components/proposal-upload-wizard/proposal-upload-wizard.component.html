@@ -1,0 +1,117 @@
+<ux-wizard-steps
+        (selectStep)="onSelectStepRemoteNav($event)"
+        [activeStepIndex]="currentStepIndex"
+        [isNavigationAllowed]="isNavigationAllowed"
+>
+    <ux-wizard-step
+            [label]="
+        (environmentService.isCouncil()
+          ? 'page.workspace.upload-cn.label'
+          : 'page.workspace.upload.label'
+        ) | translate
+      "
+            [isCompleted]="step1Complete"
+    >
+        <uxWizardStepContent>
+            <form [formGroup]="uploadForm" enctype="multipart/form-data">
+                <span>{{ 'page.workspace.upload-cn.button.label' | translate }}</span>
+                <eui-file-upload
+                    #uploadFile
+                    formControlName="legFile"
+                    [progress]="progress"
+                    [isMultiple]="false"
+                    [accept]="'.leg'"
+                    (drop)="onDrop()"
+                    [hasResetButton]="false"
+                ></eui-file-upload>
+            </form>
+            <div>
+                <button
+                        euiButton
+                        euiSecondary
+                        (click)="resetInitials()"
+                        *ngIf="showResetButton()"
+                        class="my-3"
+                >
+                    {{ 'global.actions.reset' | translate }}
+                </button>
+            </div>
+            <eui-card *ngIf="errorsVO">
+                <eui-card-header
+                >
+                    <eui-card-header-title>
+              <span
+              >Filename: {{ fileName }} not valid</span
+              ></eui-card-header-title
+                    >
+                </eui-card-header
+                >
+                <eui-card-content>
+                    <div class="" *ngFor="let error of errorsVO">
+              <span class=""
+              >{{ error.objects[0] }} - {{ error.objects[1] }}</span
+              >
+                    </div>
+                </eui-card-content>
+            </eui-card>
+        </uxWizardStepContent>
+    </ux-wizard-step>
+    <ux-wizard-step
+            [label]="
+        (environmentService.isCouncil()
+          ? 'page.workspace.create-form.draft.label'
+          : 'page.workspace.create-form.document.label'
+        ) | translate
+      "
+            [isCompleted]="uploadForm.valid"
+    >
+        <uxWizardStepContent
+        >
+            <app-proposal-create-form
+                    [createForm]="uploadForm"
+                    [translationKey]="
+            (environmentService.isCouncil() ? 'draft' : 'document') | translate
+          "
+            ></app-proposal-create-form
+            >
+        </uxWizardStepContent>
+    </ux-wizard-step>
+</ux-wizard-steps>
+
+<div class="app-dialog-footer-content">
+    <button euiButton (click)="closeDialog()">
+        {{ 'global.actions.cancel' | translate }}
+    </button>
+    <button
+            euiButton
+            type="button"
+            [disabled]="currentStepIndex === 1 || !isNavigationAllowed"
+            (click)="onNavigation(-1)"
+    >
+        <span class="eui-icon eui-icon-chevron-left"></span>
+        <span euiLabel>
+          {{ 'global.actions.previous' | translate }}
+        </span>
+    </button>
+    <button
+            euiButton
+            type="button"
+            [disabled]="currentStepIndex === stepsCount || !isNavigationAllowed"
+            (click)="onNavigation(+1)"
+            [hidden]="showCreateHideNext()"
+    >
+        <span euiLabel>
+          {{ 'global.actions.next' | translate }}
+        </span>
+        <span class="eui-icon eui-icon-chevron-right"></span>
+    </button>
+    <button
+            [hidden]="!showCreateHideNext()"
+            [disabled]="!isFormValid()"
+            euiButton
+            euiPrimary
+            (click)="onCreate()"
+    >
+        {{ 'global.actions.create' | translate }}
+    </button>
+</div>
