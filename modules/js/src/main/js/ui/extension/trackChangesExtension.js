@@ -38,7 +38,7 @@ define(function trackChangesExtensionModule(require) {
         log.debug("Track changes extension state changed...");
         // KLUGE delay execution due to sync issues with target update
         var proposalRef = connector.getState().proposalRef;
-        if (!proposalRef) {
+        if (!proposalRef && connector.getState().proposalMetadata) {
             proposalRef = connector.getState().proposalMetadata.ref;
         }
         setTimeout(_updateTrackChangesStyles, 500, connector.getState().user.login, proposalRef, connector.getState().isTrackChangesShowed);

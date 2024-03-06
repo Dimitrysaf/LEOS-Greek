@@ -1397,7 +1397,7 @@ export class DocumentService {
   }
 
   private getCollaborators(proposalRef: string) {
-    if (!proposalRef) return;
+    if (!proposalRef) return of([]);
     return this.http.get<Collaborator[]>(
       `${apiBaseUrl}/secured/proposal/${proposalRef}/collaborators`,
     );

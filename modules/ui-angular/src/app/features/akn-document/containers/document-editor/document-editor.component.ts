@@ -62,6 +62,7 @@ import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.servic
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { LeosLightService } from '@/shared/services/leos-light.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
@@ -200,6 +201,7 @@ export class DocumentEditorComponent
     private viewVersionService: ViewVersionService,
     private pageModeService: PageModeService,
     public mergeContributionService: MergeContributionsService,
+    private leosLightService: LeosLightService,
   ) {
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
 
@@ -652,12 +654,14 @@ export class DocumentEditorComponent
   }
 
   handleClose() {
-    const proposalRef = this.documentConfig.proposalMetadata.ref;
     if (this.document.querySelectorAll('.cke').length > 0) {
       this.openEditorDialog.openDialog();
     } else {
       this.cdkEditor.closeElementEditor();
-      this.router.navigate([`/collection/${proposalRef}`]);
+      const proposalRef = this.documentConfig.proposalMetadata?.ref;
+      if (proposalRef) {
+        this.router.navigate([`/collection/${proposalRef}`]);
+      }
     }
   }
 
@@ -669,7 +673,9 @@ export class DocumentEditorComponent
     this.openEditorDialog.closeDialog();
     this.cdkEditor.closeElementEditor();
     //wait for the API where we get all the metadata for each document
-    this.router.navigate([`/collection/${this.proposalRef}`]);
+    if (this.proposalRef) {
+      this.router.navigate([`/collection/${this.proposalRef}`]);
+    }
   }
 
   onSidebarShown() {
@@ -960,6 +966,9 @@ export class DocumentEditorComponent
   }
 
   private manageBreadCrumbsDocumentScreen() {
+    if (!this.documentConfig.proposalMetadata) {
+      return;
+    }
     this.breadcrumbService.setBreadcrumb([
       {
         id: 'home',
@@ -993,11 +1002,7 @@ export class DocumentEditorComponent
   }
 
   get showMarkAsDoneButton() {
-    return (
-      this.profile &&
-      this.profile.callbackPresent &&
-      this.profile.markAsDoneAvailable
-    );
+    return this.documentActions.showMarkAsDoneButton;
   }
 
   get showTocEditButton() {

@@ -66,3 +66,7 @@
 .overlay-merge-contribution {
   @include overlay-style(rgba(132, 117, 117, 0.2), rgb(132, 117, 117)); // Very faint red color with adjusted opacity
 }
+
+.overlay-finalize {
+  @include overlay-style(rgba(172, 194, 230, 0.2), rgb(82, 120, 168)); // Very faint blue color with adjusted opacity
+}

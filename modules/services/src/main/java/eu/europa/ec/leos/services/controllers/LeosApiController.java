@@ -667,7 +667,7 @@ public class LeosApiController {
         try {
             String systemName = null;
             String token = request.getHeader(CLIENT_CONTEXT_PARAMETER);
-            if(tokenService.validateClientContextToken(token)) {
+            if(StringUtils.isNotBlank(token) && tokenService.validateClientContextToken(token)) {
                 systemName = tokenService.extractUserSystemNameFromToken(token);
             }
             AppConfigResponse appConfigResponse = configService.getApplicationConfig(systemName);

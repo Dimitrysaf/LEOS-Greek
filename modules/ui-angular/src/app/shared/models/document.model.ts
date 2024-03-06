@@ -63,6 +63,8 @@ export interface DocumentsMetadata {
   stage: string;
   template: string;
   title: string;
+  callbackAddress: string;
+  imported: boolean;
 }
 export interface LeosMetadata {
   category: DocumentType;
@@ -76,6 +78,8 @@ export interface LeosMetadata {
   objectId: string;
   docVersion: string;
   eeaRelevance: boolean;
+  callbackAddress: string;
+  imported: boolean;
 }
 
 /** AKA `CloneProposalMetadataVO` in Java code */

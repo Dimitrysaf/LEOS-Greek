@@ -48,6 +48,8 @@ import {
   EXPORT_DROPDOWN_EXPORT_VERSION_WITH_ANNOTATIONS_ID,
   EXPORT_SECTION_DROPDOWN_ID,
   EXPORT_SECTION_ID,
+  FINALIZE_ACTION_ID,
+  FINALIZE_SECTION_ID,
   IMPORT_OJ_ACTION_ID,
   IMPORT_OJ_SECTION_ID,
   MERGE_CONTRIBUTION_APPLY_CHANGES_ID,
@@ -69,6 +71,7 @@ import {
 } from '@/shared/constants/document-actions.constants';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { LeosLightService } from '@/shared/services/leos-light.service';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import { SaveVersionComponent } from '../components/save-version/save-version.component';
@@ -117,6 +120,7 @@ export abstract class DocumentActionsService {
     protected mergeContributionService: MergeContributionsService,
     protected pageModeService: PageModeService,
     protected appConfigService: AppConfigService,
+    protected leosLightService: LeosLightService,
   ) {
     this.actionsItems$ = this.actionItemsBS.asObservable();
     this.applyDisabled$ = this.applyDisabledBS.asObservable();
@@ -261,7 +265,7 @@ export abstract class DocumentActionsService {
     const mergeContributionsSection =
       this.pageMode === PageMode.Contribution &&
       this.buildMergeContributionsSection();
-
+    const finalizeSection = this.showMarkAsDoneButton && this.buildFinalizeSection();
     return [
       saveSection,
       importOJSection,
@@ -273,6 +277,7 @@ export abstract class DocumentActionsService {
       compareSection,
       viewVersionSection,
       mergeContributionsSection,
+      finalizeSection,
     ].filter(Boolean);
   }
 
@@ -868,6 +873,45 @@ export abstract class DocumentActionsService {
     this.mergeContributionService.handleContributionSelectCount(false, true);
   }
 
+  private buildFinalizeSection(): IRibbonToolbarSection {
+    return {
+      type: IRibbonToolbarType.SECTION,
+      id: FINALIZE_SECTION_ID,
+      order: 8,
+      resizeOrder: 1,
+      sectionContainerCssClasses: 'overlay-finalize',
+      cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
+      children: [
+        {
+          type: IRibbonToolbarType.BUTTON,
+          id: FINALIZE_ACTION_ID,
+          label: this.translateService.instant(
+            'global.actions.mark.done',
+          ),
+          description: this.translateService.instant(
+            'global.actions.mark.done',
+          ),
+          euiSize: 's',
+          euiStyle: 'secondary',
+          actionFn: () => this.leosLightService.exportDocument(this.documentService.documentType, this.documentService.documentRef),
+        },
+      ],
+    };
+  }
+
+  get showMarkAsDoneButton() {
+    const documentMetada =
+      this.documentConfig &&
+      this.documentConfig.documentsMetadata &&
+      this.documentConfig.documentsMetadata.find(
+        (d) => (d.category = this.documentService.documentType),
+      );
+    return (
+      this.profile?.markAsDoneAvailable &&
+      documentMetada?.callbackAddress != null
+    );
+  }
+  
   private toggleUserGuidance() {
     this.ckEditorService.toggleUserGuidance();
   }

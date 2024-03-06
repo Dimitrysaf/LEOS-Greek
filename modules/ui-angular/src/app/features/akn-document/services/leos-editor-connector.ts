@@ -7,6 +7,7 @@ import {
   EditElementResponse,
   SaveElementAction,
 } from '@/features/akn-document/models/ckeditor';
+import { ActionManagerConnector } from "@/features/akn-document/services/action-manager-connector";
 import type { EditorOpenState } from '@/features/akn-document/services/ckeditor.service';
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
@@ -23,7 +24,6 @@ import { getInstanceType, isNodeLastElement } from '@/shared/utils/toc.utils';
 
 import { apiBaseUrl } from '../../../../config';
 import { TableOfContentService } from './table-of-content.service';
-import { ActionManagerConnector } from "@/features/akn-document/services/action-manager-connector";
 
 export type LeosEditorConnectorState = LeosJavaScriptExtensionState & {
   // No connector specific state
