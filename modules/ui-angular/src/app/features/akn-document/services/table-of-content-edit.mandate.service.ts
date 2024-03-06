@@ -23,7 +23,10 @@ import {
   SUBPARAGRAPH,
 } from '@/shared/constants';
 import { NodeValidation } from '@/shared/models/drop-response.model';
-import { TableOfContentItemVO } from '@/shared/models/toc.model';
+import {
+  ClassToDepthType,
+  TableOfContentItemVO,
+} from '@/shared/models/toc.model';
 import { DocumentService } from '@/shared/services/document.service';
 import {
   containsItemOfOrigin,

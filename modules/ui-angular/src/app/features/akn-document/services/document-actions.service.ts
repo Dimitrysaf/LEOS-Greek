@@ -273,7 +273,7 @@ export abstract class DocumentActionsService {
       compareSection,
       viewVersionSection,
       mergeContributionsSection,
-    ];
+    ].filter(Boolean);
   }
 
   private buildSaveSection(): IRibbonToolbarSection {
@@ -767,8 +767,7 @@ export abstract class DocumentActionsService {
         ),
         iconClass: 'eui-icon-more-vertical',
         items: this.buildMergeContributionApplyDropdownOptions(),
-        cssClasses:
-          'eui-button--basic eui-button--icon-only',
+        cssClasses: 'eui-button--basic eui-button--icon-only',
       },
       {
         type: IRibbonToolbarType.BUTTON,
@@ -853,14 +852,19 @@ export abstract class DocumentActionsService {
   }
 
   private onAcceptMergeAllContributions() {
-    this.ckEditorService.handleMergeContributionsActions(this.mergeWithTrackChanges, true);
+    this.ckEditorService.handleMergeContributionsActions(
+      this.mergeWithTrackChanges,
+      true,
+    );
   }
 
-  private onCancelMergeAllContributions() {
-  }
+  private onCancelMergeAllContributions() {}
 
   private handleMerge() {
-    this.ckEditorService.handleMergeContributionsActions(this.mergeWithTrackChanges, false);
+    this.ckEditorService.handleMergeContributionsActions(
+      this.mergeWithTrackChanges,
+      false,
+    );
     this.mergeContributionService.handleContributionSelectCount(false, true);
   }
 
@@ -997,7 +1001,7 @@ export abstract class DocumentActionsService {
 
   private canAcceptTrackChanges() {
     return (
-      this.permissions.includes('CAN_ACCEPT_CHANGES') &&
+      this.permissions?.includes('CAN_ACCEPT_CHANGES') &&
       (!this.documentConfig?.clonedProposal ||
         (this.documentConfig?.clonedProposal &&
           this.leosConfig?.user.roles.includes('SUPPORT')))
@@ -1005,6 +1009,6 @@ export abstract class DocumentActionsService {
   }
 
   private canRejectTrackChanges() {
-    return this.permissions.includes('CAN_REJECT_CHANGES');
+    return this.permissions?.includes('CAN_REJECT_CHANGES');
   }
 }

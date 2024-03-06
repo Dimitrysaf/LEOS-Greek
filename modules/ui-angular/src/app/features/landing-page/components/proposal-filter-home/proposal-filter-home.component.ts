@@ -1,17 +1,20 @@
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+
 import {
   DEFAULT_SORT_ORDER,
   ProposalFilter,
 } from '@/features/proposals/models';
-import { ProposalService } from '@/features/proposals/services/proposal.service';
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { ProposalService } from '@/shared/services/proposal.service';
+
 type ProposalsState = {
   filters: ProposalFilter;
   sortOrder: boolean;
   limit: number;
   page: number;
 };
+
 @Component({
   selector: 'app-proposal-filter-home',
   templateUrl: './proposal-filter-home.component.html',
@@ -20,7 +23,7 @@ type ProposalsState = {
 export class ProposalFilterHomeComponent implements OnInit {
   sortOrder = DEFAULT_SORT_ORDER;
   @Output() onSearchInitiated: EventEmitter<string | null> = new EventEmitter();
-  searchTerm: string = '';
+  searchTerm = '';
   private destroy$ = new Subject<void>();
 
   constructor(

@@ -501,7 +501,7 @@ export abstract class TableOfContentEditService {
     targetElement: TableOfContentItemVO,
   ) => {
     if (this.isNumbered(newTree, droppedElement, targetElement)) {
-      if (!droppedElement.autoNumOverwritten) {
+      if (!droppedElement.tocItem.autoNumbering) {
         droppedElement.number = HASH_NUM_VALUE;
       }
       if (isNumSoftDeleted(droppedElement.numSoftActionAttr)) {

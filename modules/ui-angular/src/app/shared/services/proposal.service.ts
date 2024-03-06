@@ -32,14 +32,13 @@ import { finalize, switchMap } from 'rxjs/operators';
 import { apiBaseUrl } from 'src/config';
 
 import { AppConfigService } from '@/core/services/app-config.service';
-import { LoadingService } from '@/shared/services/loading.service';
-
 import {
   DEFAULT_LIMIT,
   DEFAULT_PAGE,
   DEFAULT_SORT_ORDER,
   ProposalFilter,
-} from '../models';
+} from '@/features/proposals/models';
+import { LoadingService } from '@/shared/services/loading.service';
 
 const initialFilters: ProposalFilter = {
   searchTerm: '',

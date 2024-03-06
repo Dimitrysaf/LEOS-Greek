@@ -26,6 +26,7 @@ import {
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DocumentSearchParams } from '@/features/akn-document/models';
 import { Version } from '@/features/akn-document/models/versions';
+import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
 import {
@@ -47,7 +48,6 @@ import {
 } from '../models/document-view-response.model';
 import { SearchMatchVO } from '../models/search.model';
 import { CoEditionServiceWS } from './coEdition.websocket.service';
-import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 
 export enum RelevantElements {
   ALL = 'ALL',

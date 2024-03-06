@@ -1,578 +1,573 @@
 <!-- SECTION: COVERPAGE -->
 <ng-container *appShowOnInstance="['ec', 'os']">
-  <eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="coverpage">
-    <eui-card-header>
-      <eui-card-header-title>
-        <a
-          [routerLink]="['/coverpage', proposalRef]"
-          (click)="$event.preventDefault()"
-          ><strong>{{
-            'page.collection.drafts.coverPage' | translate
-          }}</strong></a
-        >
-        <app-co-edition-info [documentCoEditions]="null"></app-co-edition-info>
-      </eui-card-header-title>
-      <eui-card-header-subtitle
-        *ngIf="coverpage.updatedOn && coverpage.updatedBy"
-      >
-        <app-proposal-last-updated-on
-          [date]="coverpage.updatedOn"
-          [name]="coverpage.updatedBy"
-        ></app-proposal-last-updated-on>
-      </eui-card-header-subtitle>
-    </eui-card-header>
-  </eui-card>
+    <eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="coverpage">
+        <eui-card-header>
+            <eui-card-header-title>
+                <a
+                        [routerLink]="['/coverpage', proposalRef]"
+                        (click)="$event.preventDefault()"
+                ><strong>{{
+                    'page.collection.drafts.coverPage' | translate
+                    }}</strong></a
+                >
+                <app-co-edition-info [documentCoEditions]="null"></app-co-edition-info>
+            </eui-card-header-title>
+            <eui-card-header-subtitle
+                    *ngIf="coverpage.updatedOn && coverpage.updatedBy"
+            >
+                <app-proposal-last-updated-on
+                        [date]="coverpage.updatedOn"
+                        [name]="coverpage.updatedBy"
+                ></app-proposal-last-updated-on>
+            </eui-card-header-subtitle>
+        </eui-card-header>
+    </eui-card>
 </ng-container>
 
 <!-- SECTION: MEMORANDUM -->
 <eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum">
-  <eui-card-header>
-    <eui-card-header-title>
-      <div class="d-flex flex-row">
-        <app-co-edition-info
-          *ngIf="coEditionMap"
-          [documentCoEditions]="
+    <eui-card-header>
+        <eui-card-header-title>
+            <div class="d-flex flex-row">
+                <app-co-edition-info
+                        *ngIf="coEditionMap"
+                        [documentCoEditions]="
             coEditionMap[memorandum?.metadata.internalRef] ?? null
           "
-        ></app-co-edition-info>
-        <a
-          [routerLink]="['/memorandum', memorandum.metadata.internalRef]"
-          (click)="$event.preventDefault()"
-          ><strong>{{
-            'page.collection.drafts.explanatory-memorandum' | translate
-          }}</strong></a
+                ></app-co-edition-info>
+                <a
+                        [routerLink]="['/memorandum', memorandum.metadata.internalRef]"
+                        (click)="$event.preventDefault()"
+                ><strong>{{
+                    'page.collection.drafts.explanatory-memorandum' | translate
+                    }}</strong></a
+                >
+            </div>
+        </eui-card-header-title>
+        <eui-card-header-subtitle
+                *ngIf="memorandum.updatedOn && memorandum.updatedBy"
         >
-      </div>
-    </eui-card-header-title>
-    <eui-card-header-subtitle
-      *ngIf="memorandum.updatedOn && memorandum.updatedBy"
-    >
-      <app-proposal-last-updated-on
-        [date]="memorandum.updatedOn"
-        [name]="memorandum.updatedBy"
-      ></app-proposal-last-updated-on>
-    </eui-card-header-subtitle>
-  </eui-card-header>
+            <app-proposal-last-updated-on
+                    [date]="memorandum.updatedOn"
+                    [name]="memorandum.updatedBy"
+            ></app-proposal-last-updated-on>
+        </eui-card-header-subtitle>
+    </eui-card-header>
 </eui-card>
 
 <!-- SECTION: EXPLANATORY | DRAFTS -->
 <ng-container *appShowOnInstance="['cn']">
-  <eui-card class="eui-u-mt-s eui-u-mb-l">
-    <eui-card-header>
-      <eui-card-header-title>
-        <strong>{{ 'page.collection.drafts.explanatory' | translate }}</strong>
-      </eui-card-header-title>
-      <eui-card-header-right-content>
-        <button euiButton euiPrimary (click)="handleCreateDraft()">
+    <eui-card class="eui-u-mt-s eui-u-mb-l">
+        <eui-card-header>
+            <eui-card-header-title>
+                <strong>{{ 'page.collection.drafts.explanatory' | translate }}</strong>
+            </eui-card-header-title>
+            <eui-card-header-right-content>
+                <button euiButton euiPrimary (click)="handleCreateDraft()">
           <span>
             {{ 'global.actions.add' | translate }}
           </span>
-        </button>
-      </eui-card-header-right-content>
-    </eui-card-header>
-    <eui-card-content>
-      <app-proposal-create-draft
-        #createDraftDialog
-        [showCreateButton]="false"
-        [fromProposal]="true"
-      ></app-proposal-create-draft>
-      <table
-        class="eui-u-mt-m"
-        euiTable
-        euiTableResponsive
-        [rows]="explanatories"
-        *ngIf="true"
-      >
-        <ng-template euiTemplate="header">
-          <tr>
-            <th>
-              {{ 'page.collection.drafts.explanatory.table.title' | translate }}
-            </th>
-            <th>
-              {{
-                'page.collection.drafts.explanatory.table.language' | translate
-              }}
-            </th>
-            <th>
-              {{
-                'page.collection.drafts.explanatory.table.last-updated-on'
-                  | translate
-              }}
-            </th>
-            <th>
-              {{
-                'page.collection.drafts.explanatory.table.last-updated-by'
-                  | translate
-              }}
-            </th>
-            <th style="width: 0">
-              {{
-                'page.collection.drafts.explanatory.table.actions' | translate
-              }}
-            </th>
-          </tr>
-        </ng-template>
-        <ng-template let-row euiTemplate="body">
-          <tr>
-            <td
-              [attr.data-col-label]="
+                </button>
+            </eui-card-header-right-content>
+        </eui-card-header>
+        <eui-card-content>
+            <table
+                    class="eui-u-mt-m"
+                    euiTable
+                    euiTableResponsive
+                    [rows]="explanatories"
+                    *ngIf="true"
+            >
+                <ng-template euiTemplate="header">
+                    <tr>
+                        <th>
+                            {{ 'page.collection.drafts.explanatory.table.title' | translate }}
+                        </th>
+                        <th>
+                            {{
+                            'page.collection.drafts.explanatory.table.language' | translate
+                            }}
+                        </th>
+                        <th>
+                            {{
+                            'page.collection.drafts.explanatory.table.last-updated-on'
+                                | translate
+                            }}
+                        </th>
+                        <th>
+                            {{
+                            'page.collection.drafts.explanatory.table.last-updated-by'
+                                | translate
+                            }}
+                        </th>
+                        <th style="width: 0">
+                            {{
+                            'page.collection.drafts.explanatory.table.actions' | translate
+                            }}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template let-row euiTemplate="body">
+                    <tr>
+                        <td
+                                [attr.data-col-label]="
                 'page.collection.drafts.explanatory.table.title' | translate
               "
-            >
-              <div class="d-flex flex-row">
-                <app-co-edition-info
-                  *ngIf="coEditionMap"
-                  [documentCoEditions]="
+                        >
+                            <div class="d-flex flex-row">
+                                <app-co-edition-info
+                                        *ngIf="coEditionMap"
+                                        [documentCoEditions]="
                     coEditionMap[row?.metadata.internalRef] ?? null
                   "
-                ></app-co-edition-info>
-                <a
-                  *ngIf="row.title"
-                  [routerLink]="['/explanatory', row.metadata.internalRef]"
-                  (click)="$event.preventDefault()"
-                  ><strong>{{ row.title }}</strong></a
-                >
-              </div>
-            </td>
-            <td
-              [attr.data-col-label]="
+                                ></app-co-edition-info>
+                                <a
+                                        *ngIf="row.title"
+                                        [routerLink]="['/explanatory', row.metadata.internalRef]"
+                                        (click)="$event.preventDefault()"
+                                ><strong>{{ row.title }}</strong></a
+                                >
+                            </div>
+                        </td>
+                        <td
+                                [attr.data-col-label]="
                 'page.collection.drafts.explanatory.table.language' | translate
               "
-            >
-              {{ row.language }}
-            </td>
-            <td
-              [attr.data-col-label]="
+                        >
+                            {{ row.language }}
+                        </td>
+                        <td
+                                [attr.data-col-label]="
                 'page.collection.drafts.explanatory.table.last-updated-on'
                   | translate
               "
-            >
-              {{ row.updatedBy }}
-            </td>
-            <td
-              [attr.data-col-label]="
+                        >
+                            {{ row.updatedBy }}
+                        </td>
+                        <td
+                                [attr.data-col-label]="
                 'page.collection.drafts.explanatory.table.last-updated-by'
                   | translate
               "
-            >
-              {{ row.updatedOn | date : 'dd/MM/yyyy HH:mm' }}
-            </td>
-            <td
-              [attr.data-col-label]="
+                        >
+                            {{ row.updatedOn | date : 'dd/MM/yyyy HH:mm' }}
+                        </td>
+                        <td
+                                [attr.data-col-label]="
                 'page.collection.drafts.explanatory.table.actions' | translate
               "
-            >
-              <eui-dropdown>
-                <button
-                  euiButton
-                  euiRounded
-                  euiIconButton
-                  euiBasicButton
-                  euiSecondary
-                  [euiTooltip]="
+                        >
+                            <eui-dropdown>
+                                <button
+                                        euiButton
+                                        euiRounded
+                                        euiIconButton
+                                        euiBasicButton
+                                        euiSecondary
+                                        [euiTooltip]="
                     'page.collection.drafts.explanatory.table.actions.tooltip'
                       | translate
                   "
-                  [attr.aria-label]="
+                                        [attr.aria-label]="
                     'page.collection.drafts.explanatory.table.actions.tooltip'
                       | translate
                   "
-                >
+                                >
                   <span euiIcon iconClass="eui-icon eui-icon-more-vertical">
                   </span>
-                </button>
-                <eui-dropdown-content>
-                  <div euiList>
-                    <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
-                      <button
-                        class="eui-u-p-s"
-                        euiListItem
-                        translate="page.collection.drafts.annex.table.tr.actions.dropdown.edit-title"
-                        (click)="handleExplanatoryEditTitle(row)"
-                      ></button>
-                    </ng-container>
-                    <button
-                      class="eui-u-p-s"
-                      euiListItem
-                      euiDanger
-                      translate="global.actions.delete"
-                      (click)="handleConfirmationDeleteExpl(row)"
-                    ></button>
-                  </div>
-                </eui-dropdown-content>
-              </eui-dropdown>
-            </td>
-          </tr>
-        </ng-template>
-      </table>
-    </eui-card-content>
-  </eui-card>
+                                </button>
+                                <eui-dropdown-content>
+                                    <div euiList>
+                                        <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
+                                            <button
+                                                    class="eui-u-p-s"
+                                                    euiListItem
+                                                    translate="page.collection.drafts.annex.table.tr.actions.dropdown.edit-title"
+                                                    (click)="handleExplanatoryEditTitle(row)"
+                                            ></button>
+                                        </ng-container>
+                                        <button
+                                                class="eui-u-p-s"
+                                                euiListItem
+                                                euiDanger
+                                                translate="global.actions.delete"
+                                                (click)="handleConfirmationDeleteExpl(row)"
+                                        ></button>
+                                    </div>
+                                </eui-dropdown-content>
+                            </eui-dropdown>
+                        </td>
+                    </tr>
+                </ng-template>
+            </table>
+        </eui-card-content>
+    </eui-card>
 </ng-container>
 
 <!-- SECTION: LEGAL ACT -->
 <eui-card
-  class="eui-u-mt-s eui-u-mb-l"
-  *ngIf="document"
-  #documentCard
-  euiCollapsible
-  euiCollapsed="false"
+        class="eui-u-mt-s eui-u-mb-l"
+        *ngIf="document"
+        #documentCard
+        euiCollapsible
+        euiCollapsed="false"
 >
-  <eui-card-header>
-    <eui-card-header-title>
-      <div class="d-flex flex-row">
-        <app-co-edition-info
-          *ngIf="coEditionMap"
-          [documentCoEditions]="
+    <eui-card-header>
+        <eui-card-header-title>
+            <div class="d-flex flex-row">
+                <app-co-edition-info
+                        *ngIf="coEditionMap"
+                        [documentCoEditions]="
             coEditionMap[document.metadata.internalRef] ?? null
           "
-        ></app-co-edition-info>
-        <a
-          [routerLink]="['/document', document.metadata.internalRef]"
-          (click)="$event.stopPropagation()"
-          ><strong>{{
-            'page.collection.drafts.legal-act' | translate
-          }}</strong></a
-        >
-      </div>
-    </eui-card-header-title>
-    <eui-card-header-subtitle *ngIf="document.updatedOn && document.updatedBy">
-      <app-proposal-last-updated-on
-        [date]="document.updatedOn"
-        [name]="document.updatedBy"
-      ></app-proposal-last-updated-on>
-    </eui-card-header-subtitle>
-  </eui-card-header>
-  <eui-card-content>
-    <!-- FINANCIAL STATEMENT SECTION   -->
-    <ng-container *appShowOnInstance="['ec', 'os']">
-      <div
-        class="eui-u-flex pb-3"
-        style="border-bottom: 1px solid var(--eui-base-color-grey-15)"
-        *ngIf="!documentCard.euiCollapsed"
-      >
-        <div class="flex-grow-1">
-          <div class="d-flex flex-row">
-            <div *ngIf="!financialStatement">
-              <strong>{{
-                'page.collection.drafts.financial-statement.title' | translate
-              }}</strong>
+                ></app-co-edition-info>
+                <a
+                        [routerLink]="['/document', document.metadata.internalRef]"
+                        (click)="$event.stopPropagation()"
+                ><strong>{{
+                    'page.collection.drafts.legal-act' | translate
+                    }}</strong></a
+                >
             </div>
-            <a
-              *ngIf="financialStatement"
-              [routerLink]="[
+        </eui-card-header-title>
+        <eui-card-header-subtitle *ngIf="document.updatedOn && document.updatedBy">
+            <app-proposal-last-updated-on
+                    [date]="document.updatedOn"
+                    [name]="document.updatedBy"
+            ></app-proposal-last-updated-on>
+        </eui-card-header-subtitle>
+    </eui-card-header>
+    <eui-card-content>
+        <!-- FINANCIAL STATEMENT SECTION   -->
+        <ng-container *appShowOnInstance="['ec', 'os']">
+            <div
+                    class="eui-u-flex pb-3"
+                    style="border-bottom: 1px solid var(--eui-base-color-grey-15)"
+                    *ngIf="!documentCard.euiCollapsed"
+            >
+                <div class="flex-grow-1">
+                    <div class="d-flex flex-row">
+                        <div *ngIf="!financialStatement">
+                            <strong>{{
+                                'page.collection.drafts.financial-statement.title' | translate
+                                }}</strong>
+                        </div>
+                        <a
+                                *ngIf="financialStatement"
+                                [routerLink]="[
                 '/financial-statement',
                 financialStatement.metadata.internalRef
               ]"
-              (click)="$event.stopPropagation()"
-              ><strong>{{
-                'page.collection.drafts.financial-statement.title' | translate
-              }}</strong></a
-            >
-          </div>
-          <div *ngIf="financialStatement">
-            <eui-card-header-subtitle
-              *ngIf="
+                                (click)="$event.stopPropagation()"
+                        ><strong>{{
+                            'page.collection.drafts.financial-statement.title' | translate
+                            }}</strong></a
+                        >
+                    </div>
+                    <div *ngIf="financialStatement">
+                        <eui-card-header-subtitle
+                                *ngIf="
                 financialStatement.updatedOn && financialStatement.updatedBy
               "
+                        >
+                            <app-proposal-last-updated-on
+                                    [date]="financialStatement.updatedOn"
+                                    [name]="financialStatement.updatedBy"
+                            ></app-proposal-last-updated-on>
+                        </eui-card-header-subtitle>
+                    </div>
+                    <div *ngIf="!financialStatement">
+                        {{
+                        'page.collection.drafts.financial-statement.not-found' | translate
+                        }}
+                    </div>
+                </div>
+                <ng-container
+                        *ngIf="!financialStatement && permissions.includes('CAN_UPDATE')"
+                >
+                    <button
+                            class="eui-u-ml-l"
+                            euiButton
+                            euiPrimary
+                            [euiDisabled]="this.proposalState === 'active'"
+                            [disabled]="this.proposalState === 'active'"
+                            (click)="onFinancialStatementCreate()"
+                    >
+                        {{ 'global.actions.add' | translate }}
+                    </button>
+                </ng-container>
+                <ng-container
+                        *ngIf="financialStatement && permissions.includes('CAN_UPDATE')"
+                >
+                    <button
+                            class="eui-u-ml-l"
+                            euiButton
+                            euiDanger
+                            euiOutline
+                            [euiDisabled]="this.proposalState === 'active'"
+                            [disabled]="this.proposalState === 'active'"
+                            (click)="onFinancialStatementDelete()"
+                    >
+                        {{ 'global.actions.delete' | translate }}
+                    </button>
+                </ng-container>
+            </div>
+        </ng-container>
+        <!-- ANNEX SECTION   -->
+        <ng-container *ngIf="!documentCard.euiCollapsed">
+            <div class="eui-u-flex pt-3">
+                <div class="flex-grow-1">
+                    <div>
+                        <strong>{{
+                            'page.collection.drafts.annex.table.title' | translate
+                            }}</strong>
+                    </div>
+                    <div *ngIf="annexes.length">
+                        <strong>{{ annexes.length }}</strong>
+                        {{ 'page.collection.drafts.annex.table.annex-found' | translate }}
+                    </div>
+                    <div *ngIf="!annexes.length">
+                        {{ 'page.collection.drafts.annex.no-annex' | translate }}
+                    </div>
+                </div>
+                <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
+                    <button
+                            class="eui-u-ml-l"
+                            euiButton
+                            euiPrimary
+                            [euiDisabled]="this.proposalState === 'active'"
+                            [disabled]="this.proposalState === 'active'"
+                            (click)="handleAnnexAdd()"
+                    >
+                        {{ 'global.actions.add' | translate }}
+                    </button>
+                </ng-container>
+                <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
+                    <button
+                            class="eui-u-ml-l"
+                            euiButton
+                            euiPrimary
+                            euiOutline
+                            [euiDisabled]="this.proposalState === 'active'"
+                            [disabled]="this.proposalState === 'active'"
+                            (click)="handleAnnexReorder()"
+                    >
+                        {{ 'page.collection.drafts.annex.table.re-order' | translate }}
+                    </button>
+                </ng-container>
+            </div>
+            <table
+                    class="eui-u-mt-m"
+                    euiTable
+                    euiTableResponsive
+                    [rows]="annexes"
+                    *ngIf="annexes.length"
             >
-              <app-proposal-last-updated-on
-                [date]="financialStatement.updatedOn"
-                [name]="financialStatement.updatedBy"
-              ></app-proposal-last-updated-on>
-            </eui-card-header-subtitle>
-          </div>
-          <div *ngIf="!financialStatement">
-            {{
-              'page.collection.drafts.financial-statement.not-found' | translate
-            }}
-          </div>
-        </div>
-        <ng-container
-          *ngIf="!financialStatement && permissions.includes('CAN_UPDATE')"
-        >
-          <button
-            class="eui-u-ml-l"
-            euiButton
-            euiPrimary
-            [euiDisabled]="this.proposalState === 'active'"
-            [disabled]="this.proposalState === 'active'"
-            (click)="onFinancialStatementCreate()"
-          >
-            {{ 'global.actions.add' | translate }}
-          </button>
-        </ng-container>
-        <ng-container
-          *ngIf="financialStatement && permissions.includes('CAN_UPDATE')"
-        >
-          <button
-            class="eui-u-ml-l"
-            euiButton
-            euiDanger
-            euiOutline
-            [euiDisabled]="this.proposalState === 'active'"
-            [disabled]="this.proposalState === 'active'"
-            (click)="onFinancialStatementDelete()"
-          >
-            {{ 'global.actions.delete' | translate }}
-          </button>
-        </ng-container>
-      </div>
-    </ng-container>
-    <!-- ANNEX SECTION   -->
-    <ng-container *ngIf="!documentCard.euiCollapsed">
-      <div class="eui-u-flex pt-3">
-        <div class="flex-grow-1">
-          <div>
-            <strong>{{
-              'page.collection.drafts.annex.table.title' | translate
-            }}</strong>
-          </div>
-          <div *ngIf="annexes.length">
-            <strong>{{ annexes.length }}</strong>
-            {{ 'page.collection.drafts.annex.table.annex-found' | translate }}
-          </div>
-          <div *ngIf="!annexes.length">
-            {{ 'page.collection.drafts.annex.no-annex' | translate }}
-          </div>
-        </div>
-        <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
-          <button
-            class="eui-u-ml-l"
-            euiButton
-            euiPrimary
-            [euiDisabled]="this.proposalState === 'active'"
-            [disabled]="this.proposalState === 'active'"
-            (click)="handleAnnexAdd()"
-          >
-            {{ 'global.actions.add' | translate }}
-          </button>
-        </ng-container>
-        <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
-          <button
-            class="eui-u-ml-l"
-            euiButton
-            euiPrimary
-            euiOutline
-            [euiDisabled]="this.proposalState === 'active'"
-            [disabled]="this.proposalState === 'active'"
-            (click)="handleAnnexReorder()"
-          >
-            {{ 'page.collection.drafts.annex.table.re-order' | translate }}
-          </button>
-        </ng-container>
-      </div>
-      <table
-        class="eui-u-mt-m"
-        euiTable
-        euiTableResponsive
-        [rows]="annexes"
-        *ngIf="annexes.length"
-      >
-        <ng-template euiTemplate="header">
-          <tr>
-            <th>
-              {{ 'page.collection.drafts.annex.table.tr.title' | translate }}
-            </th>
-            <th>
-              {{
-                'page.collection.drafts.annex.table.tr.last-updated-by'
-                  | translate
-              }}
-            </th>
-            <th>
-              {{
-                'page.collection.drafts.annex.table.tr.last-updated-on'
-                  | translate
-              }}
-            </th>
-            <th style="width: 0">
-              {{ 'page.collection.drafts.annex.table.tr.actions' | translate }}
-            </th>
-          </tr>
-        </ng-template>
-        <ng-template let-row euiTemplate="body">
-          <tr>
-            <td
-              [attr.data-col-label]="
+                <ng-template euiTemplate="header">
+                    <tr>
+                        <th>
+                            {{ 'page.collection.drafts.annex.table.tr.title' | translate }}
+                        </th>
+                        <th>
+                            {{
+                            'page.collection.drafts.annex.table.tr.last-updated-by'
+                                | translate
+                            }}
+                        </th>
+                        <th>
+                            {{
+                            'page.collection.drafts.annex.table.tr.last-updated-on'
+                                | translate
+                            }}
+                        </th>
+                        <th style="width: 0">
+                            {{ 'page.collection.drafts.annex.table.tr.actions' | translate }}
+                        </th>
+                    </tr>
+                </ng-template>
+                <ng-template let-row euiTemplate="body">
+                    <tr>
+                        <td
+                                [attr.data-col-label]="
                 'page.collection.drafts.annex.table.tr.title' | translate
               "
-            >
-              <div class="d-flex flex-row eui-u-flex-align-items-center">
-                <app-co-edition-info
-                  *ngIf="coEditionMap"
-                  [documentCoEditions]="
+                        >
+                            <div class="d-flex flex-row eui-u-flex-align-items-center">
+                                <app-co-edition-info
+                                        *ngIf="coEditionMap"
+                                        [documentCoEditions]="
                     coEditionMap[row.metadata.internalRef] ?? null
                   "
-                ></app-co-edition-info>
-                <a
-                  [routerLink]="['/annex', row.metadata.internalRef]"
-                  (click)="$event.preventDefault()"
-                  ><strong>{{
-                    row.title
-                      ? row.title
-                      : ('page.collection.drafts.annex.table.tr.no-title'
-                        | translate)
-                  }}</strong></a
-                >
-              </div>
-            </td>
-            <td
-              [attr.data-col-label]="
+                                ></app-co-edition-info>
+                                <a
+                                        [routerLink]="['/annex', row.metadata.internalRef]"
+                                        (click)="$event.preventDefault()"
+                                ><strong>{{
+                                    row.title
+                                        ? row.title
+                                        : ('page.collection.drafts.annex.table.tr.no-title'
+                                            | translate)
+                                    }}</strong></a
+                                >
+                            </div>
+                        </td>
+                        <td
+                                [attr.data-col-label]="
                 'page.collection.drafts.annex.table.tr.last-updated-by'
                   | translate
               "
-            >
-              {{ row.updatedBy }}
-            </td>
-            <td
-              [attr.data-col-label]="
+                        >
+                            {{ row.updatedBy }}
+                        </td>
+                        <td
+                                [attr.data-col-label]="
                 'page.collection.drafts.annex.table.tr.last-updated-on'
                   | translate
               "
-            >
-              {{ row.updatedOn | date : 'dd/MM/yyyy HH:mm' }}
-            </td>
-            <td
-              [attr.data-col-label]="
+                        >
+                            {{ row.updatedOn | date : 'dd/MM/yyyy HH:mm' }}
+                        </td>
+                        <td
+                                [attr.data-col-label]="
                 'page.collection.drafts.annex.table.tr.actions' | translate
               "
-            >
-              <div class="eui-dropdown-button">
-                <eui-dropdown>
-                  <button
-                    euiButton
-                    euiRounded
-                    euiIconButton
-                    euiBasicButton
-                    euiSecondary
-                    [euiTooltip]="
+                        >
+                            <div class="eui-dropdown-button">
+                                <eui-dropdown>
+                                    <button
+                                            euiButton
+                                            euiRounded
+                                            euiIconButton
+                                            euiBasicButton
+                                            euiSecondary
+                                            [euiTooltip]="
                       'page.collection.drafts.annex.table.tr.actions.tooltip'
                         | translate
                     "
-                    [attr.aria-label]="
+                                            [attr.aria-label]="
                       'page.collection.drafts.annex.table.tr.actions.tooltip'
                         | translate
                     "
-                  >
+                                    >
                     <span
-                      euiIcon
-                      iconClass="eui-icon eui-icon-more-vertical"
+                            euiIcon
+                            iconClass="eui-icon eui-icon-more-vertical"
                     ></span>
-                  </button>
-                  <eui-dropdown-content>
-                    <div euiList>
-                      <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
-                        <button
-                          class="eui-u-p-s"
-                          euiListItem
-                          translate="page.collection.drafts.annex.table.tr.actions.dropdown.edit-title"
-                          [euiDisabled]="this.proposalState === 'active'"
-                          [disabled]="this.proposalState === 'active'"
-                          (click)="handleAnnexEditTitle(row)"
-                        ></button>
-                      </ng-container>
-                      <ng-container *ngIf="permissions.includes('CAN_DELETE')">
-                        <button
-                          class="eui-u-p-s"
-                          euiListItem
-                          euiDanger
-                          translate="global.actions.delete"
-                          [euiDisabled]="this.proposalState === 'active'"
-                          [disabled]="this.proposalState === 'active'"
-                          (click)="handleAnnexDelete(row)"
-                        ></button>
-                      </ng-container>
-                    </div>
-                  </eui-dropdown-content>
-                </eui-dropdown>
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-      </table>
-    </ng-container>
-  </eui-card-content>
+                                    </button>
+                                    <eui-dropdown-content>
+                                        <div euiList>
+                                            <ng-container *ngIf="permissions.includes('CAN_UPDATE')">
+                                                <button
+                                                        class="eui-u-p-s"
+                                                        euiListItem
+                                                        translate="page.collection.drafts.annex.table.tr.actions.dropdown.edit-title"
+                                                        [euiDisabled]="this.proposalState === 'active'"
+                                                        [disabled]="this.proposalState === 'active'"
+                                                        (click)="handleAnnexEditTitle(row)"
+                                                ></button>
+                                            </ng-container>
+                                            <ng-container *ngIf="permissions.includes('CAN_DELETE')">
+                                                <button
+                                                        class="eui-u-p-s"
+                                                        euiListItem
+                                                        euiDanger
+                                                        translate="global.actions.delete"
+                                                        [euiDisabled]="this.proposalState === 'active'"
+                                                        [disabled]="this.proposalState === 'active'"
+                                                        (click)="handleAnnexDelete(row)"
+                                                ></button>
+                                            </ng-container>
+                                        </div>
+                                    </eui-dropdown-content>
+                                </eui-dropdown>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </table>
+        </ng-container>
+    </eui-card-content>
 </eui-card>
 
 <!-- DIALOG: CONFIRM ANNEX DELETE -->
 <app-confirm-delete-dialog
-  #confirmationForDelete
-  [title]="'page.collection.drafts.annex.delete-dialog.title' | translate"
-  [description]="'page.collection.drafts.annex.delete-dialog.desc' | translate"
-  (confirmDeletion)="handleConfirmationDelete()"
+    #confirmationForDelete
+    [title]="'page.collection.drafts.annex.delete-dialog.title' | translate"
+    [description]="'page.collection.drafts.annex.delete-dialog.desc' | translate"
+    (confirmDeletion)="handleConfirmationDelete()"
 ></app-confirm-delete-dialog>
 
 <!-- DIALOG: CONFIRM EXPLANATORY DELETE -->
 <app-confirm-delete-dialog
-  #confirmationForDeleteExpl
-  [title]="
+    #confirmationForDeleteExpl
+    [title]="
     'page.collection.drafts.explanatory.table.actions.delete-dialog.title'
       | translate
   "
-  [description]="
+    [description]="
     'page.collection.drafts.explanatory.table.actions.delete-dialog.desc'
       | translate
   "
-  (confirmDeletion)="handleExplanatoryDelete()"
+    (confirmDeletion)="handleExplanatoryDelete()"
 ></app-confirm-delete-dialog>
 
 <!-- DIALOG: EDIT ANNEX TITLE -->
 <eui-dialog
-  #editAnnexTitleDialog
-  [title]="'page.collection.drafts.title-dialog.title' | translate"
-  [acceptLabel]="'global.actions.save' | translate"
-  [dismissLabel]="'global.actions.cancel' | translate"
-  (accept)="handleSave()"
+    #editAnnexTitleDialog
+    [title]="'page.collection.drafts.title-dialog.title' | translate"
+    [acceptLabel]="'global.actions.save' | translate"
+    [dismissLabel]="'global.actions.cancel' | translate"
+    (accept)="handleSave()"
 >
-  <div euiInputGroup class="flex-row align-items-center">
-    <label class="label">
-      {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
-    >
-    <input euiInputText [(ngModel)]="title" />
-  </div>
+    <div euiInputGroup class="flex-row align-items-center">
+        <label class="label">
+            {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
+        >
+        <input euiInputText [(ngModel)]="title"/>
+    </div>
 </eui-dialog>
 
 <!-- DIALOG: EDIT EXPLANATORY TITLE -->
 <eui-dialog
-  #editExplanatoryTitleDialog
-  [title]="'page.collection.drafts.title-dialog.title' | translate"
-  [acceptLabel]="'global.actions.save' | translate"
-  [dismissLabel]="'global.actions.cancel' | translate"
-  (accept)="handleExplanatoryTitleSave()"
+    #editExplanatoryTitleDialog
+    [title]="'page.collection.drafts.title-dialog.title' | translate"
+    [acceptLabel]="'global.actions.save' | translate"
+    [dismissLabel]="'global.actions.cancel' | translate"
+    (accept)="handleExplanatoryTitleSave()"
 >
-  <div euiInputGroup class="flex-row align-items-center">
-    <label euiLabel class="label" for="explanatoryTitle">
-      {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
-    >
-    <input euiInputText id="explanatoryTitle" [(ngModel)]="explanatoryTitle" />
-  </div>
+    <div euiInputGroup class="flex-row align-items-center">
+        <label euiLabel class="label" for="explanatoryTitle">
+            {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
+        >
+        <input euiInputText id="explanatoryTitle" [(ngModel)]="explanatoryTitle"/>
+    </div>
 </eui-dialog>
 
 <!-- DIALOG: REORDER ANNEX -->
 <eui-dialog
-  #editAnnexOrder
-  [title]="'page.collection.drafts.annex.reorder-dialog.title' | translate"
-  [dismissLabel]="'global.actions.close' | translate"
-  [hasAcceptButton]="false"
+    #editAnnexOrder
+    [title]="'page.collection.drafts.annex.reorder-dialog.title' | translate"
+    [dismissLabel]="'global.actions.close' | translate"
+    [hasAcceptButton]="false"
 >
-  <div
-    class="eui-u-flex eui-u-flex-column eui-u-flex-align-items-start app-u-gap-m"
-  >
-    <p>{{ 'page.collection.drafts.annex-reorder-dialog.hint' | translate }}</p>
-    <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
-      <div
-        class="example-box"
-        *ngFor="let annex of annexes; let i = index"
-        cdkDrag
-      >
-        <span class="eui-icon eui-icon-bars"></span>
-        <div [attr.data-index]="i">
-          {{
-            annex.title ||
-              ('page.collection.drafts.annex.table.tr.no-title' | translate)
-          }}
+    <div
+            class="eui-u-flex eui-u-flex-column eui-u-flex-align-items-start app-u-gap-m"
+    >
+        <p>{{ 'page.collection.drafts.annex-reorder-dialog.hint' | translate }}</p>
+        <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+            <div
+                    class="example-box"
+                    *ngFor="let annex of annexes; let i = index"
+                    cdkDrag
+            >
+                <span class="eui-icon eui-icon-bars"></span>
+                <div [attr.data-index]="i">
+                    {{
+                    annex.title ||
+                    ('page.collection.drafts.annex.table.tr.no-title' | translate)
+                    }}
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </eui-dialog>

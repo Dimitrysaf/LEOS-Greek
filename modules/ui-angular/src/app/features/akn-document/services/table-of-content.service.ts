@@ -2,11 +2,14 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
+  combineLatest,
+  distinctUntilChanged,
   filter,
   finalize,
   forkJoin,
   mergeMap,
   Observable,
+  switchMap,
   take,
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
@@ -53,10 +56,11 @@ export class TableOfContentService {
     this.isTocDraft$ = this.isTocDraftBS.asObservable();
     this.isEditMode$ = this.isEditModeBS.asObservable();
 
-    this.documentRefAndCategory$
+    combineLatest([this.documentRefAndCategory$, this.isEditMode$])
       .pipe(
+        distinctUntilChanged(),
         filter(Boolean),
-        mergeMap((options) => {
+        switchMap(([options, _]) => {
           const toc = this.getToc(options.ref, options.category);
           const tocItems = this.getTocItems(options.ref, options.category);
           return forkJoin([toc, tocItems]);
@@ -84,14 +88,6 @@ export class TableOfContentService {
     const ref = this.documentRefAndCategoryBS.value.ref;
     const category = this.documentRefAndCategoryBS.value.category;
     this.setDocumentRefAndCategory(ref, category);
-  }
-
-  reloadTocItems() {
-    const ref = this.documentRefAndCategoryBS.value.ref;
-    const category = this.documentRefAndCategoryBS.value.category;
-    this.getTocItems(ref, category)
-      .pipe(take(1))
-      .subscribe((tocItems) => this.tocItemsBS.next(tocItems));
   }
 
   reloadToc() {
@@ -147,14 +143,9 @@ export class TableOfContentService {
     this.isEditModeBS.next(value);
   }
 
-  private getTocItems(
-    documentRef: string,
-    documentType: string,
-    tocMode = process.env.NG_APP_LEOS_INSTANCE === 'cn'
-      ? 'NOT_SIMPLIFIED'
-      : 'SIMPLIFIED',
-  ) {
+  private getTocItems(documentRef: string, documentType: string) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
+    const tocMode = this.isEditModeBS.value ? 'NOT_SIMPLIFIED' : 'SIMPLIFIED';
     return this.http.get<TocItem[]>(
       `${apiBaseUrl}/secured/${category}/${documentRef}/getTocItems`,
       {
@@ -163,15 +154,9 @@ export class TableOfContentService {
     );
   }
 
-  private getToc(
-    documentRef: string,
-    documentType: string,
-    tocMode = process.env.NG_APP_LEOS_INSTANCE === 'cn'
-      ? 'NOT_SIMPLIFIED'
-      : 'SIMPLIFIED',
-  ) {
+  private getToc(documentRef: string, documentType: string) {
     const category = documentType === 'coverpage' ? 'coverPage' : documentType;
-
+    const tocMode = this.isEditModeBS.value ? 'NOT_SIMPLIFIED' : 'SIMPLIFIED';
     return this.http.get<TableOfContentItemVO[]>(
       `${apiBaseUrl}/secured/${category}/${documentRef}/getToc`,
       {

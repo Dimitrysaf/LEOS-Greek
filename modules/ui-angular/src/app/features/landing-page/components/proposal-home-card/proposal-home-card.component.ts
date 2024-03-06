@@ -6,28 +6,31 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { ActivatedRoute, Params, Router } from '@angular/router';
+import {
+  EuiPaginationEvent,
+  EuiPaginatorComponent,
+} from '@eui/components/eui-paginator';
+import { combineLatest, distinctUntilChanged, map,Observable } from 'rxjs';
+
+import { ProposalsFiltersComponent } from '@/features/proposals/components';
+import { ProposalsComponent } from '@/features/proposals/containers';
 import {
   DEFAULT_LIMIT,
   DEFAULT_PAGE,
   DEFAULT_SORT_ORDER,
   ProposalFilter,
 } from '@/features/proposals/models';
-import { Observable, combineLatest, distinctUntilChanged, map } from 'rxjs';
-import { ProposalService } from '@/features/proposals/services/proposal.service';
 import { Document } from '@/shared';
-import { ProposalsComponent } from '@/features/proposals/containers';
-import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ProposalsFiltersComponent } from '@/features/proposals/components';
-import {
-  EuiPaginationEvent,
-  EuiPaginatorComponent,
-} from '@eui/components/eui-paginator';
+import { ProposalService } from '@/shared/services/proposal.service';
+
 type ProposalsState = {
   filters: ProposalFilter;
   sortOrder: boolean;
   limit: number;
   page: number;
 };
+
 @Component({
   selector: 'app-proposal-home-card',
   templateUrl: './proposal-home-card.component.html',
@@ -42,7 +45,7 @@ export class ProposalHomeCardComponent implements OnInit {
   paginatorComponent: EuiPaginatorComponent;
   @ViewChild('filters') filtersComponent: ProposalsFiltersComponent;
   sortOrder = DEFAULT_SORT_ORDER;
-  showHeader: boolean = true;
+  showHeader = true;
   filters$: Observable<ProposalFilter>;
   limit$: Observable<number>;
   page$: Observable<number>;
@@ -120,6 +123,7 @@ export class ProposalHomeCardComponent implements OnInit {
   get shouldShowIcon(): boolean {
     return !!this.iconClass; // This ensures that `iconClass` is truthy (not null, undefined, or an empty string)
   }
+
   toggleHeaderVisibility() {
     console.log(this.showHeader);
     this.showHeader = !this.showHeader;

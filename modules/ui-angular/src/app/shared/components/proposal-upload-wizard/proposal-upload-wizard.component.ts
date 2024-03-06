@@ -13,7 +13,6 @@ import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
-import { ProposalService } from '@/features/proposals/services/proposal.service';
 import {
   CatalogItem,
   CreateProposalBody,
@@ -21,6 +20,7 @@ import {
   UpdateProposalMetadataModel,
 } from '@/shared/models';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { ProposalService } from '@/shared/services/proposal.service';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import { GLOBAL } from '../../../../config/global';
