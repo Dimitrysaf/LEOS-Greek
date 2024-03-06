@@ -14,8 +14,8 @@ import { UxTreeComponent } from '@eui/components/legacy/ux-tree';
 import { Subject, takeUntil } from 'rxjs';
 import { appConfig } from 'src/config';
 
-import { ProposalService } from '@/features/proposals/services/proposal.service';
 import { CatalogItem } from '@/shared';
+import { ProposalService } from '@/shared/services/proposal.service';
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();

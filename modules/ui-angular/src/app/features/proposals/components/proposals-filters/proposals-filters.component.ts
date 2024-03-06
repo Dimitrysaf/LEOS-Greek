@@ -27,13 +27,13 @@ import {
   MAX_TRUNCATION_LIMIT,
   ONE_LINE_NODE_LABEL_LENGTH,
 } from '@/shared/constants/toc.constant';
+import { ProposalService } from '@/shared/services/proposal.service';
 
 import {
   FilterOption,
   ProposalFilter,
   ProposalFilterGroup,
 } from '../../models';
-import { ProposalService } from '../../services/proposal.service';
 
 @Component({
   selector: 'app-proposals-filters',

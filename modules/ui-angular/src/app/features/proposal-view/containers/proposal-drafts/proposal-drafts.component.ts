@@ -176,7 +176,7 @@ export class ProposalDraftsComponent
   }
 
   handleCreateDraft() {
-    this.createProposalService.openProposalCreateDraftDialog();
+    this.createProposalService.openProposalCreateDraftDialog(true);
   }
 
   drop(event: CdkDragDrop<any[]>) {

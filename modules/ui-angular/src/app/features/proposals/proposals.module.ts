@@ -9,7 +9,6 @@ import {
 } from './components';
 import { ProposalsComponent } from './containers';
 import { ProposalsRoutingModule } from './proposals-routing.module';
-import { ProposalService } from './services/proposal.service';
 
 @NgModule({
   declarations: [
@@ -18,7 +17,6 @@ import { ProposalService } from './services/proposal.service';
     ProposalsListComponent,
     ProposalItemComponent,
   ],
-  providers: [ProposalService],
   imports: [SharedModule, ReactiveFormsModule, ProposalsRoutingModule],
 })
 export class ProposalsModule {}

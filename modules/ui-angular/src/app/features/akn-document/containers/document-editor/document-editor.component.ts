@@ -349,9 +349,13 @@ export class DocumentEditorComponent
         this.contributions = contributions;
         this.showContributionsPane = this.contributions.length > 0;
         if (this.contribution) {
-          this.contribution = contributions.find((c) => c.legFileName === this.contribution.legFileName);
+          this.contribution = contributions.find(
+            (c) => c.legFileName === this.contribution.legFileName,
+          );
           if (this.pageMode === PageMode.Contribution) {
-            this.mergeContributionService.viewAndMergeContribution(this.contribution);
+            this.mergeContributionService.viewAndMergeContribution(
+              this.contribution,
+            );
           }
         }
       });
@@ -581,15 +585,13 @@ export class DocumentEditorComponent
   }
 
   handleCancel() {
-    //TODO : implement cancel
-    this.tocService.setIsEditMode(this.isReady);
     if (this.documentTocComponent.isToCDraft) {
       //TODO: handle confirm you want to discard changes
       this.unSavedDialog.openDialog();
       //reset toc state
       this.documentTocComponent.isToCDraft = false;
     } else {
-      this.closeInlineToCEdit(true);
+      this.closeInlineToCEdit();
     }
   }
 
@@ -626,7 +628,7 @@ export class DocumentEditorComponent
       if (save) {
         this.handleSave();
       }
-      this.closeInlineToCEdit(true);
+      this.closeInlineToCEdit();
     }
     this.unSavedDialog.closeDialog();
   }
@@ -793,10 +795,11 @@ export class DocumentEditorComponent
   }
 
   private handleContributionsChanges() {
-    const nodeList = this.contributionViewContainerElement ?
-      this.contributionViewContainerElement.nativeElement?.querySelectorAll(
-        '.merge-contribution-wrapper',
-      ) : [];
+    const nodeList = this.contributionViewContainerElement
+      ? this.contributionViewContainerElement.nativeElement?.querySelectorAll(
+          '.merge-contribution-wrapper',
+        )
+      : [];
     const elemList = nodeList ? [...nodeList] : [];
     this.contributionChangesBS.next(elemList);
   }
@@ -823,7 +826,7 @@ export class DocumentEditorComponent
     xml.style.userSelect = 'all';
   }
 
-  private closeInlineToCEdit(reloadToc = false) {
+  private closeInlineToCEdit() {
     this.documentTocComponent.messageFromValidation = null;
     this.documentTocComponent.isDropValid = null;
     this.tocService.setIsEditMode(false);
@@ -831,7 +834,6 @@ export class DocumentEditorComponent
     this.documentTocComponent.clearHighlightInvalidNodes();
     this.coEditionWSService.removeTocInlineEdit(this.documentRef);
     this.documentService.setAnnotationMode('NORMAL');
-    if (reloadToc) this.tocService.reload();
   }
 
   private get tocStructure() {
@@ -855,15 +857,18 @@ export class DocumentEditorComponent
       if (!item.root && item.draggable) {
         let number = null;
         let heading = null;
-        let content = null;
+        let content = '';
+
         if (item.itemNumber === 'MANDATORY' || item.itemNumber === 'OPTIONAL') {
           number = this.tranlsateService.instant('toc.item.type.number');
         }
+
         if (item.itemHeading === 'MANDATORY') {
           heading = this.tranlsateService.instant(
             'toc.item.type.' + item.aknTag.toLowerCase() + '.heading',
           );
         }
+
         if (item.contentDisplayed) {
           content =
             item.aknTag.toLowerCase() === 'recital' ||
@@ -958,6 +963,11 @@ export class DocumentEditorComponent
     this.breadcrumbService.setBreadcrumb([
       {
         id: 'home',
+        label: this.tranlsateService.instant('app.breadcrumb.home'),
+        link: `/home`,
+      },
+      {
+        id: 'workspace',
         label: this.tranlsateService.instant('global.breadcrumb.proposals'),
         link: `/workspace`,
       },

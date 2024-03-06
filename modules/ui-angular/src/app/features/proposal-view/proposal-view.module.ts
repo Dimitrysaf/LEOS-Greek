@@ -1,7 +1,10 @@
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'src/app/shared/shared.module';
 
-import { ProposalService } from '../proposals/services/proposal.service';
+import { ProposalService } from '@/shared/services/proposal.service';
+
 import { AddMilestoneDialogComponent } from './components/add-milestone-dialog/add-milestone-dialog.component';
 import { MilestoneAnnotationWarningModalComponent } from './components/milestone-annotation-warning-modal/milestone-annotation-warning-modal.component';
 import { ProposalActionsDropdownComponent } from './components/proposal-actions-dropdown/proposal-actions-dropdown.component';
@@ -33,7 +36,12 @@ import { ProposalViewRoutingModule } from './proposal-view-routing.module';
     ProposalMilestoneSendCopyDialogComponent,
     MilestoneAnnotationWarningModalComponent,
   ],
+  imports: [
+    ProposalViewRoutingModule,
+    SharedModule,
+    CommonModule,
+    ReactiveFormsModule,
+  ],
   providers: [ProposalService],
-  imports: [ProposalViewRoutingModule, SharedModule],
 })
 export class ProposalViewModule {}

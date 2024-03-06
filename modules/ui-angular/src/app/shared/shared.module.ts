@@ -7,10 +7,10 @@ import { UxAllModule } from '@eui/components/legacy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
 
-import { ProposalService } from '@/features/proposals/services/proposal.service';
 import { ConfirmReloadDialogComponent } from '@/shared/components/confirm-reload-dialog/confirm-reload-dialog.component';
 import { ProposalCreateWizardComponent } from '@/shared/components/proposal-create-wizard/proposal-create-wizard.component';
 import { ProposalUploadWizardComponent } from '@/shared/components/proposal-upload-wizard/proposal-upload-wizard.component';
+import { ProposalService } from '@/shared/services/proposal.service';
 
 import { AknDocumentComponent } from './components/akn-document/akn-document.component';
 import { CoEditionDetectedDialogComponent } from './components/co-edition-detected-dialog/co-edition-detected-dialog.component';
@@ -65,8 +65,6 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ConfirmReloadDialogComponent,
   ],
   exports: [
-    ProposalCreateWizardComponent,
-    ProposalUploadWizardComponent,
     UxAllModule,
     EuiAllModule,
     NgForTrackByPropertyModule,
@@ -78,8 +76,6 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     DocumentAnnotationsComponent,
     ShowOnInstanceDirective,
     UserHasPermissionDirective,
-    ProposalCreateDraftComponent,
-    ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
     ConfirmDeleteDialogComponent,
     ConfirmDialogComponent,

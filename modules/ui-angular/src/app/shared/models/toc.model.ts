@@ -123,3 +123,10 @@ export class TocItem {
 }
 
 export class Node {}
+
+export enum ClassToDepthType {
+  TYPE_1 = 1,
+  TYPE_2,
+  TYPE_3,
+  TYPE_4,
+}

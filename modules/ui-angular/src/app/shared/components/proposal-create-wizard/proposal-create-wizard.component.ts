@@ -11,12 +11,12 @@ import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
-import { ProposalService } from '@/features/proposals/services/proposal.service';
 import {
   CatalogItem,
   CreateProposalBody,
   CreateProposalResponse,
 } from '@/shared/models';
+import { ProposalService } from '@/shared/services/proposal.service';
 import { createPromise } from '@/shared/utils';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 

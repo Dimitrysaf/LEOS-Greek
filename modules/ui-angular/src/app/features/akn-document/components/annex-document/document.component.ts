@@ -90,6 +90,22 @@ export class DocumentComponent
   }
 
   ngOnInit(): void {
+    // handle case Memorandum for CN which is required to be readOnly
+    if (
+      this.readonly &&
+      this.environmentService.isCouncil() &&
+      this.documentType === 'memorandum'
+    ) {
+      this.documentService.documentView$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((documentView) => {
+          if (documentView && !this.contributionView) {
+            this.loadDocument(documentView.editableXml);
+          }
+          this.ckeditorService.initUserGuidanceStandalone();
+        });
+    }
+
     if (!this.readonly) {
       this.documentService.documentView$
         .pipe(takeUntil(this.destroy$))
@@ -241,7 +257,9 @@ export class DocumentComponent
       this.documentService.setDidDocumentLoadAndRender(true);
     }
     if (!this.readonly) {
-      this.showElementsBeingEdited(this.coEditionWSService.getDocCoEditionInfoData());
+      this.showElementsBeingEdited(
+        this.coEditionWSService.getDocCoEditionInfoData(),
+      );
       this.initTrackChangesActions();
       this.ckeditorService.refreshStateAllAvailableConnectors();
     }

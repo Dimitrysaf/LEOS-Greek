@@ -105,6 +105,16 @@ export class CKEditorService {
     this.leosEditorConnector?.closeElement();
   }
 
+  initUserGuidanceStandalone() {
+    const rootElement = this.domDocument.getElementById('docContainer');
+    combineLatest([this.leosLegacyService.require$, this.getLeosState()])
+      .pipe(take(1))
+      .subscribe(([require, leosState]) => {
+        require(['js/leosModulesBootstrap']);
+        this.initUserGuidance(require, leosState, rootElement);
+      });
+  }
+
   init() {
     // TODO: this should not be hardcoded
     const rootElement = this.domDocument.getElementById('docContainer');
@@ -205,10 +215,10 @@ export class CKEditorService {
   }
 
   /*
-                                    This function destroys the instance of the active ckeditor instance on each document page.
-                                   */
+        This function destroys the instance of the active ckeditor instance on each document page.
+       */
   private destroyEditorInstance() {
-    this.leosEditorConnector.onUnregister(
+    this.leosEditorConnector?.onUnregister(
       this.leosEditorConnector,
       'onUnregister',
     );

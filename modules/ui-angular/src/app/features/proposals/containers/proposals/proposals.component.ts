@@ -25,6 +25,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { Document } from '@/shared/models/document.model';
 import { CreateProposalService } from '@/shared/services/create-proposal.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { ProposalService } from '@/shared/services/proposal.service';
 
 import { ProposalsFiltersComponent } from '../../components';
 import {
@@ -34,7 +35,6 @@ import {
   DEFAULT_SORT_ORDER,
   ProposalFilter,
 } from '../../models';
-import { ProposalService } from '../../services/proposal.service';
 
 type ProposalsState = {
   filters: ProposalFilter;
@@ -225,6 +225,11 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
     this.breadcrumbService.setBreadcrumb([
       {
         id: 'home',
+        label: this.translateService.instant('app.breadcrumb.home'),
+        link: '/home',
+      },
+      {
+        id: 'workspaces',
         label: this.translateService.instant('global.breadcrumb.proposals'),
         link: null,
       },

@@ -24,9 +24,9 @@ import {
   CreateDraftBody,
   CreateExplanatoryDocument,
 } from '@/shared';
+import { ProposalService } from '@/shared/services/proposal.service';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
-import { ProposalService } from '../../../features/proposals/services/proposal.service';
 import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-template-selector/proposal-create-template-selector.component';
 
 @Component({
@@ -34,8 +34,6 @@ import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-temp
   templateUrl: './proposal-create-draft.component.html',
 })
 export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
-  @Input() showCreateButton = true;
-  @Input() fromProposal = true;
   stepSelected: any;
   isNavigationAllowed = false;
   currentStepIndex = 1;
@@ -47,6 +45,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
   @ViewChild('templateSelector')
   templateSelector: ProposalCreateTemplateSelectorComponent;
 
+  fromProposal = true;
   private destroy$ = new Subject();
 
   constructor(
@@ -57,7 +56,9 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     private router: Router,
     private route: ActivatedRoute,
     private translateService: TranslateService,
-  ) {}
+  ) {
+    this.fromProposal = config?.fromProposal;
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next(null);
@@ -202,7 +203,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    this.config.closeDialog();
+    this.config?.closeDialog();
     this.resetInitials();
   }
 

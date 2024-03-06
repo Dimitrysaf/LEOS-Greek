@@ -137,6 +137,11 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
     this.breadcrumbService.setBreadcrumb([
       {
         id: 'home',
+        label: this.translateService.instant('app.breadcrumb.home'),
+        link: `/home`,
+      },
+      {
+        id: 'workspace',
         label: this.translateService.instant('global.breadcrumb.proposals'),
         link: `/workspace`,
       },

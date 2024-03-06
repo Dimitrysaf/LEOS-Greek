@@ -1,6 +1,20 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
+import {
+  EuiPaginationEvent,
+  EuiPaginatorComponent,
+} from '@eui/components/eui-paginator';
+import {
+  combineLatest,
+  distinctUntilChanged,
+  map,
+  Observable,
+  take,
+} from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { ProposalFilterHomeComponent } from '@/features/landing-page/components/proposal-filter-home/proposal-filter-home.component';
 import {
   DEFAULT_HOME_LIMIT,
   DEFAULT_LIMIT,
@@ -9,23 +23,11 @@ import {
   DEFAULT_SORT_ORDER,
   ProposalFilter,
 } from '@/features/proposals/models';
-import { ProposalService } from '@/features/proposals/services/proposal.service';
 import { Document, ProcedureType } from '@/shared';
 import { CreateProposalService } from '@/shared/services/create-proposal.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
-import {
-  EuiPaginationEvent,
-  EuiPaginatorComponent,
-} from '@eui/components/eui-paginator';
-import {
-  Observable,
-  combineLatest,
-  distinctUntilChanged,
-  map,
-  take,
-} from 'rxjs';
-import { ProposalFilterHomeComponent } from '@/features/landing-page/components/proposal-filter-home/proposal-filter-home.component';
+import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { ProposalService } from '@/shared/services/proposal.service';
+
 type ProposalsState = {
   filters: ProposalFilter;
   sortOrder: boolean;
@@ -48,8 +50,10 @@ export class LandingPageComponent implements OnInit {
   @ViewChild('paginatorComponent')
   paginatorComponent: EuiPaginatorComponent;
   @ViewChild('filters') filtersComponent: ProposalFilterHomeComponent;
-  showProposalCard: boolean = false;
+  showProposalCard = false;
+
   constructor(
+    public environmentService: EnvironmentService,
     private fb: FormBuilder,
     protected createProposalService: CreateProposalService,
     private proposalService: ProposalService,
@@ -63,6 +67,7 @@ export class LandingPageComponent implements OnInit {
     this.totalResults$ = this.proposalService.totalResults$;
     this.searchTerm = '';
   }
+
   ngOnInit() {
     this.proposalService.sortOrder$.subscribe((so) => (this.sortOrder = so));
 
@@ -88,7 +93,7 @@ export class LandingPageComponent implements OnInit {
   ngAfterViewInit(): void {
     this.proposalService.proposals$.pipe(take(1)).subscribe(() => {
       this.proposalService.page$.subscribe((page) => {
-        this.paginatorComponent.getPage(page);
+        this.paginatorComponent?.getPage(page);
         setTimeout(() => this.cdr.detectChanges());
       });
     });
@@ -100,6 +105,14 @@ export class LandingPageComponent implements OnInit {
 
   handleUpload() {
     this.createProposalService.openProposalUploadDialog();
+  }
+
+  handleCreateMandate() {
+    this.createProposalService.openProposalUploadDialog();
+  }
+
+  handleCreateDraft() {
+    this.createProposalService.openProposalCreateDraftDialog(false);
   }
 
   private setQueryParams(queryParams: Params) {
@@ -181,7 +194,7 @@ export class LandingPageComponent implements OnInit {
   toggleProposalCardVisibility(searchTerm: string | null): void {
     this.searchTerm = searchTerm || '';
     if (searchTerm) {
-      this.proposalService.setFilters({ searchTerm: searchTerm });
+      this.proposalService.setFilters({ searchTerm });
       this.showProposalCard = true;
     } else {
       this.showProposalCard = false;
