@@ -7,12 +7,15 @@
     padding: 0.2rem;
   }
 
+  //akomaNtoso doc[name="STAT_FINANC_LEGIS" i] {
+  //  margin-left: 330px;
+  //}
+
   .eui-breadcrumb {
     width: fit-content;
   }
 
   .document-pane {
-    flex-basis: 0;
     min-width: 200px;
   }
 
@@ -28,6 +31,8 @@
 
   .eui-page-column__body {
     min-width: 200px;
+    height: 100%;
+    width: 100%;
   }
 
   .eui-page-column__body:first-of-type {
@@ -48,10 +53,6 @@
     margin: 0;
   }
 
-  .scrollable-page-column {
-    overflow: auto;
-    width: 40%;
-  }
 
   .eui-page-column__header-right-content {
     align-items: center;
@@ -85,7 +86,8 @@
   }
 
   eui-page-column-body {
-    flex-grow: 1;
+    height: 100%;
+    width: 100%;
   }
 
   /* Migrated from modules/ui/src/main/resources/VAADIN/themes/leos/scss/component/_documentView.scss */
