@@ -288,7 +288,7 @@ export class VersionCompareService {
     const pinContainer = this.document.createElement('div');
     pinContainer.classList.add('pin-container');
     pinContainer.classList.add('pin-right');
-    container.appendChild(pinContainer);
+    container.parentElement.appendChild(pinContainer);
     const selectorStyleMap = {
       '.leos-marker-content-removed': 'pin-leos-marker-content-removed',
       '.leos-marker-content-added': 'pin-leos-marker-content-added',

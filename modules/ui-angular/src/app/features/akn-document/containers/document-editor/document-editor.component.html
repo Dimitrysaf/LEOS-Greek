@@ -4,98 +4,98 @@
       'eui-page-content--blocked':
         blockDocumentEditorService.isDocumentEditorBlocked$ | async
     }"
-  >
-    <eui-page-column-header-collapsed-content>
-      <div class="eui-u-flex eui-u-flex-column eui-u-width-100">
-        <div class="eui-u-flex eui-u-flex-row justify-content-between">
-          <eui-breadcrumb *ngIf="showBreadcrumb">
-            <eui-breadcrumb-item
-              *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
-              [id]="item.id"
-              [link]="item.link"
-              [label]="item.label"
-            >
-            </eui-breadcrumb-item>
-          </eui-breadcrumb>
-          <h4
-            class="subtitle eui-u-font-size-s flex-grow-1 eui-u-mh-xs eui-u-text-center"
-          >
-            {{ pageTitle$ | async }}
-          </h4>
-            <button
-                    *ngIf="showCloseButton && !showMarkAsDoneButton && documentConfig?.proposalMetadata"
-                    class="eui-u-ml-xs eui-u-mr-xs"
-                    euiButton
-                    euiSizeS
-                    euiPrimary
-                    translate="global.actions.close"
-                    (click)="handleClose()"
-            ></button>
-            <button
-                    *ngIf="showMarkAsDoneButton && !showCloseButton"
-                    class="eui-u-ml-xs eui-u-mr-xs"
-                    euiButton
-                    euiSizeS
-                    euiPrimary
-                    translate="global.actions.mark.done"></button>
-        </div>
-        <app-ribbon-toolbar-container class="eui-u-width-100"></app-ribbon-toolbar-container>
-      </div>
-    </eui-page-column-header-collapsed-content>
+    >
+        <eui-page-column-header-collapsed-content>
+            <div class="eui-u-flex eui-u-flex-column eui-u-width-100">
+                <div class="eui-u-flex eui-u-flex-row justify-content-between">
+                    <eui-breadcrumb *ngIf="showBreadcrumb">
+                        <eui-breadcrumb-item
+                                *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
+                                [id]="item.id"
+                                [link]="item.link"
+                                [label]="item.label"
+                        >
+                        </eui-breadcrumb-item>
+                    </eui-breadcrumb>
+                    <h4
+                            class="subtitle eui-u-font-size-s flex-grow-1 eui-u-mh-xs eui-u-text-center"
+                    >
+                        {{ pageTitle$ | async }}
+                    </h4>
+                    <button
+                            *ngIf="showCloseButton && !showMarkAsDoneButton && documentConfig?.proposalMetadata"
+                            class="eui-u-ml-xs eui-u-mr-xs"
+                            euiButton
+                            euiSizeS
+                            euiPrimary
+                            translate="global.actions.close"
+                            (click)="handleClose()"
+                    ></button>
+                    <button
+                            *ngIf="showMarkAsDoneButton && !showCloseButton"
+                            class="eui-u-ml-xs eui-u-mr-xs"
+                            euiButton
+                            euiSizeS
+                            euiPrimary
+                            translate="global.actions.mark.done"></button>
+                </div>
+                <app-ribbon-toolbar-container class="eui-u-width-100"></app-ribbon-toolbar-container>
+            </div>
+        </eui-page-column-header-collapsed-content>
 
-    <eui-page-columns>
-      <!-- ToC -->
-      <eui-page-column
-        #tocPane
-        class="toc-pane"
-        isCollapsible
-        [isCollapsed]="documentService.navigationSidebarCollapsed$ | async"
-        (collapsed)="documentService.toggleNavigationSidebar(!$event)"
-        style="flex-basis: 400px"
-      >
-        <eui-page-column-body>
-          <eui-fieldset
-            class="eui-u-mt-s"
-            label="{{ 'page.editor.navigation-pane.label' | translate }}"
-            isExpandable
-            [isExpanded]="isTocPaneExpanded"
-            (expanded)="onTocPaneExpanded($event)"
-          >
-            <div class="d-flex flex-row align-items-center">
-              <!-- Expand all -->
-              <button
-                euiButton
-                euiBasicButton
-                euiSizeS
-                class=""
-                *ngIf="!isEditMode"
-                [euiTooltip]="
+        <eui-page-columns>
+            <!-- ToC -->
+            <eui-page-column
+                #tocPane
+                class="toc-pane"
+                isCollapsible
+                [isCollapsed]="documentService.navigationSidebarCollapsed$ | async"
+                (collapsed)="documentService.toggleNavigationSidebar(!$event)"
+                style="flex-basis: 400px"
+            >
+                <eui-page-column-body>
+                    <eui-fieldset
+                            class="eui-u-mt-s"
+                            label="{{ 'page.editor.navigation-pane.label' | translate }}"
+                            isExpandable
+                            [isExpanded]="isTocPaneExpanded"
+                            (expanded)="onTocPaneExpanded($event)"
+                    >
+                        <div class="d-flex flex-row align-items-center">
+                            <!-- Expand all -->
+                            <button
+                                    euiButton
+                                    euiBasicButton
+                                    euiSizeS
+                                    class=""
+                                    *ngIf="!isEditMode"
+                                    [euiTooltip]="
                   (isCollapseToc
                     ? 'page.editor.toc.toc-pane.actions.expandAll'
                     : 'page.editor.toc.toc-pane.actions.collapseAll'
                   ) | translate
                 "
-                [position]="'right'"
-                (click)="expandAll()"
-              >
-                <span class="eui-icon eui-icon-sitemap"></span>
-              </button>
-              <!-- Co edition Indicator -->
-              <div class="">
-                <app-co-edition-info [isToc]="true"></app-co-edition-info>
-              </div>
-              <!-- Edit mode -->
-              <button
-                euiButton
-                euiBasicButton
-                euiSizeS
-                class=""
-                euiTooltip="{{
+                                    [position]="'right'"
+                                    (click)="expandAll()"
+                            >
+                                <span class="eui-icon eui-icon-sitemap"></span>
+                            </button>
+                            <!-- Co edition Indicator -->
+                            <div class="">
+                                <app-co-edition-info [isToc]="true"></app-co-edition-info>
+                            </div>
+                            <!-- Edit mode -->
+                            <button
+                                    euiButton
+                                    euiBasicButton
+                                    euiSizeS
+                                    class=""
+                                    euiTooltip="{{
                   'page.editor.toc.toc-pane.actions.edit' | translate
                 }}"
-                [position]="'right'"
-                (click)="handleEdit()"
-                *ngIf="
+                                    [position]="'right'"
+                                    (click)="handleEdit()"
+                                    *ngIf="
                   showTocEditButton &&
                   !isEditMode &&
                   !['coverPage', 'memorandum', 'stat_financ_legis'].includes(
@@ -151,7 +151,7 @@
                     : 'page.editor.versions.compare-button.tooltip-enable'
                   ) | translate
                 "
-                [attr.aria-label]="
+                                    [attr.aria-label]="
                   ((versionCompareService.compareModeEnabled$ | async)
                     ? 'page.editor.versions.compare-button.tooltip-disable'
                     : 'page.editor.versions.compare-button.tooltip-enable'
@@ -174,279 +174,278 @@
                     : 'page.editor.versions.search-button.tooltip-enable'
                   ) | translate
                 "
-                [attr.aria-label]="
+                                    [attr.aria-label]="
                   ((documentService.versionSearchOpen$ | async)
                     ? 'page.editor.versions.search-button.tooltip-disable'
                     : 'page.editor.versions.search-button.tooltip-enable'
                   ) | translate
                 "
-                (click)="documentService.toggleVersionsSearchPane()"
-              >
-                <eui-icon-svg icon="search"></eui-icon-svg>
-              </button>
-            </div>
-
-            <div
-              class="eui-u-display-flex eui-u-flex-column eui-u-mb-m search-version-pane"
-              *ngIf="documentService.versionSearchOpen$ | async"
-            >
-              <eui-card euiNoShadow>
-                <eui-card-content>
-                  <form [formGroup]="versionSearchForm">
-                    <div class="row g-0">
-                      <div class="col-md-3 version-search-form-type-label">
-                        {{
-                        'page.editor.versions.search.form.type' | translate
-                        }}:
-                      </div>
-                      <div class="col-md-7 no-g">
-                        <div class="eui-u-display-flex eui-u-flex-row">
-                          <div class="version-search-form-author-label">
-                            <input
-                              name="type"
-                              euiInputRadio
-                              id="type-all"
-                              formControlName="type"
-                              value="all"
-                              label="All"
-                              euiSizeXS
-                            />
-                          </div>
-                          <div class="version-search-form-author-label">
-                            <input
-                              name="type"
-                              euiInputRadio
-                              id="type-save"
-                              formControlName="type"
-                              value="save"
-                              label="Save"
-                            />
-                          </div>
-                          <div class="version-search-form-author-label">
-                            <input
-                              name="type"
-                              euiInputRadio
-                              id="type-milestone"
-                              formControlName="type"
-                              value="milestone"
-                              label="Milestone"
-                            />
-                          </div>
+                                    (click)="documentService.toggleVersionsSearchPane()"
+                            >
+                                <eui-icon-svg icon="search"></eui-icon-svg>
+                            </button>
                         </div>
-                      </div>
-                      <div class="col-md-2" style="text-align: right">
-                        <button
-                          type="button"
-                          class="eui-button eui-button--basic eui-button--icon-only eui-button--rounded eui-button--size-s ng-star-inserted"
-                          (click)="documentService.toggleVersionsSearchPane()"
+
+                        <div
+                                class="eui-u-display-flex eui-u-flex-column eui-u-mb-m search-version-pane"
+                                *ngIf="documentService.versionSearchOpen$ | async"
                         >
+                            <eui-card euiNoShadow>
+                                <eui-card-content>
+                                    <form [formGroup]="versionSearchForm">
+                                        <div class="row g-0">
+                                            <div class="col-md-3 version-search-form-type-label">
+                                                {{
+                                                'page.editor.versions.search.form.type' | translate
+                                                }}:
+                                            </div>
+                                            <div class="col-md-7 no-g">
+                                                <div class="eui-u-display-flex eui-u-flex-row">
+                                                    <div class="version-search-form-author-label">
+                                                        <input
+                                                                name="type"
+                                                                euiInputRadio
+                                                                id="type-all"
+                                                                formControlName="type"
+                                                                value="all"
+                                                                label="All"
+                                                                euiSizeXS
+                                                        />
+                                                    </div>
+                                                    <div class="version-search-form-author-label">
+                                                        <input
+                                                                name="type"
+                                                                euiInputRadio
+                                                                id="type-save"
+                                                                formControlName="type"
+                                                                value="save"
+                                                                label="Save"
+                                                        />
+                                                    </div>
+                                                    <div class="version-search-form-author-label">
+                                                        <input
+                                                                name="type"
+                                                                euiInputRadio
+                                                                id="type-milestone"
+                                                                formControlName="type"
+                                                                value="milestone"
+                                                                label="Milestone"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2" style="text-align: right">
+                                                <button
+                                                        type="button"
+                                                        class="eui-button eui-button--basic eui-button--icon-only eui-button--rounded eui-button--size-s ng-star-inserted"
+                                                        (click)="documentService.toggleVersionsSearchPane()"
+                                                >
                           <span class="eui-button__container">
                             <span class="eui-icon eui-icon-close-m"></span>
                           </span>
-                        </button>
-                      </div>
-                    </div>
+                                                </button>
+                                            </div>
+                                        </div>
 
-                    <div class="row g-0">
-                      <div class="col-md-4 version-search-form-author-label">
-                        <label for="author"
-                        >{{
-                          'page.editor.versions.search.form.author'
-                            | translate
-                          }}:</label
-                        >
-                      </div>
-                      <div class="col-md-8">
-                        <input id="author" formControlName="author"/>
-                        <button
-                          type="button"
-                          class="eui-button eui-button--basic eui-button--icon-only eui-button--rounded eui-button--size-s ng-star-inserted"
-                          (click)="this.onSearch()"
-                        >
+                                        <div class="row g-0">
+                                            <div class="col-md-4 version-search-form-author-label">
+                                                <label for="author"
+                                                >{{
+                                                    'page.editor.versions.search.form.author'
+                                                        | translate
+                                                    }}:</label
+                                                >
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input id="author" formControlName="author"/>
+                                                <button
+                                                        type="button"
+                                                        class="eui-button eui-button--basic eui-button--icon-only eui-button--rounded eui-button--size-s ng-star-inserted"
+                                                        (click)="this.onSearch()"
+                                                >
                           <span class="eui-button__container">
                             <span class="eui-icon eui-icon-search"></span>
                           </span>
-                        </button>
-                      </div>
-                    </div>
-                  </form>
-                </eui-card-content>
-              </eui-card>
-              <eui-card
-                *ngIf="documentService.getVersionSearchResultsIsEmpty()"
-                class="search-versions-result"
-                euiNoShadow
-              >
-                <eui-card-content>
-                  <app-search-versions-pane
-                    class="eui-u-display-block eui-u-width-100"
-                    *ngFor="
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </eui-card-content>
+                            </eui-card>
+                            <eui-card
+                                    *ngIf="documentService.getVersionSearchResultsIsEmpty()"
+                                    class="search-versions-result"
+                                    euiNoShadow
+                            >
+                                <eui-card-content>
+                                    <app-search-versions-pane
+                                            class="eui-u-display-block eui-u-width-100"
+                                            *ngFor="
                       let version of documentService.versionSearchResults$
                         | async;
                       trackByProperty: 'cmisVersionNumber'
                     "
-                    [version]="version"
-                    (exploreMilestone)="exploreMilestone($event)"
-                  ></app-search-versions-pane>
-                </eui-card-content>
-              </eui-card>
-            </div>
-            <app-versions-pane
-              (exploreMilestone)="exploreMilestone($event)"
-            ></app-versions-pane>
-          </eui-fieldset>
-          <!-- contributions -->
-          <hr *ngIf="showContributionsPane"/>
-          <eui-fieldset
-            class="eui-u-mt-s"
-            label="{{ 'page.editor.contribution-pane.label' | translate }}"
-            isExpandable
-            [isExpanded]="isContributionsPaneExpanded"
-            *ngIf="showContributionsPane"
-            (expanded)="onContributionsPaneExpanded($event)"
-          >
-            <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
-              <button euiButton euiIconButton euiSecondary euiOutline euiSizeS>
-                <eui-icon-svg icon="search"></eui-icon-svg>
-              </button>
-            </div>
-            <app-revision-pane
-              [contributions]="contributions"
-            ></app-revision-pane>
-          </eui-fieldset>
-        </eui-page-column-body>
-      </eui-page-column>
-      <!-- splitter: ToC & document -->
-      <app-resize-handle
-        [leftEl]="tocPaneElement?.nativeElement"
-        [rightEl]="documentPaneElement?.nativeElement"
-        *ngIf="(documentService.navigationSidebarCollapsed$ | async) === false"
-      ></app-resize-handle>
-      <eui-page-column
-        #documentPane
-        class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
-        [interactiveScrollbars]="false"
-      >
-        <!-- leos-editing-pane is used in leosFloatingSpacePlugin.js -->
-        <eui-page-column-body
-          class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1 leos-editing-pane"
-          euiNoContentPadding
-        >
-          <!-- Search panel -->
-          <eui-card
-            class="eui-u-font-size-s"
-            euiNoShadow
-            [ngClass]="{ 'toc-edit-mode': isEditMode }"
-            *ngIf="documentService.searchPaneOpen$ | async"
-          >
-            <eui-card-content class="eui-u-overflow-auto">
-              <app-document-search></app-document-search>
-            </eui-card-content>
-          </eui-card>
-          <!-- Drag elements -->
-          <div class="tree-drag-content" *ngIf="isEditMode && tocItems.length">
-            <h3 class="">{{ 'page.editor.drag-items.title' | translate }}</h3>
-            <ul
-              euiList
-              class=""
-              #elementList="cdkDropList"
-              cdkDropList
-              [cdkDropListData]="dragItems"
-              cdkDropListConnectedTo="tree"
-              [cdkDropListSortingDisabled]="true"
-              [cdkDropListDisabled]="false"
-              cdkDragBoundary=".tree"
+                                            [version]="version"
+                                            (exploreMilestone)="exploreMilestone($event)"
+                                    ></app-search-versions-pane>
+                                </eui-card-content>
+                            </eui-card>
+                        </div>
+                        <app-versions-pane
+                                (exploreMilestone)="exploreMilestone($event)"
+                        ></app-versions-pane>
+                    </eui-fieldset>
+                    <!-- contributions -->
+                    <hr *ngIf="showContributionsPane"/>
+                    <eui-fieldset
+                            class="eui-u-mt-s"
+                            label="{{ 'page.editor.contribution-pane.label' | translate }}"
+                            isExpandable
+                            [isExpanded]="isContributionsPaneExpanded"
+                            *ngIf="showContributionsPane"
+                            (expanded)="onContributionsPaneExpanded($event)"
+                    >
+                        <div class="eui-u-display-flex app-u-gap-m eui-u-mb-m">
+                            <button euiButton euiIconButton euiSecondary euiOutline euiSizeS>
+                                <eui-icon-svg icon="search"></eui-icon-svg>
+                            </button>
+                        </div>
+                        <app-revision-pane
+                                [contributions]="contributions"
+                        ></app-revision-pane>
+                    </eui-fieldset>
+                </eui-page-column-body>
+            </eui-page-column>
+            <!-- splitter: ToC & document -->
+            <app-resize-handle
+                    [leftEl]="tocPaneElement?.nativeElement"
+                    [rightEl]="documentPaneElement?.nativeElement"
+                    *ngIf="(documentService.navigationSidebarCollapsed$ | async) === false"
+            ></app-resize-handle>
+            <eui-page-column
+                #documentPane
+                class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
+                [interactiveScrollbars]="false"
             >
-              <li
-                euiListItem
-                euiPrimary
-                class=""
-                cdkDrag
-                [cdkDragData]="item"
-                (cdkDragMoved)="hanldeListItemDragged($event, true)"
-                *ngFor="let item of dragItems"
-              >
-                <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
-                <div
-                  *cdkDragPlaceholder
-                  euiListItem
-                  euiPrimary
-                  class="drag-preview"
+                <!-- leos-editing-pane is used in leosFloatingSpacePlugin.js -->
+                <eui-page-column-body
+                        class="leos-editing-pane"
+                        euiNoContentPadding
                 >
-                  <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
-                </div>
-              </li>
-            </ul>
-          </div>
-          <!-- Document with editor -->
-          <app-document
-            [containerId]="containerId"
-            [mainContainerId]="mainContainerId"
-            [documentType]="documentType"
-            [readonly]="
+                    <!-- Search panel -->
+                    <eui-card
+                            class="eui-u-font-size-s"
+                            euiNoShadow
+                            [ngClass]="{ 'toc-edit-mode': isEditMode }"
+                            *ngIf="documentService.searchPaneOpen$ | async"
+                    >
+                        <eui-card-content class="eui-u-overflow-auto">
+                            <app-document-search></app-document-search>
+                        </eui-card-content>
+                    </eui-card>
+                    <!-- Drag elements -->
+                    <div class="tree-drag-content" *ngIf="isEditMode && tocItems.length">
+                        <h3 class="">{{ 'page.editor.drag-items.title' | translate }}</h3>
+                        <ul
+                                euiList
+                                class=""
+                                #elementList="cdkDropList"
+                                cdkDropList
+                                [cdkDropListData]="dragItems"
+                                cdkDropListConnectedTo="tree"
+                                [cdkDropListSortingDisabled]="true"
+                                [cdkDropListDisabled]="false"
+                                cdkDragBoundary=".tree"
+                        >
+                            <li
+                                    euiListItem
+                                    euiPrimary
+                                    class=""
+                                    cdkDrag
+                                    [cdkDragData]="item"
+                                    (cdkDragMoved)="hanldeListItemDragged($event, true)"
+                                    *ngFor="let item of dragItems"
+                            >
+                                <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
+                                <div
+                                        *cdkDragPlaceholder
+                                        euiListItem
+                                        euiPrimary
+                                        class="drag-preview"
+                                >
+                                    <span>{{ getTocItemDisplayTitle(item.tocItem) }}</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Document with editor -->
+                    <app-document
+                            [containerId]="containerId"
+                            [mainContainerId]="mainContainerId"
+                            [documentType]="documentType"
+                            [readonly]="
               environmentService.isCouncil() &&
               documentService.documentType === 'memorandum'
             "
-            [containerClass]="{
+                            [containerClass]="{
               'leos-doc-content': true,
               'sync-scroll': true,
               'toc-edit-mode': isEditMode
             }"
-          ></app-document>
-        </eui-page-column-body>
-      </eui-page-column>
-      <!--       splitter: document & document:viewVersion -->
-      <app-resize-handle
-        [leftEl]="documentPaneElement?.nativeElement"
-        [rightEl]="versionForViewPaneElement?.nativeElement"
-        *ngIf="pageMode === PageMode.ViewVersion"
-      ></app-resize-handle>
-      <!-- document:viewVersion -->
-      <eui-page-column
-        #versionForViewPane
-        class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
-        [interactiveScrollbars]="false"
-        *ngIf="pageMode === PageMode.ViewVersion"
-      >
-        <eui-page-column-body
-          class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
-        >
-          <app-document
-            containerId="versionContainer"
-            [mainContainerId]="mainContainerId"
-            [documentType]="documentType"
-            [xml]="versionForView"
-            [containerClass]="{
+                    ></app-document>
+                </eui-page-column-body>
+            </eui-page-column>
+            <!--       splitter: document & document:viewVersion -->
+            <app-resize-handle
+                    [leftEl]="documentPaneElement?.nativeElement"
+                    [rightEl]="versionForViewPaneElement?.nativeElement"
+                    *ngIf="pageMode === PageMode.ViewVersion"
+            ></app-resize-handle>
+            <!-- document:viewVersion -->
+            <eui-page-column
+                #versionForViewPane
+                class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
+                [interactiveScrollbars]="false"
+                *ngIf="pageMode === PageMode.ViewVersion"
+            >
+                <eui-page-column-body
+                        class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
+                >
+                    <app-document
+                            containerId="versionContainer"
+                            [mainContainerId]="mainContainerId"
+                            [documentType]="documentType"
+                            [xml]="versionForView"
+                            [containerClass]="{
               'leos-double-comparison-content': isCNInstance,
               'leos-marked-content': !isCNInstance,
               'sync-scroll': true
             }"
-          ></app-document>
-        </eui-page-column-body>
-      </eui-page-column>
+                    ></app-document>
+                </eui-page-column-body>
+            </eui-page-column>
 
-      <!-- splitter: document & document:compareVersions -->
-      <app-resize-handle
-        [leftEl]="documentPaneElement?.nativeElement"
-        [rightEl]="compareModePaneElement?.nativeElement"
-        *ngIf="pageMode === PageMode.CompareVersions"
-      ></app-resize-handle>
-      <!-- document:compareVersions -->
-      <eui-page-column
-        #compareModePane
-        class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
-        [interactiveScrollbars]="false"
-        *ngIf="pageMode === PageMode.CompareVersions"
-      >
-        <eui-page-column-body
-          class="eui-u-flex eui-u-flex-column align-items-center"
-          style="position: relative; overflow: auto"
-        >
-          <app-document
-            containerId="versionComparisonContainer"
-            [mainContainerId]="mainContainerId"
-            [xml]="versionsComparisonForView"
-            [documentType]="documentType"
+            <!-- splitter: document & document:compareVersions -->
+            <app-resize-handle
+                    [leftEl]="documentPaneElement?.nativeElement"
+                    [rightEl]="compareModePaneElement?.nativeElement"
+                    *ngIf="pageMode === PageMode.CompareVersions"
+            ></app-resize-handle>
+            <!-- document:compareVersions -->
+            <eui-page-column
+                #compareModePane
+                class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
+                [interactiveScrollbars]="false"
+                *ngIf="pageMode === PageMode.CompareVersions"
+            >
+                <eui-page-column-body
+                        class="eui-u-flex eui-u-flex-column align-items-center"
+                >
+                    <app-document
+                            containerId="versionComparisonContainer"
+                            [mainContainerId]="mainContainerId"
+                            [xml]="versionsComparisonForView"
+                            [documentType]="documentType"
             [containerClass]="{
               'leos-double-comparison-content': isCNInstance,
               'leos-marked-content': !isCNInstance,
@@ -455,31 +454,31 @@
                 isCNInstance &&
                 (versionCompareService.versionCompareIds$ | async)?.length === 2
             }"
-          ></app-document>
-        </eui-page-column-body>
-      </eui-page-column>
+                    ></app-document>
+                </eui-page-column-body>
+            </eui-page-column>
 
-      <!-- splitter: document & document annotations -->
-      <app-resize-handle
-        [leftEl]="documentPaneElement?.nativeElement"
-        [rightEl]="annotationsPaneElement?.nativeElement"
-        *ngIf="
+            <!-- splitter: document & document annotations -->
+            <app-resize-handle
+                    [leftEl]="documentPaneElement?.nativeElement"
+                    [rightEl]="annotationsPaneElement?.nativeElement"
+                    *ngIf="
           (pageMode === PageMode.Normal ||
             pageMode === PageMode.Contribution) &&
           !isAnnotationsPaneCollapsed
         "
-      ></app-resize-handle>
-      <!-- splitter: document:viewVersion & document annotations -->
-      <app-resize-handle
-        [leftEl]="versionForViewPaneElement?.nativeElement"
-        [rightEl]="annotationsPaneElement?.nativeElement"
-        *ngIf="pageMode === PageMode.ViewVersion && !isAnnotationsPaneCollapsed"
-      ></app-resize-handle>
-      <!-- splitter: document:compareVersions & document annotations -->
-      <app-resize-handle
-        [leftEl]="compareModePaneElement?.nativeElement"
-        [rightEl]="annotationsPaneElement?.nativeElement"
-        *ngIf="
+            ></app-resize-handle>
+            <!-- splitter: document:viewVersion & document annotations -->
+            <app-resize-handle
+                    [leftEl]="versionForViewPaneElement?.nativeElement"
+                    [rightEl]="annotationsPaneElement?.nativeElement"
+                    *ngIf="pageMode === PageMode.ViewVersion && !isAnnotationsPaneCollapsed"
+            ></app-resize-handle>
+            <!-- splitter: document:compareVersions & document annotations -->
+            <app-resize-handle
+                    [leftEl]="compareModePaneElement?.nativeElement"
+                    [rightEl]="annotationsPaneElement?.nativeElement"
+                    *ngIf="
           pageMode === PageMode.CompareVersions && !isAnnotationsPaneCollapsed
         "
             ></app-resize-handle>
@@ -492,7 +491,7 @@
                 [isCollapsed]="isAnnotationsPaneCollapsed"
                 (collapsed)="onToggleAnnotationsPaneCollapsed()"
                 style="flex-basis: 580px"
-            *ngIf="showAnnotations">
+                *ngIf="showAnnotations">
                 <eui-page-column-body class="flex-grow-1">
                     <app-document-annotations
                             [containerId]="mainContainerId"
@@ -507,21 +506,21 @@
                 </eui-page-column-body>
             </eui-page-column>
 
-      <!-- splitter: document annotations & document:contribution
-                 Note: It actually resizes the two document panes -->
-      <app-resize-handle
-        [leftEl]="documentPaneElement?.nativeElement"
-        [rightEl]="contributionViewPaneElement?.nativeElement"
-        *ngIf="pageMode === PageMode.Contribution"
-      ></app-resize-handle>
-      <!-- document:contribution (view and merge pane) -->
-      <eui-page-column
-        #contributionViewPane
-        class="eui-u-p-none eui-page-column--no-scrollbars document-pane contribution-view-merge-pane"
-        [interactiveScrollbars]="false"
-        *ngIf="pageMode === PageMode.Contribution"
-      >
-        <eui-page-column-header-body>
+            <!-- splitter: document annotations & document:contribution
+                       Note: It actually resizes the two document panes -->
+            <app-resize-handle
+                    [leftEl]="documentPaneElement?.nativeElement"
+                    [rightEl]="contributionViewPaneElement?.nativeElement"
+                    *ngIf="pageMode === PageMode.Contribution"
+            ></app-resize-handle>
+            <!-- document:contribution (view and merge pane) -->
+            <eui-page-column
+                #contributionViewPane
+                class="eui-u-p-none eui-page-column--no-scrollbars document-pane contribution-view-merge-pane"
+                [interactiveScrollbars]="false"
+                *ngIf="pageMode === PageMode.Contribution"
+            >
+                <eui-page-column-header-body>
           <div
                   class="eui-u-overflow-auto justify-content-between w-100 app-u-gap-xs"
                   style="min-height: 35.99px; text-align: center;"
@@ -552,66 +551,64 @@
           </div>
         </eui-page-column-header-body>
         <eui-page-column-body
-          class="eui-u-flex eui-u-flex-column align-items-center"
-          style="position: relative; overflow: auto"
-        >
-          <app-document
-            #contributionViewContainer
-            containerId="contributionViewContainer"
-            [mainContainerId]="mainContainerId"
-            [xml]="contributionForView"
-            [contributionView]=true
-            [containerClass]="{
+                >
+                    <app-document
+                        #contributionViewContainer
+                        containerId="contributionViewContainer"
+                        [mainContainerId]="mainContainerId"
+                        [xml]="contributionForView"
+                        [contributionView]=true
+                        [containerClass]="{
               'leos-revision-content': true,
               'sync-scroll': true,
               'contribution-disabled-mode': processed
             }"
-          >
-          </app-document>
-          <app-merge-actions
-            [contribution]="contribution"
-          >
-          </app-merge-actions>
-        </eui-page-column-body>
-      </eui-page-column>
+                    >
+                    </app-document>
+                    <app-merge-actions
+                            [contribution]="contribution"
+                    >
+                    </app-merge-actions>
+                </eui-page-column-body>
+            </eui-page-column>
 
-      <!-- splitter: document:contribution & document:contribution annotations -->
-      <app-resize-handle
-        [leftEl]="contributionViewPaneElement?.nativeElement"
-        [rightEl]="contributionAnnotationsPaneElement?.nativeElement"
-        *ngIf="
+            <!-- splitter: document:contribution & document:contribution annotations -->
+            <app-resize-handle
+                    [leftEl]="contributionViewPaneElement?.nativeElement"
+                    [rightEl]="contributionAnnotationsPaneElement?.nativeElement"
+                    *ngIf="
           pageMode === PageMode.Contribution &&
           !isContributionAnnotationsPaneCollapsed
         "
-      ></app-resize-handle>
-      <!-- document:contribution annotations -->
-      <eui-page-column
-        #contributionAnnotationsPane
-        class="eui-page-column--right-column annotations-pane"
-        [label]="'page.editor.annotations-pane.label' | translate"
-        isCollapsible
-        [isCollapsed]="isContributionAnnotationsPaneCollapsed"
-        (collapsed)="onToggleContributionAnnotationsPaneCollapsed()"
-        style="flex-basis: 580px"
-        *ngIf="pageMode === PageMode.Contribution"
-      >
-        <eui-page-column-body class="flex-grow-1">
-          <app-document-annotations
-            containerId="contributionViewContainer"
-            [permissions]="documentService.permissions$ | async"
-            [showStatusFilter]="showStatusFilter"
-            operationMode="READ_ONLY"
-            sidebarAppId="revision-01"
-            [temporaryDataId]="contributionTemporaryDataId"
-            [temporaryDataDocument]="contributionTemporaryDataDocument"
-            [collapsed]="isContributionAnnotationsPaneCollapsed"
-            (sidebarShown)="onContributionAnnotationsSidebarShown()"
-            *ngIf="!milestoneViewData && contributionForView"
-          ></app-document-annotations>
-        </eui-page-column-body>
-      </eui-page-column>
-    </eui-page-columns>
-  </eui-page-content>
+            ></app-resize-handle>
+            <!-- document:contribution annotations -->
+            <eui-page-column
+                #contributionAnnotationsPane
+                class="eui-page-column--right-column annotations-pane"
+                [label]="'page.editor.annotations-pane.label' | translate"
+                isCollapsible
+                [isCollapsed]="isContributionAnnotationsPaneCollapsed"
+                (collapsed)="onToggleContributionAnnotationsPaneCollapsed()"
+                style="flex-basis: 580px"
+                *ngIf="pageMode === PageMode.Contribution"
+            >
+                <eui-page-column-body class="flex-grow-1">
+                    <app-document-annotations
+                            containerId="contributionViewContainer"
+                            [permissions]="documentService.permissions$ | async"
+                            [showStatusFilter]="showStatusFilter"
+                            operationMode="READ_ONLY"
+                            sidebarAppId="revision-01"
+                            [temporaryDataId]="contributionTemporaryDataId"
+                            [temporaryDataDocument]="contributionTemporaryDataDocument"
+                            [collapsed]="isContributionAnnotationsPaneCollapsed"
+                            (sidebarShown)="onContributionAnnotationsSidebarShown()"
+                            *ngIf="!milestoneViewData && contributionForView"
+                    ></app-document-annotations>
+                </eui-page-column-body>
+            </eui-page-column>
+        </eui-page-columns>
+    </eui-page-content>
 </eui-page>
 
 <app-download-econsilium-modal
