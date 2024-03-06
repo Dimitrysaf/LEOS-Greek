@@ -252,6 +252,7 @@ export abstract class DocumentActionsService {
       this.buildImportOJSection();
     const exportSection = this.buildExportSection();
     const displaySection = this.buildDisplaySection();
+    // TODO : if this is only present for drafting instance should be moved to document-actions-proposal.service.ts
     const trackChangesSection = !this.isCN() && this.buildTrackChangesSection();
     const editSection = this.editSection();
     const compareSection =
@@ -498,7 +499,8 @@ export abstract class DocumentActionsService {
           isSlider: true,
           disabled:
             !this.permissions.includes('CAN_ACTIVATE_TRACK_CHANGES') ||
-            this.documentService.isEditorOpen$,
+            this.documentService.isEditorOpen$ ||
+            this.isClonedProposal(),
           value: this.isTrackChangesEnabled,
           actionFn: () => this.toggleTrackChangesEnabled(),
         },
