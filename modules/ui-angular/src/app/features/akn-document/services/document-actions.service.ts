@@ -772,8 +772,7 @@ export abstract class DocumentActionsService {
         ),
         iconClass: 'eui-icon-more-vertical',
         items: this.buildMergeContributionApplyDropdownOptions(),
-        cssClasses:
-          'eui-button--basic eui-button--icon-only',
+        cssClasses: 'eui-button--basic eui-button--icon-only',
       },
       {
         type: IRibbonToolbarType.BUTTON,
@@ -858,14 +857,19 @@ export abstract class DocumentActionsService {
   }
 
   private onAcceptMergeAllContributions() {
-    this.ckEditorService.handleMergeContributionsActions(this.mergeWithTrackChanges, true);
+    this.ckEditorService.handleMergeContributionsActions(
+      this.mergeWithTrackChanges,
+      true,
+    );
   }
 
-  private onCancelMergeAllContributions() {
-  }
+  private onCancelMergeAllContributions() {}
 
   private handleMerge() {
-    this.ckEditorService.handleMergeContributionsActions(this.mergeWithTrackChanges, false);
+    this.ckEditorService.handleMergeContributionsActions(
+      this.mergeWithTrackChanges,
+      false,
+    );
     this.mergeContributionService.handleContributionSelectCount(false, true);
   }
 
