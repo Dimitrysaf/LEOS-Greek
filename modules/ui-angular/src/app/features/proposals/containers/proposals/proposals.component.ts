@@ -217,7 +217,7 @@ export class ProposalsComponent implements OnInit, AfterViewInit {
       this.canCreateDraft = CN && CAN_UPLOAD;
       this.canCreateMandate = CN;
       this.canCreateProposal = !CN;
-      this.canUpload = !CN && CAN_UPLOAD;
+      this.canUpload = CAN_UPLOAD;
     });
   }
 

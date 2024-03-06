@@ -50,6 +50,7 @@
                     <!-- "Create" actions -->
                     <div class="eui-u-flex eui-u-flex-justify-content-end app-u-gap-m">
                         <button
+                                *ngIf="canUpload"
                                 euiButton
                                 [euiPrimary]="environmentService.isCouncil()"
                                 [euiSecondary]="!environmentService.isCouncil()"
@@ -62,7 +63,8 @@
                             ) | translate
                             }}
                         </button>
-                        <button euiButton euiPrimary (click)="createProposalService.openProposalCreateDialog()">
+                        <button euiButton euiPrimary (click)="createProposalService.openProposalCreateDialog()"
+                                *ngIf="!environmentService.isCouncil()">
                             {{ 'page.workspace.create-button' | translate }}
                         </button>
                         <!-- TODO: this is set to false should be adjusted to CN instance  -->
@@ -70,7 +72,7 @@
                                 euiButton
                                 euiPrimary
                                 (click)="createProposalService.openProposalCreateDraftDialog(false)"
-                                *ngIf="false"
+                                *ngIf="environmentService.isCouncil()"
                         >
                             {{ 'page.workspace.create-draft' | translate }}
                         </button>

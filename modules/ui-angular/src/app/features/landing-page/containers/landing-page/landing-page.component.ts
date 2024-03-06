@@ -1,4 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import {
@@ -10,7 +17,9 @@ import {
   distinctUntilChanged,
   map,
   Observable,
+  Subject,
   take,
+  takeUntil,
 } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
@@ -23,7 +32,7 @@ import {
   DEFAULT_SORT_ORDER,
   ProposalFilter,
 } from '@/features/proposals/models';
-import { Document, ProcedureType } from '@/shared';
+import { Document, LeosConfig, ProcedureType } from '@/shared';
 import { CreateProposalService } from '@/shared/services/create-proposal.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { ProposalService } from '@/shared/services/proposal.service';
@@ -40,8 +49,7 @@ type ProposalsState = {
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.scss'],
 })
-export class LandingPageComponent implements OnInit {
-  protected readonly homeUrl = document.baseURI;
+export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
   proposals$: Observable<Document[]>;
   limit$: Observable<number>;
   totalResults$: Observable<number>;
@@ -51,6 +59,9 @@ export class LandingPageComponent implements OnInit {
   paginatorComponent: EuiPaginatorComponent;
   @ViewChild('filters') filtersComponent: ProposalFilterHomeComponent;
   showProposalCard = false;
+  canUpload = false;
+  protected readonly homeUrl = document.baseURI;
+  private destroy$ = new Subject<void>();
 
   constructor(
     public environmentService: EnvironmentService,
@@ -88,6 +99,10 @@ export class LandingPageComponent implements OnInit {
       .subscribe((params) => {
         this.setQueryParams(params);
       });
+
+    this.appConfig.config.pipe(takeUntil(this.destroy$)).subscribe((config) => {
+      this.canUpload = config.userAppPermissions.includes('CAN_UPLOAD');
+    });
   }
 
   ngAfterViewInit(): void {
@@ -97,6 +112,11 @@ export class LandingPageComponent implements OnInit {
         setTimeout(() => this.cdr.detectChanges());
       });
     });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   handleCreate() {
