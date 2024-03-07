@@ -173,6 +173,9 @@ define(function actionManagerExtensionModule(require) {
         connector.editedElementsIdList.push(data.elementId);
         let element = document.getElementById(data.elementId);
         _hideActionButtons(element.actions, element);
+
+        $(element.actions).remove();
+        element.actions = null;
     }
 
     function _editorClose(connector, data) {
