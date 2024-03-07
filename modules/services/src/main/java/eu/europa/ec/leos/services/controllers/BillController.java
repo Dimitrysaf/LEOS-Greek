@@ -185,7 +185,7 @@ public class BillController {
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            saveEvent.setCheckinComment(encodeParam(saveEvent.getCheckinComment()));
+//            saveEvent.setCheckinComment(encodeParam(saveEvent.getCheckinComment()));
             List<VersionVO> versions = this.billApiService.saveDocument(documentRef, saveEvent.getCheckinComment(), saveEvent.getVersionType());
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
