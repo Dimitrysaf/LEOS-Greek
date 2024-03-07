@@ -117,6 +117,10 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestArchiveDocumentURI;
     @Value("${leos.rest.repository.find.document.search.versions}")
     private String leosRestSearchVersionsURI;
+    @Value("${leos.rest.repository.find.recent.packages.uri}")
+    private String leosRestRecentPackagesURI;
+    @Value("${leos.rest.repository.find.favourite.packages.uri}")
+    private String leosRestFavouritePackagesURI;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -426,6 +430,20 @@ public class RestRepository extends AbstractRestClient {
         LOGGER.trace("Finding package by document ref and version... [docRef={} ]", documentRef);
         String url = getUrl(leosRestFindPackageByDocumentRefURI);
         Package resp = getEntity(url, Package.class, documentRef);
+        return resp;
+    }
+
+    Object findRecentPackagesForUser(final String userId, String numberOfResults) {
+        LOGGER.trace("Finding recent packages by userId... [userId =" + userId + ", numberOfResults =" + numberOfResults + ']');
+        String url = getUrl(leosRestRecentPackagesURI);
+        Object resp = getEntity(url, Object.class, userId, numberOfResults);
+        return resp;
+    }
+
+    Object findFavouritePackagesForUser(final String userId) {
+        LOGGER.trace("Finding recent packages by userId... [userId =" + userId + ']');
+        String url = getUrl(leosRestFavouritePackagesURI);
+        Object resp = getEntity(url, Object.class, userId);
         return resp;
     }
 }

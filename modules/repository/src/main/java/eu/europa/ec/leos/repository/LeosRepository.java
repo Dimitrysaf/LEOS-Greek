@@ -380,4 +380,8 @@ public interface LeosRepository {
     Object findFolderByPath(String path);
 
     <D extends LeosDocument> List<D> searchVersions(Class<? extends D> type, String docRef, List<String> logins, String versionType);
+
+    Object findRecentPackagesForUser(String userId, String numberOfResult);
+
+    Object findFavouritePackagesForUser(String userId);
 }

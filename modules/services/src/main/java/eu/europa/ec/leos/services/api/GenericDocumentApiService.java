@@ -39,6 +39,8 @@ import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.response.FavouritePackageResponse;
+import eu.europa.ec.leos.services.response.RecentPackageResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -109,6 +111,8 @@ public class GenericDocumentApiService {
     private final ExportService exportService;
     private final UserService userService;
 
+    private final Properties applicationProperties;
+
     public GenericDocumentApiService(@NotNull LeosRepository leosRepository,
                                      @NotNull TableOfContentProcessor tableOfContentProcessor,
                                      @NotNull ElementProcessor elementProcessor,
@@ -131,7 +135,8 @@ public class GenericDocumentApiService {
                                      @NotNull DocumentVOProvider documentVOProvider,
                                      @NotNull ComparisonDelegateAPI<XmlDocument> comparisonDelegate,
                                      @NotNull ExportService exportService,
-                                     @NotNull UserService userService) {
+                                     @NotNull UserService userService,
+                                     @NotNull Properties applicationProperties) {
         this.leosRepository = Objects.requireNonNull(leosRepository);
         this.tableOfContentProcessor = Objects.requireNonNull(tableOfContentProcessor);
         this.elementProcessor = Objects.requireNonNull(elementProcessor);
@@ -155,6 +160,7 @@ public class GenericDocumentApiService {
         this.comparisonDelegate = Objects.requireNonNull(comparisonDelegate);
         this.exportService = exportService;
         this.userService = userService;
+        this.applicationProperties = applicationProperties;
     }
 
     public DocumentViewResponse getDocumentByRef(@NotNull String docRef) throws NotFoundException {
@@ -584,6 +590,17 @@ public class GenericDocumentApiService {
         return Optional.ofNullable(this.leosRepository.findDocumentById(docId, XmlDocument.class, false))
                 .map(leosDoc -> (XmlDocument) leosDoc)
                 .orElseThrow(() -> new NotFoundException(String.format("Not found document with %s id", docId)));
+    }
+
+    public List<RecentPackageResponse> findRecentPackagesForUser() {
+        String userId = securityContext.getUser().getLogin();
+        String numberOfResult = applicationProperties.getProperty("leos.home.page.result");
+        return (List<RecentPackageResponse>) this.leosRepository.findRecentPackagesForUser(userId, numberOfResult);
+    }
+
+    public List<FavouritePackageResponse> findFavoritePackagesForUser() {
+        String userId = securityContext.getUser().getLogin();
+        return (List<FavouritePackageResponse>) this.leosRepository.findFavouritePackagesForUser(userId);
     }
 
 }

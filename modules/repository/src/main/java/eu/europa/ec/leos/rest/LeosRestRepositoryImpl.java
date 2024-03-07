@@ -996,4 +996,20 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         leosCategory = (leosCategory.startsWith("TEMPLATE_")) ? leosCategory.substring("TEMPLATE_".length()) : leosCategory;
         return LeosCategory.valueOf(leosCategory);
     }
+
+    @Override
+    @PerformanceLogger
+    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator", condition = "#root.target.cacheEnabled")
+    public Object findRecentPackagesForUser(String userId, String numberOfResult) {
+        logger.trace("Finding recent packages by userId... [userId=" + userId + ", numberOfResult=" + numberOfResult + ']');
+        return repository.findRecentPackagesForUser(userId, numberOfResult);
+    }
+
+    @Override
+    @PerformanceLogger
+    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator", condition = "#root.target.cacheEnabled")
+    public Object findFavouritePackagesForUser(String userId) {
+        logger.trace("Finding favourite packages by userId... [userId=" + userId + ']');
+        return repository.findFavouritePackagesForUser(userId);
+    }
 }
