@@ -44,7 +44,7 @@ define(function elementEditorModule(require) {
     }
 
     function _editElement(elementId, elementType, elementFragment, docType, instanceType, alternatives, levelItemVo,
-                          isClonedProposal) {
+                          isClonedProposal, elementCursorId, elementCursorChildPos, elementCursorPos) {
         log.debug("Initializing element editor...");
         let connector = this;
 
@@ -88,7 +88,10 @@ define(function elementEditorModule(require) {
                 numberingConfigs: numberingConfigs,
                 listNumberConfig: listNumberConfig,
                 articleTypesConfig: articleTypesConfigJsonArray,
-                isClonedProposal: isClonedProposal
+                isClonedProposal: isClonedProposal,
+                elementCursorId: elementCursorId,
+                elementCursorChildPos: elementCursorChildPos,
+                elementCursorPos: elementCursorPos
             }
             // load the specific profile and initialize the editor
             require(["profiles/" + profileId],
@@ -182,7 +185,10 @@ define(function elementEditorModule(require) {
                 isTrackChangesEnabled: connector.getState().isTrackChangesEnabled,
                 isTrackChangesShowed: connector.getState().isTrackChangesShowed,
                 isTrackChangesStyleFormattingEnabled: connector.getState().isTrackChangesStyleFormattingEnabled,
-                mousePosition: []
+                mousePosition: [],
+                elementCursorId: params.elementCursorId,
+                elementCursorChildPos: params.elementCursorChildPos,
+                elementCursorPos: params.elementCursorPos
             };
             // register editor event callbacks
             editor.on("close", _destroyEditor.bind(undefined, connector, params.elementId, params.elementType));
@@ -195,26 +201,15 @@ define(function elementEditorModule(require) {
             editor.on('canBeSaved', _canBeSaved.bind(undefined, connector, params.elementId));
 
             editor.on('instanceReady', function(event) {
-                if (event.editor.container.$ && event.editor.container.$.getAttribute("class")) {
-                    if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-double") >= 0
-                        || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first-double") >= 0) {
-                        document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop + 80;
-                    } else if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus") >= 0
-                        || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first") >= 0) {
-                        document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop + 40;
-                    }
+                if (connector.getState().isAngularUI) {
+                    _changeScrollPosition(event);
+                    _putCursorInPosition(event);
                 }
             });
 
             editor.on('destroy', function(event) {
-                if (event.editor.container.$ && event.editor.container.$.getAttribute("class")) {
-                    if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-double") >= 0
-                        || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first-double") >= 0) {
-                        document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop - 80;
-                    } else if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus") >= 0
-                        || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first") >= 0) {
-                        document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop - 40;
-                    }
+                if (connector.getState().isAngularUI) {
+                    _changeScrollPositionToOriginal(event)
                 }
             });
 
@@ -237,6 +232,47 @@ define(function elementEditorModule(require) {
             $("inline[name='unchecked']").off();
         } else {
             throw new Error("Unable to initialize the element editor!");
+        }
+    }
+
+    function _changeScrollPosition(event) {
+        if (event.editor.container.$ && event.editor.container.$.getAttribute("class") && document.querySelector(".main-container")) {
+            if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-double") >= 0
+                || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first-double") >= 0) {
+                document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop + 80;
+            } else if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus") >= 0
+                || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first") >= 0) {
+                document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop + 40;
+            }
+        }
+    }
+
+    function _changeScrollPositionToOriginal(event) {
+        if (event.editor.container.$ && event.editor.container.$.getAttribute("class") && document.querySelector(".main-container")) {
+            if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-double") >= 0
+                || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first-double") >= 0) {
+                document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop - 80;
+            } else if (event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus") >= 0
+                || event.editor.container.$.getAttribute("class").indexOf("leos-editor-focus-first") >= 0) {
+                document.querySelector(".main-container").scrollTop = document.querySelector(".main-container").scrollTop - 40;
+            }
+        }
+    }
+
+    function _putCursorInPosition(event) {
+        if (event.editor.LEOS.elementCursorId !== "" && event.editor.LEOS.elementCursorPos !== -1) {
+            var editor = event.editor;
+            var elementToPutCursor = editor.element.findOne("#" + event.editor.LEOS.elementCursorId);
+            if (!elementToPutCursor) {
+                elementToPutCursor = editor.element.findOne("[data-akn-heading-id='" + event.editor.LEOS.elementCursorId + "']");
+            }
+            elementToPutCursor = elementToPutCursor.getChild(editor.LEOS.elementCursorChildPos);
+            var range = editor.createRange();
+            range.moveToPosition(elementToPutCursor, CKEDITOR.POSITION_AFTER_START);
+            range.setStart(elementToPutCursor, editor.LEOS.elementCursorPos);
+            range.setEnd(elementToPutCursor, editor.LEOS.elementCursorPos);
+            range.collapse(true);
+            range.select();
         }
     }
 

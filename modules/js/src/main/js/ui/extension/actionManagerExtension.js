@@ -355,10 +355,17 @@ define(function actionManagerExtensionModule(require) {
         var deletable = _getDeletable($element);
         var user = connector.user;
         if (_isValidAction(action, elementId, elementType, editable, deletable, user)) {
+            var cursorAndChildPos = getTextPositionFromElement(event.target, event.originalEvent.clientX, event.originalEvent.clientY);
+            var cursorPos = cursorAndChildPos[0];
+            var childPos = cursorAndChildPos[1];
+            var elementIdForCursorPos = getElementIdForCursorPos(event.target);
             var data = {
                 action: action,
                 elementId: elementId,
-                elementType: elementType
+                elementType: elementType,
+                elementCursorId: elementIdForCursorPos,
+                elementCursorChildPos: childPos,
+                elementCursorPos: cursorPos
             };
             var topic = "actions." + action + ".element";
             if (action == 'edit') {
@@ -375,6 +382,45 @@ define(function actionManagerExtensionModule(require) {
                 connector.editorChannel.publish(topic, data);
             }
         }
+    }
+
+    function getTextPositionFromElement(element, clickX, clickY) {
+        var posFound = -1;
+        var childIndex = -1;
+        if (element.localName !== 'num') {
+            var nodes = element.childNodes;
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                if (node.nodeType === Node.TEXT_NODE) {
+                    var range = document.createRange();
+                    for (var pos = 0; pos < node.textContent.length; pos++) {
+                        range.setStart(node, pos);
+                        range.setEnd(node, pos + 1);
+                        var rect = range.getBoundingClientRect();
+                        if (clickX >= rect.left && clickX <= rect.right && clickY >= rect.top && clickY <= rect.bottom) {
+                            childIndex = i;
+                            posFound = pos;
+                            if (clickX > rect.right - 8) {
+                                posFound++;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        } else if (element.localName === 'num') {
+            posFound = 0;
+            childIndex = 0;
+        }
+        return [posFound, childIndex];
+    }
+
+    function getElementIdForCursorPos(element) {
+        var elementsWithoutValidId = ["num", "aknp", "content", "mp", "inline"];
+        while (element.parentElement && elementsWithoutValidId.includes(element.localName)) {
+            element = element.parentElement;
+        }
+        return element.id;
     }
 
     function _disableActions($element){
