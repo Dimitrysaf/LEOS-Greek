@@ -624,7 +624,7 @@ public class LeosApiController {
     public ResponseEntity<Object> createMilestone(@PathVariable("proposalRef") String proposalRef, @RequestBody String milestoneComment) {
         try {
             proposalRef = encodeParam(proposalRef);
-            milestoneComment = encodeParam(milestoneComment);
+//            milestoneComment = encodeParam(milestoneComment);
             return new ResponseEntity<>(apiService.createMilestone(proposalRef, milestoneComment), HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Unexpected error while creating new milestone - " + e.getMessage());
