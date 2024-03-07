@@ -146,7 +146,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   closeDialog() {
-    this.config.closeDialog();
+    this.config?.closeDialog();
     this.resetInitials();
   }
 
