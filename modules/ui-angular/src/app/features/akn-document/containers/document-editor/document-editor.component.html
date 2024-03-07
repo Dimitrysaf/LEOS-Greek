@@ -406,7 +406,7 @@
         >
           <app-document
             containerId="versionContainer"
-            [mainContainerId]="mainContainerId"
+            [mainContainerId]="versionMainContainerId"
             [documentType]="documentType"
             [xml]="versionForView"
             [containerClass]="{
@@ -436,7 +436,7 @@
         >
           <app-document
             containerId="versionComparisonContainer"
-            [mainContainerId]="mainContainerId"
+            [mainContainerId]="versionComparisonMainContainerId"
             [xml]="versionsComparisonForView"
             [documentType]="documentType"
             [containerClass]="{
@@ -548,7 +548,7 @@
           <app-document
             #contributionViewContainer
             containerId="contributionViewContainer"
-            [mainContainerId]="mainContainerId"
+            [mainContainerId]="contributionViewMainContainerId"
             [xml]="contributionForView"
             [contributionView]=true
             [containerClass]="{
@@ -587,13 +587,12 @@
       >
         <eui-page-column-body class="flex-grow-1">
           <app-document-annotations
-            containerId="contributionViewContainer"
+            [containerId]="contributionViewMainContainerId"
+            [connectedEntity]="connectedEntity"
+            [proposalRef]="proposalRef"                            
             [permissions]="documentService.permissions$ | async"
             [showStatusFilter]="showStatusFilter"
-            operationMode="READ_ONLY"
             sidebarAppId="revision-01"
-            [temporaryDataId]="contributionTemporaryDataId"
-            [temporaryDataDocument]="contributionTemporaryDataDocument"
             [collapsed]="isContributionAnnotationsPaneCollapsed"
             (sidebarShown)="onContributionAnnotationsSidebarShown()"
             *ngIf="!milestoneViewData && contributionForView"

@@ -89,6 +89,9 @@ export class DocumentEditorComponent
   connectedEntity: string;
   containerId = 'docContainer';
   mainContainerId = 'mainContainer';
+  versionMainContainerId = "versionMainContainer";
+  versionComparisonMainContainerId = "versionComparisonMainContainer";
+  contributionViewMainContainerId = "contributionViewMainContainer";
   documentRef: string;
   documentType: string;
   proposalRef: string;
