@@ -53,6 +53,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     alternatives: any,
     levelItemVo: any,
     isClonedProposal: any,
+    elementCursorId: any,
+    elementCursorChildPos: any,
+    elementCursorPos: any
   ) => void;
   refreshElement?: (
     elementId: any,
@@ -112,6 +115,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     action: string;
     elementId: string;
     elementType: string;
+    elementCursorId: string;
+    elementCursorChildPos: number
+    elementCursorPos: number;
   }) {
     this.elementToEditAfterClose = null;
     if (data.elementType === 'crossheading') {
@@ -135,7 +141,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     }
   }
 
-  handleEdit(data: { action: string; elementId: string; elementType: string }) {
+  handleEdit(data: { action: string; elementId: string; elementType: string, elementCursorId: string, elementCursorChildPos: number, elementCursorPos: number }) {
     const documentRef = this.documentService.documentRef;
     const documentType = this.documentService.documentType;
     this.elementUnderEdit = data.elementId;
@@ -180,6 +186,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
                       response.alternatives,
                       JSON.stringify(response.levelItem),
                       response.clonedProposal,
+                      data.elementCursorId,
+                      data.elementCursorChildPos,
+                      data.elementCursorPos
                     );
                   });
               } else {
@@ -192,6 +201,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
                   response.alternatives,
                   JSON.stringify(response.levelItem),
                   response.clonedProposal,
+                  data.elementCursorId,
+                  data.elementCursorChildPos,
+                  data.elementCursorPos
                 );
               }
               this.coEditionService.joinElementCoEditInfo(
@@ -230,6 +242,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
                   response.alternatives,
                   JSON.stringify(response.levelItem),
                   response.clonedProposal,
+                  data.elementCursorId,
+                  data.elementCursorChildPos,
+                  data.elementCursorPos
                 );
               });
           } else {
@@ -242,6 +257,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
               response.alternatives,
               JSON.stringify(response.levelItem),
               response.clonedProposal,
+              data.elementCursorId,
+              data.elementCursorChildPos,
+              data.elementCursorPos
             );
           }
           this.coEditionService.joinElementCoEditInfo(
@@ -369,6 +387,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         action: 'edit',
         elementId: this.elementToEditAfterClose['elementId'],
         elementType: this.elementToEditAfterClose['elementTagName'],
+        elementCursorId: "",
+        elementCursorChildPos: -1,
+        elementCursorPos: -1
       });
     } else if (this.documentService.isReloadRequired) {
       if (!this.isElementSaved) {
