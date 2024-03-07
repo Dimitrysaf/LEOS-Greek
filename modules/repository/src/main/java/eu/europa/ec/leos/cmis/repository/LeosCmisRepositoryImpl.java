@@ -855,4 +855,13 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
         return repository.findFolderByPath(path);
     }
 
+    @Override
+    public Object findRecentPackagesForUser(String userId, String numberOfResult) {
+        return null;
+    }
+
+    @Override
+    public Object findFavouritePackagesForUser(String userId) {
+        return null;
+    }
 }
