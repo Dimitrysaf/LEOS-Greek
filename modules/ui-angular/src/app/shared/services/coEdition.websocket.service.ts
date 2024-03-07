@@ -74,6 +74,11 @@ export class CoEditionServiceWS {
       while (this.subscribeQueue.length > 0) {
         const { topic, callback } = this.subscribeQueue.shift();
         this.stompClient.subscribe(topic, callback);
+        if (topic.startsWith("/topic/document/")) {
+          this.refreshCoEditInfo(topic.substring("/topic/document/".length));
+        } else {
+          this.refreshCoEditInfo();
+        }
       }
       this.sessionId = socket._transport.url.split('/')[7];
     });
@@ -98,6 +103,7 @@ export class CoEditionServiceWS {
       this.stompClient.subscribe(`/topic/document`, (message) => {
         this.handleDocumentChannel(message);
       });
+      this.refreshCoEditInfo();
     } else
       this.subscribeQueue.push({
         topic: '/topic/document',
@@ -114,6 +120,7 @@ export class CoEditionServiceWS {
           | CoEditionUpdate;
         this.handleCoEditionMessage(coEdits);
       });
+      this.refreshCoEditInfo(documentId);
     } else
       this.subscribeQueue.push({
         topic: `/topic/document/${documentId}`,
@@ -126,6 +133,17 @@ export class CoEditionServiceWS {
           this.handleCoEditionMessage(coEdits);
         },
       });
+  }
+
+  private refreshCoEditInfo(documentId: string = "") {
+    this.stompClient.send(
+      '/app/refresh/document',
+      {},
+      JSON.stringify({
+        userId: this.user.login,
+        documentId
+      }),
+    );
   }
 
   public joinElementCoEditInfo(documentId: string, elementId: string) {

@@ -48,6 +48,7 @@ public class CoEditionController {
     private static final Logger LOG = LoggerFactory.getLogger(CoEditionController.class);
     private static final String TOPIC_DOCUMENT = "/topic/document";
     private static final String TOPIC_DOCUMENT_SLASH = "/topic/document/";
+
     @Autowired
     CoEditionService coEditionService;
     @Autowired
@@ -87,7 +88,17 @@ public class CoEditionController {
         for (CoEditionVO coEdit : sessionEdits) {
             String destination = encodeParam(TOPIC_DOCUMENT_SLASH + coEdit.getDocumentId());
             simpMessagingTemplate.convertAndSend(destination, coEditionService.getCurrentEditInfo(coEdit.getDocumentId()));
+        }
+    }
 
+    @MessageMapping("/refresh/document")
+    public void refreshDocumentRoom(Message<CoEditionRequest> message) {
+        CoEditionRequest event = message.getPayload();
+        LOG.info("Received refresh message from user {} on documentId {}", event.getUserId(), event.getDocumentId());
+        simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
+        if (!event.getDocumentId().isEmpty()) {
+            String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
+            simpMessagingTemplate.convertAndSend(destination, this.coEditionService.getCurrentEditInfo(event.getDocumentId()));
         }
     }
 
