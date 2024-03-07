@@ -159,7 +159,7 @@ define(function elementEditorModule(require) {
         if (editor) {
             // store LEOS data in editor
             var proposalRef = connector.getState().proposalRef;
-            if (!proposalRef) {
+            if (!proposalRef && connector.getState().proposalMetadata) {
                 proposalRef = connector.getState().proposalMetadata.ref;
             }
             editor.LEOS = {

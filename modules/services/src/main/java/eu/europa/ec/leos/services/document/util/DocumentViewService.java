@@ -69,19 +69,21 @@ public class DocumentViewService<T extends XmlDocument> {
         populateCloneProposalMetadata(proposal);
         String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
-        String proposalRef = proposal.getMetadata().getOrNull().getRef();
+        String proposalRef = proposal != null ? proposal.getMetadata().getOrNull().getRef() : null;
         return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO, null, null);
     }
 
     public DocumentViewResponse updateDocumentView(T document) {
         Proposal proposal = getProposalFromPackage(document);
-        CollectionContextService context = proposalContextProvider.get();
-        context.useChildDocument(proposal.getMetadata().get().getRef());
-        context.useActionComment(messageHelper.getMessage("operation.metadata.updated"));
-        context.executeUpdateProposalAsync();
+        if(proposal != null) {
+            CollectionContextService context = proposalContextProvider.get();
+            context.useChildDocument(proposal.getMetadata().get().getRef());
+            context.useActionComment(messageHelper.getMessage("operation.metadata.updated"));
+            context.executeUpdateProposalAsync();
+        }
         String editableXml = getEditableXml(document, proposal);
         VersionInfoVO versionInfoVO = getVersionInfo(document);
-        String proposalRef = proposal.getMetadata().getOrNull().getRef();
+        String proposalRef = proposal != null ? proposal.getMetadata().getOrNull().getRef() : null;
         return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO, null, null);
     }
 
@@ -117,7 +119,6 @@ public class DocumentViewService<T extends XmlDocument> {
     }
 
     private String getEditableXml(T document, Proposal proposal) {
-        securityContext.getPermissions(proposal);
         byte[] coverPageContent = new byte[0];
         //handle cover page type
 
@@ -135,7 +136,7 @@ public class DocumentViewService<T extends XmlDocument> {
         //handle other types
         byte[] documentContent = document.getContent().get().getSource().getBytes();
         boolean isCoverPageExists = documentContentService.isCoverPageExists(documentContent);
-        if (!isCoverPageExists) {
+        if (!isCoverPageExists && proposal != null) {
             byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
             coverPageContent = documentContentService.getCoverPageContent(xmlContent);
         }

@@ -19,14 +19,15 @@ import { MergeContributionsService } from '@/features/akn-document/services/merg
 import { PageModeService } from '@/features/akn-document/services/page-mode.service';
 import { SyncDocumentScrollService } from '@/features/akn-document/services/sync-document-scroll.service';
 import { VersionCompareService } from '@/features/akn-document/services/version-compare.service';
+import { ViewVersionService } from '@/features/akn-document/services/view-version.service';
 import {
   EXPORT_DROPDOWN_EXPORT_CLEAN_VERSION_ID,
   EXPORT_SECTION_DROPDOWN_ID,
   EXPORT_SECTION_ID,
 } from '@/shared/constants/document-actions.constants';
-import { ViewVersionService } from '@/features/akn-document/services/view-version.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { LeosLightService } from '@/shared/services/leos-light.service';
 
 @Injectable()
 export class DocumentActionsProposalService extends DocumentActionsService {
@@ -46,6 +47,7 @@ export class DocumentActionsProposalService extends DocumentActionsService {
     protected mergeContributionService: MergeContributionsService,
     protected pageModeService: PageModeService,
     protected appConfigService: AppConfigService,
+    protected leosLightService: LeosLightService,
   ) {
     super(
       router,
@@ -63,6 +65,7 @@ export class DocumentActionsProposalService extends DocumentActionsService {
       mergeContributionService,
       pageModeService,
       appConfigService,
+      leosLightService
     );
   }
 

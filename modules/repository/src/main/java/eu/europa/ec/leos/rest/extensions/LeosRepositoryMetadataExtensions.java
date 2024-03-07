@@ -34,8 +34,8 @@ class LeosRepositoryMetadataExtensions {
     private static RepositoryPropertiesMapper repositoryPropertiesMapper = new RestProperties();
 
     private static class CommonMetadataProperties {
-        String stage, type, purpose, template, language, docTemplate, ref;
-        Boolean eeaRelevance;
+        String stage, type, purpose, template, language, docTemplate, ref, callbackAddress;
+        Boolean eeaRelevance, imported;
     }
 
     static Option<ProfileMetaData> getProfileMetaDataOption(eu.europa.ec.leos.rest.support.model.LeosDocument leosDocument) {
@@ -69,9 +69,13 @@ class LeosRepositoryMetadataExtensions {
     }
 
     static Option<BillMetadata> getBillMetadataOption(LeosDocument leosDocument) {
-        return buildMetadata(leosDocument, props -> Option.some(
-                new BillMetadata(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
+        return buildMetadata(leosDocument, props -> {
+            BillMetadata metadata = new BillMetadata(props.stage, props.type, props.purpose, props.template,
+                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance);
+            metadata.setCallbackAddress(props.callbackAddress);
+            metadata.setImported(props.imported);
+            return Option.some(metadata);
+        });
     }
 
     static Option<AnnexMetadata> getAnnexMetadataOption(LeosDocument leosDocument) {
@@ -110,6 +114,8 @@ class LeosRepositoryMetadataExtensions {
         props.docTemplate = getMetadataDocTemplate(doc);
         props.ref = getMetadataRef(doc);
         props.eeaRelevance = getMetadataEeaRelevance(doc);
+        props.callbackAddress = getMetadataCallbaclAddress(doc);
+        props.imported = getMetadataImported(doc);
 
         Option<T> result;
         if (props.language != null && props.docTemplate != null) {
@@ -139,6 +145,15 @@ class LeosRepositoryMetadataExtensions {
     private static boolean getMetadataEeaRelevance(LeosDocument leosDocument) {
         Boolean eeaRelevance = (Boolean) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_EEA_RELEVANCE));
         return eeaRelevance != null ? eeaRelevance : false;
+    }
+
+    private static String getMetadataCallbaclAddress(LeosDocument leosDocument) {
+        return (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.CALLBACK_ADDRESS));
+    }
+
+    private static boolean getMetadataImported(LeosDocument leosDocument) {
+        String imported = (String) leosDocument.getMetadata().get(repositoryPropertiesMapper.getId(RepositoryProperties.IMPORTED));
+        return  imported != null ? Boolean.valueOf(imported) : false;
     }
 
     private static Integer getAnnexIndex(LeosDocument leosDocument) {

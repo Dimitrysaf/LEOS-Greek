@@ -158,7 +158,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         VersionInfoVO versionInfoVO = getVersionInfo(proposal);
         String editableXml = getEditableXml(proposal);
-        String proposalRef = proposal.getMetadata().get().getRef();
+        String proposalRef = proposal != null ? proposal.getMetadata().get().getRef() : null;
         return new DocumentViewResponse(proposalRef, editableXml, versionInfoVO, null, null);
     }
 
@@ -391,6 +391,9 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
+        if(proposal == null) {
+            return null;
+        }
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(
                 proposal.getMetadata().getOrError(() -> "Proposal metadata is required!").getDocTemplate());

@@ -26,6 +26,7 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -382,13 +383,15 @@ public class BillApiServiceImpl implements BillApiService {
         List<RefConfig> refConfigs = structure.getRefConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(bill.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
+        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
+        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, alternateConfigs, refConfigs,
                 StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef(),
-                proposal.getMetadata().getOrNull(), structure.getTocRules(),
-                bill.isTrackChangesEnabled(), true, proposal.isClonedProposal()
+                proposalMetadata, structure.getTocRules(),
+                bill.isTrackChangesEnabled(), true, isClonedProposal
         );
     }
 
