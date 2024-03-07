@@ -152,6 +152,7 @@ eui-icon-svg > svg > use {
   flex-direction: row;
   gap: var(--eui-base-spacing-m);
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .search-result {
@@ -555,7 +556,11 @@ body {
 .contribution-view-merge-pane .contribution-wrapper-after-merge {
   background-color: rgb(166 166 166 / 80%) !important;
   border: #8c8c8c thin solid;
-  [leos\:mergeAction]:not([leos\:selectedAction]), [leos\:mergeaction]:not([leos\:selectedaction]), ins, del, num {
+  [leos\:mergeAction]:not([leos\:selectedAction]),
+  [leos\:mergeaction]:not([leos\:selectedaction]),
+  ins,
+  del,
+  num {
     background-color: rgb(166 166 166 / 0%) !important;
   }
 
@@ -573,4 +578,3 @@ body {
     }
   }
 }
-

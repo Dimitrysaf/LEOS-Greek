@@ -5,3 +5,16 @@
 .proposals-list-container {
   margin-top: -32px;
 }
+
+@media (max-width: 642px) {
+  .total-results-sort {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 500px) {
+  .total-results-sort {
+    flex-direction: column;
+    flex-wrap: wrap;
+  }
+}
