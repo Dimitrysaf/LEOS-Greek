@@ -243,7 +243,7 @@ export class DocumentComponent
           target +
           `${c.userName} editing since ${formatDate(
             c.editionTime,
-            'dd/mm/yyyy HH:MM',
+            'dd/MM/yyyy HH:mm',
             'en-US',
           )} <br>`),
     );
