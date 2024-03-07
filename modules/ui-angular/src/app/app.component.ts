@@ -103,18 +103,18 @@ export class AppComponent implements OnInit, OnDestroy {
           'mailto:SG-DECIDE-FORMATION-SUPPORT@ec.europa.eu';
         break;
       }
-
       case 2: {
         window.location.href =
           'https://eceuropaeu.sharepoint.com/teams/GRP-PRO-SG-EU-PMH-IT-training-support/SitePages/Edit.aspx';
         break;
       }
       case 3: {
-        window.location.href =
-          'https://webgate.ec.europa.eu/fpfis/wikis/pages/viewpage.action?spaceKey=REGISTRY&title=Home';
+        window.open(
+          'https://webgate.ec.europa.eu/fpfis/wikis/pages/viewpage.action?spaceKey=REGISTRY&title=Home',
+          '_blank',
+        );
         break;
       }
-
       case 4: {
         window.location.href =
           'https://intragate.ec.europa.eu/decide/sep/entrance';
