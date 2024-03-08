@@ -7,8 +7,8 @@ import { UnathorizedComponent } from './features/error/components/unathorized/un
 import { DocumentUserGuard } from './shared/guards/document-user.guard';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
-  { path: 'index.jsp', redirectTo: 'home' },
+  { path: '', redirectTo: 'workspace', pathMatch: 'full' },
+  { path: 'index.jsp', redirectTo: 'workspace' },
   {
     path: 'error/page-not-found',
     component: PageNotFoundComponent,
