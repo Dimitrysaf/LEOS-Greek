@@ -38,18 +38,14 @@
           </div>
           <div class="sort-btn">
             <span>{{ 'page.home.sort-by' | translate }} </span>
-            <eui-dropdown>
-              <button euiButton>
-                <span euiLabel>{{ 'page.home.sort.date' | translate }}</span>
-                <span
-                  euiIcon
-                  euiIconButton
-                  iconClass="eui-icon-caret-down"
-                ></span>
-              </button>
-              <eui-dropdown-content> </eui-dropdown-content>
-            </eui-dropdown>
-
+            <button euiButton>
+              <span euiLabel>{{ 'page.home.sort.date' | translate }}</span>
+              <span
+                euiIcon
+                euiIconButton
+                iconClass="eui-icon-caret-down"
+              ></span>
+            </button>
             <button euiButton (click)="toggleSortOrder()">
               <span
                 euiIcon
