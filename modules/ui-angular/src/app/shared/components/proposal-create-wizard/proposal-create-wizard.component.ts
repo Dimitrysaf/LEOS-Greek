@@ -35,6 +35,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   selectedTemplate: CatalogItem | null;
   selectedLanguage: string;
 
+  isStepOneCompleted: boolean = false;
   private destroy$ = new Subject();
 
   constructor(
@@ -98,6 +99,9 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     const newIndex: number = this.currentStepIndex + increment;
     if (newIndex >= 1 && newIndex <= this.stepsCount) {
       this.currentStepIndex = newIndex;
+       if (this.currentStepIndex === 2) {
+         this.isStepOneCompleted = true;
+       }
     }
   }
 
@@ -128,6 +132,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
 
   closeDialog() {
     this.resetInitials();
+    this.config.closeDialog();
   }
 
   isFormValid(): boolean {
