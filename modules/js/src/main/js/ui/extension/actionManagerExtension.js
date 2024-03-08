@@ -321,10 +321,9 @@ define(function actionManagerExtensionModule(require) {
                  IGNORE_EDIT_CLICK.elementClass.some((cl) => event.target?.classList?.contains(cl)) ||
                  IGNORE_EDIT_CLICK.elementName.includes(event.target?.offsetParent?.nodeName)
                 );
-            if (shouldBeIgnored) {
-                return;
+            if (!shouldBeIgnored) {
+                _handleAction(connector, "edit", event);
             }
-            _handleAction(connector, "edit", event);
         }
     }
 
