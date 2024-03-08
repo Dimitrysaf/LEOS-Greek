@@ -504,7 +504,7 @@ export abstract class DocumentActionsService {
           isSlider: true,
           disabled:
             !this.permissions.includes('CAN_ACTIVATE_TRACK_CHANGES') ||
-            this.documentService.isEditorOpen$ ||
+            this.isEditorOpen ||
             this.isClonedProposal(),
           value: this.isTrackChangesEnabled,
           actionFn: () => this.toggleTrackChangesEnabled(),
