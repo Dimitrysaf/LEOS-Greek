@@ -699,10 +699,8 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     this.targetNode = null;
   }
 
-  private isMovedNode(node: TableOfContentItemVO) {
-    return (
-      node.softActionRoot && [MOVE_TO, MOVE_FROM].includes(node.softActionAttr)
-    );
+  private isMovedToNode(node: TableOfContentItemVO) {
+    return node.softActionRoot && node.softActionAttr === MOVE_TO;
   }
 
   private isDeletedNode(node: TableOfContentItemVO) {
@@ -715,7 +713,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
     isAdd: boolean,
     position: string,
   ) {
-    if (this.isMovedNode(nodeDragged) || this.isDeletedNode(nodeDragged)) {
+    if (this.isMovedToNode(nodeDragged) || this.isDeletedNode(nodeDragged)) {
       this.populateValidationMessage({
         success: false,
         sourceItem: nodeDragged,
