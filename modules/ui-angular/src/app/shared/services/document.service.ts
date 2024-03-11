@@ -40,6 +40,7 @@ import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
+import { cleanDelInsert } from '@/shared/utils/string.utils';
 
 import { apiBaseUrl } from '../../../config';
 import {
@@ -1188,7 +1189,7 @@ export class DocumentService {
   }
 
   updateTitle(newTitle: string): void {
-    this.documentPageTitleBS.next(newTitle);
+    this.documentPageTitleBS.next(cleanDelInsert(newTitle));
   }
 
   setIsEditorOpen(val: boolean) {
@@ -1491,7 +1492,7 @@ export class DocumentService {
         })
         .pipe(take(1))
         .subscribe((subTitle: string) => {
-          this.documentPageTitleBS.next(subTitle);
+          this.documentPageTitleBS.next(cleanDelInsert(subTitle));
         });
     } else {
       this.translate
@@ -1502,7 +1503,7 @@ export class DocumentService {
         })
         .pipe(take(1))
         .subscribe((subTitle: string) => {
-          this.documentPageTitleBS.next(subTitle);
+          this.documentPageTitleBS.next(cleanDelInsert(subTitle));
         });
     }
   }

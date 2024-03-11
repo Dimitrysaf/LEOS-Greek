@@ -29,6 +29,7 @@ define(function aknDocPurposePluginModule(require) {
     var pluginDefinition = {
         requires : "widget,leosWidget",
         init : function init(editor) {
+            $(editor.element.$).on("keyup mouseup", null, [editor], _handleClickEvent);
 
             leosKeyHandler.on({
                 editor : editor,
@@ -87,6 +88,15 @@ define(function aknDocPurposePluginModule(require) {
         context.event.cancel();
     }
 
+    var _handleClickEvent = function _handleClickEvent(event) {
+        if(event.data[0].getSelection()) {
+            var range = event.data[0].getSelection().getRanges()[0];
+            if(range.collapsed) {
+                range.checkEndOfBlock(true);
+            }
+        }
+    }
+    
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
     var DOCPURPOSE_NAME = "docPurpose";

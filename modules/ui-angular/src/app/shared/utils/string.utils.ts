@@ -30,3 +30,11 @@ export const countOccurrencesOfTextInString = (
   }
   return occurences;
 };
+
+
+export const cleanDelInsert = (
+  title: string
+) => {
+    let resultTitle = title?.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
+    return resultTitle?.replace(/<\/?ins[^>]*?>/gi, '');
+  }
