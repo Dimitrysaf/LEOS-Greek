@@ -99,6 +99,7 @@ import org.springframework.stereotype.Service;
 import javax.inject.Provider;
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -864,6 +865,13 @@ public abstract class ApiServiceImpl implements ApiService {
                 clonedMilestonesVOS.add(milestoneVO);
             });
             milestonesVO.setClonedMilestones(clonedMilestonesVOS);
+        }
+        try{
+            String title = java.net.URLDecoder.decode(milestonesVO.getTitle(), StandardCharsets.UTF_8.toString());
+            milestonesVO.setTitle(title);
+        } catch (UnsupportedEncodingException e) {
+            LOG.error("Encoding error occurred while retrieving the milestone", e);
+            throw new RuntimeException(e);
         }
         return milestonesVO;
     }
