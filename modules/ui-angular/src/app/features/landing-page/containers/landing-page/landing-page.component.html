@@ -1,62 +1,81 @@
 <eui-page>
-    <eui-page-content class="p-0">
-        <!-- Results column -->
-        <!-- Hero Banner and Buttons-->
-        <div class="hero-image">
-            <div class="content-container">
-                <div class="label-container">
-                    <eui-label class="hero-text eui-u-font-3xl">{{
-                        'page.home.hero.label' | translate
-                        }}</eui-label>
-                </div>
-                <!-- Hero buttons -->
-                <div class="button-container eui-u-mt-s">
-                    <button euiButton euiPrimary (click)="handleCreateMandate()"
-                            *ngIf="environmentService.isCouncil() && canUpload">
-                        {{ 'page.workspace.upload-cn.button.text' | translate }}
-                        <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
-                    </button>
-                    <button euiButton euiPrimary (click)="handleCreateDraft()" *ngIf="environmentService.isCouncil()">
-                        {{ 'page.workspace.create-draft' | translate }}
-                        <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
-                    </button>
-                    <button euiButton euiPrimary (click)="handleCreate()" *ngIf="!environmentService.isCouncil()">
-                        {{ 'page.workspace.upload.button.text' | translate }}
-                        <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
-                    </button>
-                    <button euiButton euiPrimary (click)="handleUpload()"
-                            *ngIf="!environmentService.isCouncil() && canUpload">
-                        {{ 'page.home.create-your-draft' | translate }}
-                        <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
-                    </button>
-                </div>
-            </div>
+  <eui-page-content class="p-0">
+    <!-- Results column -->
+    <!-- Hero Banner and Buttons-->
+    <div class="hero-image">
+      <div class="content-container">
+        <div class="label-container">
+          <eui-label class="hero-text eui-u-font-3xl">{{
+            'page.home.hero.label' | translate
+          }}</eui-label>
         </div>
-        <!-- Searchbar-->
-        <div class="eui-b-pl-xl middle-body-content">
-            <app-proposal-filter-home
-                    class="filter-container"
-                    (onSearchInitiated)="toggleProposalCardVisibility($event)"
-            ></app-proposal-filter-home>
-            <app-proposal-home-card
-                    *ngIf="showProposalCard"
-                    class="search-card-container"
-                    [proposals]="proposals$ | async"
-            ></app-proposal-home-card>
+        <!-- Hero buttons -->
+        <div class="button-container eui-u-mt-s">
+          <button
+            euiButton
+            euiPrimary
+            (click)="handleCreateMandate()"
+            *ngIf="canUpload"
+          >
+            {{ 'page.workspace.upload.button.text' | translate }}
+            <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
+          </button>
+          <button
+            euiButton
+            euiPrimary
+            (click)="handleCreateMandate()"
+            *ngIf="environmentService.isCouncil()"
+          >
+            {{ 'page.workspace.upload-cn.button.text' | translate }}
+            <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
+          </button>
+          <button
+            euiButton
+            euiPrimary
+            (click)="handleCreate()"
+            *ngIf="environmentService.isCouncil()"
+          >
+            {{ 'page.workspace.create-draft' | translate }}
+            <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
+          </button>
+          <button
+            euiButton
+            euiPrimary
+            (click)="handleUpload()"
+            *ngIf="!environmentService.isCouncil()"
+          >
+            {{ 'page.home.create-your-draft' | translate }}
+            <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
+          </button>
         </div>
-        <!-- Cards-->
-        <div class="cards-containers">
-            <app-proposal-home-card
-                    class="card-container"
-                    iconClass="eui-icon eui-icon-pulse"
-                    labelKey="page.home.my-latest-activity"
-            ></app-proposal-home-card>
+      </div>
+    </div>
+    <!-- Searchbar-->
+    <div class="eui-b-pl-xl middle-body-content">
+      <app-proposal-filter-home
+        class="filter-container"
+        (onSearchInitiated)="toggleProposalCardVisibility($event)"
+      ></app-proposal-filter-home>
+      <app-proposal-home-card
+        *ngIf="showProposalCard"
+        class="search-card-container"
+        [proposals]="proposals$ | async"
+      ></app-proposal-home-card>
+    </div>
+    <!-- Cards-->
+    <div class="cards-containers">
+      <app-proposal-home-card
+        class="card-container"
+        iconClass="eui-icon eui-icon-pulse"
+        labelKey="page.home.my-latest-activity"
+        [packages]="packages$ | async"
+      ></app-proposal-home-card>
 
-            <app-proposal-home-card
-                    class="card-container"
-                    iconClass="eui-icon eui-icon-bookmark"
-                    labelKey="page.home.my-favourites"
-            ></app-proposal-home-card>
-        </div>
-    </eui-page-content>
+      <app-proposal-home-card
+        class="card-container"
+        iconClass="eui-icon eui-icon-bookmark"
+        labelKey="page.home.my-favourites"
+      ></app-proposal-home-card>
+    </div>
+  </eui-page-content>
 </eui-page>

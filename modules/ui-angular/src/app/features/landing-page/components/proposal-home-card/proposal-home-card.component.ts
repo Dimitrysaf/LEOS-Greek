@@ -1,5 +1,13 @@
+import { ProposalsFiltersComponent } from '@/features/proposals/components';
 import {
-  ChangeDetectorRef,
+  DEFAULT_LIMIT,
+  DEFAULT_PAGE,
+  DEFAULT_SORT_ORDER,
+  ProposalFilter,
+} from '@/features/proposals/models';
+import { Document } from '@/shared';
+import { ProposalService } from '@/shared/services/proposal.service';
+import {
   Component,
   Input,
   OnInit,
@@ -11,26 +19,23 @@ import {
   EuiPaginationEvent,
   EuiPaginatorComponent,
 } from '@eui/components/eui-paginator';
-import { combineLatest, distinctUntilChanged, map,Observable } from 'rxjs';
-
-import { ProposalsFiltersComponent } from '@/features/proposals/components';
-import { ProposalsComponent } from '@/features/proposals/containers';
 import {
-  DEFAULT_LIMIT,
-  DEFAULT_PAGE,
-  DEFAULT_SORT_ORDER,
-  ProposalFilter,
-} from '@/features/proposals/models';
-import { Document } from '@/shared';
-import { ProposalService } from '@/shared/services/proposal.service';
+  Observable,
+  Subject,
+  combineLatest,
+  distinctUntilChanged,
+  map,
+  takeUntil,
+} from 'rxjs';
+import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
 
+export const PACKAGES_PAGE_SIZE = 4;
 type ProposalsState = {
   filters: ProposalFilter;
   sortOrder: boolean;
   limit: number;
   page: number;
 };
-
 @Component({
   selector: 'app-proposal-home-card',
   templateUrl: './proposal-home-card.component.html',
@@ -40,16 +45,24 @@ export class ProposalHomeCardComponent implements OnInit {
   @Input() iconClass: string;
   @Input() labelKey: string;
   @Input() proposals: Document[];
+  @Input() packages: PackagesRecentlyChanged[];
   @Input() searchTerm: string;
   @ViewChild('paginatorComponent')
   paginatorComponent: EuiPaginatorComponent;
-  @ViewChild('filters') filtersComponent: ProposalsFiltersComponent;
+  @ViewChild('paginatorComponentPackages')
+  paginatorComponentPackages: EuiPaginatorComponent;
+  @ViewChild('filters')
+  filtersComponent: ProposalsFiltersComponent;
+  displayedPackages: PackagesRecentlyChanged[] = [];
+  currentPackagesPage;
+  packagesPageSize = PACKAGES_PAGE_SIZE;
   sortOrder = DEFAULT_SORT_ORDER;
   showHeader = true;
   filters$: Observable<ProposalFilter>;
   limit$: Observable<number>;
   page$: Observable<number>;
   totalResults$: Observable<number>;
+  private destroy$: Subject<any> = new Subject();
 
   constructor(
     private proposalService: ProposalService,
@@ -63,7 +76,9 @@ export class ProposalHomeCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.proposalService.sortOrder$.subscribe((so) => (this.sortOrder = so));
+    this.proposalService.sortOrder$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((so) => (this.sortOrder = so));
 
     combineLatest({
       filters: this.proposalService.filters$,
@@ -78,6 +93,18 @@ export class ProposalHomeCardComponent implements OnInit {
       .subscribe((params) => {
         this.setQueryParams(params);
       });
+    this.updateDisplayedPackages();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.packages) {
+      this.updateDisplayedPackages();
+    }
   }
 
   private static stateToQueryParams(state: ProposalsState): Params {
@@ -121,7 +148,7 @@ export class ProposalHomeCardComponent implements OnInit {
   }
 
   get shouldShowIcon(): boolean {
-    return !!this.iconClass; // This ensures that `iconClass` is truthy (not null, undefined, or an empty string)
+    return !!this.iconClass;
   }
 
   toggleHeaderVisibility() {
@@ -152,6 +179,18 @@ export class ProposalHomeCardComponent implements OnInit {
   handlePagerChange($event: EuiPaginationEvent) {
     this.proposalService.setLimit($event.pageSize);
     this.proposalService.setPage($event.page);
+  }
+
+  handlePackagePagerChange($event: EuiPaginationEvent): void {
+    this.currentPackagesPage = $event.page;
+    this.packagesPageSize = $event.pageSize;
+    this.updateDisplayedPackages();
+  }
+
+  updateDisplayedPackages(): void {
+    const start = this.currentPackagesPage * this.packagesPageSize;
+    const end = start + this.packagesPageSize;
+    this.displayedPackages = [...(this.packages || []).slice(start, end)];
   }
 
   protected readonly DEFAULT_SORT_ORDER = DEFAULT_SORT_ORDER;

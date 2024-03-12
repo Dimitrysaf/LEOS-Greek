@@ -1,4 +1,4 @@
-<eui-card class="eui-u-mt-m">
+<eui-card class="eui-u-mt-m" *ngIf="proposal">
   <eui-card-header
     class="eui-u-flex-align-items-start"
     [isHeaderMultilines]="true"
@@ -40,5 +40,28 @@
         </eui-chip>
       </div>
     </eui-card-header-right-content>
+  </eui-card-header>
+</eui-card>
+<eui-card class="eui-u-mt-m" *ngIf="package">
+  <eui-card-header
+    class="eui-u-flex-align-items-start"
+    [isHeaderMultilines]="true"
+  >
+    <eui-card-header-title class="align-self-start eui-u-color-primary-100">
+      <a
+        [routerLink]="['/collection', package.ref]"
+        [innerHTML]="package.title"
+      ></a>
+    </eui-card-header-title>
+    <eui-card-header-subtitle>
+      {{
+        'page.workspace.proposal-item.updated-by'
+          | translate
+            : {
+                updatedOn: updatedOn | date : 'dd/MM/yyyy h:mm',
+                updatedBy: createdBy
+              }
+      }}
+    </eui-card-header-subtitle>
   </eui-card-header>
 </eui-card>
