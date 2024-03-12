@@ -15,13 +15,21 @@
 
     <eui-card-content>
       <div class="proposals-list-container">
-        <app-proposal-item-home-card
-          *ngFor="let proposal of proposals; let i = index"
-          [proposal]="proposal"
-        ></app-proposal-item-home-card>
+        <ng-container *ngFor="let package of displayedPackages; let i = index">
+          <app-proposal-item-home-card
+            [package]="package"
+          ></app-proposal-item-home-card>
+        </ng-container>
       </div>
     </eui-card-content>
   </eui-card>
+  <eui-paginator
+    #paginatorComponentPackages
+    [pageSize]="packagesPageSize"
+    [length]="displayedPackages?.length"
+    class="eui-u-pv-2xs pagination"
+    (pageChange)="handlePackagePagerChange($event)"
+  ></eui-paginator>
 </ng-container>
 <ng-container *ngIf="!shouldShowIcon">
   <eui-card class="card-container eui-u-shadow-1">

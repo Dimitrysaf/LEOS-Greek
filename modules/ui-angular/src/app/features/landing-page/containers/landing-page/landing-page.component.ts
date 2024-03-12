@@ -1,26 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
-import {
-  EuiPaginationEvent,
-  EuiPaginatorComponent,
-} from '@eui/components/eui-paginator';
-import {
-  combineLatest,
-  distinctUntilChanged,
-  map,
-  Observable,
-  Subject,
-  take,
-  takeUntil,
-} from 'rxjs';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { ProposalFilterHomeComponent } from '@/features/landing-page/components/proposal-filter-home/proposal-filter-home.component';
@@ -32,10 +10,27 @@ import {
   DEFAULT_SORT_ORDER,
   ProposalFilter,
 } from '@/features/proposals/models';
-import { Document, LeosConfig, ProcedureType } from '@/shared';
+import { Document, ProcedureType } from '@/shared';
 import { CreateProposalService } from '@/shared/services/create-proposal.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { ProposalService } from '@/shared/services/proposal.service';
+import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
+import { UserState } from '@eui/base';
+import {
+  EuiPaginationEvent,
+  EuiPaginatorComponent,
+} from '@eui/components/eui-paginator';
+import { Store } from '@ngrx/store';
+import {
+  Observable,
+  Subject,
+  combineLatest,
+  distinctUntilChanged,
+  map,
+  takeUntil,
+} from 'rxjs';
+import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
+import { LandingPageService } from '../../services/landing-page.service';
 
 type ProposalsState = {
   filters: ProposalFilter;
@@ -49,7 +44,10 @@ type ProposalsState = {
   templateUrl: './landing-page.component.html',
   styleUrls: ['./landing-page.component.scss'],
 })
-export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
+export class LandingPageComponent implements OnInit, OnDestroy {
+  protected readonly homeUrl = document.baseURI;
+  private destroy$: Subject<any> = new Subject();
+  packages$: Observable<PackagesRecentlyChanged[]>;
   proposals$: Observable<Document[]>;
   limit$: Observable<number>;
   totalResults$: Observable<number>;
@@ -58,29 +56,39 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('paginatorComponent')
   paginatorComponent: EuiPaginatorComponent;
   @ViewChild('filters') filtersComponent: ProposalFilterHomeComponent;
-  showProposalCard = false;
+  showProposalCard: boolean = false;
+  canCreateDraft = false;
+  canCreateMandate = false;
+  canCreateProposal = false;
   canUpload = false;
-  protected readonly homeUrl = document.baseURI;
-  private destroy$ = new Subject<void>();
+  isCNInstance;
+  userName: string;
 
   constructor(
-    public environmentService: EnvironmentService,
-    private fb: FormBuilder,
+    private store: Store<any>,
     protected createProposalService: CreateProposalService,
     private proposalService: ProposalService,
-    private cdr: ChangeDetectorRef,
+    private landingPageService: LandingPageService,
     private appConfig: AppConfigService,
     private router: Router,
     private route: ActivatedRoute,
+    public environmentService: EnvironmentService,
   ) {
     this.limit$ = this.proposalService.limit$;
     this.proposals$ = this.proposalService.proposals$;
+    this.packages$ = this.landingPageService.findRecentPackagesForUser();
     this.totalResults$ = this.proposalService.totalResults$;
     this.searchTerm = '';
   }
-
   ngOnInit() {
     this.proposalService.sortOrder$.subscribe((so) => (this.sortOrder = so));
+
+    this.store
+      .select('user')
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((userState: UserState) => {
+        this.userName = userState.firstName;
+      });
 
     this.route.queryParamMap.subscribe((paramsMap) =>
       this.applyQueryParams(paramsMap),
@@ -99,23 +107,22 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
       .subscribe((params) => {
         this.setQueryParams(params);
       });
-
-    this.appConfig.config.pipe(takeUntil(this.destroy$)).subscribe((config) => {
-      this.canUpload = config.userAppPermissions.includes('CAN_UPLOAD');
-    });
+    this.setPermissions();
   }
 
-  ngAfterViewInit(): void {
-    this.proposalService.proposals$.pipe(take(1)).subscribe(() => {
-      this.proposalService.page$.subscribe((page) => {
-        this.paginatorComponent?.getPage(page);
-        setTimeout(() => this.cdr.detectChanges());
-      });
+  private setPermissions() {
+    this.appConfig.config.subscribe((config) => {
+      const CN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+      const CAN_UPLOAD = config.userAppPermissions.includes('CAN_UPLOAD');
+      this.canCreateDraft = CN && CAN_UPLOAD;
+      this.canCreateMandate = CN;
+      this.canCreateProposal = !CN;
+      this.canUpload = CAN_UPLOAD;
     });
   }
 
   ngOnDestroy() {
-    this.destroy$.next();
+    this.destroy$.next(null);
     this.destroy$.complete();
   }
 
@@ -214,7 +221,7 @@ export class LandingPageComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleProposalCardVisibility(searchTerm: string | null): void {
     this.searchTerm = searchTerm || '';
     if (searchTerm) {
-      this.proposalService.setFilters({ searchTerm });
+      this.proposalService.setFilters({ searchTerm: searchTerm });
       this.showProposalCard = true;
     } else {
       this.showProposalCard = false;
