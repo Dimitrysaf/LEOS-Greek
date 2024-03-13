@@ -96,7 +96,7 @@ public class CoEditionController {
         CoEditionRequest event = message.getPayload();
         LOG.info("Received refresh message from user {} on documentId {}", event.getUserId(), event.getDocumentId());
         simpMessagingTemplate.convertAndSend(TOPIC_DOCUMENT, this.coEditionService.getAllEditInfo());
-        if (!event.getDocumentId().isEmpty()) {
+        if (!event.getDocumentId().equals("document")) {
             String destination = encodeParam(TOPIC_DOCUMENT_SLASH + event.getDocumentId());
             simpMessagingTemplate.convertAndSend(destination, this.coEditionService.getCurrentEditInfo(event.getDocumentId()));
         }
