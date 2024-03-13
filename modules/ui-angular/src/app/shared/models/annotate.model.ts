@@ -42,6 +42,8 @@ export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
   // Client-side only state
   showStatusFilter: boolean;
   showGuideLinesButton: boolean;
+  disableSuggestionButton: boolean;
+  disableHighlightButton: boolean;
 
   // App session depended properties
   connectedEntity?: string;

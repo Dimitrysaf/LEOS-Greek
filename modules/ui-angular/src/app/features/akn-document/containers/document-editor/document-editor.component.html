@@ -592,6 +592,8 @@
             [proposalRef]="contribution.proposalRef"                            
             [permissions]="documentService.permissions$ | async"
             [showStatusFilter]="showStatusFilter"
+            [disableSuggestionButton]=true
+            [disableHighlightButton]=true
             sidebarAppId="revision-01"
             [collapsed]="isContributionAnnotationsPaneCollapsed"
             (sidebarShown)="onContributionAnnotationsSidebarShown()"
