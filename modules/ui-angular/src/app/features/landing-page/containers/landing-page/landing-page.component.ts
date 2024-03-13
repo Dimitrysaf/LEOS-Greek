@@ -31,6 +31,7 @@ import {
 } from 'rxjs';
 import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
 import { LandingPageService } from '../../services/landing-page.service';
+import { PackagesFavourite } from '../../models/packages-favourite.model';
 
 type ProposalsState = {
   filters: ProposalFilter;
@@ -38,7 +39,6 @@ type ProposalsState = {
   limit: number;
   page: number;
 };
-
 @Component({
   selector: 'app-landing-page',
   templateUrl: './landing-page.component.html',
@@ -47,7 +47,8 @@ type ProposalsState = {
 export class LandingPageComponent implements OnInit, OnDestroy {
   protected readonly homeUrl = document.baseURI;
   private destroy$: Subject<any> = new Subject();
-  packages$: Observable<PackagesRecentlyChanged[]>;
+  latestPackages$: Observable<PackagesRecentlyChanged[]>;
+  favouritesPackages$: Observable<PackagesFavourite[]>;
   proposals$: Observable<Document[]>;
   limit$: Observable<number>;
   totalResults$: Observable<number>;
@@ -76,7 +77,8 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   ) {
     this.limit$ = this.proposalService.limit$;
     this.proposals$ = this.proposalService.proposals$;
-    this.packages$ = this.landingPageService.findRecentPackagesForUser();
+    this.latestPackages$ = this.landingPageService.findRecentPackagesForUser();
+    this.favouritesPackages$ = this.landingPageService.findFavouritePackagesForUser();
     this.totalResults$ = this.proposalService.totalResults$;
     this.searchTerm = '';
   }
