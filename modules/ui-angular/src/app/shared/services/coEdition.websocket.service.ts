@@ -12,7 +12,6 @@ import {
   CoEditionUpdate,
   CoEditionVO,
 } from '../models/coEditionVO.model';
-import {Message} from "stompjs";
 
 export type CO_EDITION_ACTION = 'EDIT_ELEMENT' | 'EDIT_TOC';
 
