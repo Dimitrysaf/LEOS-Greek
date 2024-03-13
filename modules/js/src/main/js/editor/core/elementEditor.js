@@ -260,7 +260,7 @@ define(function elementEditorModule(require) {
     }
 
     function _putCursorInPosition(event) {
-        if (event.editor.LEOS.elementCursorId !== "" && event.editor.LEOS.elementCursorPos !== -1) {
+        if (event.editor.LEOS.elementCursorId !== "") {
             var editor = event.editor;
             var elementToPutCursor = editor.element.findOne("#" + event.editor.LEOS.elementCursorId);
             if (!elementToPutCursor) {

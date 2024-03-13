@@ -384,40 +384,67 @@ define(function actionManagerExtensionModule(require) {
     }
 
     function getTextPositionFromElement(element, clickX, clickY) {
-        var posFound = -1;
-        var childIndex = -1;
+        var posFound = 0;
+        var childIndex = 0;
+        if (element.localName === 'paragraph' || element.localName === 'subparagraph' || element.localName === 'point') {
+            var elementToFind = new CKEDITOR.dom.element(element);
+            elementToFind = elementToFind.findOne("aknp");
+            if (elementToFind) {
+                element = elementToFind.$;
+            }
+        }
         if (element.localName !== 'num') {
             var nodes = element.childNodes;
-            for (var i = 0; i < nodes.length; i++) {
+            var sizeOfLastTextNode = 0;
+            var cumulativeSizeForExternalReferences = 0;
+            var countExternalReferences = 0;
+            var found = false;
+            for (var i = 0; i < nodes.length && !found; i++) {
                 var node = nodes[i];
-                if (node.nodeType === Node.TEXT_NODE) {
+                if (node.nodeType === Node.ELEMENT_NODE && node.localName === "a" && node.hasAttribute("data-ref2link-initial")) {
+                    cumulativeSizeForExternalReferences = cumulativeSizeForExternalReferences + sizeOfLastTextNode + node.textContent.length;
+                    countExternalReferences++;
+                } else if (node.nodeType === Node.TEXT_NODE) {
                     var range = document.createRange();
+                    sizeOfLastTextNode = node.textContent.length;
                     for (var pos = 0; pos < node.textContent.length; pos++) {
                         range.setStart(node, pos);
                         range.setEnd(node, pos + 1);
                         var rect = range.getBoundingClientRect();
+                        if (clickY >= rect.top && clickY <= rect.bottom && clickX < rect.left) {
+                            childIndex = i - (countExternalReferences*2);
+                            posFound = 0;
+                        }
+                        if (clickY >= rect.top && clickY <= rect.bottom && clickX > rect.right) {
+                            childIndex = i - (countExternalReferences*2);
+                            posFound = pos + cumulativeSizeForExternalReferences + 1;
+                        }
                         if (clickX >= rect.left && clickX <= rect.right && clickY >= rect.top && clickY <= rect.bottom) {
-                            childIndex = i;
-                            posFound = pos;
+                            childIndex = i - (countExternalReferences*2);
+                            posFound = pos + cumulativeSizeForExternalReferences;
+                            found = true;
                             if (clickX > rect.right - 8) {
                                 posFound++;
                             }
                             break;
                         }
                     }
+                } else {
+                    cumulativeSizeForExternalReferences = 0;
                 }
             }
-        } else if (element.localName === 'num') {
-            posFound = 0;
-            childIndex = 0;
         }
         return [posFound, childIndex];
     }
 
     function getElementIdForCursorPos(element) {
-        var elementsWithoutValidId = ["num", "aknp", "content", "mp", "inline"];
-        while (element.parentElement && elementsWithoutValidId.includes(element.localName)) {
-            element = element.parentElement;
+        if (element.localName === "num" && element.parentElement && element.parentElement.localName === "article") {
+            element = element.nextElementSibling;
+        } else {
+            var elementsWithoutValidId = ["num", "aknp", "content", "mp", "inline"];
+            while (element.parentElement && elementsWithoutValidId.includes(element.localName)) {
+                element = element.parentElement;
+            }
         }
         return element.id;
     }
