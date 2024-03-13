@@ -12,12 +12,14 @@ import {
   CoEditionUpdate,
   CoEditionVO,
 } from '../models/coEditionVO.model';
+import {Message} from "stompjs";
 
 export type CO_EDITION_ACTION = 'EDIT_ELEMENT' | 'EDIT_TOC';
 
 export interface SubscriptionEvent {
   topic: string;
   callback: (message) => void;
+  id: string;
 }
 
 export interface MessageEvent {
@@ -72,13 +74,8 @@ export class CoEditionServiceWS {
 
     this.stompClient.connect({}, () => {
       while (this.subscribeQueue.length > 0) {
-        const { topic, callback } = this.subscribeQueue.shift();
-        this.stompClient.subscribe(topic, callback);
-        if (topic.startsWith("/topic/document/")) {
-          this.refreshCoEditInfo(topic.substring("/topic/document/".length));
-        } else {
-          this.refreshCoEditInfo();
-        }
+        const { topic, callback, id } = this.subscribeQueue.shift();
+        this.subscribe(topic, callback, id);
       }
       this.sessionId = socket._transport.url.split('/')[7];
     });
@@ -88,6 +85,17 @@ export class CoEditionServiceWS {
     if (this.stompClient) {
       this.stompClient.disconnect(null);
     }
+  }
+
+  subscribe(topic: string, callback: (message) => void, id: string): void {
+    if (!this.stompClient.subscriptions[id]) {
+      this.stompClient.subscribe(topic, callback, { id: `${id}` });
+    }
+    this.stompClient.send(
+      '/app/refresh/document',
+      {},
+      JSON.stringify({ userId: this.user.login, documentId: id })
+    );
   }
 
   removeSession(): void {
@@ -100,27 +108,26 @@ export class CoEditionServiceWS {
 
   public joinDocumentChannel() {
     if (this.stompClient.connected) {
-      this.stompClient.subscribe(`/topic/document`, (message) => {
+      this.subscribe(`/topic/document`, (message) => {
         this.handleDocumentChannel(message);
-      });
-      this.refreshCoEditInfo();
+      }, 'document');
     } else
       this.subscribeQueue.push({
         topic: '/topic/document',
         callback: (message) => this.handleDocumentChannel(message),
+        id: 'document'
       });
   }
 
   public joinSubDocumentChannel(documentId: string): void {
     if (this.stompClient.connected) {
-      this.stompClient.subscribe(`/topic/document/${documentId}`, (message) => {
+      this.subscribe(`/topic/document/${documentId}`, (message) => {
         const coEdits = JSON.parse(message.body) as
           | CoEditionActionInfo
           | CoEditionVO[]
           | CoEditionUpdate;
         this.handleCoEditionMessage(coEdits);
-      });
-      this.refreshCoEditInfo(documentId);
+      }, documentId);
     } else
       this.subscribeQueue.push({
         topic: `/topic/document/${documentId}`,
@@ -129,21 +136,10 @@ export class CoEditionServiceWS {
             | CoEditionActionInfo
             | CoEditionVO[]
             | CoEditionUpdate;
-          //handle the update logic
           this.handleCoEditionMessage(coEdits);
         },
+        id: `${documentId}`
       });
-  }
-
-  private refreshCoEditInfo(documentId: string = "") {
-    this.stompClient.send(
-      '/app/refresh/document',
-      {},
-      JSON.stringify({
-        userId: this.user.login,
-        documentId
-      }),
-    );
   }
 
   public joinElementCoEditInfo(documentId: string, elementId: string) {
