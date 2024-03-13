@@ -271,6 +271,8 @@ define(function annotateExtensionModule(require) {
             "operationMode" : `${annotateState.operationMode}`,
             "showStatusFilter" : annotateState.showStatusFilter,
             "showGuideLinesButton" : annotateState.showGuideLinesButton,
+            "disableSuggestionButton": annotateState.disableSuggestionButton,
+            "disableHighlightButton": annotateState.disableHighlightButton,
             "annotationPopupDefaultStatus" : `${annotateState.annotationPopupDefaultStatus}`,
             "annotationContainer": `${annotateState.annotationContainer}`,
             "context": `${annotateState.proposalRef}`,

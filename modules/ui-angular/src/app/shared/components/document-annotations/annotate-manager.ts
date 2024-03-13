@@ -30,6 +30,8 @@ export type AnnotateConnectorOptions = Pick<
   | 'proposalRef'
   | 'showStatusFilter'
   | 'showGuideLinesButton'
+  | 'disableSuggestionButton'
+  | 'disableHighlightButton'
   | 'connectedEntity'
   | 'sidebarAppId'
   | 'temporaryDataId'

@@ -13,6 +13,7 @@ export interface ContributionVO {
   xmlContent: string;
   legFileName: string;
   documentName: string;
+  proposalRef: string;
   username: string;
   greyed?: boolean;
 }

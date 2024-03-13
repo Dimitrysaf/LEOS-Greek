@@ -46,6 +46,8 @@ export class DocumentAnnotationsComponent
   @Input() proposalRef?: string;
   @Input() showGuideLinesButton = true;
   @Input() showStatusFilter = true;
+  @Input() disableSuggestionButton: boolean;
+  @Input() disableHighlightButton: boolean;
   @Input() sidebarAppId?: string;
   @Input() temporaryDataId?: string;
   @Input() temporaryDataDocument?: string;
@@ -90,6 +92,8 @@ export class DocumentAnnotationsComponent
         proposalRef: this.proposalRef,
         showGuideLinesButton: this.showGuideLinesButton,
         showStatusFilter: this.showStatusFilter,
+        disableSuggestionButton: this.disableSuggestionButton,
+        disableHighlightButton: this.disableHighlightButton,
         sidebarAppId: this.sidebarAppId,
         temporaryDataId: this.temporaryDataId,
         temporaryDataDocument: this.temporaryDataDocument,

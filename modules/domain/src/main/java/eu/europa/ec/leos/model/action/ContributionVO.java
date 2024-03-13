@@ -28,6 +28,7 @@ public class ContributionVO implements Comparable<ContributionVO> {
     private byte[] xmlContent;
     private String legFileName;
     private String documentName;
+    private String proposalRef;
 
     public enum ContributionStatus {
         RECEIVED("Contribution received"),
@@ -146,6 +147,18 @@ public class ContributionVO implements Comparable<ContributionVO> {
 
     public void setDocumentName(String documentName) {
         this.documentName = documentName;
+    }
+
+    public void setContributionStatus(ContributionStatus contributionStatus) {
+        this.contributionStatus = contributionStatus;
+    }
+
+    public String getProposalRef() {
+        return proposalRef;
+    }
+
+    public void setProposalRef(String proposalRef) {
+        this.proposalRef = proposalRef;
     }
 
     @Override

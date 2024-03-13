@@ -150,7 +150,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                         String annexName = annex.getName();
                         byte[] annexContent = (byte[]) legContent.get(annexName);
                         ContributionLegDocumentVO<Annex> annexContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), annex,
-                                annexContent, legName, annexName);
+                                annexContent, legName, annexName, proposalRef);
                         documentVersions.add((ContributionLegDocumentVO<T>) annexContributionLegDocumentVO);
                     }
                 });
@@ -166,7 +166,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                         String documentName = doc.getName();
                         byte[] docContent = (byte[])legContent.get(documentName);
                         ContributionLegDocumentVO<Bill> billContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName);
+                                docContent, legName, documentName, proposalRef);
                         documentVersions.add((ContributionLegDocumentVO<T>) billContributionLegDocumentVO);
                     }
                 }
@@ -180,7 +180,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                         String documentName = doc.getName();
                         byte[] docContent = (byte[])legContent.get(documentName);
                         ContributionLegDocumentVO<Memorandum> contributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName);
+                                docContent, legName, documentName, proposalRef);
                         documentVersions.add((ContributionLegDocumentVO<T>)contributionLegDocumentVO);
                     }
                 }
@@ -194,7 +194,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                         String documentName = doc.getName();
                         byte[] docContent = (byte[])legContent.get(documentName);
                         ContributionLegDocumentVO<FinancialStatement> financialStatementContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
-                                docContent, legName, documentName);
+                                docContent, legName, documentName, proposalRef);
                         documentVersions.add((ContributionLegDocumentVO<T>) financialStatementContributionLegDocumentVO);
                     }
                 }
@@ -206,7 +206,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                     XPathCatalog catalog = new XPathCatalog();
                     doc = proposalService.findProposalVersion(xmlContentProcessor.getElementValue(docContent, catalog.getXPathObjectId(), true));
                     ContributionLegDocumentVO<Proposal> proposalContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), doc,
-                            docContent, legName, documentName);
+                            docContent, legName, documentName, proposalRef);
                     documentVersions.add((ContributionLegDocumentVO<T>) proposalContributionLegDocumentVO);
                 }
             }

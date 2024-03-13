@@ -9,14 +9,16 @@ public class ContributionLegDocumentVO<T extends XmlDocument> {
     private byte[] content;
     private String legFileName;
     private String documentName;
+    private String proposalRef;
 
     public ContributionLegDocumentVO(String originRef, T document, byte[] content, String legFileName,
-                                     String documentName) {
+                                     String documentName, String proposalRef) {
         this.originRef = originRef;
         this.document = document;
         this.content = content;
         this.legFileName = legFileName;
         this.documentName = documentName;
+        this.proposalRef = proposalRef;
     }
 
     public String getOriginRef() {
@@ -57,5 +59,13 @@ public class ContributionLegDocumentVO<T extends XmlDocument> {
 
     public void setDocumentName(String documentName) {
         this.documentName = documentName;
+    }
+
+    public String getProposalRef() {
+        return proposalRef;
+    }
+
+    public void setProposalRef(String proposalRef) {
+        this.proposalRef = proposalRef;
     }
 }
