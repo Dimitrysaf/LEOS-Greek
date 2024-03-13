@@ -42,6 +42,7 @@ public class ContributionsUtil {
             contributionVO.setXmlContent(contribution.getContent());
             contributionVO.setLegFileName(contribution.getLegFileName());
             contributionVO.setDocumentName(contribution.getDocumentName());
+            contributionVO.setProposalRef(contribution.getProposalRef());
             if (contributions.indexOf(contribution) < contributions.size() - 1) {
                 contributionVO.setContributionStatus(ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
             } else {
