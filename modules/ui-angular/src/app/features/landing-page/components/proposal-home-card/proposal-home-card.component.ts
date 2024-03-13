@@ -30,7 +30,7 @@ import {
 import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
 import { PackagesFavourite } from '../../models/packages-favourite.model';
 
-export const PACKAGES_PAGE_SIZE = 3;
+export const PACKAGES_PAGE_SIZE = 5;
 type Package = PackagesRecentlyChanged | PackagesFavourite;
 type ProposalsState = {
   filters: ProposalFilter;
