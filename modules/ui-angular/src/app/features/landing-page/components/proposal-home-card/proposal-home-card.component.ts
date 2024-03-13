@@ -28,8 +28,10 @@ import {
   takeUntil,
 } from 'rxjs';
 import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
+import { PackagesFavourite } from '../../models/packages-favourite.model';
 
-export const PACKAGES_PAGE_SIZE = 4;
+export const PACKAGES_PAGE_SIZE = 3;
+type Package = PackagesRecentlyChanged | PackagesFavourite;
 type ProposalsState = {
   filters: ProposalFilter;
   sortOrder: boolean;
@@ -45,7 +47,7 @@ export class ProposalHomeCardComponent implements OnInit {
   @Input() iconClass: string;
   @Input() labelKey: string;
   @Input() proposals: Document[];
-  @Input() packages: PackagesRecentlyChanged[];
+  @Input() packages: Package[] = [];
   @Input() searchTerm: string;
   @ViewChild('paginatorComponent')
   paginatorComponent: EuiPaginatorComponent;
@@ -53,7 +55,7 @@ export class ProposalHomeCardComponent implements OnInit {
   paginatorComponentPackages: EuiPaginatorComponent;
   @ViewChild('filters')
   filtersComponent: ProposalsFiltersComponent;
-  displayedPackages: PackagesRecentlyChanged[] = [];
+  displayedPackages: Package[] = [];
   currentPackagesPage;
   packagesPageSize = PACKAGES_PAGE_SIZE;
   sortOrder = DEFAULT_SORT_ORDER;
@@ -152,7 +154,6 @@ export class ProposalHomeCardComponent implements OnInit {
   }
 
   toggleHeaderVisibility() {
-    console.log(this.showHeader);
     this.showHeader = !this.showHeader;
   }
 
