@@ -188,6 +188,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
                 false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR,
                 messageHelper.getMessage("operation." + elementName + ".updated"));
+        documentViewService.updateProposalAsync(memorandum);
         return new SaveElementResponse(elementId, elementName,
                 elementProcessor.getElement(memorandum, elementName, elementId));
     }
@@ -217,6 +218,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public List<VersionVO> saveDocument(String documentRef, String checkInComment, VersionType versionType) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         this.memorandumService.createVersion(memorandum.getId(), versionType, checkInComment);
+        documentViewService.updateProposalAsync(memorandum);
         return this.memorandumService.getAllVersions(memorandum.getId(), documentRef, 0, 10);
     }
 
@@ -423,6 +425,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         String documentId = memorandumService.findMemorandumByRef(documentRef).getId();
         Memorandum memorandum = memorandumService.updateMemorandum(documentRef, documentId, properties, false);
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        documentViewService.updateProposalAsync(memorandum);
         return true;
     }
 
