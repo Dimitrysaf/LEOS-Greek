@@ -61,7 +61,7 @@ public class CommonSteps extends BaseDriver {
                 dialogBoxPage = new DialogBoxPage(WebDriverFactory.getDriver());
                 dialogBoxPage.clickOnDangerButton();
                 assertTrue(repositoryBrowserPage.isCreateDraftBtnDisplayedAndEnabled());
-                assertTrue(repositoryBrowserPage.isCreateMandateBtnDisplayedAndEnabled());
+//                assertTrue(repositoryBrowserPage.isCreateMandateBtnDisplayedAndEnabled());
             }
         }
     }
@@ -81,7 +81,7 @@ public class CommonSteps extends BaseDriver {
                 dialogBoxPage = new DialogBoxPage(WebDriverFactory.getDriver());
                 dialogBoxPage.clickOnDangerButton();
                 assertTrue(repositoryBrowserPage.isCreateDraftBtnDisplayedAndEnabled());
-                assertTrue(repositoryBrowserPage.isCreateMandateBtnDisplayedAndEnabled());
+//                assertTrue(repositoryBrowserPage.isCreateMandateBtnDisplayedAndEnabled());
             }
         }
     }

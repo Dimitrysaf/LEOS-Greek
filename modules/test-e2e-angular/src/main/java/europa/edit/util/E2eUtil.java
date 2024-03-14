@@ -65,7 +65,7 @@ public class E2eUtil {
 
     public static void waitForLoadingProgressBarToDisappear(WebDriver driver) {
         try {
-            wait(1000);
+            sleep(1000);
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EXPLICIT_TIMEOUT_DELAY));
             wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("eui-block-document.eui-block-document--blocked")));
             waitForPageLoad(driver,TIMEOUT_DELAY);
@@ -73,16 +73,6 @@ public class E2eUtil {
             logger.error(e.getMessage(), e);
         }
     }
-
-    public static void waitForElementClickable(WebDriver driver, WebElement element) {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT_DELAY));
-            wait.until(ExpectedConditions.elementToBeClickable(element));
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
-
 
     public static void elementClick(WebDriver driver, WebElement element) {
         element.click();
@@ -365,7 +355,7 @@ public class E2eUtil {
     }
 
     // Definite wait needed at multiple place, used a function instead Thread.sleep method
-    public static void wait(int milliseconds) {
+    public static void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (Exception e) {

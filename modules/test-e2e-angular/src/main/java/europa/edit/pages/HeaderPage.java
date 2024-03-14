@@ -28,6 +28,10 @@ public class HeaderPage {
     @CacheLookup
     WebElement EUI_LABEL;
 
+    @FindBy(xpath = "//a//*[text()=' Home ']")
+    @CacheLookup
+    WebElement HOME_LINK;
+
 /*    @FindBy(css = "div.eui-user-profile__avatar")
     @CacheLookup
     WebElement EUI_USER_PROFILE_AVATAR;
@@ -55,7 +59,11 @@ public class HeaderPage {
         return EUI_LABEL.getText();
     }
 
-    public void clickHomeButton() {
+    public void clickHomeLink() {
+        elementClick(driver, HOME_LINK);
+    }
+
+    public void clickHomeButtonInBreadCrumb() {
         elementClick(driver, EUI_BREADCRUMB_ITEM_BUTTON.get(0));
     }
 

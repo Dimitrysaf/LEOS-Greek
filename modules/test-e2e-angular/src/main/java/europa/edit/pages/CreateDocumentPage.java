@@ -75,7 +75,7 @@ public class CreateDocumentPage {
     }
 
     public boolean isNextButtonEnabled() {
-        return nextBtn.isEnabled();
+        return waitForElementTobeClickable(driver, nextBtn).isEnabled();
     }
 
     public void enterDocumentTitle(String arg0) {
