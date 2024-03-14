@@ -276,6 +276,7 @@ define(function annotateExtensionModule(require) {
             "annotationPopupDefaultStatus" : `${annotateState.annotationPopupDefaultStatus}`,
             "annotationContainer": `${annotateState.annotationContainer}`,
             "context": `${annotateState.proposalRef}`,
+            "legFileName": `${annotateState.legFileName}`,
             "connectedEntity": `${annotateState.connectedEntity}`,
             "ignoredTags": ["div"],
             "allowedSelectorTags": "a.ref2link-generated, span.leos-content-soft-new",

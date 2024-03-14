@@ -44,6 +44,7 @@ export class DocumentAnnotationsComponent
   @Input() operationMode: AnnotateOperationMode = 'NORMAL';
   @Input() permissions: Permission[] = [];
   @Input() proposalRef?: string;
+  @Input() legFileName?: string;
   @Input() showGuideLinesButton = true;
   @Input() showStatusFilter = true;
   @Input() disableSuggestionButton: boolean;
@@ -90,6 +91,7 @@ export class DocumentAnnotationsComponent
         connectedEntity: this.connectedEntity,
         operationMode: this.operationMode,
         proposalRef: this.proposalRef,
+        legFileName: this.legFileName,
         showGuideLinesButton: this.showGuideLinesButton,
         showStatusFilter: this.showStatusFilter,
         disableSuggestionButton: this.disableSuggestionButton,
