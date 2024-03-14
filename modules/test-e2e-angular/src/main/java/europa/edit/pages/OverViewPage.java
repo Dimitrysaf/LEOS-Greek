@@ -9,8 +9,7 @@ import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.pagefactory.AjaxElementLocatorFactory;
 
-import static europa.edit.util.E2eUtil.elementClick;
-import static europa.edit.util.E2eUtil.waitForLoadingProgressBarToDisappear;
+import static europa.edit.util.E2eUtil.*;
 
 public class OverViewPage extends HeaderPage{
 
@@ -52,7 +51,17 @@ public class OverViewPage extends HeaderPage{
     @CacheLookup
     WebElement EUI_CARD_READER_DRAFTS;
 
+    @FindBy(xpath = "//*[text()='Share']")
+    @CacheLookup
+    WebElement SHARE_BUTTON;
+
+    @FindBy(xpath = "//*[text()=' Export as PDF ']")
+    @CacheLookup
+    WebElement EXPORT_AS_PDF_BUTTON;
+
     By deleteButton = By.cssSelector("button.eui-list-item--danger");
+    By downloadButton = By.xpath("//button//*[text()=' Download ']");
+
     public OverViewPage(WebDriver driver){
         super(driver);
         this.driver = driver;
@@ -64,9 +73,23 @@ public class OverViewPage extends HeaderPage{
     public void clickOnActionButton() {
         elementClick(driver, ACTIONS_BTN);
     }
-
     public void clickOnDeleteButton() {
         elementClick(driver, driver.findElement(deleteButton));
     }
 
+    public boolean isDeleteBtnNotPresent() {
+        return waitUnTillElementIsNotPresent(driver, deleteButton);
+    }
+
+    public boolean isDownloadBtnNotPresent() {
+        return waitUnTillElementIsNotPresent(driver, downloadButton);
+    }
+
+    public boolean isShareBtnDisplayedAndEnabled() {
+        return SHARE_BUTTON.isDisplayed() && SHARE_BUTTON.isEnabled();
+    }
+
+    public boolean isExportAsPdfBtnDisplayedAndEnabled() {
+        return EXPORT_AS_PDF_BUTTON.isDisplayed() && EXPORT_AS_PDF_BUTTON.isEnabled();
+    }
 }

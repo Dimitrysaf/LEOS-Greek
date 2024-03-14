@@ -92,4 +92,11 @@ public class UploadDocumentPage {
     public void clickOnCreateButton() {
         createBtn.click();
     }
+
+    public void uploadFile(String relativeLocation) {
+        File file = new File(System.getProperty("user.dir") + relativeLocation);
+        ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
+        assert file != null;
+        elementSendKeys(driver, fileInput, file.getAbsolutePath());
+    }
 }

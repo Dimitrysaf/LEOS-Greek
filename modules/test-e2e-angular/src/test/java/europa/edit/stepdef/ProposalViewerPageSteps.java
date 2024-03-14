@@ -123,11 +123,6 @@ public class ProposalViewerPageSteps extends BaseDriver {
         assertEquals(annexNum, proposalViewerPage.getNumberOfAnnexes());
     }
 
-    @When("click on home link")
-    public void clickOnHomeLinkPresentInBreadcrumb() {
-        proposalViewerPage.clickHomeButton();
-    }
-
     @When("click on change title button")
     public void clickOnChangeTitleButton() {
         proposalViewerPage.clickChangeTitleButton();
@@ -161,7 +156,7 @@ public class ProposalViewerPageSteps extends BaseDriver {
         changeTitlePage.clickSaveButton();
     }
 
-    @When("click on delete button")
+    @When("click on delete button present in proposal viewer screen")
     public void clickOnDeleteButton() {
         proposalViewerPage.clickOnDeleteButton();
     }

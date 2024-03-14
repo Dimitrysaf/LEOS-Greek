@@ -11,6 +11,8 @@ Feature: Create Proposal Regression Features in Edit Commission
     Then  user is on login page
     When  user enters password "user.support.1.pwd"
     And   user clicks on sign in button
+#    Then  user is on home page
+#    When  user clicks on view all acts button
     Then  user is on repository browser page
 
   @createProposalByDownloadingAndUploadingLegFile

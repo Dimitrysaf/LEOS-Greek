@@ -12,6 +12,8 @@ Feature: Repository Browser Page Regression Features in Edit Revision
     Then  user is on login page
     When  user enters password "user.support.1.pwd"
     And   user clicks on sign in button
+#    Then  user is on home page
+#    When  user clicks on view all acts button
     Then  user is on repository browser page
     And   user name is present in the top right upper corner
     And   filter section is displayed
@@ -26,5 +28,5 @@ Feature: Repository Browser Page Regression Features in Edit Revision
     Then  "acts-DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" is unTicked in filter section
     When  click on proposal 1
     Then  user is on overview screen
-    When  click on home link present in breadcrumb
-    Then  user is on repository browser page
+    When  click on home button present in breadcrumb
+    Then  user is on home page
