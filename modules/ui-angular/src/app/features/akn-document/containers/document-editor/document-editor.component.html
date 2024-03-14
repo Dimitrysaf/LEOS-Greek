@@ -589,7 +589,8 @@
           <app-document-annotations
             [containerId]="contributionViewMainContainerId"
             [connectedEntity]="connectedEntity"
-            [proposalRef]="contribution.proposalRef"                            
+            [proposalRef]="contribution.proposalRef"
+            [legFileName]="contribution.legFileName"
             [permissions]="documentService.permissions$ | async"
             [showStatusFilter]="showStatusFilter"
             [disableSuggestionButton]=true

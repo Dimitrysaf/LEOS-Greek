@@ -39,6 +39,8 @@ export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
   // Calculated on the server (instance + env + document + user dependent)
   proposalRef?: string;
 
+  legFileName?: string;
+
   // Client-side only state
   showStatusFilter: boolean;
   showGuideLinesButton: boolean;

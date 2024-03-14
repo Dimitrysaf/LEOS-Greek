@@ -28,6 +28,7 @@ export type AnnotateConnectorOptions = Pick<
   | 'sidebarContainer'
   | 'annotationContainer'
   | 'proposalRef'
+  | 'legFileName'
   | 'showStatusFilter'
   | 'showGuideLinesButton'
   | 'disableSuggestionButton'
