@@ -54,4 +54,9 @@ public class UploadDocumentPageSteps extends BaseDriver {
     public void clickOnCreateButtonInUploadDocumentPage() {
         uploadDocumentPage.clickOnCreateButton();
     }
+
+    @When("upload a leg file from relative location {string}")
+    public void uploadALegFileFromRelativeLocation(String relativeLocation) {
+        uploadDocumentPage.uploadFile(relativeLocation);
+    }
 }

@@ -41,12 +41,8 @@ public class RepositoryBrowserPage extends HeaderPage {
     By CREATE_MANDATE_BTN = By.xpath("//*[contains(text(),'Create mandate')]");
     By CREATE_DRAFT_BTN = By.xpath("//*[contains(text(),'Create Draft')]");
 
-    public boolean isCreateProposalBtnDisplayed() {
-        return waitForElementTobeDisPlayed(driver, driver.findElement(CREATE_PROPOSAL_BTN));
-    }
-
-    public boolean isCreateProposalBtnEnabled() {
-        return isElementEnabled(driver.findElement(CREATE_PROPOSAL_BTN));
+    public boolean isCreateProposalBtnDisplayedAndEnabled() {
+        return isElementDisplayedAndEnabled(driver.findElement(CREATE_PROPOSAL_BTN));
     }
 
     public boolean isUploadBtnNotPresent() {
@@ -65,10 +61,9 @@ public class RepositoryBrowserPage extends HeaderPage {
         return waitForElementTobeDisPlayed(driver, SORT_BTN);
     }
 
-    public boolean isUploadBtnPresent() {
-        return waitForElementTobeDisPlayed(driver, driver.findElement(UPLOAD_BTN));
+    public boolean isUploadBtnIsDisplayedAndEnabled() {
+        return isElementDisplayedAndEnabled(driver.findElement(UPLOAD_BTN));
     }
-
 
     public void clickOnNthProposal(int arg0) {
         elementClick(driver, driver.findElements(PROPOSAL_LIST_LINK).get(arg0 - 1));
@@ -92,5 +87,9 @@ public class RepositoryBrowserPage extends HeaderPage {
 
     public void clickUploadButton() {
         elementClick(driver, driver.findElement(UPLOAD_BTN));
+    }
+
+    public void clickCreateMandateButton() {
+        elementClick(driver, driver.findElement(CREATE_MANDATE_BTN));
     }
 }

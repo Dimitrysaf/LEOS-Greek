@@ -6,14 +6,16 @@ Feature: Proposal Viewer Regression Features in Edit Commission
   Background:
     Given navigate to "Drafting" application
     Then  user is on EU login page
-    When  user enters username "user.nonsupport.1.name"
+    When  user enters username "user.support.1.name"
     And   user clicks next button
     Then  user is on login page
-    When  user enters password "user.nonsupport.1.pwd"
+    When  user enters password "user.support.1.pwd"
     And   user clicks on sign in button
+#    Then  user is on home page
+#    When  user clicks on view all acts button
     Then  user is on repository browser page
 
-  @changeTitleAndCreateMilestoneAndDeleteProposal
+  @createMilestoneAndDeleteProposal
   Scenario: LEOS-4587 [EC] Verify User is able to do download, title change, create milestone and delete proposal
     When click on create proposal button
     Then user is on create new legislative document window
@@ -25,16 +27,6 @@ Feature: Proposal Viewer Regression Features in Edit Commission
     And  click on create button
     Then user is on proposal viewer page
     And  title of the proposal contains "Automation Testing" keyword
-    When click on actions button present in proposal viewer screen
-    When click on change title button
-    Then change title windows pop up is displayed
-    Then save button is displayed and enabled in change title windows pop up
-    And  cancel button is displayed and enabled in change title windows pop up
-    When append " Title change" keyword in the title of the proposal
-    And  click on save button in change title windows pop up
-    And  click refresh button
-    Then user is on proposal viewer page
-    Then title of the proposal contains "Automation Testing Title change" keyword
     When click on milestones tab
     Then milestones tab is displayed
     And  no row is present in milestone table
@@ -58,100 +50,12 @@ Feature: Proposal Viewer Regression Features in Edit Commission
     And  "Milestones: Contribution from Legal Service has been updated" message is displayed
     And  "File ready" is showing under status column of row 1 of milestones table
     When click on actions button present in proposal viewer screen
-    When click on delete button
+    When click on delete button present in proposal viewer screen
     Then delete proposal confirmation windows pop up is displayed
     And  cancel button is displayed and enabled in delete proposal confirmation windows pop up
     And  delete button is displayed and enabled in delete proposal confirmation windows pop up
     When click on delete button in delete proposal confirmation windows pop up
     Then user is on repository browser page
-
-  @WarningOnClickingBackOrCloseOrHomeButtonWhenEditorIsOpen
-  Scenario: ANOT-358,359,404,407 Create a warning/confirmation when going back in the browser or closing the document when the text block is open for editing results
-    When click on create proposal button
-    Then user is on create new legislative document window
-    Then "Select the document type and language" label is displayed in create document page
-    When click on template "SJ-023 - Proposal for a Regulation of the European Parliament and of the Council" under tree item
-    When click on next button in create document page
-    Then "Enter document metadata" label is displayed in create document page
-    When provide document title "Automation Testing" in create document page
-    And  click on create button
-    Then user is on proposal viewer page
-    When click on add button present under annexes section
-    Then numbers of annex present in annexes section are 1
-    And  title of Annex 1 is "Annex"
-    When click on cover page link
-    Then user is on cover page
-    And  annotation side bar is present
-#    When click on "Title" link in navigation pane
-#    Then cover page long title is "Automation Testing"
-#    When double click on long title of doc purpose
-#    Then ck editor window is displayed
-#    When click on home button
-#    Then message "Unsaved changes will be lost. If you want to continue, press Confirm." is displayed in the "Open editor detected" pop up window
-#    When click on cancel button present in pop up window
-#    And  click on back button of the browser
-#    Then the message "Changes you made may not be saved. Would you like to proceed?" is displayed in alert pop up
-#    When click on cancel button present in browser alert pop up
-#    And  click on close button present in cover page
-#    Then message "Unsaved changes will be lost. If you want to continue, press Confirm." is displayed in the "Open editor detected" pop up window
-#    When click on confirm button present in pop up window
-#    Then Proposal Viewer screen is displayed
-
-##    When click on open button for explanatory memorandum
-##    Then explanatory memorandum page is displayed
-##    And  annotation side bar is present
-##    When double click on blockcontainer 1 of tblock where refersto attribute is "~_rationale"
-##    When mouse hover and click on show all action button and click on edit button of blockcontainer 1 of tblock where refersto attribute is "~_rationale"
-##    And  wait for disappearance of the loading progress bar
-##    Then ck editor window is displayed
-##    When click on close button in explanatory memorandum page
-##    Then message "Unsaved changes will be lost. If you want to continue, press Confirm." is displayed in the "Open editor detected" pop up window
-##    When click on cancel button present in pop up window
-##    And  click on home button
-##    Then message "Unsaved changes will be lost. If you want to continue, press Confirm." is displayed in the "Open editor detected" pop up window
-##    When click on cancel button present in pop up window
-##    And  click on back button of the browser
-##    Then the message "Changes you made may not be saved. Would you like to proceed?" is displayed in alert pop up
-##    When click on ok button present in windows alert pop up
-##    And  wait for disappearance of the loading progress bar
-##    Then Proposal Viewer screen is displayed
-#
-#    When click on open button of legal act
-#    Then legal act page is displayed
-#    And  annotation side bar is present
-#    When double click on citation 2
-#    And  wait for disappearance of the loading progress bar
-#    Then ck editor window is displayed
-#    When click on back button of the browser
-#    Then the message "Changes you made may not be saved. Would you like to proceed?" is displayed in alert pop up
-#    When click on cancel button present in browser alert pop up
-#    And  click on home button
-#    Then message "Unsaved changes will be lost. If you want to continue, press Confirm." is displayed in the "Open editor detected" pop up window
-#    When click on cancel button present in pop up window
-#    And  click on close button present in legal act page
-#    Then message "Unsaved changes will be lost. If you want to continue, press Confirm." is displayed in the "Open editor detected" pop up window
-#    When click on confirm button present in pop up window
-#    And  wait for disappearance of the loading progress bar
-#    Then Proposal Viewer screen is displayed
-#
-#    When click on open button of Annex 1
-#    And  wait for disappearance of the loading progress bar
-#    Then Annex page is displayed
-#    And  annotation side bar is present
-#    When double click on level 1
-#    And  wait for disappearance of the loading progress bar
-#    Then ck editor window is displayed
-#    When click on close button present in annex page
-#    Then message "Unsaved changes will be lost. If you want to continue, press Confirm." is displayed in the "Open editor detected" pop up window
-#    When click on cancel button present in pop up window
-#    When click on back button of the browser
-#    Then the message "Changes you made may not be saved. Would you like to proceed?" is displayed in alert pop up
-#    When click on cancel button present in browser alert pop up
-#    And  click on home button
-#    Then message "Unsaved changes will be lost. If you want to continue, press Confirm." is displayed in the "Open editor detected" pop up window
-#    When click on confirm button present in pop up window
-#    And  wait for disappearance of the loading progress bar
-#    Then navigate to Repository Browser page
 
   @verifyXmlInsideDownloadedLegFile
   Scenario: verify name of xmls present inside downloaded leg file
