@@ -160,6 +160,7 @@ export class DocumentComponent
             ) {
               coEditionUpdate.updatedElements.forEach((element) => {
                 this.updateElementContent({
+                  documentRef: coEditionUpdate.documentId,
                   elementId: element.elementId,
                   elementType: element.elementTagName,
                   elementFragment: element.elementFragment,
@@ -306,12 +307,16 @@ export class DocumentComponent
   }
 
   private updateElementContent(data: {
+    documentRef: string;
     elementId: string;
     elementType: string;
     elementFragment: string;
     isClosing: boolean;
     isSaved: boolean;
   }) {
+    if (!data.documentRef || (data.documentRef !== this.documentService.documentRef)) {
+      return;
+    }
     const ckeditorsOpen = this.document.querySelectorAll('.cke_editable');
     if (ckeditorsOpen && ckeditorsOpen.length > 0) {
       const ckeditorOpen = ckeditorsOpen.item(0);
