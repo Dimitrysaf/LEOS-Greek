@@ -109,6 +109,7 @@ export class DocumentService {
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
   refreshConnectors$: Observable<{
+    documentRef: string;
     elementId: string;
     elementType: string;
     elementFragment: string;
@@ -124,6 +125,7 @@ export class DocumentService {
   isClonedProposal$: Observable<boolean>;
   isEditorOpen$: Observable<boolean>;
   updateElementContent$: Observable<{
+    documentRef: string;
     elementId: string;
     elementType: string;
     elementFragment: string;
@@ -175,12 +177,14 @@ export class DocumentService {
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
   private refreshConnectorsBS = new BehaviorSubject<{
+    documentRef: string;
     elementId: string;
     elementType: string;
     elementFragment: string;
     isClosing: boolean;
     isSaved: boolean;
   }>({
+    documentRef: null,
     elementId: null,
     elementType: null,
     elementFragment: null,
@@ -200,12 +204,14 @@ export class DocumentService {
     elementType: string;
   }>({ elementId: null, elementType: null });
   private updateElementContentBS = new BehaviorSubject<{
+    documentRef: string;
     elementId: string;
     elementType: string;
     elementFragment: string;
     isClosing: boolean;
     isSaved: boolean;
   }>({
+    documentRef: null,
     elementId: null,
     elementType: null,
     elementFragment: null,
@@ -632,6 +638,7 @@ export class DocumentService {
     isSaved = false,
   ) {
     this.refreshConnectorsBS.next({
+      documentRef: this.documentRef,
       elementId: data.elementId,
       elementType: data.elementType,
       elementFragment: data.elementFragment,
@@ -847,6 +854,7 @@ export class DocumentService {
   }
 
   updateElementContent(data: {
+    documentRef: string;
     elementId: string;
     elementType: string;
     elementFragment: string;
