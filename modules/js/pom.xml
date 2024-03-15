@@ -255,5 +255,20 @@
                 <exec.plugin.execution.phase>none</exec.plugin.execution.phase>
             </properties>
         </profile>
+        <!-- NO GENERATE CLIENT RESOURCES -->
+        <!-- IN THIS MODULE JS MEANS NOT EXECUTE TESTS USING MAVEN -->
+        <!-- USED nogenres FOR COMPATIBILITY WITH OTHER MODULES -->
+        <profile>
+            <id>no-generate-client-resources</id>
+            <activation>
+                <property>
+                    <name>nogenres</name>
+                </property>
+            </activation>
+            <properties>
+                <frontend.plugin.execution.phase>none</frontend.plugin.execution.phase>
+                <exec.plugin.execution.phase>none</exec.plugin.execution.phase>
+            </properties>
+        </profile>
     </profiles>
 </project>
