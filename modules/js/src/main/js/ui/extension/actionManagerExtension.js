@@ -398,55 +398,41 @@ define(function actionManagerExtensionModule(require) {
             var sizeOfLastTextNode = 0;
             var cumulativeSizeForExternalReferences = 0;
             var countExternalReferences = 0;
-            var found = false;
-            for (var i = 0; i < nodes.length && !found; i++) {
+            var selection = window.getSelection();
+            for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
                 if (node.nodeType === Node.ELEMENT_NODE && node.localName === "a" && node.hasAttribute("data-ref2link-initial")) {
                     cumulativeSizeForExternalReferences = cumulativeSizeForExternalReferences + sizeOfLastTextNode + node.textContent.length;
                     countExternalReferences++;
                 } else if (node.nodeType === Node.TEXT_NODE) {
-                    var range = document.createRange();
                     sizeOfLastTextNode = node.textContent.length;
-                    for (var pos = 0; pos < node.textContent.length; pos++) {
-                        range.setStart(node, pos);
-                        range.setEnd(node, pos + 1);
-                        var rect = range.getBoundingClientRect();
-                        if (clickY >= rect.top && clickY <= rect.bottom && clickX < rect.left) {
-                            childIndex = i - (countExternalReferences*2);
-                            posFound = 0;
-                        }
-                        if (clickY >= rect.top && clickY <= rect.bottom && clickX > rect.right) {
-                            childIndex = i - (countExternalReferences*2);
-                            posFound = pos + cumulativeSizeForExternalReferences + 1;
-                        }
-                        if (clickX >= rect.left && clickX <= rect.right && clickY >= rect.top && clickY <= rect.bottom) {
-                            childIndex = i - (countExternalReferences*2);
-                            posFound = pos + cumulativeSizeForExternalReferences;
-                            found = true;
-                            if (clickX > rect.right - 8) {
-                                posFound++;
-                            }
-                            break;
-                        }
+                    if (node === selection.anchorNode) {
+                        break
                     }
                 } else {
                     cumulativeSizeForExternalReferences = 0;
                 }
             }
+            childIndex = Array.prototype.indexOf.call(selection.anchorNode.parentNode.childNodes, selection.anchorNode) - (countExternalReferences*2);
+            posFound = selection.anchorOffset + cumulativeSizeForExternalReferences;
         }
         return [posFound, childIndex];
     }
 
     function getElementIdForCursorPos(element) {
+        var id = "";
         if (element.localName === "num" && element.parentElement && element.parentElement.localName === "article") {
-            element = element.nextElementSibling;
+            id = element.nextElementSibling.id;
         } else {
             var elementsWithoutValidId = ["num", "aknp", "content", "mp", "inline"];
-            while (element.parentElement && elementsWithoutValidId.includes(element.localName)) {
-                element = element.parentElement;
+            var selection = window.getSelection();
+            var elementToGetId = selection.anchorNode.parentElement;
+            while (elementToGetId.parentElement && elementsWithoutValidId.includes(elementToGetId.localName)) {
+                elementToGetId = elementToGetId.parentElement;
             }
+            id = elementToGetId.id;
         }
-        return element.id;
+        return id;
     }
 
     function _disableActions($element){
