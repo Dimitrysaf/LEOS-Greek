@@ -59,4 +59,19 @@ public class UploadDocumentPageSteps extends BaseDriver {
     public void uploadALegFileFromRelativeLocation(String relativeLocation) {
         uploadDocumentPage.uploadFile(relativeLocation);
     }
+
+    @Then("enter draft metadata label is displayed in upload document page")
+    public void enterDraftMetadataLabelIsDisplayedInUploadDocumentPage() {
+        assertTrue(uploadDocumentPage.isEnterDraftMetaDataLabelDisplayed());
+    }
+
+    @And("{string} is showing as draft title")
+    public void isShowingAsDraftTitle(String title) {
+        assertEquals(title, uploadDocumentPage.getDraftTitle());
+    }
+
+    @And("{string} is showing as draft language")
+    public void isShowingAsDraftLanguage(String lang) {
+        assertEquals(lang, uploadDocumentPage.getDocumentLanguage());
+    }
 }

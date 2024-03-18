@@ -65,8 +65,9 @@ public class RepositoryBrowserPage extends HeaderPage {
         return isElementDisplayedAndEnabled(driver.findElement(UPLOAD_BTN));
     }
 
-    public void clickOnNthProposal(int arg0) {
+    public ProposalViewerPage clickOnNthProposal(int arg0) {
         elementClick(driver, driver.findElements(PROPOSAL_LIST_LINK).get(arg0 - 1));
+        return new ProposalViewerPage(driver);
     }
 
     public boolean isCreateMandateBtnDisplayedAndEnabled() {
