@@ -30,6 +30,10 @@ public class UploadDocumentPage {
     @CacheLookup
     WebElement enterDocumentMetaDataLabel;
 
+    @FindBy(xpath = "//*[text()=' Enter draft metadata ']")
+    @CacheLookup
+    WebElement enterDraftMetaDataLabel;
+
     @FindBy(css = "input.file-input")
     @CacheLookup
     WebElement fileInput;
@@ -98,5 +102,13 @@ public class UploadDocumentPage {
         ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
         assert file != null;
         elementSendKeys(driver, fileInput, file.getAbsolutePath());
+    }
+
+    public boolean isEnterDraftMetaDataLabelDisplayed() {
+        return waitForElementTobeDisPlayed(driver, enterDraftMetaDataLabel);
+    }
+
+    public String getDraftTitle() {
+        return getElementAttributeValue(documentTitle);
     }
 }

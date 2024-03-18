@@ -18,9 +18,9 @@ public class DialogBoxPage {
     @CacheLookup
     WebElement HEADER;
 
-/*    @FindBy(css = "div.eui-dialog__body-content")
+    @FindBy(css = "div.eui-dialog__body-content div p")
     @CacheLookup
-    WebElement BODY_CONTENT;*/
+    WebElement BODY_CONTENT;
 
     @FindBy(css = "eui-dialog-footer button.eui-button--secondary")
     @CacheLookup
@@ -37,9 +37,10 @@ public class DialogBoxPage {
         PageFactory.initElements(ajax, this);
     }
 
-    public void clickOnDangerButton() {
+    public RepositoryBrowserPage clickOnDangerButton() {
         elementClick(driver, DANGER_BUTTON);
         waitForLoadingProgressBarToDisappear(driver);
+        return new RepositoryBrowserPage(driver);
     }
 
     public String getHeaderTitle() {
@@ -60,5 +61,13 @@ public class DialogBoxPage {
 
     public boolean isDeleteButtonEnabled() {
         return DANGER_BUTTON.isEnabled();
+    }
+
+    public String getBodyContent() {
+        return BODY_CONTENT.getText();
+    }
+
+    public void clickOnCancelButton() {
+        elementClick(driver, DANGER_BUTTON);
     }
 }

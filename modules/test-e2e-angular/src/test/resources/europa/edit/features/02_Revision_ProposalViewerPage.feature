@@ -18,11 +18,11 @@ Feature: Proposal Browser Page Regression Features in Edit Council
 #    When  user clicks on view all acts button
     Then user is on repository browser page
     When click on proposal 1
-    Then user is on overview screen
+    Then user is on proposal viewer page
 #    And close button is not displayed
-    When click on actions button present in overview screen
+    When click on actions button present in proposal viewer screen
     Then share button is displayed and enabled
-    And  export as pdf button is displayed and enabled
+    And  export as pdf button is not displayed
     And  delete button is not displayed
     And  download button is not displayed
 
@@ -36,18 +36,19 @@ Feature: Proposal Browser Page Regression Features in Edit Council
 #    Then user is on home page
 #    When user clicks on view all acts button
     Then user is on repository browser page
-    And  upload button is displayed and enabled
-    And  create proposal button is displayed and enabled
-    When click on upload button
+    And  create mandate button is displayed and enabled
+    And  create draft button is displayed and enabled
+    When click on create mandate button
     Then user is on upload new legislative document window
     And  please select a leg file to be uploaded label is displayed in upload document page
     When upload a leg file from relative location "/target/test-classes/upload/legFiles/PROP_ACT-4294241678941651921-EN.leg"
-    Then enter document metadata label is displayed in upload document page
-    And  "English" is showing as document language
+    Then enter draft metadata label is displayed in upload document page
+    And  "Automation Testing" is showing as draft title
+    And  "English" is showing as draft language
     And  "Standard treatment" is showing as confidentiality level
     When click on create button in upload document page
-    Then user is on overview screen
-    When click on actions button present in overview screen
+    Then user is on proposal viewer page
+    When click on actions button present in proposal viewer screen
     And  click on delete button present in overview screen
     Then delete proposal confirmation windows pop up is displayed
     And  "Are you sure you want to delete this proposal" message is displayed

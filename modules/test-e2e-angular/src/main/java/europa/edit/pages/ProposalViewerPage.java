@@ -19,12 +19,6 @@ public class ProposalViewerPage extends HeaderPage {
     @CacheLookup
     WebElement MILESTONES_TAB;
 
-/*
-    @FindBy(xpath = "//*[@class='eui-tab-item__label' and text()='Collaborators']")
-    @CacheLookup
-    WebElement COLLABORATORS_TAB;
-*/
-
     @FindBy(xpath = "//*[@class='eui-label' and text()='Actions']")
     @CacheLookup
     WebElement ACTIONS_BTN;
@@ -32,10 +26,6 @@ public class ProposalViewerPage extends HeaderPage {
     @FindBy(css = ".eui-u-flex-align-items-start h1")
     @CacheLookup
     WebElement PROPOSAL_TITLE;
-
-/*    @FindBy(css = "app-proposal-details .eui-fieldset__container")
-    @CacheLookup
-    WebElement PROPOSAL_DETAILS_CONTAINER;*/
 
     @FindBy(css = "div.eui-tab-item--active .eui-tab-item__label")
     @CacheLookup
@@ -69,12 +59,37 @@ public class ProposalViewerPage extends HeaderPage {
     @CacheLookup
     WebElement ANNEX_ADD_BTN;
 
-/*    @FindBy(xpath = "//*[text()='Annexes']//ancestor::div[@class='flex-grow-1']//parent::div//button[2]")
+    @FindBy(xpath = "//*[text()='Share']")
     @CacheLookup
-    WebElement ANNEX_REORDER_BTN;*/
+    WebElement SHARE_BUTTON;
+
+    @FindBy(xpath = "//*[@class='eui-tab-item__label' and text()='Collaborators']")
+    @CacheLookup
+    WebElement COLLABORATORS_TAB;
+
+    @FindBy(css = "app-proposal-details .eui-fieldset__container")
+    @CacheLookup
+    WebElement PROPOSAL_DETAILS_CONTAINER;
+
+    @FindBy(xpath = "//*[text()='Annexes']//ancestor::div[@class='flex-grow-1']//parent::div//button[2]")
+    @CacheLookup
+    WebElement ANNEX_REORDER_BTN;
+
+    @FindBy(xpath = "//*[@class='eui-tab-item__label' and text()='Drafts']")
+    @CacheLookup
+    WebElement DRAFTS_TAB;
+
+    @FindBy(xpath = "//*[@class='eui-tab-item__label' and text()=' Exports ']")
+    @CacheLookup
+    WebElement EXPORTS_TAB;
+
+    @FindBy(xpath = "//eui-card-header//*[text()='Drafts']")
+    @CacheLookup
+    WebElement EUI_CARD_READER_DRAFTS;
 
     By deleteButton = By.cssSelector("button.eui-list-item--danger");
     By downloadButton = By.xpath("//button//*[contains(text(),'Download')]");
+    By EXPORT_AS_PDF_BUTTON = By.xpath("//*[text()=' Export as PDF ']");
     By changeTitleButton = By.xpath("//button//*[contains(text(),'Change title')]");
     By annexFound = By.xpath("//*[contains(text(),'annexes found')]");
     String tab = "div.eui-tab-item:nth-child(%d)";
@@ -108,12 +123,14 @@ public class ProposalViewerPage extends HeaderPage {
         elementClick(driver, driver.findElement(downloadButton));
     }
 
-    public void clickOnDeleteButton() {
-        driver.findElement(deleteButton).click();
+    public DialogBoxPage clickOnDeleteButton() {
+        elementClick(driver, driver.findElement(deleteButton));
+        return new DialogBoxPage(driver);
     }
 
-    public void clickOnCloseButton() {
+    public RepositoryBrowserPage clickOnCloseButton() {
         elementClick(driver, CLOSE_BTN);
+        return new RepositoryBrowserPage(driver);
     }
 
     public String getTabName(int tabIndex) {
@@ -179,5 +196,21 @@ public class ProposalViewerPage extends HeaderPage {
 
     public void clickOnCoverPageLInk() {
         COVER_PAGE.click();
+    }
+
+    public boolean isDeleteBtnNotPresent() {
+        return waitUnTillElementIsNotPresent(driver, deleteButton);
+    }
+
+    public boolean isDownloadBtnNotPresent() {
+        return waitUnTillElementIsNotPresent(driver, downloadButton);
+    }
+
+    public boolean isShareBtnDisplayedAndEnabled() {
+        return SHARE_BUTTON.isDisplayed() && SHARE_BUTTON.isEnabled();
+    }
+
+    public boolean isExportAsPdfBtnNotPresent() {
+        return waitUnTillElementIsNotPresent(driver, EXPORT_AS_PDF_BUTTON);
     }
 }

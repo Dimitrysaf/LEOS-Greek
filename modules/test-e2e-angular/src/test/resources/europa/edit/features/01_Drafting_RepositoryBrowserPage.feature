@@ -3,10 +3,12 @@
 @RepositoryBrowserPageRegressionScenariosEditCommission
 Feature: Repository Browser Page Regression Features in Edit Commission
 
-  @uploadFileNotPresentForNonSupportUser
-  Scenario: upload button is not present in repository browser page for non support user
+  Background:
     Given navigate to "Drafting" application
     Then  user is on EU login page
+
+  @uploadFileNotPresentForNonSupportUser
+  Scenario: upload button is not present in repository browser page for non support user
     When  user enters username "user.nonsupport.1.name"
     And   user clicks next button
     Then  user is on login page
@@ -21,8 +23,6 @@ Feature: Repository Browser Page Regression Features in Edit Commission
 
   @filterSection
   Scenario: upload button is not present in repository browser page for non support user
-    Given navigate to "Drafting" application
-    Then  user is on EU login page
     When  user enters username "user.support.1.name"
     And   user clicks next button
     Then  user is on login page

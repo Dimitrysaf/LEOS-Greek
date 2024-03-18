@@ -1,11 +1,9 @@
 package europa.edit.stepdef;
 
 import europa.edit.pages.CoverPage;
-import europa.edit.pages.OverViewPage;
 import europa.edit.util.BaseDriver;
 import europa.edit.util.WebDriverFactory;
 import io.cucumber.java.en.Then;
-import io.cucumber.java.en.When;
 
 import static org.testng.Assert.assertEquals;
 
