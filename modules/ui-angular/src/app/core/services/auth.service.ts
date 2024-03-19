@@ -213,9 +213,10 @@ export class AuthService implements OnDestroy {
 
   private showErrorPopup(msg) {
     return this.dialogService.openDialog({
+      //title: this.translateService.instant('global.notifications.title.error'),
+      //content: msg,
       title: this.translateService.instant('popup.token.expired.title'),
       content: this.translateService.instant('popup.token.expired.description'),
-      //content: msg,
       hasCloseButton: false,
       hasDismissButton: false,
       accept: () => {
