@@ -124,7 +124,7 @@ public class ProposalViewerPage extends HeaderPage {
     }
 
     public DialogBoxPage clickOnDeleteButton() {
-        elementClick(driver, driver.findElement(deleteButton));
+        elementClickJS(driver, driver.findElement(deleteButton));
         return new DialogBoxPage(driver);
     }
 

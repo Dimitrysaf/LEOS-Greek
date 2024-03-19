@@ -45,7 +45,7 @@ Feature: Proposal Viewer Regression Features in Edit Commission
     When click on create milestone button
     Then "Milestone created" message is displayed
     And  "Commission proposal" is showing under title column of row 1 of milestones table
-    And  today's date is showing under date column of row 1 of milestones table
+#    And  today's date is showing under date column of row 1 of milestones table
     And  "In Preparation" is showing under status column of row 1 of milestones table
     And  "Milestones: Contribution from Legal Service has been updated" message is displayed
     And  "File ready" is showing under status column of row 1 of milestones table

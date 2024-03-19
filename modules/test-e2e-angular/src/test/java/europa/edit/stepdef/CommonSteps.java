@@ -61,8 +61,8 @@ public class CommonSteps extends BaseDriver {
                 String dialogBoxBodyContent = dialogBoxPage.getBodyContent();
                 if("Are you sure you want to delete this proposal".equals(dialogBoxBodyContent)){
                     repositoryBrowserPage = dialogBoxPage.clickOnDangerButton();
-                    assertTrue(repositoryBrowserPage.isCreateDraftBtnDisplayedAndEnabled());
-                    assertTrue(repositoryBrowserPage.isCreateMandateBtnDisplayedAndEnabled());
+                    assertTrue(repositoryBrowserPage.isCreateProposalBtnDisplayedAndEnabled());
+                    assertTrue(repositoryBrowserPage.isUploadBtnIsDisplayedAndEnabled());
                     proposalNumber = 1;
                 }
                 else{

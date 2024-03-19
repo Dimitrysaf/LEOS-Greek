@@ -33,7 +33,7 @@ public class E2eUtil {
 
     public static void waitForLoadingProgressBarToDisappear(WebDriver driver) {
         try {
-            sleep(1000);
+            sleep(2000);
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(EXPLICIT_TIMEOUT_DELAY));
             wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("eui-block-document.eui-block-document--blocked")));
             waitForPageLoad(driver,TIMEOUT_DELAY);
