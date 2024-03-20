@@ -213,8 +213,10 @@ export class AuthService implements OnDestroy {
 
   private showErrorPopup(msg) {
     return this.dialogService.openDialog({
-      title: this.translateService.instant('global.notifications.title.error'),
-      content: msg,
+      //title: this.translateService.instant('global.notifications.title.error'),
+      //content: msg,
+      title: this.translateService.instant('popup.token.expired.title'),
+      content: this.translateService.instant('popup.token.expired.description'),
       hasCloseButton: false,
       hasDismissButton: false,
       accept: () => {
@@ -255,7 +257,7 @@ export class AuthService implements OnDestroy {
     const urlParams = new URLSearchParams(url.search);
     const clientContext = urlParams.get('clientContext');
     if (clientContext) {
-      headers[ "Client-Context"] = clientContext;
+      headers["Client-Context"] = clientContext;
     }
 
     this.http
