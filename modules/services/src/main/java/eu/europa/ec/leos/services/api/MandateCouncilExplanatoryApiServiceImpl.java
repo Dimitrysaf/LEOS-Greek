@@ -13,6 +13,7 @@ import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -447,13 +448,15 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(
                 explanatory.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
+        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
+        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, refConfigs,
                 StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(),
-                proposal.getMetadata().getOrNull(), structureContext1.getTocRules(),
-                explanatory.isTrackChangesEnabled(), true, proposal.isClonedProposal()
+                proposalMetadata, structureContext1.getTocRules(),
+                explanatory.isTrackChangesEnabled(), true, isClonedProposal
         );
     }
 

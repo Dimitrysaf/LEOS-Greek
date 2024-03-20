@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.rest.mapping.RestProperties;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -73,6 +74,9 @@ public class LeosMetadataExtensions {
 
     private static Map<String, ? extends Object> toLeosRepositoryProperties(ExplanatoryMetadata explanatoryMetadata) {
         String title = explanatoryMetadata.getTitle();
+        if(StringUtils.isBlank(title)) {
+            title = explanatoryMetadata.getType();
+        }
 
         return buildCommonProperties(explanatoryMetadata, title);
     }
@@ -108,6 +112,9 @@ public class LeosMetadataExtensions {
 
     private static Map<String, ? extends Object> toLeosRepositoryProperties(FinancialStatementMetadata financialStatementMetadata) {
         String title = financialStatementMetadata.getTitle();
+        if(StringUtils.isBlank(title)) {
+            title = financialStatementMetadata.getType();
+        }
 
         return buildCommonProperties(financialStatementMetadata, title);
     }
