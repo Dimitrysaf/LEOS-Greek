@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { apiBaseUrl } from 'src/config';
 import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
 import { Observable } from 'rxjs';
+import { LandingPageService } from '../../services/landing-page.service';
 
 @Component({
   selector: 'app-proposal-item-home-card',
@@ -21,22 +22,26 @@ export class ProposalItemHomeCardComponent implements OnInit {
   createdBy;
   updatedOn;
   title: string;
+  isClonedProposal = false;
 
   constructor(
     private translateService: TranslateService,
     private domSanitizer: DomSanitizer,
-    private http: HttpClient,
+    private landingPageService: LandingPageService,
   ) {}
 
   ngOnInit() {
-    console.log('Package on init:', this.package);
     if (this.proposal) this.setItemTitle(this.proposal.title);
 
     if (this.package) {
-      this.getUserDoc(this.package.ref).subscribe((document) => {
-        this.createdBy = document.createdBy;
-        this.updatedOn = document.updatedOn;
-      });
+      this.landingPageService
+        .getUserDoc(this.package.ref)
+        .subscribe((document) => {
+          this.createdBy = document.createdBy;
+          this.updatedOn = document.updatedOn;
+          this.originRef = this.determineOriginRefFromDocument(document);
+          this.status = this.determineStatusFromDocument(document);
+        });
     }
   }
 
@@ -50,14 +55,26 @@ export class ProposalItemHomeCardComponent implements OnInit {
         );
   }
 
+  determineStatusFromDocument(document: Document) {
+    const contributionStatus =
+      document.cloneProposalMetadataVO?.revisionStatus ===
+      'Sent for contribution'
+        ? 'sent'
+        : 'ready';
+
+    return document.cloneProposalMetadataVO !== null
+      ? contributionStatus
+      : null;
+  }
+
+  determineOriginRefFromDocument(document: Document) {
+    return document.cloneProposalMetadataVO?.originRef ?? null;
+  }
+
   private setItemTitle(newTitle: any) {
     this.title = newTitle.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
     this.title = this.title.replace(/<\/?ins[^>]*?>/gi, '');
     this.title =
       this.domSanitizer.sanitize(SecurityContext.HTML, this.title) || '';
-  }
-
-  private getUserDoc(pkg: PackagesRecentlyChanged): Observable<Document> {
-    return this.http.get<Document>(`${apiBaseUrl}/secured/proposals/${pkg}`);
   }
 }
