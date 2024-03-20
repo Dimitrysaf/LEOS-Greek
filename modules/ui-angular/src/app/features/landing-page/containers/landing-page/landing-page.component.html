@@ -14,7 +14,7 @@
           <button
             euiButton
             euiPrimary
-            (click)="handleCreateMandate()"
+            (click)="handleUpload()"
             *ngIf="canUpload"
           >
             {{ 'page.workspace.upload.button.text' | translate }}
@@ -32,7 +32,7 @@
           <button
             euiButton
             euiPrimary
-            (click)="handleCreate()"
+            (click)="handleCreateDraft()"
             *ngIf="environmentService.isCouncil()"
           >
             {{ 'page.home.create-your-draft' | translate }}

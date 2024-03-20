@@ -99,13 +99,16 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     const newIndex: number = this.currentStepIndex + increment;
     if (newIndex >= 1 && newIndex <= this.stepsCount) {
       this.currentStepIndex = newIndex;
-       if (this.currentStepIndex === 2) {
-         this.isStepOneCompleted = true;
-       }
+      this.isStepOneCompleted = this.currentStepIndex >= 2;
     }
   }
 
   onSelectStepRemoteNav(event: any) {
+    if (this.currentStepIndex > event.index) {
+      this.isStepOneCompleted = false;
+    } else if (this.currentStepIndex < event.index) {
+      this.isStepOneCompleted = true;
+    }
     this.currentStepIndex = event.index;
   }
 
