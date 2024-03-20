@@ -19,7 +19,7 @@
     </ux-wizard-step>
     <ux-wizard-step
             label="{{ 'page.workspace.create-form.draft.label' | translate }}"
-            [isCompleted]="createForm.valid"
+            [isCompleted]="createForm.valid && isStepOneCompleted"
     >
         <uxWizardStepContent>
             <app-proposal-create-form

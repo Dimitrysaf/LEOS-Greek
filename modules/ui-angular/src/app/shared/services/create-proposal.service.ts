@@ -6,6 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ProposalCreateDraftComponent } from '@/shared/components/proposal-create-draft/proposal-create-draft.component';
 import { ProposalCreateWizardComponent } from '@/shared/components/proposal-create-wizard/proposal-create-wizard.component';
 import { ProposalUploadWizardComponent } from '@/shared/components/proposal-upload-wizard/proposal-upload-wizard.component';
+import { EnvironmentService } from './enviroment.service';
 
 @Injectable({
   providedIn: 'root',
@@ -16,13 +17,18 @@ export class CreateProposalService {
   constructor(
     private euiDialogService: EuiDialogService,
     private translateService: TranslateService,
+    private environmentService: EnvironmentService,
   ) {}
 
   openProposalUploadDialog() {
     const dialog = this.euiDialogService.openDialog(
       new EuiDialogConfig({
         dialogId: 'upload-id',
-        title: this.translateService.instant('page.workspace.upload.title'),
+        title: this.translateService.instant(
+          this.environmentService.isCouncil()
+            ? 'page.workspace.upload-cn.title'
+            : 'page.workspace.upload.title',
+        ),
         bodyComponent: {
           component: ProposalUploadWizardComponent,
           config: {
