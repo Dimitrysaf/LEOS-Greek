@@ -22,7 +22,7 @@
     <parent>
         <groupId>eu.europa.ec.leos.pilot</groupId>
         <artifactId>leos-modules</artifactId>
-        <version>5.0.3-SNAPSHOT</version>
+        <version>5.0.3</version>
     </parent>
 
     <artifactId>leos-ui-angular</artifactId>
