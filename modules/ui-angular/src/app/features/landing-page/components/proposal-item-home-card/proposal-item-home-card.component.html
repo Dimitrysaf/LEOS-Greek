@@ -63,5 +63,23 @@
               }
       }}
     </eui-card-header-subtitle>
+    <eui-card-header-right-content
+      class="eui-u-flex-column col-2 eui-u-flex-align-items-start"
+    >
+      <div *ngIf="originRef">
+        <eui-chip euiSizeXL class="eui-u-mr-2xs eui-u-mb-2xs">
+          <span euiLabel>{{
+            'page.collection.proposal-header.contribution' | translate
+          }}</span>
+        </eui-chip>
+        <eui-chip
+          *ngIf="originRef"
+          euiSize2XL
+          class="eui-u-mr-2xs eui-u-mb-2xs"
+        >
+          <span euiLabel>{{ originRef }}</span>
+        </eui-chip>
+      </div>
+    </eui-card-header-right-content>
   </eui-card-header>
 </eui-card>
