@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -479,13 +480,15 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         List<RefConfig> refConfigs = context.getRefConfigs();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getMetadata().get().getRef());
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
+        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
+        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, refConfigs,
                 StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(),
-                proposal.getMetadata().getOrNull(), context.getTocRules(),
-                annex.isTrackChangesEnabled(), true, proposal.isClonedProposal()
+                proposalMetadata, context.getTocRules(),
+                annex.isTrackChangesEnabled(), true, isClonedProposal
         );
     }
 

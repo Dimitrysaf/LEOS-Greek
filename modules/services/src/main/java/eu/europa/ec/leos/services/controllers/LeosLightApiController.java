@@ -15,8 +15,13 @@ package eu.europa.ec.leos.services.controllers;
 
 import com.google.common.collect.ImmutableMap;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.ErrorVO;
@@ -57,6 +62,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -74,6 +80,21 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 public class LeosLightApiController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosLightApiController.class);
+
+    public static final Map<Class, String> DOC_TYPE_MAP;
+
+    static {
+        Map<Class, String> tempMap = new HashMap<>();
+        tempMap.put(Annex.class, "annex");
+        tempMap.put(Bill.class, "document");
+        tempMap.put(Explanatory.class, "council_explanatory");
+        tempMap.put(FinancialStatement.class, "financial-statement");
+        tempMap.put(Memorandum.class, "memorandum");
+        tempMap.put(Proposal.class, "collection");
+
+        DOC_TYPE_MAP = Collections.unmodifiableMap(tempMap);
+    }
+
 
     private ValidationService validationService;
     private ProposalConverterService proposalConverterService;
@@ -108,9 +129,6 @@ public class LeosLightApiController {
         locale = encodeParam(locale);
         String inputFileName = encodeParam(inputFile.getOriginalFilename());
         String docRef = inputFileName.substring(0, inputFileName.lastIndexOf("-") + 1) + locale;
-        String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
-        String documentReferenceUrl = mappingUrl + "/ui/document/" + docRef;
-        documentReferenceUrl = encodeParam(documentReferenceUrl);
         docRef = encodeParam(docRef);
         String errorMessage;
 
@@ -138,6 +156,9 @@ public class LeosLightApiController {
                 } catch (Exception exception) {
                     LOG.info(messageHelper.getMessage("leoslight.document.not.found"));
                 }
+
+                String documentReferenceUrl = getDocumentViewUrl(docRef, docType);
+
                 if (savedDocument != null) {
                     if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), documentVO.getSource())) {
                         errorMessage = messageHelper.getMessage("leoslight.document.duplicate");
@@ -239,5 +260,11 @@ public class LeosLightApiController {
         return "Test RESTful service. " + System.currentTimeMillis();
     }
 
+    private <D extends LeosDocument> String getDocumentViewUrl(String docRef, Class<? extends D> docType) {
+        String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
+        String urlPart = DOC_TYPE_MAP.get(docType);
+        String documentReferenceUrl = mappingUrl + "/ui/"+ urlPart + '/' + docRef;
+        return encodeParam(documentReferenceUrl);
+    }
 
 }

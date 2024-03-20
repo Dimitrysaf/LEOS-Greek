@@ -175,11 +175,13 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
                                            String elementFragment, boolean isSplit) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(
                 memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
-        populateCloneProposalMetadata(proposal);
+        Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
+        if(proposal != null) {
+            populateCloneProposalMetadata(proposal);
+        }
         byte[] newXmlContent = elementProcessor.updateElement(memorandum, elementFragment, elementName, elementId,
                 false);
         memorandum = memorandumService.updateMemorandum(memorandum, newXmlContent, VersionType.MINOR,

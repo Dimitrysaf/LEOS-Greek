@@ -8,6 +8,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -211,6 +212,8 @@ public class GenericDocumentApiService {
         List<NumberingConfig> numberConfigs = structure.getNumberingConfigs();
         List<RefConfig> refConfigs = structure.getRefConfigs();
         Proposal proposal = this.getDocProposal(document);
+        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
+        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
 
         return new DocumentConfigResponse(
                 packageService.getDocumentsMetadata(document.getMetadata().get().getRef()),
@@ -221,11 +224,11 @@ public class GenericDocumentApiService {
                 StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
                 getArticleTypesAttributes(tocItems),
                 document.getMetadata().get().getRef(),
-                proposal.getMetadata().getOrNull(),
+                proposalMetadata,
                 structure.getTocRules(),
                 document.isTrackChangesEnabled(),
                 true,
-                proposal.isClonedProposal()
+                isClonedProposal
         );
     }
 
@@ -403,6 +406,7 @@ public class GenericDocumentApiService {
     public EditElementResponse getElement(String documentRef, String elementId, String elementTagName) {
         FinancialStatement document = this.findDocumentByRef(FinancialStatement.class, documentRef);
         Proposal proposal = this.getDocProposal(document);
+        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
 
         StructureContext structure = this.getStructureContext();
         structure.useDocumentTemplate(this.getDocTemplate(document));
@@ -416,7 +420,7 @@ public class GenericDocumentApiService {
                 elementTagName,
                 element,
                 "",
-                proposal.isClonedProposal()
+                isClonedProposal
         );
     }
 
@@ -514,13 +518,12 @@ public class GenericDocumentApiService {
                 .map(metadata -> this.packageService.findPackageByDocumentRef(metadata.get().getRef(),
                         XmlDocument.class))
                 .map(pack -> this.proposalService.findProposalByPackagePath(pack.getPath()))
-                .orElseThrow(() -> new RuntimeException(
-                        String.format("Not found proposal for document %s", document.getId())));
+                .orElse(null);
     }
 
     private void populateCloneProposalMetadata(@NotNull XmlDocument document) {
         Proposal proposal = this.getDocProposal(document);
-        if (proposal.isClonedProposal()) {
+        if (proposal != null && proposal.isClonedProposal()) {
             byte[] xmlContent = this.getDocumentContent(proposal);
             CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
                     xmlContent);
