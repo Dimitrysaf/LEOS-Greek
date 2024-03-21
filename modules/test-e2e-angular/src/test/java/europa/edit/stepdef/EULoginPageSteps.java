@@ -2,6 +2,7 @@ package europa.edit.stepdef;
 
 import europa.edit.pages.EULoginPage;
 import europa.edit.util.BaseDriver;
+import europa.edit.util.TestParameters;
 import europa.edit.util.WebDriverFactory;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -45,6 +46,9 @@ public class EULoginPageSteps extends BaseDriver {
     public void startApp(WebDriver driver, String applicationType) {
         String applicationURL = getAppUrl(applicationType);
         if (!driver.getCurrentUrl().trim().contains(applicationURL)) {
+            if ("local".equalsIgnoreCase(TestParameters.getInstance().getEnvironment())) {
+                applicationURL = String.format(applicationURL, "demo", "demo");
+            }
             driver.get(applicationURL);
         }
     }

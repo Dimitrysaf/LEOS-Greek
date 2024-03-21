@@ -3,12 +3,10 @@
 @ProposalBrowserPageRegressionScenariosEditCouncil
 Feature: Proposal Browser Page Regression Features in Edit Council
 
-  Background:
+  @closeButtonNotVisibleNonSupportUser @remote
+  Scenario: LEOS-5025 [CN] download button is not available for non support user in proposal browser page
     Given navigate to "Revision" application
     Then user is on EU login page
-
-  @closeButtonNotVisibleNonSupportUser
-  Scenario: LEOS-5025 [CN] download button is not available for non support user in proposal browser page
     When user enters username "user.nonsupport.1.name"
     And  user clicks next button
     Then user is on login page
@@ -26,8 +24,10 @@ Feature: Proposal Browser Page Regression Features in Edit Council
     And  delete button is not displayed
     And  download button is not displayed
 
-  @deleteMandate
+  @deleteMandate @remote
   Scenario: LEOS-4584,4145 [CN] Verify User is able to do create mandate, create milestone, title change of mandate and delete mandate
+    Given navigate to "Revision" application
+    Then user is on EU login page
     When user enters username "user.support.1.name"
     And  user clicks next button
     Then user is on login page
@@ -39,14 +39,14 @@ Feature: Proposal Browser Page Regression Features in Edit Council
     And  create mandate button is displayed and enabled
     And  create draft button is displayed and enabled
     When click on create mandate button
-    Then user is on upload new legislative document window
-    And  please select a leg file to be uploaded label is displayed in upload document page
-    When upload a leg file from relative location "/target/test-classes/upload/legFiles/PROP_ACT-4294241678941651921-EN.leg"
-    Then enter draft metadata label is displayed in upload document page
-    And  "Automation Testing" is showing as draft title
-    And  "English" is showing as draft language
-    And  "Standard treatment" is showing as confidentiality level
-    When click on create button in upload document page
+    Then user is on create new mandate window
+    And  please select a leg file to be uploaded label is displayed in create mandate window
+    When upload a leg file from relative location "/target/test-classes/upload/legFiles/PROP_ACT-4294241678941651921-EN.leg" in create mandate window
+    Then enter draft metadata label is displayed in create mandate window
+    And  "Automation Testing" is showing as draft title in create mandate window
+    And  "English" is showing as draft language in create mandate window
+    And  "Standard treatment" is showing as confidentiality level in create mandate window
+    When click on create button in create mandate window
     Then user is on proposal viewer page
     When click on actions button present in proposal viewer screen
     And  click on delete button present in overview screen

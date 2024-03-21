@@ -17,7 +17,6 @@ public class HeaderPage {
     private final WebDriver driver;
 
     @FindBy(css = ".eui-user-profile__infos-name")
-    @CacheLookup
     WebElement EUI_USER_PROFILE_INFO_NAME;
 
     @FindBy(css = "eui-breadcrumb-item.eui-breadcrumb-item button")
@@ -25,7 +24,6 @@ public class HeaderPage {
     List<WebElement> EUI_BREADCRUMB_ITEM_BUTTON;
 
     @FindBy(css = "eui-breadcrumb-item span.eui-label")
-    @CacheLookup
     WebElement EUI_LABEL;
 
     @FindBy(xpath = "//a//*[text()=' Home ']")

@@ -3,7 +3,7 @@
 @RepositoryBrowserPageRegressionScenariosEditRevision
 Feature: Repository Browser Page Regression Features in Edit Revision
 
-  @resetFilter
+  @resetFilter @remote
   Scenario: Verify user is able to reset filter, search mandate and open proposal by using double click
     Given navigate to "Revision" application
     Then  user is on EU login page
