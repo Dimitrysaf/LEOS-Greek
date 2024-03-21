@@ -3,7 +3,7 @@
 @RepositoryBrowserPageRegressionScenariosEditRevision
 Feature: Repository Browser Page Regression Features in Edit Revision
 
-  @resetFilter
+  @resetFilter @remote
   Scenario: Verify user is able to reset filter, search mandate and open proposal by using double click
     Given navigate to "Revision" application
     Then  user is on EU login page
@@ -27,6 +27,6 @@ Feature: Repository Browser Page Regression Features in Edit Revision
     When  click on reset button
     Then  "acts-DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL" is unTicked in filter section
     When  click on proposal 1
-    Then  user is on overview screen
+    Then  user is on proposal viewer page
     When  click on home button present in breadcrumb
     Then  user is on home page

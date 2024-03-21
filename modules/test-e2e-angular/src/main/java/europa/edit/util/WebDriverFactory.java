@@ -3,8 +3,7 @@ package europa.edit.util;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.Platform;
@@ -131,7 +130,9 @@ public class WebDriverFactory {
     }
 
     public WebDriver localDriver(String browser) {
-        DesiredCapabilities capability;
+        DesiredCapabilities capability = new DesiredCapabilities();
+        capability.setPlatform(Platform.ANY);
+        capability.setCapability("ignoreZoomSetting", true);
         switch (browser) {
             case Constants.FIREFOX: // If user choose Firefox driver has been changed to Firefox
                 driver = new FirefoxDriver();
@@ -145,21 +146,21 @@ public class WebDriverFactory {
                 options.addArguments("--no-sandbox");
                 options.addArguments("--disable-browser-side-navigation");
                 //options.addArguments("--incognito");
+                //options.setCapability("se:downloadsEnabled", true);
                 options.setAcceptInsecureCerts(true);
                 options.setPageLoadStrategy(PageLoadStrategy.EAGER);
                 Map<String, Object> prefs = new HashMap<>();
+                prefs.put("profile.default_content_settings.popups", 0);
                 prefs.put("credentials_enable_service", false);
                 prefs.put("profile.password_manager_enabled", false);
+                prefs.put("download.prompt_for_download", false);
                 prefs.put("download.default_directory", System.getProperty("user.dir") + configReader.getProperty("relative.download.path.local"));
                 options.setExperimentalOption("prefs", prefs);
                 options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
-                capability = new DesiredCapabilities();
                 capability.setCapability(ChromeOptions.CAPABILITY, options);
                 capability.setBrowserName(Constants.CHROME);
-                capability.setPlatform(Platform.ANY);
-                capability.setCapability("ignoreZoomSetting", true);
-                capability.setCapability(ChromeOptions.CAPABILITY, options);
-                driver = new ChromeDriver();
+                options.merge(capability);
+                driver = new ChromeDriver(options);
         }
         return driver;
     }

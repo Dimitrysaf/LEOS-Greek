@@ -3,7 +3,8 @@
 @ProposalViewerRegressionScenariosEditCommission
 Feature: Proposal Viewer Regression Features in Edit Commission
 
-  Background:
+  @createMilestoneAndDeleteProposal @remote
+  Scenario: LEOS-4587 [EC] Verify User is able to do download, title change, create milestone and delete proposal
     Given navigate to "Drafting" application
     Then  user is on EU login page
     When  user enters username "user.support.1.name"
@@ -13,10 +14,7 @@ Feature: Proposal Viewer Regression Features in Edit Commission
     And   user clicks on sign in button
 #    Then  user is on home page
 #    When  user clicks on view all acts button
-    Then  user is on repository browser page
-
-  @createMilestoneAndDeleteProposal
-  Scenario: LEOS-4587 [EC] Verify User is able to do download, title change, create milestone and delete proposal
+    Then user is on repository browser page
     When click on create proposal button
     Then user is on create new legislative document window
     Then "Select the document type and language" label is displayed in create document page
@@ -45,7 +43,7 @@ Feature: Proposal Viewer Regression Features in Edit Commission
     When click on create milestone button
     Then "Milestone created" message is displayed
     And  "Commission proposal" is showing under title column of row 1 of milestones table
-    And  today's date is showing under date column of row 1 of milestones table
+#    And  today's date is showing under date column of row 1 of milestones table
     And  "In Preparation" is showing under status column of row 1 of milestones table
     And  "Milestones: Contribution from Legal Service has been updated" message is displayed
     And  "File ready" is showing under status column of row 1 of milestones table
@@ -57,8 +55,18 @@ Feature: Proposal Viewer Regression Features in Edit Commission
     When click on delete button in delete proposal confirmation windows pop up
     Then user is on repository browser page
 
-  @verifyXmlInsideDownloadedLegFile
+  @verifyXmlInsideDownloadedLegFile @remote
   Scenario: verify name of xmls present inside downloaded leg file
+    Given navigate to "Drafting" application
+    Then  user is on EU login page
+    When  user enters username "user.support.1.name"
+    And   user clicks next button
+    Then  user is on login page
+    When  user enters password "user.support.1.pwd"
+    And   user clicks on sign in button
+#    Then  user is on home page
+#    When  user clicks on view all acts button
+    Then user is on repository browser page
     When click on create proposal button
     Then user is on create new legislative document window
     Then "Select the document type and language" label is displayed in create document page

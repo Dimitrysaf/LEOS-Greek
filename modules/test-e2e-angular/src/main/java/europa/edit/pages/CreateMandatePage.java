@@ -14,21 +14,17 @@ import java.io.File;
 
 import static europa.edit.util.E2eUtil.*;
 
-public class UploadDocumentPage {
+public class CreateMandatePage {
 
     private final WebDriver driver;
 
-    @FindBy(xpath = "//*[text()='Upload new legislative document']")
+    @FindBy(xpath = "//*[text()='Create new mandate']")
     @CacheLookup
-    WebElement uploadDocumentTitle;
+    WebElement CREATE_MANDATE;
 
     @FindBy(xpath = "//*[text()='Please select a leg file to be uploaded:']")
     @CacheLookup
     WebElement selectLegFileLabel;
-
-    @FindBy(xpath = "//*[text()=' Enter document metadata ']")
-    @CacheLookup
-    WebElement enterDocumentMetaDataLabel;
 
     @FindBy(xpath = "//*[text()=' Enter draft metadata ']")
     @CacheLookup
@@ -54,35 +50,15 @@ public class UploadDocumentPage {
     @CacheLookup
     WebElement createBtn;
 
-    public UploadDocumentPage(WebDriver driver) {
+    public CreateMandatePage(WebDriver driver) {
         this.driver = driver;
         waitForLoadingProgressBarToDisappear(driver);
         AjaxElementLocatorFactory ajax = new AjaxElementLocatorFactory(driver, Constants.TIMEOUT_DELAY);
         PageFactory.initElements(ajax, this);
     }
 
-    public void uploadRecentFile(String fileType, String relativeLocation) {
-        File file = findRecentFile(fileType, relativeLocation);
-        ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
-        assert file != null;
-        elementSendKeys(driver, fileInput, file.getAbsolutePath());
-    }
-
-    public boolean isUploadWindowDisplayed() {
-        return waitForElementTobeDisPlayed(driver,uploadDocumentTitle);
-    }
-
     public boolean isSelectLegFileLabelDisplayed() {
         return waitForElementTobeDisPlayed(driver, selectLegFileLabel);
-    }
-
-    public boolean isEnterDocumentMetaDataLabelDisplayed() {
-        return waitForElementTobeDisPlayed(driver, enterDocumentMetaDataLabel);
-    }
-
-    public void enterDocumentTitle(String title) {
-        documentTitle.clear();
-        documentTitle.sendKeys(title);
     }
 
     public String getDocumentLanguage() {
@@ -100,7 +76,6 @@ public class UploadDocumentPage {
     public void uploadFile(String relativeLocation) {
         File file = new File(System.getProperty("user.dir") + relativeLocation);
         ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
-        assert file != null;
         elementSendKeys(driver, fileInput, file.getAbsolutePath());
     }
 
@@ -110,5 +85,9 @@ public class UploadDocumentPage {
 
     public String getDraftTitle() {
         return getElementAttributeValue(documentTitle);
+    }
+
+    public boolean isCreateMandateWindowDisplayed() {
+        return CREATE_MANDATE.isDisplayed();
     }
 }

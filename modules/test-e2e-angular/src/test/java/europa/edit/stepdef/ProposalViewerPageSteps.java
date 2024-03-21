@@ -279,4 +279,29 @@ public class ProposalViewerPageSteps extends BaseDriver {
     public void clickOnCoverPageLink() {
         proposalViewerPage.clickOnCoverPageLInk();
     }
+
+    @Then("share button is displayed and enabled")
+    public void shareButtonIsDisplayedAndEnabled() {
+        assertTrue(proposalViewerPage.isShareBtnDisplayedAndEnabled());
+    }
+
+    @And("delete button is not displayed")
+    public void deleteButtonIsNotDisplayed() {
+        assertTrue(proposalViewerPage.isDeleteBtnNotPresent());
+    }
+
+    @And("download button is not displayed")
+    public void downloadButtonIsNotDisplayed() {
+        assertTrue(proposalViewerPage.isDownloadBtnNotPresent());
+    }
+
+    @When("click on delete button present in overview screen")
+    public void clickOnDeleteButtonPresentInOverviewScreen() {
+        proposalViewerPage.clickOnDeleteButton();
+    }
+
+    @And("export as pdf button is not displayed")
+    public void exportAsPdfButtonIsNotDisplayed() {
+        assertTrue(proposalViewerPage.isExportAsPdfBtnNotPresent());
+    }
 }

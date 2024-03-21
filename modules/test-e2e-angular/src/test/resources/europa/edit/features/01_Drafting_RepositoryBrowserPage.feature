@@ -3,7 +3,7 @@
 @RepositoryBrowserPageRegressionScenariosEditCommission
 Feature: Repository Browser Page Regression Features in Edit Commission
 
-  @uploadFileNotPresentForNonSupportUser
+  @uploadFileNotPresentForNonSupportUser @remote
   Scenario: upload button is not present in repository browser page for non support user
     Given navigate to "Drafting" application
     Then  user is on EU login page
@@ -19,7 +19,7 @@ Feature: Repository Browser Page Regression Features in Edit Commission
     And   upload button is not present
 
 
-  @filterSection
+  @filterSection @remote
   Scenario: upload button is not present in repository browser page for non support user
     Given navigate to "Drafting" application
     Then  user is on EU login page

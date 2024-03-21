@@ -3,7 +3,8 @@
 @CreateProposalEditDrafting
 Feature: Create Proposal Regression Features in Edit Commission
 
-  Background:
+  @createProposalByDownloadingAndUploadingLegFile @remote
+  Scenario Outline: Verify user is able to create the proposal successfully
     Given navigate to "Drafting" application
     Then  user is on EU login page
     When  user enters username "user.support.1.name"
@@ -14,9 +15,6 @@ Feature: Create Proposal Regression Features in Edit Commission
 #    Then  user is on home page
 #    When  user clicks on view all acts button
     Then  user is on repository browser page
-
-  @createProposalByDownloadingAndUploadingLegFile
-  Scenario Outline: Verify user is able to create the proposal successfully
     And  create proposal button is displayed and enabled
     When click on create proposal button
     Then user is on create new legislative document window

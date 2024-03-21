@@ -36,6 +36,8 @@ import static org.testng.Assert.assertTrue;
 
 public class CommonSteps extends BaseDriver {
     private RepositoryBrowserPage repositoryBrowserPage;
+    ProposalViewerPage proposalViewerPage;
+    DialogBoxPage dialogBoxPage;
 
     @And("^sleep for (.*) milliseconds")
     public void sleepForMilliseconds(long time) {
@@ -49,19 +51,25 @@ public class CommonSteps extends BaseDriver {
     @And("delete all the proposal containing keyword")
     public void deleteAllTheProposalContainingKeyword(DataTable dataTable) {
         List<String> details = dataTable.asList(String.class);
-        ProposalViewerPage proposalViewerPage;
-        DialogBoxPage dialogBoxPage;
+        int proposalNumber = 1;
+        repositoryBrowserPage = new RepositoryBrowserPage(WebDriverFactory.getDriver());
         for (String keyword : details) {
             while (findNumberOfRowsRepoPage(keyword)) {
-                repositoryBrowserPage = new RepositoryBrowserPage(WebDriverFactory.getDriver());
-                repositoryBrowserPage.clickOnNthProposal(1);
-                proposalViewerPage = new ProposalViewerPage(WebDriverFactory.getDriver());
+                proposalViewerPage = repositoryBrowserPage.clickOnNthProposal(proposalNumber);
                 proposalViewerPage.clickOnActionButton();
-                proposalViewerPage.clickOnDeleteButton();
-                dialogBoxPage = new DialogBoxPage(WebDriverFactory.getDriver());
-                dialogBoxPage.clickOnDangerButton();
-                assertTrue(repositoryBrowserPage.isCreateDraftBtnDisplayedAndEnabled());
-//                assertTrue(repositoryBrowserPage.isCreateMandateBtnDisplayedAndEnabled());
+                dialogBoxPage = proposalViewerPage.clickOnDeleteButton();
+                String dialogBoxBodyContent = dialogBoxPage.getBodyContent();
+                if("Are you sure you want to delete this proposal".equals(dialogBoxBodyContent)){
+                    repositoryBrowserPage = dialogBoxPage.clickOnDangerButton();
+                    assertTrue(repositoryBrowserPage.isCreateProposalBtnDisplayedAndEnabled());
+                    assertTrue(repositoryBrowserPage.isUploadBtnIsDisplayedAndEnabled());
+                    proposalNumber = 1;
+                }
+                else{
+                    proposalNumber++;
+                    dialogBoxPage.clickOnCancelButton();
+                    repositoryBrowserPage = proposalViewerPage.clickOnCloseButton();
+                }
             }
         }
     }
@@ -69,19 +77,15 @@ public class CommonSteps extends BaseDriver {
     @And("delete all the mandate containing keyword")
     public void deleteAllTheMandateContainingKeyword(DataTable dataTable) {
         List<String> details = dataTable.asList(String.class);
-        OverViewPage overViewPage;
-        DialogBoxPage dialogBoxPage;
+        repositoryBrowserPage = new RepositoryBrowserPage(WebDriverFactory.getDriver());
         for (String keyword : details) {
             while (findNumberOfRowsRepoPage(keyword)) {
-                repositoryBrowserPage = new RepositoryBrowserPage(WebDriverFactory.getDriver());
-                repositoryBrowserPage.clickOnNthProposal(1);
-                overViewPage = new OverViewPage(WebDriverFactory.getDriver());
-                overViewPage.clickOnActionButton();
-                overViewPage.clickOnDeleteButton();
-                dialogBoxPage = new DialogBoxPage(WebDriverFactory.getDriver());
-                dialogBoxPage.clickOnDangerButton();
+                proposalViewerPage = repositoryBrowserPage.clickOnNthProposal(1);
+                proposalViewerPage.clickOnActionButton();
+                dialogBoxPage = proposalViewerPage.clickOnDeleteButton();
+                repositoryBrowserPage = dialogBoxPage.clickOnDangerButton();
                 assertTrue(repositoryBrowserPage.isCreateDraftBtnDisplayedAndEnabled());
-//                assertTrue(repositoryBrowserPage.isCreateMandateBtnDisplayedAndEnabled());
+                assertTrue(repositoryBrowserPage.isCreateMandateBtnDisplayedAndEnabled());
             }
         }
     }
