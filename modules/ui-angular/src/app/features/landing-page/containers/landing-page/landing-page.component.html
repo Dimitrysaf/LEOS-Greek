@@ -15,7 +15,7 @@
             euiButton
             euiPrimary
             (click)="handleUpload()"
-            *ngIf="canUpload"
+            *ngIf="canUpload && !environmentService.isCouncil()"
           >
             {{ 'page.workspace.upload.button.text' | translate }}
             <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
@@ -24,7 +24,7 @@
             euiButton
             euiPrimary
             (click)="handleCreateMandate()"
-            *ngIf="environmentService.isCouncil()"
+            *ngIf="canUpload && environmentService.isCouncil()"
           >
             {{ 'page.workspace.upload-cn.button.text' | translate }}
             <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
