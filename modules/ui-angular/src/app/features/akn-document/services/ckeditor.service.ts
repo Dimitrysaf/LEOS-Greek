@@ -270,6 +270,7 @@ export class CKEditorService {
     require(['js/editor/leosEditorExtension'], (leosEditor) => {
       leosEditor.init(this.leosEditorConnector);
       this.leosEditorConnector.jsDepsInited();
+      window['EditorConnector'] = this.leosEditorConnector;
     });
   }
 
