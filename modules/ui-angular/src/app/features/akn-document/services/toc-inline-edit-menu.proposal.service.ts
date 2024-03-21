@@ -7,12 +7,13 @@ import { TranslateService } from '@ngx-translate/core';
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { TableOfContentEditService } from '@/features/akn-document/services/table-of-content-edit.service';
 import { ValidateTocService } from '@/features/akn-document/services/validate-node-drop.service';
-import { ARTICLE } from '@/shared/constants';
+import {ARTICLE, CHAPTER, PART} from '@/shared/constants';
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 
 import { TocInlineEditMenuService } from './toc-inline-edit-menu.service';
+import {DocumentConfig} from "@/shared";
 
 @Injectable()
 export class TocInlineEditMenuProposalService extends TocInlineEditMenuService {
@@ -45,6 +46,9 @@ export class TocInlineEditMenuProposalService extends TocInlineEditMenuService {
     switch (node.tocItem.aknTag) {
       case ARTICLE:
         items.push(this.buildArticleItem(node));
+        break;
+      case CHAPTER:
+        items.push(this.buildChapterItem(node));
         break;
     }
     return items;

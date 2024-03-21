@@ -12,9 +12,15 @@ import {
   ARTICLE_TYPE_DEFINITION,
   ARTICLE_TYPE_REGULAR,
   CANCEL_MOVE_ID,
+  CHAPTER_NUMBER_ARABIC,
+  CHAPTER_NUMBER_CHANGE_ID,
+  CHAPTER_NUMBER_ROMAN,
   DELETE_ACTION_ID,
   ITEM_NAME_ACTION_ID,
   MOVE_ACTION_ID,
+  PART_NUMBER_CHANGE_ID,
+  PART_NUMBER_ROMAN,
+  PART_NUMBER_TEXTUTAL,
   PLACE_AFTER_ACTION_ID,
   PLACE_AS_CHILDREN_ACTION_ID,
   PLACE_BEFORE_ACTION_ID,
@@ -22,7 +28,7 @@ import {
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { TableOfContentEditService } from '@/features/akn-document/services/table-of-content-edit.service';
 import { ValidateTocService } from '@/features/akn-document/services/validate-node-drop.service';
-import { DocumentConfig } from '@/shared';
+import {DocumentConfig, NumberingType} from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import {
   BULLET_NUM,
@@ -156,6 +162,50 @@ export abstract class TocInlineEditMenuService {
     };
   }
 
+  protected buildChapterItem(
+    node: TableOfContentItemVO,
+  ): EuiDropdownButtonMenuItem {
+    const toc = this.tocService.getCurrentToc();
+    const tocVOs = toc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems
+      .filter(obj => obj.tocItem.aknTag === node.tocItem.aknTag);
+    if(tocVOs.length > 0 ) {
+      switch (tocVOs[0].number) {
+        case 'I':
+          node.tocItem.numberingType = 'ROMAN_UPPER';
+          break;
+        case '1':
+          node.tocItem.numberingType = 'HIGHER_ELEMENT_NUM';
+          break;
+        default:
+          break;
+      }
+    }
+    return {
+      id: CHAPTER_NUMBER_CHANGE_ID,
+      label: this.translateService.instant(
+        'toc.edit.window.item.list.type.change.numbering',
+      ),
+      children: [
+        {
+          id: CHAPTER_NUMBER_ROMAN,
+          label: this.translateService.instant(
+            'toc.edit.window.item.regular.chapter.num.roman',
+          ),
+          disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'ROMAN_UPPER',
+          command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', toc, tocVOs),
+        },
+        {
+          id: CHAPTER_NUMBER_ARABIC,
+          label: this.translateService.instant(
+            'toc.edit.window.item.regular.chapter.num.arabic',
+          ),
+          disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'HIGHER_ELEMENT_NUM',
+          command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', toc, tocVOs),
+        },
+      ],
+    };
+  }
+
   protected updateDropdownItems(selectedNode: TableOfContentItemVO) {
     if (!this.isReadyToMove) {
       this.itemsBS.next([
@@ -252,6 +302,18 @@ export abstract class TocInlineEditMenuService {
     }
     this.previousType = oldValue;
     this.previousHeading = oldHeading;
+    this.tocEditService.handleNodeChanges(toc);
+  }
+
+  protected handleHighSubdivChangeNumbering(numberingType: NumberingType, toc: TableOfContentItemVO[], tocVOs: TableOfContentItemVO[]) {
+    const selectedNode = this.targetNodeBS.value;
+    this.tocEditService.handleNodeChanges(toc, true);
+    //const tocVOs = toc.filter(obj => obj.tocItem.aknTag === "BODY")[0].childItems
+    //  .filter(obj => obj.tocItem.aknTag === selectedNode.tocItem.aknTag);
+    for(const tocVO of tocVOs) {
+      tocVO.tocItem.numberingType = numberingType;
+      tocVO.numberingToggled = true;
+    }
     this.tocEditService.handleNodeChanges(toc);
   }
 

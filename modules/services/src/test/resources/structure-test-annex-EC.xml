@@ -55,7 +55,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>ROMAN_UPPER</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -74,7 +74,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ROMAN_UPPER</numberingType>
             <editable>false</editable>
             <template><![CDATA[<part xml:id="${id}"><num>${num}</num><heading>${heading}</heading></part>]]></template>
         </tocItem>
@@ -88,7 +87,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>ROMAN_UPPER</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -107,7 +106,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ROMAN_UPPER</numberingType>
             <editable>false</editable>
             <template><![CDATA[<title xml:id="${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
         </tocItem>
@@ -121,7 +119,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>HIGHER_ELEMENT_NUM</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -132,6 +130,7 @@
                     <numberingType>NONE</numberingType>
                 </langNumConfig>
             </autoNumbering>
+            <alternateNumberingType>ROMAN_UPPER</alternateNumberingType>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -140,7 +139,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_PARENTHESIS</numberingType>
             <editable>false</editable>
             <template><![CDATA[<chapter xml:id="${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
         </tocItem>
@@ -154,8 +152,8 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
-                    <numberingType>ARABIC_PARENTHESIS</numberingType>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>ARABIC</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
                 <langNumConfig langGroup="cyrillic" auto="false">
@@ -173,7 +171,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_PARENTHESIS</numberingType>
             <editable>false</editable>
             <template><![CDATA[<section xml:id="${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
         </tocItem>
@@ -335,6 +332,18 @@
     </tocItems>
 
     <numberingConfigs>
+        <numberingConfig>
+            <type>HIGHER_ELEMENT_NUM</type>
+            <numbered>true</numbered>
+            <prefix></prefix>
+            <suffix></suffix>
+            <sequence>1</sequence>
+            <description>1, 2, etc</description>
+            <regex>#|^(?!([a-z]))((^([1-9][0-9]*)|M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3}))([a-z])*)
+            </regex>
+            <regexJS>^(?:[MDCLXVI]+[a-zA-Z]?|\d+[a-zA-Z]?)$</regexJS>
+            <msgValidationError>subdivision.num.config.validation.error.message</msgValidationError>
+        </numberingConfig>
         <numberingConfig>
             <type>ARABIC</type>
             <numbered>true</numbered>

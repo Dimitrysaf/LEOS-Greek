@@ -54,7 +54,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>ROMAN_UPPER</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -85,7 +85,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>ROMAN_UPPER</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -117,7 +117,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>HIGHER_ELEMENT_NUM</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -128,6 +128,7 @@
                     <numberingType>NONE</numberingType>
                 </langNumConfig>
             </autoNumbering>
+            <alternateNumberingType>ROMAN_UPPER</alternateNumberingType>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -149,8 +150,8 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
-                    <numberingType>ARABIC_PARENTHESIS</numberingType>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>ARABIC</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
                 <langNumConfig langGroup="cyrillic" auto="false">

@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +98,7 @@ public class NumberServiceMandate implements NumberService {
 
     @Override
     public byte[] renumberArticles(byte[] xmlContent, boolean renumberChildElement) {
-        return renumberArticles(xmlContent);
+        return renumberArticles(xmlContent, renumberChildElement);
     }
 
     @Override
@@ -156,6 +157,11 @@ public class NumberServiceMandate implements NumberService {
             LOG.debug("Renumbered {} '{}' in {} milliseconds ({} sec)", nodeList.getLength(), DIVISION, stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
             return nodeToByteArray(document);
         }
+        return xmlContent;
+    }
+
+    @Override
+    public byte[] renumberHigherSubDivisions(byte[] xmlContent, List<TableOfContentItemVO> tableOfContentItemVOList) {
         return xmlContent;
     }
 }

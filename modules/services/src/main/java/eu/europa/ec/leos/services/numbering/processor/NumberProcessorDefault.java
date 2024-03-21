@@ -10,7 +10,11 @@ import org.w3c.dom.Node;
 
 import java.util.Arrays;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
+import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 
 @Component
 public class NumberProcessorDefault extends NumberProcessorAbstract implements NumberProcessor {
@@ -26,7 +30,7 @@ public class NumberProcessorDefault extends NumberProcessorAbstract implements N
      */
     @Override
     public boolean canRenumber(Node node) {
-        return Arrays.asList(RECITAL).contains(node.getNodeName());
+        return Arrays.asList(RECITAL, PART, TITLE, CHAPTER, SECTION).contains(node.getNodeName());
     }
 
     @Override

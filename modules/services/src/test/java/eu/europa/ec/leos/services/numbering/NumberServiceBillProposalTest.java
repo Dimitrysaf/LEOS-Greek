@@ -1,7 +1,13 @@
 package eu.europa.ec.leos.services.numbering;
 
 import eu.europa.ec.leos.services.util.TestUtils;
+import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static org.junit.Assert.assertEquals;
@@ -73,5 +79,19 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX_OJ, "test_numbering_article_definition_importFromOJ_ec_expected.xml");
         String result = numberService.renumberImportedArticle(new String(xmlInput));
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(result));
+    }
+
+    @Test
+    public void test_numbering_higher_subdivisions() {
+        final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_higher_subdivisions.xml");
+        final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_higher_subdivisions_expected.xml");
+        List<TableOfContentItemVO> tocList = new ArrayList<>();
+        TableOfContentItemVO body = new TableOfContentItemVO();
+        TocItem tocItem1 = new TocItem();
+        tocItem1.setAknTag(AknTag.BODY);
+        body.setTocItem(tocItem1);
+        tocList.add(body);
+        byte[] result = numberService.renumberHigherSubDivisions(xmlInput, tocList);
+        assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 }

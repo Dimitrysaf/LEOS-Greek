@@ -315,6 +315,7 @@ public abstract class BillServiceImpl implements BillService {
         String language = bill.getMetadata().get().getLanguage();
         newXmlContent = numberService.renumberArticles(newXmlContent, true);
         newXmlContent = numberService.renumberRecitals(newXmlContent);
+        newXmlContent = numberService.renumberHigherSubDivisions(newXmlContent, tocList);
         newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
 
         return updateBill(bill, newXmlContent, actionMsg);

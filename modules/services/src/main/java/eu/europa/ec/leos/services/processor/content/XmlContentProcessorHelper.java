@@ -347,16 +347,35 @@ public class XmlContentProcessorHelper {
     }
 
     private static boolean shouldItemBeAddedToToc(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, Node node, TocItem tocItem) {
-        boolean addItemToToc = false;
         if (tocItem.isRoot()) {
-            addItemToToc = tocItem.isDisplay();
+            return tocItem.isDisplay();
         } else {
             TocItem parentTocItem = StructureConfigUtils.getTocItemByName(tocItems, getParentTagName(node));
-            if ((parentTocItem != null) && (tocRules.get(parentTocItem) != null)) {
-                addItemToToc = tocRules.get(parentTocItem).contains(tocItem);
+            TocItem parentFromTocRules = findParentFromTocRules(tocRules, parentTocItem);
+            return isParentContainsTocItem(tocRules, tocItem, parentTocItem, parentFromTocRules);
+        }
+    }
+
+    private static boolean isParentContainsTocItem(Map<TocItem, List<TocItem>> tocRules, TocItem tocItem, TocItem parentTocItem, TocItem parentFromTocRules) {
+        if ((parentTocItem != null) && parentFromTocRules != null) {
+            List<TocItem> listOfTocItems = tocRules.get(parentFromTocRules);
+            for(TocItem tocItem1 : listOfTocItems) {
+                if(tocItem1.getAknTag().equals(tocItem.getAknTag())) {
+                    return true;
+                }
             }
         }
-        return addItemToToc;
+        return false;
+    }
+
+    private static TocItem findParentFromTocRules(Map<TocItem, List<TocItem>> tocRules, TocItem parentTocItem) {
+        for (Map.Entry<TocItem, List<TocItem>> entry : tocRules.entrySet()) {
+            TocItem key = entry.getKey();
+            if (key.getAknTag().equals(parentTocItem.getAknTag())) {
+                return key;
+            }
+        }
+        return null;
     }
 
     public static String getTagValueFromTocItemVo(TableOfContentItemVO tableOfContentItemVO) {

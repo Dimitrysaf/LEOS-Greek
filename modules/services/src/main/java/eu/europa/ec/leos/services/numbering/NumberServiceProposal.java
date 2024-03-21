@@ -22,7 +22,11 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +36,28 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XercesUtils.replaceElement;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
+import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
-import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
+import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
+import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemByName;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.isAutoNumberingEnabled;
 
 /**
@@ -156,4 +169,49 @@ public class NumberServiceProposal implements NumberService {
         return xmlContent;
     }
 
+    @Override
+    public byte[] renumberHigherSubDivisions(byte[] xmlContent, List<TableOfContentItemVO> tableOfContentItemVOList) {
+        xmlContent = renumberDocumentSubdivision(xmlContent, tableOfContentItemVOList, PART, false);
+        xmlContent = renumberDocumentSubdivision(xmlContent, tableOfContentItemVOList, TITLE, false);
+        xmlContent = renumberDocumentSubdivision(xmlContent, tableOfContentItemVOList, CHAPTER, false);
+        xmlContent = renumberDocumentSubdivision(xmlContent, tableOfContentItemVOList, SECTION, false);
+        return xmlContent;
+    }
+
+    private byte[] renumberDocumentSubdivision(byte[] xmlContent, List<TableOfContentItemVO> tableOfContentItemVOList, String elementName, boolean namespaceEnabled) {
+        tocItems = structureContextProvider.get().getTocItems();
+        String language = documentLanguageContext.getDocumentLanguage();
+        TocItem tocItem = getTocItemByName(tocItems, elementName);
+        NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
+        List<TableOfContentItemVO> itemVOs = tableOfContentItemVOList.stream()
+                .filter(tocVO -> tocVO.getTocItem().getAknTag().value().equalsIgnoreCase(BODY) || tocVO.getTocItem().getAknTag().value().equalsIgnoreCase(MAIN_BODY))
+                .findFirst()
+                .get().getChildItems().stream()
+                .filter(tocVO -> tocVO.getTocItem().getAknTag().value().equalsIgnoreCase(elementName))
+                .collect(Collectors.toList());
+        if (!itemVOs.isEmpty() && elementName.equals(CHAPTER)) {
+            numberingType = itemVOs.get(0).getTocItem().getNumberingType() != null ? itemVOs.get(0).getTocItem().getNumberingType() : numberingType;
+        }
+
+        if (isAutoNumberingEnabled(tocItems, elementName, language)) {
+            Document document = createXercesDocument(xmlContent, namespaceEnabled);
+            NodeList elements = document.getElementsByTagName(elementName);
+            List<Node> nodeList = XercesUtils.getNodesAsList(elements);
+            List<Node> subDivParentNodeList = new ArrayList<>();
+            //from this list find parent and get child nodes list of same subdivision type and send that list to renumber
+            for (int i = 0; i < nodeList.size(); i++) {
+                Node parentNode = nodeList.get(i).getParentNode();
+                if (subDivParentNodeList.indexOf(parentNode) == -1) {
+                    subDivParentNodeList.add(parentNode);
+                    NodeList childNodes = parentNode.getChildNodes();
+                    List<Node> subdivsionNodeList = XercesUtils.getNodesAsList(childNodes).stream()
+                            .filter(node -> node.getNodeName().equals(elementName))
+                            .collect(Collectors.toList());
+                    numberProcessorHandler.renumberHighSubDiv(subdivsionNodeList, numberingType, language);
+                }
+            }
+            return nodeToByteArray(document);
+        }
+        return xmlContent;
+    }
 }

@@ -50,6 +50,8 @@ public class NumberProcessorAbstract {
         }
     }
 
+    public void renumber(Node node, NumberConfig numberConfig, int index) { }
+
     // Numbers like: 1, 2, 3, etc
     private void simpleNumbering(Node node, NumberConfig numberConfig, String elementName, String elementId, String parentPrefix, int depth) {
         String elementNum = numberConfig.getPrefix() + parentPrefix + numberConfig.getNextNumberToShow() + numberConfig.getSuffix();

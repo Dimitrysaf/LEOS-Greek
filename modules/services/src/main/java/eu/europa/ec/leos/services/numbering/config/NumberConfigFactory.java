@@ -61,6 +61,12 @@ public class NumberConfigFactory {
         return numberConfig;
     }
 
+    public NumberConfig getNumberConfigByNumberingType(NumberingType numberingType) {
+        List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
+        NumberingConfig numberingConfig = getNumberingByName(numberingConfigs, numberingType);
+        return getNumberConfig(numberingType, numberingConfig);
+    }
+
     private NumberConfig getNumberConfig(NumberingType numberingType, NumberingConfig numberingConfig) {
         String prefix = numberingConfig.getPrefix();
         String suffix = numberingConfig.getSuffix();
@@ -86,6 +92,10 @@ public class NumberConfigFactory {
             case BULLET_WHITE_SQUARE:
             case INDENT:
                 return new NumberConfigSymbol(numberingConfig.getSequence(), prefix, suffix);
+            case HIGHER_ELEMENT_NUM:
+                return new NumberConfigArabic("","");
+            /*case TEXTUAL:
+                return new NumberConfigTextual();*/
             case NONE:
                 return null;
             default:

@@ -19,6 +19,8 @@ import { Subject } from 'rxjs';
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import {
   ARTICLE,
+  PART,
+  CHAPTER,
   BLOCK,
   BULLET_NUM,
   CROSSHEADING,
@@ -141,6 +143,14 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   isArticle(tocItem: TocItem) {
     return tocItem.aknTag.toLowerCase() === ARTICLE.toLowerCase();
+  }
+
+  isPart(tocItem: TocItem) {
+    return tocItem.aknTag.toLowerCase() === PART.toLowerCase();
+  }
+
+  isChapter(tocItem: TocItem) {
+    return tocItem.aknTag.toLowerCase() === CHAPTER.toLowerCase();
   }
 
   isDivision(tocItem: TocItem) {

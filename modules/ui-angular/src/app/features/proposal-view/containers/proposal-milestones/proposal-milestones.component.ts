@@ -90,7 +90,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
             if(!this.inputMilestoneViewed && this.legFileName != null) {
               if(milestone.legDocumentName === this.legFileName) {
-                this.openMilestoneViewDialog(milestone);                                
+                this.openMilestoneViewDialog(milestone);
                 this.inputMilestoneViewed = true;
               } else {
                 const clonedMilestone = milestone.clonedMilestones?.find(value => value.legDocumentName === this.legFileName);
