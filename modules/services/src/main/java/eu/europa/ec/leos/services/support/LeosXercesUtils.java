@@ -24,6 +24,7 @@ import java.util.List;
 public class LeosXercesUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosXercesUtils.class);
+    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
 
     public static Node buildNumElement(Node node, String numLabel, SecurityContext securityContext, boolean isTrackChangesEnabled) {
         Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
@@ -82,7 +83,7 @@ public class LeosXercesUtils {
     }
 
     public static String getTitleValue(SecurityContext securityContext) {
-        return securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+        return securityContext.getUser().getName() + " : " + ZonedDateTime.now().format(DATE_FORMAT);
     }
 
     private static void buildNumElementForDivision(Node node, String numLabel, Node numNode) {

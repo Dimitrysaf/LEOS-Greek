@@ -56,13 +56,9 @@ import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -116,7 +112,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
     public static final String NBSP = "\u00a0";
     public static final String[] NUMBERED_AND_LEVEL_ITEMS = {PARAGRAPH, POINT, LEVEL, INDENT};
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX").withZone(ZoneId.systemDefault());
     private static final String INSERT_TAG = "ins";
     private static final String LEOS_UID_PREFIX = " leos:uid=\"";
     private static final String LEOS_TITLE_PREFIX = " leos:title=\"";
@@ -569,12 +564,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             }
             XercesUtils.addSibling(newNode, node, before);
 
-            if(isTrackChangesEnabled) {
-                ZonedDateTime localDateTime = ZonedDateTime.now();
+            if (isTrackChangesEnabled) {
                 addAttribute(newNode, LEOS_ACTION_ATTR, "insert");
                 addAttribute(newNode, LEOS_UID, securityContext.getUser().getLogin());
-                addAttribute(newNode, LEOS_TITLE,
-                        securityContext.getUser().getName() + " : " + localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                addAttribute(newNode, LEOS_TITLE, getTitleValue(securityContext));
             }
         }
         return nodeToByteArray(document);
@@ -1396,8 +1389,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         String title = "";
         if(userLogin != null && userName!= null) {
             uid =  new StringBuilder(LEOS_UID_PREFIX).append(userLogin).append(BACKSLASH_QUOTE).toString();
-            title =   new StringBuilder(LEOS_TITLE_PREFIX).append(userName).append(" : ")
-                    .append(DATE_FORMAT.format(new Date().toInstant())).append(BACKSLASH_QUOTE).toString();
+            title =   new StringBuilder(LEOS_TITLE_PREFIX).append(getTitleValue(securityContext)).append(BACKSLASH_QUOTE).toString();
         }
 
         String newNodeContentFromExisting = new  StringBuilder(eltContent.substring(0,result.middle)).append(INS_END_TAG).toString();
@@ -1491,8 +1483,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         String title = "";
         if(userLogin != null && userName!= null) {
              uid =  new StringBuilder(LEOS_UID_PREFIX).append(userLogin).append(BACKSLASH_QUOTE).toString();
-             title =   new StringBuilder(LEOS_TITLE_PREFIX).append(userName).append(" : ")
-                    .append(DATE_FORMAT.format(new Date().toInstant())).append(BACKSLASH_QUOTE).toString();
+             title =   new StringBuilder(LEOS_TITLE_PREFIX).append(getTitleValue(securityContext)).append(BACKSLASH_QUOTE).toString();
         }
 
         String elementToAdd = new StringBuilder("<del ") //delete tag added
@@ -2382,12 +2373,10 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         cleanMoveFromAttributes(node);
         updateXMLIDAttributeFullStructureNode(node, SOFT_DELETE_PLACEHOLDER_ID_PREFIX, true);
 
-        if(isTrackChangesEnabled) {
-            ZonedDateTime localDateTime = ZonedDateTime.now();
+        if (isTrackChangesEnabled) {
             addAttribute(node, LEOS_ACTION_ATTR, "delete");
             addAttribute(node, LEOS_UID, securityContext.getUser().getLogin());
-            addAttribute(node, LEOS_TITLE,
-                    securityContext.getUser().getName() + " : " + localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+            addAttribute(node, LEOS_TITLE, getTitleValue(securityContext));
         }
 
         propagateSoftDeleteToChildren(XercesUtils.getChildren(node), actionType);

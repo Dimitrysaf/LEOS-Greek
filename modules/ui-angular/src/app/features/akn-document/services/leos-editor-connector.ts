@@ -428,16 +428,25 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           documentType,
         );
         this.tableOfContentService.reloadToc();
+        this.coEditionService.sendUpdateDocumentEvent(documentRef);
       });
     };
 
-    if (
-      (this.isCNInstance &&
-        isLastElement &&
-        ['recital', 'citation', 'body'].includes(elementType)) ||
-      (!this.isCNInstance && isLastElement)
-    ) {
-      this.openLastElementDeleteConfirmation(confirmDeletion);
+    if ((this.isCNInstance && isLastElement && ['recital', 'citation', 'body'].includes(elementType)) ||
+      (!this.isCNInstance && isLastElement)) {
+      this.dialogService.openDialog({
+        title: this.translateService.instant(
+          'page.editor.last-element-delete-confirmation.title',
+        ),
+        content: this.translateService.instant(
+          'page.editor.last-element-delete-confirmation.message',
+        ),
+        acceptLabel: this.translateService.instant('global.actions.continue'),
+        accept: confirmDeletion,
+        dismiss: () => {
+          this.actionManagerConnector.cancelActionElement(elementData.elementId);
+        },
+      });
     } else {
       this.dialogService.openDialog({
         title: this.translateService.instant(
@@ -447,12 +456,9 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           'page.editor.element-delete-dialog.body',
         ),
         accept: confirmDeletion,
-        dismiss: () =>
-          this.releaseElement({
-            elementId: elementData.elementId,
-            elementType: elementData.elementType,
-            elementFragment: null,
-          }),
+        dismiss: () => {
+          this.actionManagerConnector.cancelActionElement(elementData.elementId);
+        },
       });
     }
   }
@@ -480,6 +486,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
           documentType,
         );
         this.tableOfContentService.reloadToc();
+        this.coEditionService.sendUpdateDocumentEvent(documentRef);
       });
   }
 
@@ -500,20 +507,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     ).subscribe((response) => {
       this.closeElement();
       this.documentService.refreshView(response);
-    });
-  }
-
-  private openLastElementDeleteConfirmation(onConfirm: () => void) {
-    this.dialogService.openDialog({
-      title: this.translateService.instant(
-        'page.editor.last-element-delete-confirmation.title',
-      ),
-      content: this.translateService.instant(
-        'page.editor.last-element-delete-confirmation.message',
-      ),
-      acceptLabel: this.translateService.instant('global.actions.continue'),
-      accept: onConfirm,
-      dismiss: () => {},
+      this.coEditionService.sendUpdateDocumentEvent(documentRef);
     });
   }
 
