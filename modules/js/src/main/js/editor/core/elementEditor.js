@@ -382,20 +382,32 @@ define(function elementEditorModule(require) {
         return config;
     }
 
+    function _cleanUpElementContent(str) {
+        return str.replaceAll("<p ", "<aknp ")
+            .replaceAll("<p>", "<aknp>")
+            .replaceAll("</p>", "</aknp>")
+            .replaceAll(" xml:id=", " id=")
+            .replaceAll("<title>", "<akntitle>")
+            .replaceAll("<title ", "<akntitle ")
+            .replaceAll("</title>", "</akntitle>");
+    }
 
     function _destroyEditor(connector, elementId, elementType, event) {
         log.debug("Destroying element editor...");
         var editor = event.editor;
         // set read-only to prevent changes
         editor.setReadOnly(true);
-        var newContent = editor._.data.replaceAll("<p ", "<aknp ").replaceAll("</p>", "</aknp>").replaceAll(" xml:id=", " id=");
-        newContent = newContent.replaceAll("<title ", "<akntitle ").replaceAll("</title>", "</akntitle>");
         var rootElement = UTILS.getParentElement(connector);
         var placeholder = _getEditorPlaceholder(rootElement, elementId);
         _unscopeEvents(placeholder);
         $(placeholder).height(_getEditableAreaHeight(elementId));
         editor.placeholder = placeholder;
-
+        var newContent = _cleanUpElementContent(editor._.data);
+        var storeContent = localStorage.getItem(elementId);
+        if (!!storeContent) {
+            newContent = _cleanUpElementContent(storeContent);
+            localStorage.removeItem(elementId);
+        }
         // release the element being edited
         var data = {
             elementId: elementId,
@@ -406,7 +418,6 @@ define(function elementEditorModule(require) {
         // destroy editor instance, without updating DOM
         if (connector.getState().isAngularUI) {
             placeholder.outerHTML = newContent;
-
             editor.destroy(false);
         } else {
             if (placeholder != null) {

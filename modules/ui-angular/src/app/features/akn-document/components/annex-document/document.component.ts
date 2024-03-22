@@ -130,7 +130,15 @@ export class DocumentComponent
       this.documentService.updateElementContent$
         .pipe(takeUntil(this.destroy$))
         .subscribe((data) => {
-          this.updateElementContent(data);
+          this.updateElementContent({
+            documentRef: data.documentRef,
+            elementId: data.elementId,
+            elementType: data.elementType,
+            elementFragment: data.elementFragment,
+            presenterId: this.coEditionWSService.presenterId,
+            isClosing: data.isClosing,
+            isSaved: data.isSaved
+          });
         });
 
       this.documentService.getElementContent$
@@ -164,6 +172,7 @@ export class DocumentComponent
                   elementId: element.elementId,
                   elementType: element.elementTagName,
                   elementFragment: element.elementFragment,
+                  presenterId: coEditionUpdate.presenterId,
                   isClosing: false,
                   isSaved: false,
                 });
@@ -311,6 +320,7 @@ export class DocumentComponent
     elementId: string;
     elementType: string;
     elementFragment: string;
+    presenterId: string,
     isClosing: boolean;
     isSaved: boolean;
   }) {
@@ -326,7 +336,7 @@ export class DocumentComponent
       } else if (data.isClosing && !data.isSaved) {
         if (!this.isCNInstance) this.reloadElements(data);
         else this.documentService.reloadDocument();
-      } else {
+      } else if (this.coEditionWSService.presenterId !== data.presenterId) {
         this.documentService.isReloadRequired = true;
       }
     } else {

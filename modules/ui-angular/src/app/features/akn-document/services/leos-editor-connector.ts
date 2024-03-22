@@ -335,6 +335,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       this.documentService.documentType,
       this.coEditionService.presenterId,
     ).subscribe((response) => {
+      this.documentService.isReloadRequired = false;
+      if (!this.isSaveAndClose) {
+        localStorage.setItem(elemData.elementId, response.elementFragment);
+      }
       this.handleActionsAfterSave(response, elemData, String(milliseconds));
     });
   }
@@ -392,8 +396,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
         elementCursorPos: -1
       });
     } else if (this.documentService.isReloadRequired) {
-      if (!this.isElementSaved) {
-        // When updates have been done on the same edited element by another user, if saved, other changes are screwed up.
+      // When updates have been done on the same edited element by another user, if saved, other changes are screwed up.
+      if (!this.isSaveAndClose) {
         this.documentService.reloadDocument();
       }
       this.documentService.isReloadRequired = false;
