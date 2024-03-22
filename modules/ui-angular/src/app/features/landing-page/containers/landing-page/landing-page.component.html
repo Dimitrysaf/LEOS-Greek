@@ -16,7 +16,7 @@
               euiButton
               euiPrimary
               (click)="handleCreateMandate()"
-              *ngIf="canUpload"
+              *ngIf="canUpload && !environmentService.isCouncil()"
             >
               {{ 'page.workspace.upload.button.text' | translate }}
               <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
