@@ -31,9 +31,12 @@ export class ProposalItemHomeCardComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    if (this.proposal) this.setItemTitle(this.proposal.title);
+    if (this.proposal) {
+      this.setItemTitle(this.proposal.title);
+    }
 
     if (this.package) {
+      this.setItemTitle(this.package.title);
       this.landingPageService
         .getUserDoc(this.package.ref)
         .subscribe((document) => {

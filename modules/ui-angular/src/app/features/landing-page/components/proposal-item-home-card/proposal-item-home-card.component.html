@@ -48,10 +48,7 @@
     [isHeaderMultilines]="true"
   >
     <eui-card-header-title class="align-self-start eui-u-color-primary-100">
-      <a
-        [routerLink]="['/collection', package.ref]"
-        [innerHTML]="package.title"
-      ></a>
+      <a [routerLink]="['/collection', package.ref]" [innerHTML]="title"></a>
     </eui-card-header-title>
     <eui-card-header-subtitle>
       {{
