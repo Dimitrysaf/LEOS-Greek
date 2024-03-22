@@ -1,0 +1,20 @@
+<eui-card style="border: none">
+  <eui-card-content>
+    <div class="notification-card-container">
+      <div class="notification-card">
+        <div class="notification-card-header">
+          <span>{{
+            notification.newsTimestamp * 1000 | date : 'dd/MM/yyyy HH:mm'
+          }}</span>
+        </div>
+      </div>
+      <div class="notification-card-body">
+        <a style="font-weight: bolder">{{ notification.title }}</a>
+        <eui-label style="padding-right: 10%">{{
+          notification.body
+        }}</eui-label>
+      </div>
+      <div style="border-top: 1px solid #d3d3d3"></div>
+    </div>
+  </eui-card-content>
+</eui-card>

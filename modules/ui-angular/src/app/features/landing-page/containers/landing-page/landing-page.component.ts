@@ -63,6 +63,8 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   canCreateProposal = false;
   canUpload = false;
   isCNInstance;
+  isNotificationShown$: Observable<boolean>;
+  isNotificationShown = true;
   userName: string;
 
   constructor(
@@ -78,13 +80,17 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     this.limit$ = this.proposalService.limit$;
     this.proposals$ = this.proposalService.proposals$;
     this.latestPackages$ = this.landingPageService.findRecentPackagesForUser();
-    this.favouritesPackages$ = this.landingPageService.findFavouritePackagesForUser();
+    this.favouritesPackages$ =
+      this.landingPageService.findFavouritePackagesForUser();
     this.totalResults$ = this.proposalService.totalResults$;
     this.searchTerm = '';
   }
   ngOnInit() {
     this.proposalService.sortOrder$.subscribe((so) => (this.sortOrder = so));
-
+    this.landingPageService.isNotificationShown$.subscribe((isShown) => {
+      this.isNotificationShown = isShown;
+    });
+    
     this.store
       .select('user')
       .pipe(takeUntil(this.destroy$))

@@ -1,0 +1,50 @@
+.notification-layout {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  background-color: white;
+  color: black;
+  flex-direction: column;
+  padding-right: 7px;
+}
+
+.header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  align-items: center;
+}
+
+.right-side-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-content-divider {
+  padding-left: 10px;
+  padding-bottom: 10px;
+  border-top: 1px solid #d3d3d3;
+}
+
+.list-container {
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+list-container::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+@media (max-width: 766px) {
+  .notification-container {
+    width: 100%;
+  }
+}

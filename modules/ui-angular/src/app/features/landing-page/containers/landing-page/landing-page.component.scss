@@ -1,4 +1,7 @@
-.eui-page-content {
+.body-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
   padding: 0;
   gap: 41px;
 }
@@ -184,8 +187,13 @@
   .search-card-container {
     width: 110%;
   }
+
   .middle-body-content {
     gap: 20px;
+  }
+
+  .notification-container {
+    width: 70%;
   }
 
   @media (max-height: 414px) {
@@ -213,6 +221,10 @@
     padding-left: 0px;
     padding-top: 0px;
   }
+
+  .notification-container {
+    width: 100%;
+  }
 }
 
 @media (max-height: 740px) {
@@ -223,7 +235,7 @@
     .hero-image {
       height: 73vh;
     }
-    .eui-page-content {
+    .body-container {
       gap: 30px;
     }
   }

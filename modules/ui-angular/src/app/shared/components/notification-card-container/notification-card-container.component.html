@@ -1,0 +1,36 @@
+<div
+  interactiveScrollbars
+  class="notification-container"
+  *ngIf="isNotificationsShown"
+>
+  <div class="notification-layout">
+    <div class="header-container">
+      <div>
+        <span style="font-weight: bolder">{{
+          'page.home.notifications.notification' | translate
+        }}</span>
+      </div>
+      <div class="right-side-header">
+        <button *ngIf="canUpload" euiButton euiPrimary euiSizeS>
+          <span style="font-weight: bolder">{{
+            'page.workspace.upload.button.text' | translate
+          }}</span>
+        </button>
+        <a style="font-weight: bolder" (click)="toggleNotificationVisibility()"
+          ><span style="font-weight: bolder">{{
+            'global.actions.hide' | translate
+          }}</span></a
+        >
+        <span class="eui-icon eui-icon-angle-right"></span>
+      </div>
+    </div>
+    <div class="header-content-divider"></div>
+    <div class="list-container">
+      <div *ngFor="let notification of notifications; let i = index">
+        <app-notification-card
+          [notification]="notification"
+        ></app-notification-card>
+      </div>
+    </div>
+  </div>
+</div>
