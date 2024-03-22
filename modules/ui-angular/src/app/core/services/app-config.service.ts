@@ -37,7 +37,7 @@ const createLeosAppConfig = (config: LeosConfig): LeosAppConfig => ({
 });
 
 const resolveAppPermissions = (config: LeosConfig) => {
-  const roles = config.user.roles;
+  const roles = [...config.user.roles, config.contextRole];
   const permissions = roles.flatMap((r) => config.permissionsMap[r]);
   return [...new Set(permissions)];
 };

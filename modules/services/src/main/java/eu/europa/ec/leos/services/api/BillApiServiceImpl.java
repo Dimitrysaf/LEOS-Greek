@@ -257,8 +257,7 @@ public class BillApiServiceImpl implements BillApiService {
                         bill.getMetadata().get().getDocTemplate(), "alternatives");
             }
 
-            String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(
-                    securityContext.getUser().getRoles());
+            String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getAuthorities());
             User user = securityContext.getUser();
             return new EditElementResponse(user, permissions,
                     elementId, elementTagName, element, jsonAlternatives, isClonedProposal);

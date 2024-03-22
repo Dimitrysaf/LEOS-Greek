@@ -124,6 +124,18 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
       data.elementType = 'crossHeading';
     }
 
+    if(!this.documentService.getUserPermissions()?.includes('CAN_UPDATE')) {
+      this.dialogService.openDialog({
+        title: this.translateService.instant('page.editor.open.editor.not.allowed.dialog.title'),
+        content: this.translateService.instant('page.editor.open.editor.not.allowed.dialog.body', {"userRoles": this.documentService.getUserRoles()}),
+        hasDismissButton: false,
+        close: () => {
+          this.actionManagerConnector.cancelActionElement(data.elementId);
+        }
+      });
+      return;
+    }
+
     if (this.isCNInstance) {
       const promise = new Promise<void>((resolve, reject) => {
         this.documentService.didDocumentLoadAndRender$

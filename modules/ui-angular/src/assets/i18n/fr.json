@@ -438,6 +438,8 @@
   "page.editor.bookmark-text": "[FR]Go back to text under edition",
   "page.editor.open.editor.dialog.title": "Open Editor Detected [FR]",
   "page.editor.open.editor.dialog.body": "Unsaved changes will be lost. If you want to continue, press Confirm. [FR]",
+  "page.editor.open.editor.not.allowed.dialog.title": "Alerte!",
+  "page.editor.open.editor.not.allowed.dialog.body": "Non autorisé à modifier avec les rôles {{ userRoles }}",
   "page.editor.last-element-delete-confirmation.title": "[FR] Last element detected",
   "page.editor.last-element-delete-confirmation.message": "[FR] Warning, You are about to delete the last editing zone of this area. If you need to have this type of element back, you will have to add it using the Table of Content Edition. <br/> Are you sure you want to delete this last element?",
   "page.editor.element-delete-dialog.title": "[FR] Delete Element: confirmation",

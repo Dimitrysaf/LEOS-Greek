@@ -105,6 +105,7 @@ export class DocumentService {
   totalNumVersion$: Observable<number>;
   collaborators$: Observable<Collaborator[]>;
   permissions$: Observable<Permission[]>;
+  userRoles$: Observable<string[]>;
   navigationSidebarCollapsed$: Observable<boolean>;
   userGuidanceVisible$: Observable<boolean>;
   reloadTrigger$: Observable<number>;
@@ -173,6 +174,7 @@ export class DocumentService {
   private searchAndReplaceTextBS = new BehaviorSubject<string>('');
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
+  private userRolesBS = new BehaviorSubject<string[]>([]);
   private navigationSidebarCollapsedBS = new BehaviorSubject<boolean>(false);
   private userGuidanceVisibleBS = new BehaviorSubject<boolean>(false);
   private reloadTriggerBS = new BehaviorSubject<number>(0);
@@ -331,9 +333,12 @@ export class DocumentService {
       )
       .subscribe((collaborators) => this.collaboratorsBS.next(collaborators));
     this.permissions$ = this.permissionsBS.asObservable();
+    this.userRoles$ = this.userRolesBS.asObservable();
     this.collaborators$
       .pipe(combineLatestWith(this.appConfig.config))
       .subscribe(([collaborators, config]) => {
+        const roles = this.resolveRoles(collaborators, config);
+        this.userRolesBS.next(roles);
         const permissions = this.resolvePermissions(collaborators, config);
         this.permissionsBS.next(permissions);
       });
@@ -1187,6 +1192,10 @@ export class DocumentService {
     return this.permissionsBS.value;
   }
 
+  getUserRoles() {
+    return this.userRolesBS.value;
+  }
+
   updateTitle(newTitle: string): void {
     this.documentPageTitleBS.next(newTitle);
   }
@@ -1411,6 +1420,16 @@ export class DocumentService {
     );
   }
 
+  private resolveRoles(
+    collaborators: Collaborator[],
+    config: LeosAppConfig,
+  ) {
+    const docRoles = collaborators
+      .filter((c) => c.login === config.user.login)
+      .map((c) => c.role);
+    return [...config.user.roles, ...docRoles, config.contextRole].filter(Boolean);
+  }
+
   private resolvePermissions(
     collaborators: Collaborator[],
     config: LeosAppConfig,
@@ -1418,7 +1437,7 @@ export class DocumentService {
     const docRoles = collaborators
       .filter((c) => c.login === config.user.login)
       .map((c) => c.role);
-    const roles = [...config.user.roles, ...docRoles];
+    const roles = [...config.user.roles, ...docRoles, config.contextRole];
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);
     return [...new Set(permissions)];
   }

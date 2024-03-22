@@ -265,8 +265,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(
                 memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
-        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(
-                securityContext.getUser().getRoles());
+        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getAuthorities());
         User user = securityContext.getUser();
         boolean isClonedProposal = !memorandum.getClonedFrom().isEmpty();
         try {

@@ -336,8 +336,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     public EditElementResponse editElement(String documentRef, String elementId, String elementTagName) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         String jsonAlternatives = "";
-        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(
-                securityContext.getUser().getRoles());
+        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getAuthorities());
         User user = securityContext.getUser();
         Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
         boolean isClonedProposal = proposal.isClonedProposal();

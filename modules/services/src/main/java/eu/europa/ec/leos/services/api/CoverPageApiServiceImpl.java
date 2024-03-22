@@ -291,8 +291,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         Proposal proposal = this.proposalService.getProposalByRef(documentRef);
         String element = this.elementProcessor.getElement(proposal, elementTagName, elementId);
         String jsonAlternatives = "";
-        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(
-                securityContext.getUser().getRoles());
+        String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getAuthorities());
         boolean isClonedProposal = !proposal.getClonedFrom().isEmpty();
         User user = securityContext.getUser();
         return new EditElementResponse(user, permissions,

@@ -339,8 +339,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                     || NUM.equalsIgnoreCase(elementTagName)) {
                 levelItemVO = annexProcessor.getLevelItemVO(annex, elementId, elementTagName);
             }
-            String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(
-                    securityContext.getUser().getRoles());
+            String[] permissions = leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getAuthorities());
             User user = securityContext.getUser();
             boolean isClonedProposal = !annex.getClonedFrom().isEmpty();
             return new EditElementResponse(user, permissions, elementId, elementTagName, element, levelItemVO,
