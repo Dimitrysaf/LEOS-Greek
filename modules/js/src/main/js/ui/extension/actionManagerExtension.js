@@ -354,20 +354,17 @@ define(function actionManagerExtensionModule(require) {
         var deletable = _getDeletable($element);
         var user = connector.user;
         if (_isValidAction(action, elementId, elementType, editable, deletable, user)) {
-            var cursorAndChildPos = getTextPositionFromElement(event.target, event.originalEvent.clientX, event.originalEvent.clientY);
-            var cursorPos = cursorAndChildPos[0];
-            var childPos = cursorAndChildPos[1];
-            var elementIdForCursorPos = getElementIdForCursorPos(event.target);
             var data = {
                 action: action,
                 elementId: elementId,
-                elementType: elementType,
-                elementCursorId: elementIdForCursorPos,
-                elementCursorChildPos: childPos,
-                elementCursorPos: cursorPos
+                elementType: elementType
             };
             var topic = "actions." + action + ".element";
             if (action == 'edit') {
+                var cursorAndChildPos = getTextPositionFromElement(event.target, event.originalEvent.clientX, event.originalEvent.clientY);
+                data.elementCursorPos = cursorAndChildPos[0];
+                data.elementCursorChildPos = cursorAndChildPos[1];
+                data.elementCursorId = getElementIdForCursorPos(event.target);
                 var id = setInterval(function() {
                     if (!connector.semaphoreInitEditorOngoing) {
                         CKEDITOR.fire("editorInitOngoing");

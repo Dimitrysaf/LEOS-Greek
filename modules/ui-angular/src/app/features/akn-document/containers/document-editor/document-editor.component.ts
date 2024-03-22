@@ -584,6 +584,7 @@ export class DocumentEditorComponent
           this.tocEditService.resetTreeHistory();
           this.documentService.reloadDocument();
           this.tocService.reload();
+          this.coEditionWSService.sendUpdateDocumentEvent(this.documentRef);
         },
         error: (err) => {},
       });

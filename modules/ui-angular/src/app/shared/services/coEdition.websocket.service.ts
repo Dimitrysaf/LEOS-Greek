@@ -210,9 +210,9 @@ export class CoEditionServiceWS {
 
   public sendUpdateDocumentEvent(
     documentId: string,
-    elementId: string,
-    elementTagName: string,
-    elementFragment: string,
+    elementId?: string,
+    elementTagName?: string,
+    elementFragment?: string,
   ) {
     this.stompClient.send(
       '/app/update/document',
