@@ -1,5 +1,6 @@
 package europa.edit.util;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.Duration;
@@ -154,7 +155,7 @@ public class WebDriverFactory {
                 prefs.put("credentials_enable_service", false);
                 prefs.put("profile.password_manager_enabled", false);
                 prefs.put("download.prompt_for_download", false);
-                prefs.put("download.default_directory", System.getProperty("user.dir") + configReader.getProperty("relative.download.path.local"));
+                prefs.put("download.default_directory", System.getProperty("user.dir") + File.separator + "target" + File.separator + "download");
                 options.setExperimentalOption("prefs", prefs);
                 options.setExperimentalOption("excludeSwitches", new String[]{"enable-automation"});
                 capability.setCapability(ChromeOptions.CAPABILITY, options);

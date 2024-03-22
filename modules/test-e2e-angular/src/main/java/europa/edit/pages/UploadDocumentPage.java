@@ -1,6 +1,7 @@
 package europa.edit.pages;
 
 import europa.edit.util.Constants;
+import europa.edit.util.TestParameters;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.LocalFileDetector;
@@ -63,13 +64,15 @@ public class UploadDocumentPage {
 
     public void uploadRecentFile(String fileType, String relativeLocation) {
         File file = findRecentFile(fileType, relativeLocation);
-        ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
+        if ("remote".equalsIgnoreCase(TestParameters.getInstance().getMode())) {
+            ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
+        }
         assert file != null;
         elementSendKeys(driver, fileInput, file.getAbsolutePath());
     }
 
     public boolean isUploadWindowDisplayed() {
-        return waitForElementTobeDisPlayed(driver,uploadDocumentTitle);
+        return waitForElementTobeDisPlayed(driver, uploadDocumentTitle);
     }
 
     public boolean isSelectLegFileLabelDisplayed() {
@@ -100,7 +103,6 @@ public class UploadDocumentPage {
     public void uploadFile(String relativeLocation) {
         File file = new File(System.getProperty("user.dir") + relativeLocation);
         ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
-        assert file != null;
         elementSendKeys(driver, fileInput, file.getAbsolutePath());
     }
 
