@@ -197,7 +197,7 @@ export class DocumentComponent
         .getDocCoEditionInfo()
         .pipe(takeUntil(this.destroy$))
         .subscribe((coEdits) => {
-          this.showElementsBeingEdited(coEdits);
+          this.coEditionWSService.showElementsBeingEdited(coEdits);
         });
       this.initTrackChangesActions();
     }
@@ -243,23 +243,6 @@ export class DocumentComponent
     this.handleZoomChange(event);
   }
 
-  generateTooltip(coEdits: CoEditionVO[]) {
-    if (!coEdits) return;
-    let target = '';
-    // FIXME: use translated message for target
-    coEdits.forEach(
-      (c) =>
-        (target =
-          target +
-          `${c.userName} editing since ${formatDate(
-            c.editionTime,
-            'dd/MM/yyyy HH:mm',
-            'en-US',
-          )} <br>`),
-    );
-    return target;
-  }
-
   private loadDocument(xml: string) {
     this.xml = this.cleanupAndSerializeXML(xml);
     this.containerElRef.nativeElement.innerHTML = this.xml;
@@ -267,7 +250,7 @@ export class DocumentComponent
       this.documentService.setDidDocumentLoadAndRender(true);
     }
     if (!this.readonly) {
-      this.showElementsBeingEdited(
+      this.coEditionWSService.showElementsBeingEdited(
         this.coEditionWSService.getDocCoEditionInfoData(),
       );
       this.initTrackChangesActions();
@@ -420,46 +403,6 @@ export class DocumentComponent
       .replaceAll(' xml:id=', ' id=')
       .replaceAll('<title ', '<akntitle ')
       .replaceAll('</title>', '</akntitle>');
-  }
-
-  private showElementsBeingEdited(coEdits: Record<string, CoEditionVO[]>) {
-    const userCoEditionElements = this.document.querySelectorAll(
-      '.leos-user-coedition',
-    );
-    userCoEditionElements.forEach((userCoEditionElement) => {
-      userCoEditionElement.remove();
-    });
-    for (const key in coEdits) {
-      if (key)
-        for (const coEdit of coEdits[key]) {
-          if (coEdit.infoType === 'TOC_INFO') return;
-          const elemInDoc = this.document.getElementById(coEdit.elementId);
-          const coEditNode = this.document.createElement('div');
-          coEditNode.classList.add(
-            'leos-user-coedition',
-            'leos-user-coedition-self-user',
-          );
-          const iconSpan = this.document.createElement('span');
-          iconSpan.classList.add('eui-icon', 'eui-icon-person');
-          iconSpan.style.verticalAlign = 'bottom';
-          iconSpan.style.display = 'inline-block';
-          const textDiv = this.document.createElement('div');
-          textDiv.innerHTML = this.generateTooltip(coEdits[key]);
-          coEditNode.append(iconSpan);
-          coEditNode.append(textDiv);
-          coEditNode.style.top = elemInDoc.offsetTop + 'px';
-          coEditNode.style.left = elemInDoc.offsetLeft - 25 + 'px';
-          elemInDoc.insertAdjacentElement('beforebegin', coEditNode);
-          // elemInToc.insertAdjacentElement('beforebegin', coEditNode);
-          coEditNode.addEventListener('mouseenter', () => {
-            textDiv.style.left = iconSpan.offsetLeft + 10 + 'px';
-            textDiv.style.display = 'block';
-          });
-          coEditNode.addEventListener('mouseleave', () => {
-            textDiv.style.display = 'none';
-          });
-        }
-    }
   }
 
   /**
