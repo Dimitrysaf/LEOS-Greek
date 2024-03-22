@@ -1,0 +1,22 @@
+.notification-card-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.notification-card {
+  display: flex;
+  justify-content: space-between;
+}
+
+.notification-card-header {
+  display: flex;
+  gap: 9px;
+}
+
+.notification-card-body {
+  display: flex;
+  flex-direction: column;
+  padding-top: 5px;
+  gap: 20px;
+}

@@ -19,6 +19,7 @@ import { ConfirmDeleteDialogComponent } from './components/confirm-delete-dialog
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { DocumentAnnotationsComponent } from './components/document-annotations/document-annotations.component';
 import { MilestoneTocComponent } from './components/milestone-toc/milestone-toc.component';
+import { NotificationCardComponent } from './components/notification-card/notification-card.component';
 import { ProposalCreateDraftComponent } from './components/proposal-create-draft/proposal-create-draft.component';
 import { ProposalCreateFormComponent } from './components/proposal-create-form/proposal-create-form.component';
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
@@ -27,6 +28,7 @@ import { ResizeHandleComponent } from './components/resize-handle/resize-handle.
 import { ZoomScrollbarComponent } from './components/zoom-scrollbar/zoom-scrollbar.component';
 import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
 import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
+import { NotificationCardContainerComponent } from '@/shared/components/notification-card-container/notification-card-container.component';
 import { EscapeHtmlPipe } from './pipes/escape-html.pipe';
 import { HtmlToPlaintextPipe } from './pipes/html-to-plaintext.pipe';
 import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
@@ -63,6 +65,8 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     EscapeHtmlPipe,
     UnescapeHtmlPipe,
     ConfirmReloadDialogComponent,
+    NotificationCardContainerComponent,
+    NotificationCardComponent,
   ],
   exports: [
     UxAllModule,
@@ -88,6 +92,8 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     UnescapeHtmlPipe,
     ConfirmReloadDialogComponent,
     ZoomScrollbarComponent,
+    NotificationCardContainerComponent,
+    NotificationCardComponent,
   ],
   providers: [ProposalService],
 })

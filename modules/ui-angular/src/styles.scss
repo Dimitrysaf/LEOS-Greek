@@ -147,6 +147,14 @@ eui-icon-svg > svg > use {
   width: 100%;
 }
 
+.notification-container {
+  position: fixed;
+  right: 0px;
+  top: 55px;
+  z-index: 2001;
+  width: 40%;
+}
+
 .app-dialog-footer-content {
   display: flex;
   flex-direction: row;

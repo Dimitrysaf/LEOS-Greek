@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { PackagesRecentlyChanged } from '../models/packages-recent-changed.model';
@@ -10,7 +10,12 @@ import { Document } from '@/shared';
   providedIn: 'root',
 })
 export class LandingPageService {
-  constructor(private http: HttpClient) {}
+  isNotificationShown$: Observable<boolean>;
+  private isNotificationShownBS = new BehaviorSubject<boolean>(true);
+
+  constructor(private http: HttpClient) {
+    this.isNotificationShown$ = this.isNotificationShownBS.asObservable();
+  }
 
   findRecentPackagesForUser(): Observable<PackagesRecentlyChanged[]> {
     return this.http.get<PackagesRecentlyChanged[]>(
@@ -26,5 +31,10 @@ export class LandingPageService {
 
   getUserDoc(pkg: PackagesRecentlyChanged): Observable<Document> {
     return this.http.get<Document>(`${apiBaseUrl}/secured/proposals/${pkg}`);
+  }
+  
+  toggleNotifications() {
+    const currentValue = this.isNotificationShownBS.getValue();
+    this.isNotificationShownBS.next(!currentValue);
   }
 }

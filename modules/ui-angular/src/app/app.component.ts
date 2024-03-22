@@ -10,13 +10,14 @@ import {
 } from '@eui/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, map } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { AppLocalStorageService } from '@/core/services/app-local-storage.service';
 
 import { Profile } from './shared/models/leos.model';
 import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
+import { NotificationsService } from './shared/services/notifications.service';
 
 @Component({
   selector: 'app-root',
@@ -42,7 +43,8 @@ export class AppComponent implements OnInit, OnDestroy {
   i18nState: Observable<I18nState>;
   userPreferencesState: Observable<UserPreferences>;
   profile: Profile;
-
+  isNotificationsShown$: Observable<boolean>;
+  contentAvailable$: Observable<boolean>;
   listSupportButtons = [
     { id: 1, label: 'app.support.contact-us' },
     { id: 2, label: 'app.support.learn' },
@@ -56,7 +58,14 @@ export class AppComponent implements OnInit, OnDestroy {
     private translateService: TranslateService,
     private webSocket: CoEditionServiceWS,
     private storage: AppLocalStorageService,
+    private notificationsService: NotificationsService,
   ) {
+    this.isNotificationsShown$ = this.notificationsService.isShown$;
+    // This will be uncommented when the BE endpoint will be implemented.
+    // Checks if the notification package contains any item.
+    // this.contentAvailable$ = this.notificationsService
+    //   .fetchNotifications()
+    //   .pipe(map((notifications) => notifications && notifications.length > 0));
     this.i18nState = this.store.select(getI18nState);
     this.userPreferencesState = this.store.select(getUserPreferences);
     this.userState = this.store.select(getUserState);
@@ -77,6 +86,8 @@ export class AppComponent implements OnInit, OnDestroy {
         this.profile = config.profile;
       }),
     );
+
+    this.notificationsService.fetchNotifications();
 
     this.subs.push(
       this.i18nState.subscribe((state) => {
@@ -121,5 +132,9 @@ export class AppComponent implements OnInit, OnDestroy {
         break;
       }
     }
+  }
+
+  toggleNotifications(): void {
+    this.notificationsService.toggleNotifications();
   }
 }
