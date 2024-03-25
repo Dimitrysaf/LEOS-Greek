@@ -706,6 +706,19 @@ public class XercesUtils {
         return firstChild;
     }
 
+    public static Node getLastChild(Node node) {
+        Node lastChild = null;
+        NodeList nodeList = node.getChildNodes();
+        for (int i = nodeList.getLength()-1; i >= 0; i--) {
+            node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                lastChild = node;
+                break;
+            }
+        }
+        return lastChild;
+    }
+
     public static Node getFirstChild(Node node, String elementName) {
         Node firstChild = null;
         NodeList nodeList = node.getChildNodes();
@@ -789,6 +802,14 @@ public class XercesUtils {
             descendants.addAll(getDescendants(child, tagNames));
         }
         return descendants;
+    }
+
+    public static Node getFirstAscendant(Node node, List<String> tagNames) {
+        Node parent = node.getParentNode();
+        while (parent != null && !tagNames.contains(parent.getNodeName())) {
+            parent = parent.getParentNode();
+        }
+        return parent;
     }
 
     public static Node getFirstDescendant(Node node, List<String> tagNames) {

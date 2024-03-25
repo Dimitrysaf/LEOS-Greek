@@ -242,6 +242,35 @@ $BLACK : #000000;
         margin-left: 1px;
         margin-right: 7px;
         width: 100%;
+        background-color: white !important;
+    }
+
+    %contributionWrapperAfterMerge {
+        background-color: rgba(166, 166, 166, .8) !important;
+        border: #8c8c8c thin solid;
+        [leos\:mergeAction]:not([leos\:selectedAction]),
+        [leos\:mergeaction]:not([leos\:selectedaction]),
+        ins,
+        del,
+        num {
+            background-color: rgba(166, 166, 166, 0) !important;
+        }
+    }
+
+    %selectedContributionWrapper {
+        background-color: #E1EFFE !important;
+        border-color: #ADB4BB;
+        [leos\:uid] {
+            background-color: #E1EFFE !important;
+        }
+    }
+
+    [leos\:mergeAction]:not([leos\:selectedAction]) {
+        @extend %contributionWrapperAfterMerge;
+    }
+
+    [leos\:selectedAction] {
+        @extend %selectedContributionWrapper;
     }
 
     div.merge-actions-wrapper {
@@ -271,15 +300,92 @@ $BLACK : #000000;
                 font-weight: normal;
             }
         }
-        > .unselect {
-            @extend %contributionAction;
-            float: right;
-            cursor: pointer;
+        [data-widget-type="show.all.actions"] {
+            display: inline-block;
         }
-        > .accept, > .reject {
-            @extend %contributionAction;
-            color: $BLACK;
-            float: right;
+        [data-widget-type='undo'] {
+            display: none;
+        }
+        [data-widget-type='accepted'] {
+            display: none;
+        }
+        [data-widget-type='accepted_tc'] {
+            display: none;
+        }
+        [data-widget-type='processed'] {
+            display: none;
+        }
+    }
+
+    div.selectedAccept {
+        [data-widget-type="show.all.actions"] {
+            display: none;
+        }
+        [data-widget-type='undo'] {
+            display: inline-block;
+        }
+        [data-widget-type='accepted'] {
+            display: inline-block;
+        }
+        [data-widget-type='accepted_tc'] {
+            display: none;
+        }
+        [data-widget-type='processed'] {
+            display: none;
+        }
+    }
+
+    div.selectedAcceptTc {
+        [data-widget-type="show.all.actions"] {
+            display: none;
+        }
+        [data-widget-type='undo'] {
+            display: inline-block;
+        }
+        [data-widget-type='accepted'] {
+            display: none;
+        }
+        [data-widget-type='accepted_tc'] {
+            display: inline-block;
+        }
+        [data-widget-type='processed'] {
+            display: none;
+        }
+    }
+
+    div.selectedProcessed {
+        [data-widget-type="show.all.actions"] {
+            display: none;
+        }
+        [data-widget-type='undo'] {
+            display: inline-block;
+        }
+        [data-widget-type='accepted'] {
+            display: none;
+        }
+        [data-widget-type='accepted_tc'] {
+            display: none;
+        }
+        [data-widget-type='processed'] {
+            display: inline-block;
+        }
+    }
+
+    div.selectedUndo {
+        [data-widget-type="show.all.actions"] {
+            display: none;
+        }
+        [data-widget-type='undo'] {
+            display: inline-block;
+        }
+        [data-widget-type='accepted'] {
+            display: none;
+        }
+        [data-widget-type='accepted_tc'] {
+            display: none;
+        }
+        [data-widget-type='processed'] {
+            display: none;
         }
     }
 
@@ -295,13 +401,5 @@ $BLACK : #000000;
     list.merge-contribution-wrapper {
         @extend %mergeContributionWrapper;
         display: inline-grid;
-    }
-
-    .selected-contribution-wrapper {
-        background-color: #E1EFFE !important;
-        border-color: #ADB4BB;
-        [leos\:uid] {
-            background-color: #E1EFFE !important;
-        }
     }
 }

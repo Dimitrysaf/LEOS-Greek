@@ -88,6 +88,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getContentByTagName
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstElementByName;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
+import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNextSibling;
 import static eu.europa.ec.leos.services.support.XercesUtils.getParentId;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
@@ -149,11 +150,14 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             addAttribute(node, LEOS_TITLE, title);
             addAttribute(node, LEOS_SOFT_ACTION_ROOT_ATTR, "true");
             if (direction.equals(SoftActionType.MOVE_FROM)) {
+                if (Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE).contains(node.getNodeName())) {
+                    removeAttribute(node, LEOS_UID);
+                }
                 removeAttribute(node, LEOS_ACTION_ATTR);
-                removeAttribute(node, LEOS_UID);
                 addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.MOVE_FROM.getSoftAction());
                 addAttribute(node, LEOS_SOFT_MOVE_FROM, SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elementId);
                 addAttribute(node, LEOS_SOFT_USER_ATTR, softUser);
+                //updateSoftMoveLabelAttribute(document.getFirstChild(), LEOS_SOFT_MOVE_FROM);
             } else if (direction.equals(SoftActionType.MOVE_TO)) {
                 addAttribute(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
                 addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.MOVE_TO.getSoftAction());
@@ -711,6 +715,40 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                         }
                     }
                 }
+            }
+        }
+        return element;
+    }
+
+    @Override
+    public Element getFirstChildElement(byte[] xmlContent, String idAttributeValue) {
+        Document document = createXercesDocument(xmlContent);
+        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Element element = null;
+        if (node != null) {
+            node = getFirstChild(node);
+            if (node != null) {
+                String elementTagName = node.getNodeName();
+                String elementId = getId(node) != null ? getId(node) : "";
+                String elementFragment = nodeToString(node);
+                element = new Element(elementId, elementTagName, elementFragment);
+            }
+        }
+        return element;
+    }
+
+    @Override
+    public Element getLastChildElement(byte[] xmlContent, String idAttributeValue) {
+        Document document = createXercesDocument(xmlContent);
+        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        Element element = null;
+        if (node != null) {
+            node = getLastChild(node);
+            if (node != null) {
+                String elementTagName = node.getNodeName();
+                String elementId = getId(node) != null ? getId(node) : "";
+                String elementFragment = nodeToString(node);
+                element = new Element(elementId, elementTagName, elementFragment);
             }
         }
         return element;

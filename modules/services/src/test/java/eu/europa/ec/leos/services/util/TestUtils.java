@@ -86,6 +86,16 @@ public class TestUtils {
                 .replaceAll("<num(\\s)*?xml:id=\".+?\"(\\s)*?>", "<num>");
     }
 
+    public static String squeezeXmlRemoveNumValue(String input) {
+        return input.replaceAll("\\s+", "")
+                .replaceAll("\\n+", "")
+                .replaceAll("\\n\\r+", "")
+                .replaceAll("\\t+", "")
+                .replaceAll("<num[^>]*>[^num]*</num>", "<num>dummyNum</num>")
+                .replaceAll("leos:origin=\".+?\"", "")
+                .replaceAll("leos:listIdAttr=\"[^(\")]*\"", "");
+    }
+
     public static String squeezeXmlWithoutXmlIds(String input) {
         return input.replaceAll("\\s+", "")
                 .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"")

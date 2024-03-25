@@ -561,7 +561,7 @@ body {
 
 //create temporary ui rule for merged contributions
 // TODO: move this to document-editor.component.scss
-.contribution-view-merge-pane .contribution-wrapper-after-merge {
+.contribution-view-merge-pane .contribution-wrapper-after-merge:not([leos\:selectedAction]) {
   background-color: rgb(166 166 166 / 80%) !important;
   border: #8c8c8c thin solid;
   [leos\:mergeAction]:not([leos\:selectedAction]),
@@ -570,19 +570,5 @@ body {
   del,
   num {
     background-color: rgb(166 166 166 / 0%) !important;
-  }
-
-  .accept {
-    background-color: #f7f7f7 !important;
-    [leos\:uid] {
-      background-color: #f7f7f7 !important;
-    }
-  }
-
-  .reject {
-    background-color: #f7f7f7 !important;
-    [leos\:uid] {
-      background-color: #f7f7f7 !important;
-    }
   }
 }
