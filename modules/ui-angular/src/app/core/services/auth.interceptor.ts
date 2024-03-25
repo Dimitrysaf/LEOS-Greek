@@ -17,7 +17,7 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService, private location: Location) {}
+  constructor(private authService: AuthService) {}
 
   intercept(
     req: HttpRequest<any>,
@@ -32,7 +32,7 @@ export class AuthInterceptor implements HttpInterceptor {
   handleWithToken(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // Make addTokenToRequest asynchronous and return an Observable
     return from(this.addTokenToRequest(request)).pipe(
-      switchMap((authRequest:HttpRequest<any>) => 
+      switchMap((authRequest:HttpRequest<any>) =>
         // Pass on the cloned request instead of the original request
          next.handle(authRequest).pipe(
           catchError((e) => this.errorHandler(e, this.authService.loadTokenData().accessToken))
@@ -63,9 +63,7 @@ export class AuthInterceptor implements HttpInterceptor {
   /** Adds the `Authorization` header to the request. */
   private addToken(req: HttpRequest<any>, token: TokenData) {
     const accessToken = token.accessToken;
-    const url = new URL(document.baseURI + this.location.path());
-    const urlParams = new URLSearchParams(url.search);
-    const clientContext = urlParams.get('clientContext');
+    const clientContext = this.authService.getClientContext();
 
     const headers = {};
     headers['Authorization'] = `Bearer ${accessToken}`;

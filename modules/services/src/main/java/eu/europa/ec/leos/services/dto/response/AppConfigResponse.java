@@ -35,6 +35,7 @@ public class AppConfigResponse {
     private Map<String, Set<LeosPermission>> permissionsMap;
     private Profile profile;
     private User user;
+    private String contextRole;
     private String headerTitle;
     private String headerPath;
     private String annotateAuthority;
@@ -225,5 +226,13 @@ public class AppConfigResponse {
 
     public void setProfile(Profile profile) {
         this.profile = profile;
+    }
+
+    public String getContextRole() {
+        return contextRole;
+    }
+
+    public void setContextRole(String contextRole) {
+        this.contextRole = contextRole;
     }
 }

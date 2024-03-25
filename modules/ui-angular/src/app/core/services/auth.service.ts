@@ -140,6 +140,12 @@ export class AuthService implements OnDestroy {
     return now_plus_RENEW_WINDOW > expiresIn;
   }
 
+  getClientContext() {
+    const url = new URL(document.baseURI + this.location.path());
+    const urlParams = new URLSearchParams(url.search);
+    return urlParams.get('clientContext');
+  }
+
   /**
    * Initializes the **Access Token**. If found in storage and not expired, then
    * it gets reused, else it gets renewed.
@@ -253,9 +259,7 @@ export class AuthService implements OnDestroy {
       headers['assertion'] = process.env.NG_APP_REFRESH_TOKEN;
     }
 
-    const url = new URL(document.baseURI + this.location.path());
-    const urlParams = new URLSearchParams(url.search);
-    const clientContext = urlParams.get('clientContext');
+    const clientContext = this.getClientContext();
     if (clientContext) {
       headers["Client-Context"] = clientContext;
     }

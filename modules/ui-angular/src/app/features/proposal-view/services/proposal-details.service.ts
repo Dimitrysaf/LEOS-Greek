@@ -620,7 +620,7 @@ export class ProposalDetailsService implements OnDestroy {
     const docRoles = collaborators
       .filter((c) => c.login === config.user.login)
       .map((c) => c.role);
-    const roles = [...config.user.roles, ...docRoles];
+    const roles = [...config.user.roles, ...docRoles, config.contextRole];
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);
     return [...new Set(permissions)];
   }

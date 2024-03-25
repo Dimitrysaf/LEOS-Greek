@@ -60,7 +60,8 @@ export type LeosConfig = {
   annotatePopupDefaultStatus: 'ON' | 'OFF';
   collectionCloseButtonEnabled: boolean;
   showRevisionEnabled: boolean;
-  profile?: Profile;
+  profile: Profile;
+  contextRole: string;
 };
 
 export type LeosAppConfig = LeosConfig & {

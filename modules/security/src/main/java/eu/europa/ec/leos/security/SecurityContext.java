@@ -16,12 +16,14 @@ package eu.europa.ec.leos.security;
 import eu.europa.ec.leos.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /* This class is just a indirection to not to replicate code to get user at different places
    SecurityContextHolder manages context for different threads. So it would return respective user for the thread*/
@@ -53,6 +55,10 @@ public class SecurityContext {
         } else {
             return principal.toString();
         }
+    }
+
+    public List<String> getAuthorities() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList());
     }
 
     public boolean isUserAuthenticated() {

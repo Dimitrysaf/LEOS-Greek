@@ -664,12 +664,8 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> getConfig(HttpServletRequest request) {
         try {
-            String systemName = null;
-            String token = request.getHeader(CLIENT_CONTEXT_PARAMETER);
-            if(StringUtils.isNotBlank(token) && tokenService.validateClientContextToken(token)) {
-                systemName = tokenService.extractUserSystemNameFromToken(token);
-            }
-            AppConfigResponse appConfigResponse = configService.getApplicationConfig(systemName);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
+            AppConfigResponse appConfigResponse = configService.getApplicationConfig(clientContextToken);
             return new ResponseEntity<>(appConfigResponse, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting application configuration - " + e.getMessage());

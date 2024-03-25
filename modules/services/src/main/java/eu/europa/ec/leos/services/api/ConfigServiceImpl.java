@@ -17,6 +17,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.profile.ProfileService;
@@ -38,19 +39,21 @@ public class ConfigServiceImpl implements ConfigService {
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
     private final MessageHelper messageHelper;
     private final ProfileService profileService;
+    private final TokenService tokenService;
 
     @Autowired
     public ConfigServiceImpl(Properties applicationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
-            Provider<StructureContext> structureContextProvider, MessageHelper messageHelper, ProfileService profileService) {
+            Provider<StructureContext> structureContextProvider, MessageHelper messageHelper, ProfileService profileService, TokenService tokenService) {
         this.applicationProperties = applicationProperties;
         this.securityContext = securityContext;
         this.authorityMapHelper = authorityMapHelper;
         this.messageHelper = messageHelper;
         this.profileService = profileService;
+        this.tokenService = tokenService;
     }
 
     @Override
-    public AppConfigResponse getApplicationConfig(String systemName) {
+    public AppConfigResponse getApplicationConfig(String clientContextToken) {
         AppConfigResponse appConfigResponse = new AppConfigResponse();
 
         String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
@@ -72,9 +75,11 @@ public class ConfigServiceImpl implements ConfigService {
         String annotatePopupDefaultStatus = applicationProperties.getProperty("annotate.popup.default.status");
         boolean collectionCloseButtonEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.collection.close.button.enabled"));
         boolean showRevisionEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.view.revision.milestone"));
+        String contextRole = null;
         Profile profile = null;
-        if(StringUtils.isNotEmpty(systemName)) {
-            profile = profileService.getProfile(systemName);
+        if(StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
+            contextRole = tokenService.extractUserRoleFromToken(clientContextToken);
+            profile = profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken));
         }
 
         appConfigResponse.setMappingUrl(mappingUrl);
@@ -97,9 +102,8 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setAnnotatePopupDefaultStatus(annotatePopupDefaultStatus);
         appConfigResponse.setCollectionCloseButtonEnabled(collectionCloseButtonEnabled);
         appConfigResponse.setShowRevisionEnabled(showRevisionEnabled);
-        if(profile != null) {
-            appConfigResponse.setProfile(profile);
-        }
+        appConfigResponse.setContextRole(contextRole);
+        appConfigResponse.setProfile(profile);
 
         return appConfigResponse;
     }

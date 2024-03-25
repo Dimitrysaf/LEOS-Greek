@@ -415,7 +415,7 @@ public class GenericDocumentApiService {
         String element = this.elementProcessor.getElement(document, elementTagName, elementId);
         return new EditElementResponse(
                 user,
-                leosPermissionAuthorityMapHelper.getPermissionsForRoles(user.getRoles()),
+                leosPermissionAuthorityMapHelper.getPermissionsForRoles(securityContext.getAuthorities()),
                 elementId,
                 elementTagName,
                 element,
