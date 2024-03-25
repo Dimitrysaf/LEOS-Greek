@@ -40,6 +40,8 @@ import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
@@ -856,12 +858,23 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public Object findRecentPackagesForUser(String userId, String numberOfResult) {
+    public List<RecentPackageResponse> findRecentPackagesForUser(String userId, String numberOfResult) {
         return null;
     }
 
     @Override
-    public Object findFavouritePackagesForUser(String userId) {
+    public List<FavouritePackageResponse> findFavouritePackagesForUser(String userId) {
         return null;
     }
+
+    @Override
+    public FavouritePackageResponse getFavouritePackage(String ref, String userId) {
+        return null;
+    }
+
+    @Override
+    public FavouritePackageResponse toggleFavouritePackage(String ref, String userId) {
+        return null;
+    }
+
 }

@@ -42,6 +42,8 @@ import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.rest.support.util.ConversionUtils;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1000,7 +1002,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @Override
     @PerformanceLogger
     @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator", condition = "#root.target.cacheEnabled")
-    public Object findRecentPackagesForUser(String userId, String numberOfResult) {
+    public List<RecentPackageResponse> findRecentPackagesForUser(String userId, String numberOfResult) {
         logger.trace("Finding recent packages by userId... [userId=" + userId + ", numberOfResult=" + numberOfResult + ']');
         return repository.findRecentPackagesForUser(userId, numberOfResult);
     }
@@ -1008,8 +1010,24 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @Override
     @PerformanceLogger
     @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator", condition = "#root.target.cacheEnabled")
-    public Object findFavouritePackagesForUser(String userId) {
+    public List<FavouritePackageResponse> findFavouritePackagesForUser(String userId) {
         logger.trace("Finding favourite packages by userId... [userId=" + userId + ']');
         return repository.findFavouritePackagesForUser(userId);
     }
+
+    @Override
+    @PerformanceLogger
+    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator", condition = "#root.target.cacheEnabled")
+    public FavouritePackageResponse getFavouritePackage(String ref, String userId) {
+        logger.trace("Finding package for document... [ref=" + ref + ']');
+        return repository.getFavouritePackage(ref, userId);
+    }
+
+    @Override
+    @PerformanceLogger
+    public FavouritePackageResponse toggleFavouritePackage(String ref, String userId) {
+        logger.trace("Toggle favourite package for document... [ref=" + ref + ']');
+        return repository.toggleFavouritePackage(ref, userId);
+    }
+
 }

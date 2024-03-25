@@ -25,14 +25,14 @@ export class LandingPageService {
 
   findFavouritePackagesForUser(): Observable<PackagesFavourite[]> {
     return this.http.get<PackagesFavourite[]>(
-      `${apiBaseUrl}/secured/home/my-favorite-packages`,
+      `${apiBaseUrl}/secured/home/my-favourite-packages`,
     );
   }
 
   getUserDoc(pkg: PackagesRecentlyChanged): Observable<Document> {
     return this.http.get<Document>(`${apiBaseUrl}/secured/proposals/${pkg}`);
   }
-  
+
   toggleNotifications() {
     const currentValue = this.isNotificationShownBS.getValue();
     this.isNotificationShownBS.next(!currentValue);

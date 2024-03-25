@@ -62,6 +62,8 @@ public class PackageCollaborators implements Serializable {
     @JoinColumn(name = "PACKAGE_ID", referencedColumnName = "ID")
     @ManyToOne(optional = false)
     private Package pkg;
+    @Column(name = "IS_FAVORITE")
+    private BigDecimal favorite = BigDecimal.ZERO;
 
     public PackageCollaborators() {
     }
@@ -124,6 +126,14 @@ public class PackageCollaborators implements Serializable {
 
     public void setPackage(Package pkg) {
         this.pkg = pkg;
+    }
+
+    public BigDecimal getFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(BigDecimal favorite) {
+        this.favorite = favorite;
     }
 
     @Override

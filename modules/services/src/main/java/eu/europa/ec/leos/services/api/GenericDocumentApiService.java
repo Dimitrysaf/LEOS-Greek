@@ -40,8 +40,6 @@ import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
-import eu.europa.ec.leos.services.response.FavouritePackageResponse;
-import eu.europa.ec.leos.services.response.RecentPackageResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
@@ -52,6 +50,8 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.RefConfig;
@@ -598,12 +598,22 @@ public class GenericDocumentApiService {
     public List<RecentPackageResponse> findRecentPackagesForUser() {
         String userId = securityContext.getUser().getLogin();
         String numberOfResult = applicationProperties.getProperty("leos.home.page.result");
-        return (List<RecentPackageResponse>) this.leosRepository.findRecentPackagesForUser(userId, numberOfResult);
+        return this.leosRepository.findRecentPackagesForUser(userId, numberOfResult);
     }
 
-    public List<FavouritePackageResponse> findFavoritePackagesForUser() {
+    public List<FavouritePackageResponse> findFavouritePackagesForUser() {
         String userId = securityContext.getUser().getLogin();
-        return (List<FavouritePackageResponse>) this.leosRepository.findFavouritePackagesForUser(userId);
+        return this.leosRepository.findFavouritePackagesForUser(userId);
+    }
+
+    public FavouritePackageResponse getFavouritePackage(String ref) {
+        String userId = securityContext.getUser().getLogin();
+        return this.leosRepository.getFavouritePackage(ref, userId);
+    }
+
+    public FavouritePackageResponse toggleFavouritePackage(String ref) {
+        String userId = securityContext.getUser().getLogin();
+        return this.leosRepository.toggleFavouritePackage(ref, userId);
     }
 
 }

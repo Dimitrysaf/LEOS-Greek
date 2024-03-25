@@ -13,17 +13,21 @@
  */
 package eu.europa.ec.leos.repository.services;
 
+import eu.europa.ec.leos.repository.entities.Collaborators;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.entities.Package;
+import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.repositories.CollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
 import eu.europa.ec.leos.repository.repositories.PackageRepository;
+import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +56,8 @@ public class PackageServiceImpl implements PackageService {
 
     private final DocumentVRepository documentVRepository;
     private final PackageRepository packageRepository;
+    private final CollaboratorsRepository collaboratorsRepository;
+    private final PackageCollaboratorsRepository packageCollaboratorsRepository;
     private final DocumentPropertyValuesRepository documentPropertyValuesRepository;
     private final DocumentContentRepository documentContentRepository;
     private final CollaboratorsService collaboratorsService;
@@ -62,6 +68,7 @@ public class PackageServiceImpl implements PackageService {
 
     @Autowired
     public PackageServiceImpl(DocumentVRepository documentVRepository, PackageRepository packageRepository,
+                              CollaboratorsRepository collaboratorsRepository, PackageCollaboratorsRepository packageCollaboratorsRepository,
                               DocumentPropertyValuesRepository documentPropertyValuesRepository,
                               DocumentContentRepository documentContentRepository, CollaboratorsService collaboratorsService,
                               DocumentMilestoneListRepository documentMilestoneListRepository, DocumentMilestoneRepository documentMilestoneRepository,
@@ -69,6 +76,8 @@ public class PackageServiceImpl implements PackageService {
                               @Lazy DocumentService documentService) {
         this.documentVRepository = documentVRepository;
         this.packageRepository = packageRepository;
+        this.collaboratorsRepository = collaboratorsRepository;
+        this.packageCollaboratorsRepository = packageCollaboratorsRepository;
         this.documentContentRepository = documentContentRepository;
         this.documentPropertyValuesRepository = documentPropertyValuesRepository;
         this.collaboratorsService = collaboratorsService;
@@ -235,15 +244,42 @@ public class PackageServiceImpl implements PackageService {
         }
     }
 
-    public List<PackagesFavorites> findFavoritePackagesForUser(final String userName) throws RepositoryException {
+    public List<PackagesFavorites> findFavouritePackagesForUser(final String userName) throws RepositoryException {
         try {
-            return packageRepository.findFavoritePackagesForUser(userName);
+            return packageRepository.findFavouritePackagesForUser(userName);
         }
         catch (Exception e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, userName);
         }
     }
 
+    public PackagesFavorites getFavouritePackage(final String userName, final String ref) throws RepositoryException {
+        try {
+            return packageRepository.getFavouritePackage(userName, ref).get();
+        }
+        catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ref);
+        }
+    }
 
+    @Transactional(rollbackFor = Exception.class)
+    public PackagesFavorites toggleFavouritePackage(final String userName, final String ref) throws RepositoryException {
+        try {
+            Optional<PackagesFavorites> pkg = packageRepository.getFavouritePackage(userName, ref);
+            List<Collaborators> listCollaborators = collaboratorsRepository.findCollaboratorByName(userName);
+            if (pkg.isPresent() && listCollaborators.size() > 0) {
+                for (Collaborators collaborator: listCollaborators) {
+                    Optional<PackageCollaborators> packageCollaborators = packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(
+                            pkg.get().getPackageId(), collaborator.getId());
+                    packageCollaborators.get().setFavorite(new BigDecimal((packageCollaborators.get().getFavorite().intValue()+1)%2));
+                    packageCollaboratorsRepository.save(packageCollaborators.get());
+                }
+            }
+            return packageRepository.getFavouritePackage(userName, ref).get();
+        }
+        catch (Exception e) {
+            throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ref);
+        }
+    }
 
 }

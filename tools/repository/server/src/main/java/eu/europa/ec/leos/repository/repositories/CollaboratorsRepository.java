@@ -18,6 +18,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 public interface CollaboratorsRepository extends JpaRepository<Collaborators, BigDecimal> {
@@ -26,4 +27,8 @@ public interface CollaboratorsRepository extends JpaRepository<Collaborators, Bi
 
     @Query(value = "SELECT * FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = ?1 AND c.ROLE_ID = ?2 AND c.ORGANIZATION = ?3", nativeQuery = true)
     Optional<Collaborators> findCollaboratorByNameRoleAndOrganization(String collaboratorName, String role, String organization);
+
+    @Query(value = "SELECT * FROM COLLABORATORS c WHERE c.COLLABORATOR_NAME = ?1", nativeQuery = true)
+    List<Collaborators> findCollaboratorByName(String collaboratorName);
+
 }
