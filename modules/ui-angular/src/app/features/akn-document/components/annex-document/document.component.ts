@@ -287,14 +287,8 @@ export class DocumentComponent
         .forEach((el) => el.remove());
 
       akomantosoEl.querySelectorAll('docPurpose').forEach((el) => {
-        let docInnerHTML = el.textContent;
-        if (docInnerHTML) {
-          docInnerHTML = docInnerHTML.replace(
-            /<del[^>]*?>[\s\S]*?<\/del>/gi,
-            '',
-          );
-          docInnerHTML = docInnerHTML.replace(/<\/?ins[^>]*?>/gi, '');
-          el.innerHTML = docInnerHTML;
+        if (el.textContent) {
+          el.innerHTML = decodeURI(el.textContent);
         }
       });
     }

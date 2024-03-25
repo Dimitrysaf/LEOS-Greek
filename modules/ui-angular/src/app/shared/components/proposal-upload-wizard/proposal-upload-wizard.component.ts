@@ -22,6 +22,7 @@ import {
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { ProposalService } from '@/shared/services/proposal.service';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
+import { cleanDelInsert } from '@/shared/utils/string.utils';
 
 import { GLOBAL } from '../../../../config/global';
 
@@ -248,7 +249,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
           this.currentStepIndex = 2;
           this.uploadForm.patchValue({
             templateName: res.documentToBeCreated.metadata.templateName,
-            docPurpose: res.documentToBeCreated.metadata.docPurpose,
+            docPurpose: cleanDelInsert(res.documentToBeCreated.metadata.docPurpose),
             eeaRelevance: res.documentToBeCreated.metadata.eeaRelevance,
             packageTitle: res.documentToBeCreated.metadata.packageTitle,
             internalReference: res.documentToBeCreated.metadata.internalRef,
@@ -266,4 +267,5 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     }
     return '';
   }
+
 }
