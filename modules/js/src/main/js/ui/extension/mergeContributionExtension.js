@@ -30,10 +30,8 @@ define(function mergeContributionExtensionModule(require) {
     var MERGE_CONTRIBUTION = "merge-contribution-wrapper";
     var MERGE_ACTION_WRAPPER = ".merge-actions-wrapper";
     var ACTION_DONE_CLASS = "contribution-wrapper-after-merge";
-    var SELECTED_CONTRIBUTION_CLASS = "selected-contribution-wrapper";
     var MOVE_FROM = "move_from", INSERT = "insert", DELETE = "delete", PARENT_AFFECTED = "parent_affected", UNDO = "UNDO"
         , PROCESSED = "PROCESSED", ACCEPT = "ACCEPT", ACCEPT_TC = "ACCEPT_TC";
-    var NUM = "num";
 
     var callback = (mutationList, observer) => {
         var $elements = $('.' + MERGE_CONTRIBUTION);
@@ -44,6 +42,7 @@ define(function mergeContributionExtensionModule(require) {
        }
     };
     var wrapperElementsList;
+    var higherElements = [];
 
     function _initExtension(connector) {
         connector.refreshContributions = _refreshContributions;
@@ -67,29 +66,35 @@ define(function mergeContributionExtensionModule(require) {
         var $parent_element;
         for (let i = 0; i < $changed_element.length; i++) {
             var $element = $($changed_element[i]);
-            if ($element.length > 0 && $element.attr('id') && $element.attr('id').includes(REVISION_PREFIX)) {
+            if ($element.length > 0 && $element.attr(UTILS.ID) && $element.attr(UTILS.ID).includes(REVISION_PREFIX) && UTILS.getElementTagName($element).toLowerCase() !== UTILS.NUM) {
                 var $main_element = $element.closest(MAIN_ELEMENT_SELECTOR);
-                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== NUM) {
-                    if ($main_element.attr('id') != $element.attr('id')) {
+                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== UTILS.NUM) {
+                    const mainEltTag = UTILS.getElementTagName($main_element).toLowerCase();
+                    if ($main_element.attr(UTILS.ID) != $element.attr(UTILS.ID)) {
                         $main_element.attr(PARENT_AFFECTED, "true");
                     } else {
                         $main_element.removeAttr(PARENT_AFFECTED);
                     }
-                    _attachWrapperActionEvents(connector, $main_element)
-                }
-                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== NUM) {
-                    $parent_element = $main_element.parents(MAIN_ELEMENT_SELECTOR);
-                    if ($parent_element.length > 0 && UTILS.getElementTagName($parent_element).toLowerCase() !== NUM && $changed_element.index($parent_element) === -1) {
-                        $parent_element.attr(PARENT_AFFECTED, "true");
-                        _attachWrapperActionEvents(connector, $parent_element)
+                    if (higherElements.indexOf(mainEltTag) === -1) {
+                        _attachWrapperActionEvents(connector, $main_element);
+                        checkIfAlreadyProcessedAndSetCssClass($changed_element, $element, $main_element);
+                    } else {
+                        _attachWrapperActionEvents(connector, $element);
                     }
                 }
-                if (!!$parent_element && $parent_element.length > 0 && UTILS.getElementTagName($parent_element).toLowerCase() !== NUM
-                    && $changed_element.index($parent_element) === -1) {
-                    checkIfAlreadyProcessedAndSetCssClass($changed_element, $element, $parent_element);
-                }
-                if (UTILS.getElementTagName($main_element).toLowerCase() !== NUM) {
-                    checkIfAlreadyProcessedAndSetCssClass($changed_element, $element, $main_element);
+                if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== UTILS.NUM) {
+                    $parent_element = $main_element.parents(MAIN_ELEMENT_SELECTOR);
+                    if ($parent_element.length > 0) {
+                        for (let j = 0; j < $parent_element.length; j++) {
+                            var $parent = $($parent_element[j]);
+                            const parentEltTag = UTILS.getElementTagName($parent).toLowerCase();
+                            if (parentEltTag !== UTILS.NUM
+                                && higherElements.indexOf(parentEltTag) === -1 && $changed_element.index($parent) === -1) {
+                                $parent.attr(PARENT_AFFECTED, "true");
+                                _attachWrapperActionEvents(connector, $parent);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -97,94 +102,57 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function checkIfAlreadyProcessedAndSetCssClass($changed_elements, $element, $main_element) {
-        const $originalElementWithChangedID =$("#" + $element.attr('id').replace(REVISION_PREFIX, ''));
-        const $originalElement =$("#" + $element.attr('id').replace(REVISION_PREFIX, '').replace(MOVED_PREFIX, '').replace(DELETED_PREFIX, ''));
-        const action = $main_element.attr(MERGE_ACTION_ATTR);
-        if (!action && !$main_element.hasClass(SELECTED_CONTRIBUTION_CLASS)) {
+        const $originalElementWithChangedID =$("#" + $element.attr(UTILS.ID).replace(REVISION_PREFIX, ''));
+        const $originalElement =$("#" + $element.attr(UTILS.ID).replace(REVISION_PREFIX, '').replace(MOVED_PREFIX, '').replace(DELETED_PREFIX, ''));
+        const action = $element.attr(MERGE_ACTION_ATTR);
+        const selectedAction = $element.attr(SELECTED_ACTION_ATTR);
+        if (!action && !selectedAction) {
             if ($originalElementWithChangedID.length > 0 && $changed_elements.index($originalElementWithChangedID) !== -1 &&
+                ($element.attr(TRACK_ACTION_ATTR) || $element.attr(TRACK_ACTION_ATTR)) &&
                 ($element.attr(TRACK_ACTION_ATTR) === $originalElementWithChangedID.attr(TRACK_ACTION_ATTR)
                     || $element.attr(SOFT_ACTION_ATTR) === $originalElementWithChangedID.attr(SOFT_ACTION_ATTR))) {
-                $main_element.addClass(ACTION_DONE_CLASS);
+                $main_element[0].classList.add(ACTION_DONE_CLASS);
             } else if ($originalElement.length === 0 && $changed_elements.index($originalElement) === -1 && $element.attr(TRACK_ACTION_ATTR) === DELETE) {
-                $main_element.addClass(ACTION_DONE_CLASS);
+                $main_element[0].classList.add(ACTION_DONE_CLASS);
             } else if ($originalElement.length > 0 && $changed_elements.index($originalElement) === -1  && $element.attr(TRACK_ACTION_ATTR) === INSERT && !$element.attr(SOFT_ACTION_ATTR)) {
-                $main_element.addClass(ACTION_DONE_CLASS);
+                $main_element[0].classList.add(ACTION_DONE_CLASS);
             }
         } else if (!!action) {
-            $main_element.addClass(ACTION_DONE_CLASS);
-        } else {
-            $main_element.removeClass(ACTION_DONE_CLASS);
+            $main_element[0].classList.add(ACTION_DONE_CLASS);
         }
     }
 
     function _refreshActions($element, $actions) {
         const action = $element.attr(MERGE_ACTION_ATTR);
         const selectedAction = $element.attr(SELECTED_ACTION_ATTR);
-        if (!!action && !selectedAction) {
-            $element.addClass(ACTION_DONE_CLASS);
-        }
         if ($actions.length > 0) {
+            $actions.removeClass("selectedAccept");
+            $actions.removeClass("selectedAcceptTc");
+            $actions.removeClass("selectedProcessed");
+            $actions.removeClass("selectedUndo");
             if (!action && !selectedAction && $element.hasClass(ACTION_DONE_CLASS)) {
                 $actions.css({display: "none"});
             } else if (!!selectedAction && !!action && action !== UNDO) {
-                const accepted = $actions.find("[data-widget-type='accepted']");
-                const accepted_tc = $actions.find("[data-widget-type='accepted_tc']");
-                const processed = $actions.find("[data-widget-type='processed']");
-                $actions.children().css({display: "inline-block"});
-                $($actions.children()[0]).css({display: "none"});
-                accepted.css({display: "none"});
-                accepted_tc.css({display: "none"});
-                processed.css({display: "none"});
+                $actions.addClass("selectedUndo");
             } else if (!!selectedAction && (!action || action === UNDO)) {
-                const accepted = $actions.find("[data-widget-type='accepted']");
-                const accepted_tc = $actions.find("[data-widget-type='accepted_tc']");
-                const processed = $actions.find("[data-widget-type='processed']");
-                $actions.children().css({display: "inline-block"});
-                $($actions.children()[0]).css({display: "none"});
                 if (selectedAction === ACCEPT) {
-                    accepted.css({display: "inline-block"});
-                    accepted_tc.css({display: "none"});
-                    processed.css({display: "none"});
+                    $actions.addClass("selectedAccept");
                 } else if (selectedAction === ACCEPT_TC) {
-                    accepted.css({display: "none"});
-                    accepted_tc.css({display: "inline-block"});
-                    processed.css({display: "none"});
+                    $actions.addClass("selectedAcceptTc");
                 } else if (selectedAction === PROCESSED) {
-                    accepted.css({display: "none"});
-                    accepted_tc.css({display: "none"});
-                    processed.css({display: "inline-block"});
+                    $actions.addClass("selectedProcessed");
                 } else if (selectedAction === UNDO) {
-                    accepted.css({display: "none"});
-                    accepted_tc.css({display: "none"});
-                    processed.css({display: "none"});
+                    $actions.addClass("selectedUndo");
                 }
             } else if (!selectedAction && !!action && action !== UNDO) {
-                const accepted = $actions.find("[data-widget-type='accepted']");
-                const accepted_tc = $actions.find("[data-widget-type='accepted_tc']");
-                const processed = $actions.find("[data-widget-type='processed']");
-                $actions.children().css({display: "inline-block"});
-                $($actions.children()[0]).css({display: "none"});
                 if (action === ACCEPT) {
-                    accepted.css({display: "inline-block"});
-                    accepted_tc.css({display: "none"});
-                    processed.css({display: "none"});
+                    $actions.addClass("selectedAccept");
                 } else if (action === ACCEPT_TC) {
-                    accepted.css({display: "none"});
-                    accepted_tc.css({display: "inline-block"});
-                    processed.css({display: "none"});
+                    $actions.addClass("selectedAcceptTc");
                 } else if (action === PROCESSED) {
-                    accepted.css({display: "none"});
-                    accepted_tc.css({display: "none"});
-                    processed.css({display: "inline-block"});
+                    $actions.addClass("selectedProcessed");
                 } else if (action === UNDO) {
-                    accepted.css({display: "none"});
-                    accepted_tc.css({display: "none"});
-                    processed.css({display: "none"});
-                }
-            } else {
-                if ($actions.children()[1].style.display !== 'none') {
-                    $actions.children().css({display: "none"});
-                    $($actions.children()[0]).css({display: "inline-block"});
+                    $actions.addClass("selectedUndo");
                 }
             }
         }
@@ -201,15 +169,9 @@ define(function mergeContributionExtensionModule(require) {
                 $wrappedChildren = $wrappedParent.find("." + MERGE_CONTRIBUTION);
             }
 
-            // If this is there only one action included in parent, no need to wrap the child
-            if (!!$wrappedChildren && $wrappedChildren.length === 1 && !$wrappedParent.attr(SOFT_ACTION_ATTR) && !$wrappedParent.attr(TRACK_ACTION_ATTR)
-                && $wrappedParent.attr(MERGE_ACTION_ATTR) === $wrappedElement.attr(MERGE_ACTION_ATTR)) {
-                _removeWrapperAndAction($wrappedElement);
-            }
-
             // Checks if sub element has been moved to an added element
             if (!!$wrappedParent && $wrappedParent.length > 0) {
-                const id = $wrappedElement.attr('id');
+                const id = $wrappedElement.attr(UTILS.ID);
                 if (!!id && id.includes(MOVED_PREFIX)) {
                     const $moveDestElt = $('#' + id.replaceAll(MOVED_PREFIX, ''));
                     if ($moveDestElt.length === 1) {
@@ -236,7 +198,7 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function _removeWrapperAndAction($element) {
-        $element.removeClass(MERGE_CONTRIBUTION);
+        $element[0].classList.remove(MERGE_CONTRIBUTION);
         let $actions = $element.next(MERGE_ACTION_WRAPPER);
         if (!!$actions && $actions.length > 0) {
             $actions.remove();
@@ -246,7 +208,7 @@ define(function mergeContributionExtensionModule(require) {
 
     function _attachWrapperActionEvents(connector, $element) {
        if (!$element.hasClass(MERGE_CONTRIBUTION)) {
-           $element.addClass(MERGE_CONTRIBUTION);
+           $element[0].classList.add(MERGE_CONTRIBUTION);
            _attachActions(connector, $element);
            _createClickActions(connector, $element);
            let observer = new MutationObserver(callback);
@@ -297,11 +259,11 @@ define(function mergeContributionExtensionModule(require) {
 
             var left_position;
 
-            left_position = $element.position().left + $element[0].offsetWidth - 8;
+            left_position = $element.position().left + $element[0].offsetWidth /*- 8*/;
 
             $actions.css({
                 top: $element.position().top + 9,
-                left: left_position + 5 - actionsWidth,
+                left: left_position + 5 /*- actionsWidth*/,
             });
         }
     }
@@ -358,9 +320,11 @@ define(function mergeContributionExtensionModule(require) {
     function _populateTocItemList() {
         let connector = this;
         wrapperElementsList = JSON.parse(connector.getState().tocItemsJsonArray);
+        higherElements = wrapperElementsList.filter(elt => elt.draggable && elt.childrenAllowed).map(elt => elt.aknTag);
         var wrappedEltsList = wrapperElementsList.filter(elt => elt.draggable).map(elt => elt.aknTag);
-        wrappedEltsList.push("num");
-        wrappedEltsList.push("paragraph");
+        wrappedEltsList.push(UTILS.NUM);
+        wrappedEltsList.push(UTILS.PARAGRAPH);
+        wrappedEltsList.push(UTILS.HEADING);
         MAIN_ELEMENT_SELECTOR = wrappedEltsList.join(',');
         _registerActionTriggers(connector);
     }

@@ -6,11 +6,10 @@ export enum ContributionActionAttrValue {
   UNDO = "UNDO",
 }
 
-const CONTRIBUTION_SELECTED = "selected-contribution-wrapper";
 const MERGE_CONTRIBUTION = "merge-contribution-wrapper";
 const MERGE_ACTION_ATTR = "leos:mergeAction";
-const SELECTED_ACTION_ATTR = "leos:selectedAction";
 const ACTION_DONE_CLASS = "contribution-wrapper-after-merge";
+const SELECTED_ACTION_ATTR = "leos:selectedAction";
 const LEOS_TRACK_ACTION = 'leos:action';
 const LEOS_SOFT_ACTION = 'leos:softaction';
 const LEOS_SOFT_ACTION_MOVE_TO = 'leos:softmove_to';
@@ -30,7 +29,6 @@ const PARENT_AFFECTED = "parent_affected";
 export {
   REVISION_PREFIX,
   ID,
-  CONTRIBUTION_SELECTED,
   MERGE_CONTRIBUTION,
   ACTION_DONE_CLASS,
   MERGE_ACTION_ATTR,

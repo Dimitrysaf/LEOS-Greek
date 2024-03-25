@@ -228,6 +228,24 @@ public interface XmlContentProcessor {
     Element getChildElement(byte[] xmlContent, String tagName, String idAttributeValue, List<String> elementTags, int position);
 
     /**
+     * get the first child element given an element id attribute value
+     *
+     * @param xmlContent
+     * @param idAttributeValue
+     * @return first child of element
+     */
+    Element getFirstChildElement(byte[] xmlContent, String idAttributeValue);
+
+    /**
+     * get the last child element given an element id attribute value
+     *
+     * @param xmlContent
+     * @param idAttributeValue
+     * @return last child of element
+     */
+    Element getLastChildElement(byte[] xmlContent, String idAttributeValue);
+
+    /**
      * get the last child element given an element id attribute value, tag name, considering only tag elements provided
      *
      * @param xmlContent

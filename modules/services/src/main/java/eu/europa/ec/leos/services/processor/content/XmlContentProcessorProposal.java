@@ -51,6 +51,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
@@ -423,10 +424,14 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         XercesUtils.removeAttribute(nodeToRestore, LEOS_ACTION_ATTR);
         XercesUtils.removeAttribute(nodeToRestore, LEOS_TITLE);
         XercesUtils.removeAttribute(nodeToRestore, LEOS_UID);
-        XercesUtils.removeAttribute(nodeToRestore, LEOS_EDITABLE_ATTR);
+        if (XercesUtils.hasAttribute(nodeToRestore, LEOS_EDITABLE_ATTR)) {
+            XercesUtils.addAttribute(nodeToRestore, LEOS_EDITABLE_ATTR, "true");
+        }
         XercesUtils.updateXMLIDAttributeFullStructureNode(nodeToRestore, EMPTY_STRING, true);
         Node numNode = getFirstChild(nodeToRestore, getNumTag(nodeToRestore.getNodeName()));
-        if (numNode != null) {
+        Optional<TocItem> tocItem =
+                structureContextProvider.get().getTocItems().stream().filter((item) -> item.getAknTag().name().equalsIgnoreCase(nodeToRestore.getNodeName())).findFirst();
+        if (numNode != null && (tocItem.isPresent() && tocItem.get().isAutoNumbering())) {
             numNode.setTextContent("#");
             XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
             XercesUtils.removeAttribute(numNode, LEOS_TITLE);
@@ -472,7 +477,9 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             if (letsRestore) {
                 XercesUtils.removeAttribute(nodeToRestore, LEOS_INITIAL_NUM_ATTR);
                 Node numNode = getFirstChild(nodeToRestore, getNumTag(nodeToRestore.getNodeName()));
-                if (numNode != null) {
+                Optional<TocItem> tocItem =
+                        structureContextProvider.get().getTocItems().stream().filter((item) -> item.getAknTag().name().equalsIgnoreCase(nodeToRestore.getNodeName())).findFirst();
+                if (numNode != null && (tocItem.isPresent() && tocItem.get().isAutoNumbering())) {
                     numNode.setTextContent("#");
                     XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
                     XercesUtils.removeAttribute(numNode, LEOS_TITLE);

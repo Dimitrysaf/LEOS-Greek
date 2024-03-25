@@ -1,0 +1,1156 @@
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <bill name="REG">
+        <meta>
+            <identification source="~COM">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="9999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="true"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="9999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="en"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="9999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:akn4euVersion value="4.0.0.0"/>
+                    </preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~COM">
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
+            </references>
+            <proprietary source="~leos">
+                <leos:templateVersion>3.0.0</leos:templateVersion>
+                <leos:docVersion>0.1.0</leos:docVersion>
+                <leos:template>SJ-023</leos:template>
+                <leos:docTemplate>BL-023</leos:docTemplate>
+                <leos:docPurpose xml:id="proprietary__docpurpose">establishing the European Union Single Window Environment for Customs and amending Regulation (EU) No 952/2013</leos:docPurpose>
+                <leos:docStage xml:id="proprietary__docstage">Proposal for a</leos:docStage>
+                <leos:docType xml:id="proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType>
+                <leos:objectId/>
+                <leos:refOrigin>REG-clthawxoi0003jl56782c2n3o-en</leos:refOrigin>
+                <leos:clonedProposals>
+                    <leos:milestoneRef name="PROP_ACT-clthay0d30005jl56g1hj60m2-en.leg">
+                        <clonedProposalRef ref="REG-clthay8jz000ajl56z68jsqqn-en">
+                            <targetUser>dasatya</targetUser>
+                            <creationDate>Thu Mar 07 15:07:31 CET 2024</creationDate>
+                            <status>Sent for contribution</status>
+                        </clonedProposalRef>
+                    </leos:milestoneRef>
+                    <leos:milestoneRef name="PROP_ACT-cltmu0lxt0006bk28wtsx1w5a-en.leg">
+                        <clonedProposalRef ref="REG-cltmu0ytj000cbk28i47vpokf-en">
+                            <targetUser>demo</targetUser>
+                            <creationDate>Mon Mar 11 12:00:22 CET 2024</creationDate>
+                            <status>Sent for contribution</status>
+                        </clonedProposalRef>
+                    </leos:milestoneRef>
+                </leos:clonedProposals>
+                <leos:ref>REG-cltmu06e80004bk281ck5uolr-en</leos:ref>
+            </proprietary>
+        </meta>
+        <coverPage xml:id="coverpage">
+            <container name="logo" xml:id="coverpage__container_1">
+                <p xml:id="coverpage__container_1__p">
+                    <img alt="European Commission" src="data:image/png;base64,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" title="European Commission" xml:id="coverpage__container_1__p__img"/>
+                </p>
+            </container>
+            <longTitle xml:id="coverpage__longtitle">
+                <p xml:id="coverpage__longtitle__p">
+                    <docStage xml:id="coverpage__longtitle__p__docstage">Proposal for a</docStage>
+                    <docType refersTo="~REG" xml:id="coverpage__longtitle__p__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
+                    <docPurpose xml:id="coverpage__longtitle__p__docpurpose">establishing the European Union Single Window Environment for Customs and amending Regulation (EU) No 952/2013</docPurpose>
+                </p>
+            </longTitle>
+            <container name="docLabel" xml:id="coverpage__container_2">
+                <p xml:id="akn_mPCLZl"/>
+            </container>
+            <container name="language" refersTo="#frbrLanguage" xml:id="coverpage__container_3">
+                <p xml:id="coverpage__container_3__p">EN</p>
+            </container>
+        </coverPage>
+        <preface xml:id="preface">
+            <longTitle xml:id="preface__longtitle">
+                <p xml:id="preface__longtitle__p">
+                    <docStage xml:id="preface__longtitle__p__docstage">Proposal for a</docStage>
+                    <docType refersTo="~REG" xml:id="preface__longtitle__p__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
+                    <docPurpose xml:id="preface__longtitle__p__docpurpose">establishing the European Union Single Window Environment for Customs and amending Regulation (EU) No 952/2013</docPurpose>
+                </p>
+            </longTitle>
+        </preface>
+        <preamble xml:id="preamble">
+            <formula name="actingEntity" xml:id="preamble__formula_1">
+                <p xml:id="preamble__formula_1__p">THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</p>
+            </formula>
+            <citations leos:editable="false" xml:id="cits">
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_1">
+                    <p xml:id="cit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in particular Articles 33, 114 and 207 thereof,</p>
+                </citation>
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_2">
+                    <p xml:id="cit_2__p">Having regard to the proposal from the PENDING CHANGES European Commission,</p>
+                </citation>
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_3">
+                    <p xml:id="cit_3__p">After transmission of the draft legislative act to the national CHANGE,</p>
+                </citation>
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_4">
+                    <p xml:id="cit_4__p">Having regard to the opinion of the European Economic and Social Committee
+                        <authorialNote marker="1" placement="bottom" xml:id="authorialnote_1">
+                            <p xml:id="authorialNote_1__p">OJ C [...], [...], p. [...]</p>
+                        </authorialNote>
+                        ,</p>
+                </citation>
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_6">
+                    <p xml:id="cit_6__p">Acting in accordance with the ordinary legislative procedure,</p>
+                </citation>
+            </citations>
+            <recitals leos:editable="false" xml:id="recs">
+                <intro xml:id="recitalsIntro">
+                    <p xml:id="recs_intro">Whereas:</p>
+                </intro>
+                <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_label="MOVED to Recital (6)" leos:softmove_to="rec__tE15Ak" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" leos:uid="gautare" xml:id="moved_rec__tE15Ak">
+                    <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" xml:id="moved_recs_blWVY5">(1)</num>
+                    <p leos:origin="ec" xml:id="moved_recs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
+                        <authorialNote leos:origin="ec" marker="2" placement="bottom" xml:id="moved_recs_je6fAW">
+                            <p leos:origin="ec" xml:id="moved_recs_qfdztM">Regulation (EU) No 952/2013 of the European Parliament and of the Council of 9 October 2013 laying down the Union Customs Code (OJ L 269, 10.10.2013, p. 1).</p>
+                        </authorialNote>
+                        is to ensure the security and safety of the Union and its residents, and the protection of the environment, where appropriate, in close cooperation with other authorities. The authorities responsible for Union non-customs regulatory formalities (â€˜partner competent authoritiesâ€™) and customs authorities often work in silos, creating complex and burdensome reporting obligations for traders and inefficient goods clearance processes conducive to error and fraud. To address the fragmented interoperability between customs and partner competent authorities in the management of goods clearance processes and to coordinate action in this area, the Commission and the Member States have taken a number of commitments over the years to develop single window initiatives for the clearance of goods.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__tt4AmO">
+                    <num xml:id="recs_9SZ1mY">(1)</num>
+                    <p xml:id="recs_Hy6gir">In accordance with Article 4(6) of Decision No 70/2008/EC of the European Parliament and of the Council
+                        <authorialNote marker="3" placement="bottom" xml:id="recs_xf29kl">
+                            <p xml:id="recs_8i8Frp">Decision No 70/2008/EC of the European Parliament and of the Council of 15 January 2008 on a paperless environment for customs and trade (OJ L 23, 26.01.2008, p. 21).</p>
+                        </authorialNote>
+                        , the Member States and the CommissionÂ are to endeavour to establish and make operational a framework of single window services. As stated in theÂ  final report on Evaluation of the electronic customs implementation in the EUÂ of 21 January 2015
+                        <authorialNote marker="4" placement="bottom" xml:id="recs_cWsSOZ">
+                            <p xml:id="recs_drQFcU">Final report prepared by Coffey International Development, Europe Economic Research Ltd and Ramboll Management Consulting on request of the Commission.</p>
+                        </authorialNote>
+                        , while certain elements of that Decision remain highly relevant, other parts either have been superseded or are not concrete enough to encourage and incentivise further advances, in particular on the single window initiative. Following up on this, the Council Conclusions of 17 December 2014 on Electronic Customs and Single Window Implementation in the European Union
+                        <authorialNote marker="5" placement="bottom" xml:id="recs_20qGYF">
+                            <p xml:id="recs_daGNK9">ST16507/14.</p>
+                        </authorialNote>
+                        Â endorsed the Venice Declaration of 15 October 2014
+                        <authorialNote marker="6" placement="bottom" xml:id="recs_IMMmtL">
+                            <p xml:id="recs_utP3hc">Annex to the Council Conclusions of 17 December 2014.</p>
+                        </authorialNote>
+                        and invited the Commission to present a proposal for the revision of Decision No 70/2008/EC.Â </p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__Epl5Gg">
+                    <num xml:id="recs_dSF8Mk">(2)</num>
+                    <p xml:id="recs_ihv95P">On 1 October 2015, the Council adopted Decision (EU) 2015/1947
+                        <authorialNote marker="7" placement="bottom" xml:id="recs_hTuPlb">
+                            <p xml:id="recs_GEZWun">Council Decision (EU) 2015/1947 of 1 October 2015 on the conclusion, on behalf of the European Union, of the Protocol Amending the Marrakesh Agreement establishing the World Trade Organisation (OJ L 284, 30.10.2015, p. 1).</p>
+                        </authorialNote>
+                        approving, on behalf of the Union, the Agreement on Trade Facilitation, whichÂ entered into force on 22 February 2017. ThatÂ agreement represents the most extensive effort at trade facilitation and customs reform under the World Trade Organisation. It contains provisions that aim to significantly improve goods clearance and the effective cooperation between customs and other regulatory authorities on trade facilitation and customs compliance issues. In accordance with Article 10(4) of the agreement, members are to endeavour to establish or maintain a single window, enabling traders to submit documentation and/or data requirements for the import, export or transit of goods through a single entry point to the participating authorities or agencies. Â Â </p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__hzMbu2">
+                    <num xml:id="recs_BihC4S">(3)</num>
+                    <p xml:id="recs_H00esS">Trade facilitation, and safety and security, concern all authorities involved in the goods clearance process across Union borders. The rapid rise in international trade has increased the need for better cooperation and coordination among those authorities. The ongoing process of digitalisation allows this situation to be addressed more efficiently by connecting the systems of customs and partner competent authorities and enabling a systematic automated exchange of information between them. As such, the current framework of regulatory compliance is insufficient to support an effective interaction between customs and partner competent authorities, whose systems and procedures are characterised by fragmentation and redundancy. A fully coordinated and efficient goods clearance process requires a streamlined Union regulatory environment for international trade that delivers long-term benefits to the Union and its residents in all policy areas.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__e3HXL9">
+                    <num xml:id="recs_MGiqGW">(4)</num>
+                    <p xml:id="recs_uf2SeS">The EUÂ eGovernment action plan 2016-2020 set out in Commission Communication of 19 April 2016
+                        <authorialNote marker="8" placement="bottom" xml:id="recs_gcEX8m">
+                            <p xml:id="recs_Vfkufr">Communication from the Commission to the European Parliament, the Council, the European Economic and Social Committee and the Committee of the Regions, EU eGovernment Action Plan 2016-2020 - Accelerating the digital transformation of government, COM(2016) 179 final of 19 April 2016.</p>
+                        </authorialNote>
+                        seeks to increase the efficiency of public services by removing existing digital barriers, reducing the administrative burden and improving the quality of interactions between national administrations. In line with this vision and the wider efforts to simplify and digitalise reporting processes for theÂ international trade in goods, the Commission developed a voluntary pilot project called European Union Customs Single Window Certificates Exchange. This project allows customs authorities to automatically verify compliance with a limited number of non-customs formalities, enabling information to be exchangedÂ between the customs systems of participating Member States and the respective Union non-customs systems managing non-customs formalities. While the project has improved clearance procedures, its voluntary nature clearly limits its potential to generate substantial benefits for customs authorities, partner competent authorities and economic operators.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__1PpfPV">
+                    <num xml:id="recs_nOwEvy">(5)</num>
+                    <p xml:id="recs_2cbuRE">To achieve a fully digital environment and an efficient goods clearance process for all parties involved in international trade, it is necessary to establish common rules for a harmonised and integrated European Union Single Window Environment for Customs (EUÂ Single Window Environment for Customs). This environment should include a set of fully integrated electronic services delivered at Union and national level to facilitate information sharing and digital cooperation between customs and partner competent authorities and to streamline goods clearance processes for economic operators. The EU Single Window Environment for Customs should be developed in alignment with the possibilities for trustworthy identification and authentication offered by the eIDAS Regulation
+                        <authorialNote marker="9" placement="bottom" xml:id="recs_FUdpmn">
+                            <p xml:id="recs_9pdS5T">Regulation (EU) No 910/2014 of the European Parliament and of the Council of 23 July 2014 on electronic identification and trust services for electronic transactions in the internal market and repealing Directive 1999/93/EC (OJ L 257, 28.8.2014, p. 73).</p>
+                        </authorialNote>
+                        Â and the once-only principle where appropriate, as reiterated in the Single Digital Gateway Regulation
+                        <authorialNote marker="10" placement="bottom" xml:id="recs_quQzuV">
+                            <p xml:id="recs_tFkck6">Regulation (EU) 2018/1724 of the European Parliament and of the Council of 2 October 2018 establishing a single digital gateway to provide access to information, to procedures and to assistance and problem-solving services and amending Regulation (EU) No 1024/2012 (OJ L 295, 21.11.2018, p. 1).</p>
+                        </authorialNote>
+                        . To implement the EUÂ Single Window Environment for Customs, it is necessary to establish, on the basis of the pilot project, a certificates exchange system, the EUÂ Customs Single Window Certificates Exchange System (EU CSW-CERTEX), that interconnects national single window environments for customs and Union non-customs systems managing specific non-customs formalities. It is also necessary to harmonise national single window environments for customs, integrate those environments into the EU Single Window Environment for Customs, and establish a set of rules on digital administrative cooperation within the EU Single Window Environment for Customs.</p>
+                </recital>
+                <recital leos:action="insert" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_from="moved_rec__tE15Ak" leos:softmove_label="MOVED from Recital (1)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" leos:uid="nystepa" xml:id="rec__tE15Ak">
+                    <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.626+01:00" leos:uid="gautare" xml:id="recs_blWVY5">(6)</num>
+                    <p xml:id="recs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
+                        <authorialNote marker="11" placement="bottom" xml:id="recs_je6fAW">
+                            <p xml:id="recs_qfdztM">Regulation (EU) No 952/2013 of the European Parliament and of the Council of 9 October 2013 laying down the Union Customs Code (OJ L 269, 10.10.2013, p. 1).</p>
+                        </authorialNote>
+                        is to ensure the security and safety of the Union and its residents, and the protection of the environment, where appropriate, in close cooperation with other authorities. The authorities responsible for Union non-customs regulatory formalities (â€˜partner competent authoritiesâ€™) and customs authorities often work in silos, creating complex and burdensome reporting obligations for traders and inefficient goods clearance processes conducive to error and fraud. To address the fragmented interoperability between customs and partner competent authorities in the management of goods clearance processes and to coordinate action in this area, the Commission and the Member States have taken a number of commitments over the years to develop single window initiatives for the clearance of goods.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="akn_recital_ic8hRC">
+                    <num xml:id="recs_vSNrBt">(7)</num>
+                    <p xml:id="recs_PvND7v">The exchanges of digital information through EU CSW-CERTEX should cover Union non-customs formalities laid down in Union legislation that customs authorities are entrusted to enforce. Those formalities impose different obligations for the import, export or transit of certain goods, and their verification through customs controls is fundamentally important to the effective functioning of the EU Single Window Environment for Customs. EU CSW-CERTEX should cover digitalised regulatory formalities laid down in Union legislation and managed by partner competent authorities in electronic Union non-customs systems, storing the relevant information from all Member States required for goods clearance. It is therefore appropriate to identify the Union non-customs formalities which should be subject to digital cooperation through EU CSW-CERTEX.Â In particular, EU CSW-CERTEXÂ should initially cover sanitary and phytosanitary requirements, rules regulating the import of organic products, environmental requirements in relation to fluorinated greenhouse gases and ozone depleting substances, and formalities related to the import of cultural goods.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__1kPSyR">
+                    <num xml:id="recs_Op6vYS">(8)</num>
+                    <p xml:id="recs_YJuOP2">EU CSW-CERTEX should facilitate information sharing between the national single window environments for customs and Union non-customs systems. This means that when an economic operator submits a customs declaration requiring the compliance of Union non-customs formalities, customs authorities and partner competent authorities may automatically and effectively exchange and verify the required information for the customs clearance process. An improved digital cooperation and coordination between customs authorities and partner competent authorities should lead to more integrated, faster and simpler paperless processes for goods clearance and better enforcement of and compliance with Union non-customs formalities.Â </p>
+                </recital>
+                <recital leos:editable="true" xml:id="akn_recital_GdAG0d">
+                    <num xml:id="recs_9k8Jx1">(9)</num>
+                    <p xml:id="recs_s9ZozU">The Commission, in collaboration withÂ the Member States, should develop, integrate, deploy and maintain EU CSW-CERTEX. To deliver appropriate and harmonised single window services at Union level for Union non-customs formalities, the Commission should connect the respective Union non-customs systems with EU CSW-CERTEX. Member States should be responsible for connecting their national single window environments for customs with EU CSW-CERTEX.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="recs_wuUOH5">
+                    <num xml:id="recs_VrI3DA">(10)</num>
+                    <p xml:id="recs_Yx9fwi">Any processing of personal data in EU CSW-CERTEX should facilitate information sharing between the national environments for customs and Union non-customs systems without any storing ofÂ data. It should also transform data, where necessary, to enable information exchange between both digital domains. The information technology facilities used for data transformation should be located in the Union.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__kyZ5gp">
+                    <num xml:id="recs_ZT1WIM">(11)</num>
+                    <p xml:id="recs_JnbOMl">Depending on the type of non-customs formality, the electronic information to be exchanged through EU CSW-CERTEX might contain different categories of data subjects and theirÂ personal data required to lodge the customs declaration or to apply for supporting documents. Customs declarations might contain personal data of several categories of data subjects, including exporters, importers, consignees, and additional supply chain actors. Supporting documents might contain the same information for other categories of data subjects, such as consignors, exporters, consignees, importers and licensees. A third category of data subjects whose personal data might be processed in EU CSW-CERTEX includes authorised staff of customs authorities, partner competent authorities or any other certified body, as well as Commission staff and any third party providers acting on its behalf involved in EU CSW-CERTEX operational and maintenance activities.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__m4hX6X">
+                    <num xml:id="recs_l2brpY">(12)</num>
+                    <p xml:id="recs_Ujxtpe">Where personal data is processed by two or more entitiesÂ who jointly determine the purpose and means of processing, those entities should be joint controllers. Since the Commission and theÂ Member States areÂ responsible for the functioning of EU CSW-CERTEX, theyÂ should beÂ joint controllers of the processing of personal data in EU CSW-CERTEX in accordance with Regulations (EU) 2018/1725
+                        <authorialNote marker="12" placement="bottom" xml:id="recs_eFNpT6">
+                            <p xml:id="recs_F6PAoQ">Regulation (EU) 2018/1725 of the European Parliament and of the Council of 23 October 2018 on the protection of natural persons with regard to the processing of personal data by the Union institutions, bodies, offices and agencies and on the free movement of such data, and repealing Regulation (EC) No 45/2001 and Decision No 1247/2002/EC (OJ L 295, 21.11.2018, p. 39).</p>
+                        </authorialNote>
+                        and (EU) 2016/679 of the European Parliament and of the Council
+                        <authorialNote marker="13" placement="bottom" xml:id="recs_HCPb1M">
+                            <p xml:id="recs_Q3koTj">Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC (General Data Protection Regulation) (OJ L 119, 4.5.2016, p. 1).</p>
+                        </authorialNote>
+                        .Â </p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__TSQfcg">
+                    <num xml:id="recs_IEalmA">(13)</num>
+                    <p xml:id="recs_PNwQR5">The increased digitalisation of customs and Union non-customs regulatory formalities applicable to international trade has opened up new opportunities for Member States to improve the digital cooperation between customs and partner competent authorities. In pursuit of those priorities, several Member States have started to develop frameworks for national single window environments for customs. Those initiatives differ substantially depending on the level of existing customs information technology architecture, priorities and cost structures. It is therefore necessary to require Member States to establish and operate national single window environments for customs for Union non-customs formalities covered by EU CSW-CERTEX. Those environments should constitute the national components of the EU Single Window Environment for Customs, enabling electronic information sharing and collaboration between customs, partner competent authorities and economic operators to ensure compliance with and efficient enforcement of customs legislation and Union non-customs formalities covered by EU CSW-CERTEX. In line with this objective, the national single window environments for customs should enable the automated verification by customs authorities of formalities in respect of which data is transmitted from the respective Union non-customs system through EU CSW-CERTEX. The national single window environments for customs should also allow partner competent authorities to monitor and control the quantities of authorised goods (â€˜quantity managementâ€™) that have been released by customs through the Union. This should be ensured by providing the necessary clearance information to the Union non-customs systems through EU CSW-CERTEX. In practical terms, quantity management at Union level is necessary to enable a better enforcement of non-customs regulatory formalities by automatically and consistently monitoring the consumption of authorised quantities for the release of goods, avoiding their overuse or mishandling.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__OW7O1n">
+                    <num xml:id="recs_0fABtI">(14)</num>
+                    <p xml:id="recs_f1Y9oz">To further simplify goods clearance processes for economic operators, the national single window environments for customs should become a single channel to communicate with customs and partner competent authorities. The Union non-customs formalities subject to this additional facilitation measure are a subset of the overarching formalities covered by EU CSW-CERTEX. The Commission should identify those formalities progressively by assessing the fulfilment of a set of criteria relevant to trade facilitation, taking into account their legal and technical feasibility. In order to further enhance trade facilitation, it should be possible to use the national single window environments for customs as a platform for coordinating controls between customs authorities and partner competent authorities in line with Article 47(1) of Regulation (EU) No 952/2013.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__4BTXUQ">
+                    <num xml:id="recs_zLYSpQ">(15)</num>
+                    <p xml:id="recs_5NzQoN">Each Member State should be the sole controller of the data processing operations performed within its national single window environment for customs. The data processing operations should be performed in accordance with Regulation (EU) 2016/679. Given that some of the data originating from the national single window environment for customs is to be exchanged with Union non-customs systems through EU CSW-CERTEX, each Member State should be required toÂ notifyÂ the Commission in case of any personal data breach compromising the security, confidentiality, availability or integrity of the personal data processed within its environment.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__vlJ00j">
+                    <num xml:id="recs_0zzWIC">(16)</num>
+                    <p xml:id="recs_lNJGVM">A fully coordinated goods clearance process requires procedures that support digital cooperation and information sharing between customs authorities, partner competent authorities and economic operators to fulfil and enforce Union non-customs formalities covered by EU CSW-CERTEX. Interoperability means the capability to run these processes seamlessly across customs and non-customs systems and domains without losing the context or meaning of the data exchanged. To enable a fully automated verification of Union non-customs formalities, EU CSW-CERTEX should ensure technical interoperability as well as consistent meaning. It is important to align customs and non-customs terminology to ensure that the exchanged data and information is preserved and understood throughout the exchanges between Union non-customs systems and national single window environments for customs. In addition, to ensure a harmonised enforcement of Union non-customs formalities across the Union, EU CSW-CERTEX should identify the customs procedures for which the supporting documents canÂ be used based on the administrative decisions indicated by the partner competent authority in the supporting documents. From a technical perspective, EU CSW-CERTEX should makeÂ customs and non-customs data compatible by converting their format or structure where necessary, without changing their content.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__RGPvsN">
+                    <num xml:id="recs_EtM3f5">(17)</num>
+                    <p xml:id="recs_uyZHgb">In view of the Union non-customs formalities covered, EU CSW-CERTEXÂ should serve several purposes. It should make available the relevant data to customs authorities to better enforce Union non-customs regulatory policies through the automated verification of those formalities. It should provide the relevant data to partner competent authorities to monitor and determine the remaining quantity of authorised goods not written off by customs in the clearance of other consignments. It should also support the implementation of the â€˜one-stop shopâ€™ principle for the performance of controls referred toÂ in Article 47(1) of Regulation (EU) No 952/2013, by facilitating the integration of customs and Union non-customs procedures for a fully automated goods clearance process. Some legal acts of the UnionÂ may require data transfers between national customs systems and the information and communication system established in the relevant act. EU CSW-CERTEX should therefore enable automated data sharing between customs authorities and partner competent authorities where required by those acts.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__nIxzlX">
+                    <num xml:id="recs_UnamWn">(18)</num>
+                    <p xml:id="recs_FrPwDV">To establish a single communication channel with the authorities involved in goods clearance, the national single window environments for customs should allow economic operators to submit the necessary data required by customs legislation and Union non-customs legislation at a single point and receive any related information from the authorities involved directly from that point. The single communication channel should be used only for theÂ Union non-customs formalities covered by EU CSW-CERTEX and identified as suitable for additional facilitation measures.Â </p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__rCjY3K">
+                    <num xml:id="recs_J2jVJd">(19)</num>
+                    <p xml:id="recs_IgGNIZ">There is a significant overlap between the data included in the customs declaration and the data included in the application for supporting documents. To enable the re-use of data so that economic operators do not need to provide the same data more than once, it is necessary to reconcile and rationalise the data requirements for customs and the Union non-customs formalities covered by EU CSW-CERTEX. The Commission should therefore identify the data elements included in both the customs declaration and the application for supporting documents. The Commission should also identify the data elements that are required only by Union non-customs legislation (â€˜partner competent authorityÂ (PCA) data set(s)â€™). The customs declaration data and the PCA data set(s) should constitute an integratedÂ declaration including all clearance related information needed to fulfil the customs and Union non-customs formalities covered by EU CSW-CERTEX.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__Zcm4Xg">
+                    <num xml:id="recs_6kr3tv">(20)</num>
+                    <p xml:id="recs_5y59wr">To allow economic operators to fulfil customs and non-customs formalities affecting the same goods movements, the national single window environments for customs should enable them to submit all data required by multiple regulatory authorities for placing the goods under customs procedures through an integratedÂ declaration. It should be possible to submit such data together with the customs declaration lodged prior to the expected presentation of the goods to customs, in accordance with Article 171 of Regulation (EU) No 952/2013.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__oDzUTF">
+                    <num xml:id="recs_CHMXwy">(21)</num>
+                    <p xml:id="recs_ddZU0M">To transmit the information provided by the economic operators at the national single window environments for customs to all authorities concerned, EU CSW-CERTEX should enable the necessary exchanges of information between the customs and non-customs domains. In particular, EU CSW-CERTEX should receive the data required for fulfilling the applicable Union non-customs formalities from the national single window environments for customs and distribute it to the respective Union non-customs system. This exchange should enable partner competent authorities to review the information transmitted to the respective Union non-customs systems and take their clearance decisions that should be forwarded to customs via EU CSW-CERTEX. Customs authorities, in turn, should make this information available to the economic operators through the national single window environments for customs. The EORI number should be used as the identifier for sharing and cross-referencing the information related to these exchanges.Â </p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__MdNr5s">
+                    <num xml:id="recs_1G4M0T">(22)</num>
+                    <p xml:id="recs_BnWOvy">In accordance with Article 9 of Regulation (EU) No 952/2013, an EORI number is assigned to each economic operator engaged in customs operations as an identifier for all dealings with customs authorities in the Union.Â The Commission maintains a central EORI system to store and handle EORI related data. To facilitate collaboration between the different authorities involved in the goods clearance process, partner competent authorities should have access to the EORI system to validate the EORI numberÂ that they can requestÂ from economic operators in the context of their formalities.Â  Â  Â Â </p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__VMy2tZ">
+                    <num xml:id="recs_V2XilG">(23)</num>
+                    <p xml:id="recs_D6uCOD">Close cooperation between the Commission and the Member States is essential to coordinate all activities associated with the effective functioning of the EU Single Window Environment for Customs. Given theÂ broad and diverse scope of those activities, it is necessary forÂ each Member State to appoint a competent authority as national coordinator. The national coordinator should be the contact point for the Commission, and should promote cooperation at national level, while ensuring system interoperability. The Commission should provide coordination where necessary, and help ensureÂ the efficient enforcement of Union non-customs formalities.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__jDW1bl">
+                    <num xml:id="recs_bpAAK9">(24)</num>
+                    <p xml:id="recs_meFGCQ">The development of the EU Single Window Environment for Customs entails various implementation costs. It is important to allocate those costsÂ between the Commission and the Member States in the most appropriate wayÂ depending on the type of services provided. The Commission should incur costs related to the development, maintenance and operation of the central component of the EU Single Window Environment for Customs, EU CSW-CERTEX, and its interfaces with Union non-customs systems. The Member States should incur costs related to their role in ensuring interfaces with EU CSW-CERTEX and developing, maintaining and operating the national single window environments for customs.</p>
+                </recital>
+                <recital leos:origin="ec" xml:id="rec__qn3ea3">
+                    <num leos:origin="ec" xml:id="recs_em2cQJ">(25)</num>
+                    <p xml:id="recs_o0TGRb">Detailed planning is required to progressively integrate various Union non-customs formalities from diverse policy areas intoÂ EU CSW-CERTEX. To that end, the Commission should prepareÂ a work programme to incorporateÂ those formalities into EU CSW-CERTEX and to develop connections between the Union non-customs systems processing those formalities and EU CSW-CERTEX. The main objective of the work programme should be to support the operational requirementsÂ and implementation timeline of these activities. The work programme should be reviewed regularly to assess overall progress in applying the provisions of this Regulation.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__elFUtj">
+                    <num xml:id="recs_vil1vj">(26)</num>
+                    <p xml:id="recs_Z6Zvg8">The Commission should regularly monitor the functioning of the EU Single Window Environment for Customs to evaluate the performance of EU CSW-CERTEX and to ensure the efficient enforcement of Union non-customs formalities covered by EU CSW-CERTEX. The Commission should submit regular assessment reports on the functioning of the EU Single Window Environment for Customs to the European Parliament and to the Council. Those reports should take stock of progress, identify areas for improvement and propose recommendations for the future in light of progress made towards an improved digital collaboration between customs and partner competent authorities involved in goods clearance to ensure simplified processes for economic operators and the efficient enforcement of Union non-customs formalities.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__8125WP">
+                    <num xml:id="recs_iGUnny">(27)</num>
+                    <p xml:id="recs_mKg1iD">To ensure an efficient and effective functioning of the EU Single Window Environment for Customs, the power to adopt acts in accordance with Article 290 of the Treaty on the Functioning of the European Union (TFEU) should be delegated to the Commission in respect of amendments to the list of Union non-customs formalities covered by EU CSW-CERTEX; specification of the data elements to be exchanged through EU CSW-CERTEX and identifying the data elements that are common to both the customs declaration and the application for supporting documents together with the PCA data set for each of the relevant Union act applicable to Union non-customs formalities integrated into EU CSW-CERTEX. It is of particular importance that the Commission carry out appropriate consultations during its preparatory work, including at expert level, and that those consultations be conducted in accordance with the principles laid down in the Interinstitutional Agreement of 13 April 2016 on Better Law-Making
+                        <authorialNote marker="14" placement="bottom" xml:id="recs_5fiW6q">
+                            <p xml:id="recs_yq8n5M">Interinstitutional Agreement between the European Parliament, the Council of the European Union and the European Commission on Better Law-Making (OJ L 123, 12.5.2016, p. 1).</p>
+                        </authorialNote>
+                        .Â In particular, to ensure equal participation in the preparation of delegated acts, the European Parliament and the Council receive all documents at the same time as Member States' experts, and their experts systematically have access to meetings of Commission expert groups dealing with the preparation of delegated acts.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__xXMUYM">
+                    <num xml:id="recs_tdaLvH">(28)</num>
+                    <p xml:id="recs_TXOlPM">To ensure uniform conditions for the implementation of this Regulation, implementing powers should be conferred on the Commission as regards the establishment of the respective responsibilities of the joint controllers for compliance with the obligations under Regulations (EU) 2016/679 andÂ (EU) 2018/1725; adoption of specific rules for the information exchange to be processed through EU CSW-CERTEX, including, where appropriate, any specific rules to ensure the protection of personal data; determining the Union non-customs formalities integrated into EU CSW-CERTEX that may be subject to additional digital cooperation; adoption of procedural arrangements for the additional exchanges of information processed through EU CSW-CERTEX, including, where appropriate, any specific rules governing the protection of personal data and adoption of a work programme to support the implementation of the provisions related to the connection of the relevant Union non-customs systems to EU CSW-CERTEX and the integration of the respective Union non-customs formalities. Those powers should be exercised in accordance with Regulation (EU) No 182/2011 of the European Parliament and of the Council
+                        <authorialNote marker="15" placement="bottom" xml:id="recs_Pj2hcJ">
+                            <p xml:id="recs_jcll1X">Regulation (EU) No 182/2011 of the European Parliament and of the Council of 16 February 2011 laying down the rules and general principles concerning mechanisms for control by Member States of the Commissionâ€™s exercise of implementing powers (OJ L 55, 28.2.2011, p. 13).</p>
+                        </authorialNote>
+                        .</p>
+                </recital>
+                <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ls" leos:softaction="add" leos:softactionroot="true" leos:softdate="2024-03-11T11:02:45.000Z" leos:softuser="DOE Jane(DGT)" leos:title="NYSTEN Pascal : 2024-03-12T12:04:20.374+01:00" leos:uid="nystepa" xml:id="__akn_recital_GGRRGI">
+                    <num leos:editable="false" xml:id="_recs_Iz6xi8">(29)</num>
+                    <p xml:id="_recs_kmFJrc">Recital...</p>
+                </recital>
+                <recital leos:editable="true" xml:id="akn_recital_zWfsoZ">
+                    <num xml:id="recs_kTzLOB">(30)</num>
+                    <p xml:id="recs_7XdW8w">Regulation (EU) No 952/2013 should be amended so as to integrate the EU Single Window Environment for Customs into the concept of customs legislation, and to better integrateÂ customs and Union non-customs procedures by enabling them to run simultaneously. Firstly, since this Regulation puts in place a mechanism for customs authorities to enforce regulatory formalities affecting the goods clearance process, it is necessary to include it and its supplementing and implementing provisions in the definition of customs legislation set out in point 2 ofÂ Article 5 of Regulation (EU) No 952/2013. This approach is in line with Article 3 of Regulation (EU) No 952/2013, which entrusts customs authorities with the task of ensuringÂ the security and safety of the Union and its residents in close cooperation with other authorities where appropriate, while facilitating trade. Secondly, Article 163(1) of Regulation (EU) No 952/2013 stipulates that the supporting documents required to apply the provisions governing the relevant customs procedure are to be in the declarant's possession and at the disposal of the customs authorities at the time when the customs declaration is lodged. Since customs authorities will be able to obtain through EU CSW-CERTEX the necessary data associated with Union non-customs formalities, this obligation should be deemed to be fulfilled, and Article 163(1) of Regulation (EU) No 952/2013Â should therefore be amended accordingly.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__l2Oy6v">
+                    <num xml:id="recs_iLEqiN">(31)</num>
+                    <p xml:id="recs_kYKHXR">The European Data Protection Supervisor was consulted in accordance withÂ Article 42(1) of Regulation (EU) 2018/1725Â and delivered an opinion on xx/xx/202x.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="akn_recital_AAStSG">
+                    <num xml:id="recs_CChIWm">(32)</num>
+                    <p xml:id="recs_GE8pcw">The integration of Union non-customs formalities into EU CSW-CERTEX requires implementing new information technology infrastructure to establish connections between the national single window environments for customs and Union non-customs systems, identifying the data to be exchanged, and developing technical and functional specifications.Â TheÂ timing needed to advance these developments at Union and national level should therefore be taken into consideration for the application of this Regulation. Furthermore, the implementation of additional digital cooperation measures is expected to take substantially longer as it requires prior identification of the Union non-customs formalities concerned together with the relevant technical developments. It is therefore necessary to defer the application of certainÂ provisions ofÂ this Regulation.</p>
+                </recital>
+                <recital leos:editable="true" xml:id="rec__z5bWRX">
+                    <num xml:id="recs_NqYTNY">(33)</num>
+                    <p xml:id="recs_rsIKNQ">Since the objectives of this Regulation, namely the improved enforcement of Union regulatory requirements across UnionÂ borders and facilitation of international trade, cannot be sufficiently achieved by the Member States alone due to the inherently transnational nature of the movement of goods across borders and its complexity, but can rather be better achieved at Union level, the Union may adopt measures, in accordance with the principle of subsidiarity as set out in Article 5 of the Treaty on European Union. In accordance with the principle of proportionality set out in that Article, this Regulation does not go beyond what is necessary in order to achieve those objectives,</p>
+                </recital>
+            </recitals>
+            <formula name="enactingFormula" xml:id="preamble__formula_2">
+                <p xml:id="preamble__formula_2__p">HAVE ADOPTED THIS REGULATION:</p>
+            </formula>
+        </preamble>
+        <body xml:id="body">
+            <part leos:depth="1" xml:id="__akn_part_LfUhVE">
+                <num xml:id="_akn_5m57iU">Part #</num>
+                <heading xml:id="_akn_PSu8kO">Part heading...</heading>
+                <title leos:depth="2" xml:id="__akn_title_VQ9CTh">
+                    <num xml:id="_akn_AWjBcM">Title #</num>
+                    <heading xml:id="_akn_qmc6PN">Title heading...</heading>
+                    <chapter leos:depth="3" xml:id="__akn_chapter_z3Ibxh">
+                        <num xml:id="_akn_nzX8wI">Chapter #</num>
+                        <heading xml:id="_akn_BceP3R">Chapter heading...</heading>
+                        <section leos:depth="4" xml:id="__akn_section_UG4Uqt">
+                            <num xml:id="_akn_F9pAlu">Section #</num>
+                            <heading xml:id="_akn_C3WpRQ">Section heading...</heading>
+                        </section>
+                    </chapter>
+                </title>
+            </part>
+            <chapter leos:depth="1" xml:id="__akn_chapter_BjDYqk">
+                <num xml:id="_akn_NoOLoV">Chapter #</num>
+                <heading xml:id="_akn_py0g2K">IntitulÃ© du Chapitre...</heading>
+            </chapter>
+            <chapter xml:id="cha_MUNQWr">
+                <num xml:id="akn_2yQOfD">Chapter I</num>
+                <heading xml:id="akn_u9YZEG">General provisions</heading>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_aljBSj" leos:origin="ec" xml:id="art_1">
+                    <num leos:editable="false" leos:origin="ec" xml:id="art_1__num">Article 1</num>
+                    <heading xml:id="art_1__heading">Subject matter</heading>
+                    <paragraph xml:id="art_1_61PenZ">
+                        <content xml:id="art_1_BrqgVv">
+                            <p xml:id="art_1_9KdmGu">This Regulation establishes a European Union Single Window Environment for Customs that provides an integrated set of interoperable electronic services at Union and national level through the European Union Customs Single Window Certificates Exchange System to support interaction and information exchange between the national single window environments for customs and the Union non-customs systems referred to in the Annex.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="art_1_K29idR">
+                        <content xml:id="art_1_6zNBvF">
+                            <p xml:id="art_1_EUTgpK">It lays down rules for the national single window environments for customs and rules on digital administrative cooperation and information sharing within the European Union Single Window Environment for Customs.</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_0Yljie" xml:id="akn_art_xX8jV5">
+                    <num leos:editable="false" xml:id="akn_art_xX8jV5_7CQ3Z9">Article 2</num>
+                    <heading xml:id="akn_art_xX8jV5_sm7ESs">Definitions</heading>
+                    <paragraph xml:id="akn_art_xX8jV5_yo3l6B">
+                        <content xml:id="akn_art_xX8jV5_8hrY8T">
+                            <p xml:id="akn_art_xX8jV5_moXKKL">For the purposes of this Regulation, in addition to the definitions in Article 5, points (1), (2), (5), (8), (12), (15) and (16), of Regulation (EU) No 952/2013, the following definitions shall apply:</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_xX8jV5_Xb6HDS">
+                        <content xml:id="akn_art_xX8jV5_f990Na">
+                            <p xml:id="akn_art_xX8jV5_7ooAbs">(1) â€˜national single windowÂ environment for customsâ€™ means a set of electronic services delivered by a Member State to enable information to be exchanged between the electronic systems of customs authorities, partner competent authorities and economic operators;</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_xX8jV5_NsKlKj">
+                        <content xml:id="akn_art_xX8jV5_tltucv">
+                            <p xml:id="akn_art_xX8jV5_PdOwDi">(2) â€˜partner competent authority' means any Member State authority or the Commission empowered to perform a designated function in relation to the fulfilment of the relevant Union non-customs formalities;</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_xX8jV5_YmXRNo">
+                        <content xml:id="akn_art_xX8jV5_e6sIXY">
+                            <p xml:id="akn_art_xX8jV5_LpNYKe">(3) â€˜Union non-customs formalityâ€™ means any formalityÂ for the international trade in goods laid down in Union legislation other than customs legislation;</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_xX8jV5_FpxGEz">
+                        <content xml:id="akn_art_xX8jV5_rkAtgC">
+                            <p xml:id="akn_art_xX8jV5_wOhStq">(4) â€˜supporting documentâ€™ means any certificate, attestation, declaration of conformity, licence orÂ permit issued by partner competent authorities to certify that Union non-customs formalities have been fulfilled;</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_xX8jV5_mmANDy">
+                        <content xml:id="akn_art_xX8jV5_qrh2dk">
+                            <p xml:id="akn_art_xX8jV5_Tfx3xx">(5) â€˜quantity managementâ€™ means the activity of monitoring and managing the quantity of goods authorised by partner competent authorities in accordance with Union non-customs legislation based on the information provided by customs authorities on the clearance of related consignments;</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_xX8jV5_CU8ZgC">
+                        <content xml:id="akn_art_xX8jV5_oeQfLp">
+                            <p xml:id="akn_art_xX8jV5_W7vdDw">(6) â€˜Union non-customs systemâ€™ means any Union electronic system that storesÂ information from all relevant partner competent authorities, which isÂ neededÂ by customs authorities to verify compliance with the respective Union non-customs formalities.Â </p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_hBC712" xml:id="akn_art_sjUC1P">
+                    <num leos:editable="false" xml:id="akn_art_sjUC1P_C159Oh">Article 3</num>
+                    <heading xml:id="akn_art_sjUC1P_GjAIEZ">European Union Single Window Environment for Customs</heading>
+                    <paragraph xml:id="akn_art_sjUC1P-par1">
+                        <content xml:id="akn_art_sjUC1P_RLUzhW">
+                            <p xml:id="akn_art_sjUC1P_AuVJjo">A European Union Single Window Environment for Customs is hereby established. It shall include the European Union Customs Single Window Certificates Exchange System, national single window environments for customs and the Union non-customs systems referred to in the Annex.</p>
+                        </content>
+                    </paragraph>
+                </article>
+            </chapter>
+            <chapter xml:id="cha_HysnPu">
+                <num xml:id="akn_rnHisF">Chapter II</num>
+                <heading xml:id="akn_RWG2yz">European Union Customs Single Window Certificates Exchange System</heading>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_zknBOT" xml:id="akn_art_2YbqTL">
+                    <num leos:editable="false" xml:id="akn_art_2YbqTL_D4fiap">Article 4</num>
+                    <heading xml:id="akn_art_2YbqTL_DWm6eE">Establishment of the European Union Customs Single Window Certificates Exchange System</heading>
+                    <paragraph xml:id="akn_art_2YbqTL_xSg044">
+                        <content xml:id="akn_art_2YbqTL_IyfWt2">
+                            <p xml:id="akn_art_2YbqTL_8xIPtk">An electronic European Union Customs Single Window Certificates Exchange System (EU CSW-CERTEX) is hereby established. Â EU CSW-CERTEX shall connect the national single window environments for customs with the Union non-customs systems referred to in the Annex.</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_ITxRTG" xml:id="akn_art_ubc2NQ">
+                    <num leos:editable="false" xml:id="akn_art_ubc2NQ_Wwu4Uv">Article 5</num>
+                    <heading xml:id="akn_art_ubc2NQ_HeudnT">Roles and responsibilities for EU CSW-CERTEX</heading>
+                    <paragraph xml:id="akn_art_ubc2NQ_Zur2uo">
+                        <num xml:id="akn_art_ubc2NQ_uoY0vh">1.</num>
+                        <content xml:id="akn_art_ubc2NQ_kK4yzk">
+                            <p xml:id="akn_art_ubc2NQ_Dq8ODX">The Commission, in collaboration with the Member States, shall develop, integrate and operate EU CSW-CERTEX.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_ubc2NQ_NTFf7I">
+                        <num xml:id="akn_art_ubc2NQ_aV7H4W">2.</num>
+                        <content xml:id="akn_art_ubc2NQ_tEH5xU">
+                            <p xml:id="akn_art_ubc2NQ_G6OPaA">The Commission shall connect the Union non-customs systems referred to in the Annex with EU CSW-CERTEX and enable information to be exchangedÂ on the Union non-customs formalities listed in the Annex.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_ubc2NQ_BqyeQZ">
+                        <num xml:id="akn_art_ubc2NQ_Xxgpvo">3.</num>
+                        <content xml:id="akn_art_ubc2NQ_YHKsUD">
+                            <p xml:id="akn_art_ubc2NQ_dp7Zao">The Member States shall connect the national single window environments for customs with EU CSW-CERTEX and enable information to be exchangedÂ on the Union non-customs formalities listed in the Annex.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_ubc2NQ_PDxMr6">
+                        <num xml:id="akn_art_ubc2NQ_h93WOx">4.</num>
+                        <content xml:id="akn_art_ubc2NQ_n3kL7r">
+                            <p xml:id="akn_art_ubc2NQ_2UlaOk">The Commission is empowered to adopt delegated acts in accordance with Article 21Â amending the Annex, in particular to cover other Union non-customs formalities.</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_sZwrnU" xml:id="akn_art_phTLdP">
+                    <num leos:editable="false" leos:origin="ec" xml:id="akn_art_phTLdP_HqKfs6">Article 6</num>
+                    <heading xml:id="akn_art_phTLdP_gjfAUn">Processing of personal data in EU CSW-CERTEX</heading>
+                    <paragraph xml:id="akn_art_phTLdP_GDNZEE">
+                        <num leos:origin="ec" xml:id="akn_art_phTLdP_EPO84e">1.</num>
+                        <list xml:id="akn_art_phTLdP_ieIr1P">
+                            <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_C9WFYo">
+                                <content xml:id="akn_art_phTLdP_E5fjAu">
+                                    <p xml:id="akn_art_phTLdP_5TvVpF">Processing of personal data may take place in EU CSW-CERTEX only for the following purposes:</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="akn_art_phTLdP_L4avd2">
+                                <num xml:id="akn_art_phTLdP_Evy3k3">(a)</num>
+                                <content xml:id="akn_art_phTLdP_8f5IPO">
+                                    <p xml:id="akn_art_phTLdP_J1ZwuD">enabling information to be exchanged between national single window environments for customs and the Union non-customs systems referred to in the AnnexÂ as regards the Union non-customs formalities listed therein;</p>
+                                </content>
+                            </point>
+                            <point xml:id="akn_art_phTLdP_Vs16WE">
+                                <num xml:id="akn_art_phTLdP_g5M08k">(b)</num>
+                                <content xml:id="akn_art_phTLdP_bsVHaZ">
+                                    <p xml:id="akn_art_phTLdP_aK2KR8">performing the transformation of data listed in Article 10(2), where necessary, to enable the exchange of information referred to in this paragraph, point (a).</p>
+                                </content>
+                            </point>
+                        </list>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_phTLdP_NvQTzp">
+                        <num leos:origin="ec" xml:id="akn_art_phTLdP_Lm9ODY">2.</num>
+                        <list xml:id="akn_art_phTLdP_7DFoOJ">
+                            <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_FE6qXG">
+                                <content xml:id="akn_art_phTLdP_obG97T">
+                                    <p xml:id="akn_art_phTLdP_IWYLwk">EU CSW-CERTEX may process personal data only on the following categories of data subjects:</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="akn_art_phTLdP_foSGyy">
+                                <num xml:id="akn_art_phTLdP_K8QmF4">(a)</num>
+                                <content xml:id="akn_art_phTLdP_pmUUSt">
+                                    <p xml:id="akn_art_phTLdP_O5kcqP">natural persons whose personal information is contained in the customs declaration;</p>
+                                </content>
+                            </point>
+                            <point xml:id="akn_art_phTLdP_UiWM7N">
+                                <num xml:id="akn_art_phTLdP_U3Z4gS">(b)</num>
+                                <content xml:id="akn_art_phTLdP_FvflpZ">
+                                    <p xml:id="akn_art_phTLdP_seXHAg">natural persons whose personal information is contained in the supporting documents, or inÂ any other additional documentary evidence required for the fulfilment of the Union non-customs formalities listed in the Annex;</p>
+                                </content>
+                            </point>
+                            <point xml:id="akn_art_phTLdP_Nv7XNK">
+                                <num xml:id="akn_art_phTLdP_fpHuCr">(c)</num>
+                                <content xml:id="akn_art_phTLdP_qdX4A4">
+                                    <p xml:id="akn_art_phTLdP_6nHpXT">authorised staff of customs authorities, partner competent authorities, consignment verification authorities or any other relevant authority or authorised body whose personal information is contained in any documents referred to in points (a) and (b);</p>
+                                </content>
+                            </point>
+                            <point leos:origin="ec" xml:id="akn_art_phTLdP_iLri4i">
+                                <num leos:origin="ec" xml:id="akn_art_phTLdP_B5q9f5">(d)</num>
+                                <content xml:id="akn_art_phTLdP_5jAAsC">
+                                    <p xml:id="akn_art_phTLdP_pIo8G7">Commission staff and third party providers acting on behalf of Commission that perform EU CSW-CERTEX-related operations and maintenance activities.</p>
+                                </content>
+                            </point>
+                        </list>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_phTLdP_QsVl8H">
+                        <num xml:id="akn_art_phTLdP_JFGuwC">3.</num>
+                        <list xml:id="akn_art_phTLdP_u49VGy">
+                            <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_Hyqr4c">
+                                <content xml:id="akn_art_phTLdP_ARYfGY">
+                                    <p xml:id="akn_art_phTLdP_g8wNtg">EU CSW-CERTEX may process only the following categories of personal data:</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="akn_art_phTLdP_So3bWi">
+                                <num xml:id="akn_art_phTLdP_4NBMRV">(a)</num>
+                                <content xml:id="akn_art_phTLdP_ExzreT">
+                                    <p xml:id="akn_art_phTLdP_PnEbFv">name, address, country code and identification number of the natural persons referred to in paragraphÂ 2, points (a) and (b), required either by customs legislation or by Union non-customs legislation to fulfil their respectiveÂ  formalities;</p>
+                                </content>
+                            </point>
+                            <point xml:id="akn_art_phTLdP_sOqEHg">
+                                <num xml:id="akn_art_phTLdP_BWGqVL">(b)</num>
+                                <content xml:id="akn_art_phTLdP_WfHuEA">
+                                    <p xml:id="akn_art_phTLdP_eSbJFT">name and signature of the authorised staff referred to in paragraph 2, points (c) and (d).</p>
+                                </content>
+                            </point>
+                        </list>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_phTLdP_EPBM9a">
+                        <num xml:id="akn_art_phTLdP_SrwOpM">4.</num>
+                        <content xml:id="akn_art_phTLdP_JbfzjJ">
+                            <p xml:id="akn_art_phTLdP_D8qZer">EU CSW-CERTEX shall not store any information exchanged between the national single window environments for customs and Union non-customs systems.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_phTLdP_JhbISd">
+                        <num xml:id="akn_art_phTLdP_Vfew0u">5.</num>
+                        <content xml:id="akn_art_phTLdP_mICcWs">
+                            <p xml:id="akn_art_phTLdP_Vuy4KE">The transformation of personal data referred to in paragraph 1, point (b), shall be performed using information technology infrastructure located in the Union. Â  Â  Â Â </p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_JBUKF2" xml:id="akn_art_jSKkaB">
+                    <num leos:editable="false" leos:origin="ec" xml:id="akn_art_jSKkaB_gKvQut">Article 7</num>
+                    <heading xml:id="akn_art_jSKkaB_i1xheN">Joint controllership of EU CSW-CERTEX</heading>
+                    <paragraph xml:id="akn_art_jSKkaB_1oEQCa">
+                        <num xml:id="akn_art_jSKkaB_pY6a7Z">1.</num>
+                        <content xml:id="akn_art_jSKkaB_Ry9fcT">
+                            <p xml:id="akn_art_jSKkaB_zrKTWd">As regards the processing of personal data in EU CSW-CERTEX, the Commission shall be a joint controller within the meaning of Article 28(1) of Regulation (EU) 2018/1725, and customs authorities and partner competent authorities shall be joint controllers within the meaning of Article 26(1) of Regulation (EU) 2016/679.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_jSKkaB_KzuCNP">
+                        <num xml:id="akn_art_jSKkaB_Kl0qpt">2.</num>
+                        <content xml:id="akn_art_jSKkaB_EvaKng">
+                            <p xml:id="akn_art_jSKkaB_UfLtRx">TheÂ Commission shall, by means of implementing acts, establish the respective responsibilities of the joint controllers to comply with the obligations under Regulations (EU) 2016/679 and (EU) 2018/1725. Those implementing acts shall be adopted in accordance with the examination procedure referred to in Article 22(3) of this Regulation.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_jSKkaB_7DGsxr">
+                        <num xml:id="akn_art_jSKkaB_aZUNmZ">3.</num>
+                        <list xml:id="akn_art_jSKkaB_6EEUWu">
+                            <subparagraph refersTo="~_INP" xml:id="akn_art_jSKkaB_1dypT1">
+                                <content xml:id="akn_art_jSKkaB_AHS0L6">
+                                    <p xml:id="akn_art_jSKkaB_9MzApm">The joint controllers shall ensure that they:</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="akn_art_jSKkaB_KM8SBm">
+                                <num xml:id="akn_art_jSKkaB_6AJ16Q">(a)</num>
+                                <content xml:id="akn_art_jSKkaB_Dxa9O1">
+                                    <p xml:id="akn_art_jSKkaB_9TAnyL">work together to process the request(s) made by the data subject(s) in a timely manner;</p>
+                                </content>
+                            </point>
+
+                            <point xml:id="akn_art_jSKkaB_hqHlj1">
+                                <num xml:id="akn_art_jSKkaB_jlGLnK">(c)</num>
+                                <content xml:id="akn_art_jSKkaB_AJVmCs">
+                                    <p xml:id="akn_art_jSKkaB_KpUgrk">exchange the relevant information necessary to inform data subjects pursuant to Section 2 of Regulation (EU) 2016/679 and Section 2 of Regulation (EU) 2018/1725;</p>
+                                </content>
+                            </point>
+                            <point xml:id="akn_art_jSKkaB_BDjUaG">
+                                <num xml:id="akn_art_jSKkaB_8Rb88E">(d)</num>
+                                <content xml:id="akn_art_jSKkaB_QZZh5s">
+                                    <p xml:id="akn_art_jSKkaB_dllHML">ensure and protect the security, integrity, availability and confidentiality of the personal data processed jointly pursuant to Article 32 of Regulation (EU)Â 2016/679 and Article 33 of Regulation (EU)Â 2018/1725.</p>
+                                </content>
+                            </point>
+                        </list>
+                    </paragraph>
+                </article>
+            </chapter>
+            <chapter xml:id="cha_YaW7nA">
+                <num xml:id="akn_XqViZx">Chapter III</num>
+                <heading xml:id="akn_RGD2LO">National single window environments for customs</heading>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_XV6KSx" xml:id="akn_art_dMHd93">
+                    <num leos:editable="false" leos:origin="ec" xml:id="akn_art_dMHd93_zsIeaG">#</num>
+                    <heading xml:id="akn_art_dMHd93_tB9qgm">Establishment of national single window environments for customsÂ </heading>
+                    <paragraph xml:id="akn_art_dMHd93_w3Psxl">
+                        <num xml:id="akn_art_dMHd93_8OMAeP">1.</num>
+                        <content xml:id="akn_art_dMHd93_m5x1WO">
+                            <p xml:id="akn_art_dMHd93_IoF34H">The Member States shall establish national single window environments for customs. Each Member State shall be responsible for the development, integration and operation of its single window environment for customs.</p>
+                        </content>
+                    </paragraph>
+
+                    <paragraph xml:id="akn_art_dMHd93_X20PeL">
+                        <num xml:id="akn_art_dMHd93_VsWLtx">3.</num>
+                        <list xml:id="akn_art_dMHd93_fjD8KI">
+                            <subparagraph refersTo="~_INP" xml:id="akn_art_dMHd93_sMzfOQ">
+                                <content xml:id="akn_art_dMHd93_8FM4cZ">
+                                    <p xml:id="akn_art_dMHd93_PULz4y">The national single window environments for customs shall provide in particular the following functionalities:</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="akn_art_dMHd93_YEjy5F">
+                                <num xml:id="akn_art_dMHd93_GkyV5y">(a)</num>
+                                <content xml:id="akn_art_dMHd93_Frmivt">
+                                    <p xml:id="akn_art_dMHd93_64tNfb">enable customs authorities to automatically verify compliance with the Union non-customs formalities listed in the Annex based on the data received from Union non-customs systems for goods clearance purposes;</p>
+                                </content>
+                            </point>
+                            <point xml:id="akn_art_dMHd93_taEUHD">
+                                <num xml:id="akn_art_dMHd93_XK52qY">(b)</num>
+                                <content xml:id="akn_art_dMHd93_216qLT">
+                                    <p xml:id="akn_art_dMHd93_VaEEpA">allow partner competent authorities to perform, where applicable, quantity management related to the Union non-customs formalities listed in the Annex;Â </p>
+                                </content>
+                            </point>
+                            <point xml:id="akn_art_dMHd93_zwlWl9">
+                                <num xml:id="akn_art_dMHd93_GKdZ6o">(c)</num>
+                                <content xml:id="akn_art_dMHd93_w5FzN8">
+                                    <p xml:id="akn_art_dMHd93_Hl4uaa">provide a single communication channel for economic operators to fulfil the relevant customs formalities and Union non-customs formalitiesÂ subject to additional digital cooperation in accordance with Article 12.</p>
+                                </content>
+                            </point><point leos:origin="ec" xml:id="akn_art_jSKkaB_LCbrrd">
+                            <num leos:origin="ec" xml:id="akn_art_jSKkaB_OuBKd6">#</num>
+                            <content xml:id="akn_art_jSKkaB_WD2gcv">
+                                <p xml:id="akn_art_jSKkaB_EHe9BM">assist each other in matters involving the identification and handling of any data breach related to joint processing;</p>
+                            </content>
+                        </point>
+                        </list>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_dMHd93_VQGJh8">
+                        <num xml:id="akn_art_dMHd93_0Eyz2X">4.</num>
+                        <content xml:id="akn_art_dMHd93_6Rfzp9">
+                            <p xml:id="akn_art_dMHd93_7oiXaH">The national single window environments for customs may be used as a platform to coordinate controls in accordance with Article 47(1) of Regulation (EU)Â 952/2013.</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_RVg6Ji" xml:id="akn_art_7SgBab">
+                    <num leos:editable="false" xml:id="akn_art_7SgBab_RgWzWJ">Article 9</num>
+                    <heading xml:id="akn_art_7SgBab_Fy38kB">Personal data processing within the national single window environments for customs</heading>
+                    <paragraph xml:id="akn_art_7SgBab_Ap5wOa">
+                        <num xml:id="akn_art_7SgBab_eTr586">1.</num>
+                        <content xml:id="akn_art_7SgBab_bya1DB">
+                            <p xml:id="akn_art_7SgBab_8AWcWv">The processing of personal data within the national single window environments for customs shall take place in accordance with Regulation (EU) 2016/679 separately from the processing operations referred to in Article 6 of this Regulation.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_7SgBab_EO5nGZ">
+                        <num xml:id="akn_art_7SgBab_JyyCO2">2.</num>
+                        <content xml:id="akn_art_7SgBab_aR44h6">
+                            <p xml:id="akn_art_7SgBab_FqDM38">Each Member State shall be the sole controller of the data processing operations taking place within its single window environment for customs.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_7SgBab_rc0fvk">
+                        <num xml:id="akn_art_7SgBab_yjYhAc">3.</num>
+                        <content xml:id="akn_art_7SgBab_B0hHs1">
+                            <p xml:id="akn_art_7SgBab_gEitzc">Each Member State shall notify the Commission of any personal data breach that compromises the security, confidentiality, availability or integrity of the personal data processed within its single window environment for customs.</p>
+                        </content>
+                    </paragraph>
+                </article>
+            </chapter>
+            <chapter xml:id="cha_Fee09f">
+                <num xml:id="akn_S4iR11">Chapter IV</num>
+                <heading xml:id="akn_1rVo8P">Digital cooperation - information exchange and other procedural rules</heading>
+                <section xml:id="sec_nlYayS">
+                    <num xml:id="akn_zntRbe">Section 1</num>
+                    <heading xml:id="akn_RT0jeA">DIGITAL COOPERATION RELATED TO UNION NON-CUSTOMS FORMALITIES</heading>
+                    <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_HaKQtt" xml:id="akn_art_q7XGxr">
+                        <num leos:editable="false" xml:id="akn_art_q7XGxr_ilVeFO">Article 10</num>
+                        <heading xml:id="akn_art_q7XGxr_L2iO0x">Information exchange processed through EU CSW-CERTEX</heading>
+                        <paragraph xml:id="akn_art_q7XGxr_t7zhJW">
+                            <num xml:id="akn_art_q7XGxr_sd2xlH">1.</num>
+                            <list xml:id="akn_art_q7XGxr_JOEMzG">
+                                <subparagraph refersTo="~_INP" xml:id="akn_art_q7XGxr_bIuYAK">
+                                    <content xml:id="akn_art_q7XGxr_E176AP">
+                                        <p xml:id="akn_art_q7XGxr_uwVnDm">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall enable information to be exchanged between the national single window environments for customs and the relevant Union non-customs systems for the following purposes:</p>
+                                    </content>
+                                </subparagraph>
+                                <point xml:id="akn_art_q7XGxr_UGnu09">
+                                    <num xml:id="akn_art_q7XGxr_SfavcV">(a)</num>
+                                    <content xml:id="akn_art_q7XGxr_18gO5j">
+                                        <p xml:id="akn_art_q7XGxr_G9Wxer">making available the relevant data to customs authorities to perform the necessary automated verification of those formalities in accordance with Regulation (EU) No 952/2013;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_q7XGxr_DQjHEU">
+                                    <num xml:id="akn_art_q7XGxr_9uYdAj">(b)</num>
+                                    <content xml:id="akn_art_q7XGxr_Rfgg9r">
+                                        <p xml:id="akn_art_q7XGxr_PTWRam">making available the relevant data to partner competent authorities to perform the quantity management of authorised goods in Union non-customs systems based on the goods declared to customs authorities and released by those authorities;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_q7XGxr_AxsRv9">
+                                    <num xml:id="akn_art_q7XGxr_4yG69e">(c)</num>
+                                    <content xml:id="akn_art_q7XGxr_wtbz1C">
+                                        <p xml:id="akn_art_q7XGxr_KeaH4r">facilitating the integration of procedures between customs and partner competent authorities for a fully automated goods clearance process and coordination of controls in accordance with ArticleÂ 47(1) of Regulation (EU) No 952/2013;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_q7XGxr_Nm6oFM">
+                                    <num xml:id="akn_art_q7XGxr_dywvdH">(d)</num>
+                                    <content xml:id="akn_art_q7XGxr_ZarR0w">
+                                        <p xml:id="akn_art_q7XGxr_Am0rFg">allowing any other automated data transfer between customs and the relevant partner competent authorities required by Union legislation referred to in the Annex.</p>
+                                    </content>
+                                </point>
+                            </list>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_q7XGxr_7GzwUc">
+                            <num xml:id="akn_art_q7XGxr_UAgiy6">2.</num>
+                            <list xml:id="akn_art_q7XGxr_PgDoT7">
+                                <subparagraph refersTo="~_INP" xml:id="akn_art_q7XGxr_RUwVxP">
+                                    <content xml:id="akn_art_q7XGxr_jL3AuW">
+                                        <p xml:id="akn_art_q7XGxr_GAUZf1">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall provide for the following:</p>
+                                    </content>
+                                </subparagraph>
+                                <point xml:id="akn_art_q7XGxr_myMswf">
+                                    <num xml:id="akn_art_q7XGxr_sxCGiB">(a)</num>
+                                    <content xml:id="akn_art_q7XGxr_YgspvT">
+                                        <p xml:id="akn_art_q7XGxr_GjIwo1">aligning customs and non-customs terminology where possible, and identifying the customs procedures for which the supporting documents can be used based on the administrative decisions of the partner competent authority indicated in the supporting documents;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_q7XGxr_tDF4RY">
+                                    <num xml:id="akn_art_q7XGxr_uBM98w">(b)</num>
+                                    <content xml:id="akn_art_q7XGxr_1S5MPC">
+                                        <p xml:id="akn_art_q7XGxr_2xa7GE">converting the format of data required to fulfil the relevant Union non-customs formalities into data compatible with the customs declarationÂ and vice versa without changing their content.</p>
+                                    </content>
+                                </point>
+                            </list>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_q7XGxr_Qe9qGQ">
+                            <num xml:id="akn_art_q7XGxr_APtk7M">3.</num>
+                            <content xml:id="akn_art_q7XGxr_xDKCYG">
+                                <p xml:id="akn_art_q7XGxr_d33CUm">The Commission is empowered to adopt delegated acts in accordance with Article 21Â specifying the data elementsÂ to be exchanged through EU CSW-CERTEX in accordance with paragraph 1 of this Article.</p>
+                            </content>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_q7XGxr_R8ee99">
+                            <num xml:id="akn_art_q7XGxr_tzgNfc">4.</num>
+                            <content xml:id="akn_art_q7XGxr_AUT4Qx">
+                                <p xml:id="akn_art_q7XGxr_3MlhVZ">The Commission shall, by means of implementing acts, adopt specific rules for the information exchange referred to in paragraphs 1 and 2, including, where appropriate, any specific rules to ensure the protection of personal data. Those implementing acts shall be adopted in accordance with the advisory procedure referred to in Article 22(2).</p>
+                            </content>
+                        </paragraph>
+                    </article>
+                </section>
+                <section xml:id="sec_nennEs">
+                    <num xml:id="akn_dKcnyq">Section 2</num>
+                    <heading xml:id="akn_UAL67f">ADDITIONAL DIGITAL COOPERATION RELATED TO UNION NON-CUSTOMS FORMALITIES</heading>
+                    <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_lFYQR3" xml:id="akn_art_dtWbDZ">
+                        <num leos:editable="false" xml:id="akn_art_dtWbDZ_6qZ851">Article 11</num>
+                        <heading xml:id="akn_art_dtWbDZ_KZj4UG">Streamlining the fulfilment of customs and Union non-customs formalities</heading>
+                        <paragraph xml:id="akn_art_dtWbDZ_XfqDj2">
+                            <list xml:id="akn_art_dtWbDZ_pfVhrA">
+                                <subparagraph refersTo="~_INP" xml:id="akn_art_dtWbDZ_YTj1W0">
+                                    <content xml:id="akn_art_dtWbDZ_KHYPbU">
+                                        <p xml:id="akn_art_dtWbDZ_eLCD5A">For goods subject to any of the Union non-customs formalities listed in the Annex, the national single window environments for customs shall provide the following functionalities:</p>
+                                    </content>
+                                </subparagraph>
+                                <point xml:id="akn_art_dtWbDZ_KDAMvE">
+                                    <num xml:id="akn_art_dtWbDZ_5nKyRV">(a)</num>
+                                    <content xml:id="akn_art_dtWbDZ_2Y3bcB">
+                                        <p xml:id="akn_art_dtWbDZ_8fHRWQ">allowing economic operators to submit the relevant information required for the fulfilment of the applicable customs formalities and Union non-customs formalities;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_dtWbDZ-par1">
+                                    <num xml:id="akn_art_dtWbDZ_0hL0ix">(b)</num>
+                                    <content xml:id="akn_art_dtWbDZ_i021mQ">
+                                        <p xml:id="akn_art_dtWbDZ_GwjffQ">makingÂ available to economic operators the electronic feedback of goods clearance from customs and partner competent authorities responsible for the fulfilment of the applicable customsÂ formalities and Union non-customs formalities.</p>
+                                    </content>
+                                </point>
+                            </list>
+                        </paragraph>
+                    </article>
+                    <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_UMkYLW" xml:id="akn_art_kCjLvC">
+                        <num leos:editable="false" xml:id="akn_art_kCjLvC_KG9Dwl">Article 12</num>
+                        <heading xml:id="akn_art_kCjLvC_4E3Sfp">Union non-customs formalities subject to additional digital cooperation</heading>
+                        <paragraph xml:id="akn_art_kCjLvC_qLqoJI">
+                            <num xml:id="akn_art_kCjLvC_LP3juG">1.</num>
+                            <content xml:id="akn_art_kCjLvC_FP2wU6">
+                                <p xml:id="akn_art_kCjLvC_z3mUYn">A Union non-customs formality listed in the Annex shall be subject to Article 8(3), point (c),Â Articles 11 to 15 and Article 16(2) provided that the Commission has determined in accordance with paragraph 2 of this Article that such formality fulfils the criteria set out in that paragraph.</p>
+                            </content>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_kCjLvC_zUa3wJ">
+                            <num xml:id="akn_art_kCjLvC_516xzg">2.</num>
+                            <list xml:id="akn_art_kCjLvC_dNIHv5">
+                                <subparagraph refersTo="~_INP" xml:id="akn_art_kCjLvC_SwXBty">
+                                    <content xml:id="akn_art_kCjLvC_toeFZz">
+                                        <p xml:id="akn_art_kCjLvC_bzqs48">The Commission shall, by means of implementing acts, determine which of the Union non-customs formalities listed in the Annex fulfil the following criteria:Â </p>
+                                    </content>
+                                </subparagraph>
+                                <point xml:id="akn_art_kCjLvC_5HYy1n">
+                                    <num xml:id="akn_art_kCjLvC_rnCADB">(a)</num>
+                                    <content xml:id="akn_art_kCjLvC_NDOT4Y">
+                                        <p xml:id="akn_art_kCjLvC_frDQl5">there is an overlap between several data required for the application for supporting documents and the customs declaration;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_kCjLvC_pvGnuc">
+                                    <num xml:id="akn_art_kCjLvC_kUZAHI">(b)</num>
+                                    <content xml:id="akn_art_kCjLvC_zMbKfl">
+                                        <p xml:id="akn_art_kCjLvC_h6l6s9">the number of supporting documents issued in the Union for the specific formality is not negligible;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_kCjLvC_bvQOP5">
+                                    <num xml:id="akn_art_kCjLvC_L1DvHa">(c)</num>
+                                    <content xml:id="akn_art_kCjLvC_K0gWaS">
+                                        <p xml:id="akn_art_kCjLvC_t0Uqx1">the corresponding Union non-customs system referred to in the Annex can identify the economic operator by means of the Economic Operator Registration and Identification (EORI) number;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_kCjLvC_wBpHxX">
+                                    <num xml:id="akn_art_kCjLvC_KMdMBH">(d)</num>
+                                    <content xml:id="akn_art_kCjLvC_prlgHA">
+                                        <p xml:id="akn_art_kCjLvC_3g5BtX">the applicable Union non-customs legislation allows the fulfilment of the specific formality through the national single window environments for customs in accordance with Article 11.</p>
+                                    </content>
+                                </point>
+                            </list>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_kCjLvC_b8CP4W">
+                            <num xml:id="akn_art_kCjLvC_3PKntl">3.</num>
+                            <content xml:id="akn_art_kCjLvC_kYIOqT">
+                                <p xml:id="akn_art_kCjLvC_YvtAcO">Those implementing acts shall be adopted in accordance with the advisory procedure referred to in Article 22(2).</p>
+                            </content>
+                        </paragraph>
+                    </article>
+                    <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_HOM8NU" xml:id="akn_art_NytFbv">
+                        <num leos:editable="false" xml:id="akn_art_NytFbv_nd9Fas">Article 13</num>
+                        <heading xml:id="akn_art_NytFbv_xyMyYe">Data harmonisation and rationalisation</heading>
+                        <paragraph xml:id="akn_art_NytFbv_sFcMSP">
+                            <num xml:id="akn_art_NytFbv_L0ZAEI">1.</num>
+                            <content xml:id="akn_art_NytFbv_Ani65c">
+                                <p xml:id="akn_art_NytFbv_6obSOj">The Commission shall identify the common data between the customs declaration and the corresponding application for supporting documents, and identify the additional data elements subject solely to Union non-customs legislation.</p>
+                            </content>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_NytFbv_ew4QTF">
+                            <num xml:id="akn_art_NytFbv_zlx54E">2.</num>
+                            <content xml:id="akn_art_NytFbv_pXhRPe">
+                                <p xml:id="akn_art_NytFbv_z9KM4O">The additional data elements referred to in paragraph 1 shall be identified by the corresponding acronym of the Union non-customs formality listed in the Annex, followed by the suffix â€˜partner competent authority (PCA) data setâ€™.</p>
+                            </content>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_NytFbv_LTeEq0">
+                            <num xml:id="akn_art_NytFbv_gksRzk">3.</num>
+                            <content xml:id="akn_art_NytFbv_3ZEJfJ">
+                                <p xml:id="akn_art_NytFbv_iiylK0">The customs declaration data and the additional data elements referred to in paragraph 1 requiredÂ to placeÂ the goods under a specific customs procedure shall constitute an integratedÂ declaration, containing all data neededÂ by customs and partner competent authorities for goods clearance.</p>
+                            </content>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_NytFbv_r6BKH6">
+                            <num xml:id="akn_art_NytFbv_ndFQP6">4.</num>
+                            <content xml:id="akn_art_NytFbv_iXdnf2">
+                                <p xml:id="akn_art_NytFbv_CqFHxD">The Commission is empowered to adopt delegated acts in accordance with Article 21, identifying,Â on the one hand, the data elements that are common to both the customs declaration and the application for supporting documents and, on the other hand, the PCA data setÂ for each of the relevant Union actsÂ applicable to Union non-customs formalities listed in the Annex.</p>
+                            </content>
+                        </paragraph>
+                    </article>
+                    <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_KuZsFC" xml:id="akn_art_4YJPOt">
+                        <num leos:editable="false" xml:id="akn_art_4YJPOt_WlyVcy">Article 14</num>
+                        <heading xml:id="akn_art_4YJPOt_amvUQB">Submission of customs and Union non-customs data by economic operators</heading>
+                        <paragraph xml:id="akn_art_4YJPOt_OdIUTF">
+                            <num xml:id="akn_art_4YJPOt_2jvb9j">1.</num>
+                            <content xml:id="akn_art_4YJPOt_hra5wY">
+                                <p xml:id="akn_art_4YJPOt_pIGwIn">For the purposes of Article 11, point (a), national single window environments for customs may enableÂ economic operators to submit an integratedÂ declaration containing the PCA data set(s) together with the customs declaration lodged prior to the presentation of the goods in accordance with Article 171 of Regulation (EU) No 952/2013.</p>
+                            </content>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_4YJPOt_nNbDV4">
+                            <num xml:id="akn_art_4YJPOt_hfPMdH">2.</num>
+                            <content xml:id="akn_art_4YJPOt_3IVieJ">
+                                <p xml:id="akn_art_4YJPOt_k9X2Im">The integratedÂ declaration submitted in accordance with paragraph 1 shall constitute both the customs declaration and the application for supporting documents.</p>
+                            </content>
+                        </paragraph>
+                    </article>
+                    <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_LyW1Dx" xml:id="akn_art_LBFSRW">
+                        <num leos:editable="false" xml:id="akn_art_LBFSRW_Si0yWB">Article 15</num>
+                        <heading xml:id="akn_art_LBFSRW_Y1SPgf">Additional information exchange processed through EU CSW-CERTEX</heading>
+                        <paragraph xml:id="akn_art_LBFSRW_eXWyDr">
+                            <num xml:id="akn_art_LBFSRW_36NDMs">1.</num>
+                            <list xml:id="akn_art_LBFSRW_9fx8ti">
+                                <subparagraph refersTo="~_INP" xml:id="akn_art_LBFSRW_a2ccWr">
+                                    <content xml:id="akn_art_LBFSRW_kcKzuH">
+                                        <p xml:id="akn_art_LBFSRW_RRt9eD">EU CSW-CERTEX shall enable the necessary exchanges of information between national single window environments for customs and Union non-customs systems for the following purposes:</p>
+                                    </content>
+                                </subparagraph>
+                                <point xml:id="akn_art_LBFSRW_aH63Z1">
+                                    <num xml:id="akn_art_LBFSRW_NwYQ7a">(a)</num>
+                                    <content xml:id="akn_art_LBFSRW_ZVqW7J">
+                                        <p xml:id="akn_art_LBFSRW_vMfwCp">transmitting the data that have been identified as common to the customs declaration and the corresponding application for supporting documents pursuant to Article 13(4), as well as the applicable PCA data set(s) to enable partner competent authorities to carry out their duties for the relevant formalities in accordance with Union non-customs legislation;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_LBFSRW_FoEPGJ">
+                                    <num xml:id="akn_art_LBFSRW_LluIfN">(b)</num>
+                                    <content xml:id="akn_art_LBFSRW_MpyMy0">
+                                        <p xml:id="akn_art_LBFSRW_vFVxqp">transmitting to economic operators for the purposes of Article 11(b) any feedback from partner competent authorities entered in the applicable Union non-customs system(s).</p>
+                                    </content>
+                                </point>
+                            </list>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_LBFSRW_EQJjNu">
+                            <num xml:id="akn_art_LBFSRW_QBTjjp">2.</num>
+                            <content xml:id="akn_art_LBFSRW_TGn9a3">
+                                <p xml:id="akn_art_LBFSRW_95bDqs">Where anÂ economic operator is registered with the customs authorities in accordance with Article 9 of Regulation (EU) No 952/2013, the EORI number shall be used for the exchanges of information referred to in paragraph 1.</p>
+                            </content>
+                        </paragraph>
+                        <paragraph xml:id="akn_art_LBFSRW_TpDs2b">
+                            <num xml:id="akn_art_LBFSRW_PG57Xs">3.</num>
+                            <content xml:id="akn_art_LBFSRW_BJlpCG">
+                                <p xml:id="akn_art_LBFSRW_dsz76A">The Commission shall adopt, by means of implementing acts,Â procedural arrangements for the exchanges of information referred to in paragraph 1, including, where appropriate, any specific rules governing the protection of personal data. Those implementing acts shall be adopted in accordance with the advisory procedure referred to in Article 22(2).</p>
+                            </content>
+                        </paragraph>
+                    </article>
+                </section>
+                <section xml:id="sec_mhWpdJ">
+                    <num xml:id="akn_Kk5pYg">Section 3</num>
+                    <heading xml:id="akn_z1TmGt">OTHER PROCEDURAL RULES FOR THE UNION NON-CUSTOMS FORMALITIESÂ </heading>
+                    <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_QKoT34" xml:id="akn_art_adfnqa">
+                        <num leos:editable="false" xml:id="akn_art_adfnqa_x3bHMx">Article 16</num>
+                        <heading xml:id="akn_art_adfnqa_ZCTwJB">Use of the EORI system by partner competent authorities</heading>
+                        <paragraph xml:id="akn_art_adfnqa_KVvz0A">
+                            <content xml:id="akn_art_adfnqa_kzP5Pf">
+                                <p xml:id="akn_art_adfnqa_cdbAe3">In carrying out their duties, partner competent authorities shall have access to the EORIÂ system established for the purposes of Article 9 of Regulation (EU) No 952/2013, to validate the relevant data on economic operators stored in that system.</p>
+                            </content>
+                        </paragraph>
+                    </article>
+                    <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_7M6AAu" xml:id="akn_art_ninkXQ">
+                        <num leos:editable="false" xml:id="akn_art_ninkXQ_U9iKBh">Article 17</num>
+                        <heading xml:id="akn_art_ninkXQ_xC6YJV">National coordinators</heading>
+                        <paragraph xml:id="akn_art_ninkXQ_e4cxNV">
+                            <list xml:id="akn_art_ninkXQ_hjUw2m">
+                                <subparagraph refersTo="~_INP" xml:id="akn_art_ninkXQ_Gb8eF4">
+                                    <content xml:id="akn_art_ninkXQ_HOV02w">
+                                        <p xml:id="akn_art_ninkXQ_OQmHlf">Each Member State shall designate a competent authority to act as a national coordinator for the European Union Single Window Environment for Customs. The national coordinator shall carry out the following tasks:</p>
+                                    </content>
+                                </subparagraph>
+                                <point xml:id="akn_art_ninkXQ_FoBHK4">
+                                    <num xml:id="akn_art_ninkXQ_Zap3ap">(a)</num>
+                                    <content xml:id="akn_art_ninkXQ_2tX6zP">
+                                        <p xml:id="akn_art_ninkXQ_VLbr3l">act as the national contact point for the Commission for all matters relating to the implementation of this Regulation;</p>
+                                    </content>
+                                </point>
+                                <point xml:id="akn_art_ninkXQ_ToZVCX">
+                                    <num xml:id="akn_art_ninkXQ_0bDMum">(b)</num>
+                                    <content xml:id="akn_art_ninkXQ_nJ46Sd">
+                                        <p xml:id="akn_art_ninkXQ_zHOov5">promote cooperation between customs and national partner competent authorities on a national levelÂ and coordinate the activities related to the connection between the national single window environments for customs and EU CSW-CERTEXÂ to support implementation of this Regulation.Â </p>
+                                    </content>
+                                </point>
+                            </list>
+                        </paragraph>
+                    </article>
+                </section>
+            </chapter>
+            <chapter xml:id="cha_eZzXw2">
+                <num xml:id="akn_8zLWYN">Chapter V</num>
+                <heading xml:id="akn_J2fghH">Costs of EU CSW-CERTEX, work programme, and monitoring and reporting</heading>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_5vSnsU" xml:id="akn_art_ZQi0El">
+                    <num leos:editable="false" xml:id="akn_art_ZQi0El_6QPM6i">Article 18</num>
+                    <heading xml:id="akn_art_ZQi0El_RvSiFX">Costs</heading>
+                    <paragraph xml:id="akn_art_ZQi0El_RUk5SM">
+                        <num xml:id="akn_art_ZQi0El_0GUdhQ">1.</num>
+                        <content xml:id="akn_art_ZQi0El_hxU2hX">
+                            <p xml:id="akn_art_ZQi0El_Cufb5X">The costs associated with the development, integration and operation of EU CSW-CERTEX and its interfaces with Union non-customs systems shall be borne by the Union.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_ZQi0El_WOJfbR">
+                        <num xml:id="akn_art_ZQi0El_OEZbn2">2.</num>
+                        <content xml:id="akn_art_ZQi0El_m8aNvP">
+                            <p xml:id="akn_art_ZQi0El_v7vl8u">Each Member State shall bear the costs incurred in relation to the development, integration and operation of itsÂ national single window environmentÂ for customs and itsÂ connection with EU CSW-CERTEX.</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_Jv6Lz5" xml:id="akn_art_rWpWZg">
+                    <num leos:editable="false" xml:id="akn_art_rWpWZg_PkcfJf">Article 19</num>
+                    <heading xml:id="akn_art_rWpWZg_LN1aK5">Work programme</heading>
+                    <paragraph xml:id="akn_art_rWpWZg-par1">
+                        <content xml:id="akn_art_rWpWZg_zgUS0v">
+                            <p xml:id="akn_art_rWpWZg_Du3drL">The Commission shall, by means of implementing acts, adopt a work programme to support the implementation of the provisions of this Regulation related to the connection of the Union non-customs systems referred to in the Annex to EU CSW-CERTEX and the integration of the respective Union non-customs formalities. The work programme shall be kept up to date. Those implementing acts shall be adopted in accordance with the advisory procedure referred to in Article 22(2).</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_wEabj3" xml:id="akn_art_9bdXcQ">
+                    <num leos:editable="false" xml:id="akn_art_9bdXcQ_2sFIP8">Article 20</num>
+                    <heading xml:id="akn_art_9bdXcQ_Gagszt">Monitoring and reporting</heading>
+                    <paragraph xml:id="akn_art_9bdXcQ_I8teu1">
+                        <num xml:id="akn_art_9bdXcQ_9EdSp2">1.</num>
+                        <content xml:id="akn_art_9bdXcQ_yZs624">
+                            <p xml:id="akn_art_9bdXcQ_3mbrE2">The Commission shall regularly monitor the functioning of the European Union Single Window Environment for Customs.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_9bdXcQ_I89Zai">
+                        <num xml:id="akn_art_9bdXcQ_sq9tfA">2.</num>
+                        <content xml:id="akn_art_9bdXcQ_Gq1kpV">
+                            <p xml:id="akn_art_9bdXcQ_U0xenu">The Commission shall regularly evaluate the performance of EU CSW-CERTEX.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_9bdXcQ_8mHd8J">
+                        <num xml:id="akn_art_9bdXcQ_0AfDuw">3.</num>
+                        <content xml:id="akn_art_9bdXcQ_JKUmEI">
+                            <p xml:id="akn_art_9bdXcQ_ZV00Am">By 31 December 2027Â and every threeÂ years thereafter, the Commission shall submit to the European Parliament and to the Council a report on the implementation of this Regulation. The report shall also include information on the monitoring and evaluation carried out in accordance with paragraphs 1 and 2, respectively.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_9bdXcQ_9osdf8">
+                        <num xml:id="akn_art_9bdXcQ_LDQmfH">4.</num>
+                        <content xml:id="akn_art_9bdXcQ_MpU6Pb">
+                            <p xml:id="akn_art_9bdXcQ_Ljz7kX">The Member States shall, upon request from the Commission, provide any information that is necessary for the report referred to in paragraph 3.</p>
+                        </content>
+                    </paragraph>
+                </article>
+            </chapter>
+            <chapter xml:id="cha_SnsPsd">
+                <num xml:id="akn_348OfS">Chapter VI</num>
+                <heading xml:id="akn_DculZe">Procedures for adoption of implementing and delegated acts, amendments to Regulation (EU) No 952/2013 and final provisions</heading>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_6L6h0k" xml:id="akn_art_fTOjdP">
+                    <num leos:editable="false" xml:id="akn_art_fTOjdP_O0SFyi">Article 21</num>
+                    <heading xml:id="akn_art_fTOjdP_An3ga2">Exercise of the delegation</heading>
+                    <paragraph xml:id="akn_art_fTOjdP_4qGRQC">
+                        <num xml:id="akn_art_fTOjdP_SFjEa7">1.</num>
+                        <content xml:id="akn_art_fTOjdP_QkB1dA">
+                            <p xml:id="akn_art_fTOjdP_C77I3n">The power to adopt delegated acts is conferred on the Commission subject to the conditions laid down in this Article.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_fTOjdP_H3RTzQ">
+                        <num xml:id="akn_art_fTOjdP_lWoQ0X">2.</num>
+                        <content xml:id="akn_art_fTOjdP_sZmHdi">
+                            <p xml:id="akn_art_fTOjdP_M17TTw">The power to adopt delegated acts referred to in Articles 5(4), 10(3)Â and 13(4) shall be conferred on the Commission for an indeterminate period from the date of entry into force of this Regulation.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_fTOjdP_iBajuF">
+                        <num xml:id="akn_art_fTOjdP_5xn1XI">3.</num>
+                        <content xml:id="akn_art_fTOjdP_324rCB">
+                            <p xml:id="akn_art_fTOjdP_DnZKCT">The delegation of power referred to in Articles 5(4), 10(3)Â and 13(4) may be revoked at any time by the European Parliament or by the Council. A decision to revoke shall put an end to the delegation of the power specified in that decision. It shall take effect the day following the publication of the decision in the Official Journal of the European Union or at a later date specified therein. It shall not affect the validity of any delegated acts already in force.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_fTOjdP_5Qbfw3">
+                        <num xml:id="akn_art_fTOjdP_8G0qII">4.</num>
+                        <content xml:id="akn_art_fTOjdP_L8kOCH">
+                            <p xml:id="akn_art_fTOjdP_6I67WG">Before adopting a delegated act, the Commission shall consult experts designated by each Member State in accordance with the principles laid down in the Interinstitutional Agreement of 13 April 2016 on Better Law-Making.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_fTOjdP_6oifjk">
+                        <num xml:id="akn_art_fTOjdP_rxHwaO">5.</num>
+                        <content xml:id="akn_art_fTOjdP_OTpy0d">
+                            <p xml:id="akn_art_fTOjdP_1eczFa">As soon as it adopts a delegated act, the Commission shall notify it simultaneously to the European Parliament and to the Council.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_fTOjdP_XE1MLD">
+                        <num xml:id="akn_art_fTOjdP_oWkAaR">6.</num>
+                        <content xml:id="akn_art_fTOjdP_aeMe5r">
+                            <p xml:id="akn_art_fTOjdP_BfcDny">A delegated act adopted pursuant to Articles 5(4), 10(3) and 13(4) shall enter into force only if no objection has been expressed either by the European Parliament or by the Council within a period of two months of notification of that act to the European Parliament and the Council or if, before the expiry of that period, the European Parliament and the Council have both informed the Commission that they will not object. That period shall be extended by two months at the initiative of the European Parliament or of the Council.</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_6hHL5j" xml:id="akn_art_Kw3Lfu">
+                    <num leos:editable="false" xml:id="akn_art_Kw3Lfu_AwLNHZ">Article 22</num>
+                    <heading xml:id="akn_art_Kw3Lfu_l0ehX4">Committee procedure</heading>
+                    <paragraph xml:id="akn_art_Kw3Lfu_OHkiLz">
+                        <num xml:id="akn_art_Kw3Lfu_gl6A0x">1.</num>
+                        <content xml:id="akn_art_Kw3Lfu_o64pfY">
+                            <p xml:id="akn_art_Kw3Lfu_vvrrr0">The Commission shall be assisted by the Customs Code Committee established by Regulation (EU) No 952/2013. That committee shall be a committee within the meaning of Regulation (EU) No 182/2011.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_Kw3Lfu_msmR4W">
+                        <num xml:id="akn_art_Kw3Lfu_D5MKw1">2.</num>
+                        <content xml:id="akn_art_Kw3Lfu_x00WBR">
+                            <p xml:id="akn_art_Kw3Lfu_Ey7BFm">Where reference is made to this paragraph, Article 4 of Regulation (EU) No 182/2011 shall apply.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_art_Kw3Lfu_FJjRrM">
+                        <num xml:id="akn_art_Kw3Lfu_iwljMh">3.</num>
+                        <content xml:id="akn_art_Kw3Lfu_mDZSB1">
+                            <p xml:id="akn_art_Kw3Lfu_CHlSVJ">Where reference is made to this paragraph, Article 5 of Regulation (EU) No 182/2011 shall apply.</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:listIdAttr="_akn_article_nT3puI" xml:id="akn_article_KAkYFV">
+                    <num leos:editable="false" xml:id="akn_article_KAkYFV_CZn5Xc">Article 23</num>
+                    <heading xml:id="akn_article_KAkYFV_8HIm8V">Amendments toÂ Regulation (EU) No 952/2013</heading>
+                    <paragraph xml:id="akn_article_KAkYFV_Cb6AJZ">
+                        <content xml:id="akn_article_KAkYFV_aoorEu">
+                            <p xml:id="akn_article_KAkYFV_h9Wzfs">Regulation (EU) No 952/2013 is amended as follows:</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_article_KAkYFV_trUhla">
+                        <content xml:id="akn_article_KAkYFV_2zF9HQ">
+                            <p xml:id="akn_article_KAkYFV_HrRJkt">(1) in Article 5(2), the following pointÂ isÂ added:</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_article_KAkYFV_OkoQiz">
+                        <content xml:id="akn_article_KAkYFV_BIrn5X">
+                            <p xml:id="akn_article_KAkYFV_s8YotI">â€˜(e) Regulation (EU) [...] of the European Parliament and of the Council* and the provisions supplementing or implementing it;</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_article_KAkYFV_vIW36i">
+                        <content xml:id="akn_article_KAkYFV_UT7Yow">
+                            <p xml:id="akn_article_KAkYFV_TGD1wC">*Regulation (EU) [...] of the European Parliament and of the Council of [date] establishing the European Union Single Window Environment for Customs and amending Regulation (EU) No 952/2013 (OJ L [â€¦], DD/MM/YYYY, p. XX).</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_article_KAkYFV_PS91EQ">
+                        <content xml:id="akn_article_KAkYFV_sVhD4h">
+                            <p xml:id="akn_article_KAkYFV_ripmIS">(2) in Article 163(1), the following subparagraphÂ is added:</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="akn_article_KAkYFV-par1">
+                        <content xml:id="akn_article_KAkYFV_TcSg6y">
+                            <p xml:id="akn_article_KAkYFV_EDYMgg">â€˜The supporting documents for the applicable Union non-customs formalities listed in the Annex to Regulation (EU)Â [â€¦] shall be deemed to be in the possession of the declarant and at the disposal of the customs authorities at the time when the customs declaration is lodged, provided that those authorities are able to obtain the necessary data from the corresponding Union non-customs system(s) through the European Union Customs Single Window Certificates Exchange System in accordance with Article 10(1), pointsÂ (a) and (c)Â of that Regulationâ€™.</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_tzycU7" xml:id="art_2">
+                    <num leos:editable="false" xml:id="art_2__num">Article 24</num>
+                    <heading xml:id="art_2__heading">Entry into force and application</heading>
+                    <paragraph xml:id="art_2_qTBtZk">
+                        <content xml:id="art_2_jwl4J2">
+                            <p xml:id="art_2_IqbuO4">This Regulation shall enter into force on the twentieth day following that of its publication in the
+                                <i xml:id="art_2__para_1__content__p__i">Official Journal of the European Union</i>
+                                .
+                            </p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="art_2_Sfe2zJ">
+                        <content xml:id="art_2_YUP9l0">
+                            <p xml:id="art_2_knNKeE">Article 5(2) and (3), Article 8(3), points (a) and (b), and Article 10 shall apply to each of the Union non-customs formalities listed in the Annex as from the dates set out therein.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="art_2__para_1">
+                        <content xml:id="art_2__para_1__content">
+                            <p xml:id="art_2__para_1__content__p">Article 8(3), point (c), Article 11, Article 13(1), (2) and (3), Article 14 and Article 15(1) and (2) shall apply from 1 January 2031.</p>
+                        </content>
+                    </paragraph>
+                </article>
+            </chapter>
+            <clause leos:deletable="false" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="clause_1">
+                <content xml:id="clause_1__content">
+                    <p xml:id="clause_1__content__p">This Regulation shall be binding in its entirety and directly applicable in all Member States.</p>
+                </content>
+            </clause>
+        </body>
+        <conclusions xml:id="conclusions">
+            <p xml:id="conclusions__p_1">Done at
+                <location refersTo="~BEL_BRU" xml:id="conclusions__p__location_1">Brussels</location>
+                ,
+            </p>
+            <block name="signatory" xml:id="conclusions__block_1">
+                <signature xml:id="conclusions__block_1__signature_1">
+                    <organization refersTo="~EP" xml:id="conclusions__block_1__signature_1__organization">For the European Parliament</organization>
+                    <role refersTo="~PRESID" xml:id="conclusions__block_1__signature_1__role">The President</role>
+                    <person refersTo="" xml:id="conclusions__block_1__signature_1__person">[...]</person>
+                </signature>
+                <signature xml:id="conclusions__block_1__signature_2">
+                    <organization refersTo="~CONSIL" xml:id="conclusions__block_1__signature_2__organization">For the Council</organization>
+                    <role refersTo="~PRESID" xml:id="conclusions__block_1__signature_2__role">The President</role>
+                    <person refersTo="" xml:id="conclusions__block_1__signature_2__person">[...]</person>
+                </signature>
+            </block>
+        </conclusions>
+        <attachments>
+            <attachment xml:id="_akn_aqCMXC">
+                <documentRef href="ANNEX-cltmu06fs0005bk2801qpk3hc-en.xml" showAs="Annex" xml:id="_akn_wVapIM"/>
+            </attachment>
+        </attachments>
+    </bill>
+</akomaNtoso>

@@ -37,6 +37,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.Validate;
@@ -79,10 +80,11 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private final Provider<StructureContext> structureContextProvider;
     private final Provider<StructureContext> structureContext;
     private final AttachmentProcessor attachmentProcessor;
-    private final MergeContributionHelperService mergeContributionHelperService;
+    private final MergeContributionService mergeContributionService;
     private final XmlContentProcessor xmlContentProcessor;
     private final NumberService numberService;
     private final MessageHelper messageHelper;
+    private final TrackChangesContext trackChangesContext;
 
     private final DocumentContentService documentContentService;
     private final ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
@@ -106,11 +108,11 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       Provider<StructureContext> structureContextProvider,
                                       Provider<StructureContext> structureContext,
                                       AttachmentProcessor attachmentProcessor,
-                                      MergeContributionHelperService mergeContributionHelperService,
+                                      MergeContributionService mergeContributionService,
                                       XmlContentProcessor xmlContentProcessor,
                                       NumberService numberService,
                                       MessageHelper messageHelper,
-                                      DocumentContentService documentContentService,
+                                      TrackChangesContext trackChangesContext, DocumentContentService documentContentService,
                                       ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI,
                                       DocumentViewService<XmlDocument> documentViewService,
                                       RepositoryPropertiesMapper repositoryPropertiesMapper) {
@@ -126,10 +128,11 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.structureContextProvider = structureContextProvider;
         this.structureContext = structureContext;
         this.attachmentProcessor = attachmentProcessor;
-        this.mergeContributionHelperService = mergeContributionHelperService;
+        this.mergeContributionService = mergeContributionService;
         this.messageHelper = messageHelper;
         this.xmlContentProcessor = xmlContentProcessor;
         this.numberService = numberService;
+        this.trackChangesContext = trackChangesContext;
         this.documentContentService = documentContentService;
         this.comparisonDelegateAPI = comparisonDelegateAPI;
         this.documentViewService = documentViewService;
@@ -275,9 +278,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             List<TocItem> tocItemList = this.structureContext.get().getTocItems();
             byte[] xmlClonedContent = contribution.getXmlContent();
             List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
-            byte[] xmlContent = mergeContributionHelperService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
+            byte[] xmlContent = mergeContributionService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
             xmlContent = this.numberService.renumberArticles(xmlContent, true);
             xmlContent = this.numberService.renumberRecitals(xmlContent);
+            trackChangesContext.setTrackChangesEnabled(true);
             xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
             document = this.leosRepository.updateDocument(
                     document.getId(),

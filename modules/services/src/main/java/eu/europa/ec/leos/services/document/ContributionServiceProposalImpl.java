@@ -289,13 +289,15 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             throws IOException {
         //TODO: change to findPackageByDocumentRef
         LeosPackage clonedPackage = packageService.findPackageByDocumentId(cloneDocumentId);
-        LegDocument legDocument = packageService.findDocumentByPackagePathAndName(clonedPackage.getPath(), legFileName,
-                LegDocument.class);
-        Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().
-                getSource().getBytes());
-        legContent.put(documentName, xmlContent);
-        byte[] updatedLegContent = ZipPackageUtil.zipByteArray(legContent);
-        legService.updateLegDocument(legDocument.getId(), updatedLegContent, legDocument.getStatus());
+        if (clonedPackage != null) {
+            LegDocument legDocument = packageService.findDocumentByPackagePathAndName(clonedPackage.getPath(), legFileName,
+                    LegDocument.class);
+            Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().
+                    getSource().getBytes());
+            legContent.put(documentName, xmlContent);
+            byte[] updatedLegContent = ZipPackageUtil.zipByteArray(legContent);
+            legService.updateLegDocument(legDocument.getId(), updatedLegContent, legDocument.getStatus());
+        }
     }
 
     private String getClonedMilestoneId(String proposalRef, String legDocumentName) {

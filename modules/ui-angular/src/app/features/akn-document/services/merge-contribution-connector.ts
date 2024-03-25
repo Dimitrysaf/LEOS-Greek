@@ -6,12 +6,11 @@ import { MergeActionVO } from '@/shared/models/merge-action-vo.model';
 import { DocumentService } from '@/shared/services/document.service';
 import {
   ACTION_DONE_CLASS,
-  CONTRIBUTION_SELECTED,
   ContributionActionAttrValue,
   ID,
   LEOS_SOFT_ACTION,
   LEOS_SOFT_ACTION_MOVE_FROM,
-  LEOS_SOFT_ACTION_MOVE_TO,
+  LEOS_SOFT_ACTION_MOVE_TO, MERGE_ACTION_ATTR,
   MERGE_CONTRIBUTION,
   MOVE_FROM_ATTR,
   MOVE_PREFIX,
@@ -74,7 +73,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
     let selectedElements: Element[] = Array.from(elementsToBeMerged);
     selectedElements.forEach( (e, index) => {
       let elt = e as HTMLElement;
-      if (!elt.classList.contains('ACTION_DONE_CLASS')) {
+      if (!elt.hasAttribute(MERGE_ACTION_ATTR) && !elt.classList.contains(ACTION_DONE_CLASS)) {
         const softAction = elt.getAttribute(LEOS_SOFT_ACTION);
         if (softAction && softAction === MOVE_FROM_ATTR) {
           selectedElements = selectedElements.filter( (s) => s.getAttribute(ID) !== REVISION_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elt.getAttribute(ID).replace(REVISION_PREFIX, ""));
@@ -114,39 +113,49 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
   }
 
   undo(event: MouseEvent, element: HTMLElement, actions: HTMLElement) {
-    if (element.classList.contains(ACTION_DONE_CLASS)) {
-      element.classList.add(CONTRIBUTION_SELECTED);
-      element.classList.remove(ACTION_DONE_CLASS);
-      const list = this.mergeContributionsService.getImpactedElements(element);
+    if (element.hasAttribute(MERGE_ACTION_ATTR) && !element.hasAttribute(SELECTED_ACTION_ATTR)) {
+      element.setAttribute(SELECTED_ACTION_ATTR, ContributionActionAttrValue.UNDO);
+      const list = this.mergeContributionsService.getImpactedElementsForUndo(element);
       list.forEach(e => {
         let elt =  e as HTMLElement;
-        elt.classList.add(CONTRIBUTION_SELECTED);
-        elt.classList.remove(ACTION_DONE_CLASS);
+        elt.setAttribute(SELECTED_ACTION_ATTR, ContributionActionAttrValue.UNDO);
       });
+      if (element.hasAttribute(LEOS_SOFT_ACTION_MOVE_TO)) {
+        const movedFromElement = this.document.getElementById(element.getAttribute(ID).replace(MOVE_PREFIX,''));
+        if (movedFromElement) {
+          movedFromElement.removeAttribute(SELECTED_ACTION_ATTR);
+          const list = this.mergeContributionsService.getImpactedElementsForUndo(movedFromElement);
+          list.forEach(e => {
+            let elt =  e as HTMLElement;
+            elt.setAttribute(SELECTED_ACTION_ATTR, ContributionActionAttrValue.UNDO);
+          });
+        }
+      } else if (element.hasAttribute(LEOS_SOFT_ACTION_MOVE_FROM)) {
+        const movedToElement = this.document.getElementById(REVISION_PREFIX + MOVE_PREFIX + element.getAttribute(ID).replace(REVISION_PREFIX,''));
+        if (movedToElement) {
+          movedToElement.setAttribute(SELECTED_ACTION_ATTR, ContributionActionAttrValue.UNDO);
+        }
+      }
       this.mergeContributionsService.undo(element, this.mergeContributionsService.getCurrentContribution());
     } else {
       if (element.hasAttribute(LEOS_SOFT_ACTION_MOVE_TO)) {
         const movedFromElement = this.document.getElementById(element.getAttribute(ID).replace(MOVE_PREFIX,''));
         if (movedFromElement) {
           movedFromElement.removeAttribute(SELECTED_ACTION_ATTR);
-          movedFromElement.classList.remove(CONTRIBUTION_SELECTED);
           const list = this.mergeContributionsService.getImpactedElements(movedFromElement);
           list.forEach(e => {
             let elt =  e as HTMLElement;
             elt.removeAttribute(SELECTED_ACTION_ATTR);
-            elt.classList.remove(CONTRIBUTION_SELECTED);
           });
         }
       } else if (element.hasAttribute(LEOS_SOFT_ACTION_MOVE_FROM)) {
         const movedToElement = this.document.getElementById(REVISION_PREFIX + MOVE_PREFIX + element.getAttribute(ID).replace(REVISION_PREFIX,''));
         if (movedToElement) {
           movedToElement.removeAttribute(SELECTED_ACTION_ATTR);
-          movedToElement.classList.remove(CONTRIBUTION_SELECTED);
         }
       }
 
       element.removeAttribute(SELECTED_ACTION_ATTR);
-      element.classList.remove(CONTRIBUTION_SELECTED);
       const removedAction: MergeActionVO = this.mergeContributionsService.removeMergeActionList(element);
       this.doUpdateMergeActionList({action: removedAction, select: false});
 
@@ -154,7 +163,6 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
       list.forEach(e => {
         let elt =  e as HTMLElement;
         elt.removeAttribute(SELECTED_ACTION_ATTR);
-        elt.classList.remove(CONTRIBUTION_SELECTED);
         const removedAction: MergeActionVO = this.mergeContributionsService.removeMergeActionList(elt);
         this.doUpdateMergeActionList({action: removedAction, select: false});
       });
@@ -190,7 +198,6 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
          this.acceptAllContributions,
        );
     }
-    this.mergeContributionsService.emptyMergeActionList();
   }
 
   handleContributionSelection(selectionData: { selected: boolean }) {

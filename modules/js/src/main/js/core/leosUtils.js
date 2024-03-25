@@ -36,7 +36,10 @@ define(function leosUtilsModule(require) {
     var SUB_TEXT_TAG = "SUB";
     var SUP_TEXT_TAG = "SUP";
     var HEADING_TAG = "H2";
+    var HEADING = "heading";
     var NUM = "num";
+    var PARAGRAPH = "paragraph";
+    var ID = "id";
     var KEYS = {
         "KEY_DELETE": 8,
         "KEY_ENTER": 13,
@@ -332,6 +335,10 @@ define(function leosUtilsModule(require) {
         getDocContainer: _getDocContainer,
         getElementPosition: _getElementPosition,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE,
-        KEYS: KEYS
+        KEYS: KEYS,
+        PARAGRAPH: PARAGRAPH,
+        NUM: NUM,
+        ID: ID,
+        HEADING: HEADING,
     };
 });

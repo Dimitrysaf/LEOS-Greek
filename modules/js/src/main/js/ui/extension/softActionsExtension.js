@@ -48,6 +48,8 @@ define(function SoftActionsExtensionModule(require) {
     var SIMPLE_COMPARE_CONTENT_CLASS = "leos-simple-comparison-content";
     var REVISION_CONTENT_CLASS = "leos-revision-content";
 
+    var otherParentElements;
+
     function _initSoftActions(connector) {
         log.debug("Initializing Soft Actions extension...");
 
@@ -183,6 +185,7 @@ define(function SoftActionsExtensionModule(require) {
             _displaySoftMoveLabelForDirection("TO", target);
             _displaySoftMoveLabelForDirection("FROM", target);
         }
+        otherParentElements = otherTargets;
         if (!!otherTargets && otherTargets.length > 0) {
             for (const t of otherTargets) {
                 const targetElt = document.getElementById(t);
@@ -195,8 +198,23 @@ define(function SoftActionsExtensionModule(require) {
     }
 
     function _navigateToMovedElement(id, parentElement) {
+        if (id.includes(REVISION_CONTENT_PREFIX) && id.includes(SOFT_MOVE_PLACEHOLDER_ID_PREFIX)) {
+            id = REVISION_CONTENT_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + id.replaceAll(REVISION_CONTENT_PREFIX, '')
+                .replaceAll(SOFT_MOVE_PLACEHOLDER_ID_PREFIX, '');
+        }
         var element = document.getElementById(id);
-        contentScroller.scrollTo(element, parentElement, null);
+        if ($(parentElement).find('#' + id).length == 0) {
+            if (!!otherParentElements && otherParentElements.length > 0) {
+                for (const t of otherParentElements) {
+                    const targetElt = document.getElementById(t);
+                    if (!!targetElt && $(targetElt).find('#' + id).length > 0) {
+                        contentScroller.scrollTo(element, targetElt.parentElement, null);
+                    }
+                }
+            }
+        } else {
+            contentScroller.scrollTo(element, parentElement, null);
+        }
     }
 
     function _connectorStateChangeListener() {

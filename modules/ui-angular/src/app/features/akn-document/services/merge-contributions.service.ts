@@ -21,11 +21,11 @@ import {EuiDialogService} from "@eui/components/eui-dialog";
 import {TemplatePortal} from "@angular/cdk/portal";
 import {DomSanitizer} from "@angular/platform-browser";
 import {
-  ADD_ATTR, CONTENT_CHANGE, CONTRIBUTION_SELECTED, ContributionActionAttrValue,
+  ADD_ATTR, CONTENT_CHANGE, ContributionActionAttrValue,
   DELETE_ATTR,
   ID, INSERT_ATTR,
   LEOS_SOFT_ACTION,
-  LEOS_TRACK_ACTION, MERGE_CONTRIBUTION,
+  LEOS_TRACK_ACTION, MERGE_ACTION_ATTR, MERGE_CONTRIBUTION,
   MOVE_ATTR,
   MOVE_FROM_ATTR, MOVE_PREFIX,
   MOVE_TO_ATTR,
@@ -305,6 +305,7 @@ export class MergeContributionsService {
           });
           if (!acceptAllContributions && contribution)
             this.updateProcessedStatus(false, contribution);
+          this.emptyMergeActionList();
           this.documentService.reloadDocument();
         },
         error: (res) => {
@@ -541,31 +542,30 @@ export class MergeContributionsService {
       if (element.getAttribute(ID).includes(MOVE_PREFIX)) {
         const movedFromElement = document.getElementById(element.getAttribute(ID).replace(MOVE_PREFIX, ''));
         movedFromElement.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-        movedFromElement.classList.add(CONTRIBUTION_SELECTED);
         const list = this.getImpactedElements(movedFromElement);
         list.forEach(e => {
           let elt =  e as HTMLElement;
           elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-          elt.classList.add(CONTRIBUTION_SELECTED);
         });
       } else {
         const movedToElement = document.getElementById(REVISION_PREFIX + MOVE_PREFIX + element.getAttribute(ID).replace(REVISION_PREFIX, ''));
         movedToElement.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-        movedToElement.classList.add(CONTRIBUTION_SELECTED);
       }
     }
-    element.classList.add(CONTRIBUTION_SELECTED);
     element.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
     const list = this.getImpactedElements(element);
     list.forEach(e => {
       let elt =  e as HTMLElement;
       elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-      elt.classList.add(CONTRIBUTION_SELECTED);
     });
   }
 
   public getImpactedElements(element: HTMLElement): NodeList {
     return element.querySelectorAll('.' + MERGE_CONTRIBUTION);
+  }
+
+  public getImpactedElementsForUndo(element: HTMLElement): NodeList {
+    return element.querySelectorAll('[leos\\:mergeAction]');
   }
 
   public undo(element: HTMLElement, contribution: ContributionVO) {
