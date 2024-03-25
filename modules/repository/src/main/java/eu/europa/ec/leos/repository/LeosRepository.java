@@ -25,6 +25,8 @@ import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -381,7 +383,13 @@ public interface LeosRepository {
 
     <D extends LeosDocument> List<D> searchVersions(Class<? extends D> type, String docRef, List<String> logins, String versionType);
 
-    Object findRecentPackagesForUser(String userId, String numberOfResult);
+    List<RecentPackageResponse> findRecentPackagesForUser(String userId, String numberOfResult);
 
-    Object findFavouritePackagesForUser(String userId);
+    List<FavouritePackageResponse> findFavouritePackagesForUser(String userId);
+
+
+    FavouritePackageResponse getFavouritePackage(String ref, String userId);
+
+    FavouritePackageResponse toggleFavouritePackage(String ref, String userId);
+
 }

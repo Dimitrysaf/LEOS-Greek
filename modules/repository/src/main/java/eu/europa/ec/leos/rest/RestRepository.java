@@ -26,6 +26,8 @@ import eu.europa.ec.leos.rest.support.requests.CreateDocumentRequest;
 import eu.europa.ec.leos.rest.support.requests.CreatePackageRequest;
 import eu.europa.ec.leos.rest.support.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.rest.support.requests.UpdateDocumentRequest;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
+import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,6 +124,12 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestRecentPackagesURI;
     @Value("${leos.rest.repository.find.favourite.packages.uri}")
     private String leosRestFavouritePackagesURI;
+
+    @Value("${leos.rest.repository.get.favourite.package}")
+    private String leosRestFavouritePackageDocument;
+
+    @Value("${leos.rest.repository.toggle.favourite.package}")
+    private String leosRestToggleFavouritePackageDocument;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -433,17 +442,32 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
-    Object findRecentPackagesForUser(final String userId, String numberOfResults) {
+    List<RecentPackageResponse> findRecentPackagesForUser(final String userId, String numberOfResults) {
         LOGGER.trace("Finding recent packages by userId... [userId =" + userId + ", numberOfResults =" + numberOfResults + ']');
         String url = getUrl(leosRestRecentPackagesURI);
-        Object resp = getEntity(url, Object.class, userId, numberOfResults);
+        RecentPackageResponse[] respFromRepo = getEntity(url, RecentPackageResponse[].class, userId, numberOfResults);
+        List<RecentPackageResponse> resp = Arrays.asList(respFromRepo);
         return resp;
     }
 
-    Object findFavouritePackagesForUser(final String userId) {
+    List<FavouritePackageResponse> findFavouritePackagesForUser(final String userId) {
         LOGGER.trace("Finding recent packages by userId... [userId =" + userId + ']');
         String url = getUrl(leosRestFavouritePackagesURI);
-        Object resp = getEntity(url, Object.class, userId);
+        FavouritePackageResponse[] respFromRepo = getEntity(url, FavouritePackageResponse[].class, userId);
+        List<FavouritePackageResponse> resp = Arrays.asList(respFromRepo);
         return resp;
     }
+
+    FavouritePackageResponse getFavouritePackage(final String ref, final String userId) {
+        LOGGER.trace("Finding favourite package... [ref =" + ref + ']');
+        String url = getUrl(leosRestFavouritePackageDocument);
+        return getEntity(url, FavouritePackageResponse.class, ref, userId);
+    }
+
+    FavouritePackageResponse toggleFavouritePackage(final String ref, final String userId) {
+        LOGGER.trace("Toggle favourite package... [ref =" + ref + ']');
+        String url = getUrl(leosRestToggleFavouritePackageDocument);
+        return putEntity(url, null, FavouritePackageResponse.class, ref, userId);
+    }
+
 }

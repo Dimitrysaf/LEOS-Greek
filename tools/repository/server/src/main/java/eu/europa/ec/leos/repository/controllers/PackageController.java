@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -209,16 +210,35 @@ public class PackageController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public List<PackagesRecentlyChanged> findRecentPackagesForUser(@PathVariable("userName") String userName, @PathVariable("numberOfRecentPackages") BigDecimal numberOfRecentPackages) throws RepositoryException{
-        return packageService.findRecentPackagesForUser(userName, numberOfRecentPackages);
+    public ResponseEntity<List<PackagesRecentlyChanged>> findRecentPackagesForUser(@PathVariable("userName") String userName, @PathVariable("numberOfRecentPackages") BigDecimal numberOfRecentPackages) throws RepositoryException{
+        return new ResponseEntity<>(packageService.findRecentPackagesForUser(userName, numberOfRecentPackages), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/package/find-favorite-packages/{userName}")
+    @GetMapping(path = "/package/find-favourite-packages/{userName}")
     @Operation(summary = "Find favorite packages for username")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public List<PackagesFavorites> findFavoritePackagesForUser(@PathVariable("userName") String userName) throws RepositoryException{
-        return packageService.findFavoritePackagesForUser(userName);
+    public ResponseEntity<List<PackagesFavorites>> findFavouritePackagesForUser(@PathVariable("userName") String userName) throws RepositoryException{
+        return new ResponseEntity<>(packageService.findFavouritePackagesForUser(userName), HttpStatus.OK);
     }
+
+    @GetMapping(path = "/package/{ref}/get-favourite-package/{userName}")
+    @Operation(summary = "Get favourite package")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<PackagesFavorites> getFavouritePackage(@PathVariable("userName") String userName, @PathVariable("ref") String ref) throws RepositoryException{
+        return new ResponseEntity<>(packageService.getFavouritePackage(userName, ref), HttpStatus.OK);
+    }
+
+    @PutMapping(path = "/package/{ref}/toggle-favourite-package/{userName}")
+    @Operation(summary = "Toggle favourite package")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<PackagesFavorites> toggleFavouritePackage(@PathVariable("userName") String userName, @PathVariable("ref") String ref) throws RepositoryException{
+        return new ResponseEntity<>(packageService.toggleFavouritePackage(userName, ref), HttpStatus.OK);
+    }
+
 }

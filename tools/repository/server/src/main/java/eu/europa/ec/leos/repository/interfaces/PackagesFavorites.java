@@ -11,4 +11,5 @@ public interface PackagesFavorites {
     BigDecimal getDocumentId();
     String getRef();
     String getTitle();
+    BigDecimal getFavorite();
 }

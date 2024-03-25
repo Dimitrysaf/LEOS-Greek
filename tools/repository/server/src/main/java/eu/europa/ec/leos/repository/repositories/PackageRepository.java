@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.repositories;
 import eu.europa.ec.leos.repository.entities.Package;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.Modifying;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -85,9 +86,10 @@ public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
     List<PackagesRecentlyChanged> findRecentPackagesForUser(String userName, BigDecimal numberOfRecentPackages);
 
 
-    @Query(value="select to_char(pkgfav.audit_c_date,'dd.mm.yyyy hh24:mi:ss') as creationDate, pkgfav_meta.package_id as packageId, pkgfav_meta.document_id as documentId, pkgfav_meta.ref as ref, pkgfav_meta.title as title\n" +
+    @Query(value="select distinct to_char(pkgfav.audit_c_date,'dd.mm.yyyy hh24:mi:ss') as creationDate, pkgfav_meta.package_id as packageId, pkgfav_meta.document_id as documentId, " +
+            "pkgfav_meta.ref as ref, pkgfav_meta.title as title, pkgfav.IS_FAVORITE as favorite\n" +
             "from (\n" +
-            "select pc.package_id, p.AUDIT_C_DATE\n" +
+            "select pc.package_id, p.AUDIT_C_DATE, pc.IS_FAVORITE\n" +
             "  from PACKAGE_COLLABORATORS pc JOIN COLLABORATORS c ON (pc.COLLABORATOR_ID = c.ID) join \"PACKAGE\" p on (pc.package_id = p.id)\n" +
             " WHERE c.COLLABORATOR_NAME = ?1 AND pc.is_favorite = 1\n" +
             " ) pkgfav JOIN (SELECT PKGVER.PACKAGE_ID, PKGVER.DOCUMENT_ID, PKGVER.VERSION_ID, PKGVER.REF, DOCCON.TITLE \n" +
@@ -96,6 +98,20 @@ public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
             "WHERE d.CATEGORY_ID IN (SELECT id FROM DOCUMENT_CATEGORIES dc2 where category_code = 'PROPOSAL')) pkgver\n" +
             "JOIN (select version_id, title, category_code from DOCUMENT_CONTENT) doccon ON (pkgver.version_id = doccon.VERSION_ID)) pkgfav_meta\n" +
             "ON (pkgfav.package_id = pkgfav_meta.package_id)", nativeQuery=true)
-    List<PackagesFavorites> findFavoritePackagesForUser(String userName);
+    List<PackagesFavorites> findFavouritePackagesForUser(String userName);
+
+    @Query(value="select distinct to_char(pkgfav.audit_c_date,'dd.mm.yyyy hh24:mi:ss') as creationDate, pkgfav_meta.package_id as packageId, pkgfav_meta.document_id as documentId, " +
+            "pkgfav_meta.ref as ref, pkgfav_meta.title as title, pkgfav.IS_FAVORITE as favorite\n" +
+            "from (\n" +
+            "select pc.package_id, p.AUDIT_C_DATE, pc.IS_FAVORITE\n" +
+            "  from PACKAGE_COLLABORATORS pc JOIN COLLABORATORS c ON (pc.COLLABORATOR_ID = c.ID) join \"PACKAGE\" p on (pc.package_id = p.id)\n" +
+            "WHERE c.COLLABORATOR_NAME = ?1" +
+            " ) pkgfav JOIN (SELECT PKGVER.PACKAGE_ID, PKGVER.DOCUMENT_ID, PKGVER.VERSION_ID, PKGVER.REF, DOCCON.TITLE \n" +
+            "  FROM \n" +
+            "(select package_id, d.id document_id, dcv.ID version_id, D.REF from document d join (select DOCUMENT_ID, MAX(ID) ID from document_version GROUP BY DOCUMENT_ID) dcv ON (d.id = dcv.DOCUMENT_ID)\n" +
+            "WHERE d.CATEGORY_ID IN (SELECT id FROM DOCUMENT_CATEGORIES dc2 where category_code = 'PROPOSAL') and ref = ?2) pkgver\n" +
+            "JOIN (select version_id, title, category_code from DOCUMENT_CONTENT) doccon ON (pkgver.version_id = doccon.VERSION_ID)) pkgfav_meta\n" +
+            "ON (pkgfav.package_id = pkgfav_meta.package_id)", nativeQuery=true)
+    Optional<PackagesFavorites> getFavouritePackage(String userName, String ref);
 
 }

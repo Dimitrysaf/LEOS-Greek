@@ -19,14 +19,8 @@ public class AbstractRestClient {
     private RestTemplate restTemplate;
 
     protected <T> T getEntity(String url, Class<T> responseType, Object... parameters) {
-        ResponseEntity<T> resp;
-        try {
-            resp = restTemplate.getForEntity(url, responseType, parameters);
-            return resp.getBody();
-        } catch (Exception e) {
-            logger.error("Error occured in GET request" + e.getMessage());
-        }
-        return null;
+        ResponseEntity<T> resp = restTemplate.getForEntity(url, responseType, parameters);
+        return resp.getBody();
     }
 
     protected <T> T postEntity(String url, Object request, Class<T> responseType, Object... parameters) {

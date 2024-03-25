@@ -45,5 +45,10 @@ public interface PackageService {
 
     List<PackagesRecentlyChanged> findRecentPackagesForUser(final String userName, final BigDecimal numberOfRecentPackages) throws RepositoryException;
 
-    List<PackagesFavorites> findFavoritePackagesForUser(final String userName) throws RepositoryException;
+    List<PackagesFavorites> findFavouritePackagesForUser(final String userName) throws RepositoryException;
+
+    PackagesFavorites getFavouritePackage(final String userName, final String ref) throws RepositoryException;
+
+    PackagesFavorites toggleFavouritePackage(final String userName, final String ref) throws RepositoryException;
+
 }
