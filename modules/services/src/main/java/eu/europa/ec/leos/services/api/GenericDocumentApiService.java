@@ -606,11 +606,6 @@ public class GenericDocumentApiService {
         return this.leosRepository.findFavouritePackagesForUser(userId);
     }
 
-    public FavouritePackageResponse getFavouritePackage(String ref) {
-        String userId = securityContext.getUser().getLogin();
-        return this.leosRepository.getFavouritePackage(ref, userId);
-    }
-
     public FavouritePackageResponse toggleFavouritePackage(String ref) {
         String userId = securityContext.getUser().getLogin();
         return this.leosRepository.toggleFavouritePackage(ref, userId);

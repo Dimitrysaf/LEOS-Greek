@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 
 import java.util.List;
 
@@ -124,6 +125,15 @@ public interface PackageRepository {
      * @return the found package.
      */
     <D extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends D> type);
+
+    /**
+     * Finds a [FavouritePackageResponse] from ref and userId.
+     *
+     * @param ref the doc ref of a document inside the package.
+     * @param userId the userId of logged user.
+     * @return the found FavouritePackageResponse.
+     */
+    FavouritePackageResponse getFavouritePackage(String ref, String userId);
 
     /**
      * Finds documents with the specified characteristics.

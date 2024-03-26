@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,6 +108,10 @@ public class PackageRepositoryImpl implements PackageRepository {
     public <D extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends D> type) {
         logger.debug("Finding Package by document ref... [documentRef=" + documentRef + "]");
         return leosRepository.findPackageByDocumentRef(documentRef, type);
+    }
+
+    public FavouritePackageResponse getFavouritePackage(String ref, String userId) {
+        return this.leosRepository.getFavouritePackage(ref, userId);
     }
 
     @Override

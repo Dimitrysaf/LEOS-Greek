@@ -75,7 +75,7 @@ public interface ApiService {
 
     String exportProposal(String proposalRef, String outputType) throws Exception;
 
-    Optional<DocumentVO> getProposalDetails(String proposalRef);
+    Optional<DocumentVO> getProposalDetails(String proposalRef, String userId);
 
     byte[] downloadProposal(String proposalRef) throws Exception;
 

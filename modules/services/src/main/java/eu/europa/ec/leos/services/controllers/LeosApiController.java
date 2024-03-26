@@ -505,7 +505,8 @@ public class LeosApiController {
     @ResponseBody
     public ResponseEntity<Object> getProposalDetails(@PathVariable String proposalRef) {
         proposalRef = encodeParam(proposalRef);
-        Optional<DocumentVO> requestedProposal = apiService.getProposalDetails(proposalRef);
+        String userId = securityContext.getUser().getLogin();
+        Optional<DocumentVO> requestedProposal = apiService.getProposalDetails(proposalRef, userId);
         if (requestedProposal.isPresent()) {
             return ResponseEntity.ok(requestedProposal.get());
         } else {
