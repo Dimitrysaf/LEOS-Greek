@@ -269,7 +269,7 @@ define(function elementEditorModule(require) {
             if (!elementToPutCursor) {
                 elementToPutCursor = editor.element.findOne("[data-akn-heading-id='" + event.editor.LEOS.elementCursorId + "']");
             }
-            if (elementToPutCursor.getAttribute('data-akn-element') && elementToPutCursor.getChild(0).$
+            if (elementToPutCursor && elementToPutCursor.getAttribute('data-akn-element') && elementToPutCursor.getChild(0).$
                 && elementToPutCursor.getAttribute('data-akn-element') === 'level'
                 && elementToPutCursor.getChildCount() === 1 && elementToPutCursor.getChild(0).$.localName === 'p'
                 && elementToPutCursor.getChild(0).$.nodeType === CKEDITOR.NODE_ELEMENT) {
