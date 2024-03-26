@@ -22,7 +22,7 @@ public class EULoginPageSteps extends BaseDriver {
 
     @Given("^navigate to \"([^\"]*)\" application$")
     public void invokeApp(String appType) {
-        startApp(WebDriverFactory.getDriver(), appType);
+        startApp(appType);
     }
 
     @Then("user is on EU login page")
@@ -43,14 +43,9 @@ public class EULoginPageSteps extends BaseDriver {
         euLoginPage.clickNext();
     }
 
-    public void startApp(WebDriver driver, String applicationType) {
+    public void startApp(String applicationType) {
         String applicationURL = getAppUrl(applicationType);
-        if (!driver.getCurrentUrl().trim().contains(applicationURL)) {
-            if ("local".equalsIgnoreCase(TestParameters.getInstance().getEnvironment())) {
-                applicationURL = String.format(applicationURL, "demo", "demo");
-            }
-            driver.get(applicationURL);
-        }
+        getUrl(WebDriverFactory.getDriver(), applicationURL);
     }
 
     private String getAppUrl(String applicationType) {
@@ -63,5 +58,20 @@ public class EULoginPageSteps extends BaseDriver {
         }
         logger.info("Open application {} url {}", applicationType, appUrl);
         return appUrl;
+    }
+
+    @Given("login to {string} instance with username {string}")
+    public void loginToInstanceWithUserNameForLocalEnv(String instance, String userName) {
+        String applicationURL = getAppUrl(instance);
+        if ("local".equalsIgnoreCase(TestParameters.getInstance().getEnvironment())) {
+            applicationURL = String.format(applicationURL,  config.getProperty(userName), "demo");
+        }
+        getUrl(WebDriverFactory.getDriver(), applicationURL);
+    }
+
+    public void getUrl(WebDriver driver, String applicationURL) {
+        if (!driver.getCurrentUrl().trim().contains(applicationURL)) {
+            driver.get(applicationURL);
+        }
     }
 }

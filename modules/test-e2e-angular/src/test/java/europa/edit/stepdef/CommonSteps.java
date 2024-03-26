@@ -102,22 +102,22 @@ public class CommonSteps extends BaseDriver {
         }
     }
 
-    @When("move the downloaded file to relative location {string}")
-    public void moveTheDownloadedFileToRelativeLocation(String relativeLocation) throws MalformedURLException {
+    @When("move the downloaded zip file to relative location {string}")
+    public void moveTheDownloadedZipFileToRelativeLocation(String relativeLocation) throws MalformedURLException {
         URL gridUrl = new URL(config.getProperty("grid.url"));
-        System.out.println("getSessionId " + ((RemoteWebDriver) WebDriverFactory.getDriver()).getSessionId());
+        //System.out.println("getSessionId " + ((RemoteWebDriver) WebDriverFactory.getDriver()).getSessionId());
         String downloadsEndpoint = String.format("/session/%s/se/files", ((RemoteWebDriver) WebDriverFactory.getDriver()).getSessionId());
-        System.out.println("downloadsEndpoint " + downloadsEndpoint);
+        //System.out.println("downloadsEndpoint " + downloadsEndpoint);
         String fileToDownload;
         try (HttpClient client = HttpClient.Factory.createDefault().createClient(gridUrl)) {
             HttpRequest request = new HttpRequest(GET, downloadsEndpoint);
             HttpResponse response = client.execute(request);
             Map<String, Object> jsonResponse = new Json().toType(string(response), Json.MAP_TYPE);
-            System.out.println("jsonResponse " + jsonResponse);
+            //System.out.println("jsonResponse " + jsonResponse);
             Map<String, Object> value = (Map<String, Object>) jsonResponse.get("value");
-            System.out.println("value " + value);
+            //System.out.println("value " + value);
             List<String> names = (List<String>) value.get("names");
-            System.out.println("names " + names);
+            //System.out.println("names " + names);
             fileToDownload = names.get(0);
             request = new HttpRequest(POST, downloadsEndpoint);
             request.setContent(asJson(ImmutableMap.of("name", fileToDownload)));

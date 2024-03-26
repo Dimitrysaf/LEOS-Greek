@@ -1,6 +1,7 @@
 package europa.edit.pages;
 
 import europa.edit.util.Constants;
+import europa.edit.util.TestParameters;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.LocalFileDetector;
@@ -75,7 +76,9 @@ public class CreateMandatePage {
 
     public void uploadFile(String relativeLocation) {
         File file = new File(System.getProperty("user.dir") + relativeLocation);
-        ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
+        if("remote".equalsIgnoreCase(TestParameters.getInstance().getMode())){
+            ((RemoteWebDriver) driver).setFileDetector(new LocalFileDetector());
+        }
         elementSendKeys(driver, fileInput, file.getAbsolutePath());
     }
 
