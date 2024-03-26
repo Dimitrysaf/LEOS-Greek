@@ -88,6 +88,7 @@ import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import org.apache.commons.lang.Validate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -487,7 +488,7 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public Optional<DocumentVO> getProposalDetails(String proposalRef) {
+    public Optional<DocumentVO> getProposalDetails(String proposalRef, String userId) {
         LOG.trace(proposalRef);
         Set<MilestonesVO> milestonesVOs = new TreeSet<>(Comparator.comparing(MilestonesVO::getUpdatedDate).reversed());
         Proposal proposal = null;
@@ -509,8 +510,9 @@ public abstract class ApiServiceImpl implements ApiService {
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
             List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
             List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
+            FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
             legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
-            DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, proposalVersionSeriesId, docVersionSeriesIds);
+            DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, proposalVersionSeriesId, docVersionSeriesIds, favouritePackageResponse.isFavourite());
             if (proposal.isClonedProposal()) {
                 populateCloneProposalMetadataVO(proposalXmlContent);
                 proposalVO.setCloneProposalMetadataVO(cloneContext.getCloneProposalMetadataVO());
@@ -536,7 +538,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 messageHelper.getMessage("collection.block.export.package.column.status.value." + exportDocument.getStatus().name()));
     }
 
-    private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent, String proposalVersionSeriesId, Set<String> docVersionSeriesIds) {
+    private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent, String proposalVersionSeriesId, Set<String> docVersionSeriesIds, Boolean isFavourite) {
         DocumentVO proposalVO = new DocumentVO(LeosCategory.PROPOSAL);
         List<DocumentVO> annexVOList = new ArrayList<>();
         Set<String> docVerSeriesIds = new HashSet<>();
@@ -555,6 +557,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposalVO.setLanguage(metadataVO.getLanguage());
                     proposalVO.setSource(proposalXmlContent);
                     proposalVO.setRef(proposal.getMetadata().get().getRef());
+                    proposalVO.setFavourite(isFavourite);
                     if (proposalXmlContent != null && documentContentService.isCoverPageExists(proposalXmlContent)) {
                         proposalVO.addChildDocument(getCoverPageVO(proposalVO, proposal.getOriginRef()));
                     }

@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
@@ -33,6 +34,8 @@ public interface PackageService {
     LeosPackage findPackageByDocumentId(String documentId);
 
     <T extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends T> type);
+
+    FavouritePackageResponse getFavouritePackage(String ref, String userId);
 
     <T extends LeosDocument> List<T> findDocumentsByPackagePath(String path, Class<T> filterType, Boolean fetchContent);
     

@@ -26,6 +26,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +82,11 @@ class PackageServiceImpl implements PackageService {
     @Override
     public <T extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends T> type) {
         return packageRepository.findPackageByDocumentRef(documentRef, type);
+    }
+
+    @Override
+    public FavouritePackageResponse getFavouritePackage(String ref, String userId) {
+        return packageRepository.getFavouritePackage(ref, userId);
     }
 
     @Override

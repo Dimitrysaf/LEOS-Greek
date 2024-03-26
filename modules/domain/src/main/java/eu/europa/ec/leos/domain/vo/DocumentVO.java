@@ -13,6 +13,8 @@
  */
 package eu.europa.ec.leos.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.document.*;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
@@ -52,6 +54,7 @@ public class DocumentVO {
     private LeosMetadata metadataDocument;
 
     private CloneProposalMetadataVO cloneProposalMetadataVO;
+    private Boolean favourite;
 
     public DocumentVO(XmlDocument xmlDocument) {
         if (xmlDocument != null) {
@@ -449,4 +452,15 @@ public class DocumentVO {
     public String getProposalRef() {
         return proposalRef;
     }
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("isFavourite")
+    public Boolean isFavourite() {
+        return favourite;
+    }
+
+    public void setFavourite(Boolean favourite) {
+        this.favourite = favourite;
+    }
+
 }

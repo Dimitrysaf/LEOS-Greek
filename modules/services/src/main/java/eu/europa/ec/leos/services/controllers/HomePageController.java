@@ -49,12 +49,6 @@ public class HomePageController {
         return ResponseEntity.ok().body(genericDocumentApiService.findFavouritePackagesForUser());
     }
 
-    @GetMapping(path = "/{documentRef}/favourite-package", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<Object> getFavouritePackage(@PathVariable("documentRef") String documentRef) {
-        return ResponseEntity.ok().body(genericDocumentApiService.getFavouritePackage(documentRef));
-    }
-
     @PutMapping(path = "/{documentRef}/toggle-favourite-package", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> toggleFavouritePackage(@PathVariable("documentRef") String documentRef) {
