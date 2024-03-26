@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { getUserDetails, UserDetails } from '@eui/base';
 import { Store } from '@ngrx/store';
 import { groupBy, keys } from 'lodash-es';
@@ -6,6 +6,7 @@ import { BehaviorSubject, Observable, Subject, Subscription, take } from 'rxjs';
 import * as SockJS from 'sockjs-client';
 import { apiBaseUrl } from 'src/config';
 import * as Stomp from 'stompjs';
+import { DOCUMENT, formatDate } from '@angular/common';
 
 import {
   CoEditionActionInfo,
@@ -55,7 +56,10 @@ export class CoEditionServiceWS {
   private requestQueue: MessageEvent[] = [];
   private subscribeQueue: SubscriptionEvent[] = [];
 
-  constructor(private store: Store<any>) {
+  constructor(
+    private store: Store<any>,
+    @Inject(DOCUMENT) private document: Document,
+  ) {
     this.store
       .select(getUserDetails)
       .pipe(take(1))
@@ -319,4 +323,86 @@ export class CoEditionServiceWS {
       this.handleCoEditForDocument(coEdits);
     }
   }
+
+  public showElementsBeingEdited(coEdits: Record<string, CoEditionVO[]>, isCalledFromToc?: boolean) {
+      const userCoEditionElements = this.document.querySelectorAll(
+        '.leos-user-coedition',
+      );
+      userCoEditionElements.forEach((userCoEditionElement) => {
+        userCoEditionElement.remove();
+      });
+      let result = false;
+      for (const key in coEdits) {
+        if (key)
+          for (const coEdit of coEdits[key]) {
+            if (coEdit.infoType === 'TOC_INFO') return;
+            const elemInDoc = this.document.getElementById(coEdit.elementId);
+            const tocElemInDoc = document.querySelector(`[data-id=${coEdit.elementId}]`);
+            if(!isCalledFromToc) {
+              this.addCoEditionIconToElement(elemInDoc, key, coEdits, false);
+            }
+            if (tocElemInDoc){
+              if(isCalledFromToc) {
+                this.addCoEditionIconToElement(elemInDoc, key, coEdits, false);
+              }
+              this.addCoEditionIconToElement(tocElemInDoc, key, coEdits, true);
+              result = true;
+            }
+          }
+      }
+      return result;
+    }
+
+    private addCoEditionIconToElement(elemToAddIcon: any, key: string, coEdits: Record<string, CoEditionVO[]>, isToc: boolean){
+      const coEditNode = this.document.createElement('div');
+      coEditNode.classList.add(
+        'leos-user-coedition',
+        'leos-user-coedition-self-user',
+      );
+      const iconSpan = this.document.createElement('span');
+      iconSpan.classList.add('eui-icon', 'eui-icon-person');
+      iconSpan.style.verticalAlign = 'bottom';
+      iconSpan.style.display = 'inline-block';
+      const textDiv = this.document.createElement('div');
+      textDiv.innerHTML = this.generateTooltip(coEdits[key]);
+      if(isToc){
+        textDiv.style.cssText = "position: absolute;padding: 3px 7px;width: auto;white-space: nowrap;font-size: 12px;" +
+          "font-family: 'Open Sans';color: white;background-color: rgba(51, 51, 51, 0.9);" +
+          "-webkit-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2); display: none;" +
+          "z-index: 999999;";
+      }
+      coEditNode.append(iconSpan);
+      coEditNode.append(textDiv);
+      coEditNode.style.top = elemToAddIcon.offsetTop + 'px';
+      coEditNode.style.left =  (isToc ? 0 : elemToAddIcon.offsetLeft - 25) + 'px';
+      coEditNode.style.position = 'absolute';
+      if(isToc){
+        coEditNode.style.color = '#707070';
+      }
+      elemToAddIcon.insertAdjacentElement('beforebegin', coEditNode);
+      coEditNode.addEventListener('mouseenter', () => {
+        textDiv.style.left = iconSpan.offsetLeft + 10 + 'px';
+        textDiv.style.display = 'block';
+      });
+      coEditNode.addEventListener('mouseleave', () => {
+        textDiv.style.display = 'none';
+      });
+    }
+
+    generateTooltip(coEdits: CoEditionVO[]) {
+        if (!coEdits) return;
+        let target = '';
+        // FIXME: use translated message for target
+        coEdits.forEach(
+          (c) =>
+            (target =
+              target +
+              `${c.userName} editing since ${formatDate(
+                c.editionTime,
+                'dd/MM/yyyy HH:mm',
+                'en-US',
+              )} <br>`),
+        );
+        return target;
+      }
 }

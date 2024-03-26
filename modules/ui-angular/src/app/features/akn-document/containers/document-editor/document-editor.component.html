@@ -120,6 +120,10 @@
                                 [documentType]="documentType"
                                 [documentRef]="documentRef"
                                 (reBuildTocItems)="onRebuildTocItems($event)"
+                                [readonly]="
+                                  environmentService.isCouncil() &&
+                                  documentService.documentType === 'memorandum'
+                                "
                         ></app-document-toc>
                     </eui-fieldset>
                     <!-- versions -->

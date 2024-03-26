@@ -1,6 +1,6 @@
 import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, formatDate } from '@angular/common';
 import {
   AfterViewInit,
   Component,
@@ -13,6 +13,7 @@ import {
   OnInit,
   Output,
   ViewChild,
+  AfterViewChecked,
 } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EuiDialogService } from '@eui/components/eui-dialog';
@@ -57,6 +58,7 @@ import { DocumentConfig } from '@/shared/models';
 import { DragAction } from '@/shared/models/drag-action.model';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
+import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { scrollInParent } from '@/shared/utils';
@@ -79,11 +81,12 @@ import { ValidateTocService } from '../../services/validate-node-drop.service';
   templateUrl: './document-toc.component.html',
   styleUrls: ['./document-toc.component.scss'],
 })
-export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
+export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
   @Input() documentType: string;
   @Input() documentRef: string;
   @Input() versionId: string;
   @Input() tocItems: TocItem[];
+  @Input() readonly = true;
   @Output() reBuildTocItems: EventEmitter<boolean> = new EventEmitter();
 
   @ViewChild('treeContainer') treeContainer: ElementRef<HTMLElement>;
@@ -126,6 +129,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private seeTrackChanges = false;
   private trackChangesEnabled = false;
+  private alreadyDidAsyncWork = false;
 
   constructor(
     private documentService: DocumentService,
@@ -197,6 +201,23 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit() {
     this.setupResizeObserver();
+  }
+
+  ngAfterViewChecked(){
+    if(!this.alreadyDidAsyncWork){
+      this.callCoEditionService();
+    }
+  }
+
+  private callCoEditionService(){
+    if (!this.readonly) {
+        this.coEditionService
+          .getDocCoEditionInfo()
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((coEdits) => {
+            this.alreadyDidAsyncWork = this.coEditionService.showElementsBeingEdited(coEdits, true);
+          });
+    }
   }
 
   seeTocItemStyling() {
