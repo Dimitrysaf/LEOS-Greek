@@ -556,7 +556,7 @@ export class CKEditorService {
     );
     config.isSpellCheckerEnabled = JSON.stringify(
       oldConfig.spellCheckerEnabled,
-    );
+    ) === 'true';
     delete config['spellCheckerEnabled'];
 
     config['refConfigs'] = oldConfig.refConfigs;
@@ -568,16 +568,6 @@ export class CKEditorService {
     config['isTrackChangesEnabled'] =
       profileTCEnabled && oldConfig.trackChangesEnabled;
     config['permissions'] = oldConfig.userAppPermissions;
-
-    if (!oldConfig.spellCheckerServiceUrl) {
-      config.spellCheckerServiceUrl =
-        'https://webgate.acceptance.ec.testa.eu/qas/spellcheck';
-    }
-
-    if (!oldConfig.spellCheckerSourceUrl) {
-      config.spellCheckerSourceUrl =
-        'https://webgate.acceptance.ec.testa.eu/qas/static/wscbundle/wscbundle.js';
-    }
 
     return config;
   }
