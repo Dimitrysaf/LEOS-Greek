@@ -11,7 +11,13 @@
         }}</span>
       </div>
       <div class="right-side-header">
-        <button *ngIf="canUpload" euiButton euiPrimary euiSizeS>
+        <button
+          *ngIf="canUpload"
+          euiButton
+          euiPrimary
+          euiSizeS
+          (click)="openNotificationUploadDialog()"
+        >
           <span style="font-weight: bolder">{{
             'page.workspace.upload.button.text' | translate
           }}</span>

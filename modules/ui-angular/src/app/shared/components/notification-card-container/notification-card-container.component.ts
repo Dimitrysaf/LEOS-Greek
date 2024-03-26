@@ -1,10 +1,56 @@
 import { AppConfigService } from '@/core/services/app-config.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { EuiDialogService } from '@eui/components/eui-dialog';
+import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { Notification } from '../../models/notification.model';
 import { NotificationsService } from '../../services/notifications.service';
+import { NotificationUploadComponent } from '../notification-upload/notification-upload.component';
+
+export const NOTIFICATIONS: Notification[] = [
+  {
+    start: 1711018559,
+    end: 1711022159,
+    newsTimestamp: 1711018559,
+    title: 'Notification 1',
+    body: 'This is the body of notification 1.',
+  },
+  {
+    start: 1711104959,
+    end: 1711108559,
+    newsTimestamp: 1711104959,
+    title: 'Notification 2',
+    body: 'This is the body of notification 2.',
+  },
+  {
+    start: 1711191359,
+    end: 1711194959,
+    newsTimestamp: 1711191359,
+    title: 'Notification 3',
+    body: 'This is the body of notification 3.',
+  },
+  {
+    start: 1711135735,
+    end: 1711139335,
+    newsTimestamp: 1711135735,
+    title: 'Notification Short',
+    body: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ',
+  },
+  {
+    start: 1711092135,
+    end: 1711095735,
+    newsTimestamp: 1711092135,
+    title: 'Notification Medium',
+    body: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ip',
+  },
+  {
+    start: 1711223535,
+    end: 2147483647,
+    newsTimestamp: 1711223535,
+    title: 'Notification Long',
+    body: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ip',
+  },
+];
 
 @Component({
   selector: 'app-notification-card-container',
@@ -13,51 +59,7 @@ import { NotificationsService } from '../../services/notifications.service';
 })
 export class NotificationCardContainerComponent implements OnInit, OnDestroy {
   isNotificationsShown: boolean = false;
-  notifications: Notification[] = [
-    {
-      start: '2024-03-21T09:00:00Z',
-      end: '2024-03-21T11:00:00Z',
-      newsTimestamp: 1711018559,
-      title: 'Notification 1',
-      body: 'This is the body of notification 1.',
-    },
-    {
-      start: '2024-03-22T09:00:00Z',
-      end: '2024-03-22T11:00:00Z',
-      newsTimestamp: 1711104959,
-      title: 'Notification 2',
-      body: 'This is the body of notification 2.',
-    },
-    {
-      start: '2024-03-23T09:00:00Z',
-      end: '2024-03-23T11:00:00Z',
-      newsTimestamp: 1711191359,
-      title: 'Notification 3',
-      body: 'This is the body of notification 3.',
-    },
-    {
-      start: '2024-03-22T11:08:55Z',
-      end: '2024-03-22T13:08:55Z',
-      newsTimestamp: 1711135735,
-      title: 'Notification Short',
-      body: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ',
-    },
-    {
-      start: '2024-03-23T11:08:55Z',
-      end: '2024-03-23T13:08:55Z',
-      newsTimestamp: 1711092135,
-      title: 'Notification Medium',
-      body: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ip',
-    },
-    {
-      start: '2024-03-24T11:08:55Z',
-      end: '2024-03-24T13:08:55Z',
-      newsTimestamp: 1711223535,
-      title: 'Notification Long',
-      body: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ip',
-    },
-  ];
-
+  notifications: Notification[] = NOTIFICATIONS;
   private destroy$: Subject<any> = new Subject();
   canUpload = false;
   constructor(
@@ -71,10 +73,6 @@ export class NotificationCardContainerComponent implements OnInit, OnDestroy {
     this.notifcationService.isShown$.subscribe((isShown) => {
       this.isNotificationsShown = isShown;
     });
-    //This will be uncommented when the BE endpoints get implemented.
-    // this.notifcationService.fetchNotifications().subscribe((notifications) => {
-    //   this.notifications = notifications;
-    // });
     this.setPermissions();
   }
 
@@ -86,6 +84,22 @@ export class NotificationCardContainerComponent implements OnInit, OnDestroy {
 
   toggleNotificationVisibility() {
     this.notifcationService.toggleNotifications();
+  }
+
+  openNotificationUploadDialog() {
+    const dialog = this.euiDialogService.openDialog(
+      new EuiDialogConfig({
+        dialogId: 'upload-id',
+        title: this.translateService.instant('page.workspace.upload.title'),
+        bodyComponent: {
+          component: NotificationUploadComponent,
+          config: {
+            closeDialog: () => this.euiDialogService.closeDialog(dialog.id),
+          },
+        },
+        hasFooter: false,
+      }),
+    );
   }
 
   private setPermissions() {

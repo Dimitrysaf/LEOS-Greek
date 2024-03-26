@@ -32,6 +32,7 @@ import { NotificationCardContainerComponent } from '@/shared/components/notifica
 import { EscapeHtmlPipe } from './pipes/escape-html.pipe';
 import { HtmlToPlaintextPipe } from './pipes/html-to-plaintext.pipe';
 import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
+import { NotificationUploadComponent } from './components/notification-upload/notification-upload.component';
 
 @NgModule({
   imports: [
@@ -67,6 +68,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ConfirmReloadDialogComponent,
     NotificationCardContainerComponent,
     NotificationCardComponent,
+    NotificationUploadComponent,
   ],
   exports: [
     UxAllModule,
@@ -94,6 +96,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ZoomScrollbarComponent,
     NotificationCardContainerComponent,
     NotificationCardComponent,
+    NotificationUploadComponent,
   ],
   providers: [ProposalService],
 })
