@@ -25,7 +25,8 @@ public class NumberServiceExplanatoryCouncilTest extends NumberServiceMandateTes
     @Before
     public void setup() {
         super.setup();
-        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter);
+        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter,
+                documentLanguageContext);
     }
 
     @Override

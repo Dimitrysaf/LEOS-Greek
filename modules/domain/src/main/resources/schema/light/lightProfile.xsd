@@ -24,17 +24,17 @@
     <xs:complexType name="profile">
         <xs:sequence>
             <xs:element name="name" type="systemName"/>
-            <xs:element name="breadcrumb" type="xs:boolean" default="true"/>
-            <xs:element name="tocEdition" type="xs:boolean" default="true"/>
-            <xs:element name="internalReference" type="xs:boolean" default="true"/>
-            <xs:element name="authorialNote" type="xs:boolean" default="true"/>
-            <xs:element name="showLoggedUser" type="xs:boolean" default="false"/>
-            <xs:element name="trackChangesEnabled" type="xs:boolean" default="false"/>
-            <xs:element name="closeDocument" type="xs:boolean" default="true"/>
-            <xs:element name="callbackPresent" type="xs:boolean" default="false"/>
-            <xs:element name="annotations" type="xs:boolean" default="true"/>
-            <xs:element name="importOJ" type="xs:boolean" default="true"/>
-            <xs:element name="markAsDoneAvailable" type="xs:boolean" default="false"/>
+            <xs:element name="breadcrumb" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="tocEdition" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="internalReference" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="authorialNote" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="showLoggedUser" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="trackChangesEnabled" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="closeDocument" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="callbackPresent" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="annotations" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="importOJ" type="xs:boolean" default="true" minOccurs="0"/>
+            <xs:element name="markAsDoneAvailable" type="xs:boolean" default="false" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -46,6 +46,8 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="DECISION_EDIT"/>
             <xs:enumeration value="DGT_EDIT"/>
+            <xs:enumeration value="DECISION_CORRECTION_REQUEST"/>
+
         </xs:restriction>
     </xs:simpleType>
 

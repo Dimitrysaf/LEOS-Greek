@@ -65,5 +65,5 @@ public interface AnnexProcessor {
     
     LevelItemVO getLevelItemVO(Annex document, String elementId, String elementTagName) throws Exception;
 
-    byte[] renumberingAndPostProcessing(byte[] xmlContent);
+    byte[] renumberingAndPostProcessing(byte[] xmlContent, String language);
 }

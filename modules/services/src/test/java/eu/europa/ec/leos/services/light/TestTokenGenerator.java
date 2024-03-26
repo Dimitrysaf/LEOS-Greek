@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.services.leoslight;
+package eu.europa.ec.leos.services.light;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;

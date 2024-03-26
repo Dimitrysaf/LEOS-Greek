@@ -1,5 +1,5 @@
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
-import { LeosMetadata, LevelItemVO, Permission, Role } from '@/shared';
+import {LeosMetadata, LevelItemVO, Permission, Role} from '@/shared';
 
 export type CkeditorConnectorState = LeosJavaScriptExtensionState & {
   instanceType: string;
@@ -16,6 +16,7 @@ export type CkeditorConnectorState = LeosJavaScriptExtensionState & {
   documentRef: string;
   user: { entity: string; login: string; role: Role[] };
   permissions: Permission[];
+  langGroup: string;
 };
 
 export interface TocItem {
@@ -26,7 +27,7 @@ export interface TocItem {
   childrenAllowed: boolean;
   display: boolean;
   itemNumber: OptionsType;
-  autoNumbering: boolean | null;
+  autoNumbering: AutoNumbering | null;
   itemHeading: OptionsType;
   itemDescription: boolean;
   numberEditable: boolean;
@@ -44,6 +45,16 @@ export interface TocItem {
   template: string | null;
   maxDepth: string | null;
   actionsPosition: ActionPositions | null;
+}
+
+export interface AutoNumbering {
+  langNumConfigs: LangNumConfig[];
+}
+
+export interface LangNumConfig {
+  numberingTypes: NumberingType[];
+  langGroup: string;
+  auto: boolean;
 }
 
 export type OptionsType = 'NONE' | 'MANDATORY' | 'OPTIONAL';

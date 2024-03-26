@@ -40,7 +40,7 @@ import {
   checkDeleteOnLastItemInList,
   checkIfConfirmDeletion,
   convertArticle,
-  findNodeById,
+  findNodeById, getNumberingTypeByLanguage,
   isDeletableItem,
   isDeletedItem,
   isMoveToItem,
@@ -99,7 +99,7 @@ export abstract class TocInlineEditMenuService {
   }
 
   public getDisplayableTocItem(tocItem: TocItem): string {
-    if (tocItem.numberingType === BULLET_NUM) {
+    if (getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup) === BULLET_NUM) {
       return this.translateService.instant('toc.item.type.bullet');
     }
     if (tocItem.aknTag === MAIN_BODY) {
@@ -223,6 +223,7 @@ export abstract class TocInlineEditMenuService {
       selectedNode,
       oldValue.toUpperCase(),
       newType.toUpperCase(),
+      this.documentConfig.langGroup
     );
     if (
       this.previousType &&

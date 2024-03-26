@@ -54,7 +54,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -76,7 +87,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -98,7 +120,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -120,7 +153,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -141,6 +185,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
             <itemNumber>none</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -192,7 +248,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>LEVEL_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>optional</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>true</numberEditable>
@@ -201,7 +268,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>LEVEL_NUM</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>level[leos\:origin='cn']</elementSelector>
@@ -219,7 +285,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
             <itemNumber>none</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -244,6 +321,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>none</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -318,7 +407,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -346,7 +446,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>

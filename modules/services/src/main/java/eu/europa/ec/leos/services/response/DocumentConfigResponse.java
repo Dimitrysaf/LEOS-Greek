@@ -2,11 +2,13 @@ package eu.europa.ec.leos.services.response;
 
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.Level;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.RefConfig;
+import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 
@@ -28,12 +30,13 @@ public class DocumentConfigResponse {
     private boolean isTrackChangesEnabled;
     private boolean isTrackChangesShowed;
     private boolean isClonedProposal;
+    private String langGroup;
 
     public DocumentConfigResponse(List<LeosMetadata> documentsMetadata, List<NumberingConfig> numberingConfig, List<TocItem> tocItems,
                                   List<AlternateConfig> alternateConfigs, List<RefConfig> refConfigs, Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray,
                                   Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata,
                                   Map<TocItem, List<TocItem>> tocRules, boolean isTrackChangesEnabled, boolean isTrackChangesShowed,
-                                  boolean isClonedProposal) {
+                                  boolean isClonedProposal, String langGroup) {
         this.documentsMetadata = documentsMetadata;
         this.numberingConfig = numberingConfig;
         this.tocItems = tocItems;
@@ -43,10 +46,11 @@ public class DocumentConfigResponse {
         this.refConfigs = refConfigs;
         this.internalRef = internalRef;
         this.proposalMetadata = proposalMetadata;
-        this.tocRules = transformMap(tocRules);
+        this.tocRules = transformMap(tocRules, proposalMetadata.getLanguage());
         this.isTrackChangesEnabled = isTrackChangesEnabled;
         this.isTrackChangesShowed = isTrackChangesShowed;
         this.isClonedProposal = isClonedProposal;
+        this.langGroup = langGroup;
     }
 
     public List<LeosMetadata> getDocumentsMetadata() {
@@ -129,17 +133,16 @@ public class DocumentConfigResponse {
         this.tocRules = tocRules;
     }
 
-    private Map<String, List<TocItem>> transformMap(Map<TocItem, List<TocItem>> originalMap) {
+    private Map<String, List<TocItem>> transformMap(Map<TocItem, List<TocItem>> originalMap, String language) {
         Map<String, List<TocItem>> transformedMap = new HashMap<>();
 
         for (Map.Entry<TocItem, List<TocItem>> entry : originalMap.entrySet()) {
             TocItem tocItem = entry.getKey();
             List<TocItem> tocItemList = entry.getValue();
-
-            String key = tocItem.getAknTag().toString().toUpperCase() + "_" + tocItem.getNumberingType().toString();
+            NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
+            String key = tocItem.getAknTag().toString().toUpperCase() + "_" + numberingType.toString();
             transformedMap.put(key, tocItemList);
         }
-
         return transformedMap;
     }
 
@@ -167,4 +170,11 @@ public class DocumentConfigResponse {
         isClonedProposal = clonedProposal;
     }
 
+    public String getLangGroup() {
+        return langGroup;
+    }
+
+    public void setLangGroup(String langGroup) {
+        this.langGroup = langGroup;
+    }
 }

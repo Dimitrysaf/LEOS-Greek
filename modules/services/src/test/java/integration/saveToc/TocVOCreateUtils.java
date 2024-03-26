@@ -17,7 +17,7 @@ import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.OptionsType;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItemBuilder;
 import eu.europa.ec.leos.vo.toc.TocItemVOBuilder;
@@ -220,7 +220,7 @@ public class TocVOCreateUtils {
                 .withTocItem(TocItemBuilder.getBuilder()
                         .withAknTag(AknTag.LEVEL)
                         .withItemNumber(OptionsType.MANDATORY)
-                        .withAutoNumbering(true)
+                        //.withAutoNumbering(true) TODO:verify if we need to set autoNumbering here
                         .withItemHeading(OptionsType.OPTIONAL)
                         .withMaxDepth("7")
                         .withNumberingType(NumberingType.LEVEL_NUM)

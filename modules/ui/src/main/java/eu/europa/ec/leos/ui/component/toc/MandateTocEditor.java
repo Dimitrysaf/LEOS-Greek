@@ -30,7 +30,7 @@ import eu.europa.ec.leos.vo.structure.Level;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.OptionsType;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -260,7 +260,7 @@ public class MandateTocEditor extends AbstractTocEditor {
             actualTargetItem = targetItem;
         }
         String droppedElementTagName = sourceItem.getTocItem().getAknTag().value();
-        NumberingType droppedElementTagNumberingType = sourceItem.getTocItem().getNumberingType();
+        NumberingType droppedElementTagNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(sourceItem.getTocItem(), "EN");
 
         String targetName = actualTargetItem.getTocItem().getAknTag().value();
         result.setSourceItem(sourceItem);
@@ -285,7 +285,7 @@ public class MandateTocEditor extends AbstractTocEditor {
                         && !droppedElementTagName.equals(POINT))
                         && !Arrays.asList(NumberingType.INDENT, BULLET_NUM).contains(droppedElementTagNumberingType)
                         || (Arrays.asList(PARAGRAPH, LEVEL).contains(targetName)
-                        && (actualTargetItem.containsItem(LIST) || !actualTargetItem.containsOnlySameIndentType(droppedElementTagNumberingType)))
+                        && (actualTargetItem.containsItem(LIST) || containsOnlySameIndentType(actualTargetItem, droppedElementTagNumberingType)))
                         || (targetName.equals(droppedElementTagName) && actualTargetItem.containsItem(LIST))
                         || !validateAgainstOtherIndentsInList(sourceItem, targetItem)) {
                     result.setSuccess(false);
@@ -318,6 +318,17 @@ public class MandateTocEditor extends AbstractTocEditor {
                     return false;
                 }
                 break;
+        }
+        return true;
+    }
+
+    private boolean containsOnlySameIndentType(TableOfContentItemVO tableOfContentItemVO, NumberingType numberingType) {
+        List<TableOfContentItemVO> chldItms = tableOfContentItemVO.getChildItems();
+        for(TableOfContentItemVO child : chldItms) {
+            if(child.getTocItem().getAknTag().value().equals("indent") &&
+                    StructureConfigUtils.getNumberingTypeByLanguage(child.getTocItem(), "EN") != numberingType) {
+                return false;
+            }
         }
         return true;
     }
@@ -578,7 +589,9 @@ public class MandateTocEditor extends AbstractTocEditor {
 
     private String getNewNumberingFromListTocItem(List<TableOfContentItemVO> list, TocItem tocItem, List<NumberingConfig> numberingConfigs) {
         String sequence = StructureConfigUtils.HASH_NUM_VALUE;
-        NumberingConfig numberingConfig = StructureConfigUtils.getNumberingConfig(numberingConfigs, tocItem.getNumberingType());
+        //TODO:
+        NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, "EN");
+        NumberingConfig numberingConfig = StructureConfigUtils.getNumberingConfig(numberingConfigs, numberingType);
         if (!list.isEmpty() && !numberingConfig.isNumbered()) {
             TableOfContentItemVO firstChild = list.get(0);
             if (numberingConfig != null
@@ -621,8 +634,8 @@ public class MandateTocEditor extends AbstractTocEditor {
     }
 
     private boolean validateAgainstOtherIndent(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem) {
-        NumberingType targetNumberingType = targetItem.getTocItem().getNumberingType();
-        NumberingType sourceNumberingType = sourceItem.getTocItem().getNumberingType();
+        NumberingType targetNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(targetItem.getTocItem(), "EN");
+        NumberingType sourceNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(sourceItem.getTocItem(), "EN");
         return targetNumberingType.equals(sourceNumberingType);
     }
 

@@ -32,6 +32,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.StructureServiceImpl;
@@ -86,10 +87,10 @@ public class ElementProcessorClonedProposalTest_IT extends LeosTest {
     @Mock
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
     @Mock
+    protected DocumentLanguageContext documentLanguageContext;
+    @Mock
     protected CloneContext cloneContext;
-
     protected TrackChangesContext trackChangesContext = new TrackChangesContext();
-
     protected AkomantosoXsdValidator akomantosoXsdValidator = new AkomantosoXsdValidator();
 
     @InjectMocks
@@ -109,11 +110,6 @@ public class ElementProcessorClonedProposalTest_IT extends LeosTest {
         MessageHelper messageHelper = new MandateMessageHelper(servicesMessageSource);
         return messageHelper;
     }
-
-    protected List<TocItem> tocItems;
-    protected String docTemplate;
-    protected List<NumberingConfig> numberingConfigs;
-    protected Map<TocItem, List<TocItem>> tocRules;
 
     @InjectMocks
     protected XmlContentProcessor xmlContentProcessor = Mockito.spy(new XmlContentProcessorMandate());
@@ -140,7 +136,10 @@ public class ElementProcessorClonedProposalTest_IT extends LeosTest {
     protected List<NumberProcessorDepthBased> numberProcessorsDepthBased = Mockito.spy(Stream.of(numberProcessorDepthBasedDefault, numberProcessorLevel).collect(Collectors.toList()));
 
     protected NumberService numberService ;
-
+    protected List<TocItem> tocItems;
+    protected String docTemplate;
+    protected List<NumberingConfig> numberingConfigs;
+    protected Map<TocItem, List<TocItem>> tocRules;
     protected final static String PREFIX_SAVE_TOC_BILL_CN = "/saveToc/bill/ls/";
 
     @Before
@@ -150,7 +149,7 @@ public class ElementProcessorClonedProposalTest_IT extends LeosTest {
         ReflectionTestUtils.setField(numberProcessorHandler, "numberConfigFactory", numberConfigFactory);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);
-        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter);
+        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter, documentLanguageContext);
 
         when(languageHelper.getCurrentLocale()).thenReturn(new Locale("en"));
         when(userDetails.getUsername()).thenReturn(getJaneTestUser().getLogin());

@@ -26,7 +26,7 @@ import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
@@ -126,10 +126,8 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Autowired
     private CloneContext cloneContext;
-
     @Autowired
     private NumberProcessorHandler numberProcessorHandler;
-
     @Autowired
     protected NumberConfigFactory numberConfigFactory;
 
@@ -187,7 +185,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         List<Node> lists = getDescendants(node, Arrays.asList(LIST));
         for (Node list : lists) {
             XercesUtils.insertOrUpdateAttributeValue(list, LEOS_LIST_TYPE_ATTR,
-                    StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems, tocItemType, POINT).toString().toLowerCase());
+                    StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems, tocItemType, POINT, documentLanguageContext.getDocumentLanguage()).toString().toLowerCase());
         }
     }
 
@@ -561,7 +559,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 Node firstElement = children.get(0);
                 int elementDepth = XercesUtils.getPointDepth(firstElement);
                 String elementName = firstElement.getNodeName();
-                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement);
+                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, "EN");
                 boolean changeOffset = false;
                 for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
                     Node node = children.get(nodeListCount);
@@ -582,7 +580,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             }
             xmlContent = nodeToByteArray(document);
             document = createXercesDocument(xmlContent);
-            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, "EN", true);
             xmlContent = nodeToByteArray(document);
 
         }
@@ -605,7 +603,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 Node firstElement = children.get(0);
                 int elementDepth = XercesUtils.getPointDepth(firstElement);
                 String elementName = firstElement.getNodeName();
-                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement);
+                NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, "EN");
                 boolean changeOffset = false;
                 for (int nodeListCount = 0; nodeListCount < children.size(); nodeListCount++) {
                     Node node = children.get(nodeListCount);
@@ -627,7 +625,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             xmlContent = nodeToByteArray(document);
             xmlContent = this.deleteElementById(xmlContent, idToDelete);
             document = createXercesDocument(xmlContent);
-            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, "EN", true);
             xmlContent = nodeToByteArray(document);
         }
         return new Pair<>(xmlContent, nodeToString(fragmentToCheckDeleted.getFirstChild().getFirstChild()));
@@ -655,7 +653,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         }
         try {
             if (ELEMENTS_TO_BE_NUMBERED.contains(tagName)) {
-                numberProcessorHandler.renumberElement(parentNode, tagName, true);
+                numberProcessorHandler.renumberElement(parentNode, tagName, true, "EN");
                 coEditionContext.addUpdatedElement(getId(parentNode), parentNode.getNodeName(), nodeToString(parentNode));
             }
         } catch (Exception e) {

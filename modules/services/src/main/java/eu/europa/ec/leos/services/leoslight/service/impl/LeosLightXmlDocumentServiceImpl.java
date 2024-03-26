@@ -29,6 +29,7 @@ import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.processor.rendition.HtmlRenditionProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -38,6 +39,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
@@ -82,6 +84,7 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     private final GenericDocumentApiService genericDocumentApiService;
     private RestTemplate restTemplate;
     private AnnotateService annotateService;
+    private DocumentLanguageContext documentLanguageContext;
 
     private final String XML_EXT = ".xml";
     private static final String STYLE_SHEET_EXT = ".css";
@@ -100,15 +103,18 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     @Value("#{integrationProperties['leos.akn4eu.single.doc.convert.uri']}")
     private String singleDocConvert;
 
+    @Autowired
     public LeosLightXmlDocumentServiceImpl(XPathCatalog xPathCatalog,
                                            HtmlRenditionProcessor htmlRenditionProcessor, GenericDocumentApiService genericDocumentApiService,
-                                           MessageHelper messageHelper, RestTemplate restTemplate, AnnotateService annotateService) {
+                                           MessageHelper messageHelper, RestTemplate restTemplate, AnnotateService annotateService,
+            DocumentLanguageContext documentLanguageContext) {
         this.xPathCatalog = xPathCatalog;
         this.htmlRenditionProcessor = htmlRenditionProcessor;
         this.messageHelper = messageHelper;
         this.genericDocumentApiService = genericDocumentApiService;
         this.restTemplate = restTemplate;
         this.annotateService = annotateService;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -280,8 +286,9 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
 
     private List<TableOfContentItemHtmlVO> buildTocHtml(List<TableOfContentItemVO> tableOfContents) {
         List<TableOfContentItemHtmlVO> tocHtml = new ArrayList<>();
+        String language = documentLanguageContext.getDocumentLanguage();
         for (TableOfContentItemVO item : tableOfContents) {
-            String name = TableOfContentHelper.buildItemCaption(item, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper);
+            String name = TableOfContentHelper.buildItemCaption(item, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, language);
             TableOfContentItemHtmlVO itemHtml = new TableOfContentItemHtmlVO(name, "#" + item.getId());
             if (item.getChildItems().size() > 0) {
                 itemHtml.setChildren(buildTocHtml(item.getChildItems()));

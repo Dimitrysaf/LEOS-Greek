@@ -1,29 +1,5 @@
 package eu.europa.ec.leos.services.document;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyBoolean;
-import static org.mockito.ArgumentMatchers.any;
-
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
-import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
-import eu.europa.ec.leos.services.store.XmlDocumentService;
-import eu.europa.ec.leos.services.tracking.TrackChangesContext;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
-
 import eu.europa.ec.leos.cmis.mapping.CmisProperties;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -34,6 +10,8 @@ import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.document.ExplanatoryRepository;
 import eu.europa.ec.leos.repository.document.ExplanatoryRepositoryImpl;
+import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
+import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
 import eu.europa.ec.leos.services.numbering.NumberService;
@@ -41,112 +19,140 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.test.support.LeosTest;
 import io.atlassian.fugue.Option;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyMap;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ExplanatoryServiceImplTest extends LeosTest {
 
-	private ExplanatoryService explanatoryService;
-	private ExplanatoryRepository explanatoryRepository;
-	private RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
-	
-	@Mock
-	private PackageRepository packageRepository;
-	@Mock
-	private XmlNodeProcessor xmlNodeProcessor;
-	@Mock
-	private XmlContentProcessor xmlContentProcessor;
-	@Mock
-	private XmlDocumentService xmlDocumentService;
-	@Mock
-	private NumberService numberService;
-	@Mock
-	private XmlNodeConfigProcessor xmlNodeConfigProcessor;
-	@Mock
-	private ValidationService validationService;
-	@Mock
-	private DocumentVOProvider documentVOProvider;
-	@Mock
-	private TableOfContentProcessor tableOfContentProcessor;
-	@Mock
-	private MessageHelper messageHelper;
-	@Mock
-	private XPathCatalog xPathCatalog;
-	@Mock
-	private TrackChangesContext trackChangesContext;
-	@Mock
-	private LeosRepository leosRepository;;
-	
-	private String objectId = "555";
-	private String baseVersionId = "210::0.1.0::Element Created";
+    private ExplanatoryService explanatoryService;
+    private ExplanatoryRepository explanatoryRepository;
+    private RepositoryPropertiesMapper repositoryPropertiesMapper = new CmisProperties();
 
-	@Before
-   	public void onSetUp(){
-		super.setup();
-		
-		explanatoryRepository = new ExplanatoryRepositoryImpl(leosRepository);
-		
-		explanatoryService = new ExplanatoryServiceImpl(explanatoryRepository, 
-				packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, numberService,
-				xmlNodeConfigProcessor, validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext);
-	}
-	
-	@Test
+    @Mock
+    private PackageRepository packageRepository;
+    @Mock
+    private XmlNodeProcessor xmlNodeProcessor;
+    @Mock
+    private XmlContentProcessor xmlContentProcessor;
+    @Mock
+    private XmlDocumentService xmlDocumentService;
+    @Mock
+    private NumberService numberService;
+    @Mock
+    private XmlNodeConfigProcessor xmlNodeConfigProcessor;
+    @Mock
+    private ValidationService validationService;
+    @Mock
+    private DocumentVOProvider documentVOProvider;
+    @Mock
+    private TableOfContentProcessor tableOfContentProcessor;
+    @Mock
+    private MessageHelper messageHelper;
+    @Mock
+    private XPathCatalog xPathCatalog;
+    @Mock
+    private TrackChangesContext trackChangesContext;
+				@Mock
+				private DocumentLanguageContext documentLanguageContext;
+    @Mock
+    private LeosRepository leosRepository;
+
+    private String objectId = "555";
+    private String baseVersionId = "210::0.1.0::Element Created";
+
+    @Before
+    public void onSetUp() {
+        super.setup();
+
+        explanatoryRepository = new ExplanatoryRepositoryImpl(leosRepository);
+
+        explanatoryService = new ExplanatoryServiceImpl(explanatoryRepository,
+                packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, numberService,
+                xmlNodeConfigProcessor, validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog,
+																trackChangesContext, documentLanguageContext);
+    }
+
+    @Test
     public void test_updateBaseVersionId() {
-		when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithBaseVersionId());
-		Map<String, Object> properties = new HashMap<>();
+        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithBaseVersionId());
+        Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.BASE_REVISION_ID), baseVersionId);
-		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, objectId, properties, true);
-		assertEquals(baseVersionId, explanatory.getBaseRevisionId());
-		
-	}
-	
-	@Test
+        Explanatory explanatory = explanatoryService.updateExplanatory(objectId, objectId, properties, true);
+        assertEquals(baseVersionId, explanatory.getBaseRevisionId());
+
+    }
+
+    @Test
     public void test_enableLiveDiffing() {
-		when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithLiveDiffing());
-		Map<String, Object> properties = new HashMap<>();
+        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithLiveDiffing());
+        Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), true);
-		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, objectId, properties, true);
-		assertTrue(explanatory.isLiveDiffingRequired());
-		
-	}
-	
-	@Test
+        Explanatory explanatory = explanatoryService.updateExplanatory(objectId, objectId, properties, true);
+        assertTrue(explanatory.isLiveDiffingRequired());
+
+    }
+
+    @Test
     public void test_disableLiveDiffing() {
-		when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithoutLiveDiffing());
-		Map<String, Object> properties = new HashMap<>();
+        when(leosRepository.updateDocument(anyString(), anyString(), anyMap(), any(), anyBoolean())).thenReturn(getMockedExplanatoryWithoutLiveDiffing());
+        Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.LIVE_DIFFING_REQUIRED), false);
-		Explanatory explanatory = explanatoryService.updateExplanatory(objectId, objectId, properties, true);
-		assertFalse(explanatory.isLiveDiffingRequired());
-		
-	}
-	
-	private Explanatory getMockedExplanatoryWithBaseVersionId() {
-		ExplanatoryMetadata explanatoryMetadata = getMockedMetadata();
-		List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
-		Content content = mock(Content.class);
-		return new Explanatory(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "", collaborators, Arrays.asList(""),
-				Option.some(content), baseVersionId, true, Option.some(explanatoryMetadata), false);
-	}
-	
-	private Explanatory getMockedExplanatoryWithLiveDiffing() {
-		ExplanatoryMetadata explanatoryMetadata = getMockedMetadata();
-		List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
-		Content content = mock(Content.class);
-		return new Explanatory(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "", collaborators, Arrays.asList(""),
-				Option.some(content), null, true, Option.some(explanatoryMetadata), false);
-	}
-	
-	private Explanatory getMockedExplanatoryWithoutLiveDiffing() {
-		ExplanatoryMetadata explanatoryMetadata = getMockedMetadata();
-		List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
-		Content content = mock(Content.class);
-		return new Explanatory(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "", collaborators, Arrays.asList(""),
-				Option.some(content), null, false, Option.some(explanatoryMetadata), false);
-	}
-	
+        Explanatory explanatory = explanatoryService.updateExplanatory(objectId, objectId, properties, true);
+        assertFalse(explanatory.isLiveDiffingRequired());
+
+    }
+
+    private Explanatory getMockedExplanatoryWithBaseVersionId() {
+        ExplanatoryMetadata explanatoryMetadata = getMockedMetadata();
+        List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
+        Content content = mock(Content.class);
+        return new Explanatory(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "",
+                collaborators, Arrays.asList(""),
+                Option.some(content), baseVersionId, true, Option.some(explanatoryMetadata), false);
+    }
+
+    private Explanatory getMockedExplanatoryWithLiveDiffing() {
+        ExplanatoryMetadata explanatoryMetadata = getMockedMetadata();
+        List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
+        Content content = mock(Content.class);
+        return new Explanatory(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "",
+                collaborators, Arrays.asList(""),
+                Option.some(content), null, true, Option.some(explanatoryMetadata), false);
+    }
+
+    private Explanatory getMockedExplanatoryWithoutLiveDiffing() {
+        ExplanatoryMetadata explanatoryMetadata = getMockedMetadata();
+        List<Collaborator> collaborators = Arrays.asList(new Collaborator("test", "OWNER", "SG"));
+        Content content = mock(Content.class);
+        return new Explanatory(objectId, "EXPL_COUNCIL", "test", Instant.now(), "test", Instant.now(), "", "", "", "", VersionType.MINOR, false, "",
+                collaborators, Arrays.asList(""),
+                Option.some(content), null, false, Option.some(explanatoryMetadata), false);
+    }
+
     private ExplanatoryMetadata getMockedMetadata() {
         return new ExplanatoryMetadata("... at this stage", "REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL", "on ...",
                 "CE-001", "EN", "CE-001", "explanatory", "Working Party cover page", "555", "0.1.0", false);

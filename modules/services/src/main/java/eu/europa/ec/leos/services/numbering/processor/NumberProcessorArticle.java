@@ -24,9 +24,9 @@ public class NumberProcessorArticle extends NumberProcessorDefault {
         return ARTICLE.equals(node.getNodeName());
     }
 
-    protected void renumberChildren(Node node, boolean numberChildren) {
+    protected void renumberChildren(Node node, boolean numberChildren, String language) {
         if (numberChildren) {
-            numberProcessorHandler.renumberElement(node, PARAGRAPH, numberChildren);
+            numberProcessorHandler.renumberElement(node, PARAGRAPH, numberChildren, language);
         }
     }
 

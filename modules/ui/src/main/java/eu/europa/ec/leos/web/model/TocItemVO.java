@@ -46,7 +46,7 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
                 tableOfContentItemVO.getNode(),
                 tableOfContentItemVO.getContent());
 
-        this.setText(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper));
+        this.setText(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, "EN"));
         this.setChildren( convertChildren(tableOfContentItemVO.getChildItemsView(),messageHelper, numberingConfigs));
     }
 

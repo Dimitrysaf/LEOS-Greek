@@ -19,7 +19,7 @@ public interface NumberService {
 
     byte[] renumberArticles(byte[] xmlContent, boolean renumberChildElements);
 
-    String renumberImportedArticle(String content, String language);
+    String renumberImportedArticle(String content);
 
     byte[] renumberRecitals(byte[] xmlContent);
 

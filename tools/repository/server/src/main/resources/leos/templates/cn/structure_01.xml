@@ -136,7 +136,19 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <!-- Default Configuration for all languages -->
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>ARABIC_PARENTHESIS</numberingType>
+                </langNumConfig>
+                <!-- Configuration for specific languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -145,7 +157,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_PARENTHESIS</numberingType>
             <profiles>
                 <profile>
                     <profileName>inlineAknRecitalMandate</profileName>
@@ -163,7 +174,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -172,7 +194,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template><![CDATA[<part xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></part>]]></template>
         </tocItem>
@@ -184,7 +205,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -193,7 +225,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template>
                 <![CDATA[<title xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
@@ -206,7 +237,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -215,7 +257,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template>
                 <![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
@@ -228,7 +269,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -237,7 +289,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template>
                 <![CDATA[<section xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
@@ -250,7 +301,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>ARABIC</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>optional</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>false</numberEditable>
@@ -259,18 +321,33 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC</numberingType>
             <tocItemTypes>
                 <tocItemType>
                     <name>REGULAR</name>
                     <subElementNumberingConfigs>
                         <subElementNumberingConfig>
                             <subElement>point</subElement>
-                            <numberingType>POINT_NUM</numberingType>
+                            <langNumConfig langGroup="latin" auto="true">
+                                <numberingType>POINT_NUM</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="cyrillic" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="greek" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
                         </subElementNumberingConfig>
                         <subElementNumberingConfig>
                             <subElement>indent</subElement>
-                            <numberingType>POINT_NUM</numberingType>
+                            <langNumConfig langGroup="latin" auto="true">
+                                <numberingType>POINT_NUM</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="cyrillic" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="greek" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
                         </subElementNumberingConfig>
                     </subElementNumberingConfigs>
                 </tocItemType>
@@ -283,11 +360,22 @@
                     <subElementNumberingConfigs>
                         <subElementNumberingConfig>
                             <subElement>point</subElement>
-                            <numberingType>POINT_NUM_DEF</numberingType>
+                            <langNumConfig langGroup="latin" auto="true">
+                                <numberingType>POINT_NUM_DEF</numberingType>
+                            </langNumConfig>
                         </subElementNumberingConfig>
                         <subElementNumberingConfig>
                             <subElement>indent</subElement>
-                            <numberingType>POINT_NUM_DEF</numberingType>
+                            <langNumConfig langGroup="latin" auto="true">
+                                <numberingType>POINT_NUM_DEF</numberingType>
+                            </langNumConfig>
+                            <!-- Default Configuration for other languages -->
+                            <langNumConfig langGroup="cyrillic" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="greek" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
                         </subElementNumberingConfig>
                     </subElementNumberingConfigs>
                 </tocItemType>
@@ -310,7 +398,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>optional</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -319,7 +418,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_POSTFIXDOT</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>article[leos\:origin='ec'] paragraph:not(:has(subparagraph, point))
@@ -381,7 +479,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -390,7 +499,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
             <profiles>
                 <profile>
@@ -409,7 +517,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>POINT_NUM_DEF</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -418,7 +537,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM_DEF</numberingType>
             <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
             <profiles>
                 <profile>
@@ -437,7 +555,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -446,7 +575,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
             <profiles>
                 <profile>
@@ -464,7 +592,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>POINT_NUM_DEF</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -473,7 +612,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM_DEF</numberingType>
             <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
             <profiles>
                 <profile>
@@ -616,6 +754,39 @@
             <description>(1), (2), etc</description>
             <regex>\d+$|#</regex>
             <regexJS>^\d+$</regexJS>
+            <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
+        </numberingConfig>
+        <numberingConfig>
+            <type>GREEK</type>
+            <numbered>true</numbered>
+            <prefix></prefix>
+            <suffix></suffix>
+            <sequence>1</sequence>
+            <description>1, 2, etc</description>
+            <regex>\[ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω]+$|#</regex>
+            <regexJS>^\[ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω]+$</regexJS>
+            <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
+        </numberingConfig>
+        <numberingConfig>
+            <type>GREEK_POSTFIXDOT</type>
+            <numbered>true</numbered>
+            <prefix></prefix>
+            <suffix>.</suffix>
+            <sequence>1</sequence>
+            <description>1., 2., etc</description>
+            <regex>\[ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω]+$|#</regex>
+            <regexJS>^\[ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω]+$</regexJS>
+            <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
+        </numberingConfig>
+        <numberingConfig>
+            <type>GREEK_PARENTHESIS</type>
+            <numbered>true</numbered>
+            <prefix>(</prefix>
+            <suffix>)</suffix>
+            <sequence>1</sequence>
+            <description>(1), (2), etc</description>
+            <regex>\[ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω]+$|#</regex>
+            <regexJS>^\[ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩαβγδεζηθικλμνξοπρστυφχψω]+$</regexJS>
             <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
         </numberingConfig>
         <numberingConfig>
@@ -849,5 +1020,16 @@
             <list/>
         </entry>
     </tocRules>
+
+    <referenceConfig>
+        <refConfig language="en">
+            <internalRef>true</internalRef>
+            <authorialNote>true</authorialNote>
+        </refConfig>
+        <refConfig language="default">
+            <internalRef>false</internalRef>
+            <authorialNote>false</authorialNote>
+        </refConfig>
+    </referenceConfig>
 
 </structure>

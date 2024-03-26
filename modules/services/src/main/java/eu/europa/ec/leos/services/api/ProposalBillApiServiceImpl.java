@@ -19,6 +19,7 @@ import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
@@ -37,8 +38,24 @@ import javax.inject.Provider;
 public class ProposalBillApiServiceImpl extends BillApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(ProposalBillApiServiceImpl.class);
 
+    private Provider<CloneContext> cloneContext;
+
     ProposalBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
-        super(structureContext, cloneContext, context);
+        super(structureContext, context);
+        this.cloneContext = cloneContext;
+    }
+
+    @Override
+    public boolean isClonedProposal() {
+        return cloneContext != null && cloneContext.get().isClonedProposal();
+    }
+
+    @Override
+    public void populateCloneProposalMetadata(XmlDocument document) {
+        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
+                this.getContent(document));
+        this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
+        this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
     }
 
     @Override
@@ -56,7 +73,7 @@ public class ProposalBillApiServiceImpl extends BillApiServiceImpl {
             final Bill currentDocument = this.billService.findBillByRef(documentRef);
 
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(currentDocument.getMetadata().get().getRef(), Bill.class);
-            contex.get().usePackage(leosPackage);
+            context.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
             populateCloneProposalMetadata(proposal);
 

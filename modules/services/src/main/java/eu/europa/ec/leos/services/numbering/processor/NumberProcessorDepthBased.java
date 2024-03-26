@@ -14,7 +14,8 @@ public interface NumberProcessorDepthBased {
      * @param numberConfig   ConfigNumber to be used for numbering
      * @param elementName    Element name to number
      * @param depth          depth in the tree structure (parent-child relationship)
+     * @param language
      */
-    void renumberDepthBased(ParentChildNode node, NumberConfig numberConfig, String elementName, int depth);
+    void renumberDepthBased(ParentChildNode node, NumberConfig numberConfig, String elementName, int depth, String language);
 
 }

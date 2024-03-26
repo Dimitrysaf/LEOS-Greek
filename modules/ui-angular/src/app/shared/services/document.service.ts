@@ -1244,7 +1244,9 @@ export class DocumentService {
       .get<DocumentConfig>(
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
       )
-      .subscribe((config) => this.documentConfigBS.next(config));
+      .subscribe((config) => {
+        this.documentConfigBS.next(config)
+      });
   }
 
   private doSearch(parameters: DocumentSearchParams) {

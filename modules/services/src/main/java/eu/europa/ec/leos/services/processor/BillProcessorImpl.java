@@ -22,10 +22,11 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
@@ -64,16 +65,19 @@ public class BillProcessorImpl implements BillProcessor {
     protected MessageHelper messageHelper;
     protected Provider<StructureContext> structureContextProvider;
     protected final TableOfContentProcessor tableOfContentProcessor;
+    protected final DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     public BillProcessorImpl(XmlContentProcessor xmlContentProcessor, ElementProcessor elementProcessor, TableOfContentProcessor tableOfContentProcessor,
-                             NumberService numberService, MessageHelper messageHelper, Provider<StructureContext> structureContextProvider) {
+                             NumberService numberService, MessageHelper messageHelper, Provider<StructureContext> structureContextProvider,
+            DocumentLanguageContext documentLanguageContext) {
         this.xmlContentProcessor = xmlContentProcessor;
         this.elementProcessor = elementProcessor;
         this.numberService = numberService;
         this.messageHelper = messageHelper;
         this.structureContextProvider = structureContextProvider;
         this.tableOfContentProcessor = tableOfContentProcessor;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     public byte[] insertNewElement(Bill document, String elementId, boolean before, String tagName) {
@@ -84,6 +88,7 @@ public class BillProcessorImpl implements BillProcessor {
         final String template;
         byte[] updatedContent;
         List<TocItem> items = structureContextProvider.get().getTocItems();
+        String language = document.getMetadata().get().getLanguage();
 
         switch (tagName) {
             case CITATION:
@@ -149,7 +154,7 @@ public class BillProcessorImpl implements BillProcessor {
         return template;
     }
 
-    public byte[] renumberDocument(Bill document) {
+    public byte[] renumberDocument(Bill document, String language) {
         Validate.notNull(document, "Document is required.");
         byte[] updatedContent = getContent(document);
         updatedContent = xmlContentProcessor.prepareForRenumber(updatedContent);
@@ -168,6 +173,7 @@ public class BillProcessorImpl implements BillProcessor {
         byte[] updatedContent;
         List<TocItem> items = structureContextProvider.get().getTocItems();
         final byte[] contentBytes = getContent(document);
+        String language = document.getMetadata().get().getLanguage();
 
         switch (tagName) {
             case CITATION:
@@ -227,6 +233,7 @@ public class BillProcessorImpl implements BillProcessor {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
         byte[] updatedContent;
+        String language = document.getMetadata().get().getLanguage();
         switch (tagName) {
             case CLAUSE:
             case CITATION:
@@ -292,7 +299,10 @@ public class BillProcessorImpl implements BillProcessor {
         Validate.notNull(elementId, "ElementId is required.");
         Validate.notNull(elementContent, "ElementContent is required.");
 
-        byte[] updatedContent = null;
+        byte[] updatedContent;
+        String language = document.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
+
         if (xmlContentProcessor.needsToBeIndented(elementContent)) {
             byte[] contentBytes = getContent(document);
             List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(BILL, contentBytes, TocMode.RAW);

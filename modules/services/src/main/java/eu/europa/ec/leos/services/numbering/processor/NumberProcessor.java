@@ -9,11 +9,11 @@ public interface NumberProcessor {
 
     /**
      * Number the Node using the NumberConfig passed as parameter
-     *
-     * @param node           Node to be numbered
+     *  @param node           Node to be numbered
      * @param numberConfig   ConfigNumber to be used for numbering
      * @param numberChildren true, if numbering should be propagated to the children
+     * @param language
      */
-    void renumber(Node node, NumberConfig numberConfig, boolean numberChildren);
+    void renumber(Node node, NumberConfig numberConfig, boolean numberChildren, String language);
 
 }

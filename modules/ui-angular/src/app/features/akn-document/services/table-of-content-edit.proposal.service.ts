@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { cloneDeep } from 'lodash-es';
 
 import {
-  ADD,
+  ADD, CN,
   DELETE,
   EC,
   LEOS_TC_DELETE_ACTION,
@@ -60,7 +60,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
         position,
       );
       if (this.tocService.isClonedProposal) {
-        this.moveOriginAttribute(sourceItem, targetItem);
+        sourceItem.originAttr = LS;
       }
       this.setNumber(tocTree, sourceItem, targetItem);
       if (this.tocService.isTrackChangesEnabled) {

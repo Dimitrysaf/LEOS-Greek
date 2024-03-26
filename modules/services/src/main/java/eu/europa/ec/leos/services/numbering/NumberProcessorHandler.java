@@ -8,6 +8,7 @@ import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessor;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBased;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import org.slf4j.Logger;
@@ -71,6 +72,8 @@ public abstract class NumberProcessorHandler {
     protected CloneContext cloneContext;
     @Autowired
     protected MessageHelper messageHelper;
+    @Autowired
+    protected DocumentLanguageContext documentLanguageContext;
 
     public static List<SoftActionType> softActionTypesToSkip = asList(SoftActionType.DELETE, SoftActionType.MOVE_TO);
 
@@ -81,11 +84,11 @@ public abstract class NumberProcessorHandler {
      * - renumberElement  -> Number children of the first level to node of type  "elementName"
      * - renumberDocument -> Number all elements present in the document of type  "elementName"  (no matter what the level inside the dom is)
      */
-    public void renumberDocument(Document document, String elementName, boolean renumberChildren) {
+    public void renumberDocument(Document document, String elementName, String language, boolean renumberChildren) {
         NodeList elements = document.getElementsByTagName(elementName);
         List<Node> nodeList = XercesUtils.getNodesAsList(elements);
         LOG.trace("renumberElementsAndChildren - Found {} '{}'s to number inside nodeName '{}', nodeId '{}'", nodeList.size(), elementName, document.getNodeName(), getId(document));
-        renumber(nodeList, renumberChildren);
+        renumber(nodeList, language, renumberChildren);
     }
 
     /**
@@ -114,23 +117,23 @@ public abstract class NumberProcessorHandler {
      *      name: Article 2
      *      children: []
      *  }
-     *
-     * @param node             Document or initial Node where the numbering will start
+     *  @param node             Document or initial Node where the numbering will start
      * @param elementName      elements name to number inside the node
      * @param renumberChildren true, if numbering should be propagated to the children
+     * @param language
      */
-    public void renumberElement(Node node, String elementName, boolean renumberChildren) {
+    public void renumberElement(Node node, String elementName, boolean renumberChildren, String language) {
         if (Arrays.asList(POINT, INDENT).contains(elementName)) {
             List<Node> LISTs = XercesUtils.getChildren(node, LIST);
             LOG.trace("getChildren. Found {} LISTs inside nodeName {}, nodeId {}", LISTs.size(), node.getNodeName(), getId(node));
             for (int i = 0; i < LISTs.size(); i++) {
                 Node list = LISTs.get(i);
                 List<Node> nodeList = XercesUtils.getChildren(list, elementName);
-                renumber(nodeList, renumberChildren);
+                renumber(nodeList, language, renumberChildren);
             }
         } else {
             List<Node> nodeList = XercesUtils.getChildren(node, elementName);
-            renumber(nodeList, renumberChildren);
+            renumber(nodeList, language, renumberChildren);
         }
     }
 
@@ -189,7 +192,7 @@ public abstract class NumberProcessorHandler {
     public void renumberDepthBased(List<ParentChildNode> nodeList, String elementName, int depth) {
         if (nodeList.size() > 0) {
             final Node firstElement = nodeList.get(0).getNode();
-            final NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, depth, firstElement);
+            final NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, depth, firstElement, documentLanguageContext.getDocumentLanguage());
             numberConfig.setComplex(setComplexNumbering(nodeList, depth));
             for (int i = 0; i < nodeList.size(); i++) {
                 final ParentChildNode parentChildNode = nodeList.get(i);
@@ -199,19 +202,19 @@ public abstract class NumberProcessorHandler {
                     numberProcessorsDepthBased.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
                             .findFirst()
-                            .ifPresent(val -> val.renumberDepthBased(parentChildNode, numberConfig, elementName, depth));
+                            .ifPresent(val -> val.renumberDepthBased(parentChildNode, numberConfig, elementName, depth, documentLanguageContext.getDocumentLanguage()));
                     removeAttribute(node, XmlHelper.LEOS_AFFECTED_ATTR);//TODO temp, until migration finishes
                 }
             }
         }
     }
 
-    private void renumber(List<Node> nodeList, boolean renumberChildren) {
+    private void renumber(List<Node> nodeList, String language, boolean renumberChildren) {
         if (nodeList.size() > 0) {
             final Node firstElement = nodeList.get(0);
             final int elementDepth = XercesUtils.getPointDepth(firstElement);
             final String elementName = firstElement.getNodeName();
-            final NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement);
+            final NumberConfig numberConfig = numberConfigFactory.getNumberConfig(elementName, elementDepth, firstElement, language);
             numberConfig.setComplex(setComplexNumbering(nodeList));
             boolean leosRenumbered = XercesUtils.getAttributeValueAsSimpleBoolean(firstElement, LEOS_RENUMBERED);
             if (!leosRenumbered) {
@@ -238,7 +241,7 @@ public abstract class NumberProcessorHandler {
                     numberProcessors.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
                             .findFirst()
-                            .ifPresent(val -> val.renumber(node, numberConfig, renumberChildren));
+                            .ifPresent(val -> val.renumber(node, numberConfig, renumberChildren, language));
                 }
                 removeAttribute(node, XmlHelper.LEOS_AFFECTED_ATTR);//TODO temp, until migration finishes
             }

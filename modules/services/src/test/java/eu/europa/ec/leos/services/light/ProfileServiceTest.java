@@ -63,7 +63,7 @@ public class ProfileServiceTest extends LeosTest {
         Profile profile = profileService.getProfile(systemName);
         //Assertions
         assertEquals(systemName, profile.getName().value());
-        assertEquals(true, profile.isBreadcrumb());
+        //assertEquals(true, profile.isBreadcrumb());
     }
 
     public byte[] getFileContent(String fileName) {

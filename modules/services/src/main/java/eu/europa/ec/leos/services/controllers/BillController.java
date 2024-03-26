@@ -87,13 +87,12 @@ public class BillController {
             elementName = encodeParam(elementName);
             elementId = encodeParam(elementId);
             presenterId = encodeParam(presenterId);
-//            elementContent = encodeParam(elementContent);
             SaveElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName, elementContent, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill element - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error occured while getting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unexpected error occurred while getting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

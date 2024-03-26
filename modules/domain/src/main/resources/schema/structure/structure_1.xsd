@@ -34,7 +34,7 @@
             <xs:element name="childrenAllowed" type="xs:boolean" default="false"/>
             <xs:element name="display" type="xs:boolean" default="false"/>
             <xs:element name="itemNumber" type="optionsType" default="none"/>
-            <xs:element name="autoNumbering" type="xs:boolean" default="false" minOccurs="0"/>
+            <xs:element name="autoNumbering" type="autoNumbering" minOccurs="0"/>
             <xs:element name="itemHeading" type="optionsType" default="none"/>
             <xs:element name="itemDescription" type="xs:boolean" default="false"/>
             <xs:element name="numberEditable" type="xs:boolean" default="false"/>
@@ -43,7 +43,7 @@
             <xs:element name="numWithType" type="xs:boolean" default="false"/>
             <xs:element name="expandedByDefault" type="xs:boolean" default="false"/>
             <xs:element name="sameParentAsChild" type="xs:boolean" default="false"/>
-            <xs:element name="numberingType" type="numberingType"/>
+            <xs:element name="numberingType" type="numberingType" minOccurs="0"/>
             <xs:element name="tocItemTypes" type="tocItemTypes" minOccurs="0"/>
             <xs:element name="parentNameNumberingTypeDependency" type="aknTag" minOccurs="0"/>
             <xs:element name="profiles" type="profiles" minOccurs="0"/>
@@ -53,6 +53,20 @@
             <xs:element name="maxDepth" type="xs:string" minOccurs="0"/>
             <xs:element name="actionsPosition" type="actionPositions" default="RIGHT" minOccurs="0"/>
         </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="autoNumbering">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="langNumConfig" type="langNumConfig"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="langNumConfig">
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="numberingType" type="numberingType"/>
+        </xs:sequence>
+        <xs:attribute name="langGroup" type="xs:string" use="required"/>
+        <xs:attribute name="auto" type="xs:boolean" use="required"/>
     </xs:complexType>
 
     <xs:simpleType name="optionsType" final="restriction">
@@ -129,7 +143,7 @@
     <xs:complexType name="subElementNumberingConfig">
         <xs:sequence>
             <xs:element name="subElement" type="aknTag"/>
-            <xs:element name="numberingType" type="numberingType"/>
+            <xs:element name="langNumConfig" type="langNumConfig" maxOccurs="unbounded"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -181,6 +195,9 @@
             <xs:enumeration value="ARABIC"/>
             <xs:enumeration value="ARABIC_POSTFIXDOT"/>
             <xs:enumeration value="ARABIC_PARENTHESIS"/>
+            <xs:enumeration value="GREEK"/>
+            <xs:enumeration value="GREEK_POSTFIXDOT"/>
+            <xs:enumeration value="GREEK_PARENTHESIS"/>
             <xs:enumeration value="ALPHA_LOWER_PARENTHESIS"/>
             <xs:enumeration value="ROMAN_LOWER_PARENTHESIS"/>
             <xs:enumeration value="ROMAN_UPPER"/>

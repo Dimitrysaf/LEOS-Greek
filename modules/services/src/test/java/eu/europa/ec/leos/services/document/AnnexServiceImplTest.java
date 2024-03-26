@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
@@ -81,6 +82,8 @@ public class AnnexServiceImplTest extends LeosTest {
     @Mock
     private TrackChangesContext trackChangesContext;
     @Mock
+    DocumentLanguageContext documentLanguageContext;
+    @Mock
     private LeosRepository leosRepository;
     private UpdateInternalReferencesMessage message;
 
@@ -94,7 +97,7 @@ public class AnnexServiceImplTest extends LeosTest {
         message = new UpdateInternalReferencesMessage(objectId, "annex");
         annexService = new AnnexServiceMandateImpl(annexRepository, xmlNodeProcessor,
                 xmlContentProcessor, xmlDocumentService, numberService, xmlNodeConfigProcessor, validationService,
-                documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext);
+                documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext, documentLanguageContext);
 
     }
 

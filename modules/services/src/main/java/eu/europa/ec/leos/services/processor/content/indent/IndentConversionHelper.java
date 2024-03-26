@@ -2,11 +2,12 @@ package eu.europa.ec.leos.services.processor.content.indent;
 
 import com.google.common.base.Strings;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import io.atlassian.fugue.Pair;
@@ -49,6 +50,8 @@ public class IndentConversionHelper {
 
     @Autowired
     TableOfContentProcessor tableOfContentProcessor;
+    @Autowired
+    DocumentLanguageContext documentLanguageContext;
 
     public Pair<TableOfContentItemVO, Boolean> convertIndentedItem(List<TocItem> tocItems,
                                                                    TableOfContentItemVO originalItem
@@ -828,10 +831,11 @@ public class IndentConversionHelper {
 
     private TocItem getTocItemFromTagName(List<TocItem> tocItems, TableOfContentItemVO item, String tagName) {
         TableOfContentItemVO article = TableOfContentHelper.getFirstAscendant(item, Arrays.asList(ARTICLE));
+        String language = documentLanguageContext.getDocumentLanguage();
         if (article != null && article.getTocItemType().equals(TocItemTypeName.DEFINITION)) {
-            return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, TocItemTypeName.DEFINITION, tagName);
+            return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, TocItemTypeName.DEFINITION, tagName, language);
         } else {
-            return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, TocItemTypeName.REGULAR, tagName);
+            return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, TocItemTypeName.REGULAR, tagName, language);
         }
     }
 }

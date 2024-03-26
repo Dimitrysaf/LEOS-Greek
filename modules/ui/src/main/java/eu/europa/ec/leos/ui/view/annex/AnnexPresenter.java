@@ -1357,6 +1357,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
 
         byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(event, annex, tocItemList, intRefMap);
         AnnexStructureType annexStructureType = getStructureType();
+        String language = annex.getMetadata().get().getLanguage();
         switch (annexStructureType) {
             case ARTICLE:
                 xmlContent = numberService.renumberArticles(xmlContent);

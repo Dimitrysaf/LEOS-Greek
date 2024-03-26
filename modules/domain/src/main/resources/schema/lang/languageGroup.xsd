@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://eu.europa.ec.digit.leos.pilot/schema/"
+           xmlns="http://eu.europa.ec.digit.leos.pilot/schema/">
+
+    <xs:element name="languageGroup">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="name" type="xs:string"/>
+                <xs:element name="description" type="xs:string"/>
+                <xs:element name="version" type="xs:string"/>
+                <xs:element name="groups" type="groups"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="groups">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="group" type="group"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="group">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="lang" type="xs:string"/>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+</xs:schema>

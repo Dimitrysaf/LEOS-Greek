@@ -36,12 +36,12 @@ public class NumberProcessorLevel extends NumberProcessorDepthBasedDefault {
     }
 
     @Override
-    protected void renumberChildrenOfDifferentType(Node node, boolean numberChildren) {
+    protected void renumberChildrenOfDifferentType(Node node, boolean numberChildren, String language) {
         List<Node> listNodes = XercesUtils.getChildren(node, LIST);
         for (int i = 0; i < listNodes.size(); i++) {
             Node listNode = listNodes.get(i);
             String elementType = XercesUtils.checkFirstChildType(listNode, INDENT) ? INDENT : POINT;
-            numberProcessorHandler.renumberElement(node, elementType, numberChildren);
+            numberProcessorHandler.renumberElement(node, elementType, numberChildren, language);
         }
     }
 

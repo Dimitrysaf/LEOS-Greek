@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -82,11 +83,15 @@ public class BillProcessorImplTest extends LeosTest {
     @Mock
     private StructureContext structureContext;
 
+    @Mock
+    DocumentLanguageContext documentLanguageContext;
+
     @InjectMocks
     private StructureServiceImpl structureServiceImpl = Mockito.spy(new StructureServiceImpl());
 
     @InjectMocks
-    private BillProcessorImpl billProcessorImpl = new BillProcessorImpl(xmlContentProcessor, elementProcessor, tableOfContentProcessor, numberService, messageHelper, structureContextProvider);
+    private BillProcessorImpl billProcessorImpl = new BillProcessorImpl(xmlContentProcessor, elementProcessor, tableOfContentProcessor,
+            numberService, messageHelper, structureContextProvider, documentLanguageContext);
     // TODO test getArticleTemplate
     
     private String docTemplate;

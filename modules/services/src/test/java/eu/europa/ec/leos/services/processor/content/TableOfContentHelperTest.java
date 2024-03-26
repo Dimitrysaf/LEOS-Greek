@@ -4,8 +4,12 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.security.AuthenticatedUser;
 import eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupServiceImpl;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -31,6 +35,7 @@ import org.w3c.dom.Node;
 
 import javax.inject.Provider;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -74,6 +79,12 @@ public class TableOfContentHelperTest extends LeosTest {
     private StructureServiceImpl structureServiceImpl;
     @InjectMocks
     private XmlContentProcessorMandate xmlContentProcessor = Mockito.spy(new XmlContentProcessorMandate());
+    @Mock
+    private ConfigurationRepository configurationRepository;
+    protected LanguageMapHolder languageMapHolder;
+    protected LanguageGroupServiceImpl languageGroupService;
+    @InjectMocks
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
 
     private List<TocItem> tocItems;
     private List<NumberingConfig> numberingConfigs;
@@ -84,10 +95,20 @@ public class TableOfContentHelperTest extends LeosTest {
     private TableOfContentProcessor tableOfContentProcessor = Mockito.spy(new TableOfContentProcessorImpl());
     @InjectMocks
     private IndentConversionHelper indentConversionHelper = new IndentConversionHelper();
-
+    protected Map<String, List<String>> languageMap = new HashMap<>();
     private final static String INDENT_FOLDER = "/indent/";
 
     private void setTemplateAndStructureFile(String template, String structureFile) {
+        languageMap.put("greek", Arrays.asList("el"));
+        languageMap.put("latin", Arrays.asList("cs", "da", "de", "en", "es", "et", "fi", "fr", "ga", "hr", "hu", "it", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "sk", "sl", "sv"));
+        languageMap.put("cyrillic", Arrays.asList("bg"));
+        documentLanguageContext.setDocumentLanguage("en");
+        languageMapHolder = Mockito.spy(new LanguageMapHolder());
+        languageGroupService = Mockito.spy(new LanguageGroupServiceImpl(configurationRepository, languageMapHolder));
+
+        //populate language map
+        languageMapHolder.loadLanguageMap(languageMap);
+
         docTemplate = template;
         byte[] bytesFile = TestUtils.getFileContent(structureFile);
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);

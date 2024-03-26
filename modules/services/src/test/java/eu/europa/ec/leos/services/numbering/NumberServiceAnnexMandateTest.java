@@ -61,7 +61,8 @@ public class NumberServiceAnnexMandateTest extends NumberServiceTest {
     @Before
     public void setup() {
         super.setup();
-        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter);
+        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter,
+                documentLanguageContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberConfigFactory", numberConfigFactory);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);

@@ -1,7 +1,8 @@
 package eu.europa.ec.leos.services.numbering.config;
 
-import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -16,10 +17,10 @@ import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_LIST_TYPE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getNumberingByName;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getNumberingTypeByDepth;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getTocItemByNumValue;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getTocItemsByName;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getNumberingByName;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getNumberingTypeByDepth;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemByNumValue;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemsByName;
 
 @Configuration
 public class NumberConfigFactory {
@@ -29,7 +30,7 @@ public class NumberConfigFactory {
     @Autowired
     protected Provider<StructureContext> structureContextProvider;
 
-    public NumberConfig getNumberConfig(String elementName, int depth, final Node firstElement) {
+    public NumberConfig getNumberConfig(String elementName, int depth, final Node firstElement, String language) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
         String listTypeAttributeValue = XercesUtils.getAttributeValue(firstElement.getParentNode(), LEOS_LIST_TYPE_ATTR);
@@ -40,14 +41,14 @@ public class NumberConfigFactory {
             XercesUtils.removeAttribute(firstElement.getParentNode(), LEOS_LIST_TYPE_ATTR);
         } else if (foundTocItems.size() > 1 && XercesUtils.getFirstChild(firstElement, NUM) != null) {
             String currentNum = XercesUtils.getNodeNum(firstElement);
-            TocItem tocItem = getTocItemByNumValue(numberingConfigs, foundTocItems, currentNum, depth);
+            TocItem tocItem = getTocItemByNumValue(numberingConfigs, foundTocItems, currentNum, depth, language);
             if (tocItem != null) {
-                numberingType = tocItem.getNumberingType();
+                numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
             } else {
-                numberingType = foundTocItems.get(0).getNumberingType();
+                numberingType = StructureConfigUtils.getNumberingTypeByLanguage(foundTocItems.get(0), language);
             }
         } else {
-            numberingType = foundTocItems.get(0).getNumberingType();
+            numberingType = StructureConfigUtils.getNumberingTypeByLanguage(foundTocItems.get(0), language);
         }
 
         NumberingConfig numberingConfig = getNumberingByName(numberingConfigs, numberingType);

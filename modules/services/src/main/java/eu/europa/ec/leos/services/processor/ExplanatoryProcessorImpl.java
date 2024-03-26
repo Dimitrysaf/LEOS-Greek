@@ -10,9 +10,10 @@ import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
@@ -36,7 +37,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getNumberingConfigByTagName;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getNumberingConfigByTagName;
 
 @Service
 public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
@@ -47,17 +48,19 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
     protected final TableOfContentProcessor tableOfContentProcessor;
     private Provider<StructureContext> structureContextProvider;
     protected MessageHelper messageHelper;
+    private DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     public ExplanatoryProcessorImpl(XmlContentProcessor xmlContentProcessor, NumberService numberService, ElementProcessor<Explanatory> elementProcessor,
                                     Provider<StructureContext> structureContextProvider, TableOfContentProcessor tableOfContentProcessor,
-                                    MessageHelper messageHelper) {
+                                    MessageHelper messageHelper, DocumentLanguageContext documentLanguageContext) {
         this.xmlContentProcessor = xmlContentProcessor;
         this.numberService = numberService;
         this.elementProcessor = elementProcessor;
         this.structureContextProvider = structureContextProvider;
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.messageHelper = messageHelper;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     private byte[] getContent(Explanatory explanatory) {
@@ -73,7 +76,8 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
         final String template;
         byte[] updatedContent;
         List<TocItem> items = structureContextProvider.get().getTocItems();
-
+        String language = document.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         switch (tagName) {
             case LEVEL:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, tagName), StructureConfigUtils.HASH_NUM_VALUE, messageHelper);
@@ -103,7 +107,8 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
     public byte[] deleteElement(Explanatory document, String elementId, String tagName) throws Exception {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
-
+        String language = document.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         byte[] xmlContent = elementProcessor.deleteElement(document, elementId, tagName, false);
         return updateExplanatoryContent(elementId, tagName, xmlContent);
     }
@@ -140,6 +145,8 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
     @Override
     public byte[] updateElement(Explanatory document, String elementId, String tagName, String elementFragment) {
         byte[] updatedContent = null;
+        String language = document.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         if (xmlContentProcessor.needsToBeIndented(elementFragment)) {
             byte[] contentBytes = getContent(document);
             List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW);
@@ -178,7 +185,7 @@ public class ExplanatoryProcessorImpl implements ExplanatoryProcessor {
     private boolean hasDepth(String tagName) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
-        NumberingConfig numberingConfig = getNumberingConfigByTagName(tocItems, numberingConfigs, tagName);
+        NumberingConfig numberingConfig = getNumberingConfigByTagName(tocItems, numberingConfigs, tagName, documentLanguageContext.getDocumentLanguage());
         return numberingConfig.getLevels() != null && numberingConfig.getLevels().getLevels().size() > 0;
     }
 

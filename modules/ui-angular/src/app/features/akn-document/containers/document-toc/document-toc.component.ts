@@ -67,7 +67,7 @@ import {
   checkPositionAfterValidation,
   checkPositionAfterValidationExplanatory,
   findNodeById,
-  getItemSoftStyle,
+  getItemSoftStyle, getNumberingTypeByLanguage,
   isFirstPointOrSubparagraph,
   removeTag,
 } from '@/shared/utils/toc.utils';
@@ -277,7 +277,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   getLabel(node: TableOfContentItemVO) {
     if (node != null) {
-      if (node.tocItem.numberingType === BULLET_NUM) {
+      if (getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup) === BULLET_NUM) {
         return this.translateService.instant('toc.item.type.bullet');
       } else {
         return this.translateService.instant(
@@ -782,6 +782,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit, A
             nodeTarget,
             nodeDragged,
             position,
+            this.documentConfig.langGroup
           );
           break;
         default:

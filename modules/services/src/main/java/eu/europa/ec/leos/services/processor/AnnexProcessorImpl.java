@@ -22,11 +22,12 @@ import eu.europa.ec.leos.model.annex.LevelItemVO;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
@@ -49,7 +50,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getNumberingConfigByTagName;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getNumberingConfigByTagName;
 
 @Service
 class AnnexProcessorImpl implements AnnexProcessor {
@@ -60,10 +61,12 @@ class AnnexProcessorImpl implements AnnexProcessor {
     protected final TableOfContentProcessor tableOfContentProcessor;
     private MessageHelper messageHelper;
     private Provider<StructureContext> structureContextProvider;
+    private DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     public AnnexProcessorImpl(XmlContentProcessor xmlContentProcessor, NumberService numberService, ElementProcessor<Annex> elementProcessor,
-                              MessageHelper messageHelper, Provider<StructureContext> structureContextProvider, TableOfContentProcessor tableOfContentProcessor) {
+                              MessageHelper messageHelper, Provider<StructureContext> structureContextProvider,
+            TableOfContentProcessor tableOfContentProcessor, DocumentLanguageContext documentLanguageContext) {
         super();
         this.xmlContentProcessor = xmlContentProcessor;
         this.numberService = numberService;
@@ -71,6 +74,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
         this.messageHelper = messageHelper;
         this.structureContextProvider = structureContextProvider;
         this.tableOfContentProcessor = tableOfContentProcessor;
+        this.documentLanguageContext = documentLanguageContext;
     }
     
     @Override
@@ -79,6 +83,8 @@ class AnnexProcessorImpl implements AnnexProcessor {
         Validate.notNull(elementId, "Element id is required.");
         
         byte[] xmlContent = elementProcessor.deleteElement(document, elementId, tagName, false);
+        String language = document.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         return updateAnnexContent(elementId, tagName, xmlContent);
     }
     
@@ -91,7 +97,8 @@ class AnnexProcessorImpl implements AnnexProcessor {
         String template;
         byte[] updatedContent;
         List<TocItem> items = structureContextProvider.get().getTocItems();
-
+        String language = document.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         switch (tagName) {
             case LEVEL:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, LEVEL), StructureConfigUtils.HASH_NUM_VALUE, messageHelper);
@@ -155,7 +162,8 @@ class AnnexProcessorImpl implements AnnexProcessor {
         final Element parentElement;
         byte[] updatedContent;
         List<TocItem> items = structureContextProvider.get().getTocItems();
-
+        String language = document.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         switch (tagName) {
             case LEVEL:
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), elementContent, tagName, elementId, before, document.isTrackChangesEnabled());
@@ -225,6 +233,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
     @Override
     public byte[] updateAnnexBlock(Annex annex, String elementId, String tagName, String elementFragment) {
         byte[] updatedContent = null;
+        String language = annex.getMetadata().get().getLanguage();
         if (xmlContentProcessor.needsToBeIndented(elementFragment)) {
             byte[] contentBytes = getContent(annex);
             List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW);
@@ -239,6 +248,8 @@ class AnnexProcessorImpl implements AnnexProcessor {
         Validate.notNull(document, "Document is required.");
         byte[] updatedContent = getContent(document);
         updatedContent = xmlContentProcessor.prepareForRenumber(updatedContent);
+        String language = document.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         switch(structureType) {
             case ARTICLE:
                 updatedContent = numberService.renumberArticles(updatedContent, true);
@@ -283,7 +294,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
     private boolean hasDepth(String tagName) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
-        NumberingConfig numberingConfig = getNumberingConfigByTagName(tocItems, numberingConfigs, tagName);
+        NumberingConfig numberingConfig = getNumberingConfigByTagName(tocItems, numberingConfigs, tagName, documentLanguageContext.getDocumentLanguage());
         return numberingConfig.getLevels() != null && numberingConfig.getLevels().getLevels().size() > 0;
     }
     
@@ -338,7 +349,8 @@ class AnnexProcessorImpl implements AnnexProcessor {
     }
 
     @Override
-    public byte[] renumberingAndPostProcessing(byte[] docContent) {
+    public byte[] renumberingAndPostProcessing(byte[] docContent, String language) {
+        documentLanguageContext.setDocumentLanguage(language);
         byte [] updatedContent = numberService.renumberLevel(docContent);
         updatedContent = numberService.renumberParagraph(updatedContent);
         updatedContent = numberService.renumberArticles(updatedContent);

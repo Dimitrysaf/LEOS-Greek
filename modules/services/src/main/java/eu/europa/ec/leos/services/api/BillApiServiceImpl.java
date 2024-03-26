@@ -27,7 +27,6 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
-import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ActionType;
@@ -41,7 +40,6 @@ import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.BillService;
@@ -78,16 +76,18 @@ import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
@@ -163,8 +163,9 @@ public class BillApiServiceImpl implements BillApiService {
     @Autowired
     RepositoryPropertiesMapper repositoryPropertiesMapper;
 
-    private Provider<CloneContext> cloneContext;
-    protected Provider<BillContextService> contex;
+
+    protected Provider<BillContextService> context;
+
     private static final String LEOS_ALTERNATIVE_ATTR = "leos:alternative";
     private static final Logger LOG = LoggerFactory.getLogger(BillApiServiceImpl.class);
 
@@ -173,17 +174,24 @@ public class BillApiServiceImpl implements BillApiService {
 
     private Provider<StructureContext> structureContext;
 
-    BillApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext,
-                       Provider<BillContextService> context) {
+    @Autowired
+    BillApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context) {
         this.structureContext = structureContext;
-        this.cloneContext = cloneContext;
-        this.contex = context;
+        this.context = context;
     }
 
     @Override
     public DocumentViewResponse getDocument(@NotNull String documentRef) {
         Bill bill = this.billService.findBillByRef(documentRef);
         return documentViewService.getDocumentView(bill);
+    }
+
+    @Override
+    public void populateCloneProposalMetadata(XmlDocument document) {}
+
+    @Override
+    public boolean isClonedProposal() {
+        return false;
     }
 
     @Override
@@ -198,7 +206,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         User user = securityContext.getUser();
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
-        this.populateCloneProposalMetadata(bill);
+        populateCloneProposalMetadata(bill);
         Bill updatedBill = this.billService.saveTableOfContent(bill, toc,
                 messageHelper.getMessage("operation.toc.updated"), user);
         documentViewService.updateProposalAsync(bill);
@@ -280,7 +288,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(bill.getMetadata().get().getRef(),
                 Bill.class);
-        contex.get().usePackage(leosPackage);
+        context.get().usePackage(leosPackage);
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
         String proposalId = proposal.getId();
         if (isClonedProposal()) {
@@ -384,14 +392,14 @@ public class BillApiServiceImpl implements BillApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
+        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), bill.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, alternateConfigs, refConfigs,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
+                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT, bill.getMetadata().get().getLanguage()),
                 getArticleTypesAttributes(tocItems), bill.getMetadata().get().getRef(),
                 proposalMetadata, structure.getTocRules(),
-                bill.isTrackChangesEnabled(), true, isClonedProposal
-        );
+                bill.isTrackChangesEnabled(), true, isClonedProposal, langGroup);
     }
 
     @Override
@@ -479,8 +487,8 @@ public class BillApiServiceImpl implements BillApiService {
             this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
             BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required");
             byte[] newXmlContent = importService.insertSelectedElements(bill,
-                    aknDocument.getBytes(StandardCharsets.UTF_8), elementIds,
-                    metadata.getLanguage());
+                    aknDocument.getBytes(StandardCharsets.UTF_8), elementIds
+            );
             String notificationMsg =
                     "document.import.element.inserted" + (elementIds.stream().anyMatch(s -> s.startsWith("rec_"))
                             ? ".recitals" : "") +
@@ -510,7 +518,7 @@ public class BillApiServiceImpl implements BillApiService {
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
                 bill.getMetadata().get().getRef(), TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper,
-                context.getNumberingConfigs());
+                context.getNumberingConfigs(), bill.getMetadata().get().getLanguage());
     }
 
     @Override
@@ -550,7 +558,8 @@ public class BillApiServiceImpl implements BillApiService {
 
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(bill);
-        final byte[] newXmlContent = billProcessor.renumberDocument(bill);
+        String language = bill.getMetadata().get().getLanguage();
+        final byte[] newXmlContent = billProcessor.renumberDocument(bill, language);
         final String title = messageHelper.getMessage("operation.element.document_renumbered");
         final String description = messageHelper.getMessage(OPERATION_CHECKIN_MINOR);
         final CheckinCommentVO checkinComment = new CheckinCommentVO(title, description,
@@ -589,6 +598,7 @@ public class BillApiServiceImpl implements BillApiService {
 
         boolean splittedContentIsEmpty = false;
         Element elementToEditAfterClose = null;
+        String language = bill.getMetadata().get().getLanguage();
 
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent, true);
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
@@ -687,18 +697,7 @@ public class BillApiServiceImpl implements BillApiService {
     }
 
     private String getContextProposalId() {
-        return contex.get().getProposalId();
-    }
-
-    protected boolean isClonedProposal() {
-        return cloneContext != null && cloneContext.get().isClonedProposal();
-    }
-
-    protected void populateCloneProposalMetadata(XmlDocument document) {
-        CloneProposalMetadataVO cloneProposalMetadataVO = this.proposalService.getClonedProposalMetadata(
-                this.getContent(document));
-        this.cloneContext.get().setCloneProposalMetadataVO(cloneProposalMetadataVO);
-        this.trackChangesContext.setTrackChangesEnabled(document.isTrackChangesEnabled());
+        return context.get().getProposalId();
     }
 
     private String getVersionInfoAsString(XmlDocument document) {

@@ -653,7 +653,7 @@ abstract class ExplanatoryScreenImpl extends VerticalLayout implements Explanato
         String[] elementlist = new String[]{RECITAL, CITATION, CROSSHEADING};
         for (TocItem type : tocItemsList) {
             if (!type.isRoot() && type.isDraggable()) {
-                Label itemLabel = new Label(TableOfContentHelper.getDisplayableTocItem(type, messageHelper));
+                Label itemLabel = new Label(TableOfContentHelper.getDisplayableTocItem(type, null, messageHelper));
                 itemLabel.setStyleName("leos-drag-item");
 
                 DragSourceExtension<Label> dragSourceExtension = new DragSourceExtension<>(itemLabel);

@@ -36,11 +36,11 @@ public class NumberProcessorParagraphAndPoint extends NumberProcessorDefault {
         return Arrays.asList(PARAGRAPH, POINT, INDENT).contains(node.getNodeName());
     }
 
-    protected void renumberChildren(Node node, boolean numberChildren) {
+    protected void renumberChildren(Node node, boolean numberChildren, String language) {
         Node listNode = getFirstChild(node, LIST);
         if (listNode != null && listNode.getFirstChild() != null) {
             String elementType = XercesUtils.getFirstChildType(listNode, Arrays.asList(INDENT, POINT));
-            numberProcessorHandler.renumberElement(node, elementType, numberChildren);
+            numberProcessorHandler.renumberElement(node, elementType, numberChildren, language);
         }
     }
 

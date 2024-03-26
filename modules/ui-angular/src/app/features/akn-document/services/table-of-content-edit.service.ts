@@ -27,6 +27,7 @@ import {
   copyDeletedItemToTempForUndelete,
   findNodeById,
   getItemIndentLevel,
+  getNumberingTypeByLanguage,
   isNumSoftDeleted,
 } from '@/shared/utils/toc.utils';
 
@@ -46,6 +47,7 @@ export abstract class TableOfContentEditService {
     this.documentService.documentConfig$.subscribe((config) => {
       this.documentConfig = config;
     });
+    this.environment = process.env.NG_APP_LEOS_INSTANCE;
   }
 
   public setTree(newTree: TableOfContentItemVO[]) {
@@ -311,9 +313,10 @@ export abstract class TableOfContentEditService {
 
     if (actualTargetItem) {
       sourceItem.parentItem = actualTargetItem.id;
+      let numType = getNumberingTypeByLanguage(targetItem.tocItem, this.documentConfig.langGroup);
       const targetRules = [
         targetItem.tocItem.aknTag.toUpperCase(),
-        targetItem.tocItem.numberingType.toUpperCase(),
+        numType.toUpperCase()
       ].join('_');
       const targetTocAllowedItems = this.documentConfig.tocRules[targetRules];
       if (
@@ -375,7 +378,7 @@ export abstract class TableOfContentEditService {
       const targetTocItem: TocItem = targetItem.tocItem;
       const targetRules = [
         targetTocItem.aknTag.toUpperCase(),
-        targetTocItem.numberingType.toUpperCase(),
+        getNumberingTypeByLanguage(targetTocItem, this.documentConfig.langGroup).toUpperCase(),
       ].join('_');
       const targetTocAllowedItems = this.documentConfig.tocRules[targetRules];
       if (

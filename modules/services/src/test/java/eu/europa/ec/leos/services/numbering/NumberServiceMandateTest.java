@@ -51,7 +51,8 @@ public abstract class NumberServiceMandateTest extends NumberServiceTest {
     public void setup() {
         super.setup();
         getStructureFile();
-        numberService = new NumberServiceMandate(contentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter);
+        numberService = new NumberServiceMandate(contentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter,
+                documentLanguageContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberConfigFactory", numberConfigFactory);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);

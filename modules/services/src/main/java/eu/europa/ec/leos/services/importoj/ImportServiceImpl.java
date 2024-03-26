@@ -20,6 +20,7 @@ import eu.europa.ec.leos.integration.ExternalDocumentProvider;
 import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,15 +47,17 @@ public class ImportServiceImpl implements ImportService {
     private XmlContentProcessor xmlContentProcessor;
     private NumberService numberService;
     private XPathCatalog xPathCatalog;
+    private DocumentLanguageContext documentLanguageContext;
 
     @Autowired
-    public ImportServiceImpl(ExternalDocumentProvider externalDocumentProvider, ConversionHelper conversionHelper, XmlContentProcessor xmlContentProcessor,
-                             NumberService numberService, XPathCatalog xPathCatalog) {
+    public ImportServiceImpl(ExternalDocumentProvider externalDocumentProvider, ConversionHelper conversionHelper,
+            XmlContentProcessor xmlContentProcessor, NumberService numberService, XPathCatalog xPathCatalog, DocumentLanguageContext documentLanguageContext) {
         this.externalDocumentProvider = externalDocumentProvider;
         this.conversionHelper = conversionHelper;
         this.xmlContentProcessor = xmlContentProcessor;
         this.numberService = numberService;
         this.xPathCatalog = xPathCatalog;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Autowired
@@ -72,8 +75,9 @@ public class ImportServiceImpl implements ImportService {
     }
 
     @Override
-    public byte[] insertSelectedElements(Bill bill, byte[] importedContent, List<String> elementIds, String language) {
+    public byte[] insertSelectedElements(Bill bill, byte[] importedContent, List<String> elementIds) {
         LOG.info("Importing {} elements...", elementIds.size());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         byte[] documentContent = getContent(bill);
         long startTime = System.currentTimeMillis();
         for (String id : elementIds) {
@@ -89,7 +93,7 @@ public class ImportServiceImpl implements ImportService {
             // Do pre-processing on the selected elements
             String updatedElement = xmlContentProcessor.doImportedElementPreProcessing(element.getElementFragment(), elementType);
             if (elementType.equalsIgnoreCase(ARTICLE)) {
-                updatedElement = this.numberService.renumberImportedArticle(updatedElement, language);
+                updatedElement = this.numberService.renumberImportedArticle(updatedElement);
             } else if (elementType.equalsIgnoreCase(RECITAL)) {
                 updatedElement = this.numberService.renumberImportedRecital(updatedElement);
             }
@@ -98,7 +102,8 @@ public class ImportServiceImpl implements ImportService {
             // Insert selected element to the document
             if (elementId != null) {
                 documentContent = xmlContentProcessor.insertElementByTagNameAndId(documentContent, updatedElement,
-                        element.getElementTagName(), elementId, checkIfLastArticleIsEntryIntoForce(documentContent, element, elementId, language), bill.isTrackChangesEnabled());
+                        element.getElementTagName(), elementId, checkIfLastArticleIsEntryIntoForce(documentContent, element, elementId,
+                                documentLanguageContext.getDocumentLanguage()), bill.isTrackChangesEnabled());
             } else if (elementType.equalsIgnoreCase(ARTICLE)) {
                 documentContent = xmlContentProcessor.appendElementToTag(documentContent, BODY, updatedElement, true);
             } else if (elementType.equalsIgnoreCase(RECITAL)) {

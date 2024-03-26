@@ -13,13 +13,12 @@
  */
 package eu.europa.ec.leos.test.support;
 
-import java.nio.charset.Charset;
-import java.util.concurrent.TimeUnit;
-
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.rules.Timeout;
 import org.mockito.MockitoAnnotations;
+
+import java.nio.charset.Charset;
+import java.util.concurrent.TimeUnit;
 
 public class LeosTest {
 

@@ -103,7 +103,9 @@ define(function listItemNumberModule(require) {
     function _getSequences(seqName) {
         if (seqName && seqName === 'Paragraph') {
             var paragraphTocItem = ckEditor.LEOS.tocItemsList.find(function(e){return e.aknTag === 'paragraph'});
-            var paraNumTypeName = paragraphTocItem.numberingType;
+            var paraNumTypeName = paragraphTocItem.autoNumbering.langNumConfigs
+                .find(config => config.langGroup.toLowerCase() === ckEditor.LEOS.langGroup.toLowerCase())
+                ?.numberingTypes[0];
             var paragraphNumType = numberingConfigs.find(function(e){return e.type === paraNumTypeName});
             var paragraphSequence = sequenceMap.find(function(el){return el.type === paraNumTypeName});
             paragraphSequence.format = 'x';

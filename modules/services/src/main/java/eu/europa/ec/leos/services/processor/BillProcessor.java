@@ -29,7 +29,7 @@ public interface BillProcessor {
     byte[] insertNewElement(Bill document, String elementId, boolean before, String tagName);
 
     @PreAuthorize("hasPermission(#document, 'CAN_RENUMBER')")
-    byte[] renumberDocument(Bill document);
+    byte[] renumberDocument(Bill document, String language);
 
     @PreAuthorize("hasPermission(#document, 'CAN_UPDATE')")
     byte[] insertNewElementWithContent(Bill document, String elementId, boolean before, String tagName, String content);

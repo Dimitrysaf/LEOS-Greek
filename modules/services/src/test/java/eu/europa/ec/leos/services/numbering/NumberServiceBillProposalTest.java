@@ -63,7 +63,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
     public void test_numbering_article_importFromOJ_ec() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX_OJ, "test_numbering_article_importFromOJ_ec.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX_OJ, "test_numbering_article_importFromOJ_ec_expected.xml");
-        String result = numberService.renumberImportedArticle(new String(xmlInput), null);
+        String result = numberService.renumberImportedArticle(new String(xmlInput));
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(result));
     }
 
@@ -71,7 +71,7 @@ public class NumberServiceBillProposalTest extends NumberServiceProposalTest {
     public void test_numbering_article_definition_importFromOJ_ec() {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX_OJ, "test_numbering_article_definition_importFromOJ_ec.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX_OJ, "test_numbering_article_definition_importFromOJ_ec_expected.xml");
-        String result = numberService.renumberImportedArticle(new String(xmlInput), null);
+        String result = numberService.renumberImportedArticle(new String(xmlInput));
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(result));
     }
 }

@@ -73,15 +73,17 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
-import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.RefConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
@@ -110,6 +112,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     private static final Logger LOG = LoggerFactory.getLogger(AnnexApiServiceImpl.class);
     private static final String ANNEX_METADATA_IS_REQUIRED = "Annex metadata is required!";
     private static final String PROPOSAL = "Proposal_";
+
     private Provider<StructureContext> structureContext;
     @Autowired
     AnnexService annexService;
@@ -154,6 +157,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Autowired
     @Qualifier("applicationProperties")
     private Properties applicationProperties;
+
     private Provider<CloneContext> cloneContext;
     private Provider<AnnexContextService> annexContext;
     protected Provider<BillContextService> contex;
@@ -481,14 +485,14 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
+        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), annex.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, refConfigs,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
+                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT, annex.getMetadata().get().getLanguage()),
                 getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(),
                 proposalMetadata, context.getTocRules(),
-                annex.isTrackChangesEnabled(), true, isClonedProposal
-        );
+                annex.isTrackChangesEnabled(), true, isClonedProposal, langGroup);
     }
 
     @Override
@@ -557,7 +561,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
         populateCloneProposalMetadata(proposal);
         byte[] newXmlContent = trackChangesProcessor.acceptChange(annex, elementId, trackChangeAction);
-        newXmlContent = annexProcessor.renumberingAndPostProcessing(newXmlContent);
+        String language = annex.getMetadata().get().getLanguage();
+        newXmlContent = annexProcessor.renumberingAndPostProcessing(newXmlContent, language);
         annex = annexService.updateAnnex(annex, newXmlContent, VersionType.MINOR, messageHelper.getMessage(msg));
 
         trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, true);
@@ -574,7 +579,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         this.populateCloneProposalMetadata(annex);
 
         byte[] newXmlContent = trackChangesProcessor.rejectChange(annex, elementId, trackChangeAction);
-        newXmlContent = annexProcessor.renumberingAndPostProcessing(newXmlContent);
+        String language = annex.getMetadata().get().getLanguage();
+        newXmlContent = annexProcessor.renumberingAndPostProcessing(newXmlContent, language);
         annex = annexService.updateAnnex(annex, newXmlContent, VersionType.MINOR, messageHelper.getMessage(msg));
 
         trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, false);
@@ -600,7 +606,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                 annex.getMetadata().get().getRef(),
                 TocMode.SIMPLIFIED_CLEAN);
         return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper,
-                context.getNumberingConfigs());
+                context.getNumberingConfigs(), annex.getMetadata().get().getLanguage());
     }
 
     @Override

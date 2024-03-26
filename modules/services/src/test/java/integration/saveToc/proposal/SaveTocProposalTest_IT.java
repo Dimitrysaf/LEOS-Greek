@@ -16,12 +16,11 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBased;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBasedDefault;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorLevel;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorParagraphAndPoint;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
+import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.support.XPathCatalog;
-import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import integration.saveToc.SaveTocTest_IT;
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -29,7 +28,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.sound.midi.Track;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -74,7 +72,8 @@ public abstract class SaveTocProposalTest_IT extends SaveTocTest_IT {
     @Before
     public void onSetUp() throws Exception {
         super.onSetUp();
-        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, xmlContentProcessor);
+        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, xmlContentProcessor,
+                documentLanguageContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
     }

@@ -8,10 +8,14 @@ import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupServiceImpl;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
@@ -52,7 +56,9 @@ import javax.inject.Provider;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -127,16 +133,33 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
     protected List<NumberProcessorDepthBased> numberProcessorsDepthBased = Mockito.spy(Stream.of(numberProcessorDepthBasedDefault, numberProcessorLevel).collect(Collectors.toList()));
     protected NumberService numberService;
     protected ExplanatoryProcessorImpl explanatoryProcessorImpl;
+    @Mock
+    private ConfigurationRepository configurationRepository;
+    protected LanguageMapHolder languageMapHolder;
+    protected LanguageGroupServiceImpl languageGroupService;
+    @InjectMocks
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
 
     private String docTemplate;
     private List<TocItem> tocItems;
     private List<NumberingConfig> numberingConfigs;
+    protected Map<String, List<String>> languageMap = new HashMap<>();
 
     protected final static String PREFIX_CONTENT_PROCESSOR = "/contentProcessor";
 
     @Before
     public void setUp() {
         super.setup();
+
+        languageMap.put("greek", Arrays.asList("el"));
+        languageMap.put("latin", Arrays.asList("cs", "da", "de", "en", "es", "et", "fi", "fr", "ga", "hr", "hu", "it", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "sk", "sl", "sv"));
+        languageMap.put("cyrillic", Arrays.asList("bg"));
+        documentLanguageContext.setDocumentLanguage("en");
+        languageMapHolder = Mockito.spy(new LanguageMapHolder());
+        languageGroupService = Mockito.spy(new LanguageGroupServiceImpl(configurationRepository, languageMapHolder));
+
+        //populate language map
+        languageMapHolder.loadLanguageMap(languageMap);
         
         docTemplate = "CE-001";
         byte[] bytesFile = TestUtils.getFileContent("/structure-test-explanatory-CN.xml");
@@ -146,8 +169,10 @@ public class ExplanatoryProcessorImplTest extends LeosTest {
         tocItems = structureServiceImpl.getTocItems(docTemplate);
         numberingConfigs = structureServiceImpl.getNumberingConfigs(docTemplate);
 
-        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter);
-        explanatoryProcessorImpl = new ExplanatoryProcessorImpl(xmlContentProcessor, numberService, elementProcessor, structureContextProvider, tableOfContentProcessor, messageHelper);
+        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler,
+                parentChildConverter, documentLanguageContext);
+        explanatoryProcessorImpl = new ExplanatoryProcessorImpl(xmlContentProcessor, numberService, elementProcessor, structureContextProvider,
+                tableOfContentProcessor, messageHelper, documentLanguageContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberConfigFactory", numberConfigFactory);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);

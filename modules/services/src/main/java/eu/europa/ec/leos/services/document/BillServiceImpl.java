@@ -33,6 +33,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -72,6 +73,7 @@ public abstract class BillServiceImpl implements BillService {
     protected final TableOfContentProcessor tableOfContentProcessor;
     protected final XPathCatalog xPathCatalog;
     protected final TrackChangesContext trackChangesContext;
+    private final DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     BillServiceImpl(BillRepository billRepository, PackageRepository packageRepository,
@@ -80,7 +82,7 @@ public abstract class BillServiceImpl implements BillService {
                     XmlNodeConfigProcessor xmlNodeConfigProcessor, AttachmentProcessor attachmentProcessor,
                     ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
                     MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
-                    XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
+                    XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
         this.billRepository = billRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -95,6 +97,7 @@ public abstract class BillServiceImpl implements BillService {
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.xPathCatalog = xPathCatalog;
         this.trackChangesContext = trackChangesContext;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -102,6 +105,7 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Finding Bill... [id={}]", id);
         Bill bill = billRepository.findBillById(id, Bill.class, latest);
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
 
@@ -111,6 +115,7 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Finding Bill version... [it={}]", id);
         Bill bill = billRepository.findBillById(id, Bill.class, false);
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
 
@@ -184,6 +189,7 @@ public abstract class BillServiceImpl implements BillService {
         final byte[] updatedBytes = getContent(bill);
         bill = billRepository.updateMilestoneComments(bill.getId(), milestoneComments, updatedBytes, versionType, comment);
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
 
@@ -192,6 +198,7 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Updating Bill... [id={}, milestoneComments={}]", billId, milestoneComments);
         Bill bill = billRepository.updateMilestoneComments(ref, billId, milestoneComments);
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
 
@@ -209,6 +216,7 @@ public abstract class BillServiceImpl implements BillService {
 
         LOG.trace("Added attachment in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
 
@@ -226,6 +234,7 @@ public abstract class BillServiceImpl implements BillService {
 
         LOG.trace("Removed attachment from Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
 
@@ -243,6 +252,7 @@ public abstract class BillServiceImpl implements BillService {
 
         LOG.trace("Update attachments in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
     
@@ -291,6 +301,7 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Finding Bill by ref... [ref=" + ref + "]");
         Bill bill = billRepository.findBillByRef(ref);
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
     
@@ -301,7 +312,7 @@ public abstract class BillServiceImpl implements BillService {
 
         byte[] newXmlContent;
         newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(bill), user, bill.isTrackChangesEnabled());
-
+        String language = bill.getMetadata().get().getLanguage();
         newXmlContent = numberService.renumberArticles(newXmlContent, true);
         newXmlContent = numberService.renumberRecitals(newXmlContent);
         newXmlContent = xmlContentProcessor.doXMLPostProcessing(newXmlContent);
@@ -377,6 +388,7 @@ public abstract class BillServiceImpl implements BillService {
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(bill) : content, metadata);
         bill = billRepository.updateBill(bill.getId(), metadata, updatedBytes, VersionType.MINOR, actionMsg);
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
 
@@ -386,6 +398,7 @@ public abstract class BillServiceImpl implements BillService {
         Bill bill = billRepository.createBillFromContent(path, name, metadata, content);
         bill = billRepository.updateBill(bill.getId(), metadata, content, VersionType.MINOR, actionMsg);
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
 

@@ -46,7 +46,7 @@ import { DocumentService } from '@/shared/services/document.service';
 import {
   findNodeById,
   getItemIndentLevel,
-  getNumberingConfig,
+  getNumberingConfig, getNumberingTypeByLanguage,
   getTocItemByNumberingType,
   updateDepthOfTocItems,
 } from '@/shared/utils/toc.utils';
@@ -258,7 +258,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     const selectedNode = this.getTargetNode();
     const toc = this.tocService.getCurrentToc();
     const tocItems = this.tocService.getCurrentTocItems();
-    const oldValue = selectedNode.tocItem.numberingType;
+    const oldValue = getNumberingTypeByLanguage(selectedNode.tocItem, this.documentConfig.langGroup);
     this.active_block_style = value;
     //save snapshot of old tree
     this.tocEditService.handleNodeChanges(toc, true);
@@ -270,6 +270,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
       tocItems,
       value,
       selectedNode.tocItem.aknTag,
+      this.documentConfig.langGroup
     );
     selectedNode.tocItem = newTocItem;
     selectedNode.number = numberConfig.sequence;
@@ -293,12 +294,12 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     const selectedNode = this.getTargetNode();
     const tocItems = this.tocService.getCurrentTocItems();
     const toc = this.tocService.getCurrentToc();
-    const oldValue = selectedNode.tocItem.numberingType;
+    const oldValue = getNumberingTypeByLanguage(selectedNode.tocItem, this.documentConfig.langGroup);
     this.active_point_style = value;
 
     //save snapshot of old tree
     this.tocEditService.handleNodeChanges(toc, true);
-    const newTocItem = getTocItemByNumberingType(tocItems, value, INDENT);
+    const newTocItem = getTocItemByNumberingType(tocItems, value, INDENT, this.documentConfig.langGroup);
     const parentNode = findNodeById(toc, selectedNode.parentItem);
     this.propagateListType(
       toc,
@@ -335,7 +336,8 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
   ) {
     const toc = this.tocService.getCurrentToc();
     let sequence = '#';
-    const config = getNumberingConfig(numberingConfigs, tocItem.numberingType);
+    let numType = getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup);
+    const config = getNumberingConfig(numberingConfigs, numType);
     if (list && list.length > 0 && config && !config.numbered) {
       const firstChild = list.at(0);
       if (config && (!config.levels || config.levels.levels.length === 0)) {

@@ -12,6 +12,7 @@ import eu.europa.ec.leos.repository.document.BillRepositoryImpl;
 import eu.europa.ec.leos.repository.store.PackageRepository;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
@@ -90,6 +91,8 @@ public class BillServiceImplTest {
     @Mock
     private TrackChangesContext trackChangesContext;
     @Mock
+    private DocumentLanguageContext documentLanguageContext;
+    @Mock
     private XPathCatalog xPathCatalog;
 
     @InjectMocks
@@ -106,7 +109,7 @@ public class BillServiceImplTest {
         billRepository =  new BillRepositoryImpl(leosRepository);
         billService = new BillServiceProposalImpl(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService,
                 xmlNodeConfigProcessor, attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper,
-                tableOfContentProcessor, xPathCatalog, trackChangesContext);
+                tableOfContentProcessor, xPathCatalog, trackChangesContext, documentLanguageContext);
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");

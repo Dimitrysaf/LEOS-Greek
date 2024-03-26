@@ -64,7 +64,7 @@ public abstract class SaveTocMandateTest_IT extends SaveTocTest_IT {
         ReflectionTestUtils.setField(numberProcessorHandler, "numberConfigFactory", numberConfigFactory);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);
-        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter);
+        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter, documentLanguageContext);
     }
 
 }

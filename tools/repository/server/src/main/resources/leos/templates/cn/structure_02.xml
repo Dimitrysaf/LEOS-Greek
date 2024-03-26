@@ -54,7 +54,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -63,7 +74,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template><![CDATA[<part xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></part>]]></template>
         </tocItem>
@@ -76,7 +86,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -85,7 +106,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template>
                 <![CDATA[<title xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
@@ -99,7 +119,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -108,7 +139,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template>
                 <![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
@@ -122,7 +152,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -131,7 +172,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template>
                 <![CDATA[<section xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
@@ -144,6 +184,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
             <itemNumber>none</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -195,7 +247,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>LEVEL_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>optional</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -204,7 +267,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>LEVEL_NUM</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>level[leos\:origin='cn']</elementSelector>
@@ -222,7 +284,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
             <itemNumber>none</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -248,6 +321,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>none</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -256,7 +341,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_POSTFIXDOT</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>paragraph[leos\:origin='ec']:not(:has(subparagraph)):not(:has(point))
@@ -328,7 +412,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -337,7 +432,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>
@@ -360,7 +454,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -369,7 +474,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>indent[leos\:origin='ec']:not(:has(subparagraph)),indent[leos\:origin='cn']

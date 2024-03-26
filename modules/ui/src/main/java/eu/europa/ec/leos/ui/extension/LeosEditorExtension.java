@@ -45,7 +45,7 @@ import eu.europa.ec.leos.ui.event.MergeElementRequestEvent;
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent;
 import eu.europa.ec.leos.web.event.view.document.CheckElementCoEditionEvent.Action;
 import eu.europa.ec.leos.web.event.view.document.CloseElementEvent;
@@ -88,7 +88,7 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
         getState().tocItemsJsonArray = toJsonString(tocItemList);
         getState().numberingConfigsJsonArray = toJsonString(numberingConfigs);
         getState().listNumberConfigJsonArray = toJsonString(StructureConfigUtils.getNumberingConfigsFromTocItem(numberingConfigs, tocItemList,
-                XmlHelper.POINT));
+                XmlHelper.POINT, "en"));
         getState().articleTypesConfigJsonArray = toJsonString(getArticleTypesAttributes(tocItemList));
         getState().alternateConfigsJsonArray = toJsonString(alternateConfigs);
         getState().documentsMetadataJsonArray = toJsonString(documents);

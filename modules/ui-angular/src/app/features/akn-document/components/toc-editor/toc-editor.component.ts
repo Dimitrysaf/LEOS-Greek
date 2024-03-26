@@ -45,6 +45,7 @@ import {
   getItemIndentLevel,
   getNumberingByName,
   getNumberingConfig,
+  getNumberingTypeByLanguage,
   getTocItemByNumberingType,
   isDeletableItem,
   isDeletedItem,
@@ -202,7 +203,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
   ) {
     const config = getNumberingByName(
       this.documentConfig.numberingConfig,
-      node.tocItem.numberingType,
+      getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup)
     );
 
     switch (fieldName) {
@@ -237,7 +238,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     this.type = this.getDisplayableTocItem(node.tocItem);
     this.numberConfig = getNumberingByName(
       this.documentConfig.numberingConfig,
-      node.tocItem.numberingType,
+      getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup)
     );
     this.tocType = node.tocItemType?.toLowerCase();
     const deletedItem = isDeletedItem(node) || isMoveToItem(node);
@@ -270,7 +271,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     ) {
       this.isIndentListRadioButtonGroupEnabled =
         this.indentListRadioButtonGroupItemsToEnable.includes(
-          node.tocItem.numberingType,
+          getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup)
         );
     }
 
@@ -281,10 +282,10 @@ export class TocEditorComponent implements OnInit, OnChanges {
       );
     }
     if (this.isIndentList(node.tocItem)) {
-      this.active_point_style = node.tocItem.numberingType;
+      this.active_point_style = getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup);
     }
     if (this.isCrossHeading(node.tocItem)) {
-      this.active_block_style = node.tocItem.numberingType;
+      this.active_block_style = getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup);
     }
     if (this.showNumParagraphToggle(node)) {
       this.active_paragraph_style =
@@ -448,7 +449,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   handleListRadioButton(event) {
     const { value } = event.target;
-    const oldValue = this.selectedNode.tocItem.numberingType;
+    const oldValue = getNumberingTypeByLanguage(this.selectedNode.tocItem, this.documentConfig.langGroup);
     this.active_block_style = value;
     //save snapshot of old tree
     this.handleNodeChanges(this.toc, true);
@@ -460,6 +461,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
       this.tocItems,
       value,
       this.selectedNode.tocItem.aknTag,
+      this.documentConfig.langGroup
     );
     this.selectedNode.tocItem = newTocItem;
     this.selectedNode.number = numberConfig.sequence;
@@ -468,12 +470,12 @@ export class TocEditorComponent implements OnInit, OnChanges {
 
   handleIndentListRadioButtonGroupChange(event) {
     const { value } = event.target;
-    const oldValue = this.selectedNode.tocItem.numberingType;
+    const oldValue = getNumberingTypeByLanguage(this.selectedNode.tocItem, this.documentConfig.langGroup);
     this.active_point_style = value;
 
     //save snapshot of old tree
     this.handleNodeChanges(this.toc, true);
-    const newTocItem = getTocItemByNumberingType(this.tocItems, value, INDENT);
+    const newTocItem = getTocItemByNumberingType(this.tocItems, value, INDENT, this.documentConfig.langGroup);
     const parentNode = findNodeById(this.toc, this.selectedNode.parentItem);
     this.propagateListType(
       this.toc,
@@ -507,6 +509,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
       this.tocItems,
       event as NumberingType,
       this.selectedNode.tocItem.aknTag,
+      this.documentConfig.langGroup
     );
     this.selectedNode.number = numberingConfig.sequence;
     this.handleNodeChanges(this.toc);
@@ -527,6 +530,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
       this.selectedNode,
       oldValue.toUpperCase(),
       event.toUpperCase(),
+      this.documentConfig.langGroup
     );
 
     if (
@@ -576,7 +580,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
     numberingConfigs: NumberingConfig[],
   ) {
     let sequence = '#';
-    const config = getNumberingConfig(numberingConfigs, tocItem.numberingType);
+    const numberingTYpe = getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup);
+    const config = getNumberingConfig(numberingConfigs, numberingTYpe);
     if (list && list.length > 0 && config && !config.numbered) {
       const firstChild = list.at(0);
       if (config && (!config.levels || config.levels.levels.length === 0)) {
@@ -681,7 +686,8 @@ export class TocEditorComponent implements OnInit, OnChanges {
   }
 
   private getDisplayableTocItem(tocItem: TocItem): string {
-    if (tocItem.numberingType === BULLET_NUM) {
+    const numberingType = getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup);
+    if (numberingType === BULLET_NUM) {
       return this.translateService.instant('toc.item.type.bullet');
     }
     if (tocItem.aknTag === MAIN_BODY) {

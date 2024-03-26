@@ -56,7 +56,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -65,7 +76,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
             <template><![CDATA[<part xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></part>]]></template>
@@ -79,7 +89,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -88,7 +109,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
             <template>
@@ -103,7 +123,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -112,7 +143,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
             <template>
@@ -127,7 +157,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -136,7 +177,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
             <template>
@@ -151,7 +191,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>DIVISION_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -174,6 +225,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>false</display>
             <itemNumber>none</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>ROMAN_UPPER</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -182,7 +245,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ROMAN_UPPER</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>division num</elementSelector>
@@ -231,7 +293,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>none</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -240,7 +313,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>crossheading:not(level crossheading):not(paragraph crossheading)</elementSelector>
@@ -259,7 +331,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>BULLET_BLACK_CIRCLE</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -268,7 +351,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>BULLET_BLACK_CIRCLE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>crossheading:not(level crossheading):not(paragraph crossheading)</elementSelector>
@@ -287,7 +369,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>INDENT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -296,7 +389,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>INDENT</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>crossheading:not(level crossheading):not(paragraph crossheading)</elementSelector>
@@ -315,6 +407,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>none</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -323,7 +427,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>block</elementSelector>
@@ -342,6 +445,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>BULLET_BLACK_CIRCLE</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -369,6 +484,18 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>INDENT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -377,7 +504,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>INDENT</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>block</elementSelector>
@@ -396,7 +522,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>LEVEL_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>optional</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -405,7 +542,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>LEVEL_NUM</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>level</elementSelector>
@@ -424,6 +560,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>none</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -432,7 +580,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_POSTFIXDOT</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>paragraph</elementSelector>
@@ -490,7 +637,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -499,7 +657,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
         </tocItem>
@@ -511,7 +668,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -520,7 +688,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
         </tocItem>
@@ -532,7 +699,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>BULLET_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -541,7 +719,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>BULLET_NUM</numberingType>
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
         </tocItem>
@@ -553,7 +730,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>INDENT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -562,7 +750,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>INDENT</numberingType>
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
         </tocItem>

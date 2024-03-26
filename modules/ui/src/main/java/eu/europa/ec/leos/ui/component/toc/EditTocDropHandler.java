@@ -26,7 +26,8 @@ import eu.europa.ec.leos.model.action.ActionType;
 import eu.europa.ec.leos.model.action.CheckinElement;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.ui.event.toc.TocChangedEvent;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -108,9 +109,10 @@ public class EditTocDropHandler implements TreeGridDropListener<TableOfContentIt
         if (getTagValueFromTocItemVo(tocItem).equals(POINT)) {
             TableOfContentItemVO article = getFirstAscendant(targetItem, Arrays.asList(ARTICLE));
             if (article != null) {
-                if (!tocItem.getTocItem().getNumberingType().equals(StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems,
-                        article.getTocItemType(), POINT))) {
-                    TocItem newTocItem = StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, article.getTocItemType(), POINT);
+                NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem.getTocItem(), "EN");
+                if (!numberingType.equals(StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems,
+                        article.getTocItemType(), POINT, "en"))) {
+                    TocItem newTocItem = StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, article.getTocItemType(), POINT, "EN");
                     if (newTocItem != null) {
                         tocItem.setTocItem(newTocItem);
                     }
@@ -133,9 +135,9 @@ public class EditTocDropHandler implements TreeGridDropListener<TableOfContentIt
 
     private void fireTocChange(TocDropResult tocDropResult, List<CheckinElement> checkinElements) {
         final TableOfContentItemVO sourceItem = tocDropResult.getSourceItem();
-        final String srcItemType = TableOfContentHelper.getDisplayableTocItem(sourceItem.getTocItem(), messageHelper);
+        final String srcItemType = TableOfContentHelper.getDisplayableTocItem(sourceItem.getTocItem(), null, messageHelper);
         if (tocDropResult.getTargetItem() != null) {
-            final String targetItemType = TableOfContentHelper.getDisplayableTocItem(tocDropResult.getTargetItem().getTocItem(), messageHelper);
+            final String targetItemType = TableOfContentHelper.getDisplayableTocItem(tocDropResult.getTargetItem().getTocItem(), null, messageHelper);
             final TocChangedEvent.Result result = tocDropResult.isSuccess() ? TocChangedEvent.Result.SUCCESSFUL : TocChangedEvent.Result.ERROR;
             final String message = messageHelper.getMessage(tocDropResult.getMessageKey(), srcItemType, targetItemType);
             eventBus.post(new TocChangedEvent(message, result, checkinElements));

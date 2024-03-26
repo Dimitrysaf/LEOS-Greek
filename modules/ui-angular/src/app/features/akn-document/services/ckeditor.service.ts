@@ -561,6 +561,8 @@ export class CKEditorService {
 
     config['refConfigs'] = oldConfig.refConfigs;
 
+    config['langGroup'] = oldConfig.langGroup;
+
     const profileTCEnabled =
       !oldConfig.profile || oldConfig.profile.trackChangesEnabled;
     config['isTrackChangesShowed'] =

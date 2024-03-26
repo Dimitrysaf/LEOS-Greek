@@ -62,12 +62,14 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -399,14 +401,14 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         List<TocItem> tocItems = structureContext1.getTocItems();
         List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(
                 proposal.getMetadata().get().getRef());
+        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, null,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
+                StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT, proposal.getMetadata().get().getLanguage()),
                 getArticleTypesAttributes(tocItems), proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().getOrNull(), structureContext1.getTocRules(),
-                proposal.isTrackChangesEnabled(), true, proposal.isClonedProposal()
-        );
+                proposal.isTrackChangesEnabled(), true, proposal.isClonedProposal(), langGroup);
     }
 
     @Override
