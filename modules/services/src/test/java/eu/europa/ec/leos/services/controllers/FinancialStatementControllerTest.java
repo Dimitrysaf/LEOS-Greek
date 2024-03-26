@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.FinancialStatementApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
@@ -100,6 +101,8 @@ public class FinancialStatementControllerTest {
     @Test
     public void getDocumentConfig() {
         final String TEST_DOC_REF = "testDocRef";
+        ProposalMetadata proposalMetadata= new ProposalMetadata("", "REGULATION for EC", "",
+                "PR-00.xml", "EN", "", "proposal-id", "", "0.1.0", false);
         final DocumentConfigResponse TEST_RESPONSE = new DocumentConfigResponse(
                 new ArrayList<>(),
                 new ArrayList<>(),
@@ -109,12 +112,11 @@ public class FinancialStatementControllerTest {
                 new HashMap<>(),
                 new HashMap<>(),
                 "testRef",
-                null,
+                proposalMetadata,
                 new HashMap<>(),
                 false,
                 false,
-                false
-        );
+                false, "latin");
 
         Mockito.when(this.genericDocumentApiService.getDocumentConfig(Mockito.anyString()))
                 .thenReturn(TEST_RESPONSE);

@@ -68,6 +68,7 @@ define(function elementEditorModule(require) {
         var articleTypesConfigJsonArray = JSON.parse(connector.getState().articleTypesConfigJsonArray);
         var alternateConfigs = JSON.parse(connector.getState().alternateConfigsJsonArray);
         var levelItemObject = JSON.parse(levelItemVo);
+        var langGroup = connector.getState().langGroup;
 
         docType = docType.toLowerCase();
         var isAlternative = (alternatives != null && alternatives != "");
@@ -91,7 +92,8 @@ define(function elementEditorModule(require) {
                 isClonedProposal: isClonedProposal,
                 elementCursorId: elementCursorId,
                 elementCursorChildPos: elementCursorChildPos,
-                elementCursorPos: elementCursorPos
+                elementCursorPos: elementCursorPos,
+                langGroup: langGroup
             }
             // load the specific profile and initialize the editor
             require(["profiles/" + profileId],
@@ -188,7 +190,8 @@ define(function elementEditorModule(require) {
                 mousePosition: [],
                 elementCursorId: params.elementCursorId,
                 elementCursorChildPos: params.elementCursorChildPos,
-                elementCursorPos: params.elementCursorPos
+                elementCursorPos: params.elementCursorPos,
+                langGroup: params.langGroup
             };
             // register editor event callbacks
             editor.on("close", _destroyEditor.bind(undefined, connector, params.elementId, params.elementType));

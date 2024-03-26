@@ -1,4 +1,4 @@
-import { NumberingType } from './document.model';
+import {AutoNumbering, NumberingType} from './document.model';
 
 export class TableOfContentItemVO {
   tocItem: TocItem;
@@ -102,7 +102,7 @@ export class TocItem {
   childrenAllowed: boolean;
   display: boolean;
   itemNumber: string;
-  autoNumbering: boolean;
+  autoNumbering: AutoNumbering | null;
   itemHeading: string;
   itemDescription: boolean;
   numberEditable: boolean;

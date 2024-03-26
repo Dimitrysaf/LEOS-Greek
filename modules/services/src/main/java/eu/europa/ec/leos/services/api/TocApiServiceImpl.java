@@ -26,8 +26,9 @@ import eu.europa.ec.leos.services.dto.request.NodeDropValidationRequest;
 import eu.europa.ec.leos.services.dto.response.NodeValidationResponse;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -65,15 +66,17 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private AnnexService annexService;
     private MessageHelper messageHelper;
     private ExplanatoryService explanatoryService;
+    private DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     protected TocApiServiceImpl(Provider<StructureContext> structureContextProvider, BillService billService, AnnexService annexService,
-                             MessageHelper messageHelper, ExplanatoryService explanatoryService) {
+                             MessageHelper messageHelper, ExplanatoryService explanatoryService, DocumentLanguageContext documentLanguageContext) {
         this.structureContextProvider = structureContextProvider;
         this.billService = billService;
         this.annexService = annexService;
         this.messageHelper = messageHelper;
         this.explanatoryService = explanatoryService;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -81,30 +84,35 @@ public abstract class TocApiServiceImpl implements TocApiService {
         String documentRef = request.getDocumentRef();
         LeosCategory category = request.getDocumentType();
         byte[] xmlContent = new byte[0];
+        String language = null;
         switch (category) {
             case BILL:
                 Bill bill = billService.findBillByRef(documentRef);
                 xmlContent = bill.getContent().getOrError(() -> DOCUMENT_CONTENT_IS_REQUIRED).getSource().getBytes();
                 this.setStructureContext(bill.getMetadata().getOrError(() -> "BIll metadata is required!").getDocTemplate());
+                language = bill.getMetadata().get().getLanguage();
                 break;
             case ANNEX:
                 Annex annex = annexService.findAnnexByRef(documentRef);
                 xmlContent = annex.getContent().getOrError(() -> DOCUMENT_CONTENT_IS_REQUIRED).getSource().getBytes();
                 this.setStructureContext(annex.getMetadata().getOrError(() -> "Annex metadata is required!").getDocTemplate());
+                language = annex.getMetadata().get().getLanguage();
                 break;
             case COUNCIL_EXPLANATORY:
                 Explanatory explanatory = explanatoryService.findExplanatoryByRef(documentRef);
                 xmlContent = explanatory.getContent().getOrError(() -> DOCUMENT_CONTENT_IS_REQUIRED).getSource().getBytes();
                 this.setStructureContext(explanatory.getMetadata().getOrError(() -> "Explanatory metadata is required!").getDocTemplate());
+                language = explanatory.getMetadata().get().getLanguage();
                 break;
             default:
                 LOG.error("Invalid document type");
         }
+        documentLanguageContext.setDocumentLanguage(language);
         TocDropResult result = validateDrop(request, xmlContent);
 
-        final String srcItemType = TableOfContentHelper.getDisplayableTocItem(result.getSourceItem().getTocItem(), messageHelper);
+        final String srcItemType = TableOfContentHelper.getDisplayableTocItem(result.getSourceItem().getTocItem(), language, messageHelper);
         if (result.getTargetItem() != null) {
-            final String targetItemType = TableOfContentHelper.getDisplayableTocItem(result.getTargetItem().getTocItem(), messageHelper);
+            final String targetItemType = TableOfContentHelper.getDisplayableTocItem(result.getTargetItem().getTocItem(), language, messageHelper);
             result.setMessageKey(messageHelper.getMessage(result.getMessageKey(), srcItemType, targetItemType));
         } else {
             result.setMessageKey(messageHelper.getMessage("toc.edit.window.drop.error.root.message", srcItemType));
@@ -118,28 +126,32 @@ public abstract class TocApiServiceImpl implements TocApiService {
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
 
         Document document = createXercesDocument(xmlContent);
+        String language = documentLanguageContext.getDocumentLanguage();
 
-        TableOfContentItemVO draggedTocItemVO = getTableOfContentItemVO(request.getDraggedNodeId().get(0), request.getDraggedNodeTagName(), tocItems, numberingConfigs, document);
-        TableOfContentItemVO targetTocItemVO = getTableOfContentItemVO(request.getTargetNodeId(), request.getTargetNodeTagName(), tocItems, numberingConfigs, document);
-        TableOfContentItemVO parentTocItemVO = getTableOfContentItemVO(request.getParentNodeId(), request.getParentNodeTagName(), tocItems, numberingConfigs, document);
+        TableOfContentItemVO draggedTocItemVO = getTableOfContentItemVO(request.getDraggedNodeId().get(0),
+                request.getDraggedNodeTagName(), tocItems, numberingConfigs, document, language);
+        TableOfContentItemVO targetTocItemVO = getTableOfContentItemVO(request.getTargetNodeId(),
+                request.getTargetNodeTagName(), tocItems, numberingConfigs, document, language);
+        TableOfContentItemVO parentTocItemVO = getTableOfContentItemVO(request.getParentNodeId(),
+                request.getParentNodeTagName(), tocItems, numberingConfigs, document, language);
 
         TocDropResult result = new TocDropResult(true, "toc.edit.window.drop.success.message",
                 draggedTocItemVO, targetTocItemVO);
 
         if (draggedTocItemVO != null && !isItemDroppedOnSameTarget(result, draggedTocItemVO, targetTocItemVO)) {
             validateAddingItemAsChildOrSibling(result, draggedTocItemVO, targetTocItemVO, tableOfContentRules,
-                    parentTocItemVO, request.getPosition());
+                    parentTocItemVO, request.getPosition(), language);
         }
         return result;
     }
 
     private static TableOfContentItemVO getTableOfContentItemVO(String nodeId, String nodeName, List<TocItem> tocItems,
-                                                                List<NumberingConfig> numberingConfigs, Document document) {
+            List<NumberingConfig> numberingConfigs, Document document, String language) {
         TableOfContentItemVO tableOfContentItemVO = null;
         if (nodeId != null) {
             Node node = getElementById(document, nodeId);
             if (node != null) {
-                tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node);
+                tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language);
             } else {
                 TocItem draggedTocItem = StructureConfigUtils.getTocItemByName(tocItems, nodeName);
                 tableOfContentItemVO = new TableOfContentItemVO(draggedTocItem, nodeId, null, null, null, null,
@@ -162,22 +174,22 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     protected boolean validateAddingItemAsChildOrSibling(final TocDropResult result, final TableOfContentItemVO sourceItem,
-                                                         final TableOfContentItemVO targetItem,
-                                                         final Map<TocItem, List<TocItem>> tableOfContentRules,
-                                                         final TableOfContentItemVO parentItem, final TocItemPosition position) {
+            final TableOfContentItemVO targetItem,
+            final Map<TocItem, List<TocItem>> tableOfContentRules,
+            final TableOfContentItemVO parentItem, final TocItemPosition position, String language) {
 
         TocItem targetTocItem = targetItem.getTocItem();
         List<TocItem> targetTocItems = tableOfContentRules.get(targetTocItem);
         if (isSourceDivision(sourceItem) || isCrossheading(sourceItem) || isDroppedOnPointOrIndent(sourceItem, targetItem) || getTagValueFromTocItemVo(sourceItem).
                 equals(getTagValueFromTocItemVo(targetItem))) {
             TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, true);
-            return validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position);
+            return validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position, language);
         } else if (CollectionUtils.isNotEmpty(targetTocItems) && targetTocItems.contains(sourceItem.getTocItem())) {
             //If target item type is root, source item will be added as child, else validate dropping item at dragged location
             TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, false);
-            return targetTocItem.isRoot() || validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position);
+            return targetTocItem.isRoot() || validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position, language);
         } else { // If child elements not allowed in target validate adding it to its parent
-            return validateAddingItemAsSibling(result, sourceItem, targetItem, tableOfContentRules, parentItem, position);
+            return validateAddingItemAsSibling(result, sourceItem, targetItem, tableOfContentRules, parentItem, position, language);
         }
     }
 
@@ -219,25 +231,26 @@ public abstract class TocApiServiceImpl implements TocApiService {
     }
 
     protected boolean validateAddingItemAsSibling(final TocDropResult result, final TableOfContentItemVO sourceItem,
-                                                  final TableOfContentItemVO targetItem, final Map<TocItem, List<TocItem>> tableOfContentRules, final TableOfContentItemVO parentItem,
-                                                  final TocItemPosition position) {
+            final TableOfContentItemVO targetItem, final Map<TocItem, List<TocItem>> tableOfContentRules, final TableOfContentItemVO parentItem,
+            final TocItemPosition position, String language) {
         TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, true);
-        return validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position);
+        return validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position, language);
     }
 
     protected boolean validateAddingToActualTargetItem(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem,
-                                                       final Map<TocItem, List<TocItem>> tableOfContentRules, final TableOfContentItemVO actualTargetItem, final TocItemPosition position) {
+            final Map<TocItem, List<TocItem>> tableOfContentRules, final TableOfContentItemVO actualTargetItem,
+            final TocItemPosition position, String language) {
 
         TocItem parentTocItem = actualTargetItem != null ? actualTargetItem.getTocItem() : null;
         List<TocItem> parentTocItems = tableOfContentRules.get(parentTocItem);
         boolean parentAndSourceTypeCompatible = validateParentAndSourceTypeCompatibility(result, sourceItem, actualTargetItem, parentTocItem, parentTocItems);
-        boolean validAddingToItem = validateAddingToItem(result, sourceItem, targetItem, actualTargetItem, position);
+        boolean validAddingToItem = validateAddingToItem(result, sourceItem, targetItem, actualTargetItem, position, language);
         boolean maxDepthNotReached = validateMaxDepth(result, sourceItem, targetItem);
         return parentAndSourceTypeCompatible && validAddingToItem && maxDepthNotReached;
     }
 
     protected abstract boolean validateAddingToItem(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem,
-                                                    final TableOfContentItemVO actualTargetItem, final TocItemPosition position);
+            final TableOfContentItemVO actualTargetItem, final TocItemPosition position, String language);
 
 
     private boolean validateParentAndSourceTypeCompatibility(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO parentItem,

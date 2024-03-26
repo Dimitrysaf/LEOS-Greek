@@ -29,6 +29,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -79,6 +80,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     private final PackageService packageService;
     private final Provider<FinancialStatementContextService> financialStatementContextProvider;
     private TrackChangesContext trackChangesContext;
+    private final DocumentLanguageContext documentLanguageContext;
 
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
@@ -99,7 +101,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                                   Provider<CollectionContextService> proposalContextProvider,
                                   PackageService packageService,
                                   Provider<FinancialStatementContextService> financialStatementContextProvider,
-                                  TrackChangesContext trackChangesContext) {
+                                  TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
         this.financialStatementRepository = financialStatementRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -116,6 +118,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
         this.packageService = packageService;
         this.financialStatementContextProvider = financialStatementContextProvider;
         this.trackChangesContext = trackChangesContext;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -365,7 +368,10 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
                                                  FinancialStatementStructureType financialStatementStructureType, String actionMsg, User user) {
         Validate.notNull(financialStatement, "FinancialStatement is required");
         Validate.notNull(tocList, "Table of content list is required");
-        byte[] newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(financialStatement), user, financialStatement.isTrackChangesEnabled());
+        byte[] newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(financialStatement), user,
+                financialStatement.isTrackChangesEnabled());
+        String language = financialStatement.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         if (financialStatementStructureType != null && LEVEL.equals(financialStatementStructureType.getType())) {
             newXmlContent = numberService.renumberLevel(newXmlContent);
         }

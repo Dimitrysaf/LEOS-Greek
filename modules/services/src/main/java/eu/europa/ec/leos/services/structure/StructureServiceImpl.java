@@ -1,6 +1,6 @@
 package eu.europa.ec.leos.services.structure;
 
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getTocItemsByName;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemsByName;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;

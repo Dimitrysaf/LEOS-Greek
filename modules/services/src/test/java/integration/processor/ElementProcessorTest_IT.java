@@ -34,6 +34,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -93,6 +94,8 @@ public class ElementProcessorTest_IT extends LeosTest {
     protected CloneContext cloneContext;
     @Mock
     protected CoEditionContext coEditionContext;
+    @Mock
+    protected DocumentLanguageContext documentLanguageContext;
 
     protected TrackChangesContext trackChangesContext = new TrackChangesContext();
 
@@ -158,7 +161,8 @@ public class ElementProcessorTest_IT extends LeosTest {
         ReflectionTestUtils.setField(numberProcessorHandler, "numberConfigFactory", numberConfigFactory);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);
-        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter);
+        numberService = new NumberServiceMandate(xmlContentProcessor, structureContextProvider, numberProcessorHandler,
+                parentChildConverter, documentLanguageContext);
 
         User user = getJaneDigitUser();
         when(languageHelper.getCurrentLocale()).thenReturn(new Locale("en"));

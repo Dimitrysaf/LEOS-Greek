@@ -668,7 +668,7 @@ abstract class AnnexScreenImpl extends VerticalLayout implements AnnexScreen {
         List<TocItem> tocItemsList = structureContextProvider.get().getTocItems();
         for (TocItem type : tocItemsList) {
             if (!type.isRoot() && type.isDraggable()) {
-                Label itemLabel = new Label(TableOfContentHelper.getDisplayableTocItem(type, messageHelper));
+                Label itemLabel = new Label(TableOfContentHelper.getDisplayableTocItem(type, null, messageHelper));
                 itemLabel.setStyleName("leos-drag-item");
 
                 DragSourceExtension<Label> dragSourceExtension = new DragSourceExtension<>(itemLabel);

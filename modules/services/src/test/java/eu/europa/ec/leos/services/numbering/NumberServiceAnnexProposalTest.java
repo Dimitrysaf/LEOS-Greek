@@ -20,7 +20,8 @@ public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
     @Before
     public void setup() {
         super.setup();
-        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, contentProcessor);
+        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, contentProcessor,
+                documentLanguageContext);
     }
 
     @Override

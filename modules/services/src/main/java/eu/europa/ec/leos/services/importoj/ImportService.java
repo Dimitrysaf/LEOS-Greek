@@ -22,6 +22,6 @@ public interface ImportService {
     
     String getAknDocument(String type, int year, int number);
     
-    byte[] insertSelectedElements(Bill bill, byte[] importedContent, List<String> elementIds, String language);
+    byte[] insertSelectedElements(Bill bill, byte[] importedContent, List<String> elementIds);
     
 }

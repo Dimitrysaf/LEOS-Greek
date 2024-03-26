@@ -35,8 +35,9 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
 
     private String text;
     private List<TocItemVO> children;
+    private String language;
 
-    public TocItemVO(TableOfContentItemVO tableOfContentItemVO, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs) {
+    public TocItemVO(TableOfContentItemVO tableOfContentItemVO, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs, String language) {
         super(tableOfContentItemVO.getTocItem(),
                 tableOfContentItemVO.getId(),
                 tableOfContentItemVO.getOriginAttr(),
@@ -45,9 +46,10 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
                 tableOfContentItemVO.getHeading(),
                 tableOfContentItemVO.getNode(),
                 tableOfContentItemVO.getContent());
+        this.language = language;
 
-        this.setText(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper));
-        this.setChildren(convertChildren(tableOfContentItemVO.getChildItemsView(), messageHelper, numberingConfigs));
+        this.setText(TableOfContentHelper.buildItemCaption(tableOfContentItemVO, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, language));
+        this.setChildren(convertChildren(tableOfContentItemVO.getChildItemsView(), messageHelper, numberingConfigs, language));
     }
 
     public String getText() {
@@ -67,13 +69,17 @@ public class TocItemVO extends TableOfContentItemVO implements Serializable {
     }
 
     //helper methods to convert easily
-    private List<TocItemVO> convertChildren(List<TableOfContentItemVO> tableOfContentItemVOList, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs) {
+    private List<TocItemVO> convertChildren(List<TableOfContentItemVO> tableOfContentItemVOList, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs,
+            String language) {
         List<TocItemVO> tocItemListVOList = new ArrayList<TocItemVO>();
         for (TableOfContentItemVO tableOfContentItemVO : tableOfContentItemVOList) {
-            TocItemVO tocItemVO = new TocItemVO(tableOfContentItemVO, messageHelper, numberingConfigs);
+            TocItemVO tocItemVO = new TocItemVO(tableOfContentItemVO, messageHelper, numberingConfigs, language);
             tocItemListVOList.add(tocItemVO);
         }
         return tocItemListVOList;
     }
 
+    public String getLanguage() {
+        return language;
+    }
 }

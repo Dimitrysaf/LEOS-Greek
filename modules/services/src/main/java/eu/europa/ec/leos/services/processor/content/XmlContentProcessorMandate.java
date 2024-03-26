@@ -30,7 +30,6 @@ import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFr
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.manageListContainingOnlySubpoints;
@@ -101,8 +100,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.getAttributeValueAsBo
 import static eu.europa.ec.leos.services.support.XmlHelper.getAttributeValueAsInteger;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.updateSoftTransFromAttribute;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.HASH_NUM_VALUE;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.HASH_NUM_VALUE;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,6 +111,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -140,7 +140,7 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.NumberingType;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
@@ -154,13 +154,15 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
     @Autowired
     private IndentHelper indentHelper;
-
     @Autowired
     private IndentConversionHelper indentConversionHelper;
+    @Autowired
+    private DocumentLanguageContext documentLanguageContext;
 
     protected Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
             Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled) {
         String tagName = tocVo.getTocItem().getAknTag().value();
+        String language = documentLanguageContext.getDocumentLanguage();
         if (tagName.equals(LIST) && !tocVo.getChildItemsView().isEmpty() && TableOfContentHelper.containsOnlySubpoints(tocVo)) {
             int index = tocVo.getParentItem().getChildItemsView().indexOf(tocVo);
             manageListContainingOnlySubpoints(tocVo);
@@ -178,7 +180,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         appendChildIfNotNull(getFirstChild(node, INTRO), newNode); //recitals intro
 
         if (!tocVo.getTocItemType().equals(tocItemType) && hasTocItemSoftOrigin(tocVo, EC)) {
-            NumberingType newNumberingType = getNumberingTypeByTagNameAndTocItemType(tocItems, tocVo.getTocItemType(), POINT);
+            NumberingType newNumberingType = getNumberingTypeByTagNameAndTocItemType(tocItems, tocVo.getTocItemType(), POINT, language);
             updateOriginOfPointsInArticle(tocVo, newNumberingType);
         }
 
@@ -187,8 +189,8 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             buildParagraphOrLevelContent(tocItems, node, newNode, tocVo, user);
         } else if (Arrays.asList(POINT, INDENT).contains(tagName) && shouldWrapWithList(tocVo.getParentItem())) {
             buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
-            newNode = buildPointContentAndWrapWithPoint(tocItems, numberingConfigs, node, newNode, tocVo, user);
-            return constructListStructure(newNode, parentNode, tocVo, user);
+            newNode = buildPointContentAndWrapWithPoint(tocItems, numberingConfigs, node, newNode, tocVo, user, language);
+            return constructListStructure(newNode, parentNode, tocVo, user, language);
         } else if (Arrays.asList(POINT, INDENT).contains(tagName) && skipPointContent(tocVo)) {
             buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             buildPointContent(tocItems, node, newNode, tocVo, user);
@@ -202,25 +204,26 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             if (!Arrays.asList(POINT, INDENT).contains(tagName)) {
                 buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             }
-            newNode = buildExistingNode(tocItems, numberingConfigs, tocRules, document, node, newNode, tocVo, user);
+            newNode = buildExistingNode(tocItems, numberingConfigs, tocRules, document, node, newNode, tocVo, user, language);
             if (Arrays.asList(POINT, INDENT).contains(tagName)) {
                 buildTocItemContentForChildren(tocItems, numberingConfigs, tocRules, document, tocVo, user, newNode, isTrackChangesEnabled);
             }
         }
-        buildNodeAttributes(newNode, tocVo, user);
+        buildNodeAttributes(newNode, tocVo, user, language);
         if (tocVo.isIndentedOrRestored()) {
             setIndentAttributes(newNode, tocVo);
         }
         if (tagName.equals(LIST) && tocVo.getParentItem().isAffected()) {
             TableOfContentItemVO firstChild = TableOfContentHelper.getFirstChildWithTagName(tocVo, Arrays.asList(NUMBERED_ITEMS));
-            XercesUtils.insertOrUpdateAttributeValue(newNode, LEOS_LIST_TYPE_ATTR, firstChild.getTocItem().getNumberingType().toString().toLowerCase());
+            NumberingType numberingType  = StructureConfigUtils.getNumberingTypeByLanguage(firstChild.getTocItem(), documentLanguageContext.getDocumentLanguage());
+            XercesUtils.insertOrUpdateAttributeValue(newNode, LEOS_LIST_TYPE_ATTR, numberingType.toString().toLowerCase());
         }
         updateTocItemTypeAttributes(tocItems, newNode, tocVo);
         return newNode;
     }
 
-    private void buildTocItemContentForChildren(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules, Document document,
-            TableOfContentItemVO tocVo, User user, Node newNode, boolean isTrackChangesEnabled) {
+    private void buildTocItemContentForChildren(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem,
+            List<TocItem>> tocRules, Document document, TableOfContentItemVO tocVo, User user, Node newNode, boolean isTrackChangesEnabled) {
         for (TableOfContentItemVO child : tocVo.getChildItemsView()) {
             Node newChild = buildTocItemContent(tocItems, numberingConfigs, tocRules, document, newNode, child, user, isTrackChangesEnabled);
             appendChildIfNotNull(newChild, newNode);
@@ -232,7 +235,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
             if (getTagValueFromTocItemVo(child).equals(PARAGRAPH)) {
                 child.setAffected(true);
             }
-            if (child.getTocItem().getNumberingType().equals(toNumberingType)) {
+            if (StructureConfigUtils.getNumberingTypeByLanguage(child.getTocItem(), documentLanguageContext.getDocumentLanguage()).equals(toNumberingType)) {
                 child.setOriginNumAttr(CN);
                 child.setAffected(true);
             }
@@ -577,13 +580,14 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         return wrapWithList;
     }
 
-    private Node buildPointContentAndWrapWithPoint(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Node node, Node newNode, TableOfContentItemVO tocVo, User user) {
+    private Node buildPointContentAndWrapWithPoint(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Node node, Node newNode,
+            TableOfContentItemVO tocVo, User user, String language) {
         buildPointContent(tocItems, node, newNode, tocVo, user);
-        return wrapWithPoint(numberingConfigs, newNode, tocVo, user);
+        return wrapWithPoint(numberingConfigs, newNode, tocVo, user, language);
     }
 
-    private Node wrapWithPoint(List<NumberingConfig> numberingConfigs, Node node, TableOfContentItemVO tocVo, User user) {
-        Node pointNode = createElement(node.getOwnerDocument(), isIndent(numberingConfigs, tocVo) ? INDENT : POINT, tocVo.getId(), EMPTY_STRING);
+    private Node wrapWithPoint(List<NumberingConfig> numberingConfigs, Node node, TableOfContentItemVO tocVo, User user, String language) {
+        Node pointNode = createElement(node.getOwnerDocument(), isIndent(numberingConfigs, tocVo, language) ? INDENT : POINT, tocVo.getId(), EMPTY_STRING);
         updateSoftInfo(pointNode, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), getMoveId(tocVo), null, getOriginOfDocument(pointNode));
         XercesUtils.insertOrUpdateAttributeValue(pointNode, LEOS_AFFECTED_ATTR, tocVo.isAffected() ? Boolean.TRUE.toString() : null);
         XercesUtils.insertOrUpdateAttributeValue(pointNode, LEOS_ORIGIN_ATTR, tocVo.getOriginAttr());
@@ -601,13 +605,13 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         return subparagraphNode;
     }
 
-    private Node constructListStructure(Node node, Node parentNode, TableOfContentItemVO tocVo, User user) {
+    private Node constructListStructure(Node node, Node parentNode, TableOfContentItemVO tocVo, User user, String language) {
         Node listNode = null;
         TableOfContentItemVO parentItem = tocVo.getParentItem();
         List<TableOfContentItemVO> childItemsOfType = constructChildListWithType(parentItem.getChildItems(), tocVo.getTocItem().getAknTag().value());
         if (tocVo.getId().equals(childItemsOfType.get(0).getId())) {
             listNode = wrapWithList(node, tocVo, user);
-            updateListTypeAttributeForIndent(listNode, tocVo);
+            updateListTypeAttributeForIndent(listNode, tocVo, language);
         } else {
             Node lastParentChildrenNode = parentNode.getLastChild();
             if (lastParentChildrenNode.getNodeName().equals(LIST)) {
@@ -631,11 +635,11 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     }
 
     private Node buildExistingNode(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules, Document document,
-            Node node, Node newNode, TableOfContentItemVO tocVo, User user) {
+            Node node, Node newNode, TableOfContentItemVO tocVo, User user, String language) {
         Node existingNode = newNode;
         String tagName = tocVo.getTocItem().getAknTag().value();
         if (tagName.equals(POINT) || tagName.equals(INDENT)) {
-            boolean isIndent = isIndent(numberingConfigs, tocVo);
+            boolean isIndent = isIndent(numberingConfigs, tocVo, language);
             if (tagName.equals(POINT) && isIndent) {
                 existingNode = XercesUtils.renameNode(document, newNode, INDENT);
             } else if (tagName.equals(INDENT) && !isIndent) {
@@ -759,21 +763,32 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         return moveId;
     }
 
-    private void updateListTypeAttributeForIndent(Node node, TableOfContentItemVO tocVo) {
-        if (tocVo.getTocItem().getAknTag().equals(AknTag.LIST) && (tocVo.getParentItem().isAffected() || (tocVo.getOriginAttr() == null || tocVo.getOriginAttr().equals(CN))) && !tocVo.getChildItemsView().isEmpty() && tocVo.getChildItemsView().get(0).getTocItem().getNumberingType() != null) {
+    private void updateListTypeAttributeForIndent(Node node, TableOfContentItemVO tocVo, String language) {
+        NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocVo.getTocItem(),
+                documentLanguageContext.getDocumentLanguage());
+        if (tocVo.getTocItem().getAknTag().equals(AknTag.LIST) && (tocVo.getParentItem().isAffected() ||
+                (tocVo.getOriginAttr() == null || tocVo.getOriginAttr().equals(CN))) &&
+                !tocVo.getChildItemsView().isEmpty() && numberingType != null) {
             TableOfContentItemVO firstChild = tocVo.getChildItemsView().get(0);
-            for (int index = 1; index < tocVo.getChildItemsView().size() && !TableOfContentProcessor.getTagValueFromTocItemVo(firstChild).equals(INDENT) && !TableOfContentProcessor.getTagValueFromTocItemVo(firstChild).equals(POINT); index++) {
+            for (int index = 1; index < tocVo.getChildItemsView().size() &&
+                    !TableOfContentProcessor.getTagValueFromTocItemVo(firstChild).equals(INDENT) &&
+                    !TableOfContentProcessor.getTagValueFromTocItemVo(firstChild).equals(POINT); index++) {
                 firstChild = tocVo.getChildItemsView().get(index);
             }
             if (TableOfContentProcessor.getTagValueFromTocItemVo(firstChild).equals(INDENT) || TableOfContentProcessor.getTagValueFromTocItemVo(firstChild).equals(POINT)) {
-                XercesUtils.insertOrUpdateAttributeValue(node, LEOS_LIST_TYPE_ATTR, firstChild.getTocItem().getNumberingType().toString().toLowerCase());
+                XercesUtils.insertOrUpdateAttributeValue(node, LEOS_LIST_TYPE_ATTR, StructureConfigUtils.getNumberingTypeByLanguage(firstChild.getTocItem(),
+                        documentLanguageContext.getDocumentLanguage()).toString().toLowerCase());
             }
-        } else if (node.getNodeName().equals(LIST) && (tocVo.getTocItem().getAknTag().equals(AknTag.INDENT) || tocVo.getTocItem().getAknTag().equals(AknTag.POINT)) && (tocVo.getParentItem().isAffected() || (tocVo.getOriginAttr() == null || tocVo.getOriginAttr().equals(CN))) && tocVo.getTocItem().getNumberingType() != null) {
-            XercesUtils.insertOrUpdateAttributeValue(node, LEOS_LIST_TYPE_ATTR, tocVo.getTocItem().getNumberingType().toString().toLowerCase());
+        } else if (node.getNodeName().equals(LIST) && (tocVo.getTocItem().getAknTag().equals(AknTag.INDENT) ||
+                tocVo.getTocItem().getAknTag().equals(AknTag.POINT)) && (tocVo.getParentItem().isAffected() ||
+                (tocVo.getOriginAttr() == null || tocVo.getOriginAttr().equals(CN))) &&
+                StructureConfigUtils.getNumberingTypeByLanguage(tocVo.getTocItem(), documentLanguageContext.getDocumentLanguage()) != null) {
+            XercesUtils.insertOrUpdateAttributeValue(node, LEOS_LIST_TYPE_ATTR,
+                    StructureConfigUtils.getNumberingTypeByLanguage(tocVo.getTocItem(), documentLanguageContext.getDocumentLanguage()).toString().toLowerCase());
         }
     }
 
-    private void buildNodeAttributes(Node node, TableOfContentItemVO tocVo, User user) {
+    private void buildNodeAttributes(Node node, TableOfContentItemVO tocVo, User user, String language) {
         if (StringUtils.isNotEmpty(tocVo.getStyle())) {
             if (node.getNodeName().equalsIgnoreCase(DIVISION)) {
                 XercesUtils.addAttribute(node, CLASS_ATTR, tocVo.getStyle());
@@ -815,12 +830,13 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         }
 
         XercesUtils.insertOrUpdateAttributeValue(node, LEOS_AFFECTED_ATTR, tocVo.isAffected() ? Boolean.TRUE.toString() : null);
-        if (tocVo.getItemDepth() > 0 && NumberingType.LEVEL_NUM.equals(tocVo.getTocItem().getNumberingType())) {
+        NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocVo.getTocItem(), documentLanguageContext.getDocumentLanguage());
+        if (tocVo.getItemDepth() > 0 && NumberingType.LEVEL_NUM.equals(numberingType)) {
             XercesUtils.insertOrUpdateAttributeValue(node, LEOS_DEPTH_ATTR, String.valueOf(tocVo.getItemDepth()));
         }
 
         if (tocVo.getTocItem().getAknTag().value().equals(LIST)) {
-            updateListTypeAttributeForIndent(node, tocVo);
+            updateListTypeAttributeForIndent(node, tocVo, language);
         } else if (getTagValueFromTocItemVo(tocVo).equalsIgnoreCase(CROSSHEADING)
                 || getTagValueFromTocItemVo(tocVo).equalsIgnoreCase(BLOCK)) {
             XercesUtils.insertOrUpdateAttributeValue(node, LEOS_INDENT_LEVEL_ATTR, String.valueOf(tocVo.getIndentLevel()));
@@ -829,8 +845,10 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         }
     }
 
-    private boolean isIndent(List<NumberingConfig> numberingConfigs, TableOfContentItemVO tocVo) {
-        boolean isNumberedNumberingConfig = tocVo.getTocItem().getNumberingType() == null || StructureConfigUtils.getNumberingConfig(numberingConfigs, tocVo.getTocItem().getNumberingType()).isNumbered();
+    private boolean isIndent(List<NumberingConfig> numberingConfigs, TableOfContentItemVO tocVo, String language) {
+        NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocVo.getTocItem(), documentLanguageContext.getDocumentLanguage());
+        boolean isNumberedNumberingConfig = numberingType == null || StructureConfigUtils.getNumberingConfig(numberingConfigs,
+                numberingType).isNumbered();
         return (!isNumberedNumberingConfig && getTagValueFromTocItemVo(tocVo).equalsIgnoreCase(INDENT))
                 || (!ArrayUtils.contains(PARAGRAPH_LEVEL_ITEMS, tocVo.getTocItem().getAknTag().value()) &&
                 (getPointDepthInToc(tocVo, 1) == StructureConfigUtils.getDepthByNumberingType(numberingConfigs, NumberingType.INDENT)));
@@ -971,6 +989,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
     private byte[] indentElement(byte[] xmlContent, String elementName, String elementId, String elementContent, List<TableOfContentItemVO> toc,
             Integer targetLevel, Integer originalIndentLevel, Boolean isNumbered) throws IllegalArgumentException {
+        String language = documentLanguageContext.getDocumentLanguage();
         if (isNumbered == null && !needsToBeIndented(elementContent)) {
             return xmlContent;
         }
@@ -1003,12 +1022,12 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
 
         indentedItem = indentHelper.doIndentForTargetIndentLevel(targetLevel, isNumbered, indentedItem, tocItems, numberingConfigs);
 
-        xmlContent = createDocumentContentWithNewTocList(toc, xmlContent, (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(), false);
+        xmlContent = createDocumentContentWithNewTocList(toc, xmlContent, (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal(),false);
 
         xmlContent = insertAffectedAttributeIntoParentElements(xmlContent, indentedItem.getId());
 
         if (isOutdent) {
-            xmlContent = correctIllegalParagraphStructure(xmlContent, elementId, toc, targetLevel, originalIndentLevel);
+            xmlContent = correctIllegalParagraphStructure(xmlContent, elementId, toc, targetLevel, originalIndentLevel, language);
         }
         return xmlContent;
     }
@@ -1018,10 +1037,11 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
      * changed element identifier (LEOS-5980)
      * @param xmlContent byte array with the xml content for the document
      * @param elementId element identifier that was indented/outdented
+     * @param language
      * @return updated xml content for the document
      */
     private byte[] correctIllegalParagraphStructure(byte[] xmlContent, String elementId, List<TableOfContentItemVO> toc,
-            Integer targetLevel, Integer originalIndentLevel){
+            Integer targetLevel, Integer originalIndentLevel, String language){
         Element parent = this.getParentElement(xmlContent, elementId);
         Element element = this.getElementById(xmlContent, elementId);
         Element sibling = this.getSiblingElement(xmlContent, null, elementId, Collections.emptyList(), false);

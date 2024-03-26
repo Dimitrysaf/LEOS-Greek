@@ -466,17 +466,6 @@ public class TableOfContentItemVO implements Serializable {
         return false;
     }
 
-    public boolean containsOnlySameIndentType(NumberingType numberingType) {
-        List<TableOfContentItemVO> chldItms = this.childItems;
-        for(TableOfContentItemVO child : chldItms) {
-            if(child.getTocItem().getAknTag().value().equals("indent") &&
-                    child.getTocItem().getNumberingType() != numberingType) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public List<CoEditionVO> getCoEditionVos() {
         return coEditionVos;
     }

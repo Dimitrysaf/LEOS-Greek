@@ -26,7 +26,7 @@ import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemType;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import eu.europa.ec.leos.vo.structure.OptionsType;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.indent.IndentedItemType;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -112,22 +112,23 @@ import static eu.europa.ec.leos.services.support.XmlHelper.extractNumber;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 import static eu.europa.ec.leos.services.support.XmlHelper.trimmedXml;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.HASH_NUM_VALUE;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getAttributeByTagNameAndTocItemType;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.getTocItemTypesByTagName;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.HASH_NUM_VALUE;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getAttributeByTagNameAndTocItemType;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemTypesByTagName;
 
 public class XmlContentProcessorHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlContentProcessorHelper.class);
 
-    public static List<TableOfContentItemVO> getAllChildTableOfContentItems(Node node, List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, TocMode mode) {
+    public static List<TableOfContentItemVO> getAllChildTableOfContentItems(Node node, List<TocItem> tocItems, Map<TocItem,
+            List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, TocMode mode, String language) {
         List<TableOfContentItemVO> itemVOList = new ArrayList<>();
         Node child;
         NodeList nodeList = node.getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
             child = nodeList.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
-                addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode);
+                addTocItemVoToList(tocItems, tocRules, numberingConfigs, child, itemVOList, mode, language);
             }
         }
         return itemVOList;
@@ -144,11 +145,12 @@ public class XmlContentProcessorHelper {
                 && (XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(SoftActionType.ADD.getSoftAction()));
     }
 
-    private static void addTocItemVoToList(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, Node node, List<TableOfContentItemVO> itemVOList, TocMode mode) {
-        TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node);
+    private static void addTocItemVoToList(List<TocItem> tocItems, Map<TocItem, List<TocItem>> tocRules, List<NumberingConfig> numberingConfigs, Node node,
+            List<TableOfContentItemVO> itemVOList, TocMode mode, String language) {
+        TableOfContentItemVO tableOfContentItemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language);
         if (tableOfContentItemVO != null) {
             boolean isList = getTagValueFromTocItemVo(tableOfContentItemVO).equals(LIST);
-            List<TableOfContentItemVO> itemVOChildrenList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode);
+            List<TableOfContentItemVO> itemVOChildrenList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language);
             if ((!TocMode.SIMPLIFIED_CLEAN.equals(mode) || (TocMode.SIMPLIFIED_CLEAN.equals(mode) && tableOfContentItemVO.getTocItem().isDisplay()))
                     && shouldItemBeAddedToToc(tocItems, tocRules, node, tableOfContentItemVO.getTocItem())) {
                 if (TocMode.SIMPLIFIED.equals(mode) || TocMode.SIMPLIFIED_CLEAN.equals(mode)) {
@@ -203,7 +205,8 @@ public class XmlContentProcessorHelper {
         }
     }
 
-    public static TableOfContentItemVO buildTableOfContentsItemVO(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, Node node) {
+    public static TableOfContentItemVO buildTableOfContentsItemVO(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, Node node,
+            String language) {
         if (node == null) {
             return null;
         }
@@ -257,7 +260,7 @@ public class XmlContentProcessorHelper {
                 indentOriginNumValue = number;
                 indentOriginNumId = numId;
             }
-            TocItem foundTocItem = getTocItemFromNumberingType(number, tagName, tocItem, numberingConfigs, tocItems, node);
+            TocItem foundTocItem = getTocItemFromNumberingType(number, tagName, tocItem, numberingConfigs, tocItems, node, language);
             tocItem = foundTocItem != null ? foundTocItem : tocItem;
         }
         String initialNumber = getAttributeValue(node, LEOS_INITIAL_NUM);
@@ -273,7 +276,7 @@ public class XmlContentProcessorHelper {
                 number = extractNumber(inlineNode.getTextContent(), tocItem.isNumWithType());
                 if (number != null && !number.isEmpty()) {
                     NumberingType numberingType = StructureConfigUtils.getNumberingTypeBySequence(numberingConfigs, number);
-                    tocItem = StructureConfigUtils.getTocItemByNumberingType(tocItems, numberingType, tocItem.getAknTag().name());
+                    tocItem = StructureConfigUtils.getTocItemByNumberingType(tocItems, numberingType, tocItem.getAknTag().name(), language);
                 }
             }
             String isInList = XercesUtils.getAttributeValue(node, LEOS_CROSSHEADING_TYPE);
@@ -553,7 +556,8 @@ public class XmlContentProcessorHelper {
         return node != null && node.getNodeName().equalsIgnoreCase(INLINE) && getAttributeValue(node, XML_NAME) != null && getAttributeValue(node, XML_NAME).equalsIgnoreCase(INLINE_NUM);
     }
 
-    public static TableOfContentItemVO buildTableOfContentFromNodeId(final List<TocItem> tocItems, final Map<TocItem, List<TocItem>> tocRules, final List<NumberingConfig> numberingConfigs, final String startingNodeId, final byte[] xmlContent, final TocMode mode) {
+    public static TableOfContentItemVO buildTableOfContentFromNodeId(final List<TocItem> tocItems, final Map<TocItem, List<TocItem>> tocRules,
+            final List<NumberingConfig> numberingConfigs, final String startingNodeId, final byte[] xmlContent, final TocMode mode, String language) {
         LOG.trace("Start building the table of content from node id {}", startingNodeId);
         long startTime = System.currentTimeMillis();
         TableOfContentItemVO itemVO = null;
@@ -563,8 +567,8 @@ public class XmlContentProcessorHelper {
             String xPath = "//*[@xml:id = '" + startingNodeId + "']";
             Node node = XercesUtils.getFirstElementByXPath(document, xPath);
             if (node != null) {
-                itemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node);
-                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode);
+                itemVO = buildTableOfContentsItemVO(numberingConfigs, tocItems, node, language);
+                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, language);
                 itemVO.addAllChildItems(itemVOList);
             }
         } catch (Exception e) {

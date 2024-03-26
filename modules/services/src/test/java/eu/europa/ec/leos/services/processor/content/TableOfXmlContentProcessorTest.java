@@ -3,6 +3,10 @@ package eu.europa.ec.leos.services.processor.content;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.repository.store.ConfigurationRepository;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupServiceImpl;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.StructureServiceImpl;
@@ -21,6 +25,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.inject.Provider;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -50,6 +56,12 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
     protected StructureServiceImpl structureServiceImpl;
     @InjectMocks
     protected TableOfContentProcessor tableOfContentProcessor = Mockito.spy(new TableOfContentProcessorImpl());
+    @Mock
+    private ConfigurationRepository configurationRepository;
+    protected LanguageMapHolder languageMapHolder;
+    protected LanguageGroupServiceImpl languageGroupService;
+    @InjectMocks
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
     
     protected MessageHelper getMessageHelper() {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("test-servicesContext.xml");
@@ -63,13 +75,24 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
     protected Map<TocItem, List<TocItem>> tocRules;
     protected String docTemplate;
     protected String configFile;
-    
+    protected Map<String, List<String>> languageMap = new HashMap<>();
+
     protected final static String FILE_PREFIX = "/xml-files";
     
     @Before
     public void onSetUp() {
         super.setup();
         getStructureFile();
+
+        languageMap.put("greek", Arrays.asList("el"));
+        languageMap.put("latin", Arrays.asList("cs", "da", "de", "en", "es", "et", "fi", "fr", "ga", "hr", "hu", "it", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "sk", "sl", "sv"));
+        languageMap.put("cyrillic", Arrays.asList("bg"));
+        documentLanguageContext.setDocumentLanguage("en");
+        languageMapHolder = Mockito.spy(new LanguageMapHolder());
+        languageGroupService = Mockito.spy(new LanguageGroupServiceImpl(configurationRepository, languageMapHolder));
+
+        //populate language map
+        languageMapHolder.loadLanguageMap(languageMap);
         
         byte[] bytesFile = TestUtils.getFileContent(configFile);
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
@@ -154,8 +177,8 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
         assertEquals(expectedElement.getIndentOriginNumValue(), actualElement.getIndentOriginNumValue());
         assertEquals(expectedElement.getIndentOriginNumOrigin(), actualElement.getIndentOriginNumOrigin());
         
-        String expectedLabel = TableOfContentHelper.buildItemCaption(expectedElement, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper);
-        String actualLabel = TableOfContentHelper.buildItemCaption(actualElement, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper);
+        String expectedLabel = TableOfContentHelper.buildItemCaption(expectedElement, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, "EN");
+        String actualLabel = TableOfContentHelper.buildItemCaption(actualElement, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper, "EN");
 //        System.out.println("label: " + expectedLabel);
         assertEquals(expectedLabel.trim(), actualLabel.trim());
     }

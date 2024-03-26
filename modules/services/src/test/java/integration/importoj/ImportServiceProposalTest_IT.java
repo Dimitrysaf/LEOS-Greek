@@ -69,7 +69,7 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
     @Before
     public void onSetUp() {
         super.setup();
-        importService = new ImportServiceImpl(externalDocumentProvider, conversionHelper, xmlContentProcessor, numberService, xPathCatalog);
+        importService = new ImportServiceImpl(externalDocumentProvider, conversionHelper, xmlContentProcessor, numberService, xPathCatalog, documentLanguageContext);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
 
         // When
         long startTime = System.currentTimeMillis();
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
         long endTime = System.currentTimeMillis();
 
         // Then
@@ -106,7 +106,7 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         List<String> elementsIds = new ArrayList<>();
 
         // When
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
 
         // Then
         String result = new String(xmlResult);
@@ -127,7 +127,7 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         elementsIds.add("art_2");
 
         // When
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
 
         // Then
         String result = new String(xmlResult);
@@ -148,7 +148,7 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         IntStream.range(1, 2).forEach(val -> elementsIds.add("art_" + val));  //total are 155, import only 1
 
         // When
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
 
         // Then
         Document document = createXercesDocument(xmlResult);
@@ -173,7 +173,7 @@ public class ImportServiceProposalTest_IT extends NumberServiceProposalTest {
         List<String> elementsIds = Arrays.asList("art_1");
 
         // When
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
 
         // Then
         Document document = createXercesDocument(xmlResult);

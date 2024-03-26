@@ -20,7 +20,6 @@ import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.instance.Instance;
-import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.document.BillContextService;
 import eu.europa.ec.leos.services.export.ExportDW;
 import eu.europa.ec.leos.services.export.ExportOptions;
@@ -37,8 +36,8 @@ import javax.inject.Provider;
 public class MandateBillApiServiceImpl extends BillApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(MandateBillApiServiceImpl.class);
 
-    MandateBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<CloneContext> cloneContext, Provider<BillContextService> context) {
-        super(structureContext, cloneContext, context);
+    MandateBillApiServiceImpl(Provider<StructureContext> structureContext, Provider<BillContextService> context) {
+        super(structureContext, context);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class MandateBillApiServiceImpl extends BillApiServiceImpl {
             final Bill currentDocument = this.billService.findBillByRef(documentRef);
 
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(currentDocument.getMetadata().get().getRef(), Bill.class);
-            contex.get().usePackage(leosPackage);
+            context.get().usePackage(leosPackage);
             Proposal proposal = this.documentViewService.getProposalFromPackage(currentDocument);
 
             ExportOptions exportOptions;
@@ -78,5 +77,4 @@ public class MandateBillApiServiceImpl extends BillApiServiceImpl {
         }
         return null;
     }
-
 }

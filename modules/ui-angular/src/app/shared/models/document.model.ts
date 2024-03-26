@@ -110,6 +110,7 @@ export interface DocumentConfig {
   trackChangesEnabled: boolean;
   trackChangesShowed: boolean;
   clonedProposal: boolean;
+  langGroup: string;
 }
 
 export interface TocRules {
@@ -162,6 +163,16 @@ export interface Levels {
 export interface Level {
   depth: string;
   numberingType: NumberingType;
+}
+
+export interface AutoNumbering {
+  langNumConfigs: LangNumConfig[];
+}
+
+export interface LangNumConfig {
+  numberingTypes: NumberingType[];
+  langGroup: string;
+  auto: boolean;
 }
 
 export type NumberingType =

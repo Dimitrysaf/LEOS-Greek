@@ -30,6 +30,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
@@ -48,10 +49,10 @@ public class BillServiceMandateImpl extends BillServiceImpl {
                            XmlDocumentService xmlDocumentService, XmlNodeConfigProcessor xmlNodeConfigProcessor, AttachmentProcessor attachmentProcessor,
                            ValidationService validationService, DocumentVOProvider documentVOProvider, NumberService numberService,
                            MessageHelper messageHelper, TableOfContentProcessor tableOfContentProcessor,
-                           XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
+                           XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
         super(billRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlDocumentService, xmlNodeConfigProcessor,
                 attachmentProcessor, validationService, documentVOProvider, numberService, messageHelper, tableOfContentProcessor,
-                xPathCatalog, trackChangesContext);
+                xPathCatalog, trackChangesContext, documentLanguageContext);
     }
 
     @Override

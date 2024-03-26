@@ -16,8 +16,8 @@ package integration.saveToc;
 import eu.europa.ec.leos.i18n.LanguageHelper;
 import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.services.clone.CloneContext;
-import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.label.ref.LabelArticleElementsOnly;
 import eu.europa.ec.leos.services.label.ref.LabelArticlesOrRecitalsOnly;
 import eu.europa.ec.leos.services.label.ref.LabelCitationsOnly;
@@ -25,6 +25,10 @@ import eu.europa.ec.leos.services.label.ref.LabelHandler;
 import eu.europa.ec.leos.services.label.ref.LabelHigherOrderElementsOnly;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.StructureServiceImpl;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupServiceImpl;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
+import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.handlers.AkomantosoXsdValidator;
 import eu.europa.ec.leos.test.support.LeosTest;
@@ -44,6 +48,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.inject.Provider;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -80,7 +86,12 @@ public abstract class SaveTocTest_IT extends LeosTest {
     private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
     @Mock
     protected CloneContext cloneContext;
-
+    @Mock
+    private ConfigurationRepository configurationRepository;
+    protected LanguageMapHolder languageMapHolder;
+    protected LanguageGroupServiceImpl languageGroupService;
+    @InjectMocks
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
     protected TrackChangesContext trackChangesContext = new TrackChangesContext();
 
     protected AkomantosoXsdValidator akomantosoXsdValidator = new AkomantosoXsdValidator();
@@ -106,9 +117,20 @@ public abstract class SaveTocTest_IT extends LeosTest {
     protected String docTemplate;
     protected List<NumberingConfig> numberingConfigs;
     protected Map<TocItem, List<TocItem>> tocRules;
+    protected Map<String, List<String>> languageMap = new HashMap<>();
 
     @Before
     public void onSetUp() throws Exception {
+        languageMap.put("greek", Arrays.asList("el"));
+        languageMap.put("latin", Arrays.asList("cs", "da", "de", "en", "es", "et", "fi", "fr", "ga", "hr", "hu", "it", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "sk", "sl", "sv"));
+        languageMap.put("cyrillic", Arrays.asList("bg"));
+        documentLanguageContext.setDocumentLanguage("en");
+        languageMapHolder = Mockito.spy(new LanguageMapHolder());
+        languageGroupService = Mockito.spy(new LanguageGroupServiceImpl(configurationRepository, languageMapHolder));
+
+        //populate language map
+        languageMapHolder.loadLanguageMap(languageMap);
+
         when(languageHelper.getCurrentLocale()).thenReturn(new Locale("en"));
         when(userDetails.getUsername()).thenReturn(getJaneTestUser().getLogin());
         when(authentication.getPrincipal()).thenReturn(userDetails);

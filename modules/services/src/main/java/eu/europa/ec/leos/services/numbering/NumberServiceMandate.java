@@ -20,6 +20,7 @@ import eu.europa.ec.leos.services.numbering.depthBased.ParentChildConverter;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.isAutoNumberingEnabled;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.isAutoNumberingEnabled;
 
 @Component
 @Instance(InstanceType.COUNCIL)
@@ -53,32 +54,25 @@ public class NumberServiceMandate implements NumberService {
     private final Provider<StructureContext> structureContextProvider;
     private final NumberProcessorHandler numberProcessorHandler;
     private final ParentChildConverter parentChildConverter;
+    private final DocumentLanguageContext documentLanguageContext;
 
     @Autowired
-    public NumberServiceMandate(XmlContentProcessor xmlContentProcessor, Provider<StructureContext> structureContextProvider, NumberProcessorHandler numberProcessorHandler, ParentChildConverter parentChildConverter) {
+    public NumberServiceMandate(XmlContentProcessor xmlContentProcessor, Provider<StructureContext> structureContextProvider,
+            NumberProcessorHandler numberProcessorHandler, ParentChildConverter parentChildConverter,
+            DocumentLanguageContext documentLanguageContext) {
         this.xmlContentProcessor = xmlContentProcessor;
         this.structureContextProvider = structureContextProvider;
         this.numberProcessorHandler = numberProcessorHandler;
         this.parentChildConverter = parentChildConverter;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
-    public String renumberImportedArticle(String xmlContent, String language) {
-//        String updatedElements;
-//        elementNumberingHelper.setImportArticleDefaultProperties();
-//        try {
-//            updatedElements = new String(elementNumberingHelper.renumberElements(ARTICLE, xmlContent.getBytes(UTF_8), false));
-//        } catch (Exception e) {
-//            LOG.error("Unable to perform the renumberArticles operation", e);
-//            throw new RuntimeException("Unable to perform the renumberArticles operation", e);
-//        } finally {
-//            elementNumberingHelper.resetImportArticleDefaultProperties();
-//        }
-//        return updatedElements;
+    public String renumberImportedArticle(String xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        if (isAutoNumberingEnabled(tocItems, ARTICLE)) {
+        if (isAutoNumberingEnabled(tocItems, ARTICLE, documentLanguageContext.getDocumentLanguage())) {
             Document document = createXercesDocument(xmlContent.getBytes(UTF_8));
-            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, documentLanguageContext.getDocumentLanguage(), true);
             return nodeToString(document);
         }
         return xmlContent;
@@ -93,9 +87,9 @@ public class NumberServiceMandate implements NumberService {
     @Override
     public byte[] renumberArticles(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        if (isAutoNumberingEnabled(tocItems, ARTICLE)) {
+        if (isAutoNumberingEnabled(tocItems, ARTICLE, documentLanguageContext.getDocumentLanguage())) {
             Document document = createXercesDocument(xmlContent);
-            numberProcessorHandler.renumberDocument(document, ARTICLE, true);
+            numberProcessorHandler.renumberDocument(document, ARTICLE, documentLanguageContext.getDocumentLanguage(), true);
             return nodeToByteArray(document);
         }
         return xmlContent;
@@ -103,15 +97,15 @@ public class NumberServiceMandate implements NumberService {
 
     @Override
     public byte[] renumberArticles(byte[] xmlContent, boolean renumberChildElement) {
-        return renumberArticles(xmlContent);
+        return renumberArticles(xmlContent, renumberChildElement);
     }
 
     @Override
     public byte[] renumberRecitals(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        if (isAutoNumberingEnabled(tocItems, RECITAL)) {
+        if (isAutoNumberingEnabled(tocItems, RECITAL, documentLanguageContext.getDocumentLanguage())) {
             Document document = createXercesDocument(xmlContent);
-            numberProcessorHandler.renumberDocument(document, RECITAL, true);
+            numberProcessorHandler.renumberDocument(document, RECITAL, documentLanguageContext.getDocumentLanguage(), true);
             return nodeToByteArray(document);
         }
         return xmlContent;
@@ -120,7 +114,7 @@ public class NumberServiceMandate implements NumberService {
     @Override
     public byte[] renumberLevel(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        if (isAutoNumberingEnabled(tocItems, LEVEL)) {
+        if (isAutoNumberingEnabled(tocItems, LEVEL, documentLanguageContext.getDocumentLanguage())) {
             Stopwatch stopwatch = Stopwatch.createStarted();
             Document document = createXercesDocument(xmlContent);
             NodeList nodeList = document.getElementsByTagName(LEVEL);
@@ -136,9 +130,9 @@ public class NumberServiceMandate implements NumberService {
     @Override
     public byte[] renumberParagraph(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        if (isAutoNumberingEnabled(tocItems, PARAGRAPH)) {
+        if (isAutoNumberingEnabled(tocItems, PARAGRAPH, documentLanguageContext.getDocumentLanguage())) {
             Document document = createXercesDocument(xmlContent);
-            numberProcessorHandler.renumberDocument(document, PARAGRAPH, true);
+            numberProcessorHandler.renumberDocument(document, PARAGRAPH, documentLanguageContext.getDocumentLanguage(), true);
             return nodeToByteArray(document);
         }
         return xmlContent;
@@ -147,7 +141,7 @@ public class NumberServiceMandate implements NumberService {
     @Override
     public byte[] renumberDivisions(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        if (isAutoNumberingEnabled(tocItems, DIVISION)) {
+        if (isAutoNumberingEnabled(tocItems, DIVISION, documentLanguageContext.getDocumentLanguage())) {
             Stopwatch stopwatch = Stopwatch.createStarted();
             Document document = createXercesDocument(xmlContent);
             NodeList nodeList = document.getElementsByTagName(DIVISION);

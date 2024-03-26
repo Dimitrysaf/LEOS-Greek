@@ -12,7 +12,7 @@ import {
   HASH_NUM_VALUE,
   INDENT,
   LEVEL,
-  LIST,
+  LIST, LS,
   MAX_INDENT_LEVEL,
   MOVE_FROM,
   MOVE_TO,
@@ -32,7 +32,7 @@ import {
   containsItemOfOrigin,
   containsOnlySameIndentType,
   findNodeById,
-  getIndentLevel,
+  getIndentLevel, getNumberingTypeByLanguage,
   isIndentAllowed,
   isLastExistingChildElement,
   isNumSoftDeleted,
@@ -66,7 +66,7 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
       actualTargetItem = targetItem;
     }
     const droppedElementTagName = sourceItem.tocItem.aknTag;
-    const droppedElementTagNumberingType = sourceItem.tocItem.numberingType;
+    const droppedElementTagNumberingType = getNumberingTypeByLanguage(sourceItem.tocItem, this.documentConfig.langGroup);
 
     const targetName = actualTargetItem.tocItem.aknTag;
     let indentAllowed = false;
@@ -100,10 +100,11 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
               !containsOnlySameIndentType(
                 actualTargetItem,
                 droppedElementTagNumberingType,
+                this.documentConfig.langGroup
               ))) ||
           (targetName === droppedElementTagName &&
             this.containsItem(actualTargetItem, LIST)) ||
-          !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem)
+          !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem, this.documentConfig.langGroup)
         ) {
           validationResult.success = false;
           if (!indentAllowed) {
@@ -165,7 +166,7 @@ export class TableOfContentMandateEditService extends TableOfContentEditService 
         actualTargetItem,
         position,
       );
-      this.moveOriginAttribute(sourceItem, targetItem);
+      sourceItem.originAttr = CN;
       this.setNumber(tocTree, sourceItem, targetItem);
       if (!sourceItem.tocItem.addSoftAttr) {
         sourceItem.softActionAttr = ADD;

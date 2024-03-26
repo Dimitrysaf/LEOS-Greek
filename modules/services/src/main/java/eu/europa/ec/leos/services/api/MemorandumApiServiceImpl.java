@@ -59,12 +59,14 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.slf4j.Logger;
@@ -386,14 +388,14 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
+        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(
                 documentsMetadata, null, tocItems, null, null,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT),
+                StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT, proposal.getMetadata().get().getLanguage()),
                 getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(),
                 proposalMetadata, context1.getTocRules(),
-                memorandum.isTrackChangesEnabled(), true, isClonedProposal
-        );
+                memorandum.isTrackChangesEnabled(), true, isClonedProposal, langGroup);
     }
 
     @Override

@@ -1174,14 +1174,14 @@ public class DocumentPresenterTest extends LeosPresenterTest {
         when(httpSession.getAttribute(anyString() + "." + SessionAttribute.BILL_REF.name())).thenReturn(docRef);
         when(billService.findBillByRef(docRef)).thenReturn(originalDocument);
         when(importService.getAknDocument("reg", 2015, 25)).thenReturn(aknDocument);
-        when(importService.insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList, "EN")).thenReturn(updatedDocumentContent);
+        when(importService.insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList)).thenReturn(updatedDocumentContent);
         when(billService.updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("operation.import.element.inserted"))).thenReturn(savedDocument);
 
         // DO THE ACTUAL CALL
         documentPresenter.importElements(new ImportElementRequestEvent(searchCriteria, elementIdList));
 
         verify(importService).getAknDocument("reg", 2015, 25);
-        verify(importService).insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList, "EN");
+        verify(importService).insertSelectedElements(originalDocument, aknDocument.getBytes(), elementIdList);
         verify(billService).findBillByRef(docRef);
         verify(billService).updateBill(originalDocument, updatedDocumentContent, messageHelper.getMessage("operation.import.element.inserted"));
 

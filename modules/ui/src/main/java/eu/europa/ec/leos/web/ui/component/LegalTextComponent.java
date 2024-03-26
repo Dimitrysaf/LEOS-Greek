@@ -209,7 +209,7 @@ public class LegalTextComponent extends CustomComponent implements ContentPane {
         if(tocItemsList != null) {
             for (TocItem tocItem : tocItemsList) {
                 if (!tocItem.isRoot() && tocItem.isDraggable() && tocItem.isDisplay()) {
-                    Label itemLabel = new Label(TableOfContentHelper.getDisplayableTocItem(tocItem, messageHelper));
+                    Label itemLabel = new Label(TableOfContentHelper.getDisplayableTocItem(tocItem, null, messageHelper));
                     itemLabel.setWidth(91, Unit.PIXELS);
                     itemLabel.setStyleName("leos-drag-item");
 

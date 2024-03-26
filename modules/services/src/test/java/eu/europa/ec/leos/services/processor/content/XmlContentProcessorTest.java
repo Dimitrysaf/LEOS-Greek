@@ -5,9 +5,13 @@ import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupServiceImpl;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.StructureServiceImpl;
@@ -15,7 +19,7 @@ import eu.europa.ec.leos.services.util.TestUtils;
 import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -27,6 +31,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.inject.Provider;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +64,12 @@ public abstract class XmlContentProcessorTest extends LeosTest {
     protected CloneContext cloneContext;
     @Mock
     protected SecurityContext securityContext;
-
+    @Mock
+    private ConfigurationRepository configurationRepository;
+    protected LanguageMapHolder languageMapHolder;
+    protected LanguageGroupServiceImpl languageGroupService;
+    @InjectMocks
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
     @InjectMocks
     protected StructureServiceImpl structureServiceImpl;
 
@@ -78,13 +89,23 @@ public abstract class XmlContentProcessorTest extends LeosTest {
     protected String docTemplate;
     protected String configFile;
     protected byte[] docContent;
-
+    protected Map<String, List<String>> languageMap = new HashMap<>();
     protected final static String FILE_PREFIX = "/contentProcessor";
 
     @Before
     public void setup() {
         super.setup();
         getStructureFile();
+
+        languageMap.put("greek", Arrays.asList("el"));
+        languageMap.put("latin", Arrays.asList("cs", "da", "de", "en", "es", "et", "fi", "fr", "ga", "hr", "hu", "it", "lt", "lv", "mt", "nl", "pl", "pt", "ro", "sk", "sl", "sv"));
+        languageMap.put("cyrillic", Arrays.asList("bg"));
+        documentLanguageContext.setDocumentLanguage("en");
+        languageMapHolder = Mockito.spy(new LanguageMapHolder());
+        languageGroupService = Mockito.spy(new LanguageGroupServiceImpl(configurationRepository, languageMapHolder));
+
+        //populate language map
+        languageMapHolder.loadLanguageMap(languageMap);
 
         byte[] bytesFile = TestUtils.getFileContent(configFile);
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);

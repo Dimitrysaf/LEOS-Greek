@@ -52,6 +52,7 @@ export const getNumberingTypeByTagNameAndTocItemType = (
   tocItems: TocItem[],
   tocItemType: string,
   subElementTagName: string,
+  langGroup: string
 ) => {
   const subElementTocItems = getTocItemsByName(tocItems, subElementTagName);
   if (
@@ -73,11 +74,12 @@ export const getNumberingTypeByTagNameAndTocItemType = (
             tocItems,
             subElementTagName,
             tocItemTyp.getSubElementNumberingConfigs(),
+            langGroup
           );
         }
       }
     } else if (subElementTocItems.length >= 1) {
-      return subElementTocItems[0].numberingType;
+      return getNumberingTypeByLanguage(subElementTocItems[0], langGroup);
     }
     return null;
   }
@@ -88,16 +90,19 @@ export const convertArticle = (
   article: TableOfContentItemVO,
   oldValue: string,
   newValue: string,
+  langGroup: string
 ): void => {
   updateTocItemsNumberingConfig(
     tocItems,
     article,
-    getNumberingTypeByTagNameAndTocItemType(tocItems, oldValue, POINT),
+    getNumberingTypeByTagNameAndTocItemType(tocItems, oldValue, POINT, langGroup),
     getNumberingTypeByTagNameAndTocItemType(
       tocItems,
       newValue,
       POINT,
+      langGroup
     ) as NumberingType,
+    langGroup
   );
 };
 
@@ -105,6 +110,7 @@ export const getNumberingTypeFromSubElementNumberingConfigs = (
   tocItems: TocItem[],
   subElementTagName: string,
   subElementNumberingConfigs: any[],
+  langGroup: string
 ): string => {
   if (subElementNumberingConfigs.length > 0) {
     for (const subElementNumberingConfig of subElementNumberingConfigs) {
@@ -114,7 +120,7 @@ export const getNumberingTypeFromSubElementNumberingConfigs = (
     }
     const tocItem: TocItem = getTocItemByName(tocItems, subElementTagName);
     if (tocItem != null) {
-      return tocItem.numberingType;
+      return getNumberingTypeByLanguage(tocItem, langGroup);
     }
   }
   return null;
@@ -125,13 +131,15 @@ const updateTocItemsNumberingConfig = (
   item: TableOfContentItemVO,
   fromNumberingType: string,
   toNumberingType: NumberingType,
+  langGroup: string
 ): void => {
   for (const child of item.childItems) {
-    if (child.tocItem.numberingType === fromNumberingType) {
+    if (getNumberingTypeByLanguage(child.tocItem, langGroup) === fromNumberingType) {
       const tocItem = getTocItemByNumberingType(
         tocItems,
         toNumberingType,
         child.tocItem.aknTag,
+        langGroup
       );
       child.tocItem = tocItem;
     }
@@ -141,6 +149,7 @@ const updateTocItemsNumberingConfig = (
       child,
       fromNumberingType,
       toNumberingType,
+      langGroup
     );
   }
 };
@@ -162,24 +171,27 @@ export const getTocItemByNumberingType = (
   tocItems: Array<TocItem>,
   numType: NumberingType,
   tagName: string,
+  langGroup: string
 ): TocItem => {
   const filtered = tocItems.filter(
     (tocItem) =>
       tocItem.aknTag.toLowerCase() === tagName.toLowerCase() &&
-      tocItem.numberingType.toLocaleLowerCase() === numType.toLocaleLowerCase(),
+      getNumberingTypeByLanguage(tocItem, langGroup).toLocaleLowerCase() === numType.toLocaleLowerCase(),
   );
   return filtered.length > 0 ? filtered[0] : null;
 };
 
-export const getTocItemByNumberingConfig = (
-  tocItems: Array<TocItem>,
-  numType: NumberingType,
-): TocItem => {
-  const filtered = tocItems.filter(
-    (tocItem) =>
-      tocItem.numberingType.toLowerCase() === numType.toLocaleLowerCase(),
-  );
-  return filtered.length > 0 ? filtered[0] : null;
+export const getNumberingTypeByLanguage = (
+  tocItem: TocItem,
+  langGroup: string,
+): NumberingType => {
+  let numType: NumberingType = 'NONE';
+  if(tocItem.autoNumbering != null) {
+    numType = tocItem.autoNumbering.langNumConfigs
+      .find(config => config.langGroup.toLowerCase() === langGroup.toLowerCase())
+      ?.numberingTypes[0];
+  }
+  return numType;
 };
 
 export const getNumberingConfig = (
@@ -228,6 +240,7 @@ export const checkPositionAfterValidationExplanatory = (
   nodeTarget: TableOfContentItemVO,
   nodeDragged: TableOfContentItemVO,
   position: string,
+  langGroup: string
 ) => {
   switch (nodeDragged.tocItem.aknTag) {
     case PART: {
@@ -347,7 +360,7 @@ export const checkPositionAfterValidationExplanatory = (
         ([DIVISION, SUBPARAGRAPH] as AknTag[]).includes(
           nodeTarget.tocItem.aknTag,
         ) ||
-        nodeTarget.tocItem.numberingType === BULLET_NUM
+        getNumberingTypeByLanguage(nodeTarget.tocItem, langGroup) === BULLET_NUM
       ) {
         return 'AFTER';
       }
@@ -362,7 +375,7 @@ export const checkPositionAfterValidationExplanatory = (
     case INDENT: {
       if (
         ([SUBPARAGRAPH] as AknTag[]).includes(nodeTarget.tocItem.aknTag) &&
-        nodeDragged.tocItem.numberingType === BULLET_NUM
+        getNumberingTypeByLanguage(nodeDragged.tocItem, langGroup) === BULLET_NUM
       ) {
         return 'AFTER';
       }
@@ -1172,6 +1185,7 @@ export const validateAddingToItem = (
   tocTree: TableOfContentItemVO[],
   actualTargetItem: TableOfContentItemVO,
   position: string,
+  langGroup: string
 ) => {
   const isNumberedCN = (element: TableOfContentItemVO) => {
     let _isNumbered = true;
@@ -1196,7 +1210,7 @@ export const validateAddingToItem = (
     actualTargetItem = targetItem;
   }
   const droppedElementTagName = sourceItem.tocItem.aknTag;
-  const droppedElementTagNumberingType = sourceItem.tocItem.numberingType;
+  const droppedElementTagNumberingType = getNumberingTypeByLanguage(sourceItem.tocItem, langGroup);
 
   const targetName = actualTargetItem.tocItem.aknTag;
   let indentAllowed = false;
@@ -1230,10 +1244,11 @@ export const validateAddingToItem = (
             !containsOnlySameIndentType(
               actualTargetItem,
               droppedElementTagNumberingType,
+              langGroup
             ))) ||
         (targetName === droppedElementTagName &&
           containsItem(actualTargetItem, LIST)) ||
-        !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem)
+        !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem, langGroup)
       ) {
         validationResult.success = false;
         if (!indentAllowed) {
@@ -1314,6 +1329,7 @@ export const validateAgainstOtherIndentsInList = (
   tocTree: TableOfContentItemVO[],
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
+  langGroup: string
 ) => {
   if (
     targetItem.tocItem.aknTag !== INDENT &&
@@ -1321,7 +1337,7 @@ export const validateAgainstOtherIndentsInList = (
     targetItem.childItems.length > 0
   ) {
     for (const child of targetItem.childItems) {
-      if (!validateAgainstOtherIndent(sourceItem, child)) {
+      if (!validateAgainstOtherIndent(sourceItem, child, langGroup)) {
         return false;
       }
     }
@@ -1329,13 +1345,13 @@ export const validateAgainstOtherIndentsInList = (
     targetItem.tocItem.aknTag === POINT ||
     targetItem.tocItem.aknTag === INDENT
   ) {
-    return validateAgainstOtherIndent(sourceItem, targetItem);
+    return validateAgainstOtherIndent(sourceItem, targetItem, langGroup);
   } else if (
     targetItem.tocItem.aknTag === LIST &&
     targetItem.childItems.length === 0
   ) {
     const parentItem = findNodeById(tocTree, sourceItem.parentItem);
-    return validateAgainstOtherIndentsInList(tocTree, sourceItem, parentItem);
+    return validateAgainstOtherIndentsInList(tocTree, sourceItem, parentItem, langGroup);
   }
   return true;
 };
@@ -1343,21 +1359,23 @@ export const validateAgainstOtherIndentsInList = (
 export const validateAgainstOtherIndent = (
   sourceItem: TableOfContentItemVO,
   targetItem: TableOfContentItemVO,
+  langGroup: string
 ) => {
-  const targetNumberingType = targetItem.tocItem.numberingType;
-  const sourceNumberingType = sourceItem.tocItem.numberingType;
+  const targetNumberingType = getNumberingTypeByLanguage(targetItem.tocItem, langGroup);
+  const sourceNumberingType = getNumberingTypeByLanguage(sourceItem.tocItem, langGroup);
   return targetNumberingType === sourceNumberingType;
 };
 
 export const containsOnlySameIndentType = (
   node: TableOfContentItemVO,
   numberingType: string,
+  langGroup: string
 ) => {
   const childItems: TableOfContentItemVO[] = node.childItems;
   for (const child of childItems || []) {
     if (
       child.tocItem.aknTag === INDENT &&
-      child.tocItem.numberingType !== numberingType
+      getNumberingTypeByLanguage(child.tocItem, langGroup) !== numberingType
     ) {
       return false;
     }

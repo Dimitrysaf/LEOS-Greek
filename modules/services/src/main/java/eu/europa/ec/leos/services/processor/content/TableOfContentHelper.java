@@ -20,7 +20,7 @@ import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -77,13 +77,13 @@ public class TableOfContentHelper {
                 && (MOVE_TO.equals(tocItem.getSoftActionAttr()) || SoftActionType.MOVE_FROM.equals(tocItem.getSoftActionAttr()));
     }
 
-    public static String buildItemCaption(TableOfContentItemVO tocItem, int captionMaxSize, MessageHelper messageHelper) {
+    public static String buildItemCaption(TableOfContentItemVO tocItem, int captionMaxSize, MessageHelper messageHelper, String language) {
         Validate.notNull(tocItem.getTocItem(), "Type should not be null");
 
         boolean shoudlAddMovedLabel = shouldAddMoveLabel(tocItem);
 
         StringBuilder itemDescription = tocItem.getTocItem().isItemDescription()
-                ? new StringBuilder(getDisplayableTocItem(tocItem.getTocItem(), messageHelper)).append(SPACE)
+                ? new StringBuilder(getDisplayableTocItem(tocItem.getTocItem(), language, messageHelper)).append(SPACE)
                 : new StringBuilder();
 
         if (shoudlAddMovedLabel) {
@@ -142,9 +142,10 @@ public class TableOfContentHelper {
         return StringUtils.abbreviate(itemDescription.toString(), shoudlAddMovedLabel ? captionMaxSize + MOVED_LABEL_SIZE : captionMaxSize);
     }
 
-    public static String getDisplayableTocItem(TocItem tocItem, MessageHelper messageHelper) {
+    public static String getDisplayableTocItem(TocItem tocItem, String language, MessageHelper messageHelper) {
         if(tocItem != null) {
-            if (tocItem.getNumberingType().equals(NumberingType.BULLET_NUM)) {
+            NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
+            if (numberingType.equals(NumberingType.BULLET_NUM)) {
                 return messageHelper.getMessage("toc.item.type.bullet");
             } else {
                 return messageHelper.getMessage("toc.item.type." + tocItem.getAknTag().value().toLowerCase());
@@ -290,21 +291,23 @@ public class TableOfContentHelper {
         }
     }
 
-    public static void convertArticle(List<TocItem> tocItems, TableOfContentItemVO article, TocItemTypeName oldValue, TocItemTypeName newValue) {
+    public static void convertArticle(List<TocItem> tocItems, TableOfContentItemVO article, TocItemTypeName oldValue, TocItemTypeName newValue,
+            String language) {
         updateTocItemsNumberingConfig(tocItems, article
-                   , StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems, oldValue, POINT)
-                   , StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems, newValue, POINT));
+                   , StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems, oldValue, POINT, language)
+                   , StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems, newValue, POINT, language), language);
     }
 
     private static void updateTocItemsNumberingConfig(List<TocItem> tocItems, TableOfContentItemVO item, NumberingType fromNumberingType,
-                                                      NumberingType toNumberingType) {
+            NumberingType toNumberingType, String language) {
         for (TableOfContentItemVO child : item.getChildItems()) {
-            if (child.getTocItem().getNumberingType().equals(fromNumberingType)) {
-                TocItem tocItem = StructureConfigUtils.getTocItemByNumberingType(tocItems, toNumberingType, child.getTocItem().getAknTag().name());
+            NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(child.getTocItem(), language);
+            if (numberingType.equals(fromNumberingType)) {
+                TocItem tocItem = StructureConfigUtils.getTocItemByNumberingType(tocItems, toNumberingType, child.getTocItem().getAknTag().name(), language);
                 child.setTocItem(tocItem);
             }
             child.setAffected(true);
-            updateTocItemsNumberingConfig(tocItems, child, fromNumberingType, toNumberingType);
+            updateTocItemsNumberingConfig(tocItems, child, fromNumberingType, toNumberingType, language);
         }
     }
 

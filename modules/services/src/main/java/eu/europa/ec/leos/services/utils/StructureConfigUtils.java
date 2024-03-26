@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.vo.toc;
+package eu.europa.ec.leos.services.utils;
 /*
  * Copyright 2024 European Union
  *
@@ -13,7 +13,9 @@ package eu.europa.ec.leos.vo.toc;
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.vo.structure.Attribute;
+import eu.europa.ec.leos.vo.structure.LangNumConfig;
 import eu.europa.ec.leos.vo.structure.Level;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.NumberingType;
@@ -51,7 +53,8 @@ public class StructureConfigUtils {
         return Arrays.asList();
     }
 
-    public static NumberingType getNumberingTypeByTagNameAndTocItemType(List<TocItem> tocItems, TocItemTypeName tocItemType, String subElementTagName) {
+    public static NumberingType getNumberingTypeByTagNameAndTocItemType(List<TocItem> tocItems, TocItemTypeName tocItemType,
+            String subElementTagName, String language) {
         List<TocItem> subElementTocItems = getTocItemsByName(tocItems, subElementTagName);
         if (subElementTocItems.size() > 1 && subElementTocItems.get(0).getParentNameNumberingTypeDependency() != null) {
             TocItem parentTocItem = getTocItemByName(tocItems, subElementTocItems.get(0).getParentNameNumberingTypeDependency().value());
@@ -59,17 +62,18 @@ public class StructureConfigUtils {
                     && isNotEmpty(parentTocItem.getTocItemTypes().getTocItemTypes())) {
                 for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().getTocItemTypes()) {
                     if (tocItemTyp.getName().equals(tocItemType)) {
-                        return getNumberingTypeFromSubElementNumberingConfigs(tocItems, subElementTagName, tocItemTyp.getSubElementNumberingConfigs());
+                        return getNumberingTypeFromSubElementNumberingConfigs(tocItems, subElementTagName, tocItemTyp.getSubElementNumberingConfigs(), language);
                     }
                 }
             }
         } else if (!subElementTocItems.isEmpty()) {
-            return subElementTocItems.get(0).getNumberingType();
+            return getNumberingTypeByLanguage(subElementTocItems.get(0), language);
         }
         return null;
     }
 
-    public static TocItem getTocItemByTagNameAndTocItemType(List<TocItem> tocItems, TocItemTypeName tocItemType, String subElementTagName) {
+    public static TocItem getTocItemByTagNameAndTocItemType(List<TocItem> tocItems, TocItemTypeName tocItemType,
+            String subElementTagName, String language) {
         List<TocItem> subElementTocItems = getTocItemsByName(tocItems, subElementTagName);
         if (subElementTocItems.size() > 1 && subElementTocItems.get(0).getParentNameNumberingTypeDependency() != null) {
             TocItem parentTocItem = getTocItemByName(tocItems, subElementTocItems.get(0).getParentNameNumberingTypeDependency().value());
@@ -78,8 +82,8 @@ public class StructureConfigUtils {
                 for (TocItemType tocItemTyp : parentTocItem.getTocItemTypes().getTocItemTypes()) {
                     if (tocItemTyp.getName().equals(tocItemType)) {
                         NumberingType numberingType = getNumberingTypeFromSubElementNumberingConfigs(tocItems, subElementTagName,
-                                tocItemTyp.getSubElementNumberingConfigs());
-                        return getTocItemByNumberingType(tocItems, numberingType, subElementTagName);
+                                tocItemTyp.getSubElementNumberingConfigs(), language);
+                        return getTocItemByNumberingType(tocItems, numberingType, subElementTagName, language);
                     }
                 }
             }
@@ -102,11 +106,12 @@ public class StructureConfigUtils {
     }
 
     public static Map<TocItemTypeName, List<Level>> getNumberingConfigsFromTocItem(List<NumberingConfig> numberingConfigs, List<TocItem> tocItems,
-                                                                                String tagName) {
+            String tagName, String language) {
         List<TocItem> foundTocItems = getTocItemsByName(tocItems, tagName);
         Map<TocItemTypeName, List<Level>> foundNumberingConfigs = new EnumMap<>(TocItemTypeName.class);
         if (foundTocItems.size() == 1) {
-            NumberingConfig numberingConfig = getNumberingConfig(numberingConfigs, foundTocItems.get(0).getNumberingType());
+            //TODO: pass the document language
+            NumberingConfig numberingConfig = getNumberingConfig(numberingConfigs, getNumberingTypeByLanguage(foundTocItems.get(0), language));
             foundNumberingConfigs.put(TocItemTypeName.REGULAR, numberingConfig != null ? numberingConfig.getLevels().getLevels() : null);
         } else if (foundTocItems.size() > 1 && foundTocItems.get(0).getParentNameNumberingTypeDependency() != null) {
             TocItem tocItem = getTocItemByName(tocItems, foundTocItems.get(0).getParentNameNumberingTypeDependency().value());
@@ -117,7 +122,8 @@ public class StructureConfigUtils {
                     if (!subElementNumberingConfigs.getSubElementNumberingConfigs().isEmpty()) {
                         for (SubElementNumberingConfig subElementNumberingConfig : subElementNumberingConfigs.getSubElementNumberingConfigs()) {
                             if (subElementNumberingConfig.getSubElement().value().equals(tagName)) {
-                                NumberingConfig numberingConfig = getNumberingConfig(numberingConfigs, subElementNumberingConfig.getNumberingType());
+                                NumberingConfig numberingConfig = getNumberingConfig(numberingConfigs,
+                                        subElementNumberingConfig.getLangNumConfigs().get(0).getNumberingTypes().get(0));
                                 foundNumberingConfigs.put(tocItemType, numberingConfig != null ? numberingConfig.getLevels().getLevels() : null);
                             }
                         }
@@ -129,17 +135,18 @@ public class StructureConfigUtils {
     }
 
     private static NumberingType getNumberingTypeFromSubElementNumberingConfigs(List<TocItem> tocItems,
-                                                                        String subElementTagName, SubElementNumberingConfigs subElementNumberingConfigs) {
+            String subElementTagName,
+            SubElementNumberingConfigs subElementNumberingConfigs, String language) {
         if (!subElementNumberingConfigs.getSubElementNumberingConfigs().isEmpty()) {
             for (SubElementNumberingConfig subElementNumberingConfig : subElementNumberingConfigs.getSubElementNumberingConfigs()) {
                 if (subElementNumberingConfig.getSubElement().value().equals(subElementTagName)) {
-                    return subElementNumberingConfig.getNumberingType();
+                    return getNumberingTypeByLangConfigAndLanguage(subElementNumberingConfig.getLangNumConfigs(), language);
                 }
             }
         }
         TocItem tocItem = getTocItemByName(tocItems, subElementTagName);
         if (tocItem != null) {
-            return tocItem.getNumberingType();
+            return getNumberingTypeByLanguage(tocItem, language);
         }
         return null;
     }
@@ -185,18 +192,19 @@ public class StructureConfigUtils {
                 .collect(Collectors.toList());
     }
 
-    public static TocItem getTocItemByNumberingType(List<TocItem> tocItems, NumberingType numType, String tagName) {
+    public static TocItem getTocItemByNumberingType(List<TocItem> tocItems, NumberingType numType, String tagName, String language) {
         return tocItems.stream()
-                .filter(tocItem -> tocItem.getAknTag().name().equalsIgnoreCase(tagName) && tocItem.getNumberingType().equals(numType)).findFirst()
+                .filter(tocItem -> tocItem.getAknTag().name().equalsIgnoreCase(tagName) && getNumberingTypeByLanguage(tocItem, language).equals(numType)).findFirst()
                 .orElseThrow(() -> new IllegalStateException(NUMBERING_TYPE + numType + "' not present in the list of TocItems [" + tocItems + "]"));
     }
 
-    public static TocItem getTocItemByNumValue(List<NumberingConfig> numberingConfigs, List<TocItem> foundTocItems, String numValue, int depth) {
+    public static TocItem getTocItemByNumValue(List<NumberingConfig> numberingConfigs, List<TocItem> foundTocItems, String numValue, int depth,
+            String language) {
         List<NumberingType> numberingTypes = getNumberingTypesBySequence(numberingConfigs, numValue);
         return foundTocItems.stream()
                 .filter(tocItem -> {
-                    NumberingConfig tocItemNumberingConfig = getNumberingConfig(numberingConfigs, tocItem.getNumberingType());
-                    return tocItemNumberingConfig != null && (isNumberingTypeMatchesSequence(numberingConfigs, tocItem.getNumberingType(), numValue)
+                    NumberingConfig tocItemNumberingConfig = getNumberingConfig(numberingConfigs, getNumberingTypeByLanguage(tocItem, language));
+                    return tocItemNumberingConfig != null && (isNumberingTypeMatchesSequence(numberingConfigs, getNumberingTypeByLanguage(tocItem, language), numValue)
                             || isNumberingTypesPartOfNumberingConfig(numberingTypes, tocItemNumberingConfig, depth));
                 })
                 .findFirst()
@@ -245,9 +253,10 @@ public class StructureConfigUtils {
                 .orElse(null);
     }
     
-    public static NumberingConfig getNumberingConfigByTagName(List<TocItem> items, List<NumberingConfig> numberingConfigs, String tagName) {
+    public static NumberingConfig getNumberingConfigByTagName(List<TocItem> items, List<NumberingConfig> numberingConfigs, String tagName,
+            String language) {
         TocItem tocItem = getTocItemByName(items, tagName);
-        return getNumberingByName(numberingConfigs, tocItem != null ? tocItem.getNumberingType() : null);
+        return getNumberingByName(numberingConfigs, tocItem != null ? getNumberingTypeByLanguage(tocItem, language) : null);
     }
 
     public static NumberingType getNumberingTypeBySequence(List<NumberingConfig> numberingConfigs, String sequence) {
@@ -328,9 +337,34 @@ public class StructureConfigUtils {
         return numValueWithoutPrefixAndSuffix;
     }
 
-    public static boolean isAutoNumberingEnabled(List<TocItem> tocItems, String elementName) {
+    public static boolean isAutoNumberingEnabled(List<TocItem> tocItems, String elementName, String language) {
         TocItem tocItem = getTocItemByName(tocItems, elementName);
-        return tocItem != null && (tocItem.isAutoNumbering() == null || tocItem.isAutoNumbering().booleanValue());
+        return tocItem != null && (getLangNumConfigByLanguage(tocItem.getAutoNumbering().getLangNumConfigs(), language).isAuto());
+    }
+
+    private static LangNumConfig getLangNumConfigByLanguage(List<LangNumConfig> langNumConfigs, String lang) {
+        String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), lang);
+        return langNumConfigs.stream().filter(config ->
+                config.getLangGroup().equalsIgnoreCase(group)).findFirst().get();
+    }
+
+    public static NumberingType getNumberingTypeByLanguage(TocItem tocItem, String language) {
+        NumberingType numberingType = NumberingType.NONE;
+        if(tocItem.getAutoNumbering() != null) {
+            String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), language);
+            numberingType = tocItem.getAutoNumbering().getLangNumConfigs().stream().filter(config ->
+                    config.getLangGroup().equalsIgnoreCase(group)).findFirst().get().getNumberingTypes().get(0);
+        }
+        return numberingType;
+    }
+
+    private static NumberingType getNumberingTypeByLangConfigAndLanguage(List<LangNumConfig> langNumConfigs, String lang) {
+        NumberingType numberingType;
+        String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), lang);
+        numberingType = langNumConfigs.stream().filter(config ->
+                config.getLangGroup().equalsIgnoreCase(group)).findFirst().get().getNumberingTypes().get(0);
+
+        return numberingType;
     }
 
 }

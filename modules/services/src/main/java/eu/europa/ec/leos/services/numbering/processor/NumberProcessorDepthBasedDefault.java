@@ -31,7 +31,7 @@ public class NumberProcessorDepthBasedDefault extends NumberProcessorAbstract im
         return DIVISION.equals(node.getNodeName());
     }
 
-    public void renumberDepthBased(ParentChildNode numberNode, NumberConfig numberConfig, String elementName, int depth) {
+    public void renumberDepthBased(ParentChildNode numberNode, NumberConfig numberConfig, String elementName, int depth, String language) {
         final Node node = numberNode.getNode();
         final String parentPrefix = numberNode.getParentPrefix();
         if (skipAutoRenumbering(node)) {
@@ -40,17 +40,17 @@ public class NumberProcessorDepthBasedDefault extends NumberProcessorAbstract im
         } else {
         	renumber(node, numberConfig, parentPrefix);
         }
-        renumberChildren(numberNode, elementName, depth);
-        renumberChildrenOfDifferentType(node, true); // Points
+        renumberChildren(numberNode, elementName, depth, language);
+        renumberChildrenOfDifferentType(node, true, language); // Points
     }
 
-    private void renumberChildren(ParentChildNode numberNode, String elementName, int depth) {
+    private void renumberChildren(ParentChildNode numberNode, String elementName, int depth, String language) {
         if (numberNode.getChildren().size() > 0) {
             numberProcessorHandler.renumberDepthBased(numberNode.getChildren(), elementName, ++depth);
         }
     }
 
-    protected void renumberChildrenOfDifferentType(Node node, boolean numberChildren) {
+    protected void renumberChildrenOfDifferentType(Node node, boolean numberChildren, String language) {
 
     }
 }

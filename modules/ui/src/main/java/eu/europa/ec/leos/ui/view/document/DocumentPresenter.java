@@ -739,8 +739,8 @@ class DocumentPresenter extends AbstractLeosPresenter {
 
         Stopwatch stopwatch = Stopwatch.createStarted();
         final Bill bill = getDocument();
-
-        final byte[] newXmlContent = billProcessor.renumberDocument(bill);
+        String language = bill.getMetadata().get().getLanguage();
+        final byte[] newXmlContent = billProcessor.renumberDocument(bill, language);
 
         final String title = messageHelper.getMessage("operation.element.document_renumbered");
         final String description = messageHelper.getMessage("operation.checkin.minor");
@@ -1044,8 +1044,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             if (aknDocument != null) {
                 Bill bill = getDocument();
                 BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required");
-                byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds,
-                        metadata.getLanguage());
+                byte[] newXmlContent = importService.insertSelectedElements(bill, aknDocument.getBytes(StandardCharsets.UTF_8), elementIds);
                 String notificationMsg = "document.import.element.inserted" + (elementIds.stream().anyMatch((s) -> s.startsWith("rec_")) ? ".recitals" : "") +
                         (elementIds.stream().anyMatch((s) -> s.startsWith("art_")) ? ".articles" : "");
                 updateBillContent(bill, newXmlContent, messageHelper.getMessage("operation.import.element.inserted"), notificationMsg);
@@ -1360,6 +1359,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         byte[] xmlClonedContent = event.getMergeActionVOS().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(event, bill, xmlClonedContent);
         byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(event, bill, tocItemList, intRefMap);
+        String language = bill.getMetadata().get().getLanguage();
         xmlContent = numberService.renumberArticles(xmlContent, true);
         xmlContent = numberService.renumberRecitals(xmlContent);
         xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);

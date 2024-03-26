@@ -20,6 +20,7 @@ import eu.europa.ec.leos.services.numbering.depthBased.ParentChildConverter;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
-import static eu.europa.ec.leos.vo.toc.StructureConfigUtils.isAutoNumberingEnabled;
+import static eu.europa.ec.leos.services.utils.StructureConfigUtils.isAutoNumberingEnabled;
 
 /**
  * Service used for Numbering a full XNL document.
@@ -58,15 +59,18 @@ public class NumberServiceProposal implements NumberService {
     private final NumberProcessorHandler numberProcessorHandler;
     private final ParentChildConverter parentChildConverter;
     private final XmlContentProcessor xmlContentProcessor;
+    private final DocumentLanguageContext documentLanguageContext;
 
     private List<TocItem> tocItems;
 
     @Autowired
-    public NumberServiceProposal(Provider<StructureContext> structureContextProvider, NumberProcessorHandler numberProcessorHandler, ParentChildConverter parentChildConverter, XmlContentProcessor xmlContentProcessor) {
+    public NumberServiceProposal(Provider<StructureContext> structureContextProvider, NumberProcessorHandler numberProcessorHandler,
+            ParentChildConverter parentChildConverter, XmlContentProcessor xmlContentProcessor, DocumentLanguageContext documentLanguageContext) {
         this.structureContextProvider = structureContextProvider;
         this.numberProcessorHandler = numberProcessorHandler;
         this.parentChildConverter = parentChildConverter;
         this.xmlContentProcessor = xmlContentProcessor;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -85,7 +89,7 @@ public class NumberServiceProposal implements NumberService {
     }
 
     @Override
-    public String renumberImportedArticle(String xmlContentAsString, String language) {
+    public String renumberImportedArticle(String xmlContentAsString) {
         byte[] initialContent = xmlContentAsString.getBytes(UTF_8);
         byte[] renumberedContent = renumberDocument(initialContent, ARTICLE, false, true);
         if (!Arrays.equals(initialContent, renumberedContent)) {
@@ -96,9 +100,9 @@ public class NumberServiceProposal implements NumberService {
 
     private byte[] renumberDocument(byte[] xmlContent, String elementName, boolean namespaceEnabled, boolean renumberChildren) {
         tocItems = structureContextProvider.get().getTocItems();
-        if (isAutoNumberingEnabled(tocItems, elementName)) {
+        if (isAutoNumberingEnabled(tocItems, elementName, documentLanguageContext.getDocumentLanguage())) {
             Document document = createXercesDocument(xmlContent, namespaceEnabled);
-            numberProcessorHandler.renumberDocument(document, elementName, renumberChildren);
+            numberProcessorHandler.renumberDocument(document, elementName, documentLanguageContext.getDocumentLanguage(), renumberChildren);
             return nodeToByteArray(document);
         }
         return xmlContent;
@@ -122,7 +126,7 @@ public class NumberServiceProposal implements NumberService {
     @Override
     public byte[] renumberLevel(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
-        if (isAutoNumberingEnabled(tocItems, LEVEL)) {
+        if (isAutoNumberingEnabled(tocItems, LEVEL, documentLanguageContext.getDocumentLanguage())) {
             Stopwatch stopwatch = Stopwatch.createStarted();
             Document document = createXercesDocument(xmlContent);
             NodeList nodeList = document.getElementsByTagName(LEVEL);

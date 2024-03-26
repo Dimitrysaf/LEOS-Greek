@@ -15,6 +15,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.services.document.models.DocType;
 import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
@@ -23,12 +24,16 @@ import eu.europa.ec.leos.services.dto.response.TocAndAncestorsResponse;
 import java.util.List;
 
 public interface BillApiService extends BaseDocumentService<Bill> {
-    public DocumentViewResponse renumberBill(String documentRef);
+    DocumentViewResponse renumberBill(String documentRef);
 
-    public String searchForImport(Integer number, Integer year, DocType type);
+    String searchForImport(Integer number, Integer year, DocType type);
 
-    public DocumentViewResponse importElements(String documentRef, ImportElementRequest importElementRequest);
+    DocumentViewResponse importElements(String documentRef, ImportElementRequest importElementRequest);
 
-    public TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds);
+    TocAndAncestorsResponse fetchTocAncestor(String documentRef, List<String> elementIds);
+
+    void populateCloneProposalMetadata(XmlDocument document);
+
+    boolean isClonedProposal();
 
 }

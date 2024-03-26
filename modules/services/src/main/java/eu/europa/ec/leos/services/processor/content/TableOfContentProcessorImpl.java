@@ -14,12 +14,13 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.common.TocMode;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
@@ -83,6 +84,8 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
 
     @Autowired
     protected Provider<StructureContext> structureContextProvider;
+    @Autowired
+    protected DocumentLanguageContext documentLanguageContext;
 
     public List<TableOfContentItemVO> buildTableOfContent(String startingNode, byte[] xmlContent, TocMode mode) {
         LOG.trace("Start building TOC from tag {} and mode {}", startingNode, mode);
@@ -96,7 +99,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
             Document document = createXercesDocument(xmlContent);
             Node node = getFirstElementByName(document, startingNode);
             if (node != null) {
-                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode);
+                itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, documentLanguageContext.getDocumentLanguage());
             }
             LOG.debug("Xerces Build table of content completed in {} ms", (System.currentTimeMillis() - startTime));
             return itemVOList;
@@ -105,7 +108,8 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
         }
     }
 
-    public static TocItem getTocItemFromNumberingType(String number, String tagName, TocItem originalTocItem, List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, Node node) {
+    public static TocItem getTocItemFromNumberingType(String number, String tagName, TocItem originalTocItem,
+            List<NumberingConfig> numberingConfigs, List<TocItem> tocItems, Node node, String language) {
         Node parent = null;
         if (originalTocItem.getParentNameNumberingTypeDependency() != null) {
             parent = XercesUtils.getParentWithTagName(node, originalTocItem.getParentNameNumberingTypeDependency().value());
@@ -114,14 +118,14 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 parent.getNodeName(),
                 XercesUtils.getAttributes(parent)) : TocItemTypeName.REGULAR;
         if (tagName.equals(POINT)) {
-            return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, tocItemType, tagName);
+            return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, tocItemType, tagName, language);
         } else if (tagName.equals(INDENT)) {
             if (node.getParentNode().getParentNode().getNodeName().equalsIgnoreCase(POINT)) {
-                return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, tocItemType, tagName);
+                return StructureConfigUtils.getTocItemByTagNameAndTocItemType(tocItems, tocItemType, tagName, language);
             } else {
                 List<TocItem> foundTocItems = StructureConfigUtils.getTocItemsByName(tocItems, INDENT);
                 int depth = XercesUtils.getPointDepth(node);
-                return StructureConfigUtils.getTocItemByNumValue(numberingConfigs, foundTocItems, number, depth);
+                return StructureConfigUtils.getTocItemByNumValue(numberingConfigs, foundTocItems, number, depth, language);
             }
         }
         return originalTocItem;

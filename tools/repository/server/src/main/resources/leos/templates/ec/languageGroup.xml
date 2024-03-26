@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<languageGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
+               xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ languageGroup.xsd">
+
+    <name>languageGroup.xml</name>
+    <description>Language map</description>
+    <version>1.0.0</version>
+
+    <groups>
+        <group name="latin">
+            <lang>cs</lang>
+            <lang>da</lang>
+            <lang>de</lang>
+            <lang>en</lang>
+            <lang>es</lang>
+            <lang>et</lang>
+            <lang>fi</lang>
+            <lang>fr</lang>
+            <lang>ga</lang>
+            <lang>hr</lang>
+            <lang>hu</lang>
+            <lang>it</lang>
+            <lang>lt</lang>
+            <lang>lv</lang>
+            <lang>mt</lang>
+            <lang>nl</lang>
+            <lang>pl</lang>
+            <lang>pt</lang>
+            <lang>ro</lang>
+            <lang>sk</lang>
+            <lang>sl</lang>
+            <lang>sv</lang>
+        </group>
+        <group name="cyrillic">
+            <lang>bg</lang>
+        </group>
+        <group name="greek">
+            <lang>el</lang>
+        </group>
+    </groups>
+</languageGroup>

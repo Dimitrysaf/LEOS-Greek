@@ -73,8 +73,9 @@ public class ImportServiceMandateTest_IT extends NumberServiceMandateTest {
 
     @Before
     public void onSetUp() {
-        numberService = new NumberServiceMandate(xmlContentMandateProcessor, structureContextProvider, numberProcessorHandler, parentChildConverter);
-        importService = new ImportServiceImpl(externalDocumentProvider, conversionHelper, xmlContentProcessor, numberService, xPathCatalog);
+        numberService = new NumberServiceMandate(xmlContentMandateProcessor, structureContextProvider, numberProcessorHandler,
+                parentChildConverter, documentLanguageContext);
+        importService = new ImportServiceImpl(externalDocumentProvider, conversionHelper, xmlContentProcessor, numberService, xPathCatalog, documentLanguageContext);
     }
 
     @Test
@@ -89,7 +90,7 @@ public class ImportServiceMandateTest_IT extends NumberServiceMandateTest {
 
         // When
         long startTime = System.currentTimeMillis();
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
         long endTime = System.currentTimeMillis();
 
         // Then
@@ -112,7 +113,7 @@ public class ImportServiceMandateTest_IT extends NumberServiceMandateTest {
         IntStream.range(1, 2).forEach(val -> elementsIds.add("art_" + val));  //total are 155, import only 1
 
         // When
-        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds, "EN");
+        byte[] xmlResult = importService.insertSelectedElements(originalDocument, xmlInput, elementsIds);
 
         // Then
         Document document = createXercesDocument(xmlResult);

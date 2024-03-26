@@ -54,13 +54,15 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.RefConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
@@ -450,13 +452,14 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
+        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(
                 documentsMetadata, numberConfigs, tocItems, null, refConfigs,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT),
+                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT, proposal.getMetadata().get().getLanguage()),
                 getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(),
                 proposalMetadata, structureContext1.getTocRules(),
-                explanatory.isTrackChangesEnabled(), true, isClonedProposal
+                explanatory.isTrackChangesEnabled(), true, isClonedProposal, langGroup
         );
     }
 
@@ -557,7 +560,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         final Map<String, List<TableOfContentItemVO>> tocItemList = packageService.getTableOfContent(
                 explanatory.getMetadata().get().getRef(),
                 TocMode.SIMPLIFIED_CLEAN);
-        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, ctxt.getNumberingConfigs());
+        return new TocAndAncestorsResponse(tocItemList, elementAncestorsIds, messageHelper, ctxt.getNumberingConfigs(),
+                explanatory.getMetadata().get().getLanguage());
     }
 
     private void setBlockOrCrossHeading(List<TableOfContentItemVO> toc) {

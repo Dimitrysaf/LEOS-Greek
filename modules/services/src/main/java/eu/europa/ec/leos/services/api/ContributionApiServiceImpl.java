@@ -262,6 +262,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(documentRef, docClass);
         final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
         this.populateCloneProposalMetadata(Validate.notNull(proposal));
+        String language = proposal.getMetadata().get().getLanguage();
 
         final List<MergeActionVO> mergeActions = Optional.ofNullable(request.getMergeActions()).orElse(new ArrayList<>());
         final ContributionVO contribution = Optional.ofNullable(mergeActions)

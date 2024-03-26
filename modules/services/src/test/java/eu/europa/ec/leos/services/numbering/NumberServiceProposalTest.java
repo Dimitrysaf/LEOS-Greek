@@ -9,6 +9,7 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBased;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBasedDefault;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorParagraphAndPoint;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDefault;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -60,7 +61,8 @@ public abstract class NumberServiceProposalTest extends NumberServiceTest {
         super.setup();
         getStructureFile();
         when(cloneContext.isClonedProposal()).thenReturn(false);
-        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, contentProcessor);
+        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, contentProcessor,
+                documentLanguageContext);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
         ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);
     }

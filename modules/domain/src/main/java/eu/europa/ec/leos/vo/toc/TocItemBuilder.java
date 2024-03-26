@@ -15,6 +15,7 @@ package eu.europa.ec.leos.vo.toc;
 
 import eu.europa.ec.leos.vo.structure.ActionPositions;
 import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.AutoNumbering;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.structure.Profiles;
@@ -28,7 +29,7 @@ public class TocItemBuilder {
     protected boolean childrenAllowed;
     protected boolean display;
     protected OptionsType itemNumber;
-    protected Boolean autoNumbering;
+    protected AutoNumbering autoNumbering;
     protected OptionsType itemHeading;
     protected boolean itemDescription;
     protected boolean numberEditable;
@@ -86,7 +87,7 @@ public class TocItemBuilder {
         return this;
     }
 
-    public TocItemBuilder withAutoNumbering(Boolean autoNumbering) {
+    public TocItemBuilder withAutoNumbering(AutoNumbering autoNumbering) {
         this.autoNumbering = autoNumbering;
         return this;
     }

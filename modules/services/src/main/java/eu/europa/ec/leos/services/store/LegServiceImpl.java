@@ -62,6 +62,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfig;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.processor.rendition.HtmlRenditionProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -148,6 +149,7 @@ public class LegServiceImpl implements LegService {
     private final ProposalService proposalService;
     private final FinancialStatementService financialStatementService;
     private final XPathCatalog xPathCatalog;
+    private final DocumentLanguageContext documentLanguageContext;
 
     private static final String MEDIA_DIR = "media/";
     private static final String ANNOT_FILE_EXT = ".json";
@@ -194,7 +196,8 @@ public class LegServiceImpl implements LegService {
                           AnnexService annexService, XmlContentProcessor xmlContentProcessor,
                           ProposalService proposalService,
                           XPathCatalog xPathCatalog,
-                          ExplanatoryService explanatoryService,FinancialStatementService financialStatementService) {
+                          ExplanatoryService explanatoryService,FinancialStatementService financialStatementService,
+            DocumentLanguageContext documentLanguageContext) {
         this.packageRepository = packageRepository;
         this.workspaceRepository = workspaceRepository;
         this.attachmentProcessor = attachmentProcessor;
@@ -216,6 +219,7 @@ public class LegServiceImpl implements LegService {
         this.xPathCatalog = xPathCatalog;
         this.explanatoryService = explanatoryService;
         this.financialStatementService = financialStatementService;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -491,6 +495,7 @@ public class LegServiceImpl implements LegService {
         legPackage.addContainedFile(proposal.getVersionedReference());
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         String language = proposal.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
 
         // 2. Depending on ExportOptions FileType add documents to package
         if (exportOptions.isComparisonMode() || exportOptions.isCleanVersion()) {
@@ -987,7 +992,8 @@ public class LegServiceImpl implements LegService {
     private List<TableOfContentItemHtmlVO> buildTocHtml(List<TableOfContentItemVO> tableOfContents) {
         List<TableOfContentItemHtmlVO> tocHtml = new ArrayList<>();
         for (TableOfContentItemVO item : tableOfContents) {
-            String name = TableOfContentHelper.buildItemCaption(item, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper);
+            String name = TableOfContentHelper.buildItemCaption(item, TableOfContentHelper.DEFAULT_CAPTION_MAX_SIZE, messageHelper,
+                    documentLanguageContext.getDocumentLanguage());
             TableOfContentItemHtmlVO itemHtml = new TableOfContentItemHtmlVO(name, "#" + item.getId());
             if (item.getChildItems().size() > 0) {
                 itemHtml.setChildren(buildTocHtml(item.getChildItems()));

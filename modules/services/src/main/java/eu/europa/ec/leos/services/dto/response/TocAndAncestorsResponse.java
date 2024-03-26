@@ -31,13 +31,13 @@ public class TocAndAncestorsResponse {
     private List<String> elementAncestorsIds;
 
     public TocAndAncestorsResponse(Map<String, List<TableOfContentItemVO>> tocItemList,
-                                   List<String> elementAncestorsIds, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs) {
+            List<String> elementAncestorsIds, MessageHelper messageHelper, List<NumberingConfig> numberingConfigs, String language) {
         tocItemsMap = new HashMap<>(tocItemList.size());
         for (String ref : tocItemList.keySet()) {
             List<TocItemVO> tocItems = new ArrayList<>();
             for (TableOfContentItemVO tableOfContentItemVO : tocItemList.get(ref)) {
                 TocItemVO tocItemVO = new TocItemVO(tableOfContentItemVO,
-                        messageHelper, numberingConfigs);
+                        messageHelper, numberingConfigs, language);
                 tocItems.add(tocItemVO);
             }
             tocItemsMap.put(ref, tocItems);

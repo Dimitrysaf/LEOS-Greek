@@ -8,6 +8,8 @@ import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
@@ -42,19 +44,20 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
     private static final int MAX_INDENT_LEVEL = 4;
 
     public MandateTocApiServiceImpl(Provider<StructureContext> structureContextProvider,
-                                    BillService billService, AnnexService annexService, MessageHelper messageHelper, ExplanatoryService explanatoryService) {
-        super(structureContextProvider, billService, annexService, messageHelper, explanatoryService);
+                                    BillService billService, AnnexService annexService, MessageHelper messageHelper,
+            ExplanatoryService explanatoryService, DocumentLanguageContext documentLanguageContext) {
+        super(structureContextProvider, billService, annexService, messageHelper, explanatoryService, documentLanguageContext);
     }
 
     @Override
     protected boolean validateAddingToItem(TocDropResult result, TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem,
-                                           TableOfContentItemVO actualTargetItem, TocItemPosition position) {
+            TableOfContentItemVO actualTargetItem, TocItemPosition position, String language) {
         Validate.notNull(targetItem, "Target item should not be null");
         if (actualTargetItem == null) {
             actualTargetItem = targetItem;
         }
         String droppedElementTagName = sourceItem.getTocItem().getAknTag().value();
-        NumberingType droppedElementTagNumberingType = sourceItem.getTocItem().getNumberingType();
+        NumberingType droppedElementTagNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(sourceItem.getTocItem(), language);
 
         String targetName = actualTargetItem.getTocItem().getAknTag().value();
         result.setSourceItem(sourceItem);
@@ -79,9 +82,9 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
                         && !droppedElementTagName.equals(POINT))
                         && !Arrays.asList(NumberingType.INDENT, BULLET_NUM).contains(droppedElementTagNumberingType)
                         || (Arrays.asList(PARAGRAPH, LEVEL).contains(targetName) && !TocItemPosition.AS_CHILDREN.equals(position)
-                        && (actualTargetItem.containsItem(LIST) || !actualTargetItem.containsOnlySameIndentType(droppedElementTagNumberingType)))
+                        && (actualTargetItem.containsItem(LIST) || !containsOnlySameIndentType(actualTargetItem, droppedElementTagNumberingType, language)))
                         || (targetName.equals(droppedElementTagName) && actualTargetItem.containsItem(LIST))
-                        || !validateAgainstOtherIndentsInList(sourceItem, targetItem)) {
+                        || !validateAgainstOtherIndentsInList(sourceItem, targetItem, language)) {
                     result.setSuccess(false);
                     if (!indentAllowed) {
                         result.setMessageKey("toc.edit.window.drop.error.indentation.message");
@@ -112,6 +115,17 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
                     return false;
                 }
                 break;
+        }
+        return true;
+    }
+
+    private boolean containsOnlySameIndentType(TableOfContentItemVO tableOfContentItemVO, NumberingType numberingType, String language) {
+        List<TableOfContentItemVO> chldItms = tableOfContentItemVO.getChildItems();
+        for(TableOfContentItemVO child : chldItms) {
+            if(child.getTocItem().getAknTag().value().equals("indent") &&
+                    StructureConfigUtils.getNumberingTypeByLanguage(child.getTocItem(), language) != numberingType) {
+                return false;
+            }
         }
         return true;
     }
@@ -152,29 +166,29 @@ public class MandateTocApiServiceImpl extends TocApiServiceImpl {
         return (tagValue.equals(POINT) || tagValue.equals(INDENT)) ? identLevel + 1 : identLevel;
     }
 
-    private boolean validateAgainstOtherIndentsInList(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem) {
+    private boolean validateAgainstOtherIndentsInList(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem, String language) {
         if (!getTagValueFromTocItemVo(targetItem).equals(INDENT)
                 && !getTagValueFromTocItemVo(targetItem).equals(POINT)
                 && targetItem != null && !targetItem.getChildItems().isEmpty()) {
             for (TableOfContentItemVO child : targetItem.getChildItems()) {
-                if (!validateAgainstOtherIndent(sourceItem, child)) {
+                if (!validateAgainstOtherIndent(sourceItem, child, language)) {
                     return false;
                 }
             }
         } else if (getTagValueFromTocItemVo(targetItem).equals(POINT)
                 || getTagValueFromTocItemVo(targetItem).equals(INDENT)) {
-            return validateAgainstOtherIndent(sourceItem, targetItem);
+            return validateAgainstOtherIndent(sourceItem, targetItem, language);
         } else if (getTagValueFromTocItemVo(targetItem).equals(LIST) && targetItem.getChildItems().isEmpty()) {
-            return validateAgainstOtherIndentsInList(sourceItem, targetItem.getParentItem());
+            return validateAgainstOtherIndentsInList(sourceItem, targetItem.getParentItem(), language);
         } else if (targetItem == null) {
             return false;
         }
         return true;
     }
 
-    private boolean validateAgainstOtherIndent(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem) {
-        NumberingType targetNumberingType = targetItem.getTocItem().getNumberingType();
-        NumberingType sourceNumberingType = sourceItem.getTocItem().getNumberingType();
+    private boolean validateAgainstOtherIndent(TableOfContentItemVO sourceItem, TableOfContentItemVO targetItem, String language) {
+        NumberingType targetNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(targetItem.getTocItem(), language);
+        NumberingType sourceNumberingType = StructureConfigUtils.getNumberingTypeByLanguage(sourceItem.getTocItem(), language);
         return targetNumberingType.equals(sourceNumberingType);
     }
 

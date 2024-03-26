@@ -23,7 +23,60 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>docstage</aknTag>
+            <root>false</root>
+            <draggable>false</draggable>
+            <childrenAllowed>false</childrenAllowed>
+            <display>false</display>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
+            <itemDescription>true</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>false</contentDisplayed>
+            <deletable>false</deletable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>false</sameParentAsChild>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>doctype</aknTag>
+            <root>false</root>
+            <draggable>false</draggable>
+            <childrenAllowed>false</childrenAllowed>
+            <display>false</display>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
+            <itemDescription>true</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>false</contentDisplayed>
+            <deletable>false</deletable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>false</sameParentAsChild>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>docpurpose</aknTag>
+            <root>false</root>
+            <draggable>false</draggable>
+            <childrenAllowed>false</childrenAllowed>
+            <display>false</display>
+            <itemNumber>none</itemNumber>
+            <itemHeading>none</itemHeading>
+            <itemDescription>true</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>false</contentDisplayed>
+            <deletable>false</deletable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>false</sameParentAsChild>
             <editable>false</editable>
         </tocItem>
 
@@ -42,7 +95,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -61,7 +113,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>false</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -80,7 +131,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -106,7 +156,8 @@
                 </profile>
             </profiles>
             <editable>true</editable>
-            <template><![CDATA[<citation refersTo="~legalBasis" xml:id="${id}" leos:editable="true"><p>${default.content.text}</p></citation>]]></template>
+            <template>
+                <![CDATA[<citation xml:id="_${id}" leos:editable="true"><p>${default.content.text}</p></citation>]]></template>
         </tocItem>
 
         <tocItem>
@@ -124,7 +175,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -135,7 +185,19 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <!-- Default Configuration for all languages -->
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>ARABIC_PARENTHESIS</numberingType>
+                </langNumConfig>
+                <!-- Configuration for specific languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -144,14 +206,14 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_PARENTHESIS</numberingType>
             <profiles>
                 <profile>
                     <profileName>inlineAknRecital</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
-            <template><![CDATA[<recital xml:id="${id}" leos:editable="true"><num leos:editable="false">${num}</num><p>${default.content.text}</p></recital>]]></template>
+            <template>
+                <![CDATA[<recital xml:id="_${id}" leos:editable="true"><num leos:editable="false">${num}</num><p>${default.content.text}</p></recital>]]></template>
         </tocItem>
 
         <tocItem>
@@ -161,7 +223,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>ROMAN_UPPER</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -170,9 +243,8 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ROMAN_UPPER</numberingType>
             <editable>false</editable>
-            <template><![CDATA[<part xml:id="${id}"><num>${num}</num><heading>${heading}</heading></part>]]></template>
+            <template><![CDATA[<part xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></part>]]></template>
         </tocItem>
 
         <tocItem>
@@ -182,7 +254,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>ROMAN_UPPER</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -191,9 +274,9 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ROMAN_UPPER</numberingType>
             <editable>false</editable>
-            <template><![CDATA[<title xml:id="${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
+            <template>
+                <![CDATA[<title xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
         </tocItem>
 
         <tocItem>
@@ -203,7 +286,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>HIGHER_ELEMENT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -212,9 +306,9 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_PARENTHESIS</numberingType>
             <editable>false</editable>
-            <template><![CDATA[<chapter xml:id="${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
+            <template>
+                <![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
         </tocItem>
 
         <tocItem>
@@ -224,7 +318,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>false</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>ARABIC_PARENTHESIS</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -233,9 +338,9 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_PARENTHESIS</numberingType>
             <editable>false</editable>
-            <template><![CDATA[<section xml:id="${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
+            <template>
+                <![CDATA[<section xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
         </tocItem>
 
         <tocItem>
@@ -245,8 +350,19 @@
             <childrenAllowed>false</childrenAllowed>
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
-            <itemHeading>mandatory</itemHeading>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>ARABIC</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
+            <itemHeading>optional</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>false</numberEditable>
             <contentDisplayed>true</contentDisplayed>
@@ -254,14 +370,73 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC</numberingType>
+            <tocItemTypes>
+                <tocItemType>
+                    <name>REGULAR</name>
+                    <subElementNumberingConfigs>
+                        <subElementNumberingConfig>
+                            <subElement>point</subElement>
+                            <langNumConfig langGroup="latin" auto="true">
+                                <numberingType>POINT_NUM</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="cyrillic" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="greek" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
+                        </subElementNumberingConfig>
+                        <subElementNumberingConfig>
+                            <subElement>indent</subElement>
+                            <langNumConfig langGroup="latin" auto="true">
+                                <numberingType>POINT_NUM</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="cyrillic" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="greek" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
+                        </subElementNumberingConfig>
+                    </subElementNumberingConfigs>
+                </tocItemType>
+                <tocItemType>
+                    <name>DEFINITION</name>
+                    <attribute>
+                        <attributeName>refersTo</attributeName>
+                        <attributeValue>~_ART_DEF</attributeValue>
+                    </attribute>
+                    <subElementNumberingConfigs>
+                        <subElementNumberingConfig>
+                            <subElement>point</subElement>
+                            <langNumConfig langGroup="latin" auto="true">
+                                <numberingType>POINT_NUM_DEF</numberingType>
+                            </langNumConfig>
+                        </subElementNumberingConfig>
+                        <subElementNumberingConfig>
+                            <subElement>indent</subElement>
+                            <langNumConfig langGroup="latin" auto="true">
+                                <numberingType>POINT_NUM_DEF</numberingType>
+                            </langNumConfig>
+                            <!-- Default Configuration for other languages -->
+                            <langNumConfig langGroup="cyrillic" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
+                            <langNumConfig langGroup="greek" auto="false">
+                                <numberingType>NONE</numberingType>
+                            </langNumConfig>
+                        </subElementNumberingConfig>
+                    </subElementNumberingConfigs>
+                </tocItemType>
+            </tocItemTypes>
             <profiles>
                 <profile>
                     <profileName>inlineAknArticle</profileName>
                 </profile>
             </profiles>
             <editable>true</editable>
-            <template><![CDATA[<article xml:id="${id}"><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph xml:id="${id}-par1"><num>1.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
+            <template>
+                <![CDATA[<article xml:id="_${id}"><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph xml:id="_${id}-par1"><num>1.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
         </tocItem>
 
         <tocItem>
@@ -271,7 +446,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
             <itemNumber>optional</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="true">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -280,7 +466,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_POSTFIXDOT</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -299,7 +484,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -318,7 +502,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -329,7 +512,18 @@
             <childrenAllowed>true</childrenAllowed>
             <display>false</display>
             <itemNumber>mandatory</itemNumber>
-            <autoNumbering>true</autoNumbering>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
             <itemHeading>none</itemHeading>
             <itemDescription>false</itemDescription>
             <numberEditable>false</numberEditable>
@@ -338,7 +532,100 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
+            <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>point</aknTag>
+            <root>false</root>
+            <draggable>false</draggable>
+            <childrenAllowed>true</childrenAllowed>
+            <display>false</display>
+            <itemNumber>mandatory</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>POINT_NUM_DEF</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
+            <itemHeading>none</itemHeading>
+            <itemDescription>false</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>true</contentDisplayed>
+            <deletable>true</deletable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>true</sameParentAsChild>
+            <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>indent</aknTag>
+            <root>false</root>
+            <draggable>false</draggable>
+            <childrenAllowed>false</childrenAllowed>
+            <display>false</display>
+            <itemNumber>mandatory</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>POINT_NUM</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
+            <itemHeading>none</itemHeading>
+            <itemDescription>false</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>true</contentDisplayed>
+            <deletable>true</deletable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>true</sameParentAsChild>
+            <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
+            <editable>false</editable>
+        </tocItem>
+
+        <tocItem>
+            <aknTag>indent</aknTag>
+            <root>false</root>
+            <draggable>false</draggable>
+            <childrenAllowed>false</childrenAllowed>
+            <display>false</display>
+            <itemNumber>mandatory</itemNumber>
+            <autoNumbering>
+                <langNumConfig langGroup="latin" auto="false">
+                    <numberingType>POINT_NUM_DEF</numberingType>
+                </langNumConfig>
+                <!-- Default Configuration for other languages -->
+                <langNumConfig langGroup="cyrillic" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+                <langNumConfig langGroup="greek" auto="false">
+                    <numberingType>NONE</numberingType>
+                </langNumConfig>
+            </autoNumbering>
+            <itemHeading>none</itemHeading>
+            <itemDescription>false</itemDescription>
+            <numberEditable>false</numberEditable>
+            <contentDisplayed>true</contentDisplayed>
+            <deletable>true</deletable>
+            <numWithType>false</numWithType>
+            <expandedByDefault>true</expandedByDefault>
+            <sameParentAsChild>true</sameParentAsChild>
+            <parentNameNumberingTypeDependency>article</parentNameNumberingTypeDependency>
             <editable>false</editable>
         </tocItem>
 
@@ -357,7 +644,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -376,7 +662,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <profileName>inlineAknClause</profileName>
@@ -400,10 +685,9 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
-                    <elementSelector>heading:not(article heading)</elementSelector>
+                    <elementSelector>heading:not(article heading):not([id^='deleted'])</elementSelector>
                     <profileName>inlineAknHeading</profileName>
                 </profile>
             </profiles>
@@ -425,7 +709,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>false</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
     </tocItems>

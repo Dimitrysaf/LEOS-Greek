@@ -135,6 +135,17 @@
                 <artifactId>maven-jaxb2-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>generate-langGroup</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <schemaDirectory>src/main/resources/schema/lang</schemaDirectory>
+                            <generateDirectory>target/generated-sources/lang</generateDirectory>
+                            <generatePackage>eu.europa.ec.leos.vo.lang</generatePackage>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>generate-structure</id>
                         <goals>
                             <goal>generate</goal>

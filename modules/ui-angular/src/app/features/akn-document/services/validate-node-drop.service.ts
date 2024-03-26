@@ -13,7 +13,7 @@ import {
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
 import { DocumentService } from '@/shared/services/document.service';
 import {
-  getActualTargetItem,
+  getActualTargetItem, getNumberingTypeByLanguage,
   isCrossheading,
   isDroppedOnPointOrIndent,
   isSourceDivision,
@@ -112,7 +112,7 @@ export abstract class ValidateTocService {
     const targetTocItem = targetItem.tocItem;
     const targetRules = [
       targetTocItem.aknTag.toUpperCase(),
-      targetTocItem.numberingType.toUpperCase(),
+      getNumberingTypeByLanguage(targetTocItem, this.documentConfig.langGroup).toUpperCase(),
     ].join('_');
     const targetTocItems: TocItem[] = this.documentConfig.tocRules[targetRules];
 

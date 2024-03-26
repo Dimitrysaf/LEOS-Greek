@@ -27,6 +27,7 @@ import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.EditableAttributeValue;
 import eu.europa.ec.leos.services.support.IdGenerator;
 import eu.europa.ec.leos.services.support.XPathCatalog;
@@ -38,7 +39,7 @@ import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.toc.StructureConfigUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
@@ -118,6 +119,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private static final String INS_END_TAG = "</ins>";
     private static final String INS_START_TAG = "<ins ";
     private static final String BACKSLASH_QUOTE = "\"";
+
     @Autowired
     private CloneContext cloneContext;
     @Autowired
@@ -138,6 +140,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected TrackChangesContext trackChangesContext;
     @Autowired
     protected CoEditionContext coEditionContext;
+    @Autowired
+    protected DocumentLanguageContext documentLanguageContext;
 
     @Override
     public byte[] addTrackChangesAttributesForMovedElement(byte[] xmlContent, String elementId, SoftActionType direction, String trackUser, String softUser,
@@ -388,7 +392,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     @Override
-    public byte[] createDocumentContentWithNewTocList(List<TableOfContentItemVO> tableOfContentItemVOs, byte[] content, User user, boolean isTrackChangesEnabled) {
+    public byte[] createDocumentContentWithNewTocList(List<TableOfContentItemVO> tableOfContentItemVOs, byte[] content, User user,
+            boolean isTrackChangesEnabled) {
         LOG.trace("Start building the document content for the new toc list");
         long startTime = System.currentTimeMillis();
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
@@ -413,7 +418,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     protected abstract Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
-                                                Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled);
+            Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled);
 
     @Override
     public String getElementValue(byte[] xmlContent, String xPath, boolean namespaceEnabled) {
@@ -1725,12 +1730,13 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 List<TocItem> tocItems = structureContextProvider.get().getTocItems();
                 List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
                 List<TocItem> foundTocItems = StructureConfigUtils.getTocItemsByName(tocItems, pointOrIndent.getNodeName());
-                TocItem tocItem = StructureConfigUtils.getTocItemByNumValue(numberingConfigs, foundTocItems, numValue, depth);
+                TocItem tocItem = StructureConfigUtils.getTocItemByNumValue(numberingConfigs, foundTocItems, numValue, depth,
+                        documentLanguageContext.getDocumentLanguage());
                 // Means it's a definition article
                 if (tocItem != null
-                        && tocItem.getNumberingType().equals(
+                        && StructureConfigUtils.getNumberingTypeByLanguage(tocItem, documentLanguageContext.getDocumentLanguage()).equals(
                                 StructureConfigUtils.getNumberingTypeByTagNameAndTocItemType(tocItems,
-                                        TocItemTypeName.DEFINITION, pointOrIndent.getNodeName()))) {
+                                        TocItemTypeName.DEFINITION, pointOrIndent.getNodeName(), documentLanguageContext.getDocumentLanguage()))) {
                     Attribute attribute =  StructureConfigUtils.getAttributeByTagNameAndTocItemType(tocItems, TocItemTypeName.DEFINITION, ARTICLE);
                     if (attribute != null) {
                         XercesUtils.addAttribute(node, attribute.getAttributeName(), attribute.getAttributeValue());

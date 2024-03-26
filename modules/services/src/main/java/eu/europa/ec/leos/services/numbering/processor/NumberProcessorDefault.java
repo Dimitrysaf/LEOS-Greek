@@ -30,12 +30,12 @@ public class NumberProcessorDefault extends NumberProcessorAbstract implements N
     }
 
     @Override
-    public void renumber(Node node, NumberConfig numberConfig, boolean numberChildren) {
+    public void renumber(Node node, NumberConfig numberConfig, boolean numberChildren, String language) {
         renumber(node, numberConfig, "");
-        renumberChildren(node, numberChildren);
+        renumberChildren(node, numberChildren, language);
     }
 
-    protected void renumberChildren(Node node, boolean numberChildren) {
+    protected void renumberChildren(Node node, boolean numberChildren, String language) {
         // no propagation for the default implementation
     }
 

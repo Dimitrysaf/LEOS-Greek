@@ -33,6 +33,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -69,13 +70,14 @@ public abstract class AnnexServiceImpl implements AnnexService {
     protected final XPathCatalog xPathCatalog;
     protected final TableOfContentProcessor tableOfContentProcessor;
     protected final TrackChangesContext trackChangesContext;
+    protected final DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     AnnexServiceImpl(AnnexRepository annexRepository, XmlNodeProcessor xmlNodeProcessor,
                      XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
                      NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
                      ValidationService validationService, DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
-                     MessageHelper messageHelper, XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
+                     MessageHelper messageHelper, XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
         this.annexRepository = annexRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
@@ -88,6 +90,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         this.xPathCatalog = xPathCatalog;
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.trackChangesContext = trackChangesContext;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -101,6 +104,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Finding Annex... [id={}]", id);
         Annex annex = annexRepository.findAnnexById(id, Annex.class, latest);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 
@@ -110,6 +114,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Finding Annex version... [it={}]", id);
         Annex annex = annexRepository.findAnnexById(id, Annex.class, false);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 
@@ -220,6 +225,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         byte[] contentBytes = content.getSource().getBytes();
         annex = annexRepository.updateAnnex(id, metadata, contentBytes, versionType, comment);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 
@@ -236,6 +242,8 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Validate.notNull(annex, "Annex is required");
         Validate.notNull(tocList, "Table of content list is required");
         byte[] newXmlContent;
+        String language = annex.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
 
         newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(annex), user, annex.isTrackChangesEnabled());
         switch(structureType) {
@@ -268,6 +276,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         LOG.trace("Finding Annex by ref... [ref=" + ref + "]");
         Annex annex = annexRepository.findAnnexByRef(ref);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 
@@ -341,6 +350,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(annex) : content, metadata);
         annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 
@@ -358,6 +368,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         updatedBytes = xmlContentProcessor.addTrackChangesAttributes(updatedBytes);
         annex = annexRepository.updateAnnex(annex.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 
@@ -367,6 +378,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Annex annex = annexRepository.createAnnexFromContent(path, name, metadata, content);
         annex = annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 
@@ -376,6 +388,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
         Annex annex = annexRepository.createClonedAnnexFromContent(path, name, metadata, cloneDocumentMetadataVO, content);
         annex = annexRepository.updateAnnex(annex.getId(), metadata, content, VersionType.MINOR, actionMessage);
         trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         return annex;
     }
 }

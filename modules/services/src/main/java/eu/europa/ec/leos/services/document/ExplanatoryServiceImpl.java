@@ -21,6 +21,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -62,6 +63,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     private final MessageHelper messageHelper;
     private final XPathCatalog xPathCatalog;
     private final TrackChangesContext trackChangesContext;
+    private final DocumentLanguageContext documentLanguageContext;
 
     private final TableOfContentProcessor tableOfContentProcessor;
 
@@ -72,7 +74,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
                            NumberService numberService, XmlNodeConfigProcessor xmlNodeConfigProcessor,
                            ValidationService validationService, DocumentVOProvider documentVOProvider,
                            TableOfContentProcessor tableOfContentProcessor, MessageHelper messageHelper,
-                           XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
+                           XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
         this.explanatoryRepository = explanatoryRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -86,6 +88,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         this.numberService = numberService;
         this.xPathCatalog = xPathCatalog;
         this.trackChangesContext = trackChangesContext;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -102,6 +105,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         byte[] updatedBytes = updateDataInXml((content == null) ? getContent(explanatory) : content, metadata);
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, updatedBytes, VersionType.MINOR, actionMessage);
         trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         return explanatory;
     }
 
@@ -111,6 +115,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         Explanatory explanatory = explanatoryRepository.createExplanatoryFromContent(path, name, metadata, content);
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, content, VersionType.MINOR, actionMessage);
         trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         return explanatory;
     }
 
@@ -125,6 +130,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Finding Explanatory... [id={}]", id);
         Explanatory explanatory = explanatoryRepository.findExplanatoryById(id, Explanatory.class, true);
         trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         return explanatory;
     }
 
@@ -134,6 +140,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Finding Explanatory version... [it={}]", id);
         Explanatory explanatory = explanatoryRepository.findExplanatoryById(id, Explanatory.class, false);
         trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         return explanatory;
     }
 
@@ -152,7 +159,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     @Override
     public Explanatory updateExplanatory(Explanatory explanatory, byte[] updatedExplanatoryContent, VersionType versionType, String comment) {
         LOG.trace("Updating Explanatory Xml Content... [id={}]", explanatory.getId());
-
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedExplanatoryContent, versionType, comment);
         explanatory = updateInternalReferencesAsync(explanatory);
         //call validation on document with updated content
@@ -166,7 +173,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Updating Explanatory... [id={}, updatedMetadata={}, versionType={}, comment={}]", explanatory.getId(), updatedMetadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         byte[] updatedBytes = updateDataInXml(getContent(explanatory), updatedMetadata);
-
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedMetadata, updatedBytes, versionType, comment);
         explanatory = updateInternalReferencesAsync(explanatory);
         //call validation on document with updated content
@@ -181,7 +188,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Updating Explanatory... [id={}, updatedMetadata={}, versionType={}, comment={}]", explanatory.getId(), metadata, versionType, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
         updatedExplanatoryContent = updateDataInXml(updatedExplanatoryContent, metadata);
-
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), metadata, updatedExplanatoryContent, versionType, comment);
         explanatory = updateInternalReferencesAsync(explanatory);
         //call validation on document with updated content
@@ -195,6 +202,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     public Explanatory updateExplanatory(Explanatory explanatory, byte[] updatedExplanatoryContent, String comment) {
         LOG.trace("Updating Explanatory... [id={}, updatedMetadata={} , comment={}]", explanatory.getId(), updatedExplanatoryContent, comment);
         Stopwatch stopwatch = Stopwatch.createStarted();
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateExplanatory(explanatory.getId(), updatedExplanatoryContent, VersionType.MINOR, comment);
         explanatory = updateInternalReferencesAsync(explanatory);
         LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
@@ -205,6 +213,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     public Explanatory updateExplanatoryWithMilestoneComments(Explanatory explanatory, List<String> milestoneComments, VersionType versionType, String comment){
         LOG.trace("Updating Explanatory... [id={}, milestoneComments={}, versionType={}, comment={}]", explanatory.getId(), milestoneComments, versionType, comment);
         final byte[] updatedBytes = getContent(explanatory);
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         explanatory = explanatoryRepository.updateMilestoneComments(explanatory.getId(), milestoneComments, updatedBytes, versionType, comment);
         return updateInternalReferencesAsync(explanatory);
     }
@@ -213,13 +222,14 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     public Explanatory updateExplanatoryWithMilestoneComments(String ref, String explanatoryId, List<String> milestoneComments){
         LOG.trace("Updating Explanatory... [id={}, milestoneComments={}]", explanatoryId, milestoneComments);
         Explanatory explanatory = explanatoryRepository.updateMilestoneComments(ref, explanatoryId, milestoneComments);
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         return updateInternalReferencesAsync(explanatory);
     }
 
     @Override
     public List<Explanatory> findVersions(String id) {
         LOG.trace("Finding Explanatory versions... [id={}]", id);
-        //LEOS-2813 We have memory issues is we fetch the content of all versions.
+        //LEOS-2813 We have memory issues if we fetch the content of all versions
         return explanatoryRepository.findExplanatoryVersions(id,false);
     }
 
@@ -232,6 +242,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         final byte[] contentBytes = content.getSource().getBytes();
         explanatory = explanatoryRepository.updateExplanatory(id, metadata, contentBytes, versionType, comment);
         trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         return explanatory;
     }
 
@@ -248,8 +259,10 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         Validate.notNull(explanatory, "Explanatory is required");
         Validate.notNull(tocList, "Table of content list is required");
         byte[] newXmlContent;
-
-        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(explanatory), user, explanatory.isTrackChangesEnabled());
+        String language = explanatory.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
+        newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(explanatory), user,
+                explanatory.isTrackChangesEnabled());
         if (explanatoryStructureType != null && LEVEL.equals(explanatoryStructureType.getType())) {
             newXmlContent = numberService.renumberLevel(newXmlContent);
         }
@@ -275,6 +288,7 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
         LOG.trace("Finding Explanatory by ref... [ref=" + ref + "]");
         Explanatory explanatory = explanatoryRepository.findExplanatoryByRef(ref);
         trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         return explanatory;
     }
 
@@ -342,10 +356,11 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     
     @Override
     public Explanatory updateExplanatory(String ref, String id, Map<String, Object> properties, boolean latest) {
-    	LOG.trace("Updating Explanatory Xml Content... [id={}]", id);
-    	Stopwatch stopwatch = Stopwatch.createStarted();
-    	Explanatory explanatory = explanatoryRepository.updateExplanatory(ref, id, properties, latest);
-    	LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        LOG.trace("Updating Explanatory Xml Content... [id={}]", id);
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        Explanatory explanatory = explanatoryRepository.updateExplanatory(ref, id, properties, latest);
+        LOG.trace("Updated Explanatory ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
         trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
         return explanatory;
     }

@@ -19,7 +19,7 @@
                         <section leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_section_d730Gv">
                             <num leos:origin="cn">#</num>
                             <heading>Section heading...</heading>
-                            <level leos:depth="5" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_level_4Vw9Hz">
+                            <level leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_level_4Vw9Hz">
                                 <num leos:editable="false" leos:origin="cn">#</num>
                                 <subparagraph leos:softaction="add" leos:softactionroot="true" leos:softdate="2022-06-17T09:41:54.119+02:00" leos:softuser="demo jane(Ext)" xml:id="_akn_subparagraph_489CXK">
                                     <content>

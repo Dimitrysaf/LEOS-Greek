@@ -18,7 +18,7 @@ import { DocumentService } from '@/shared/services/document.service';
 import {
   containsItem,
   containsOnlySameIndentType,
-  getIndentLevel,
+  getIndentLevel, getNumberingTypeByLanguage,
   isIndentAllowed,
   isNumSoftDeleted,
   validateAgainstOtherIndentsInList,
@@ -47,7 +47,7 @@ export class ValidateTocMandateService extends ValidateTocService {
       actualTargetItem = targetItem;
     }
     const droppedElementTagName = sourceItem.tocItem.aknTag;
-    const droppedElementTagNumberingType = sourceItem.tocItem.numberingType;
+    const droppedElementTagNumberingType = getNumberingTypeByLanguage(sourceItem.tocItem, this.documentConfig.langGroup);
 
     const targetName = actualTargetItem.tocItem.aknTag;
     let indentAllowed = false;
@@ -81,10 +81,11 @@ export class ValidateTocMandateService extends ValidateTocService {
               !containsOnlySameIndentType(
                 actualTargetItem,
                 droppedElementTagNumberingType,
+                this.documentConfig.langGroup
               ))) ||
           (targetName === droppedElementTagName &&
             containsItem(actualTargetItem, LIST)) ||
-          !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem)
+          !validateAgainstOtherIndentsInList(tocTree, sourceItem, targetItem, this.documentConfig.langGroup)
         ) {
           validationResult.success = false;
           if (!indentAllowed) {
