@@ -35,6 +35,7 @@ import java.util.Set;
 public class ConfigServiceImpl implements ConfigService {
 
     private final Properties applicationProperties;
+    private final Properties integrationProperties;
     private final SecurityContext securityContext;
     private final LeosPermissionAuthorityMapHelper authorityMapHelper;
     private final MessageHelper messageHelper;
@@ -42,9 +43,10 @@ public class ConfigServiceImpl implements ConfigService {
     private final TokenService tokenService;
 
     @Autowired
-    public ConfigServiceImpl(Properties applicationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
+    public ConfigServiceImpl(Properties applicationProperties, Properties integrationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
             Provider<StructureContext> structureContextProvider, MessageHelper messageHelper, ProfileService profileService, TokenService tokenService) {
         this.applicationProperties = applicationProperties;
+        this.integrationProperties = integrationProperties;
         this.securityContext = securityContext;
         this.authorityMapHelper = authorityMapHelper;
         this.messageHelper = messageHelper;
@@ -58,9 +60,9 @@ public class ConfigServiceImpl implements ConfigService {
 
         String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
         boolean implicitSaveEnabled = Boolean.parseBoolean(applicationProperties.getProperty("implicitSaveAndClose.enabled"));
-        boolean isSpellCheckerEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.spell.checker.enabled"));
-        String spellCheckServiceUrl = applicationProperties.getProperty("leos.spell.checker.service.url");
-        String spellCheckSourceUrl = applicationProperties.getProperty("leos.spell.checker.source.url");
+        boolean isSpellCheckerEnabled = Boolean.parseBoolean(integrationProperties.getProperty("leos.spell.checker.enabled"));
+        String spellCheckServiceUrl = integrationProperties.getProperty("leos.spell.checker.service.url");
+        String spellCheckSourceUrl = integrationProperties.getProperty("leos.spell.checker.source.url");
         boolean searchAndReplaceEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.searchAndReplace.enabled"));
         boolean sendForRevisionEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.sendForRevision.enabled"));
         boolean coverPageSeparated = Boolean.parseBoolean(applicationProperties.getProperty("leos.coverpage.separated"));
