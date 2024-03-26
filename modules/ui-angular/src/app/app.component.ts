@@ -10,7 +10,7 @@ import {
 } from '@eui/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription, map } from 'rxjs';
+import { Observable, Subscription, map, of } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { AppLocalStorageService } from '@/core/services/app-local-storage.service';
@@ -18,6 +18,8 @@ import { AppLocalStorageService } from '@/core/services/app-local-storage.servic
 import { Profile } from './shared/models/leos.model';
 import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
 import { NotificationsService } from './shared/services/notifications.service';
+import { Notification } from './shared/models/notification.model';
+import { NOTIFICATIONS } from './shared/components/notification-card-container/notification-card-container.component';
 
 @Component({
   selector: 'app-root',
@@ -52,6 +54,8 @@ export class AppComponent implements OnInit, OnDestroy {
     { id: 4, label: 'app.support.decide' },
   ];
 
+  notifications: Notification[] = NOTIFICATIONS;
+
   constructor(
     private store: Store<any>,
     private config: AppConfigService,
@@ -61,11 +65,6 @@ export class AppComponent implements OnInit, OnDestroy {
     private notificationsService: NotificationsService,
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
-    // This will be uncommented when the BE endpoint will be implemented.
-    // Checks if the notification package contains any item.
-    // this.contentAvailable$ = this.notificationsService
-    //   .fetchNotifications()
-    //   .pipe(map((notifications) => notifications && notifications.length > 0));
     this.i18nState = this.store.select(getI18nState);
     this.userPreferencesState = this.store.select(getUserPreferences);
     this.userState = this.store.select(getUserState);
@@ -79,6 +78,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const lang = this.storage.get('lang');
+    this.checkIfContentAvailable();
     this.store.dispatch(new UpdateUserPreferencesAction({ lang }));
     this.subs.push(
       this.config.config.subscribe((config) => {
@@ -136,5 +136,16 @@ export class AppComponent implements OnInit, OnDestroy {
 
   toggleNotifications(): void {
     this.notificationsService.toggleNotifications();
+  }
+
+  checkIfContentAvailable(): void {
+    this.contentAvailable$ = of(this.notifications).pipe(
+      map((notifications) =>
+        notifications.some((notification) => {
+          const currentTime = Math.floor(Date.now() / 1000);
+          return notification.end > currentTime;
+        }),
+      ),
+    );
   }
 }

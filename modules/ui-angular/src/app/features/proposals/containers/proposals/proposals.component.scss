@@ -2,6 +2,9 @@
   .eui-page-column__header:first-of-type {
     padding: 0 0 var(--eui-base-spacing-xs) 0;
   }
+  .eui-page-column__body--interactive-scrollbars:hover {
+    z-index: 0;
+  }
 }
 
 .proposals-container {
