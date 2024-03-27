@@ -373,10 +373,6 @@ export class MergeContributionsService {
       });
   }
 
-  onClickSendFeedback() {
-    // do nothing for the moment
-  }
-
   onClickMarkAsProcessed() {
     this.toggleIsContributionDeclinedOrProcessed();
     this.openMarkContributionAsProcessedDialog();
@@ -472,6 +468,43 @@ export class MergeContributionsService {
         this.onCancelMarkContributionAsProcessed();
       },
     });
+  }
+
+  onClickSendFeedback() {
+    this.dialogService.openDialog({
+      title: this.translate.instant(
+        'page.editor.contribution.actions.view.and.merge.actions.send.feedback',
+      ),
+      content: this.translate.instant(
+        'page.editor.contribution.actions.view.and.merge.actions.send.feedback.confirmation',
+      ),
+      acceptLabel: this.translate.instant('global.actions.continue'),
+      accept: () => {
+        this.sendFeedback();
+      },
+      dismiss: () => {},
+    });
+  }
+  
+  private sendFeedback() {
+    this.http
+      .post(`${apiBaseUrl}/secured/contribution/milestones/sendFeedback`, {
+        documentRef: this.documentRef,
+        proposalRef: this.contribution.proposalRef,
+        legFileName: this.contribution.legFileName,
+      })
+      .subscribe(() => {
+        this.appShell.growl({
+          severity: 'success',
+          summary: this.translate.instant('global.notifications.title.success'),
+          detail: this.translate.instant(
+            'page.editor.contribution.actions.view.and.merge.actions.send.feedback.success',
+          ),
+          life: 3000,
+          isGrowlSticky: false,
+          position: 'bottom-right',
+        });
+      });
   }
 
   private fetchDocumentViewForContribution(contribution: ContributionVO) {

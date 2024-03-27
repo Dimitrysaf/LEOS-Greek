@@ -372,6 +372,8 @@
   "page.editor.contribution.actions.view.and.merge.actions.apply.changes": "Accepter tous les changements",
   "page.editor.contribution.actions.view.and.merge.actions.apply.changes.tc": "Tout accepter avec le suivi des modifications",
   "page.editor.contribution.actions.view.and.merge.actions.send.feedback": "Envoyer un retour",
+  "page.editor.contribution.actions.view.and.merge.actions.send.feedback.confirmation": "Etes-vous sûr de vouloir envoyer des commentaires?",
+  "page.editor.contribution.actions.view.and.merge.actions.send.feedback.success": "Notification de commentaires envoyée!",
   "page.editor.contribution.actions.decline": "Décliner la contribution",
   "page.editor.contribution.decline.modal-title": "Décliner la contribution: confirmation",
   "page.editor.contribution.decline.modal-text": "Etes-vous sûr de vouloir décliner la contribution ?",

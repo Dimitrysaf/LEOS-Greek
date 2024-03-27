@@ -371,6 +371,8 @@
   "page.editor.contribution.actions.view.and.merge.actions.apply.changes": "Apply all changes",
   "page.editor.contribution.actions.view.and.merge.actions.apply.changes.tc": "Apply all with track changes",
   "page.editor.contribution.actions.view.and.merge.actions.send.feedback": "Send feedback",
+  "page.editor.contribution.actions.view.and.merge.actions.send.feedback.confirmation": "Are you sure to send feedback?",
+  "page.editor.contribution.actions.view.and.merge.actions.send.feedback.success": "Feedback notification sent!",
   "page.editor.contribution.actions.decline": "Decline contribution",
   "page.editor.contribution.decline.modal-title": "Decline contribution: confirmation",
   "page.editor.contribution.decline.modal-text": "Are you sure to decline this contribution?",
