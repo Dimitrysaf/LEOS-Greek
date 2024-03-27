@@ -342,7 +342,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -354,7 +353,7 @@
             <display>false</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>POINT_NUM</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -373,7 +372,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <editable>false</editable>
         </tocItem>
     </tocItems>

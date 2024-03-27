@@ -65,7 +65,7 @@ public abstract class XmlContentProcessorTest extends LeosTest {
     @Mock
     protected SecurityContext securityContext;
     @Mock
-    private ConfigurationRepository configurationRepository;
+    protected ConfigurationRepository configurationRepository;
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupServiceImpl languageGroupService;
     @InjectMocks

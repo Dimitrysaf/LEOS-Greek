@@ -342,7 +342,7 @@ public class StructureConfigUtils {
         return tocItem != null && (getLangNumConfigByLanguage(tocItem.getAutoNumbering().getLangNumConfigs(), language).isAuto());
     }
 
-    private static LangNumConfig getLangNumConfigByLanguage(List<LangNumConfig> langNumConfigs, String lang) {
+    public static LangNumConfig getLangNumConfigByLanguage(List<LangNumConfig> langNumConfigs, String lang) {
         String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), lang);
         return langNumConfigs.stream().filter(config ->
                 config.getLangGroup().equalsIgnoreCase(group)).findFirst().get();
