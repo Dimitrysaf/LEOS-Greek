@@ -37,6 +37,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -90,6 +91,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private final ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
     private final DocumentViewService<XmlDocument> documentViewService;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
+    private final DocumentLanguageContext documentLanguageContext;
 
 
     @Value("${leos.clone.originRef}")
@@ -115,7 +117,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       TrackChangesContext trackChangesContext, DocumentContentService documentContentService,
                                       ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI,
                                       DocumentViewService<XmlDocument> documentViewService,
-                                      RepositoryPropertiesMapper repositoryPropertiesMapper) {
+                                      RepositoryPropertiesMapper repositoryPropertiesMapper,
+                                      DocumentLanguageContext documentLanguageContext) {
         this.createCollectionService = createCollectionService;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
@@ -137,6 +140,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.comparisonDelegateAPI = comparisonDelegateAPI;
         this.documentViewService = documentViewService;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     private XmlDocument findDocumentByRef(String docRef) throws NotFoundException {
@@ -265,7 +269,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(documentRef, docClass);
         final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
         this.populateCloneProposalMetadata(Validate.notNull(proposal));
-        String language = proposal.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(proposal.getMetadata().get().getLanguage());
 
         final List<MergeActionVO> mergeActions = Optional.ofNullable(request.getMergeActions()).orElse(new ArrayList<>());
         final ContributionVO contribution = Optional.ofNullable(mergeActions)

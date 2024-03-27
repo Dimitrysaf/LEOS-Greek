@@ -74,6 +74,7 @@ import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -154,6 +155,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
     @Autowired
     RepositoryPropertiesMapper repositoryPropertiesMapper;
+    @Autowired
+    DocumentLanguageContext documentLanguageContext;
     @Autowired
     @Qualifier("applicationProperties")
     private Properties applicationProperties;
@@ -559,6 +562,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(annex);
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         populateCloneProposalMetadata(proposal);
         byte[] newXmlContent = trackChangesProcessor.acceptChange(annex, elementId, trackChangeAction);
         String language = annex.getMetadata().get().getLanguage();
@@ -577,7 +581,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         this.setStructureContext(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(annex);
-
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         byte[] newXmlContent = trackChangesProcessor.rejectChange(annex, elementId, trackChangeAction);
         String language = annex.getMetadata().get().getLanguage();
         newXmlContent = annexProcessor.renumberingAndPostProcessing(newXmlContent, language);

@@ -76,6 +76,7 @@ import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -162,6 +163,8 @@ public class BillApiServiceImpl implements BillApiService {
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
     @Autowired
     RepositoryPropertiesMapper repositoryPropertiesMapper;
+    @Autowired
+    DocumentLanguageContext documentLanguageContext;
 
 
     protected Provider<BillContextService> context;
@@ -418,7 +421,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(bill);
-
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         byte[] newXmlContent = trackChangesProcessor.acceptChange(bill, elementId, trackChangeAction);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
 
@@ -438,7 +441,7 @@ public class BillApiServiceImpl implements BillApiService {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(bill);
-
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         byte[] newXmlContent = trackChangesProcessor.rejectChange(bill, elementId, trackChangeAction);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
 

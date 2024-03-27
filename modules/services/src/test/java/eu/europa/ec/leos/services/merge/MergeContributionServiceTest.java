@@ -20,7 +20,6 @@ import eu.europa.ec.leos.services.document.MemorandumService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.MergeActionVO;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorTest;
 import eu.europa.ec.leos.services.store.LegService;
@@ -76,7 +75,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     protected XPathCatalog xPathCatalog = spy(new XPathCatalog());
 
     @InjectMocks
-    XmlContentProcessorImpl xmlContentProcessor = new XmlContentProcessorProposal();
+    protected XmlContentProcessorProposal xmlContentProcessor = spy(new XmlContentProcessorProposal());
 
     @InjectMocks
     eu.europa.ec.leos.services.document.ContributionService contributionService = new ContributionServiceProposalImpl<Bill>(
@@ -86,7 +85,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
             memorandumService, legService, xmlContentProcessor, repositoryPropertiesMapper);
 
     @InjectMocks
-    MergeContributionService mergeContributionService = new MergeContributionService(xmlContentProcessor, contributionService);
+    MergeContributionService mergeContributionService = new MergeContributionService(xmlContentProcessor, contributionService, documentLanguageContext);
 
     private ContributionVO contribution;
     private ContributionVO contribution2;
@@ -117,6 +116,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     @Before
     public void setup() {
         super.setup();
+
         docContent = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml");
         docContent2 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest2.xml");
         contributionContent = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest.xml");

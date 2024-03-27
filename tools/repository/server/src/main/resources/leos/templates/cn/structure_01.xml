@@ -480,7 +480,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>POINT_NUM</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -518,7 +518,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>POINT_NUM_DEF</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -556,7 +556,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>POINT_NUM</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
@@ -593,7 +593,7 @@
             <display>true</display>
             <itemNumber>mandatory</itemNumber>
             <autoNumbering>
-                <langNumConfig langGroup="latin" auto="false">
+                <langNumConfig langGroup="latin" auto="true">
                     <numberingType>POINT_NUM_DEF</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->

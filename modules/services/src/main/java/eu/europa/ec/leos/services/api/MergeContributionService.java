@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.services.api;
+    package eu.europa.ec.leos.services.api;
 
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -10,12 +10,16 @@ import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.LangNumConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -98,16 +102,20 @@ public class MergeContributionService {
 
     private final XmlContentProcessor xmlContentProcessor;
     private final ContributionService contributionService;
+    private final DocumentLanguageContext documentLanguageContext;
 
     private final int MAX_LENGTH_STR_FOUND = 20;
     private List<String> impactedElements;
     private List<String> mainElements;
     private List<TocItem> tocItemsList;
 
+    @Autowired
     public MergeContributionService(XmlContentProcessor xmlContentProcessor,
-                                    ContributionService contributionService) {
+                                    ContributionService contributionService,
+                                    DocumentLanguageContext documentLanguageContext) {
         this.xmlContentProcessor = xmlContentProcessor;
         this.contributionService = contributionService;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     //Main method: merging the merge actions contained in the request
@@ -1232,12 +1240,16 @@ public class MergeContributionService {
         Node numNode = getFirstChild(nodeToRestore, getNumTag(nodeToRestore.getNodeName()));
         Optional<TocItem> tocItem =
                 this.tocItemsList.stream().filter((item) -> item.getAknTag().name().equalsIgnoreCase(nodeToRestore.getNodeName())).findFirst();
-        if (numNode != null && (tocItem.isPresent() && tocItem.get().isAutoNumbering())) {
-            numNode.setTextContent("#");
-            XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
-            XercesUtils.removeAttribute(numNode, LEOS_TITLE);
-            XercesUtils.removeAttribute(numNode, LEOS_UID);
-            XercesUtils.addAttribute(numNode, LEOS_ORIGIN_ATTR, EC);
+        if(tocItem.isPresent() && tocItem.get().getAutoNumbering() != null) {
+            LangNumConfig langNumConfig = StructureConfigUtils.getLangNumConfigByLanguage(tocItem.get().getAutoNumbering().getLangNumConfigs(),
+                    documentLanguageContext.getDocumentLanguage());
+            if (numNode != null && (langNumConfig != null && langNumConfig.isAuto())) {
+                numNode.setTextContent("#");
+                XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
+                XercesUtils.removeAttribute(numNode, LEOS_TITLE);
+                XercesUtils.removeAttribute(numNode, LEOS_UID);
+                XercesUtils.addAttribute(numNode, LEOS_ORIGIN_ATTR, EC);
+            }
         }
     }
 

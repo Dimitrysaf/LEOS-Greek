@@ -25,11 +25,12 @@ import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import eu.europa.ec.leos.vo.structure.LangNumConfig;
+import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.Validate;
@@ -56,10 +57,16 @@ import java.util.Optional;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.ELEMENTS_WITHOUT_CONTENT;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentHelper.hasTocItemTrackChangeAction;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.updateTocItemTypeAttributes;
+import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getDescendants;
 import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
+import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
+import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
+import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CITATION;
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
@@ -76,8 +83,8 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ID_TO_BE_REMOVED
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ID_TO_BE_RESTORED;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_INITIAL_NUM_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_LIST_TYPE_ATTR;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBER_ORIGIN;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ORIGIN_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_RENUMBER_ORIGIN;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_DELETE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ROOT_ATTR;
@@ -107,12 +114,6 @@ import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
-import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.getId;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
-import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
-import static eu.europa.ec.leos.services.support.XercesUtils.updateXMLIDAttributeFullStructureNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
 import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
 
@@ -130,6 +131,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     private NumberProcessorHandler numberProcessorHandler;
     @Autowired
     protected NumberConfigFactory numberConfigFactory;
+
 
     public Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
                                     Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled) {
@@ -429,11 +431,16 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         Node numNode = getFirstChild(nodeToRestore, getNumTag(nodeToRestore.getNodeName()));
         Optional<TocItem> tocItem =
                 structureContextProvider.get().getTocItems().stream().filter((item) -> item.getAknTag().name().equalsIgnoreCase(nodeToRestore.getNodeName())).findFirst();
-        if (numNode != null && (tocItem.isPresent() && tocItem.get().isAutoNumbering())) {
-            numNode.setTextContent("#");
-            XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
-            XercesUtils.removeAttribute(numNode, LEOS_TITLE);
-            XercesUtils.removeAttribute(numNode, LEOS_UID);
+        if(tocItem.isPresent() && tocItem.get().getAutoNumbering() != null) {
+            LangNumConfig langNumConfig = StructureConfigUtils.getLangNumConfigByLanguage(tocItem.get().getAutoNumbering().getLangNumConfigs(),
+                    documentLanguageContext.getDocumentLanguage());
+
+            if (numNode != null && (langNumConfig != null && langNumConfig.isAuto())) {
+                numNode.setTextContent("#");
+                XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
+                XercesUtils.removeAttribute(numNode, LEOS_TITLE);
+                XercesUtils.removeAttribute(numNode, LEOS_UID);
+            }
         }
     }
 
@@ -477,11 +484,16 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 Node numNode = getFirstChild(nodeToRestore, getNumTag(nodeToRestore.getNodeName()));
                 Optional<TocItem> tocItem =
                         structureContextProvider.get().getTocItems().stream().filter((item) -> item.getAknTag().name().equalsIgnoreCase(nodeToRestore.getNodeName())).findFirst();
-                if (numNode != null && (tocItem.isPresent() && tocItem.get().isAutoNumbering())) {
-                    numNode.setTextContent("#");
-                    XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
-                    XercesUtils.removeAttribute(numNode, LEOS_TITLE);
-                    XercesUtils.removeAttribute(numNode, LEOS_UID);
+                if(tocItem.isPresent() && tocItem.get().getAutoNumbering() != null) {
+                    LangNumConfig langNumConfig = StructureConfigUtils.getLangNumConfigByLanguage(tocItem.get().getAutoNumbering().getLangNumConfigs(),
+                            documentLanguageContext.getDocumentLanguage());
+
+                    if (numNode != null && (langNumConfig != null && langNumConfig.isAuto())) {
+                        numNode.setTextContent("#");
+                        XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
+                        XercesUtils.removeAttribute(numNode, LEOS_TITLE);
+                        XercesUtils.removeAttribute(numNode, LEOS_UID);
+                    }
                 }
             }
             if (!letsRestore && (idAttrVal.equals(originId) || idAttrVal.equals(destId))) {
