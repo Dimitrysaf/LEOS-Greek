@@ -1,13 +1,15 @@
 <form [formGroup]="uploadForm" enctype="multipart/form-data">
-  <span>{{ 'page.workspace.upload-cn.button.label' | translate }}</span>
-  <eui-file-upload
-    #uploadFile
-    formControlName="jsonFile"
-    [isMultiple]="false"
-    [accept]="'.json'"
-    (drop)="onDrop()"
-    [hasResetButton]="false"
-  ></eui-file-upload>
+  <div class="button-text-container">
+    <span>{{ 'app.notification.upload.label.text' | translate }}</span>
+    <eui-file-upload
+      #uploadFile
+      formControlName="jsonFile"
+      [isMultiple]="false"
+      [accept]="'.json'"
+      (drop)="onDrop()"
+      [hasResetButton]="false"
+    ></eui-file-upload>
+  </div>
 </form>
 <div class="app-dialog-footer-content">
   <button euiButton (click)="closeDialog()">

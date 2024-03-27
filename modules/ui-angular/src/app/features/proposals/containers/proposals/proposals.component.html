@@ -51,16 +51,19 @@
           <div class="eui-u-flex eui-u-flex-justify-content-end app-u-gap-m">
             <button
               euiButton
-              [euiPrimary]="environmentService.isCouncil()"
-              [euiSecondary]="!environmentService.isCouncil()"
+              euiPrimary
               (click)="createProposalService.openProposalUploadDialog()"
+              *ngIf="environmentService.isCouncil()"
             >
-              {{
-                (environmentService.isCouncil()
-                  ? 'page.workspace.upload-cn.button.text'
-                  : 'page.workspace.upload.button.text'
-                ) | translate
-              }}
+              {{ 'page.workspace.upload-cn.button.text' | translate }}
+            </button>
+            <button
+              euiButton
+              euiSecondary
+              (click)="createProposalService.openProposalUploadDialog()"
+              *ngIf="!environmentService.isCouncil() && canUpload"
+            >
+              {{ 'page.workspace.upload.button.text' | translate }}
             </button>
             <button
               euiButton

@@ -90,7 +90,7 @@ export class NotificationCardContainerComponent implements OnInit, OnDestroy {
     const dialog = this.euiDialogService.openDialog(
       new EuiDialogConfig({
         dialogId: 'upload-id',
-        title: this.translateService.instant('page.workspace.upload.title'),
+        title: this.translateService.instant('app.notification.upload.label'),
         bodyComponent: {
           component: NotificationUploadComponent,
           config: {
