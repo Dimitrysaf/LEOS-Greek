@@ -13,12 +13,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.nio.charset.StandardCharsets;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +28,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static eu.europa.ec.leos.services.support.LeosXercesUtils.DATE_FORMAT;
 import static eu.europa.ec.leos.services.support.XmlHelper.AKOMANTOSO;
 import static eu.europa.ec.leos.services.support.XmlHelper.parseXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
@@ -48,7 +46,6 @@ public class SearchEngineImpl implements SearchEngine {
     private static List<String> tagsToExcludeHighlight = Arrays.asList(META, AUTHORIAL_NOTE);
     private static List<String> tagsTrackChanges = Arrays.asList(DELETE_TAG);
     private static List<String> customInlineTags = Arrays.asList(AUTHORIAL_NOTE, "signature", "placeholder", "omissis", "date", "mref");
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX").withZone(ZoneId.systemDefault());
 
     private String searchableString;
     private List<Index> indexesForString;
@@ -570,10 +567,10 @@ public class SearchEngineImpl implements SearchEngine {
         if(userLogin != null && userName!= null) {
             XercesUtils.addAttribute(deleteNode, "leos:uid", userLogin);
             XercesUtils.addAttribute(deleteNode, "leos:title",
-                    new StringBuilder(userName).append(" : ").append(DATE_FORMAT.format(new Date().toInstant())).toString() );
+                    new StringBuilder(userName).append(" : ").append(ZonedDateTime.now().format(DATE_FORMAT)).toString());
             XercesUtils.addAttribute(insertElement, "leos:uid", userLogin);
             XercesUtils.addAttribute(insertElement, "leos:title",
-                    new StringBuilder(userName).append(" : ").append(DATE_FORMAT.format(new Date().toInstant())).toString() );
+                    new StringBuilder(userName).append(" : ").append(ZonedDateTime.now().format(DATE_FORMAT)).toString());
         }
 
         List<Node> addedElementList = new ArrayList<>();

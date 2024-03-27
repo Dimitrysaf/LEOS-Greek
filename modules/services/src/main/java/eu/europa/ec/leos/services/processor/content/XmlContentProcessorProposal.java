@@ -23,6 +23,7 @@ import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
@@ -46,8 +47,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.nio.charset.StandardCharsets;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -220,7 +219,6 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     private void addTrackChangeAttributes(TableOfContentItemVO tocVo, Node node, Node numNode, boolean isTrackChangesEnabled) {
         if (isTrackChangesEnabled && securityContext.getUser() != null && StringUtils.isNotEmpty(tocVo.getTrackChangeAction())) {
             if (!hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_TO_ORIGIN_ACTION)) {
-                ZonedDateTime localDateTime = ZonedDateTime.now();
                 Node nodeToAddOrRemoveAttribute = node;
                 if (numNode != null && hasTocItemTrackChangeAction(tocVo, LEOS_TC_MOVE_ACTION)) {
                     nodeToAddOrRemoveAttribute = numNode;
@@ -231,8 +229,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 }
                 addAttribute(nodeToAddOrRemoveAttribute, LEOS_ACTION_ATTR, action);
                 addAttribute(nodeToAddOrRemoveAttribute, LEOS_UID, securityContext.getUser().getLogin());
-                addAttribute(nodeToAddOrRemoveAttribute, LEOS_TITLE,
-                        securityContext.getUser().getName() + " : " + localDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME));
+                addAttribute(nodeToAddOrRemoveAttribute, LEOS_TITLE, LeosXercesUtils.getTitleValue(securityContext));
             } else if (numNode != null) {
                 removeAttribute(numNode, LEOS_ACTION_ATTR);
                 removeAttribute(numNode, LEOS_UID);

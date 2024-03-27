@@ -24,7 +24,7 @@ import java.util.List;
 public class LeosXercesUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosXercesUtils.class);
-    private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
+    public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
 
     public static Node buildNumElement(Node node, String numLabel, SecurityContext securityContext, boolean isTrackChangesEnabled) {
         Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
