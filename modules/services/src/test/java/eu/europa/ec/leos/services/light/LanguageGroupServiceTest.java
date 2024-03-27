@@ -4,7 +4,7 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
-import eu.europa.ec.leos.services.structure.lang.LanguageGroupServiceImpl;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.test.support.LeosTest;
 import io.atlassian.fugue.Option;
@@ -35,7 +35,7 @@ public class LanguageGroupServiceTest extends LeosTest {
     @Mock
     private ConfigurationRepository configurationRepository;
     @InjectMocks
-    private LanguageGroupServiceImpl languageGroupService;
+    private LanguageGroupService languageGroupService;
 
     @Before
     public void init() {
@@ -50,7 +50,7 @@ public class LanguageGroupServiceTest extends LeosTest {
         languageMap.put("cyrillic", Arrays.asList("bg"));
 
         languageMapHolder = Mockito.spy(new LanguageMapHolder());
-        languageGroupService = Mockito.spy(new LanguageGroupServiceImpl(configurationRepository, languageMapHolder));
+        languageGroupService = Mockito.spy(new LanguageGroupService(configurationRepository, languageMapHolder));
 
         ConfigDocument configDocument = new ConfigDocument("555", "Config", "login", Instant.now(), "login", Instant.now(),
                 "0.0.1", "", "0.0.1", "", VersionType.MINOR, true,

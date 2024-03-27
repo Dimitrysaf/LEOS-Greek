@@ -23,7 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -37,9 +36,9 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class LanguageGroupServiceImpl {
+public class LanguageGroupService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LanguageGroupServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LanguageGroupService.class);
 
     @Value("${leos.light.lang.group.schema.path}")
     private String langGroupSchema;
@@ -54,12 +53,11 @@ public class LanguageGroupServiceImpl {
     LanguageMapHolder languageMapHolder;
 
     @Autowired
-    public LanguageGroupServiceImpl(ConfigurationRepository configurationRepository, LanguageMapHolder languageMapHolder) {
+    public LanguageGroupService(ConfigurationRepository configurationRepository, LanguageMapHolder languageMapHolder) {
         this.configurationRepository = configurationRepository;
         this.languageMapHolder = languageMapHolder;
     }
 
-    @PostConstruct
     public void getLanguageMap() {
         byte[] languageDocument = getLangGroupDocument();
         final LanguageGroup languageGroup = loadLanguageGroupFromFile(languageDocument);
@@ -94,6 +92,6 @@ public class LanguageGroupServiceImpl {
     }
 
     private InputStream loadSchema() {
-        return LanguageGroupServiceImpl.class.getClassLoader().getResourceAsStream(langGroupSchema);
+        return LanguageGroupService.class.getClassLoader().getResourceAsStream(langGroupSchema);
     }
 }
