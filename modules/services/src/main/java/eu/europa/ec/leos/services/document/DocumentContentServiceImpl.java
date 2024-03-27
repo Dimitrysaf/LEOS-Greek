@@ -574,7 +574,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 break;
             case PROPOSAL:
                 document = proposalService.updateProposal((Proposal) document, xmlContent, message);
-                udpateDocPurposeInChildDocuments((Proposal) document, message);
+                updateDocPurposeInChildDocuments((Proposal) document, message);
                 break;
             case STAT_FINANC_LEGIS:
                 document = financialStatementService.updateFinancialStatement((FinancialStatement) document, xmlContent, message);
@@ -602,13 +602,16 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return getDocumentById(document.getId(), category);
     }
 
-    private void udpateDocPurposeInChildDocuments(Proposal proposal, String message) {
+    private void updateDocPurposeInChildDocuments(Proposal proposal, String message) {
         byte[] proposalContent = proposal.getContent().get().getSource().getBytes();
         List<Element> docPurposeElements = xmlContentProcessor.getElementsByTagName(proposalContent,
                 Arrays.asList("docPurpose"), true);
         String docPurpose = docPurposeElements.get(0).getElementFragment();
         CollectionContextService context = proposalContextProvider.get();
         context.useProposal(proposal);
+        if(docPurpose != null && docPurpose.toLowerCase().startsWith("<docpurpose")){
+            docPurpose = XmlHelper.removeEnclosingTags(docPurpose);
+        }
         context.usePurpose(docPurpose);
         context.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
         context.useActionMessage(ContextActionService.METADATA_UPDATED, message);

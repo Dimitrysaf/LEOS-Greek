@@ -77,6 +77,25 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
   private cleanupXML(xml: string) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(xml, 'text/html');
-    return xmlDoc.querySelector('akomantoso');
+
+    const akomantosoEl = xmlDoc.querySelector('akomantoso');
+
+    akomantosoEl?.querySelectorAll('docPurpose').forEach((el) => {
+      let docInnerHTML = el.innerHTML;
+      if(el.textContent.includes('<ins') || el.textContent.includes('<del')){
+        docInnerHTML = el.textContent;
+      }
+
+      if (docInnerHTML) {
+        docInnerHTML = docInnerHTML.replace(
+          /<del[^>]*?>[\s\S]*?<\/del>/gi,
+          '',
+        );
+        docInnerHTML = docInnerHTML.replace(/<\/?ins[^>]*?>/gi, '');
+        el.innerHTML = docInnerHTML;
+      }
+    });
+
+    return akomantosoEl;
   }
 }

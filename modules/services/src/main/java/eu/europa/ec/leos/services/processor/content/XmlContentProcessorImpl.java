@@ -44,6 +44,7 @@ import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 import io.atlassian.fugue.Pair;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -1363,6 +1364,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         byte[] newElement = null;
         if (node != null) {
             String elementContent = nodeToString(node);
+            if(elementContent != null && elementContent.toLowerCase().startsWith("<docpurpose")){
+                elementContent = StringEscapeUtils.unescapeXml(elementContent);
+            }
             StringBuilder eltContent = new StringBuilder(elementContent);
             ImmutableTriple<String, Integer, Integer> result = getSubstringAvoidingTags(elementContent, startOffset, startOffset + origText.length());
             String matchingText = result.left;
