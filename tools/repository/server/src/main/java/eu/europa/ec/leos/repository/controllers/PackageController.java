@@ -57,7 +57,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
-import eu.europa.ec.leos.repository.model.PackagesFavorites;
+import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
 
 
 @RestController

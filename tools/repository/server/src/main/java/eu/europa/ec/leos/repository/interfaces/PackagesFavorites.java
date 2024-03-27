@@ -1,4 +1,4 @@
-package eu.europa.ec.leos.repository.model;
+package eu.europa.ec.leos.repository.interfaces;
 
 import java.util.List;
 import java.util.Map;
