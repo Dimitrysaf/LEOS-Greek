@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.Package;
+import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -21,8 +22,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
-import eu.europa.ec.leos.repository.model.PackagesFavorites;
-
 
 public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
     @Query(value = "SELECT * FROM PACKAGE p WHERE p.NAME = ?1", nativeQuery =

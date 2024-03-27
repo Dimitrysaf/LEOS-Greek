@@ -19,6 +19,7 @@ import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
+import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.CollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
@@ -46,7 +47,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
-import eu.europa.ec.leos.repository.model.PackagesFavorites;
 
 @Service
 public class PackageServiceImpl implements PackageService {
@@ -254,7 +254,7 @@ public class PackageServiceImpl implements PackageService {
 
     public PackagesFavorites getFavouritePackage(final String userName, final String ref) throws RepositoryException {
         try {
-            return packageRepository.getFavouritePackage(userName, ref).orElse(new PackagesFavorites());
+            return packageRepository.getFavouritePackage(userName, ref).orElse(createEmptyObject());
         }
         catch (Exception e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ref);
@@ -274,12 +274,46 @@ public class PackageServiceImpl implements PackageService {
                     packageCollaboratorsRepository.save(packageCollaborators.get());
                 }
             }
-            return packageRepository.getFavouritePackage(userName, ref).orElse(new PackagesFavorites());
+            return packageRepository.getFavouritePackage(userName, ref).orElse(createEmptyObject());
         }
         catch (Exception e) {
             e.printStackTrace();
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ref);
         }
+    }
+
+    private PackagesFavorites createEmptyObject() {
+        return new PackagesFavorites() {
+            @Override
+            public String getCreationDate() {
+                return "";
+            }
+
+            @Override
+            public BigDecimal getPackageId() {
+                return BigDecimal.ZERO;
+            }
+
+            @Override
+            public BigDecimal getDocumentId() {
+                return BigDecimal.ZERO;
+            }
+
+            @Override
+            public String getRef() {
+                return "";
+            }
+
+            @Override
+            public String getTitle() {
+                return "";
+            }
+
+            @Override
+            public BigDecimal getFavorite() {
+                return BigDecimal.ZERO;
+            }
+        };
     }
 
 }
