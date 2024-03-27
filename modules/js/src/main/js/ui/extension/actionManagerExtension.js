@@ -124,7 +124,9 @@ define(function actionManagerExtensionModule(require) {
         });
 
         EDITABLE_ELEMENTS = EDITABLE_ELEMENTS.substring(0, EDITABLE_ELEMENTS.length - 2);
-
+        $rootElement.off("mouseenter.actions");
+        $rootElement.off("mouseleave.actions");
+        $rootElement.off("click.actions");
         $rootElement.on("mouseenter.actions", EDITABLE_ELEMENTS, _attachActions.bind(undefined, connector));
         $rootElement.on("mouseleave.actions", EDITABLE_ELEMENTS, _detachActions.bind(undefined, connector));
 
@@ -410,7 +412,9 @@ define(function actionManagerExtensionModule(require) {
                     cumulativeSizeForExternalReferences = 0;
                 }
             }
-            childIndex = Array.prototype.indexOf.call(selection.anchorNode.parentNode.childNodes, selection.anchorNode) - (countExternalReferences*2);
+            if(selection?.anchorNode?.parentNode?.childNodes) {
+                childIndex = Array.prototype.indexOf.call(selection.anchorNode.parentNode.childNodes, selection.anchorNode) - (countExternalReferences*2);
+            }
             posFound = selection.anchorOffset + cumulativeSizeForExternalReferences;
         }
         return [posFound, childIndex];

@@ -191,7 +191,11 @@ export class DocumentComponent
     this.documentService.setDidDocumentLoadAndRender(true);
     if (!this.readonly) {
       this.interceptAndProcessBookmarkLink();
-      this.ckeditorService.init();
+      this.documentService.documentView$
+          .pipe(takeUntil(this.destroy$))
+          .subscribe((documentView) => {
+            this.ckeditorService.init();
+          });
 
       this.coEditionWSService
         .getDocCoEditionInfo()
