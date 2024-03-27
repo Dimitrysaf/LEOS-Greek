@@ -20,6 +20,7 @@ import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.profile.ProfileService;
 import eu.europa.ec.leos.vo.light.Profile;
 import org.apache.commons.lang3.StringUtils;
@@ -41,10 +42,12 @@ public class ConfigServiceImpl implements ConfigService {
     private final MessageHelper messageHelper;
     private final ProfileService profileService;
     private final TokenService tokenService;
+    private final LanguageGroupService languageGroupService;
 
     @Autowired
     public ConfigServiceImpl(Properties applicationProperties, Properties integrationProperties, SecurityContext securityContext, LeosPermissionAuthorityMapHelper authorityMapHelper,
-            Provider<StructureContext> structureContextProvider, MessageHelper messageHelper, ProfileService profileService, TokenService tokenService) {
+            MessageHelper messageHelper, ProfileService profileService,
+            TokenService tokenService, LanguageGroupService languageGroupService) {
         this.applicationProperties = applicationProperties;
         this.integrationProperties = integrationProperties;
         this.securityContext = securityContext;
@@ -52,11 +55,15 @@ public class ConfigServiceImpl implements ConfigService {
         this.messageHelper = messageHelper;
         this.profileService = profileService;
         this.tokenService = tokenService;
+        this.languageGroupService = languageGroupService;
     }
 
     @Override
     public AppConfigResponse getApplicationConfig(String clientContextToken) {
         AppConfigResponse appConfigResponse = new AppConfigResponse();
+
+        //load language map
+        languageGroupService.getLanguageMap();
 
         String mappingUrl = applicationProperties.getProperty("leos.mapping.url");
         boolean implicitSaveEnabled = Boolean.parseBoolean(applicationProperties.getProperty("implicitSaveAndClose.enabled"));

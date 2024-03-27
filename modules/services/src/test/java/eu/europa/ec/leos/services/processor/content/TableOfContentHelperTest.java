@@ -8,7 +8,7 @@ import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.security.AuthenticatedUser;
 import eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
-import eu.europa.ec.leos.services.structure.lang.LanguageGroupServiceImpl;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -82,7 +82,7 @@ public class TableOfContentHelperTest extends LeosTest {
     @Mock
     private ConfigurationRepository configurationRepository;
     protected LanguageMapHolder languageMapHolder;
-    protected LanguageGroupServiceImpl languageGroupService;
+    protected LanguageGroupService languageGroupService;
     @InjectMocks
     protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
 
@@ -104,7 +104,7 @@ public class TableOfContentHelperTest extends LeosTest {
         languageMap.put("cyrillic", Arrays.asList("bg"));
         documentLanguageContext.setDocumentLanguage("en");
         languageMapHolder = Mockito.spy(new LanguageMapHolder());
-        languageGroupService = Mockito.spy(new LanguageGroupServiceImpl(configurationRepository, languageMapHolder));
+        languageGroupService = Mockito.spy(new LanguageGroupService(configurationRepository, languageMapHolder));
 
         //populate language map
         languageMapHolder.loadLanguageMap(languageMap);

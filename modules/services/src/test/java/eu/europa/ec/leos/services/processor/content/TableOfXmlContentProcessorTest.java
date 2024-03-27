@@ -5,7 +5,7 @@ import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
-import eu.europa.ec.leos.services.structure.lang.LanguageGroupServiceImpl;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.template.TemplateStructureService;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -59,7 +59,7 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
     @Mock
     private ConfigurationRepository configurationRepository;
     protected LanguageMapHolder languageMapHolder;
-    protected LanguageGroupServiceImpl languageGroupService;
+    protected LanguageGroupService languageGroupService;
     @InjectMocks
     protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
     
@@ -89,7 +89,7 @@ public abstract class TableOfXmlContentProcessorTest extends LeosTest {
         languageMap.put("cyrillic", Arrays.asList("bg"));
         documentLanguageContext.setDocumentLanguage("en");
         languageMapHolder = Mockito.spy(new LanguageMapHolder());
-        languageGroupService = Mockito.spy(new LanguageGroupServiceImpl(configurationRepository, languageMapHolder));
+        languageGroupService = Mockito.spy(new LanguageGroupService(configurationRepository, languageMapHolder));
 
         //populate language map
         languageMapHolder.loadLanguageMap(languageMap);
