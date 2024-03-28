@@ -315,14 +315,20 @@ export class DocumentComponent
       if (!elementInEditor) {
         this.reloadElements(data);
       } else if (data.isClosing && !data.isSaved) {
-        if (!this.isCNInstance) this.reloadElements(data);
-        else this.documentService.reloadDocument();
+        if (this.isCNInstance || data.elementFragment.includes("</authorialNote>")) {
+          this.documentService.reloadDocument();
+        } else {
+          this.reloadElements(data)
+        }
       } else if (this.coEditionWSService.presenterId !== data.presenterId) {
         this.documentService.isReloadRequired = true;
       }
     } else {
-      if (!this.isCNInstance) this.reloadElements(data);
-      else this.documentService.reloadDocument();
+      if (this.isCNInstance || data.elementFragment.includes("</authorialNote>")) {
+        this.documentService.reloadDocument();
+      } else {
+        this.reloadElements(data)
+      }
     }
     this.initTrackChangesActions();
   }
