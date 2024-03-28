@@ -1,5 +1,4 @@
-<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <meta>
             <identification source="~COM">
@@ -165,17 +164,14 @@
                 <recital leos:editable="true" xml:id="rec__hzMbu2">
                     <num xml:id="recs_BihC4S">(3)</num>
                     <p xml:id="recs_H00esS">Trade facilitation, and safety and security, concern all authorities involved in the goods clearance process across Union borders. The rapid rise in international trade has increased the need for better cooperation and coordination among those authorities. The ongoing process of digitalisation allows this situation to be addressed more efficiently by connecting the systems of customs and partner competent authorities and enabling a systematic automated exchange of information between them. As such, the current framework of regulatory compliance is insufficient to support an effective interaction between customs and partner competent authorities, whose systems and procedures are characterised by fragmentation and redundancy. A fully coordinated and efficient goods clearance process requires a streamlined Union regulatory environment for international trade that delivers long-term benefits to the Union and its residents in all policy areas.</p>
-                </recital>
-                <recital leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
-                         leos:softdate="2024-03-08T07:11:20.000Z" leos:softmove_from="moved_rec__Epl5Gg" leos:softuser="REVTI Gautam(CNECT)"
-                         leos:title="DAS Satyabrata : 2024-03-08T15:05:03.62+01:00" leos:uid="gautare" xml:id="rec__Epl5Gg">
-                    <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.62+01:00" leos:uid="gautare" xml:id="recs_dSF8Mk">(2)</num>
-                    <p xml:id="recs_ihv95P">On 1 October 2015, the Council adopted Decision (EU) 2015/1947
-                        <authorialNote marker="7" placement="bottom" xml:id="recs_hTuPlb">
-                            <p xml:id="recs_GEZWun">Council Decision (EU) 2015/1947 of 1 October 2015 on the conclusion, on behalf of the European Union, of the Protocol Amending the Marrakesh Agreement establishing the World Trade Organisation (OJ L 284, 30.10.2015, p. 1).</p>
-                        </authorialNote>
-                        approving, on behalf of the Union, the Agreement on Trade Facilitation, whichÂ entered into force on 22 February 2017. ThatÂ agreement represents the most extensive effort at trade facilitation and customs reform under the World Trade Organisation. It contains provisions that aim to significantly improve goods clearance and the effective cooperation between customs and other regulatory authorities on trade facilitation and customs compliance issues. In accordance with Article 10(4) of the agreement, members are to endeavour to establish or maintain a single window, enabling traders to submit documentation and/or data requirements for the import, export or transit of goods through a single entry point to the participating authorities or agencies. Â Â </p>
-                </recital>
+                </recital><recital leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T07:11:20.000Z" leos:softmove_from="moved_rec__Epl5Gg" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.62+01:00" leos:uid="gautare" xml:id="rec__Epl5Gg">
+                <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.62+01:00" leos:uid="gautare" xml:id="recs_dSF8Mk">#</num>
+                <p xml:id="recs_ihv95P">On 1 October 2015, the Council adopted Decision (EU) 2015/1947
+                    <authorialNote marker="7" placement="bottom" xml:id="recs_hTuPlb">
+                        <p xml:id="recs_GEZWun">Council Decision (EU) 2015/1947 of 1 October 2015 on the conclusion, on behalf of the European Union, of the Protocol Amending the Marrakesh Agreement establishing the World Trade Organisation (OJ L 284, 30.10.2015, p. 1).</p>
+                    </authorialNote>
+                    approving, on behalf of the Union, the Agreement on Trade Facilitation, whichÂ entered into force on 22 February 2017. ThatÂ agreement represents the most extensive effort at trade facilitation and customs reform under the World Trade Organisation. It contains provisions that aim to significantly improve goods clearance and the effective cooperation between customs and other regulatory authorities on trade facilitation and customs compliance issues. In accordance with Article 10(4) of the agreement, members are to endeavour to establish or maintain a single window, enabling traders to submit documentation and/or data requirements for the import, export or transit of goods through a single entry point to the participating authorities or agencies. Â Â </p>
+            </recital>
                 <recital leos:editable="true" xml:id="rec__e3HXL9">
                     <num xml:id="recs_MGiqGW">(4)</num>
                     <p xml:id="recs_uf2SeS">The EUÂ eGovernment action plan 2016-2020 set out in Commission Communication of 19 April 2016

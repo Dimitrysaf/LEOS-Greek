@@ -279,14 +279,17 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 .orElse(null);
 
         if (Boolean.FALSE.equals(mergeActions.isEmpty())) {
+            trackChangesContext.setTrackChangesEnabled(!request.getMergeActions().get(0).getAction().equals(MergeActionVO.MergeAction.UNDO) && request.getMergeActions().get(0).isWithTrackChanges());
             structureContextProvider.get().useDocumentTemplate(document.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
             List<TocItem> tocItemList = this.structureContext.get().getTocItems();
             byte[] xmlClonedContent = contribution.getXmlContent();
             List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
             byte[] xmlContent = mergeContributionService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
-            xmlContent = this.numberService.renumberArticles(xmlContent, true);
+            xmlContent = this.numberService.renumberArticles(xmlContent, false);
             xmlContent = this.numberService.renumberRecitals(xmlContent);
-            trackChangesContext.setTrackChangesEnabled(true);
+            xmlContent = this.numberService.renumberLevel(xmlContent);
+            xmlContent = this.numberService.renumberParagraph(xmlContent);
+            xmlContent = this.numberService.renumberDivisions(xmlContent);
             xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
             document = this.leosRepository.updateDocument(
                     document.getId(),

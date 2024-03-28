@@ -573,19 +573,19 @@
                                 </content>
                             </point>
                             <point leos:action="delete" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T14:56:16.148+01:00" leos:softmove_label="MOVED to Article 9(2), point (d)" leos:softmove_to="akn_art_jSKkaB_LCbrrd" leos:softuser="DAS Satyabrata(AGRI)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.602+01:00" leos:uid="dasatya" xml:id="moved_akn_art_jSKkaB_LCbrrd">
-                                <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.602+01:00" xml:id="akn_art_jSKkaB_OuBKd6">(b)</num>
+                                <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.602+01:00" xml:id="akn_art_jSKkaB_OuBKd6"><del leos:action-number="delete" leos:tc-original-number="(b)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.602+01:00" leos:uid="dasatya" xml:id="_akn_art_jSKkaB_NVoKG9">(b)</del></num>
                                 <content leos:origin="ec" xml:id="akn_art_jSKkaB_WD2gcv">
                                     <p leos:origin="ec" xml:id="akn_art_jSKkaB_EHe9BM">assist each other in matters involving the identification and handling of any data breach related to joint processing;</p>
                                 </content>
                             </point>
                             <point xml:id="akn_art_jSKkaB_hqHlj1">
-                                <num xml:id="akn_art_jSKkaB_jlGLnK">(c)</num>
+                                <num xml:id="akn_art_jSKkaB_jlGLnK">(b)</num>
                                 <content xml:id="akn_art_jSKkaB_AJVmCs">
                                     <p xml:id="akn_art_jSKkaB_KpUgrk">exchange the relevant information necessary to inform data subjects pursuant to Section 2 of Regulation (EU) 2016/679 and Section 2 of Regulation (EU) 2018/1725;</p>
                                 </content>
                             </point>
                             <point xml:id="akn_art_jSKkaB_BDjUaG">
-                                <num xml:id="akn_art_jSKkaB_8Rb88E">(d)</num>
+                                <num xml:id="akn_art_jSKkaB_8Rb88E">(c)</num>
                                 <content xml:id="akn_art_jSKkaB_QZZh5s">
                                     <p xml:id="akn_art_jSKkaB_dllHML">ensure and protect the security, integrity, availability and confidentiality of the personal data processed jointly pursuant to Article 32 of Regulation (EU)Â 2016/679 and Article 33 of Regulation (EU)Â 2018/1725.</p>
                                 </content>
@@ -606,11 +606,8 @@
                             <p xml:id="akn_art_dMHd93_IoF34H">The Member States shall establish national single window environments for customs. Each Member State shall be responsible for the development, integration and operation of its single window environment for customs.</p>
                         </content>
                     </paragraph>
-                    <paragraph leos:action-enter="delete" leos:action-number="delete" leos:origin="ec" leos:softdate="2024-03-08T13:56:25+00:00" leos:softuser="DAS Satyabrata(undefined)" leos:tc-original-number="2." leos:title-enter="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:title-number="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:uid-enter="dasatya" leos:uid-number="dasatya" xml:id="akn_art_dMHd93_7KBuaY">
-                        <num leos:origin="ec" xml:id="akn_art_dMHd93_KCL3by">
-                            <del leos:action-enter="delete" leos:title="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dMHd93_ycTFUj">â†°</del>
-                            <del leos:action-number="delete" leos:title="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dMHd93_onkmuZ">2.</del>
-                        </num>
+                    <paragraph leos:action-enter="delete" leos:action-number="delete" leos:auto-num-overwrite="true" leos:origin="ec" leos:softdate="2024-03-08T13:56:25+00:00" leos:softuser="DAS Satyabrata(undefined)" leos:tc-original-number="2." leos:title-enter="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:title-number="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:uid-enter="dasatya" leos:uid-number="dasatya" xml:id="akn_art_dMHd93_7KBuaY">
+                        <num leos:origin="ec" xml:id="akn_art_dMHd93_KCL3by"><del leos:action-number="delete" leos:tc-original-number="2." leos:title="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dMHd93_pawiuJ">2.</del></num>
                         <content leos:origin="ec" xml:id="akn_art_dMHd93_vDg8nK">
                             <p leos:origin="ec" xml:id="akn_art_dMHd93_5uf5mT">
                                 <del leos:title="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dMHd93_G2UmQP">The national single window environments for customs shall enable the exchange of information and cooperation by electronic means between customs authorities, partner competent authorities and economic operators for the purposes of compliance with and efficient enforcement of customs legislation and the Union non-customs formalities listed in the Annex.</del>
@@ -618,7 +615,7 @@
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_dMHd93_X20PeL">
-                        <num xml:id="akn_art_dMHd93_VsWLtx">3.</num>
+                        <num xml:id="akn_art_dMHd93_VsWLtx">2.</num>
                         <list xml:id="akn_art_dMHd93_fjD8KI">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_dMHd93_sMzfOQ">
                                 <content xml:id="akn_art_dMHd93_8FM4cZ">
@@ -643,7 +640,7 @@
                                     <p xml:id="akn_art_dMHd93_Hl4uaa">provide a single communication channel for economic operators to fulfil the relevant customs formalities and Union non-customs formalitiesÂ subject to additional digital cooperation in accordance with Article 12.</p>
                                 </content>
                             </point><point leos:action="insert" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T13:56:15+00:00" leos:softmove_from="moved_akn_art_jSKkaB_LCbrrd" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.648+01:00" leos:uid="dasatya" xml:id="akn_art_jSKkaB_LCbrrd">
-                            <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.648+01:00" leos:uid="dasatya" xml:id="akn_art_jSKkaB_OuBKd6">(b)</num>
+                            <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.648+01:00" leos:uid="dasatya" xml:id="akn_art_jSKkaB_OuBKd6">(d)</num>
                             <content xml:id="akn_art_jSKkaB_WD2gcv">
                                 <p xml:id="akn_art_jSKkaB_EHe9BM">assist each other in matters involving the identification and handling of any data breach related to joint processing;</p>
                             </content>
@@ -651,7 +648,7 @@
                         </list>
                     </paragraph>
                     <paragraph xml:id="akn_art_dMHd93_VQGJh8">
-                        <num xml:id="akn_art_dMHd93_0Eyz2X">4.</num>
+                        <num xml:id="akn_art_dMHd93_0Eyz2X">3.</num>
                         <content xml:id="akn_art_dMHd93_6Rfzp9">
                             <p xml:id="akn_art_dMHd93_7oiXaH">The national single window environments for customs may be used as a platform to coordinate controls in accordance with Article 47(1) of Regulation (EU)Â 952/2013.</p>
                         </content>
