@@ -9,6 +9,7 @@ import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.FinancialStatementService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
@@ -33,6 +34,8 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     FinancialStatementService financialStatementService;
     @Autowired
     RepositoryPropertiesMapper repositoryPropertiesMapper;
+    @Autowired
+    DocumentViewService documentViewService;
 
     @Override
     public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
@@ -42,6 +45,7 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
         String documentId = financialStatementService.findFinancialStatementByRef(documentRef).getId();
         FinancialStatement financialStatement = financialStatementService.updateFinancialStatement(documentRef,
                 documentId, properties, false);
+        documentViewService.updateProposalAsync(financialStatement);
         return true;
     }
 

@@ -61,6 +61,7 @@ import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
 import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
+import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.FilterProposalsRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
@@ -167,6 +168,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
 
+    private DocumentViewService documentViewService;
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
 
@@ -195,7 +197,8 @@ public abstract class ApiServiceImpl implements ApiService {
             ValidationService validationService, Properties applicationProperties,
             ExplanatoryService explanatoryService,
             ExportPackageService exportPackageService, NotificationService notificationService, LegService legService,
-            UserHelper userHelper, LeosRepository leosRepository, TrackChangesContext trackChangesContext) {
+            UserHelper userHelper, LeosRepository leosRepository, TrackChangesContext trackChangesContext,
+            DocumentViewService  documentViewService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -225,6 +228,7 @@ public abstract class ApiServiceImpl implements ApiService {
         this.legService = legService;
         this.leosRepository = leosRepository;
         this.trackChangesContext = trackChangesContext;
+        this.documentViewService = documentViewService;
     }
 
     @Override
@@ -758,6 +762,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useCloneProposal(isClonedProposal);
                 billContext.useOriginRef(cloneOriginRef);
                 billContext.executeCreateBillAnnex();
+                documentViewService.contextExecuteUpdateProposalAsync(proposal);
             } catch (Exception e) {
                 LOG.error("Unexpected error occurred while creating new annex", e);
                 throw e;
@@ -899,6 +904,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 LOG.error("Error while using archive service {}", e.getMessage());
             }
             billContext.executeRemoveBillAnnex();
+            documentViewService.contextExecuteUpdateProposalAsync(proposal);
         }
     }
 
@@ -915,7 +921,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
                 billContext.executeMoveAnnex();
             }
-
+            documentViewService.contextExecuteUpdateProposalAsync(proposal);
         }
     }
 
@@ -925,6 +931,7 @@ public abstract class ApiServiceImpl implements ApiService {
         AnnexMetadata metadata = annex.getMetadata().getOrError(() -> "Annex metadata not found!");
         AnnexMetadata updatedMetadata = metadata.builder().withTitle(annexTitle).build();
         annexService.updateAnnex(annex, updatedMetadata, VersionType.MINOR, messageHelper.getMessage(COLLECTION_BLOCK_ANNEX_METADATA_UPDATED));
+        documentViewService.updateDocumentView(annex);
     }
 
     @Override
@@ -933,6 +940,7 @@ public abstract class ApiServiceImpl implements ApiService {
         ExplanatoryMetadata metadata = explanatory.getMetadata().getOrError(() -> "Explanatory metadata not found!");
         ExplanatoryMetadata updatedMetadata = metadata.builder().withTitle(title).build();
         explanatoryService.updateExplanatory(explanatory, updatedMetadata, VersionType.MINOR, messageHelper.getMessage("collection.block.explanatory.metadata.updated"));
+        documentViewService.updateDocumentView(explanatory);
     }
 
     private void createMajorVersions(String proposalRef, String milestoneComment, String versionComment, CollectionContextService context) {

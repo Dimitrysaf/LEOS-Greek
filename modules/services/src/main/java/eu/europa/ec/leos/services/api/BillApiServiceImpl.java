@@ -625,7 +625,7 @@ public class BillApiServiceImpl implements BillApiService {
         if (splittedContent == null) {
             splittedContentIsEmpty = true;
         }
-
+        documentViewService.updateProposalAsync(bill);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
     }
 

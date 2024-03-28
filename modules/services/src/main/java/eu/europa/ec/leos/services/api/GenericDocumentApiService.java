@@ -180,6 +180,7 @@ public class GenericDocumentApiService {
         byte[] content = this.getDocumentContent(document);
         document = this.leosRepository.updateDocument(document.getId(), metadata, content, versionType, versionComment,
                 XmlDocument.class);
+        documentViewService.updateProposalAsync(document);
         return this.getMajorVersionsData(documentRef, 0, 1);
     }
 
@@ -402,6 +403,7 @@ public class GenericDocumentApiService {
                 messageHelper.getMessage("operation.financial.statement.block.updated"),
                 XmlDocument.class
         );
+        documentViewService.updateProposalAsync(document);
         String newContent = this.elementProcessor.getElement(document, elementName, elementId);
         return new SaveElementResponse(elementId, elementName, newContent);
     }
