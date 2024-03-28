@@ -466,7 +466,7 @@
                                     <p xml:id="akn_art_phTLdP_J1ZwuD">enabling information to be exchanged between national single window environments for customs and the Union non-customs systems referred to in the AnnexÂ as regards the Union non-customs formalities listed therein;</p>
                                 </content>
                             </point><point leos:origin="ec" xml:id="_akn_art_phTLdP_T0cTpp">
-                            <num leos:origin="ec" xml:id="_akn_art_phTLdP_35pSJw">#</num>
+                            <num leos:origin="ec" xml:id="_akn_art_phTLdP_35pSJw">(b)</num>
                             <content leos:origin="ec" xml:id="_akn_art_phTLdP_GHnq58">
                                 <p leos:origin="ec" xml:id="_akn_art_phTLdP_HrHSy8">
                                     new changes
@@ -474,14 +474,14 @@
                             </content>
                         </point>
                             <point xml:id="akn_art_phTLdP_Vs16WE">
-                                <num xml:id="akn_art_phTLdP_g5M08k">(b)</num>
+                                <num xml:id="akn_art_phTLdP_g5M08k">(c)</num>
                                 <content xml:id="akn_art_phTLdP_bsVHaZ">
                                     <p xml:id="akn_art_phTLdP_aK2KR8">performing the transformation of data listed in Article 10(2), where necessary, to enable the exchange of information referred to in this paragraph, point (a).</p>
                                 </content>
                             </point>
                         </list>
                     </paragraph><paragraph leos:indent-origin-num-origin="ec" leos:origin="ec" xml:id="_akn_art_phTLdP_8XedvP">
-                    <num leos:origin="ec" xml:id="_akn_art_phTLdP_9VwjCX">#</num>
+                    <num leos:origin="ec" xml:id="_akn_art_phTLdP_9VwjCX">2.</num>
                     <content leos:origin="ec" xml:id="_akn_art_phTLdP_R5V28q">
                         <p leos:origin="ec" xml:id="_akn_art_phTLdP_t3JrAn">
                             new paragraph
@@ -489,7 +489,7 @@
                     </content>
                 </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_NvQTzp">
-                        <num leos:origin="ec" xml:id="akn_art_phTLdP_Lm9ODY">2.</num>
+                        <num leos:origin="ec" xml:id="akn_art_phTLdP_Lm9ODY">3.</num>
                         <list xml:id="akn_art_phTLdP_7DFoOJ">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_FE6qXG">
                                 <content xml:id="akn_art_phTLdP_obG97T">
@@ -518,7 +518,7 @@
                         </list>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_QsVl8H">
-                        <num xml:id="akn_art_phTLdP_JFGuwC">3.</num>
+                        <num xml:id="akn_art_phTLdP_JFGuwC">4.</num>
                         <list xml:id="akn_art_phTLdP_u49VGy">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_Hyqr4c">
                                 <content xml:id="akn_art_phTLdP_ARYfGY">
@@ -537,7 +537,7 @@
                                     <p xml:id="akn_art_phTLdP_eSbJFT">name and signature of the authorised staff referred to in paragraph 2, points (c) and (d).</p>
                                 </content>
                             </point><point leos:origin="ec" xml:id="akn_art_phTLdP_iLri4i">
-                            <num leos:origin="ec" xml:id="akn_art_phTLdP_B5q9f5">#</num>
+                            <num leos:origin="ec" xml:id="akn_art_phTLdP_B5q9f5">(c)</num>
                             <content xml:id="akn_art_phTLdP_5jAAsC">
                                 <p xml:id="akn_art_phTLdP_pIo8G7">Commission staff and third party providers acting on behalf of Commission that perform EU CSW-CERTEX-related operations and maintenance activities.</p>
                             </content>
@@ -545,13 +545,13 @@
                         </list>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_EPBM9a">
-                        <num xml:id="akn_art_phTLdP_SrwOpM">4.</num>
+                        <num xml:id="akn_art_phTLdP_SrwOpM">5.</num>
                         <content xml:id="akn_art_phTLdP_JbfzjJ">
                             <p xml:id="akn_art_phTLdP_D8qZer">EU CSW-CERTEX shall not store any information exchanged between the national single window environments for customs and Union non-customs systems.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_JhbISd">
-                        <num xml:id="akn_art_phTLdP_Vfew0u">5.</num>
+                        <num xml:id="akn_art_phTLdP_Vfew0u">6.</num>
                         <content xml:id="akn_art_phTLdP_mICcWs">
                             <p xml:id="akn_art_phTLdP_Vuy4KE">The transformation of personal data referred to in paragraph 1, point (b), shall be performed using information technology infrastructure located in the Union. Â  Â  Â Â </p>
                         </content>

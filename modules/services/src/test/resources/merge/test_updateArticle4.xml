@@ -1,5 +1,4 @@
-<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <meta>
             <identification source="~COM">
@@ -796,41 +795,37 @@
                                     </content>
                                 </subparagraph>
                                 <point xml:id="akn_art_kCjLvC_5HYy1n">
-                                    <num xml:id="akn_art_kCjLvC_rnCADB">(a)</num>
-                                    <list xml:id="_akn_art_kCjLvC_fmTVS6">
-                                        <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-03-08T15:05:03.483+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="transformed_akn_art_kCjLvC_5HYy1n">
-                                            <content xml:id="akn_art_kCjLvC_NDOT4Y">
-                                                <p xml:id="akn_art_kCjLvC_frDQl5">there is an overlap between several data required for the
-                                                    application for supporting documents and the customs declaration;</p>
-                                            </content>
-                                        </subparagraph>
-                                        <point leos:indent-origin-num-origin="ec" leos:origin="ec" leos:softdate="2024-03-08T14:04:54+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="_akn_art_kCjLvC_UjpNX6">
-                                            <num leos:origin="ec" xml:id="_akn_art_kCjLvC_63XoOG">
-                                                <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_E9vV6o">(i)</ins>
-                                            </num>
-                                            <content leos:origin="ec" xml:id="_akn_art_kCjLvC_GChucU">
-                                                <p leos:origin="ec" xml:id="_akn_art_kCjLvC_lhXEci">
-                                                    <ins leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_kc5j3Q">new point</ins>
-                                                </p>
-                                            </content>
-                                        </point>
-                                        <point leos:indent-origin-num-origin="ec" leos:origin="ec" leos:softdate="2024-03-08T14:05:03+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="_akn_art_kCjLvC_i6xM6K">
-                                            <num leos:origin="ec" xml:id="_akn_art_kCjLvC_kJfbzF">
-                                                <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_GzMal5">(ii)</ins>
-                                            </num>
-                                            <content leos:origin="ec" xml:id="_akn_art_kCjLvC_37rAFF">
-                                                <p leos:origin="ec" xml:id="_akn_art_kCjLvC_q1d6up">
-                                                    <ins leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_SpyY3h">new line</ins>
-                                                </p>
-                                            </content>
-                                        </point>
-                                    </list>
+                                    <num xml:id="akn_art_kCjLvC_rnCADB">(a)</num><list xml:id="_akn_art_kCjLvC_fmTVS6">
+                                    <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-03-08T15:05:03.483+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="transformed_akn_art_kCjLvC_5HYy1n">
+                                        <content xml:id="akn_art_kCjLvC_NDOT4Y">
+                                            <p xml:id="akn_art_kCjLvC_frDQl5">there is an overlap between several data required for the application for supporting documents and the customs declaration;</p>
+                                        </content>
+                                    </subparagraph>
+                                    <point leos:indent-origin-num-origin="ec" leos:origin="ec" leos:softdate="2024-03-08T14:04:54+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="_akn_art_kCjLvC_UjpNX6">
+                                        <num leos:origin="ec" xml:id="_akn_art_kCjLvC_63XoOG">
+                                            <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_E9vV6o">(i)</ins>
+                                        </num>
+                                        <content leos:origin="ec" xml:id="_akn_art_kCjLvC_GChucU">
+                                            <p leos:origin="ec" xml:id="_akn_art_kCjLvC_lhXEci">
+                                                <ins leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_kc5j3Q">new point</ins>
+                                            </p>
+                                        </content>
+                                    </point>
+                                    <point leos:indent-origin-num-origin="ec" leos:origin="ec" leos:softdate="2024-03-08T14:05:03+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="_akn_art_kCjLvC_i6xM6K">
+                                        <num leos:origin="ec" xml:id="_akn_art_kCjLvC_kJfbzF">
+                                            <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_GzMal5">(ii)</ins>
+                                        </num>
+                                        <content leos:origin="ec" xml:id="_akn_art_kCjLvC_37rAFF">
+                                            <p leos:origin="ec" xml:id="_akn_art_kCjLvC_q1d6up">
+                                                <ins leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_SpyY3h">new line</ins>
+                                            </p>
+                                        </content>
+                                    </point>
+                                </list>
+
                                 </point>
-                                <point leos:origin="ec" leos:softdate="2024-03-08T14:04:17+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="akn_art_kCjLvC_pvGnuc">
-                                    <num leos:origin="ec" xml:id="akn_art_kCjLvC_kUZAHI">
-                                        <del leos:action-enter="delete" leos:title="DAS Satyabrata : 2024-03-08T14:04:35+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_IX7bcF">â†°</del>
-                                        <del leos:action-number="delete" leos:title="DAS Satyabrata : 2024-03-08T14:04:35+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_UtlR9Z">(b)</del>
-                                    </num>
+                                <point leos:auto-num-overwrite="true" leos:origin="ec" leos:softdate="2024-03-08T14:04:17+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="akn_art_kCjLvC_pvGnuc">
+                                    <num leos:origin="ec" xml:id="akn_art_kCjLvC_kUZAHI"><del leos:action-number="delete" leos:tc-original-number="(b)" leos:title="DAS Satyabrata : 2024-03-08T14:04:35+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_kA7gIW">(b)</del></num>
                                     <content leos:origin="ec" xml:id="akn_art_kCjLvC_zMbKfl">
                                         <p leos:origin="ec" xml:id="akn_art_kCjLvC_h6l6s9">
                                             <del leos:title="DAS Satyabrata : 2024-03-08T14:04:35+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_w717ti">the number of supporting documents issued in the Union for the specific formality is not negligible;</del>
@@ -838,27 +833,24 @@
                                     </content>
                                 </point>
                                 <point xml:id="akn_art_kCjLvC_bvQOP5">
-                                    <num xml:id="akn_art_kCjLvC_L1DvHa">(c)</num>
+                                    <num xml:id="akn_art_kCjLvC_L1DvHa">(b)</num>
                                     <content xml:id="akn_art_kCjLvC_K0gWaS">
                                         <p xml:id="akn_art_kCjLvC_t0Uqx1">the corresponding Union non-customs system referred to in the Annex can identify the economic operator by means of the Economic Operator Registration and Identification (EORI) number;</p>
                                     </content>
                                 </point>
                                 <point xml:id="akn_art_kCjLvC_wBpHxX">
-                                    <num xml:id="akn_art_kCjLvC_KMdMBH">(d)</num>
+                                    <num xml:id="akn_art_kCjLvC_KMdMBH">(c)</num>
                                     <content xml:id="akn_art_kCjLvC_prlgHA">
                                         <p xml:id="akn_art_kCjLvC_3g5BtX">the applicable Union non-customs legislation allows the fulfilment of the specific formality through the national single window environments for customs in accordance with Article 11.</p>
                                     </content>
-                                </point>
-                                <point leos:origin="ec" leos:softdate="2024-03-08T14:04:35+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="_akn_art_kCjLvC_vyu6Sj">
-                                    <num leos:origin="ec" xml:id="_akn_art_kCjLvC_SR21R6">
-                                        <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_diMPBQ">(d)</ins>
-                                    </num>
-                                    <content leos:origin="ec" xml:id="_akn_art_kCjLvC_MKcUXP">
-                                        <p leos:origin="ec" xml:id="_akn_art_kCjLvC_SXjI8W">
-                                            <ins leos:title="DAS Satyabrata : 2024-03-08T14:04:35+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_Bel7ev">new point</ins>
-                                        </p>
-                                    </content>
-                                </point>
+                                </point><point leos:origin="ec" leos:softdate="2024-03-08T14:04:35+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="_akn_art_kCjLvC_vyu6Sj">
+                                <num leos:origin="ec" xml:id="_akn_art_kCjLvC_SR21R6"><ins leos:tc-original-number="(d)" leos:title="DAS Satyabrata : 2024-03-08T14:05:03+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_WjasBL">(d)</ins></num>
+                                <content leos:origin="ec" xml:id="_akn_art_kCjLvC_MKcUXP">
+                                    <p leos:origin="ec" xml:id="_akn_art_kCjLvC_SXjI8W">
+                                        <ins leos:title="DAS Satyabrata : 2024-03-08T14:04:35+00:00" leos:uid="dasatya" xml:id="_akn_art_kCjLvC_Bel7ev">new point</ins>
+                                    </p>
+                                </content>
+                            </point>
                             </list>
                         </paragraph>
                         <paragraph xml:id="akn_art_kCjLvC_b8CP4W">

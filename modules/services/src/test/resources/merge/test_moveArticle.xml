@@ -1,5 +1,4 @@
-<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <meta>
             <identification source="~COM">
@@ -583,35 +582,27 @@
                         </list>
                     </paragraph>
                 </article>
-            </chapter>
-            <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_aljBSj" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_from="moved_art_1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" xml:id="art_1">
-                <num leos:action="insert" leos:editable="false" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" leos:uid="gautare" xml:id="art_1__num">Article 1</num>
-                <heading xml:id="art_1__heading">Subject matter</heading>
-                <paragraph xml:id="art_1_61PenZ">
-                    <content xml:id="art_1_BrqgVv">
-                        <p xml:id="art_1_9KdmGu">This Regulation establishes a European Union Single Window Environment for Customs that provides an integrated set of interoperable ele
-                            <del leos:title="DAS Satyabrata : 2024-03-08T13:57:30+00:00" leos:uid="dasatya" xml:id="_art_1_vA6NVy">ctronic services at Union and national level through the European Union Customs Single</del>
-                            Window Certificates Exchange System to support interaction and information exchange between the national single window environments for customs and the Union non-customs systems referred to in the Annex.
-                        </p>
-                    </content>
-                </paragraph>
-                <paragraph leos:action-number="insert" leos:origin="ec" leos:softdate="2024-03-08T13:57:09+00:00" leos:softuser="DAS Satyabrata(undefined)" leos:tc-original-number="NEW" leos:title-number="DAS Satyabrata : 2024-03-08T13:57:09+00:00" leos:uid-number="dasatya" xml:id="_art_1_W8BmoP">
-                    <content leos:origin="ec" xml:id="art_1_BrqgVv">
-                        <p leos:origin="ec" xml:id="art_1_9KdmGu">
-                            <ins leos:title="DAS Satyabrata : 2024-03-08T13:57:09+00:00" leos:uid="dasatya" xml:id="_art_1_AjAs57">new paragraph</ins>
-                            Â 
-                        </p>
-                    </content>
-                </paragraph>
-                <paragraph xml:id="art_1_K29idR">
-                    <content xml:id="art_1_6zNBvF">
-                        <p xml:id="art_1_EUTgpK">It lays down rules for the national single window environments for customs and rules on digital administrative cooperation and information
-                            <ins leos:title="DAS Satyabrata : 2024-03-08T13:57:30+00:00" leos:uid="dasatya" xml:id="_art_1_7Ww48L">new changes</ins>
-                            sharing within the European Union Single Window Environment for Customs.
-                        </p>
-                    </content>
-                </paragraph>
-            </article>
+            </chapter><article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_aljBSj" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_from="moved_art_1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" xml:id="art_1">
+            <num leos:action="insert" leos:editable="false" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" leos:uid="gautare" xml:id="art_1__num">#</num>
+            <heading xml:id="art_1__heading">Subject matter</heading>
+            <paragraph xml:id="art_1_61PenZ">
+                <content xml:id="art_1_BrqgVv">
+                    <p xml:id="art_1_9KdmGu">This Regulation establishes a European Union Single Window Environment for Customs that provides an integrated set of interoperable ele<del leos:title="DAS Satyabrata : 2024-03-08T13:57:30+00:00" leos:uid="dasatya" xml:id="_art_1_vA6NVy">ctronic services at Union and national level through the European Union Customs Single</del> Window Certificates Exchange System to support interaction and information exchange between the national single window environments for customs and the Union non-customs systems referred to in the Annex.</p>
+                </content>
+            </paragraph><paragraph leos:action-number="insert" leos:origin="ec" leos:softdate="2024-03-08T13:57:09+00:00" leos:softuser="DAS Satyabrata(undefined)" leos:tc-original-number="NEW" leos:title-number="DAS Satyabrata : 2024-03-08T13:57:09+00:00" leos:uid-number="dasatya" xml:id="_art_1_W8BmoP">
+            <content leos:origin="ec" xml:id="art_1_BrqgVv">
+                <p leos:origin="ec" xml:id="art_1_9KdmGu">
+                    <ins leos:title="DAS Satyabrata : 2024-03-08T13:57:09+00:00" leos:uid="dasatya" xml:id="_art_1_AjAs57">new paragraph</ins>
+                    Â 
+                </p>
+            </content>
+        </paragraph>
+            <paragraph xml:id="art_1_K29idR">
+                <content xml:id="art_1_6zNBvF">
+                    <p xml:id="art_1_EUTgpK">It lays down rules for the national single window environments for customs and rules on digital administrative cooperation and information <ins leos:title="DAS Satyabrata : 2024-03-08T13:57:30+00:00" leos:uid="dasatya" xml:id="_art_1_7Ww48L">new changes</ins> sharing within the European Union Single Window Environment for Customs.</p>
+                </content>
+            </paragraph>
+        </article>
             <chapter xml:id="cha_YaW7nA">
                 <num xml:id="akn_XqViZx">Chapter III</num>
                 <heading xml:id="akn_RGD2LO">National single window environments for customs</heading>

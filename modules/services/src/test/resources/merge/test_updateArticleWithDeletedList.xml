@@ -1,5 +1,4 @@
-<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
-<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <meta>
             <identification source="~_COM">
@@ -247,39 +246,9 @@
                                         <p xml:id="_imp_art_d1e29372_idXU3e_teYfE3">long and short positions in assets for which a credit assessment by a nominated ECAI is not available and which meet all of the following conditions:</p>
                                     </content>
                                 </subparagraph>
-                                <point leos:origin="ec" leos:softdate="2024-03-20T16:05:09+01:00" leos:softuser="DOE Jane(undefined)" xml:id="_imp_art_d1e29372_idXU3e_OsgMty">
-                                    <num leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_dVV6Cs">
-                                        <del leos:action-enter="delete" leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_LM0E1M">â†°</del>
-                                        <del leos:action-number="delete" leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_eOq3jC">(i)</del>
-                                    </num>
-                                    <content leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_NPiiQN">
-                                        <p leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_yDsU0Q">
-                                            <del leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_Btyt99">they are considered by the institution concerned to be sufficiently liquid;</del>
-                                        </p>
-                                    </content>
-                                </point>
-                                <point leos:origin="ec" leos:softdate="2024-03-20T16:04:57+01:00" leos:softuser="DOE Jane(undefined)" xml:id="_imp_art_d1e29372_idXU3e_dgcVU9">
-                                    <num leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_tsWaK4">
-                                        <del leos:action-enter="delete" leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_QhcRJJ">â†°</del>
-                                        <del leos:action-number="delete" leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_5YTezV">(ii)</del>
-                                    </num>
-                                    <content leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_59kR5r">
-                                        <p leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_eYStA3">
-                                            <del leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_RpOMq8">their investment quality is, according to the institution's own discretion, at least equivalent to that of the assets referred to under Table 1 second row;</del>
-                                        </p>
-                                    </content>
-                                </point>
-                                <point leos:origin="ec" leos:softdate="2024-03-20T16:04:43+01:00" leos:softuser="DOE Jane(undefined)" xml:id="_imp_art_d1e29372_idXU3e_U3JgJf">
-                                    <num leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_W8LAOa">
-                                        <del leos:action-enter="delete" leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_9HH9vm">â†°</del>
-                                        <del leos:action-number="delete" leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_AXkp8r">(iii)</del>
-                                    </num>
-                                    <content leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_w2465s">
-                                        <p leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_xL59ro">
-                                            <del leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_og2evS">they are listed on at least one regulated market in a Member State or on a stock exchange in a third country provided that the exchange is recognised by the competent authorities of the relevant Member State;</del>
-                                        </p>
-                                    </content>
-                                </point>
+                                <point leos:auto-num-overwrite="true" leos:origin="ec" leos:softdate="2024-03-20T16:05:09+01:00" leos:softuser="DOE Jane(undefined)" xml:id="_imp_art_d1e29372_idXU3e_OsgMty"><num leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_dVV6Cs"><del leos:action-number="delete" leos:tc-original-number="(i)" leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_LjfR11">(i)</del></num><content leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_NPiiQN"><p leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_yDsU0Q"><del leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_Btyt99">they are considered by the institution concerned to be sufficiently liquid;</del></p></content></point>
+                                <point leos:auto-num-overwrite="true" leos:origin="ec" leos:softdate="2024-03-20T16:04:57+01:00" leos:softuser="DOE Jane(undefined)" xml:id="_imp_art_d1e29372_idXU3e_dgcVU9"><num leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_tsWaK4"><del leos:action-number="delete" leos:tc-original-number="(ii)" leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_3BAaIa">(ii)</del></num><content leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_59kR5r"><p leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_eYStA3"><del leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_RpOMq8">their investment quality is, according to the institution's own discretion, at least equivalent to that of the assets referred to under Table 1 second row;</del></p></content></point>
+                                <point leos:auto-num-overwrite="true" leos:origin="ec" leos:softdate="2024-03-20T16:04:43+01:00" leos:softuser="DOE Jane(undefined)" xml:id="_imp_art_d1e29372_idXU3e_U3JgJf"><num leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_W8LAOa"><del leos:action-number="delete" leos:tc-original-number="(iii)" leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_2JVoTo">(iii)</del></num><content leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_w2465s"><p leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_xL59ro"><del leos:title="DOE Jane : 2024-03-20T16:05:09+01:00" leos:uid="jane" xml:id="_imp_art_d1e29372_idXU3e_og2evS">they are listed on at least one regulated market in a Member State or on a stock exchange in a third country provided that the exchange is recognised by the competent authorities of the relevant Member State;</del></p></content></point>
                             </list>
                         </point>
                         <point xml:id="_imp_art_d1e29372_idXU3e_2ojWQZ">

@@ -754,7 +754,7 @@
                     <heading xml:id="akn_UAL67f">ADDITIONAL DIGITAL COOPERATION RELATED TO UNION NON-CUSTOMS FORMALITIES</heading>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_lFYQR3" leos:origin="ec" xml:id="akn_art_dtWbDZ">
                         <num leos:editable="false" leos:origin="ec" xml:id="akn_art_dtWbDZ_6qZ851">Article 11</num>
-                        <heading xml:id="akn_art_dtWbDZ_KZj4UG">Streamlining the <del leos:title="DAS Satyabrata : 2024-03-08T13:58:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dtWbDZ_4O2MCf">fulfilment of customs</del> and Union non-customs <ins leos:title="DAS Satyabrata : 2024-03-08T13:58:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dtWbDZ_yHZvhv">new changes</ins>formalities</heading>
+                        <heading xml:id="akn_art_dtWbDZ_KZj4UG">Streamlining the <del leos:title="DAS Satyabrata : 2024-03-08T13:58:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dtWbDZ_4O2MCf">fulfilment of customs</del> and Union non-customs <ins leos:title="DAS Satyabrata : 2024-03-08T13:58:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dtWbDZ_yHZvhv">new changes</ins> formalities</heading>
                         <paragraph xml:id="akn_art_dtWbDZ_XfqDj2">
                             <list xml:id="akn_art_dtWbDZ_pfVhrA">
                                 <subparagraph refersTo="~_INP" xml:id="akn_art_dtWbDZ_YTj1W0">
@@ -768,9 +768,7 @@
                                         <p xml:id="akn_art_dtWbDZ_8fHRWQ">allowing economic operators to submit the relevant information required for the fulfilment of the applicable customs formalities and Union non-customs formalities;</p>
                                     </content>
                                 </point><point leos:origin="ec" leos:softdate="2024-03-08T13:58:39+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="_akn_art_dtWbDZ_IiqQ3Z">
-                                <num leos:origin="ec" xml:id="_akn_art_dtWbDZ_hxDbb1">
-                                    <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T13:58:39+00:00" leos:uid="dasatya" xml:id="_akn_art_dtWbDZ_G8Npva">(b)</ins>
-                                </num>
+                                <num leos:origin="ec" xml:id="_akn_art_dtWbDZ_hxDbb1"><ins leos:tc-original-number="(b)" leos:title="DAS Satyabrata : 2024-03-08T13:58:39+00:00" leos:uid="dasatya" xml:id="_akn_art_dtWbDZ_NtSi75">(b)</ins></num>
                                 <content leos:origin="ec" xml:id="_akn_art_dtWbDZ_8ABraR">
                                     <p leos:origin="ec" xml:id="_akn_art_dtWbDZ_5eY8RH">
                                         <ins leos:title="DAS Satyabrata : 2024-03-08T13:58:39+00:00" leos:uid="dasatya" xml:id="_akn_art_dtWbDZ_WUwsHr">new point added</ins>
@@ -778,7 +776,7 @@
                                 </content>
                             </point>
                                 <point xml:id="akn_art_dtWbDZ-par1">
-                                    <num xml:id="akn_art_dtWbDZ_0hL0ix">(b)</num>
+                                    <num xml:id="akn_art_dtWbDZ_0hL0ix">(c)</num>
                                     <content xml:id="akn_art_dtWbDZ_i021mQ">
                                         <p xml:id="akn_art_dtWbDZ_GwjffQ">makingÂ available to economic operators the electronic feedback of goods clearance from customs and partner competent authorities responsible for the fulfilment of the applicable customsÂ formalities and Union non-customs formalities.</p>
                                     </content>

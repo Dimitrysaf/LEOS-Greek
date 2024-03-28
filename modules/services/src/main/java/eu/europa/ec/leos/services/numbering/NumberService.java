@@ -21,6 +21,8 @@ public interface NumberService {
 
     String renumberImportedArticle(String content);
 
+    byte[] renumberSpecificElementChildren(byte[] xmlContent, String tagName, String elementId);
+
     byte[] renumberRecitals(byte[] xmlContent);
 
     String renumberImportedRecital(String content);

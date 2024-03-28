@@ -21,12 +21,14 @@ import eu.europa.ec.leos.services.numbering.depthBased.ParentChildNode;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
@@ -34,8 +36,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
+import static eu.europa.ec.leos.services.support.XercesUtils.replaceElement;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
+import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
@@ -81,6 +86,18 @@ public class NumberServiceProposal implements NumberService {
     @Override
     public byte[] renumberArticles(byte[] xmlContent, boolean renumberChildren) {
         return renumberDocument(xmlContent, ARTICLE, true, renumberChildren);
+    }
+
+    @Override
+    public byte[] renumberSpecificElementChildren(byte[] xmlContent, String tagName, String elementId) {
+        Document document = createXercesDocument(xmlContent, true);
+        Node specificNode = XercesUtils.getElementById(document, elementId);
+        if (specificNode != null) {
+            Document specificNodeDoc = createXercesDocument(nodeToByteArray(specificNode), true);
+            numberProcessorHandler.renumberDocument(specificNodeDoc, tagName, documentLanguageContext.getDocumentLanguage(),true);
+            replaceElement(specificNode, nodeToString(specificNodeDoc));
+        }
+        return nodeToByteArray(document);
     }
 
     @Override

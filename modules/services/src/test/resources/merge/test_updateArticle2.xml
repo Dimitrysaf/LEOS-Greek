@@ -466,9 +466,7 @@
                                     <p xml:id="akn_art_phTLdP_J1ZwuD">enabling information to be exchanged between national single window environments for customs and the Union non-customs systems referred to in the AnnexÂ as regards the Union non-customs formalities listed therein;</p>
                                 </content>
                             </point><point leos:origin="ec" leos:softdate="2024-03-08T13:47:52+00:00" leos:softuser="DAS Satyabrata(undefined)" xml:id="_akn_art_phTLdP_T0cTpp">
-                            <num leos:origin="ec" xml:id="_akn_art_phTLdP_35pSJw">
-                                <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T13:55:57+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_vYiJcs">(b)</ins>
-                            </num>
+                            <num leos:origin="ec" xml:id="_akn_art_phTLdP_35pSJw"><ins leos:tc-original-number="(b)" leos:title="DAS Satyabrata : 2024-03-08T13:55:57+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_jSUKbB">(b)</ins></num>
                             <content leos:origin="ec" xml:id="_akn_art_phTLdP_GHnq58">
                                 <p leos:origin="ec" xml:id="_akn_art_phTLdP_HrHSy8">
                                     <ins leos:title="DAS Satyabrata : 2024-03-08T13:48:16+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_24mzfI">new changes</ins>
@@ -476,16 +474,14 @@
                             </content>
                         </point>
                             <point xml:id="akn_art_phTLdP_Vs16WE">
-                                <num xml:id="akn_art_phTLdP_g5M08k">(b)</num>
+                                <num xml:id="akn_art_phTLdP_g5M08k">(c)</num>
                                 <content xml:id="akn_art_phTLdP_bsVHaZ">
                                     <p xml:id="akn_art_phTLdP_aK2KR8">performing the transformation of data listed in Article 10(2), where necessary, to enable the exchange of information referred to in this paragraph, point (a).</p>
                                 </content>
                             </point>
                         </list>
                     </paragraph><paragraph leos:action-number="insert" leos:indent-origin-num-origin="ec" leos:origin="ec" leos:softdate="2024-03-08T13:48:10+00:00" leos:softuser="DAS Satyabrata(undefined)" leos:tc-original-number="NEW" leos:title-number="DAS Satyabrata : 2024-03-08T13:55:57+00:00" leos:uid-number="dasatya" xml:id="_akn_art_phTLdP_8XedvP">
-                    <num leos:origin="ec" xml:id="_akn_art_phTLdP_9VwjCX">
-                        <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T13:55:57+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_yF4Qpn">2.</ins>
-                    </num>
+                    <num leos:origin="ec" xml:id="_akn_art_phTLdP_9VwjCX"><ins leos:tc-original-number="2." leos:title="DAS Satyabrata : 2024-03-08T13:55:57+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_0GX5vb">2.</ins></num>
                     <content leos:origin="ec" xml:id="_akn_art_phTLdP_R5V28q">
                         <p leos:origin="ec" xml:id="_akn_art_phTLdP_t3JrAn">
                             <ins leos:title="DAS Satyabrata : 2024-03-08T13:48:16+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_9Mtvk6">new paragraph</ins>
@@ -493,7 +489,7 @@
                     </content>
                 </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_NvQTzp">
-                        <num leos:origin="ec" xml:id="akn_art_phTLdP_Lm9ODY">2.</num>
+                        <num leos:origin="ec" xml:id="akn_art_phTLdP_Lm9ODY">3.</num>
                         <list xml:id="akn_art_phTLdP_7DFoOJ">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_FE6qXG">
                                 <content xml:id="akn_art_phTLdP_obG97T">
@@ -509,7 +505,7 @@
                             <point xml:id="akn_art_phTLdP_UiWM7N">
                                 <num xml:id="akn_art_phTLdP_U3Z4gS">(b)</num>
                                 <content xml:id="akn_art_phTLdP_FvflpZ">
-                                    <p xml:id="akn_art_phTLdP_seXHAg">natural persons whose personal informatio<del leos:title="DAS Satyabrata : 2024-03-08T13:48:35+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_PrSE6G">n is contained in the supporting documents, or inÂ any other additional do</del>  cumentary evidence <ins leos:title="DAS Satyabrata : 2024-03-08T13:48:35+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_qVNKS9">new changes</ins> required for the fulfilment of the Union non-customs formalities listed in the Annex;</p>
+                                    <p xml:id="akn_art_phTLdP_seXHAg">natural persons whose personal informatio<del leos:title="DAS Satyabrata : 2024-03-08T13:48:35+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_PrSE6G">n is contained in the supporting documents, or inÂ any other additional do</del> cumentary evidence <ins leos:title="DAS Satyabrata : 2024-03-08T13:48:35+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_qVNKS9">new changes</ins>  required for the fulfilment of the Union non-customs formalities listed in the Annex;</p>
                                 </content>
                             </point>
                             <point xml:id="akn_art_phTLdP_Nv7XNK">
@@ -519,7 +515,7 @@
                                 </content>
                             </point>
                             <point leos:action="delete" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T13:55:51+00:00" leos:softmove_label="MOVED to Article 5(4), point (c)" leos:softmove_to="akn_art_phTLdP_iLri4i" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.596+01:00" leos:uid="dasatya" xml:id="moved_akn_art_phTLdP_iLri4i">
-                                <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.596+01:00" xml:id="akn_art_phTLdP_B5q9f5">(d)</num>
+                                <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.596+01:00" xml:id="akn_art_phTLdP_B5q9f5"><del leos:action-number="delete" leos:tc-original-number="(d)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.596+01:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_rcTqGf">(d)</del></num>
                                 <content leos:origin="ec" xml:id="akn_art_phTLdP_5jAAsC">
                                     <p leos:origin="ec" xml:id="akn_art_phTLdP_pIo8G7">Commission staff and third party providers acting on behalf of Commission that perform EU CSW-CERTEX-related operations and maintenance activities.</p>
                                 </content>
@@ -527,7 +523,7 @@
                         </list>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_QsVl8H">
-                        <num xml:id="akn_art_phTLdP_JFGuwC">3.</num>
+                        <num xml:id="akn_art_phTLdP_JFGuwC">4.</num>
                         <list xml:id="akn_art_phTLdP_u49VGy">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_Hyqr4c">
                                 <content xml:id="akn_art_phTLdP_ARYfGY">
@@ -546,7 +542,7 @@
                                     <p xml:id="akn_art_phTLdP_eSbJFT">name and signature of the authorised staff referred to in paragraph 2, points (c) and (d).</p>
                                 </content>
                             </point><point leos:action="insert" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T13:55:57+00:00" leos:softmove_from="moved_akn_art_phTLdP_iLri4i" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.636+01:00" leos:uid="dasatya" xml:id="akn_art_phTLdP_iLri4i">
-                            <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.636+01:00" leos:uid="dasatya" xml:id="akn_art_phTLdP_B5q9f5">(d)</num>
+                            <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.636+01:00" leos:uid="dasatya" xml:id="akn_art_phTLdP_B5q9f5">(c)</num>
                             <content xml:id="akn_art_phTLdP_5jAAsC">
                                 <p xml:id="akn_art_phTLdP_pIo8G7">Commission staff and third party providers acting on behalf of Commission that perform EU CSW-CERTEX-related operations and maintenance activities.</p>
                             </content>
@@ -554,13 +550,13 @@
                         </list>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_EPBM9a">
-                        <num xml:id="akn_art_phTLdP_SrwOpM">4.</num>
+                        <num xml:id="akn_art_phTLdP_SrwOpM">5.</num>
                         <content xml:id="akn_art_phTLdP_JbfzjJ">
                             <p xml:id="akn_art_phTLdP_D8qZer">EU CSW-CERTEX shall not store any information exchanged between the national single window environments for customs and Union non-customs systems.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_JhbISd">
-                        <num xml:id="akn_art_phTLdP_Vfew0u">5.</num>
+                        <num xml:id="akn_art_phTLdP_Vfew0u">6.</num>
                         <content xml:id="akn_art_phTLdP_mICcWs">
                             <p xml:id="akn_art_phTLdP_Vuy4KE">The transformation of personal data referred to in paragraph 1, point (b), shall be performed using information technology infrastructure located in the Union. Â  Â  Â Â </p>
                         </content>

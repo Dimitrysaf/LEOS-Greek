@@ -5,6 +5,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.model.action.ContributionVO;
@@ -20,26 +21,46 @@ import eu.europa.ec.leos.services.document.MemorandumService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.MergeActionVO;
+import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
+import eu.europa.ec.leos.services.numbering.NumberProcessorHandlerProposal;
+import eu.europa.ec.leos.services.numbering.NumberService;
+import eu.europa.ec.leos.services.numbering.NumberServiceProposal;
+import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
+import eu.europa.ec.leos.services.numbering.depthBased.ParentChildConverter;
+import eu.europa.ec.leos.services.numbering.processor.NumberProcessor;
+import eu.europa.ec.leos.services.numbering.processor.NumberProcessorArticle;
+import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDefault;
+import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBased;
+import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBasedDefault;
+import eu.europa.ec.leos.services.numbering.processor.NumberProcessorParagraphAndPoint;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorTest;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
 import io.atlassian.fugue.Option;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlRemoveNumValue;
+import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlWithoutIdsAndDummyDate;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 
@@ -65,8 +86,8 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     @Mock
     private LeosRepository leosRepository;
 
-    @Mock
-    private MessageHelper messageHelper;
+    @InjectMocks
+    protected MessageHelper messageHelper = Mockito.spy(getMessageHelper());
 
     @Mock
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -77,6 +98,36 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     @InjectMocks
     protected XmlContentProcessorProposal xmlContentProcessor = spy(new XmlContentProcessorProposal());
 
+    protected ParentChildConverter parentChildConverter = new ParentChildConverter();
+
+    @InjectMocks
+    protected NumberConfigFactory numberConfigFactory = Mockito.spy(new NumberConfigFactory());
+
+    @InjectMocks
+    protected NumberProcessorHandler numberProcessorHandler = new NumberProcessorHandlerProposal();
+
+    @Mock
+    private eu.europa.ec.leos.security.SecurityContext leosSecurityContext;
+
+    private TrackChangesContext trackChangesContext = new TrackChangesContext();
+    private NumberProcessor numberProcessorArticle = new NumberProcessorArticle(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessor numberProcessorPoint = new NumberProcessorParagraphAndPoint(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessor numberProcessorDefault = new NumberProcessorDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessorDepthBased numberProcessorDepthBasedDefault = new NumberProcessorDepthBasedDefault(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+    private NumberProcessorDepthBased numberProcessorLevel = new eu.europa.ec.leos.services.numbering.processor.NumberProcessorLevel(messageHelper, numberProcessorHandler, leosSecurityContext, trackChangesContext);
+
+    @InjectMocks
+    protected List<NumberProcessor> numberProcessors = Mockito.spy(Stream.of(numberProcessorArticle,
+            numberProcessorPoint,
+            numberProcessorDefault).collect(Collectors.toList()));
+    @InjectMocks
+    protected List<NumberProcessorDepthBased> numberProcessorsDepthBased = Mockito.spy(Stream.of(numberProcessorDepthBasedDefault, numberProcessorLevel)
+            .collect(Collectors.toList()));
+
+    @InjectMocks
+    NumberService numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, xmlContentProcessor,
+            documentLanguageContext);
+
     @InjectMocks
     eu.europa.ec.leos.services.document.ContributionService contributionService = new ContributionServiceProposalImpl<Bill>(
             leosRepository, messageHelper,
@@ -85,7 +136,8 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
             memorandumService, legService, xmlContentProcessor, repositoryPropertiesMapper);
 
     @InjectMocks
-    MergeContributionService mergeContributionService = new MergeContributionService(xmlContentProcessor, contributionService, documentLanguageContext);
+    MergeContributionService mergeContributionService = new MergeContributionService(xmlContentProcessor, contributionService, documentLanguageContext,
+            numberService);
 
     private ContributionVO contribution;
     private ContributionVO contribution2;
@@ -106,6 +158,13 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
                 "", Option.some(content), Option.some(billMetadata), true);
     }
 
+    protected MessageHelper getMessageHelper() {
+        try (ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("test-servicesContext.xml")) {
+            MessageSource servicesMessageSource = (MessageSource) applicationContext.getBean("servicesMessageSource");
+            MessageHelper messageHelper = new MandateMessageHelper(servicesMessageSource);
+            return messageHelper;
+        }
+    }
 
     @Override
     protected void getStructureFile() {
@@ -464,7 +523,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         byte[] result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
         String resultStr = new String(result);
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle.xml"));
-        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
     }
 
     @Test
@@ -507,7 +566,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         byte[] result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
         String resultStr = new String(result);
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle2.xml"));
-        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
     }
 
     @Test
@@ -636,7 +695,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         byte[] result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
         String resultStr = new String(result);
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle3.xml"));
-        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
     }
 
     @Test
@@ -679,7 +738,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         byte[] result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
         String resultStr = new String(result);
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle4.xml"));
-        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
     }
 
     @Test
@@ -1454,7 +1513,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         byte[] result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc2, this.tocItems, new ArrayList<>());
         String resultStr = new String(result);
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticleWithDeletedList.xml"));
-        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
     }
 
     @Test

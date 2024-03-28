@@ -802,7 +802,7 @@
                                         </content>
                                     </subparagraph>
                                     <point leos:indent-origin-num-origin="ec" leos:origin="ec" xml:id="_akn_art_kCjLvC_UjpNX6">
-                                        <num leos:origin="ec" xml:id="_akn_art_kCjLvC_63XoOG">#</num>
+                                        <num leos:origin="ec" xml:id="_akn_art_kCjLvC_63XoOG">(i)</num>
                                         <content leos:origin="ec" xml:id="_akn_art_kCjLvC_GChucU">
                                             <p leos:origin="ec" xml:id="_akn_art_kCjLvC_lhXEci">
                                                 new point
@@ -810,7 +810,7 @@
                                         </content>
                                     </point>
                                     <point leos:indent-origin-num-origin="ec" leos:origin="ec" xml:id="_akn_art_kCjLvC_i6xM6K">
-                                        <num leos:origin="ec" xml:id="_akn_art_kCjLvC_kJfbzF">#</num>
+                                        <num leos:origin="ec" xml:id="_akn_art_kCjLvC_kJfbzF">(ii)</num>
                                         <content leos:origin="ec" xml:id="_akn_art_kCjLvC_37rAFF">
                                             <p leos:origin="ec" xml:id="_akn_art_kCjLvC_q1d6up">
                                                 <ins xml:id="_akn_art_kCjLvC_SpyY3h">new line</ins>
@@ -822,18 +822,18 @@
                                 </point>
 
                                 <point xml:id="akn_art_kCjLvC_bvQOP5">
-                                    <num xml:id="akn_art_kCjLvC_L1DvHa">(c)</num>
+                                    <num xml:id="akn_art_kCjLvC_L1DvHa">(b)</num>
                                     <content xml:id="akn_art_kCjLvC_K0gWaS">
                                         <p xml:id="akn_art_kCjLvC_t0Uqx1">the corresponding Union non-customs system referred to in the Annex can identify the economic operator by means of the Economic Operator Registration and Identification (EORI) number;</p>
                                     </content>
                                 </point>
                                 <point xml:id="akn_art_kCjLvC_wBpHxX">
-                                    <num xml:id="akn_art_kCjLvC_KMdMBH">(d)</num>
+                                    <num xml:id="akn_art_kCjLvC_KMdMBH">(c)</num>
                                     <content xml:id="akn_art_kCjLvC_prlgHA">
                                         <p xml:id="akn_art_kCjLvC_3g5BtX">the applicable Union non-customs legislation allows the fulfilment of the specific formality through the national single window environments for customs in accordance with Article 11.</p>
                                     </content>
                                 </point><point leos:origin="ec" xml:id="_akn_art_kCjLvC_vyu6Sj">
-                                <num leos:origin="ec" xml:id="_akn_art_kCjLvC_SR21R6">#</num>
+                                <num leos:origin="ec" xml:id="_akn_art_kCjLvC_SR21R6">(d)</num>
                                 <content leos:origin="ec" xml:id="_akn_art_kCjLvC_MKcUXP">
                                     <p leos:origin="ec" xml:id="_akn_art_kCjLvC_SXjI8W">
                                         new point

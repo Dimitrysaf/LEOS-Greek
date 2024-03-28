@@ -101,6 +101,11 @@ public class NumberServiceMandate implements NumberService {
     }
 
     @Override
+    public byte[] renumberSpecificElementChildren(byte[] xmlContent, String tagName, String elementId) {
+        return xmlContent;
+    }
+
+    @Override
     public byte[] renumberRecitals(byte[] xmlContent) {
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         if (isAutoNumberingEnabled(tocItems, RECITAL, documentLanguageContext.getDocumentLanguage())) {

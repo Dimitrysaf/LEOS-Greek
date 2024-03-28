@@ -106,8 +106,9 @@ public class TestUtils {
                 .replaceAll("leos:list-type=\".+?\"", "");
     }
 
-    public static String squeezeXmlWithoutIds(String input) {
+    public static String squeezeXmlWithoutIdsAndDummyDate(String input) {
         return input.replaceAll("\\s+", "")
+                .replaceAll("xml:id=\".+?\"", "xml:id=\"dummyId\"")
                 .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"");
     }
 
