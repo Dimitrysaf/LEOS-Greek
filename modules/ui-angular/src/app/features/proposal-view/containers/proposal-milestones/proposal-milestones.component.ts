@@ -26,6 +26,7 @@ const MILESTONE_RELOAD_INTERVAL = 10000;
 export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   @Input() proposal: Document;
   @Input() proposalRef: string;
+  @Input() legFileName = null;
   @ViewChild('addMilestoneDialog')
   addMilestoneDialog: AddMilestoneDialogComponent;
   addMilestoneDialogVisible = false;
@@ -43,6 +44,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   dataSource: Milestone[] = [];
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
+  inputMilestoneViewed = false;
 
   private milestonesCheckTimer: ReturnType<typeof setTimeout>;
   private milestonesStatus = {
@@ -84,6 +86,19 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
             ) {
               this.proposalDetailsService.clonedProposalCount =
                 milestone.clonedMilestones.length;
+            }
+
+            if(!this.inputMilestoneViewed && this.legFileName != null) {
+              if(milestone.legDocumentName === this.legFileName) {
+                this.openMilestoneViewDialog(milestone);                                
+                this.inputMilestoneViewed = true;
+              } else {
+                const clonedMilestone = milestone.clonedMilestones?.find(value => value.legDocumentName === this.legFileName);
+                if(clonedMilestone != null) {
+                  this.openMilestoneViewDialog(clonedMilestone);
+                  this.inputMilestoneViewed = true;
+                }
+              }
             }
           });
         },

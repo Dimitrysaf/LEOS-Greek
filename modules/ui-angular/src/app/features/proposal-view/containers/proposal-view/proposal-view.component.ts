@@ -1,6 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewChecked,
+  Component,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { EuiTabsComponent } from '@eui/components/eui-tabs';
 import { EuiBreadcrumbService } from '@eui/components/layout';
 import { UxAppShellService } from '@eui/core';
 import { Document } from '@leos/shared';
@@ -16,7 +23,9 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
   templateUrl: './proposal-view.component.html',
   styleUrls: ['./proposal-view.component.scss'],
 })
-export class ProposalViewComponent implements OnDestroy, OnInit {
+export class ProposalViewComponent
+  implements OnDestroy, OnInit, AfterViewChecked
+{
   proposal: Document | null = null;
   proposalState: 'loading' | 'done' | 'error' | 'active' = 'loading';
   proposalError: unknown = null;
@@ -26,6 +35,9 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
   isClonedProposal = false;
   originRef: string | null = null;
   proposalRef: string;
+  @ViewChild('tabs') tabs: EuiTabsComponent;
+  milestoneTabSelected = false;
+  legFileName: string = null;
 
   protected readonly homeUrl = document.baseURI;
 
@@ -42,6 +54,11 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
 
   ngOnInit(): void {
     this.manageBreadCrumbsProposalView();
+
+    this.route.queryParams.subscribe(({legFileName}) => {
+      this.legFileName = legFileName;
+    });
+
     this.route.params
       .pipe(takeUntil(this.destroy$))
       .subscribe(({ proposalId }) => {
@@ -63,6 +80,13 @@ export class ProposalViewComponent implements OnDestroy, OnInit {
         },
         error: (error) => this.setStateError(error),
       });
+  }
+
+  ngAfterViewChecked(): void {
+    if (this.tabs && !this.milestoneTabSelected && this.legFileName && this.legFileName !== null) {
+      this.tabs.changeTab(1);
+      this.milestoneTabSelected = true;
+    }
   }
 
   onSaveEEA(eea: boolean) {

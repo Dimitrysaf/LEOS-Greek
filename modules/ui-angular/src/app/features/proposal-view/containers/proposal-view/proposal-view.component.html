@@ -24,7 +24,7 @@
       [originRef]="originRef"
     ></app-proposal-header>
 
-    <eui-tabs class="eui-u-display-block eui-u-mt-l">
+    <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs>
       <eui-tab>
         <eui-tab-label>{{
           'page.collection.tabs.drafts' | translate
@@ -45,6 +45,7 @@
           <app-proposal-milestones
             [proposal]="proposal"
             [proposalRef]="proposalRef"
+            [legFileName]="legFileName"
           ></app-proposal-milestones>
         </eui-tab-content>
       </eui-tab>
