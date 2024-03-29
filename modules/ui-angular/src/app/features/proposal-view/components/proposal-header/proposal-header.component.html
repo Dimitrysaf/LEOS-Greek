@@ -1,24 +1,38 @@
-<header class="eui-u-flex eui-u-flex-align-items-start eui-u-mb-xs">
-  <h1 class="flex-grow-1 eui-u-font-2xl" [innerHTML]="title"></h1>
-
-  <app-proposal-actions-dropdown
-    [proposalState]="this.proposalState"
-    [permissions]="permissions"
-    [nonEditablePartOfTitle]="nonEditablePartOfTitle"
-    [editableTitle]="editableTitle"
-    [isClonedProposal]="isClonedProposal"
-    [originRef]="originRef"
-    class="eui-u-ml-s"
-  ></app-proposal-actions-dropdown>
-  <button
-    class="eui-u-ml-s"
-    euiButton
-    euiSizeS
-    euiPrimary
-    translate="global.actions.close"
-    *ngIf="collectionCloseButtonEnabled"
-    (click)="handleClose()"
-  ></button>
+<header>
+  <div style="display: flex">
+    <h1
+      class="flex-grow-1 eui-u-font-2xl eui-u-mr-2xs"
+      style="padding-right: 15px"
+      [innerHTML]="title"
+    ></h1>
+    <div style="display: flex; align-content: center; align-items: flex-start">
+      <eui-icon
+        (click)="toggleFavourite()"
+        style="cursor: pointer"
+        class="eui-icon"
+        [ngClass]="isFavourite ? 'eui-icon-bookmark' : 'eui-icon-bookmark-o'"
+        euiSizeL
+      ></eui-icon>
+      <app-proposal-actions-dropdown
+        [proposalState]="this.proposalState"
+        [permissions]="permissions"
+        [nonEditablePartOfTitle]="nonEditablePartOfTitle"
+        [editableTitle]="editableTitle"
+        [isClonedProposal]="isClonedProposal"
+        [originRef]="originRef"
+        class="eui-u-ml-s"
+      ></app-proposal-actions-dropdown>
+      <button
+        class="eui-u-ml-s"
+        euiButton
+        euiSizeS
+        euiPrimary
+        translate="global.actions.close"
+        *ngIf="collectionCloseButtonEnabled"
+        (click)="handleClose()"
+      ></button>
+    </div>
+  </div>
 </header>
 <header
   *ngIf="isClonedProposal"
