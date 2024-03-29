@@ -34,6 +34,7 @@ import {
   COMPARE_EXPORT_DROPDOWN_EXPORT_PDF,
   COMPARE_EXPORT_DROPDOWN_EXPORT_XML,
   COMPARE_EXPORT_DROPDOWN_ID,
+  COMPARE_GROUP_BUTTONS_ID,
   COMPARE_NEXT_CHANGE_ACTION_ID,
   COMPARE_PREV_CHANGE_ACTION_ID,
   COMPARE_SECTION_ID,
@@ -266,7 +267,8 @@ export abstract class DocumentActionsService {
     const mergeContributionsSection =
       this.pageMode === PageMode.Contribution &&
       this.buildMergeContributionsSection();
-    const finalizeSection = this.showMarkAsDoneButton && this.buildFinalizeSection();
+    const finalizeSection =
+      this.showMarkAsDoneButton && this.buildFinalizeSection();
     return [
       saveSection,
       importOJSection,
@@ -605,8 +607,8 @@ export abstract class DocumentActionsService {
     return [
       {
         type: IRibbonToolbarType.GROUP,
-        id: 'id',
-        cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
+        id: COMPARE_GROUP_BUTTONS_ID,
+        cssClasses: 'eui-u-flex eui-u-flex-row compare-button-group',
         children: [
           {
             type: IRibbonToolbarType.BUTTON,
@@ -615,6 +617,7 @@ export abstract class DocumentActionsService {
             euiSize: 's',
             euiStyle: 'primary',
             basicButton: true,
+            cssClasses: 'next-change-style',
             actionFn: () => this.versionCompareService.handlePrevChange(),
             disabled: this.versionCompareService.hasPrevChangesDisabled$,
             description: this.translateService.instant(
@@ -628,6 +631,7 @@ export abstract class DocumentActionsService {
             euiSize: 's',
             euiStyle: 'primary',
             basicButton: true,
+            cssClasses: 'prev-change-style',
             actionFn: () => this.versionCompareService.handleNextChange(),
             disabled: this.versionCompareService.hasNextChangeDisabled$,
             description: this.translateService.instant(
@@ -887,15 +891,17 @@ export abstract class DocumentActionsService {
         {
           type: IRibbonToolbarType.BUTTON,
           id: FINALIZE_ACTION_ID,
-          label: this.translateService.instant(
-            'global.actions.mark.done',
-          ),
+          label: this.translateService.instant('global.actions.mark.done'),
           description: this.translateService.instant(
             'global.actions.mark.done',
           ),
           euiSize: 's',
           euiStyle: 'secondary',
-          actionFn: () => this.leosLightService.exportDocument(this.documentService.documentType, this.documentService.documentRef),
+          actionFn: () =>
+            this.leosLightService.exportDocument(
+              this.documentService.documentType,
+              this.documentService.documentRef,
+            ),
         },
       ],
     };
