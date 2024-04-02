@@ -60,6 +60,9 @@ class JwtTokenService implements TokenService {
     private String leosApiSecret;
     @Value("${leos.api.jwt.auth.access.token.expire.min}")
     private int accessTokenExpirationInMin;
+
+    private static final int NG_TOKEN_EXPIRE_IN_MIN = 365 * 24 * 60; //minutes in one year
+
     @Value("${leos.api.jwt.auth.clients}")
     private String authClients;
     private List<AuthClient> registeredClients = new ArrayList<>();
@@ -128,7 +131,7 @@ class JwtTokenService implements TokenService {
     @Override
     public String getNgAccessToken(String user) {
         final Date now = Calendar.getInstance().getTime();
-        return generateToken(ngClientId, null, null, now, now, accessTokenExpirationInMin,
+        return generateToken(ngClientId, null, null, now, now, NG_TOKEN_EXPIRE_IN_MIN,
                 ngClientSecret, user);
     }
 
