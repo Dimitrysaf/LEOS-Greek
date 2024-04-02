@@ -130,7 +130,7 @@ export class DocumentComponent
       this.documentService.updateElementContent$
         .pipe(takeUntil(this.destroy$))
         .subscribe((data) => {
-          this.updateElementContent({
+          data && this.updateElementContent({
             documentRef: data.documentRef,
             elementId: data.elementId,
             elementType: data.elementType,
@@ -305,7 +305,7 @@ export class DocumentComponent
     isClosing: boolean;
     isSaved: boolean;
   }) {
-    if (!data.documentRef || (data.documentRef !== this.documentService.documentRef)) {
+    if (!data || (data.documentRef !== this.documentService.documentRef)) {
       return;
     }
     const ckeditorsOpen = this.document.querySelectorAll('.cke_editable');
@@ -358,8 +358,17 @@ export class DocumentComponent
       const htmlElement = this.document.getElementById(data.elementId);
       if (htmlElement) {
         htmlElement.outerHTML = this.cleanForView(data.elementFragment);
+        this.handleInternalReferences(data.elementId);
       }
     }
+  }
+
+  private handleInternalReferences(elementId: string) {
+    const htmlElement = this.document.getElementById(elementId);
+    Array.from(htmlElement.getElementsByTagName('ref')).forEach(function(internalReference) {
+      const href = internalReference.getAttribute('href'), refId = href.substring(href.indexOf('/') + 1);
+      internalReference.setAttribute('onclick','LEOS.scrollTo(\'' + refId + '\');');
+    });
   }
 
   private getElementContent(data: { elementId: string; elementType: string }): {
@@ -367,22 +376,23 @@ export class DocumentComponent
     elementType: string;
     elementFragment: string;
   } {
-    if (data && data.elementId && data.elementType) {
+    if (data && data.elementId) {
       const parser = new DOMParser();
       const doc = parser.parseFromString(this.xml, 'text/html');
       const elt = doc.getElementById(data.elementId);
       return {
         elementId: data.elementId,
-        elementType: data.elementType,
+        elementType: elt.nodeName.toLowerCase(),
         elementFragment:
-          elt === null ? null : this.cleanForTransformation(elt.outerHTML),
+          elt === null ? null : this.cleanForTransformation(elt.outerHTML)
+      };
+    } else {
+      return {
+        elementId: null,
+        elementType: null,
+        elementFragment: null
       };
     }
-    return {
-      elementId: data.elementId,
-      elementType: data.elementType,
-      elementFragment: null,
-    };
   }
 
   private cleanForTransformation(content: string): string {
