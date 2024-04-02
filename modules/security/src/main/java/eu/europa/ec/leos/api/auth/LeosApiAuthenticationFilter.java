@@ -58,6 +58,7 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
         token = request.getHeader(AUTHORIZATION).substring(7);
 
         if (!tokenService.validateAccessToken(token)) {
+            LOG.warn("Authorization failed! Wrong accessToken");
             String claims = JWT.decode(token).getClaims().entrySet().stream()
                     .map(e -> e.getKey()+": "+e.getValue().asString())
                     .collect(Collectors.joining(","));
