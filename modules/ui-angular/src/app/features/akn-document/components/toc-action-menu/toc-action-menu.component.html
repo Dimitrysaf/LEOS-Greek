@@ -1,7 +1,7 @@
 <eui-dropdown-button-menu
   #dropdownComponentRef
   [menuItems]="menuItems"
-  *ngIf="isEditMode && !node.tocItem.root"
+  *ngIf="isEditMode && node.tocItem.draggable && !node.tocItem.root"
 >
   <button
     euiButton
