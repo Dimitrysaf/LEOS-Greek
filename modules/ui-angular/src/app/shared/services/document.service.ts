@@ -376,6 +376,9 @@ export class DocumentService {
     this.documentConfigBS.next(null);
     this.isDocumentLoadedBS.next(false);
     this.documentViewBS.next(null);
+    this.refreshConnectorsBS.next(null);
+    this.updateElementContentBS.next(null);
+    this.getElementContentBS.next(null);
     this.getAnnotations = null;
     this.setAnnotationMode = null;
   }
