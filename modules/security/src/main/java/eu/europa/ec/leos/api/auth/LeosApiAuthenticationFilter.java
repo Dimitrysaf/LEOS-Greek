@@ -65,7 +65,7 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
             LOG.warn("Token Details:\n" +
                             "Method: {}\n"+
                             "Path: {}\n"+
-                            "Token: {}",
+                            "Claims: {}",
                     request.getMethod(),
                     request.getContextPath()+request.getServletPath()+request.getPathInfo(),
                     claims
