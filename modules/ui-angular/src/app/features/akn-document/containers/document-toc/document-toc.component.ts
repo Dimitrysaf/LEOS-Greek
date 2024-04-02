@@ -2,6 +2,7 @@ import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { DOCUMENT, formatDate } from '@angular/common';
 import {
+  AfterViewChecked,
   AfterViewInit,
   Component,
   ElementRef,
@@ -13,7 +14,6 @@ import {
   OnInit,
   Output,
   ViewChild,
-  AfterViewChecked,
 } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EuiDialogService } from '@eui/components/eui-dialog';
@@ -21,6 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
 import {
   BehaviorSubject,
+  combineLatest,
   debounceTime,
   distinctUntilChanged,
   filter,
@@ -55,10 +56,10 @@ import {
   TIME_TO_CLEAR_INVALID,
 } from '@/shared/constants/toc.constant';
 import { DocumentConfig } from '@/shared/models';
+import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { DragAction } from '@/shared/models/drag-action.model';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
-import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { scrollInParent } from '@/shared/utils';
@@ -67,7 +68,8 @@ import {
   checkPositionAfterValidation,
   checkPositionAfterValidationExplanatory,
   findNodeById,
-  getItemSoftStyle, getNumberingTypeByLanguage,
+  getItemSoftStyle,
+  getNumberingTypeByLanguage,
   isFirstPointOrSubparagraph,
   removeTag,
 } from '@/shared/utils/toc.utils';
@@ -81,7 +83,9 @@ import { ValidateTocService } from '../../services/validate-node-drop.service';
   templateUrl: './document-toc.component.html',
   styleUrls: ['./document-toc.component.scss'],
 })
-export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
+export class DocumentTocComponent
+  implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked
+{
   @Input() documentType: string;
   @Input() documentRef: string;
   @Input() versionId: string;
@@ -177,14 +181,19 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit, A
   }
 
   ngOnInit() {
-    this.tocService.toc$.pipe(takeUntil(this.destroy$)).subscribe((toc) => {
-      //expand the default nodes if the expanded state is empty
-      if (!this.expandedNodeIds.size) {
-        this.setByDefaultExpandedNodes(toc);
-      }
-      this.expandNodesFromHistory(toc);
-      this.setTree(toc);
-    });
+    combineLatest([this.tocService.toc$, this.documentService.documentConfig$])
+      .pipe(
+        takeUntil(this.destroy$),
+        filter(([_, dConfig]) => !!dConfig),
+      )
+      .subscribe(([toc, config]) => {
+        //expand the default nodes if the expanded state is empty
+        if (!this.expandedNodeIds.size) {
+          this.setByDefaultExpandedNodes(toc);
+        }
+        this.expandNodesFromHistory(toc);
+        this.setTree(toc);
+      });
 
     this.validateTocService.dropValidationResult$
       .pipe(takeUntil(this.destroy$), filter(Boolean))
@@ -203,20 +212,21 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit, A
     this.setupResizeObserver();
   }
 
-  ngAfterViewChecked(){
-    if(!this.alreadyDidAsyncWork){
+  ngAfterViewChecked() {
+    if (!this.alreadyDidAsyncWork) {
       this.callCoEditionService();
     }
   }
 
-  private callCoEditionService(){
+  private callCoEditionService() {
     if (!this.readonly) {
-        this.coEditionService
-          .getDocCoEditionInfo()
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((coEdits) => {
-            this.alreadyDidAsyncWork = this.coEditionService.showElementsBeingEdited(coEdits, true);
-          });
+      this.coEditionService
+        .getDocCoEditionInfo()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((coEdits) => {
+          this.alreadyDidAsyncWork =
+            this.coEditionService.showElementsBeingEdited(coEdits, true);
+        });
     }
   }
 
@@ -277,7 +287,12 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   getLabel(node: TableOfContentItemVO) {
     if (node != null) {
-      if (getNumberingTypeByLanguage(node.tocItem, this.documentConfig.langGroup) === BULLET_NUM) {
+      if (
+        getNumberingTypeByLanguage(
+          node.tocItem,
+          this.documentConfig?.langGroup,
+        ) === BULLET_NUM
+      ) {
         return this.translateService.instant('toc.item.type.bullet');
       } else {
         return this.translateService.instant(
@@ -782,7 +797,7 @@ export class DocumentTocComponent implements OnInit, OnDestroy, AfterViewInit, A
             nodeTarget,
             nodeDragged,
             position,
-            this.documentConfig.langGroup
+            this.documentConfig.langGroup,
           );
           break;
         default:
