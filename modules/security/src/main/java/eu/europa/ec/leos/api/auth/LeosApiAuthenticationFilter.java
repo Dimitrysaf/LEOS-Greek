@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.api.auth;
 
+import com.auth0.jwt.JWT;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityUser;
 import eu.europa.ec.leos.security.SecurityUserProvider;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -57,6 +59,17 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
 
         if (!tokenService.validateAccessToken(token)) {
             LOG.warn("Authorization failed! Wrong accessToken");
+            String claims = JWT.decode(token).getClaims().entrySet().stream()
+                    .map(e -> e.getKey()+": "+e.getValue().asString())
+                    .collect(Collectors.joining(","));
+            LOG.warn("Token Details:\n" +
+                            "Method: {}\n"+
+                            "Path: {}\n"+
+                            "Claims: {}",
+                    request.getMethod(),
+                    request.getContextPath()+request.getServletPath()+request.getPathInfo(),
+                    claims
+            );
             throw new LeosApiAuthenticationException("Authorization failed! Wrong accessToken");
         }
 
