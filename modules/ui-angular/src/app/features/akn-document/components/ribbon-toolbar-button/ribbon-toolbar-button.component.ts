@@ -3,6 +3,12 @@ import { Observable, takeUntil } from 'rxjs';
 
 import { IRibbonToolbarButton } from '../../models/document-actions.model';
 import { RibbonToolbarBaseComponent } from '../ribbon-toolbar-base/ribbon-toolbar-base.component';
+import {
+  COMPARE_NEXT_CHANGE_ACTION_ID,
+  COMPARE_PREV_CHANGE_ACTION_ID,
+  MERGE_CONTRIBUTION_NEXT_CHANGE_ID,
+  MERGE_CONTRIBUTION_PREV_CHANGE_ID,
+} from '@/shared/constants/document-actions.constants';
 
 enum StyleMode {
   Default,
@@ -27,13 +33,16 @@ export class RibbonToolbarButtonComponent
 
   ngOnInit() {
     super.ngOnInit();
-    if (this.item.id === 'COMPARE_NEXT_CHANGE_ID') {
+    if (
+      this.item.id === COMPARE_NEXT_CHANGE_ACTION_ID ||
+      this.item.id === MERGE_CONTRIBUTION_NEXT_CHANGE_ID
+    ) {
       this.styleMode = StyleMode.NextChangeStyle;
-      console.log('Setting styleMode to NextChangeStyle');
-    } else if (this.item.id === 'COMPARE_PREV_CHANGE_ID') {
+    } else if (
+      this.item.id === COMPARE_PREV_CHANGE_ACTION_ID ||
+      this.item.id === MERGE_CONTRIBUTION_PREV_CHANGE_ID
+    ) {
       this.styleMode = StyleMode.PrevChangeStyle;
-      console.log('Setting styleMode to PrevChangeStyle');
     }
-    console.log('Current styleMode:', this.styleMode);
   }
 }

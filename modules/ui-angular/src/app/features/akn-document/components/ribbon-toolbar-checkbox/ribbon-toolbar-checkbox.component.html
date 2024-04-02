@@ -18,7 +18,7 @@
 </div>
 <div
   *ngIf="item.isSlider"
-  class="eui-u-flex eui-u-flex-row p-0 flex-nowrap "
+  class="eui-u-flex eui-u-flex-row p-0 flex-nowrap"
   [ngClass]="item.cssClasses"
 >
   <eui-slide-toggle
@@ -27,7 +27,9 @@
     [disabled]="isItemDisabled"
     [isChecked]="checkboxValue"
     (changed)="onChange()"
-    class="align-self-start"
+    [ngClass]="{
+      'align-self-start': !environmentService.isCouncil()
+    }"
   ></eui-slide-toggle>
   <div euiLabel>{{ item.label }}</div>
 </div>

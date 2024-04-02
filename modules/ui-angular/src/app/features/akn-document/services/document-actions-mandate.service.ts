@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { TranslateService } from '@ngx-translate/core';
-import { map } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { DownloadEconsiliumComponent } from '@/features/akn-document/components/download-econsilium/download-econsilium.component';
@@ -25,15 +24,15 @@ import { VersionCompareService } from '@/features/akn-document/services/version-
 import {
   COMPARE_EXPORT_DROPDOWN_EXPORT_DOCUWRITE,
   COMPARE_EXPORT_DROPDOWN_ID,
+  COMPARE_GROUP_BUTTONS_ID,
   COMPARE_SECTION_ID,
-  DISPLAY_SECTION_ID,
-  DISPLAY_SHOW_CLEAN_VERSION,
+  COMPARE_SYNC_PANELS_ACTION,
   EXPORT_DROPDOWN_EXPORT_CLEAN_VERSION_ID,
   EXPORT_DROPDOWN_EXPORT_TO_ECONSILIUM_ID,
   EXPORT_SECTION_DROPDOWN_ID,
   EXPORT_SECTION_ID,
   STRUCTURE_RENUMBER_DOCUMENT_ID,
-  STRUCTURE_SECTION_ID,
+  STRUCTURE_SECTION_ID
 } from '@/shared/constants/document-actions.constants';
 import {
   DocumentService,
@@ -80,7 +79,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       mergeContributionService,
       pageModeService,
       appConfigService,
-      leosLightService
+      leosLightService,
     );
   }
 
@@ -103,6 +102,31 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       exportDropdownSection.type !== IRibbonToolbarType.SECTION
     )
       return;
+    exportDropdownSection.cssClasses = this.ensureCssClass(
+      exportDropdownSection.cssClasses,
+      'compare-section-id',
+    );
+
+    const syncPanelsAction = exportDropdownSection.children?.find(
+      (child) => child.id === COMPARE_SYNC_PANELS_ACTION,
+    );
+    if (syncPanelsAction) {
+      syncPanelsAction.cssClasses = this.ensureCssClass(
+        syncPanelsAction.cssClasses,
+        'slide-toggle-mandate',
+      );
+    }
+
+    const compareGroupButtons = exportDropdownSection.children?.find(
+      (child) => child.id === COMPARE_GROUP_BUTTONS_ID,
+    );
+    if (compareGroupButtons) {
+      compareGroupButtons.cssClasses = this.ensureCssClass(
+        compareGroupButtons.cssClasses,
+        'compare-button-group-mandate',
+      );
+    }
+
     const exportDropdowns = this.findItemById(
       COMPARE_EXPORT_DROPDOWN_ID,
       exportDropdownSection.children,
@@ -260,5 +284,13 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       this.isDocumentTypeTheSame(this.documentService.documentType, 'BILL') ||
       this.isDocumentTypeTheSame(this.documentService.documentType, 'ANNEX')
     );
+  }
+
+  private ensureCssClass(existingClasses: string, newClass: string): string {
+    const classes = existingClasses ? existingClasses.split(' ') : [];
+    if (!classes.includes(newClass)) {
+      classes.push(newClass);
+    }
+    return classes.join(' ');
   }
 }
