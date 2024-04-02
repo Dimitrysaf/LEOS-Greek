@@ -1,7 +1,8 @@
 export interface PackagesFavourite {
-  ref: string;
-  title: string;
+  creationDate: string;
   documentId: number;
   packageId: number;
-  creationDate: string;
+  ref: string;
+  title: string;
+  isFavourite: boolean;
 }
