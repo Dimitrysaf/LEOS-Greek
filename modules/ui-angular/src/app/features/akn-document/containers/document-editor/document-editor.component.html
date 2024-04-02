@@ -325,13 +325,17 @@
         [interactiveScrollbars]="false"
       >
         <!-- leos-editing-pane is used in leosFloatingSpacePlugin.js -->
-        <eui-page-column-body
-                        class="leos-editing-pane"
+     <eui-page-column-body
+          class="leos-editing-pane"
+          [ngStyle]="{
+            height: (documentService.searchPaneOpen$ | async) ? '87%' : '100%'
+          }"
           euiNoContentPadding
         >
           <!-- Search panel -->
           <eui-card
             class="eui-u-font-size-s"
+            style="position: sticky"
             euiNoShadow
             [ngClass]="{ 'toc-edit-mode': isEditMode }"
             *ngIf="documentService.searchPaneOpen$ | async"
