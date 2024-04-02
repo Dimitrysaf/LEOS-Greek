@@ -18,6 +18,15 @@
     width: 34% !important;
   }
 
+  .merge-button-group {
+    width: 24% !important;
+    gap: 0px !important;
+  }
+
+  .compare-button-group-mandate {
+    width: 24% !important;
+  }
+
   &::after {
     background-color: var(--eui-base-color-primary-140);
     bottom: 8%; /* Adjust the bottom margin/padding/distance */
@@ -36,6 +45,13 @@
     flex-grow: 1;
     justify-content: center;
   }
+}
+
+.compare-section-id {
+  gap: 0% !important;
+  padding: 0% !important;
+  margin: 0% !important;
+  justify-content: space-between !important;
 }
 
 .max-width-400 {

@@ -617,7 +617,6 @@ export abstract class DocumentActionsService {
             euiSize: 's',
             euiStyle: 'primary',
             basicButton: true,
-            cssClasses: 'next-change-style',
             actionFn: () => this.versionCompareService.handlePrevChange(),
             disabled: this.versionCompareService.hasPrevChangesDisabled$,
             description: this.translateService.instant(
@@ -631,7 +630,6 @@ export abstract class DocumentActionsService {
             euiSize: 's',
             euiStyle: 'primary',
             basicButton: true,
-            cssClasses: 'prev-change-style',
             actionFn: () => this.versionCompareService.handleNextChange(),
             disabled: this.versionCompareService.hasNextChangeDisabled$,
             description: this.translateService.instant(
@@ -724,7 +722,7 @@ export abstract class DocumentActionsService {
       {
         type: IRibbonToolbarType.GROUP,
         id: MERGE_CONTRIBUTION_GROUP_PREV_NEXT_ID,
-        cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
+        cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs merge-button-group',
         children: [
           {
             type: IRibbonToolbarType.BUTTON,
