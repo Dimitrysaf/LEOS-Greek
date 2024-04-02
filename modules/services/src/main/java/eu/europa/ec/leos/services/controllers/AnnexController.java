@@ -68,7 +68,7 @@ public class AnnexController {
     private static final String ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION = "Error occurred  while  downloading xml version";
     private static final String ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT = "Error occured while getting anex element - {}";
     @Autowired
-    private AnnexApiService annexAPIService;
+    private AnnexApiService annexApiService;
     @Autowired
     private GenericDocumentApiService genericDocumentApiService;
     @Autowired
@@ -87,7 +87,7 @@ public class AnnexController {
             elementName = encodeParam(elementName);
             elementId = encodeParam(elementId);
             presenterId = encodeParam(presenterId);
-            SaveElementResponse newElement = this.annexAPIService.saveElement(documentRef, elementId, elementName,
+            SaveElementResponse newElement = this.annexApiService.saveElement(documentRef, elementId, elementName,
                     elementContent, isSplit);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, newElement);
             return ResponseEntity.ok().body(newElement);
@@ -108,7 +108,7 @@ public class AnnexController {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
             elementId = encodeParam(elementId);
-            DocumentViewResponse annexXml = this.annexAPIService.deleteBlock(documentRef, elementName, elementId);
+            DocumentViewResponse annexXml = this.annexApiService.deleteBlock(documentRef, elementName, elementId);
             return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
@@ -130,7 +130,7 @@ public class AnnexController {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
             elementId = encodeParam(elementId);
-            DocumentViewResponse annexXml = this.annexAPIService.insertElement(documentRef, elementName, elementId,
+            DocumentViewResponse annexXml = this.annexApiService.insertElement(documentRef, elementName, elementId,
                     request.getPosition());
             return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
@@ -151,7 +151,7 @@ public class AnnexController {
             documentRef = encodeParam(documentRef);
             elementTag = encodeParam(elementTag);
             elementId = encodeParam(elementId);
-            DocumentViewResponse annexXml = this.annexAPIService.mergeElement(documentRef, elementContent, elementTag,
+            DocumentViewResponse annexXml = this.annexApiService.mergeElement(documentRef, elementContent, elementTag,
                     elementId);
             return ResponseEntity.ok().body(annexXml);
         } catch (Exception e) {
@@ -201,7 +201,7 @@ public class AnnexController {
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<VersionVO> versions = this.annexAPIService.saveDocument(documentRef, saveEvent.getCheckinComment(),
+            List<VersionVO> versions = this.annexApiService.saveDocument(documentRef, saveEvent.getCheckinComment(),
                     saveEvent.getVersionType());
             return ResponseEntity.ok().body(versions);
         } catch (Exception e) {
@@ -219,7 +219,7 @@ public class AnnexController {
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.annexAPIService.saveToC(documentRef,
+            List<TableOfContentItemVO> toc = this.annexApiService.saveToC(documentRef,
                     saveTocRequestEvent.getTableOfContentItemVOs());
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
@@ -322,7 +322,7 @@ public class AnnexController {
     ) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TableOfContentItemVO> toc = this.annexAPIService.getToc(documentRef, tocMode);
+            List<TableOfContentItemVO> toc = this.annexApiService.getToc(documentRef, tocMode);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex toc items - " + e.getMessage());
@@ -337,7 +337,7 @@ public class AnnexController {
     public ResponseEntity<Object> getTocItems(@PathVariable("documentRef") String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
-            List<TocItem> tocItems = this.annexAPIService.getTocItems(documentRef);
+            List<TocItem> tocItems = this.annexApiService.getTocItems(documentRef);
             return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex toc items - " + e.getMessage());
@@ -353,7 +353,7 @@ public class AnnexController {
     public ResponseEntity<Object> getAnnex(@PathVariable("documentRef") String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
-            DocumentViewResponse annex = this.annexAPIService.getDocument(documentRef);
+            DocumentViewResponse annex = this.annexApiService.getDocument(documentRef);
             return ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex document - " + e.getMessage());
@@ -372,7 +372,7 @@ public class AnnexController {
                                                    @RequestBody(required = false) String tempUpdatedContentXML) {
         try {
             documentRef = encodeParam(documentRef);
-            List<SearchMatchVO> annex = this.annexAPIService.searchTextInDocument(documentRef, searchText, matchCase,
+            List<SearchMatchVO> annex = this.annexApiService.searchTextInDocument(documentRef, searchText, matchCase,
                     completeWords, tempUpdatedContentXML);
             return ResponseEntity.ok().body(annex);
         } catch (Exception e) {
@@ -388,7 +388,7 @@ public class AnnexController {
     public ResponseEntity<Object> showAnnexVersion(@PathVariable("versionId") String versionId) {
         try {
             versionId = encodeParam(versionId);
-            DocumentViewResponse contentHtml = this.annexAPIService.showVersion(versionId);
+            DocumentViewResponse contentHtml = this.annexApiService.showVersion(versionId);
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex version {} , error {}: - ", versionId, e.getMessage());
@@ -405,7 +405,7 @@ public class AnnexController {
         try {
             newVersionId = encodeParam(newVersionId);
             oldVersionId = encodeParam(oldVersionId);
-            String contentHtml = this.annexAPIService.compare(newVersionId, oldVersionId);
+            String contentHtml = this.annexApiService.compare(newVersionId, oldVersionId);
             return ResponseEntity.ok().body(contentHtml);
         } catch (Exception e) {
             LOG.error("Error occurred while comparing old :{} with new {} versions ", oldVersionId, newVersionId);
@@ -422,7 +422,7 @@ public class AnnexController {
         try {
             documentRef = encodeParam(documentRef);
             targetVersion = encodeParam(targetVersion);
-            DocumentViewResponse annex = this.annexAPIService.restoreToVersion(documentRef, targetVersion);
+            DocumentViewResponse annex = this.annexApiService.restoreToVersion(documentRef, targetVersion);
             return ResponseEntity.ok().body(annex);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURED_WHILE_GETTING_ANEX_ELEMENT, e.getMessage());
@@ -441,7 +441,7 @@ public class AnnexController {
             documentRef = encodeParam(documentRef);
             elementId = encodeParam(elementId);
             elementTagName = encodeParam(elementTagName);
-            EditElementResponse response = this.annexAPIService.editElement(documentRef, elementId, elementTagName);
+            EditElementResponse response = this.annexApiService.editElement(documentRef, elementId, elementTagName);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting annex element - " + e.getMessage());
@@ -456,7 +456,7 @@ public class AnnexController {
                                                          @RequestParam("isWithAnnotation") boolean isWithAnnotation) {
         try {
             documentRef = encodeParam(documentRef);
-            byte[] response = this.annexAPIService.downloadVersion(documentRef, isWithAnnotation);
+            byte[] response = this.annexApiService.downloadVersion(documentRef, isWithAnnotation);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting downloading version - " + e.getMessage());
@@ -472,7 +472,7 @@ public class AnnexController {
         try {
             documentRef = encodeParam(documentRef);
             versionId = encodeParam(versionId);
-            byte[] response = this.annexAPIService.downloadXmlVersionFiles(documentRef, versionId);
+            byte[] response = this.annexApiService.downloadXmlVersionFiles(documentRef, versionId);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION + e.getMessage());
@@ -485,7 +485,7 @@ public class AnnexController {
     public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
                                                  @RequestBody ReplaceMatchRequest request) {
         try {
-            byte[] response = this.annexAPIService.replaceOneTextInDocument(request);
+            byte[] response = this.annexApiService.replaceOneTextInDocument(request);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION + e.getMessage());
@@ -498,7 +498,7 @@ public class AnnexController {
     public ResponseEntity<Object> replaceAllText(@PathVariable("documentRef") String documentRef,
                                                  @RequestBody ReplaceAllMatchRequest request) {
         try {
-            byte[] response = this.annexAPIService.replaceAllTextInDocument(request);
+            byte[] response = this.annexApiService.replaceAllTextInDocument(request);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error(ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION + e.getMessage());
@@ -511,7 +511,7 @@ public class AnnexController {
     public ResponseEntity<Object> saveAllAfterReplace(@PathVariable("documentRef") String documentRef,
                                                       @RequestBody SaveAfterReplaceRequest request) {
         try {
-            DocumentViewResponse view = this.annexAPIService.saveAfterReplace(request);
+            DocumentViewResponse view = this.annexApiService.saveAfterReplace(request);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while saving after replace all - " + e.getMessage());
@@ -525,7 +525,7 @@ public class AnnexController {
     public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
-            DocumentConfigResponse view = this.annexAPIService.getDocumentConfig(documentRef);
+            DocumentConfigResponse view = this.annexApiService.getDocumentConfig(documentRef);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting document config  - " + e.getMessage());
@@ -539,7 +539,7 @@ public class AnnexController {
     public ResponseEntity<Object> switchAnnexStructure(@PathVariable("documentRef") String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
-            DocumentViewResponse view = this.annexAPIService.changeAnnexStructureType(documentRef);
+            DocumentViewResponse view = this.annexApiService.changeAnnexStructureType(documentRef);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to switch annex structure" + e.getMessage());
@@ -553,7 +553,7 @@ public class AnnexController {
     public ResponseEntity<Object> renumberAnnex(@PathVariable("documentRef") String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
-            DocumentViewResponse view = this.annexAPIService.renumberAnnex(documentRef);
+            DocumentViewResponse view = this.annexApiService.renumberAnnex(documentRef);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to renumber annex " + e.getMessage());
@@ -567,7 +567,7 @@ public class AnnexController {
     public ResponseEntity<Object> getUserGuidance(@PathVariable("documentRef") String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
-            String userGuidance = this.annexAPIService.fetchUserGuidance(documentRef);
+            String userGuidance = this.annexApiService.fetchUserGuidance(documentRef);
             return ResponseEntity.ok().body(userGuidance);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get user guidance for annex " + e.getMessage());
@@ -581,7 +581,7 @@ public class AnnexController {
     public ResponseEntity<Object> downloadCleanVersion(@PathVariable("documentRef") String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
-            byte[] cleanVersion = this.annexAPIService.downloadCleanVersion(documentRef);
+            byte[] cleanVersion = this.annexApiService.downloadCleanVersion(documentRef);
             final String jobFileName = documentRef + "_AKN2DW_CLEAN_" + System.currentTimeMillis() + ".docx";
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
@@ -599,7 +599,7 @@ public class AnnexController {
     public ResponseEntity<Object> showCleanVersion(@PathVariable("documentRef") String documentRef) {
         try {
             documentRef = encodeParam(documentRef);
-            DocumentViewResponse cleanVersion = this.annexAPIService.showCleanVersion(documentRef);
+            DocumentViewResponse cleanVersion = this.annexApiService.showCleanVersion(documentRef);
             return ResponseEntity.ok().body(cleanVersion);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get  clean version for annex " + e.getMessage());
@@ -614,7 +614,7 @@ public class AnnexController {
                                                        @RequestParam(value = "elementIds", required = false) List<String> elementIds) {
         try {
             documentRef = encodeParam(documentRef);
-            TocAndAncestorsResponse tocAncestors = this.annexAPIService.fetchTocAncestor(documentRef, elementIds);
+            TocAndAncestorsResponse tocAncestors = this.annexApiService.fetchTocAncestor(documentRef, elementIds);
             return ResponseEntity.ok().body(tocAncestors);
         } catch (Exception e) {
             LOG.error("Error occurred  while trying to get toc ancestors for annex " + e.getMessage());
@@ -638,7 +638,7 @@ public class AnnexController {
             trackChangeAction = encodeParam(trackChangeAction);
             presenterId = encodeParam(presenterId);
             TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
-            DocumentViewResponse response = this.annexAPIService.acceptChange(documentRef, elementId, elementTagName, trackChangeActionType, presenterId);
+            DocumentViewResponse response = this.annexApiService.acceptChange(documentRef, elementId, elementTagName, trackChangeActionType, presenterId);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while accepting change - " + e.getMessage());
@@ -660,7 +660,7 @@ public class AnnexController {
             trackChangeAction = encodeParam(trackChangeAction);
             presenterId = encodeParam(presenterId);
             TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
-            DocumentViewResponse response = this.annexAPIService.rejectChange(documentRef, elementId, elementTagName, trackChangeActionType, presenterId);
+            DocumentViewResponse response = this.annexApiService.rejectChange(documentRef, elementId, elementTagName, trackChangeActionType, presenterId);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred  while rejecting change - " + e.getMessage());
@@ -676,7 +676,7 @@ public class AnnexController {
         try {
             documentRef = encodeParam(documentRef);
             boolean isTrackChangesEnabled = toggleTrackChangeEnabledRequest.isTrackChangedEnabled();
-            boolean response = this.annexAPIService.toggleTrackChangeEnabled(isTrackChangesEnabled, documentRef);
+            boolean response = this.annexApiService.toggleTrackChangeEnabled(isTrackChangesEnabled, documentRef);
             return ResponseEntity.ok().body(response);
         } catch (Exception e) {
             LOG.error("Error occurred while toggling Track change enabled- " + e);

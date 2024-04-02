@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -352,8 +353,11 @@ public class StructureConfigUtils {
         NumberingType numberingType = NumberingType.NONE;
         if(tocItem.getAutoNumbering() != null) {
             String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), language);
-            numberingType = tocItem.getAutoNumbering().getLangNumConfigs().stream().filter(config ->
-                    config.getLangGroup().equalsIgnoreCase(group)).findFirst().get().getNumberingTypes().get(0);
+            Optional<LangNumConfig> langNumConfig = tocItem.getAutoNumbering().getLangNumConfigs().stream().filter(config ->
+                    config.getLangGroup().equalsIgnoreCase(group)).findFirst();
+            if (langNumConfig.isPresent()) {
+                numberingType = langNumConfig.get().getNumberingTypes().get(0);
+            }
         }
         return numberingType;
     }

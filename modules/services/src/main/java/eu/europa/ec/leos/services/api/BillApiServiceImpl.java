@@ -77,6 +77,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -165,6 +166,8 @@ public class BillApiServiceImpl implements BillApiService {
     RepositoryPropertiesMapper repositoryPropertiesMapper;
     @Autowired
     DocumentLanguageContext documentLanguageContext;
+    @Autowired
+    LanguageGroupService languageGroupService;
 
 
     protected Provider<BillContextService> context;
@@ -395,6 +398,7 @@ public class BillApiServiceImpl implements BillApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
+        languageGroupService.getLanguageMap();
         String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), bill.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(

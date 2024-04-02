@@ -43,6 +43,8 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
@@ -65,6 +67,7 @@ import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Option;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -113,9 +116,12 @@ public class GenericDocumentApiService {
     private final ComparisonDelegateAPI<XmlDocument> comparisonDelegate;
     private final ExportService exportService;
     private final UserService userService;
+    private final LanguageGroupService languageGroupService;
+    private final DocumentLanguageContext documentLanguageContext;
 
     private final Properties applicationProperties;
 
+    @Autowired
     public GenericDocumentApiService(@NotNull LeosRepository leosRepository,
                                      @NotNull TableOfContentProcessor tableOfContentProcessor,
                                      @NotNull ElementProcessor elementProcessor,
@@ -139,7 +145,9 @@ public class GenericDocumentApiService {
                                      @NotNull ComparisonDelegateAPI<XmlDocument> comparisonDelegate,
                                      @NotNull ExportService exportService,
                                      @NotNull UserService userService,
-                                     @NotNull Properties applicationProperties) {
+                                     @NotNull Properties applicationProperties,
+                                     @NotNull LanguageGroupService languageGroupService,
+                                     @NotNull DocumentLanguageContext documentLanguageContext) {
         this.leosRepository = Objects.requireNonNull(leosRepository);
         this.tableOfContentProcessor = Objects.requireNonNull(tableOfContentProcessor);
         this.elementProcessor = Objects.requireNonNull(elementProcessor);
@@ -164,6 +172,8 @@ public class GenericDocumentApiService {
         this.exportService = exportService;
         this.userService = userService;
         this.applicationProperties = applicationProperties;
+        this.documentLanguageContext = documentLanguageContext;
+        this.languageGroupService = languageGroupService;
     }
 
     public DocumentViewResponse getDocumentByRef(@NotNull String docRef) throws NotFoundException {
@@ -192,7 +202,7 @@ public class GenericDocumentApiService {
         String startingNode = Optional.ofNullable(DOCUMENT_TOC_STARTING_NODE.get(document.getCategory()))
                 .orElseThrow(
                         () -> new RuntimeException(String.format("Starting node not found for document %s", docRef)));
-
+        documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
         this.getStructureContext().useDocumentTemplate(docTemplate);
         List<TableOfContentItemVO> toc = this.tableOfContentProcessor.buildTableOfContent(startingNode, content, mode);
         return toc;
@@ -207,16 +217,16 @@ public class GenericDocumentApiService {
 
     public DocumentConfigResponse getDocumentConfig(@NotNull String docRef) {
         XmlDocument document = this.findDocumentByRef(docRef);
-
         StructureContext structure = this.getStructureContext();
         structure.useDocumentTemplate(this.getDocTemplate(document));
-
         List<TocItem> tocItems = structure.getTocItems();
         List<NumberingConfig> numberConfigs = structure.getNumberingConfigs();
         List<RefConfig> refConfigs = structure.getRefConfigs();
         Proposal proposal = this.getDocProposal(document);
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
+        //load language map
+        languageGroupService.getLanguageMap();
         String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(
