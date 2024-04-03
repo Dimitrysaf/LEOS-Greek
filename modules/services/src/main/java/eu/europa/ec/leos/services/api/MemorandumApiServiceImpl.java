@@ -59,6 +59,7 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -127,6 +128,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     RepositoryPropertiesMapper repositoryPropertiesMapper;
     @Autowired
     TrackChangesContext trackChangesContext;
+    @Autowired
+    LanguageGroupService languageGroupService;
 
     private Provider<BillContextService> context;
 
@@ -389,6 +392,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
+        //load language map
+        languageGroupService.getLanguageMap();
         String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(

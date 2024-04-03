@@ -75,6 +75,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -156,6 +157,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Autowired
     RepositoryPropertiesMapper repositoryPropertiesMapper;
     @Autowired
+    LanguageGroupService languageGroupService;
+    @Autowired
     DocumentLanguageContext documentLanguageContext;
     @Autowired
     @Qualifier("applicationProperties")
@@ -163,7 +166,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     private Provider<CloneContext> cloneContext;
     private Provider<AnnexContextService> annexContext;
-    protected Provider<BillContextService> contex;
+    protected Provider<BillContextService> billContext;
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
             .withZone(ZoneId.systemDefault());
 
@@ -172,7 +175,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
                         Provider<BillContextService> context, Provider<AnnexContextService> annexContext) {
         this.structureContext = structureContext;
         this.cloneContext = cloneContext;
-        this.contex = context;
+        this.billContext = context;
         this.annexContext = annexContext;
     }
 
@@ -372,7 +375,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(annex.getMetadata().get().getRef(),
                 Annex.class);
-        contex.get().usePackage(leosPackage);
+        billContext.get().usePackage(leosPackage);
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
         String proposalId = proposal.getId();
         if (isClonedProposal()) {
@@ -491,6 +494,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
+        //load language map
+        languageGroupService.getLanguageMap();
         String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), annex.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(
@@ -654,7 +659,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     private String getContextProposalId() {
-        return contex.get().getProposalId();
+        return billContext.get().getProposalId();
     }
 
     protected boolean isClonedProposal() {

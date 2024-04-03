@@ -54,6 +54,7 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -136,6 +137,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     UserHelper userHelper;
     @Autowired
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
+    @Autowired
+    LanguageGroupService languageGroupService;
 
     private Provider<StructureContext> structureContext;
     private Provider<BillContextService> context;
@@ -451,6 +454,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
         Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
         ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
         boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
+        //load language map
+        languageGroupService.getLanguageMap();
         String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
 
         return new DocumentConfigResponse(
