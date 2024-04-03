@@ -270,8 +270,10 @@ public class PackageServiceImpl implements PackageService {
                 for (Collaborators collaborator: listCollaborators) {
                     Optional<PackageCollaborators> packageCollaborators = packageCollaboratorsRepository.findPackageCollaboratorsByPkgIdAndCollaboratorId(
                             pkg.get().getPackageId(), collaborator.getId());
-                    packageCollaborators.get().setFavorite(new BigDecimal((packageCollaborators.get().getFavorite().intValue()+1)%2));
-                    packageCollaboratorsRepository.save(packageCollaborators.get());
+                    if (packageCollaborators.isPresent()) {
+                        packageCollaborators.get().setFavorite(new BigDecimal((packageCollaborators.get().getFavorite().intValue() + 1) % 2));
+                        packageCollaboratorsRepository.save(packageCollaborators.get());
+                    }
                 }
             }
             return packageRepository.getFavouritePackage(userName, ref).orElse(createEmptyObject());
