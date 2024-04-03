@@ -174,10 +174,9 @@ define(function actionManagerExtensionModule(require) {
     function _editorOpen(connector, data) {
         connector.editedElementsIdList.push(data.elementId);
         let element = document.getElementById(data.elementId);
-        _hideActionButtons(element.actions, element);
-
-        $(element.actions).remove();
-        element.actions = null;
+        if(element?.actions){
+            _hideActionButtons(element.actions, element);
+        }
     }
 
     function _editorClose(connector, data) {
@@ -486,9 +485,14 @@ define(function actionManagerExtensionModule(require) {
         let actions = element.actions;
         if (!actions) {
             let $element = $(element);
-            let actionString = _generateActions($element, _getEditable($element), _getDeletable($element), connector);
-            actions = ($.parseHTML(actionString))[0];
-            $element.after(actions);
+            let nextSibling = $element.next();
+            if(nextSibling && nextSibling[0]?.tagName == 'DIV' && nextSibling.hasClass('leos-actions')){
+                actions = nextSibling;
+            }else{
+                let actionString = _generateActions($element, _getEditable($element), _getDeletable($element), connector);
+                actions = ($.parseHTML(actionString))[0];
+                $element.after(actions);
+            }
         }
         return actions;
     }
