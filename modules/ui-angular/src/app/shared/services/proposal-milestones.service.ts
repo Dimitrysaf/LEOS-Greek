@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
-import { BehaviorSubject, Observable } from 'rxjs';
+import {BehaviorSubject, finalize, Observable} from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
 import type { MilestoneViewResponse } from '@/features/proposal-view/models/milestone.model';
@@ -14,6 +14,10 @@ import { downloadBlob } from '@/shared/utils';
 })
 export class ProposalMilestonesService {
   readyToMergeStatus$: Observable<string>;
+  requestStoredDocumentAnnotations$: Observable<boolean>;
+  private requestStoredDocumentAnnotations = new BehaviorSubject<boolean>(false);
+  receiveStoredDocumentAnnotations$: Observable<string>;
+  private receiveStoredDocumentAnnotations = new BehaviorSubject<string>(null);
   private readyToMergeStatusSource = new BehaviorSubject<string>('');
 
   constructor(
@@ -22,6 +26,8 @@ export class ProposalMilestonesService {
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.readyToMergeStatus$ = this.readyToMergeStatusSource.asObservable();
+    this.requestStoredDocumentAnnotations$ = this.requestStoredDocumentAnnotations.asObservable();
+    this.receiveStoredDocumentAnnotations$ = this.receiveStoredDocumentAnnotations.asObservable();
   }
 
   listMilestoneView(proposalRef: string, legFileName: string) {
@@ -49,6 +55,23 @@ export class ProposalMilestonesService {
     return this.http.get<MilestoneViewResponse>(
       `${apiBaseUrl}/secured/contribution/milestones/${proposalRef}/viewContribution/${legFileName}`,
     );
+  }
+
+  getStoredDocumentAnnotations() {
+    this.requestStoredDocumentAnnotations.next(true);
+  }
+
+  sendRequestStoredDocumentAnnotations(proposalRef: string, legFileName: string, documentRef: string) {
+    return this.http
+      .get<string>(
+        `${apiBaseUrl}/secured/document/${legFileName}/${proposalRef}/stored-annotations/${documentRef}`
+      ).subscribe((response) => {
+        this.receiveStoredDocumentAnnotations.next(response);
+      });
+  }
+
+  sendEmptyStoredDocumentAnnotations() {
+    this.receiveStoredDocumentAnnotations.next("");
   }
 
   exportMilestonePdf(documentRef: string, legFileName: string) {

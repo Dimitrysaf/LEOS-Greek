@@ -9,6 +9,7 @@ import type {
 } from '@/shared';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
+import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 export type AnnotateConnectorInitialState = Omit<
   AnnotateConnectorState,
@@ -24,6 +25,7 @@ const CACHE_TIME = 1000;
 export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConnectorState> {
   /* set in `modules/js/src/main/js/ui/extension/annotateExtension.js` */
   target?: Element;
+  receiveStoredDocumentAnnotations?: (annotationsList: string) => void;
   receiveUserPermissions?: (...userPermissions: Permission[]) => void;
   receiveSecurityToken?: (token: string) => void;
   receiveMergeSuggestion?: (result) => void;
@@ -52,8 +54,18 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     private options: AnnotateConnectorOptions,
     private annotateService: AnnotateService,
     private documentService: DocumentService,
+    private milestoneService: ProposalMilestonesService,
   ) {
     super({ ...leosJavaScriptExtensionState, ...state }, null);
+  }
+
+  requestStoredDocumentAnnotations() {
+    this.milestoneService.getStoredDocumentAnnotations();
+    this.milestoneService.receiveStoredDocumentAnnotations$.subscribe((annotations) => {
+      if (annotations) {
+        this.receiveStoredDocumentAnnotations(annotations);
+      }
+    });
   }
 
   requestDocumentMetadata(...args) {
@@ -197,6 +209,7 @@ const leosJavaScriptExtensionState: LeosJavaScriptExtensionState = {
     'requestMergeSuggestions',
     'requestSearchMetadata',
     'requestSecurityToken',
+    'requestStoredDocumentAnnotations',
     'responseFilteredAnnotations',
   ],
   rpcInterfaces: {

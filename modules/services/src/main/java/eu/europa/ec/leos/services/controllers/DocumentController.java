@@ -234,4 +234,21 @@ public class DocumentController {
             return new ResponseEntity<>("Unexpected error while trying to restore version ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    @GetMapping(value = "/{legFileName}/{proposalRef}/stored-annotations/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getStoredAnnotations(@PathVariable("legFileName") String legFileName,
+                                                       @PathVariable("documentRef") String documentRef,
+                                                       @PathVariable("proposalRef") String proposalRef) {
+        try {
+            documentRef = encodeParam(documentRef);
+            legFileName = encodeParam(legFileName);
+            String annots = documentApiService.getStoredDocumentAnnotations(legFileName, documentRef, proposalRef);
+            return ResponseEntity.ok().body(annots);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting annotations in LEG file for - " + legFileName, e);
+            return new ResponseEntity<>("Unexpected error while trying to get annotations in LEG file ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
