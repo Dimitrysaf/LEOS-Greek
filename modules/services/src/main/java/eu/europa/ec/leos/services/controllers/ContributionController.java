@@ -4,9 +4,11 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.ContributionApiService;
+import eu.europa.ec.leos.services.collection.CollaboratorService;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
+import eu.europa.ec.leos.services.dto.request.SendFeedbackRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
@@ -16,18 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -40,6 +34,8 @@ public class ContributionController {
 
     @Autowired
     ContributionApiService contributionApiService;
+    @Autowired
+    CollaboratorService collaboratorService;
 
     @Autowired
     ApiService apiService;
@@ -92,10 +88,10 @@ public class ContributionController {
         DocumentViewResponse mergedContent = this.contributionApiService.compareAndShowRevision(
                 request.getContextPath(),
                 documentRef,
-                contributionVersionRef,legFileName);
+                contributionVersionRef, legFileName);
         return ResponseEntity.ok(mergedContent);
     }
-    
+
     @PostMapping(value = "/decline-contributions/{documentVersionedRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<DeclineContributionResponse> declineContribution(@PathVariable("documentVersionedRef") String documentVersionedRef,
@@ -125,7 +121,7 @@ public class ContributionController {
 
     @RequestMapping(value = "/milestones/{proposalRef}/viewContribution/{legFileName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getClonedMilestoneContribution(@PathVariable("proposalRef") String proposalRef,
-                                                                 @PathVariable("legFileName") String legFileName){
+                                                                 @PathVariable("legFileName") String legFileName) {
         try {
             proposalRef = encodeParam(proposalRef);
             legFileName = encodeParam(legFileName);
@@ -134,6 +130,18 @@ public class ContributionController {
         } catch (Exception e) {
             LOG.error("Error occurred while getting milestone contribution views - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error occurred while milestone contribution view", HttpStatus.INTERNAL_SERVER_ERROR);
-        }                                                              
+        }
+    }
+
+    @PostMapping(value = "/milestones/sendFeedback", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> sendFeedback(@RequestBody SendFeedbackRequest sendFeedbackRequest) {
+        try {
+            collaboratorService.sendFeedback(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getDocumentRef(), sendFeedbackRequest.getLegFileName());
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -1,0 +1,29 @@
+<#ftl encoding="UTF-8"
+output_format="HTML"
+auto_esc=true
+strict_syntax=true
+strip_whitespace=true
+strip_text=true>
+
+<#--
+    Copyright 2024 European Union
+
+    Licensed under the EUPL, Version 1.2 or - as soon they will be approved by the European Commission - subsequent versions of the EUPL (the "Licence");
+    You may not use this work except in compliance with the Licence.
+    You may obtain a copy of the Licence at:
+
+        https://joinup.ec.europa.eu/software/page/eupl
+
+    Unless required by applicable law or agreed to in writing, software distributed under the Licence is distributed on an "AS IS" basis,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the Licence for the specific language governing permissions and limitations under the Licence.
+-->
+<#assign notification = .data_model.notification>
+<#assign title = notification.title>
+<#assign namePart = notification.namePart>
+<#assign link = notification.link>
+
+<#macro body>
+    <p>Feedback has/have been provided by the Lead DG while processing the contribution received for the proposal ${title}&nbsp;in the ${namePart}.</p>
+    <p>You can see this feedback in your contribution content using "view contribution" on the contribution : ${link}</p>
+</#macro>
