@@ -10,6 +10,8 @@ public interface AnnotateService {
 
 	String getAnnotations(String docName, String proposalRef);
 
+	String getFeedbackAnnotations(String docName, String legFileName, String proposalRef);
+
 	String createTemporaryAnnotations(byte[] legFile, String proposalRef);
 
 	boolean sendUserPermissions(List<LeosPermission> permissions);

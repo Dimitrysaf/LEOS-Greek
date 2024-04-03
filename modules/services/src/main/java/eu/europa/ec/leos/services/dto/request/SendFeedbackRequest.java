@@ -4,6 +4,7 @@ public class SendFeedbackRequest {
     private String proposalRef;
     private String documentRef;
     private String legFileName;
+    private String contributionsVersionRef;
 
     public String getProposalRef() {
         return proposalRef;
@@ -27,5 +28,13 @@ public class SendFeedbackRequest {
 
     public void setLegFileName(String legFileName) {
         this.legFileName = legFileName;
+    }
+
+    public String getContributionsVersionRef() {
+        return contributionsVersionRef;
+    }
+
+    public void setContributionsVersionRef(String contributionsVersionRef) {
+        this.contributionsVersionRef = contributionsVersionRef;
     }
 }

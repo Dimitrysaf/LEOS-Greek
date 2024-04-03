@@ -12,6 +12,7 @@ public abstract class ExportOptions {
     protected ExportVersions exportVersions;
     protected Output exportOutput;
     protected boolean withAnnotations;
+    protected boolean withFeedbackAnnotations;
     protected boolean withFilteredAnnotations;
     protected String filteredAnnotations;
     protected Class fileType;
@@ -188,4 +189,12 @@ public abstract class ExportOptions {
     }
 
     public boolean isWithAutoNumbering() { return withAutoNumbering; }
+
+    public boolean isWithFeedbackAnnotations() {
+        return withFeedbackAnnotations;
+    }
+
+    public void setWithFeedbackAnnotations(boolean withFeedbackAnnotations) {
+        this.withFeedbackAnnotations = withFeedbackAnnotations;
+    }
 }
