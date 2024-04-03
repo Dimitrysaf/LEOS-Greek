@@ -63,6 +63,7 @@ define(function aknParagraphProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
+    plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
 
     var pluginNames=[];
     var specificConfig={
