@@ -72,6 +72,12 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
 
             editor.on("change", _handleCKEvent, null, shiftEnterCommand);
             editor.on("selectionChange", _handleCKEvent, null, shiftEnterCommand);
+
+            editor.on('blur', function() {
+                editor.removeListener("change", _handleCKEvent);
+                editor.removeListener("selectionChange", _handleCKEvent);
+            }, null, null, 5);
+
             $(editor.element.$).on("keyup mouseup", null, [editor, shiftEnterCommand], _handleJQueryEvent);
         }
     };
