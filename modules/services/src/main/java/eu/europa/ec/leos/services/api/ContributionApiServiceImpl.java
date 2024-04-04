@@ -33,6 +33,8 @@ import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.exception.NotFoundException;
 import eu.europa.ec.leos.services.exception.SendNotificationException;
+import eu.europa.ec.leos.services.export.ExportLeos;
+import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
@@ -235,6 +237,19 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 contributionHtml,
                 documentViewService.getVersionInfo(contributionVersion),
                 temporaryAnnotationsId, temporaryDocument);
+    }
+
+    @Override
+    public void updateContributionAnnotations(String cloneProposalRef, String cloneLegFileName, String contributionsVersionRef) throws IOException {
+        XmlDocument contributionVersion = Optional.ofNullable(this.contributionService.findVersionByVersionedReference(contributionsVersionRef, XmlDocument.class))
+                .orElseThrow(() -> new RuntimeException(String.format("Contribution version not found for %s", contributionsVersionRef)));
+        String documentRef = contributionVersion.getMetadata().get().getRef();
+        ExportLeos exportOptions = new ExportLeos(ExportOptions.Output.PDF);
+        exportOptions.setWithSuggestions(false);
+        exportOptions.setWithAnonymization(true);
+        exportOptions.setWithAnnotations(true);
+        exportOptions.setWithFeedbackAnnotations(true);
+        legService.updateLegDocumentAnnotations(cloneProposalRef, cloneLegFileName, documentRef, contributionVersion.getName(), exportOptions);
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentRef, final String legFileName, final String versionedReference) {

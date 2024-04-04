@@ -32,6 +32,7 @@ define(function mergeContributionExtensionModule(require) {
     var ACTION_DONE_CLASS = "contribution-wrapper-after-merge";
     var MOVE_FROM = "move_from", INSERT = "insert", DELETE = "delete", PARENT_AFFECTED = "parent_affected", UNDO = "UNDO"
         , PROCESSED = "PROCESSED", ACCEPT = "ACCEPT", ACCEPT_TC = "ACCEPT_TC";
+    var HIGHER_ELTS = ['chapter' , 'title', 'section', 'part'];
 
     var callback = (mutationList, observer) => {
         var $elements = $('.' + MERGE_CONTRIBUTION);
@@ -42,7 +43,6 @@ define(function mergeContributionExtensionModule(require) {
        }
     };
     var wrapperElementsList;
-    var higherElements = [];
 
     function _initExtension(connector) {
         connector.refreshContributions = _refreshContributions;
@@ -75,7 +75,7 @@ define(function mergeContributionExtensionModule(require) {
                     } else {
                         $main_element.removeAttr(PARENT_AFFECTED);
                     }
-                    if (higherElements.indexOf(mainEltTag) === -1) {
+                    if (HIGHER_ELTS.indexOf(mainEltTag) === -1) {
                         _attachWrapperActionEvents(connector, $main_element);
                         checkIfAlreadyProcessedAndSetCssClass($changed_element, $element, $main_element);
                     } else {
@@ -89,7 +89,7 @@ define(function mergeContributionExtensionModule(require) {
                             var $parent = $($parent_element[j]);
                             const parentEltTag = UTILS.getElementTagName($parent).toLowerCase();
                             if (parentEltTag !== UTILS.NUM
-                                && higherElements.indexOf(parentEltTag) === -1 && $changed_element.index($parent) === -1) {
+                                && HIGHER_ELTS.indexOf(parentEltTag) === -1 && $changed_element.index($parent) === -1) {
                                 $parent.attr(PARENT_AFFECTED, "true");
                                 _attachWrapperActionEvents(connector, $parent);
                             }
@@ -320,7 +320,6 @@ define(function mergeContributionExtensionModule(require) {
     function _populateTocItemList() {
         let connector = this;
         wrapperElementsList = JSON.parse(connector.getState().tocItemsJsonArray);
-        higherElements = wrapperElementsList.filter(elt => elt.draggable && elt.childrenAllowed).map(elt => elt.aknTag);
         var wrappedEltsList = wrapperElementsList.filter(elt => elt.draggable).map(elt => elt.aknTag);
         wrappedEltsList.push(UTILS.NUM);
         wrappedEltsList.push(UTILS.PARAGRAPH);

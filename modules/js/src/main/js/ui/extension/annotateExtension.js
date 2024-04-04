@@ -51,6 +51,7 @@ define(function annotateExtensionModule(require) {
     function _configureHostBridge(connector) {
         connector.hostBridge = connector.hostBridge || {};
 
+        connector.receiveStoredDocumentAnnotations = _receiveStoredDocumentAnnotations;
         connector.receiveUserPermissions = _receiveUserPermissions;
         connector.receiveSecurityToken = _receiveSecurityToken;
         connector.receiveMergeSuggestion = _receiveMergeSuggestion;
@@ -76,6 +77,11 @@ define(function annotateExtensionModule(require) {
             connector.hostBridge.responseFilteredAnnotations = function(annotations) {
                 if (connector.responseFilteredAnnotations) {
                     connector.responseFilteredAnnotations(annotations);
+                }
+            }
+            connector.hostBridge.requestStoredDocumentAnnotations = function() {
+                if (connector.requestStoredDocumentAnnotations) {
+                    connector.requestStoredDocumentAnnotations();
                 }
             }
             connector.hostBridge.requestMergeSuggestion = function (selector) {
@@ -161,6 +167,14 @@ define(function annotateExtensionModule(require) {
             if (annotationContainerElt) {
                 annotationContainerElt.dispatchEvent(eventFilterHighlights);
             }
+        }
+    }
+
+    function _receiveStoredDocumentAnnotations(annotationsList) {
+        var connector = this;
+        log.debug("Stored Document Annotations received and being sent to annotate..!");
+        if (connector.hostBridge && connector.hostBridge.responseStoredDocumentAnnotations && typeof connector.hostBridge.responseStoredDocumentAnnotations === 'function') {
+            connector.hostBridge.responseStoredDocumentAnnotations(annotationsList)
         }
     }
 

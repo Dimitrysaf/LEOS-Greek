@@ -1153,6 +1153,18 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
+    public LegDocument updateLegDocumentAnnotations(String proposalRef, String legFileName, String documentRef, String documentName, ExportOptions exportOptions) throws IOException {
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        LeosPackage clonedPackage = packageRepository.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        LegDocument legDocument = packageRepository.findDocumentByPackagePathAndName(clonedPackage.getPath(), legFileName, LegDocument.class);
+        Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().getSource().getBytes());
+
+        addAnnotateToZipContent(legContent, documentRef, documentName, exportOptions, proposalRef, legFileName);
+
+        return this.updateLegDocument(legDocument.getId(), ZipPackageUtil.zipByteArray(legContent), legDocument.getStatus());
+    }
+
+    @Override
     public LegDocument findLegDocumentById(String id) {
         LOG.trace("Finding Leg Document by id... [documentId={}]", id);
         return packageRepository.findLegDocumentById(id, true);
@@ -1357,6 +1369,26 @@ public class LegServiceImpl implements LegService {
             } catch(Exception e) {
                 LOG.error("Exception occurred", e);
             }
+        }
+    }
+
+    private void addAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName, ExportOptions exportOptions, String proposalRef, String legFileName) {
+        try {
+            if(exportOptions.isWithAnnotations()) {
+                String annotations = annotateService.getAnnotations(ref, proposalRef);
+                annotations = processAnnotations(annotations, exportOptions);
+                if (exportOptions.isWithFeedbackAnnotations()) {
+                    String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
+                    feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
+                    if (StringUtils.isNotBlank(feedbackAnnotations)) {
+                        annotations = groupAnnotations(annotations, feedbackAnnotations);
+                    }
+                }
+                final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
+                contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
+            }
+        } catch(Exception e) {
+            LOG.error("Exception occurred", e);
         }
     }
 
@@ -1718,6 +1750,23 @@ public class LegServiceImpl implements LegService {
         });
         ((ObjectNode) json).putArray("rows").removeAll().addAll(modifiedList);
         ((ObjectNode) json).put("total", modifiedList.size());
+        return mapper.writeValueAsString(json);
+    }
+
+    private String groupAnnotations(String annotations, String feedbackAnnotations) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        JsonNode json = mapper.readTree(annotations);
+        ArrayNode rowsNode = (ArrayNode) json.get("rows");
+
+        JsonNode jsonFeedback = mapper.readTree(feedbackAnnotations);
+        ArrayNode rowsNodeFeedback = (ArrayNode) jsonFeedback.get("rows");
+
+        rowsNode.addAll(rowsNodeFeedback);
+
+        ((ObjectNode) json).put("rows", rowsNode);
+        ((ObjectNode) json).put("total", rowsNode.size());
+
         return mapper.writeValueAsString(json);
     }
 

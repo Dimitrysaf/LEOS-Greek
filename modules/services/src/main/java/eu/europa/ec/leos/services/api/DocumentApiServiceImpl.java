@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -221,6 +222,26 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         }
 
         return this.documentViewService.updateDocumentView(updatedDocument);
+    }
+
+    @Override
+    public String getStoredDocumentAnnotations(String legFileName, String documentRef, String proposalRef) throws IOException {
+        String annotFileName = "media/annot_" + documentRef + ".xml.json";
+        try {
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+            LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName,
+                    LegDocument.class);
+
+            Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().getOrNull().getSource().getBytes());
+            if (legContent.containsKey(annotFileName)) {
+                byte[] annotFileContent = (byte[]) legContent.get(annotFileName);
+                return new String(annotFileContent, StandardCharsets.UTF_8);
+            }
+        } catch (Exception e) {
+            LOG.info("Error while getting annotations in LEG file {}", legFileName);
+            throw new IOException("Error while getting annotations in LEG file", e);
+        }
+        return "";
     }
 
 }

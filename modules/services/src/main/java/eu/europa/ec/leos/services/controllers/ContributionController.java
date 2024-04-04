@@ -135,6 +135,7 @@ public class ContributionController {
     @ResponseBody
     public ResponseEntity<Object> sendFeedback(@RequestBody SendFeedbackRequest sendFeedbackRequest) {
         try {
+            contributionApiService.updateContributionAnnotations(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getLegFileName(), sendFeedbackRequest.getContributionsVersionRef());
             contributionApiService.sendFeedback(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getDocumentRef(), sendFeedbackRequest.getLegFileName());
             return ResponseEntity.ok().build();
         } catch (Exception e) {

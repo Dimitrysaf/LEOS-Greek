@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import {finalize, Subject} from 'rxjs';
 
 import {
   Milestone,
@@ -22,6 +22,8 @@ import { DocumentServiceAnnotationsStub } from '@/shared/components/proposal-mil
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
+import {MergeSuggestionRequest} from "@/shared";
+import {apiBaseUrl} from "../../../../config";
 
 type MilestoneDocument = {
   ref: string;
@@ -62,6 +64,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   @ViewChild('annotationsPane', { read: ElementRef })
   annotationsPaneElement: ElementRef;
   status: string;
+  isOpened: boolean = false;
 
   documents: MilestoneDocument[] = [];
   containerId = 'view-container-id';
@@ -96,6 +99,8 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       'page.workspace.proposal-item.ready-status',
     );
 
+    this.milestonesService.requestStoredDocumentAnnotations$.subscribe((request) => this.requestStoredDocumentAnnotations(request))
+
     if (this.status === this.readyToMergeMessage) {
       this.loadContribution(this.hiddenCategories);
     } else {
@@ -109,11 +114,13 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   }
 
   open() {
+    this.isOpened = true;
     this.dialog.openDialog();
   }
 
   close() {
     this.dialog.closeDialog();
+    this.isOpened = false;
     this.closed.emit();
   }
 
@@ -155,6 +162,15 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
         this.handleMilestoneExplorerDocuments(response, hiddenCategories);
       });
     this.milestonesService.resetReadyToMergeStatus();
+  }
+
+  requestStoredDocumentAnnotations(request : boolean) {
+    if (request && this.isOpened) {
+      let doc = this.documents[this.activeTabIndex];
+      this.milestonesService.sendRequestStoredDocumentAnnotations(this.milestone.proposalRef, this.milestone.legDocumentName, doc.ref);
+    } else {
+      this.milestonesService.sendEmptyStoredDocumentAnnotations();
+    }
   }
 
   private loadDocuments(hiddenCategories: string[]) {

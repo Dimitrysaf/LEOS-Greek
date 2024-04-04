@@ -54,6 +54,25 @@ public class AnnotateServiceImpl implements AnnotateService {
     }
 
     @Override
+    public String getFeedbackAnnotations(String docName, String legFileName, String proposalRef) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/search")
+                .queryParam("_separate_replies", true)
+                .queryParam("group", "__world__")
+                .queryParam("limit", -1)
+                .queryParam("offset", 0)
+                .queryParam("order", "asc")
+                .queryParam("sort", "created")
+                .queryParam("uri", "uri://LEOS/" + legFileName + "/revision-" + docName).build().encode().toUri();
+
+        try {
+            return annotationProvider.searchAnnotations(uri, this.getAnnotateToken(), proposalRef);
+        } catch (Exception exception) {
+            LOG.error("Error getting feedback annotations: ", exception);
+            throw new RuntimeException("Error Occurred While Getting Feedback Annotation");
+        }
+    }
+
+    @Override
     public String createTemporaryAnnotations(final byte[] legFile, final String proposalRef) {
         URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/annotations/temporary").build().encode().toUri();
         try {

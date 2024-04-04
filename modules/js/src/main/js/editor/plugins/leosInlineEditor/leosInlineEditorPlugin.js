@@ -87,7 +87,7 @@ define(function leosInlineEditorPluginModule(require) {
             editor.on('blur', function (evt) {
                 if ((evt.editor.LEOS.implicitSaveEnabled.toString() !== "false") && !evt.editor.LEOS.bookmarkNavigatorClicked &&
                     !evt.editor.LEOS.saveCmdExecuted) {
-                	if (_isMouseOutsideEditor(evt.editor.container.$) && !_isMouseOnDocumentScrollbar()) {
+                	if (UTILS.isMouseOutsideEditor(evt.editor) && !_isMouseOnDocumentScrollbar()) {
                         if (evt.editor.checkDirty()) {
                             if (editor.fire("canBeSaved")) {
                                 editor.fire("save", {
@@ -106,14 +106,6 @@ define(function leosInlineEditorPluginModule(require) {
                     evt.editor.LEOS.saveCmdExecuted = false;
                 }
             });
-
-            function _isMouseOutsideEditor(element) {
-                var positionEditor = UTILS.getElementPosition(element);
-                var left = positionEditor[0], right = left + parseInt(window.getComputedStyle(element).width);
-                var top = positionEditor[1], bottom = top + parseInt(window.getComputedStyle(element).height);
-                var mouseX = editor.LEOS.mousePosition[0], mouseY = editor.LEOS.mousePosition[1];
-    			return mouseX <= left || mouseX >= right || mouseY <= top || mouseY >= bottom;
-			}
 
             function _isMouseOnDocumentScrollbar() {
                 var positionEditor = UTILS.getElementPosition(docContainer);

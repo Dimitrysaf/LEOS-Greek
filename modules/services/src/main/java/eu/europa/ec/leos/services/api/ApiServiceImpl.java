@@ -961,6 +961,9 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposal.getContent().get().getSource().getBytes() : new byte[0];
             boolean isClonedProposal = proposal.isClonedProposal();
             try {
+                if(isClonedProposal) {
+                    populateCloneProposalMetadataVO(proposalXmlContent);
+                }
                 final String versionComment = messageHelper.getMessage("milestone.versionComment");
                 createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
                 LegDocument newLegDocument = milestoneService.createMilestone(proposalId, milestoneComment);

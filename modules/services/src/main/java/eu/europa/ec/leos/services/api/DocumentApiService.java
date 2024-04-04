@@ -47,4 +47,6 @@ public interface DocumentApiService {
     FetchElementResponse fetchElement(String elementId, String elementTagName, String documentRef);
 
     DocumentViewResponse changeBaseVersion(String documentRef, LeosCategory documentType, String documentId, String versionLabel, String versionComment);
+
+    String getStoredDocumentAnnotations(String legFileName, String documentRef, String proposalRef) throws IOException;
 }
