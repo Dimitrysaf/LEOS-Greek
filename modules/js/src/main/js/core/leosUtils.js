@@ -319,6 +319,15 @@ define(function leosUtilsModule(require) {
         return [position.left + docContainer.scrollLeft, position.top + docContainer.scrollTop];
     }
 
+    function _isMouseOutsideEditor(editor) {
+        var element = editor.container.$;
+        var positionEditor = this.getElementPosition(element);
+        var left = positionEditor[0], right = left + parseInt(window.getComputedStyle(element).width);
+        var top = positionEditor[1], bottom = top + parseInt(window.getComputedStyle(element).height);
+        var mouseX = editor.LEOS.mousePosition[0], mouseY = editor.LEOS.mousePosition[1];
+        return mouseX <= left || mouseX >= right || mouseY <= top || mouseY >= bottom;
+    }
+
     return {
         getParentElement: _getParentElement,
         getElementOrigin : _getElementOrigin,
@@ -334,6 +343,7 @@ define(function leosUtilsModule(require) {
         cleanUpElementFragment: _cleanUpElementFragment,
         getDocContainer: _getDocContainer,
         getElementPosition: _getElementPosition,
+        isMouseOutsideEditor: _isMouseOutsideEditor,
         COUNCIL_INSTANCE : COUNCIL_INSTANCE,
         KEYS: KEYS,
         PARAGRAPH: PARAGRAPH,
