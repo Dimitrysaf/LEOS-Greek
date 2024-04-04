@@ -21,6 +21,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
     var pluginName = "leosHierarchicalElementShiftEnterHandler";
     var leosPluginUtils = require("plugins/leosPluginUtils");
+    var UTILS = require("core/leosUtils");
 
     var LOG = require("logger");
     var SHIFT_ENTER = CKEDITOR.SHIFT + 13;
@@ -72,12 +73,6 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
 
             editor.on("change", _handleCKEvent, null, shiftEnterCommand);
             editor.on("selectionChange", _handleCKEvent, null, shiftEnterCommand);
-
-            editor.on('blur', function() {
-                editor.removeListener("change", _handleCKEvent);
-                editor.removeListener("selectionChange", _handleCKEvent);
-            }, null, null, 5);
-
             $(editor.element.$).on("keyup mouseup", null, [editor, shiftEnterCommand], _handleJQueryEvent);
         }
     };
@@ -91,8 +86,10 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
 
     var _handleCKEvent = function _handleCKEvent(event) {
         var editor = event.editor;
-        var cmd = event.listenerData;
-        _setCurrentShiftEnterStatus(editor, cmd);
+        if (!UTILS.isMouseOutsideEditor(editor)) {
+            var cmd = event.listenerData;
+            _setCurrentShiftEnterStatus(editor, cmd);
+        }
     }
 
     var _setCurrentShiftEnterStatus = function _setCurrentShiftEnterStatus(editor, cmd) {
