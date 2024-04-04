@@ -1374,23 +1374,32 @@ public class LegServiceImpl implements LegService {
 
     private void addAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName, ExportOptions exportOptions, String proposalRef, String legFileName) {
         try {
-            if(exportOptions.isWithAnnotations()) {
-                String annotations = annotateService.getAnnotations(ref, proposalRef);
-                annotations = processAnnotations(annotations, exportOptions);
-                if (exportOptions.isWithFeedbackAnnotations()) {
-                    String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
-                    feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
-                    if (StringUtils.isNotBlank(feedbackAnnotations)) {
-                        annotations = groupAnnotations(annotations, feedbackAnnotations);
+            if (exportOptions.isWithFeedbackAnnotations()) {
+                String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
+                feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
+                if (StringUtils.isNotBlank(feedbackAnnotations)) {
+                    String annotations = getAnnotationsFromZipContent(contentToZip, docName);
+                    if (StringUtils.isNotBlank(annotations)) {
+                        feedbackAnnotations = groupAnnotations(annotations, feedbackAnnotations);
                     }
+                    final byte[] xmlAnnotationContent = feedbackAnnotations.getBytes(UTF_8);
+                    contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
                 }
-                final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
-                contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
             }
         } catch(Exception e) {
             LOG.error("Exception occurred", e);
         }
     }
+
+    private String getAnnotationsFromZipContent(Map<String, Object> contentToZip, String docName) throws JsonProcessingException {
+        String fileName = creatAnnotationFileName(docName);
+        byte[] annotationsExisting = (byte[]) contentToZip.get(fileName);
+        if(annotationsExisting != null) {
+            return new String(annotationsExisting, UTF_8);
+        }
+        return null;
+    }
+
 
     public void addFilteredAnnotationsToZipContent(Map<String, Object> contentToZip, String docName, ExportOptions exportOptions) {
         if (exportOptions.isWithFilteredAnnotations()) {
