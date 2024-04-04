@@ -492,6 +492,7 @@ export class MergeContributionsService {
         documentRef: this.documentRef,
         proposalRef: this.contribution.proposalRef,
         legFileName: this.contribution.legFileName,
+        contributionsVersionRef: this.contribution.versionedReference
       })
       .subscribe(() => {
         this.appShell.growl({
