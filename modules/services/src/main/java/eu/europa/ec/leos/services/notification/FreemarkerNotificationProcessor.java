@@ -41,9 +41,9 @@ public class FreemarkerNotificationProcessor {
         } catch (MalformedTemplateNameException malformedTemplateNameException) {
             throw new RuntimeException("Invalid Template", malformedTemplateNameException);
         } catch (TemplateNotFoundException templateNotFoundException) {
-            throw new RuntimeException("Tempalte not found", templateNotFoundException);
+            throw new RuntimeException("Template not found", templateNotFoundException);
         } catch (TemplateException templateException) {
-            throw new RuntimeException("Error occured while Template processing", templateException);
+            throw new RuntimeException("Error occurred while Template processing", templateException);
         } catch (Exception exception) {
             throw new RuntimeException(exception.getMessage());
         }

@@ -5,7 +5,6 @@ import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.notification.collaborators.AddCollaborator;
-import eu.europa.ec.leos.model.notification.trackChanges.SendFeedbackNotification;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,7 +36,6 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     private static final Logger LOG = LoggerFactory.getLogger(CollaboratorServiceImpl.class);
 
     private final NotificationService notificationService;
-    private final Properties applicationProperties;
     private final MessageHelper messageHelper;
     private final PackageService packageService;
     private final SecurityService securityService;
@@ -48,8 +45,7 @@ public class CollaboratorServiceImpl implements CollaboratorService {
 
     @Autowired
     public CollaboratorServiceImpl(NotificationService notificationService, MessageHelper messageHelper, PackageService packageService,
-                                   SecurityService securityService, UserService userService, LeosPermissionAuthorityMap leosPermissionAuthorityMap, LeosPermissionAuthorityMapHelper authorityMapHelper,
-                                   Properties applicationProperties) {
+                                   SecurityService securityService, UserService userService, LeosPermissionAuthorityMap leosPermissionAuthorityMap, LeosPermissionAuthorityMapHelper authorityMapHelper) {
         this.notificationService = notificationService;
         this.messageHelper = messageHelper;
         this.packageService = packageService;
@@ -57,7 +53,6 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         this.userService = userService;
         this.leosPermissionAuthorityMap = leosPermissionAuthorityMap;
         this.authorityMapHelper = authorityMapHelper;
-        this.applicationProperties = applicationProperties;
     }
 
     @Override
@@ -257,17 +252,6 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         } catch (Exception e) {
             LOG.warn("Unexpected error occurred while sending notification to user {}", user.getLogin(), e);
             throw new SendNotificationException("Unexpected error occurred while sending notification to user " + user.getLogin(), e);
-        }
-    }
-
-    public void sendFeedback(String proposalRef, String documentRef, String legFileName) {
-        try {
-            LOG.trace("Sending email feedback to all collaborators for proposalRef {}", proposalRef);
-            String milestoneUrl = applicationProperties.getProperty("leos.mapping.url") + "/collection/"+proposalRef + "?legFileName=" + legFileName;
-            notificationService.sendNotification(new SendFeedbackNotification(proposalRef, documentRef, milestoneUrl));
-        } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
-            throw new SendNotificationException(e.getMessage(), e);
         }
     }
 

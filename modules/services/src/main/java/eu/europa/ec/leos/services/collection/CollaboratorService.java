@@ -18,6 +18,4 @@ public interface CollaboratorService {
     String editCollaborator(Proposal proposal, String userId, String proposalRef, String roleName, String proposalUrl);
 
     List<CollaboratorDTO> getCollaborators(Proposal proposal);
-
-    void sendFeedback(String proposalRef, String documentRef, String legFileName);
 }

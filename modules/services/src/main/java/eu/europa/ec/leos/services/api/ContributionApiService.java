@@ -18,4 +18,5 @@ public interface ContributionApiService {
     void declineContribution(String contributionVersionRef);
     void markContributionAsProcessed(String contributionVersionRef);
     byte[] mergeContribution(String documentRef, ApplyContributionsRequest request) throws IOException;
+    void sendFeedback(String proposalRef, String documentRef, String legFileName);
 }
