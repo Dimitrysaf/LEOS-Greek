@@ -9,9 +9,11 @@ import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
+import eu.europa.ec.leos.model.notification.trackChanges.SendFeedbackNotification;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
@@ -30,6 +32,7 @@ import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.exception.NotFoundException;
+import eu.europa.ec.leos.services.exception.SendNotificationException;
 import eu.europa.ec.leos.services.export.ExportLeos;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
@@ -51,18 +54,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import eu.europa.ec.leos.services.notification.NotificationService;
 
 import javax.inject.Provider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
@@ -79,6 +77,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private final LegService legService;
     private final SecurityContext securityContext;
     private final ContributionService contributionService;
+    private final NotificationService notificationService;
+    private final Properties applicationProperties;
     private final LeosRepository leosRepository;
     private final Provider<StructureContext> structureContextProvider;
     private final Provider<StructureContext> structureContext;
@@ -108,6 +108,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       LegService legService,
                                       SecurityContext securityContext,
                                       ContributionService contributionService,
+                                      NotificationService notificationService,
+                                      Properties applicationProperties,
                                       LeosRepository leosRepository,
                                       Provider<StructureContext> structureContextProvider,
                                       Provider<StructureContext> structureContext,
@@ -143,6 +145,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.documentViewService = documentViewService;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.documentLanguageContext = documentLanguageContext;
+        this.notificationService = notificationService;
+        this.applicationProperties = applicationProperties;
     }
 
     private XmlDocument findDocumentByRef(String docRef) throws NotFoundException {
@@ -348,5 +352,44 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             map.add(new InternalRefMap(docType, href, cloned));
         });
         return map;
+    }
+
+    public void sendFeedback(String proposalRef, String documentRef, String legFileName) {
+        try {
+            LOG.trace("Sending email feedback to all collaborators for proposalRef {}", proposalRef);
+            SendFeedbackNotification sendFeedbackNotification = new SendFeedbackNotification();
+            String milestoneUrl = applicationProperties.getProperty("leos.mapping.url") + "/collection/"+proposalRef + "?legFileName=" + legFileName;
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            XmlDocument document = this.findDocumentByRef(documentRef);
+            sendFeedbackNotification.setRecipients(buildCollaboratorList(proposal));
+            sendFeedbackNotification.setTitle(getProposalTitle(proposal));
+            sendFeedbackNotification.setNamePart(document.getCategory().toString());
+            sendFeedbackNotification.setLink(milestoneUrl);
+            sendFeedbackNotification.setEmailSubject(messageHelper.getMessage(sendFeedbackNotification.getEmailSubjectKey()));
+            notificationService.sendNotification(sendFeedbackNotification);
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+            throw new SendNotificationException(e.getMessage(), e);
+        }
+    }
+
+    private List<String> buildCollaboratorList(Proposal proposal) {
+        List<String> collaborators = new ArrayList<>();
+        proposal.getCollaborators().forEach((collaborator) -> {
+            User user = userService.getUser(collaborator.getLogin());
+            if (user == null) {
+                throw new IllegalStateException("User '" + collaborator.getLogin() + "' not found in the database!");
+            }
+            collaborators.add(user.getEmail());
+        });
+        return collaborators;
+    }
+
+    private String getProposalTitle(Proposal proposal) {
+        ProposalMetadata proposalMetadata = proposal.getMetadata().get();
+        StringBuilder proposalTitle = new StringBuilder(proposalMetadata.getStage()).append(" ");
+        proposalTitle.append(proposalMetadata.getType()).append(" ");
+        proposalTitle.append(proposalMetadata.getPurpose()).append(" ");
+        return proposalTitle.toString();
     }
 }

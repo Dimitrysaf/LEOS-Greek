@@ -34,8 +34,6 @@ public class ContributionController {
 
     @Autowired
     ContributionApiService contributionApiService;
-    @Autowired
-    CollaboratorService collaboratorService;
 
     @Autowired
     ApiService apiService;
@@ -138,7 +136,7 @@ public class ContributionController {
     public ResponseEntity<Object> sendFeedback(@RequestBody SendFeedbackRequest sendFeedbackRequest) {
         try {
             contributionApiService.updateContributionAnnotations(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getLegFileName(), sendFeedbackRequest.getContributionsVersionRef());
-            collaboratorService.sendFeedback(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getDocumentRef(), sendFeedbackRequest.getLegFileName());
+            contributionApiService.sendFeedback(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getDocumentRef(), sendFeedbackRequest.getLegFileName());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);

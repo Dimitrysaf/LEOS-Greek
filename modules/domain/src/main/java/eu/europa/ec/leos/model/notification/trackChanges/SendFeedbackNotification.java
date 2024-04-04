@@ -11,10 +11,6 @@ public class SendFeedbackNotification implements EmailNotification {
 
     private String emailSubject;
 
-    public String documentRef;
-
-    private String proposalRef;
-
     public String link;
 
     public String namePart;
@@ -22,28 +18,6 @@ public class SendFeedbackNotification implements EmailNotification {
     private String title;
 
     private List<String> recipients = new ArrayList<>();
-
-    public SendFeedbackNotification(String proposalRef, String documentRef, String link) {
-        this.proposalRef = proposalRef;
-        this.documentRef = documentRef;
-        this.link = link;
-    }
-
-    public String getDocumentRef() {
-        return documentRef;
-    }
-
-    public void setDocumentRef(String documentRef) {
-        this.documentRef = documentRef;
-    }
-
-    public String getProposalRef() {
-        return proposalRef;
-    }
-
-    public void setProposalRef(String proposalRef) {
-        this.proposalRef = proposalRef;
-    }
 
     public String getLink() {
         return link;
