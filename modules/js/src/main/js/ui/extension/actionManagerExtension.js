@@ -176,6 +176,8 @@ define(function actionManagerExtensionModule(require) {
         let element = document.getElementById(data.elementId);
         if(element?.actions){
             _hideActionButtons(element.actions, element);
+            $(element.actions).remove();
+            element.actions = null;
         }
     }
 
