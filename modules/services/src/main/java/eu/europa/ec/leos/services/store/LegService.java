@@ -35,7 +35,7 @@ public interface LegService {
     
     LegDocument updateLegDocument(String id, byte[] pdfJobZip, byte[] wordJobZip);
 
-    LegDocument updateLegDocumentAnnotations(String proposalRef, String legFileName, String documentRef, String documentName, ExportOptions exportOptions) throws IOException;
+    LegDocument updateLegDocumentFeedbackAnnotations(String proposalRef, String legFileName, String documentRef, String documentName, ExportOptions exportOptions) throws IOException;
     
     LegDocument findLegDocumentById(String id);
     

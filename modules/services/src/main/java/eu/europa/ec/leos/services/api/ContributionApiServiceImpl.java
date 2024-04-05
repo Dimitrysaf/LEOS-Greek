@@ -240,7 +240,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public void updateContributionAnnotations(String cloneProposalRef, String cloneLegFileName, String contributionsVersionRef) throws IOException {
+    public void updateFeedbackAnnotations(String cloneProposalRef, String cloneLegFileName, String contributionsVersionRef) throws IOException {
         XmlDocument contributionVersion = Optional.ofNullable(this.contributionService.findVersionByVersionedReference(contributionsVersionRef, XmlDocument.class))
                 .orElseThrow(() -> new RuntimeException(String.format("Contribution version not found for %s", contributionsVersionRef)));
         String documentRef = contributionVersion.getMetadata().get().getRef();
@@ -249,7 +249,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         exportOptions.setWithAnonymization(true);
         exportOptions.setWithAnnotations(true);
         exportOptions.setWithFeedbackAnnotations(true);
-        legService.updateLegDocumentAnnotations(cloneProposalRef, cloneLegFileName, documentRef, contributionVersion.getName(), exportOptions);
+        legService.updateLegDocumentFeedbackAnnotations(cloneProposalRef, cloneLegFileName, documentRef, contributionVersion.getName(), exportOptions);
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentRef, final String legFileName, final String versionedReference) {
