@@ -114,6 +114,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.getDateAsXml;
 import static eu.europa.ec.leos.services.support.XmlHelper.getSoftUserAttribute;
+import static eu.europa.ec.leos.util.LeosDomainUtil.unWrapXmlFragment;
 import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
 
 @Service
@@ -593,7 +594,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             xmlContent = nodeToByteArray(document);
 
         }
-        return new Pair<>(xmlContent, nodeToString(fragmentToCheckRestore.getFirstChild().getFirstChild()));
+        return new Pair<>(xmlContent, unWrapXmlFragment(nodeToString(fragmentToCheckRestore.getFirstChild())));
     }
 
     private Pair<byte[], String> removeSoftMovedElementMarkedWithAttribute(byte[] xmlContent, String elementContent) {
@@ -637,7 +638,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             numberProcessorHandler.renumberDocument(document, ARTICLE, "EN", true);
             xmlContent = nodeToByteArray(document);
         }
-        return new Pair<>(xmlContent, nodeToString(fragmentToCheckDeleted.getFirstChild().getFirstChild()));
+        return new Pair<>(xmlContent, unWrapXmlFragment(nodeToString(fragmentToCheckDeleted.getFirstChild())));
     }
 
     private void insertSoftMovedAttributesAndRenumber(String idAttrVal, Node sourceNode, Node document) {
