@@ -112,8 +112,8 @@ public class ProposalViewerPageSteps extends BaseDriver {
         assertEquals(actualTabName, tabName);
     }
 
-    @And("active tab name is {string}")
-    public void activeTabNameIs(String tabName) {
+    @And("active tab name is {string} in proposal viewer page")
+    public void activeTabName(String tabName) {
         String activeTabName = proposalViewerPage.getActiveTabName();
         assertEquals(activeTabName, tabName);
     }
@@ -303,5 +303,10 @@ public class ProposalViewerPageSteps extends BaseDriver {
     @And("export as pdf button is not displayed")
     public void exportAsPdfButtonIsNotDisplayed() {
         assertTrue(proposalViewerPage.isExportAsPdfBtnNotPresent());
+    }
+
+    @When("click on open button of explanatory memorandum link")
+    public void clickOnOpenButtonOfExplanatoryMemorandumLink() {
+        proposalViewerPage.clickOnExplanatoryMemorandumLInk();
     }
 }

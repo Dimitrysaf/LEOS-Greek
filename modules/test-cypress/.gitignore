@@ -1,0 +1,8 @@
+/*.iml
+/.idea/
+/git
+/.project
+/.settings
+/node_modules
+/cypress/report
+/cypress/videos

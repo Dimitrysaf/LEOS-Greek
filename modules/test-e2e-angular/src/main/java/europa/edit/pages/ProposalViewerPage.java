@@ -23,7 +23,7 @@ public class ProposalViewerPage extends HeaderPage {
     @CacheLookup
     WebElement ACTIONS_BTN;
 
-    @FindBy(css = ".eui-u-flex-align-items-start h1")
+    @FindBy(css = "app-proposal-header h1")
     @CacheLookup
     WebElement PROPOSAL_TITLE;
 
@@ -212,5 +212,9 @@ public class ProposalViewerPage extends HeaderPage {
 
     public boolean isExportAsPdfBtnNotPresent() {
         return waitUnTillElementIsNotPresent(driver, EXPORT_AS_PDF_BUTTON);
+    }
+
+    public void clickOnExplanatoryMemorandumLInk() {
+        EXP_MEMO.click();
     }
 }
