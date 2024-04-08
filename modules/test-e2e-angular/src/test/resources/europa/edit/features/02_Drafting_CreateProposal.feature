@@ -43,7 +43,7 @@ Feature: Create Proposal Regression Features in Edit Commission
     And  "Drafts" is showing in tab 1
     And  "Milestones" is showing in tab 2
     And  "Collaborators" is showing in tab 3
-    And  active tab name is "Drafts"
+    And  active tab name is "Drafts" in proposal viewer page
     And  cover page section is present
     And  explanatory memorandum section is present
     And  legal act section is present
@@ -119,7 +119,7 @@ Feature: Create Proposal Regression Features in Edit Commission
     And  "Drafts" is showing in tab 1
     And  "Milestones" is showing in tab 2
     And  "Collaborators" is showing in tab 3
-    And  active tab name is "Drafts"
+    And  active tab name is "Drafts" in proposal viewer page
     And  cover page section is present
     And  explanatory memorandum section is present
     And  legal act section is present
