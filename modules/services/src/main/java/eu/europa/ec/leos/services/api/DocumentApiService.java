@@ -48,5 +48,5 @@ public interface DocumentApiService {
 
     DocumentViewResponse changeBaseVersion(String documentRef, LeosCategory documentType, String documentId, String versionLabel, String versionComment);
 
-    String getStoredDocumentAnnotations(String legFileName, String documentRef, String proposalRef) throws IOException;
+    String getFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef, boolean removeRevisionprefix) throws IOException;
 }

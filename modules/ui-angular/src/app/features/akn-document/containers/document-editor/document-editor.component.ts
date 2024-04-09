@@ -26,7 +26,7 @@ import {
   debounceTime,
   filter,
   Observable,
-  Subject,
+  Subject, Subscription,
   take,
   takeUntil,
 } from 'rxjs';
@@ -73,6 +73,7 @@ import { PageMode, PageModeService } from '../../services/page-mode.service';
 import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
+import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 @Component({
   selector: 'app-document-editor',
@@ -176,6 +177,8 @@ export class DocumentEditorComponent
   private applyActionDisabledBS = new BehaviorSubject<boolean>(true);
   private contributionChangesBS = new BehaviorSubject<HTMLElement[]>([]);
 
+  private requestStoredDocumentAnnotationsSubscription: Subscription = new Subscription();
+
   constructor(
     public blockDocumentEditorService: BlockDocumentEditorService,
     public documentService: DocumentService,
@@ -204,6 +207,7 @@ export class DocumentEditorComponent
     private viewVersionService: ViewVersionService,
     private pageModeService: PageModeService,
     public mergeContributionService: MergeContributionsService,
+    private milestoneService: ProposalMilestonesService,
     private leosLightService: LeosLightService,
   ) {
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
@@ -242,6 +246,17 @@ export class DocumentEditorComponent
             [];
           [...documentPanes].forEach((el) => (el.style.flexBasis = ''));
         });
+        if (pageMode === PageMode.Contribution) {
+          this.requestStoredDocumentAnnotationsSubscription = this.milestoneService.requestStoredDocumentAnnotations$.subscribe((request) => {
+            if (request && this.contribution && this.pageMode === PageMode.Contribution && !this.isViewContributionPaneCollapsed && request.includes('revision-')) {
+              this.milestoneService.triggerRequestStoredDocumentAnnotations(this.contribution.proposalRef, this.contribution.legFileName, this.contribution.documentName.replace('.xml',''));
+            } else {
+              this.milestoneService.sendEmptyStoredDocumentAnnotations();
+            }
+          });
+        } else {
+          this.requestStoredDocumentAnnotationsSubscription.unsubscribe();
+        }
       });
 
     this.contributionChanges$
@@ -735,6 +750,7 @@ export class DocumentEditorComponent
     }
     this.mergeContributionService.handleContributionSelectCount(false, true);
     this.mergeContributionService.setContributionViewAndMergeCollapsed(true);
+    this.isViewContributionPaneCollapsed = true;
   }
 
   onSelectAction(e: any) {

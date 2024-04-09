@@ -18,7 +18,6 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
-import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -225,23 +224,15 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
     }
 
     @Override
-    public String getStoredDocumentAnnotations(String legFileName, String documentRef, String proposalRef) throws IOException {
-        String annotFileName = "media/annot_" + documentRef + ".xml.json";
-        try {
-            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-            LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName,
-                    LegDocument.class);
+    public String getFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef, boolean removeRevisionPrefix) throws IOException {
+        String result = legService.getFeedbackAnnotationsFromLeg(legFileName, documentRef, proposalRef);
 
-            Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().getOrNull().getSource().getBytes());
-            if (legContent.containsKey(annotFileName)) {
-                byte[] annotFileContent = (byte[]) legContent.get(annotFileName);
-                return new String(annotFileContent, StandardCharsets.UTF_8);
-            }
-        } catch (Exception e) {
-            LOG.info("Error while getting annotations in LEG file {}", legFileName);
-            throw new IOException("Error while getting annotations in LEG file", e);
+        if (removeRevisionPrefix) {
+            result = result.replaceAll("revision-", "");
+        } else {
+            result = legService.removePermissionsStoredAnnotations(result);
         }
-        return "";
+        return result;
     }
 
 }

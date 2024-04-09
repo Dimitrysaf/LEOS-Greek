@@ -10,6 +10,7 @@ import type {
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
+import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 
 export type AnnotateConnectorInitialState = Omit<
   AnnotateConnectorState,
@@ -25,7 +26,7 @@ const CACHE_TIME = 1000;
 export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConnectorState> {
   /* set in `modules/js/src/main/js/ui/extension/annotateExtension.js` */
   target?: Element;
-  receiveStoredDocumentAnnotations?: (annotationsList: string) => void;
+  receiveStoredDocumentAnnotations?: (annotationsList: any) => void;
   receiveUserPermissions?: (...userPermissions: Permission[]) => void;
   receiveSecurityToken?: (token: string) => void;
   receiveMergeSuggestion?: (result) => void;
@@ -55,17 +56,22 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
     private annotateService: AnnotateService,
     private documentService: DocumentService,
     private milestoneService: ProposalMilestonesService,
+    private mergeContributionService: MergeContributionsService,
   ) {
     super({ ...leosJavaScriptExtensionState, ...state }, null);
   }
 
-  requestStoredDocumentAnnotations() {
-    this.milestoneService.getStoredDocumentAnnotations();
-    this.milestoneService.receiveStoredDocumentAnnotations$.subscribe((annotations) => {
-      if (annotations) {
-        this.receiveStoredDocumentAnnotations(annotations);
+  requestStoredDocumentAnnotations(uri: string) {
+    this.milestoneService.getStoredDocumentAnnotations(uri);
+    this.milestoneService.receiveStoredDocumentAnnotations$.subscribe((result) => {
+      if (result) {
+        this.receiveStoredDocumentAnnotations(result);
       }
     });
+  }
+
+  requestCountSentFeedbacks(annots: []) {
+    this.mergeContributionService.setFeedbackToBeSent(annots.length > 0);
   }
 
   requestDocumentMetadata(...args) {

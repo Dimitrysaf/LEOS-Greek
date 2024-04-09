@@ -240,11 +240,13 @@ public class DocumentController {
     @ResponseBody
     public ResponseEntity<Object> getStoredAnnotations(@PathVariable("legFileName") String legFileName,
                                                        @PathVariable("documentRef") String documentRef,
-                                                       @PathVariable("proposalRef") String proposalRef) {
+                                                       @PathVariable("proposalRef") String proposalRef,
+                                                       @RequestParam("removeRevisionPrefix") Boolean removeRevisionPrefix) {
         try {
             documentRef = encodeParam(documentRef);
+            proposalRef = encodeParam(proposalRef);
             legFileName = encodeParam(legFileName);
-            String annots = documentApiService.getStoredDocumentAnnotations(legFileName, documentRef, proposalRef);
+            String annots = documentApiService.getFeedbackAnnotationsFromLeg(legFileName, documentRef, proposalRef, removeRevisionPrefix);
             return ResponseEntity.ok().body(annots);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annotations in LEG file for - " + legFileName, e);

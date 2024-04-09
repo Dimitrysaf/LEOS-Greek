@@ -21,6 +21,12 @@
 
   <eui-card-footer>
     <eui-card-footer-action-buttons>
+      <span euiLabel style="color: red; padding-right: 10px;" *ngIf="this.feedbackToBeSent">
+        <eui-icon
+          euiSizeS
+          iconClass="eui-icon-circle"
+        ></eui-icon>
+      </span>
       <span class="updatedBy">{{
         'page.editor.contribution-item.updated-by'
           | translate

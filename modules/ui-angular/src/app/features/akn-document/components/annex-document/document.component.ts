@@ -23,6 +23,7 @@ import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
+import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -64,8 +65,16 @@ export class DocumentComponent
     private trackChangesActionsService: TrackChangesActionsService,
     private tableOfContentService: TableOfContentService,
     private environmentService: EnvironmentService,
+    private milestoneService: ProposalMilestonesService,
   ) {
     this.isCNInstance = this.environmentService.isCouncil();
+    this.milestoneService.triggerRequestStoredDocumentAnnotations$.subscribe((request) => {
+        if (request && this.contributionView) {
+          this.milestoneService.sendRequestStoredDocumentAnnotations(request.proposalRef, request.legFileName, request.documentRef, false);
+        } else {
+          this.milestoneService.sendEmptyStoredDocumentAnnotations();
+        }
+      });
   }
 
   ngOnDestroy(): void {

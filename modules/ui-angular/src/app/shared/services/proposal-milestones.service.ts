@@ -14,8 +14,10 @@ import { downloadBlob } from '@/shared/utils';
 })
 export class ProposalMilestonesService {
   readyToMergeStatus$: Observable<string>;
-  requestStoredDocumentAnnotations$: Observable<boolean>;
-  private requestStoredDocumentAnnotations = new BehaviorSubject<boolean>(false);
+  requestStoredDocumentAnnotations$: Observable<string>;
+  private requestStoredDocumentAnnotations = new BehaviorSubject<string>(null);
+  triggerRequestStoredDocumentAnnotations$: Observable<{proposalRef, legFileName, documentRef}>;
+  private triggerRequestStoredDocumentAnnotationsBS = new BehaviorSubject<{proposalRef, legFileName, documentRef}>(null);
   receiveStoredDocumentAnnotations$: Observable<string>;
   private receiveStoredDocumentAnnotations = new BehaviorSubject<string>(null);
   private readyToMergeStatusSource = new BehaviorSubject<string>('');
@@ -28,6 +30,7 @@ export class ProposalMilestonesService {
     this.readyToMergeStatus$ = this.readyToMergeStatusSource.asObservable();
     this.requestStoredDocumentAnnotations$ = this.requestStoredDocumentAnnotations.asObservable();
     this.receiveStoredDocumentAnnotations$ = this.receiveStoredDocumentAnnotations.asObservable();
+    this.triggerRequestStoredDocumentAnnotations$ = this.triggerRequestStoredDocumentAnnotationsBS.asObservable();
   }
 
   listMilestoneView(proposalRef: string, legFileName: string) {
@@ -57,21 +60,25 @@ export class ProposalMilestonesService {
     );
   }
 
-  getStoredDocumentAnnotations() {
-    this.requestStoredDocumentAnnotations.next(true);
+  getStoredDocumentAnnotations(uri: string) {
+    this.requestStoredDocumentAnnotations.next(uri);
   }
 
-  sendRequestStoredDocumentAnnotations(proposalRef: string, legFileName: string, documentRef: string) {
+  triggerRequestStoredDocumentAnnotations(proposalRef: string, legFileName: string, documentRef: string) {
+    this.triggerRequestStoredDocumentAnnotationsBS.next({proposalRef: proposalRef, legFileName: legFileName, documentRef: documentRef});
+  }
+
+  sendRequestStoredDocumentAnnotations(proposalRef: string, legFileName: string, documentRef: string, removeRevisionPrefix: boolean) {
     return this.http
       .get<string>(
-        `${apiBaseUrl}/secured/document/${legFileName}/${proposalRef}/stored-annotations/${documentRef}`
+        `${apiBaseUrl}/secured/document/${legFileName}/${proposalRef}/stored-annotations/${documentRef}?removeRevisionPrefix=${removeRevisionPrefix}`
       ).subscribe((response) => {
         this.receiveStoredDocumentAnnotations.next(response);
       });
   }
 
   sendEmptyStoredDocumentAnnotations() {
-    this.receiveStoredDocumentAnnotations.next("");
+    this.receiveStoredDocumentAnnotations.next(null);
   }
 
   exportMilestonePdf(documentRef: string, legFileName: string) {

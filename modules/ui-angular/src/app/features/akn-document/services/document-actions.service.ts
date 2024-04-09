@@ -794,6 +794,7 @@ export abstract class DocumentActionsService {
         id: 'send-feedback-id',
         euiSize: 's',
         euiStyle: 'secondary',
+        disabled: this.mergeContributionService.disableSendFeedbackToBeSent$,
         label: this.translateService.instant(
           'page.editor.contribution.actions.view.and.merge.actions.send.feedback',
         ),

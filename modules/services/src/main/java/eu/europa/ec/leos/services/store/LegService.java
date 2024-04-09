@@ -62,4 +62,10 @@ public interface LegService {
     String storeLegDocumentTemporary(final LegDocument legDocument);
 
     String storeLegDocumentTemporary(final byte[] bytes);
+
+    String getFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef) throws IOException;
+
+    String removePermissionsStoredAnnotations(String storedFeedbackAnnotations);
+
+    int countFeedbacksToBeSentOnContribution(String ref, String proposalRef, String legFileName);
 }
