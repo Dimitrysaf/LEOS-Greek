@@ -264,7 +264,7 @@ export class DocumentComponent
     }
     if (!this.readonly) {
       this.coEditionWSService.showElementsBeingEdited(
-        this.coEditionWSService.getDocCoEditionInfoData(),
+        this.coEditionWSService.getDocCoEditionInfoData()
       );
       this.initTrackChangesActions();
       this.ckeditorService.refreshStateAllAvailableConnectors();

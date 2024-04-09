@@ -4,6 +4,7 @@
       id="tree"
       cdkDropList
       #tree="cdkDropList"
+      *ngIf="isVisible"
       [dataSource]="dataSource"
       [treeControl]="treeControl"
       (cdkDropListDropped)="onDrop($event)"
@@ -25,7 +26,9 @@
         [cdkDropListDisabled]="!isEditMode || !node.tocItem.draggable"
       >
         <div class="drop-placeholder"></div>
+
         <li class="node-li" *ngIf="shouldBeVisible(node)">
+          <app-co-edition-info *ngIf="shouldBeVisible(node)" [nodeId]="node.id"></app-co-edition-info>
           <div
             class="mat-tree-node"
             [class]="{ 'selected-node': selectedNode?.id === node.id }"
@@ -36,6 +39,7 @@
               iconClass="eui-icon-angle-right"
               class="eui-u-visibility-hidden"
             ></eui-icon>
+
             <div
               [id]="'node-label-' + node.id"
               [class]="'label' + ' ' + getNodeStyling(node)"
@@ -65,7 +69,9 @@
         [cdkDropListDisabled]="!isEditMode"
       >
         <div class="drop-placeholder"></div>
+
         <li>
+          <app-co-edition-info [nodeId]="node.id"></app-co-edition-info>
           <div
             (click)="handleNodeSelect(node)"
             class="mat-tree-node"
@@ -83,6 +89,7 @@
               iconClass="eui-icon eui-icon-angle-down"
               (click)="nodeCollapsed(node)"
             ></eui-icon>
+
             <div
               [id]="'node-label-' + node.id"
               [class]="'label-extended' + ' ' + getNodeStyling(node)"
