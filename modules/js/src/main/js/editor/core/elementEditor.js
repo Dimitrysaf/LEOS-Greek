@@ -275,13 +275,15 @@ define(function elementEditorModule(require) {
                 && elementToPutCursor.getChild(0).$.nodeType === CKEDITOR.NODE_ELEMENT) {
                 elementToPutCursor = elementToPutCursor.getChild(0);
             }
-            elementToPutCursor = elementToPutCursor.getChild(editor.LEOS.elementCursorChildPos);
-            var range = editor.createRange();
-            range.moveToPosition(elementToPutCursor, CKEDITOR.POSITION_AFTER_START);
-            range.setStart(elementToPutCursor, editor.LEOS.elementCursorPos);
-            range.setEnd(elementToPutCursor, editor.LEOS.elementCursorPos);
-            range.collapse(true);
-            range.select();
+            if (elementToPutCursor) {
+                elementToPutCursor = elementToPutCursor.getChild(editor.LEOS.elementCursorChildPos);
+                var range = editor.createRange();
+                range.moveToPosition(elementToPutCursor, CKEDITOR.POSITION_AFTER_START);
+                range.setStart(elementToPutCursor, editor.LEOS.elementCursorPos);
+                range.setEnd(elementToPutCursor, editor.LEOS.elementCursorPos);
+                range.collapse(true);
+                range.select();
+            }
         }
     }
 
@@ -420,13 +422,14 @@ define(function elementEditorModule(require) {
         connector.releaseElement(data);
         // destroy editor instance, without updating DOM
         if (connector.getState().isAngularUI) {
-            placeholder.outerHTML = newContent;
+            if (placeholder) {
+                placeholder.outerHTML = newContent;
+            }
             editor.destroy(false);
         } else {
-            if (placeholder != null) {
+            if (placeholder) {
                 placeholder.innerHTML = null;
             }
-
             editor.destroy(true);
         }
 
