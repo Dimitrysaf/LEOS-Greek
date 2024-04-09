@@ -315,7 +315,7 @@ export class DocumentComponent
       if (!elementInEditor) {
         this.reloadElements(data);
       } else if (data.isClosing && !data.isSaved) {
-        if (this.isCNInstance || data.elementFragment.includes("</authorialNote>")) {
+        if (this.shouldReloadDocument(data)) {
           this.documentService.reloadDocument();
         } else {
           this.reloadElements(data)
@@ -324,13 +324,37 @@ export class DocumentComponent
         this.documentService.isReloadRequired = true;
       }
     } else {
-      if (this.isCNInstance || data.elementFragment.includes("</authorialNote>")) {
+      if (this.shouldReloadDocument(data)) {
         this.documentService.reloadDocument();
       } else {
         this.reloadElements(data)
       }
     }
     this.initTrackChangesActions();
+  }
+
+
+  private shouldReloadDocument(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    return this.isCNInstance || data.elementFragment.includes("</authorialNote>") || this.isElementDepthUpdated(data);
+  }
+
+  private isElementDepthUpdated(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.xml, 'text/html'),
+      docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
+    const xmlElement = doc.getElementById(data.elementId),
+      xmlElementDepth = xmlElement.getAttribute("leos:depth");
+    const fragmentElement = docFragment.getElementById(data.elementId),
+      fragmentElementDepth = fragmentElement.getAttribute("leos:depth");
+    return xmlElementDepth && fragmentElementDepth && (xmlElementDepth != fragmentElementDepth);
   }
 
   private updateElementInXml(data: {
