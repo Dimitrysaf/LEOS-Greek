@@ -333,13 +333,23 @@ export class DocumentComponent
     this.initTrackChangesActions();
   }
 
-
   private shouldReloadDocument(data: {
     elementId: string;
     elementType: string;
     elementFragment: string;
   }) {
-    return this.isCNInstance || data.elementFragment.includes("</authorialNote>") || this.isElementDepthUpdated(data);
+    return this.isCNInstance || data.elementFragment.includes("</authorialNote>") || this.isElementDepthUpdated(data) || this.isSplitParagraphs(data);
+  }
+
+  private isSplitParagraphs(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.xml, 'text/html');
+    const paragraphsWithoutId = doc.querySelectorAll("paragraph:not([id])");
+    return data.elementType === 'paragraph' && paragraphsWithoutId.length > 0;
   }
 
   private isElementDepthUpdated(data: {
