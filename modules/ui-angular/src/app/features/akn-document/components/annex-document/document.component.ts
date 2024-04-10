@@ -378,7 +378,7 @@ export class DocumentComponent
       xmlElementDepth = xmlElement.getAttribute("leos:depth");
     const fragmentElement = docFragment.getElementById(data.elementId),
       fragmentElementDepth = fragmentElement.getAttribute("leos:depth");
-    return xmlElementDepth && fragmentElementDepth && (xmlElementDepth != fragmentElementDepth);
+    return xmlElementDepth && fragmentElementDepth && (xmlElementDepth !== fragmentElementDepth);
   }
 
   private updateElementInXml(data: {
