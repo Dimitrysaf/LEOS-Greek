@@ -338,10 +338,10 @@ export class DocumentComponent
     elementType: string;
     elementFragment: string;
   }) {
-    return this.isCNInstance || this.isAuthorialNoteAdded(data) || this.isElementDepthUpdated(data) || this.isSplitParagraphs(data);
+    return this.isCNInstance || this.authorialNotesUpdated(data) || this.isElementDepthUpdated(data) || this.isSplitParagraphs(data);
   }
 
-  private isAuthorialNoteAdded(data: {
+  private authorialNotesUpdated(data: {
     elementId: string;
     elementType: string;
     elementFragment: string;
