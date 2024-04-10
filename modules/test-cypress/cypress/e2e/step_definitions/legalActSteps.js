@@ -3,7 +3,7 @@ require('@cypress/xpath');
 
 Then('user is on legal act page', () => {
     cy.get('eui-breadcrumb eui-breadcrumb-item:last-child .eui-label').should('be.visible').should("have.text", "Legal Act");
-    cy.wait(10000);
+    cy.wait(2000);
 })
 
 When('click on {string} present in enacting terms', (enactingTerm) => {
@@ -11,7 +11,7 @@ When('click on {string} present in enacting terms', (enactingTerm) => {
 })
 
 When('mousehover article {int}', articleNumber => {
-    cy.xpath("//article[" + articleNumber + "]").trigger('mouseover');
+    cy.get("#_art_" + articleNumber).trigger('mouseover');
 })
 
 When('{int} paragraphs are present in article {int}', (paragraphNumber, articleNumber) => {
@@ -23,8 +23,9 @@ And('{string} is present in content of paragraph {int} of article {int}', (text,
 })
 
 When('click on article {int}', articleNumber => {
-    cy.get("#_art_" + articleNumber).trigger('mouseover').trigger("click");
-    cy.wait(15000);
+    // cy.get("#_art_" + articleNumber).trigger('mouseover').trigger("click");
+    cy.get("#_art_" + articleNumber).trigger('mouseover');
+    cy.wait(10000);
 })
 
 Then('ck editor window is displayed', () => {
@@ -32,44 +33,10 @@ Then('ck editor window is displayed', () => {
 })
 
 When('append {string} at offset {int} in paragraph {int} of article {int} when ck editor is open', function (newContent, offset, paragraphNumber, articleNumber) {
-    // cy.window().then((w) => {
-    //     w.EditorConnector.handleEdit({
-    //         "action": "edit",
-    //         "elementId": "_art_" + articleNumber,
-    //         "elementType": "article",
-    //         "elementCursorId": "_art_" + articleNumber,
-    //         "elementCursorChildPos": 0,
-    //         "elementCursorPos": 0
-    //     })
-
-    //     cy.wait(10000).then(() => {
-    //         let editor = w.CKEDITOR.instances.editor1;
-    //         let elementToPutCursorParent = editor.element.findOne("#_art_" + articleNumber + "__para_" + paragraphNumber);
-    //         let elementToPutCursor = elementToPutCursorParent.getChild(0);
-    //         let range = editor.createRange();
-    //         range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
-    //         range.setStart(elementToPutCursor, offset);
-    //         range.setEnd(elementToPutCursor, offset);
-    //         range.collapse(true);
-    //         range.select();
-    //         range.startContainer.$.appendData(newContent);
-    //         range.setStart(elementToPutCursor, offset);
-    //         range.setEnd(elementToPutCursor, offset);
-    //         range.collapse(true);
-    //         range.select();
-    //     })
     cy.window().then((w) => {
-        w.EditorConnector.handleEdit({
-            "action": "edit",
-            "elementId": "_art_1",
-            "elementType": "article",
-            "elementCursorId": "_art_1",
-            "elementCursorChildPos": 0,
-            "elementCursorPos": 0
-        })
-        cy.wait(12000).then(() => {
+        cy.wait(2000).then(() => {
             let editor = w.CKEDITOR.instances.editor1;
-            let elementToPutCursorParent = editor.element.findOne("#_art_1__para_1");
+            let elementToPutCursorParent = editor.element.findOne("#_art_"+articleNumber+"__para_"+paragraphNumber);
             let elementToPutCursor = elementToPutCursorParent.getChild(0);
             let range = editor.createRange();
             range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
