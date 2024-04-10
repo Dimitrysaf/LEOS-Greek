@@ -57,7 +57,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -76,7 +75,6 @@ import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosD
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
 @RestController
-@RequestMapping("/secured/editlight/")
 public class LeosLightApiController {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosLightApiController.class);
@@ -120,7 +118,7 @@ public class LeosLightApiController {
         this.applicationProperties = applicationProperties;
     }
 
-    @RequestMapping(value = "/importDocument", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/secured/editlight/importDocument", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> importDocument(@RequestParam MultipartFile inputFile, @RequestParam("language") String locale,
                                                  @RequestParam(required = false) String callbackAddress) {
@@ -191,7 +189,7 @@ public class LeosLightApiController {
                 ImmutableMap.of("documentUrl", "", "result", errorMessage));
     }
 
-    @PostMapping(value = "/exportDocument", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/secured/editlight/exportDocument", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_VALUE})
     @ResponseBody
     public ResponseEntity<Object> exportDocument(@RequestBody ExportDocumentRequest exportDocumentRequest) throws IOException {
         String documentUrl = encodeParam(exportDocumentRequest.getDocumentUrl());
@@ -255,9 +253,15 @@ public class LeosLightApiController {
         }
     }
 
-    @RequestMapping("/test")
+    @RequestMapping(value = "/editlight/test", method = RequestMethod.GET)
     public String test() {
         return "Test RESTful service. " + System.currentTimeMillis();
+    }
+
+    @RequestMapping(value = "/editlight/test", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> testCallbackAddress(@RequestParam MultipartFile inputFile) {
+        return ResponseEntity.ok().body(ImmutableMap.of("result", "Successfully tested callback address!"));
     }
 
     private <D extends LeosDocument> String getDocumentViewUrl(String docRef, Class<? extends D> docType) {

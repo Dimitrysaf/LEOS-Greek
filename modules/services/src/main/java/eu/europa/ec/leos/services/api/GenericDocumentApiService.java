@@ -6,7 +6,10 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
-import eu.europa.ec.leos.domain.repository.document.*;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -19,8 +22,8 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.clone.CloneContext;
+import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentVOProvider;
@@ -29,8 +32,12 @@ import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.exception.NotFoundException;
-
-import eu.europa.ec.leos.services.export.*;
+import eu.europa.ec.leos.services.export.ExportDW;
+import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportOptions;
+import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.ExportVersions;
+import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.FinancialStatementProcessor;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
@@ -43,26 +50,29 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
-import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
+import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
+import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.Attribute;
+import eu.europa.ec.leos.vo.structure.Level;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.RefConfig;
-import eu.europa.ec.leos.services.utils.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemType;
+import eu.europa.ec.leos.vo.structure.TocItemTypeName;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Option;
 import org.slf4j.Logger;
@@ -73,7 +83,14 @@ import org.springframework.util.StringUtils;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -215,35 +232,49 @@ public class GenericDocumentApiService {
         return this.getStructureContext().getTocItems();
     }
 
-    public DocumentConfigResponse getDocumentConfig(@NotNull String docRef) {
-        XmlDocument document = this.findDocumentByRef(docRef);
-        StructureContext structure = this.getStructureContext();
+    public DocumentConfigResponse getDocumentConfig(@NotNull XmlDocument document, @NotNull StructureContext structure) {
         structure.useDocumentTemplate(this.getDocTemplate(document));
-        List<TocItem> tocItems = structure.getTocItems();
+        this.populateCloneProposalMetadata(document);
+        LeosMetadata documentMetadata = document.getMetadata().get();
+        List<LeosMetadata> documentsMetadataList = packageService.getDocumentsMetadata(documentMetadata.getRef());
         List<NumberingConfig> numberConfigs = structure.getNumberingConfigs();
+        List<TocItem> tocItems = structure.getTocItems();
+        List<AlternateConfig> alternateConfigs = structure.getAlternateConfigs();
         List<RefConfig> refConfigs = structure.getRefConfigs();
+        Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray = StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT, documentMetadata.getLanguage());
+        Map<String, Attribute> articleTypesConfig = getArticleTypesAttributes(tocItems);
+        ProposalMetadata proposalMetadata = null;
+        boolean isClonedProposal = false;
         Proposal proposal = this.getDocProposal(document);
-        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
-        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
-        //load language map
+        // Note: proposal can be null in cases of leos light scenarios
+        proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
+        isClonedProposal = proposal != null && proposal.isClonedProposal();
         languageGroupService.getLanguageMap();
-        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
+        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), documentMetadata.getLanguage());
 
         return new DocumentConfigResponse(
-                packageService.getDocumentsMetadata(document.getMetadata().get().getRef()),
+                documentsMetadataList,
                 numberConfigs,
                 tocItems,
-                structure.getAlternateConfigs(),
+                alternateConfigs,
                 refConfigs,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT, proposal.getMetadata().get().getLanguage()),
-                getArticleTypesAttributes(tocItems),
-                document.getMetadata().get().getRef(),
+                listNumberConfigJsonArray,
+                articleTypesConfig,
+                documentMetadata.getRef(),
                 proposalMetadata,
                 structure.getTocRules(),
                 document.isTrackChangesEnabled(),
                 true,
-                isClonedProposal, langGroup
+                isClonedProposal,
+                langGroup,
+                documentMetadata.getLanguage()
         );
+    }
+
+    public DocumentConfigResponse getDocumentConfig(@NotNull String docRef) {
+        XmlDocument document = this.findDocumentByRef(docRef);
+        StructureContext structure = this.getStructureContext();
+        return getDocumentConfig(document, structure);
     }
 
     // ------------- VERSION METHODS

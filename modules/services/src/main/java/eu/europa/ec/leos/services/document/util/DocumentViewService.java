@@ -86,7 +86,10 @@ public class DocumentViewService<T extends XmlDocument> {
 
     public void updateProposalAsync(T document) {
         Proposal proposal = getProposalFromPackage(document);
-        contextExecuteUpdateProposalAsync(proposal);
+        // Note: proposal can be null in cases of leos light scenarios
+        if(proposal != null) {
+            contextExecuteUpdateProposalAsync(proposal);
+        }
     }
 
     public void contextExecuteUpdateProposalAsync(Proposal proposal) {

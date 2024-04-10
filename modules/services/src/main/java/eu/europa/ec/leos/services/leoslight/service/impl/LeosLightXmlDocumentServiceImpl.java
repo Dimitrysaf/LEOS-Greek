@@ -174,7 +174,7 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         File file = ZipPackageUtil.zipFiles("document.zip", contentToZip, null);
         map.add("outputDescriptor", outputDescriptor);
 
-        ResponseEntity<byte[]> response = getResponseEntity(uri, file, map);
+        ResponseEntity<byte[]> response = getResponseEntity(uri, file, map, byte[].class);
         if (response.getStatusCode().is2xxSuccessful()) {
             byte[] bytesToWrite = response.getBody();
             return bytesToWrite;
@@ -184,13 +184,12 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     }
 
     @Override
-    public ResponseEntity<byte[]> sendZipFileToCallbackUrlAsync(File file, String callbackUrl) throws IOException {
+    public ResponseEntity<Object> sendZipFileToCallbackUrlAsync(File file, String callbackUrl) throws IOException {
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-        ResponseEntity<byte[]> response = getResponseEntity(callbackUrl,file, map);
-        return response;
+        return getResponseEntity(callbackUrl,file, map, Object.class);
     }
 
-    private ResponseEntity<byte[]> getResponseEntity(String uri, File file, MultiValueMap<String, Object> map) throws IOException {
+    private <T> ResponseEntity<T> getResponseEntity(String uri, File file, MultiValueMap<String, Object> map, Class<T> responseType) throws IOException {
 
         ByteArrayResource bar = new ByteArrayResource(Files.readAllBytes(file.toPath())) {
             @Override
@@ -203,7 +202,7 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         headers.setAccept(Collections.singletonList(MediaType.ALL));
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
-        return restTemplate.postForEntity(uri, requestEntity, byte[].class);
+        return restTemplate.postForEntity(uri, requestEntity, responseType);
     }
 
     private void addAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName, ExportOptions exportOptions, String proposalRef) {

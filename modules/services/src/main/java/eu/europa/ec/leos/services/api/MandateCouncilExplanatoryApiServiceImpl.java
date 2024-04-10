@@ -2,6 +2,9 @@ package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
+import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -9,11 +12,6 @@ import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.common.InstanceType;
-import eu.europa.ec.leos.domain.common.Result;
-import eu.europa.ec.leos.domain.common.TocMode;
-import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
@@ -48,30 +46,24 @@ import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.ExplanatoryProcessor;
+import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
+import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
-import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
-import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
-import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.services.utils.LanguageMapUtils;
-import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.structure.RefConfig;
-import eu.europa.ec.leos.services.utils.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
-import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,10 +82,10 @@ import static eu.europa.ec.leos.model.annex.AnnexStructureType.ARTICLE;
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
-import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
-import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
-import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
+import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
+import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 
 @Service("mandateExplanatoryService")
 @Instance(InstanceType.COUNCIL)
@@ -442,29 +434,8 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
-        StructureContext structureContext1 = structureContext.get();
-
-        structureContext1.useDocumentTemplate(
-                explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());
-        List<TocItem> tocItems = structureContext1.getTocItems();
-        List<NumberingConfig> numberConfigs = structureContext1.getNumberingConfigs();
-        List<RefConfig> refConfigs = structureContext1.getRefConfigs();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(
-                explanatory.getMetadata().get().getRef());
-        Proposal proposal = this.documentViewService.getProposalFromPackage(explanatory);
-        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
-        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
-        //load language map
-        languageGroupService.getLanguageMap();
-        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
-
-        return new DocumentConfigResponse(
-                documentsMetadata, numberConfigs, tocItems, null, refConfigs,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT, proposal.getMetadata().get().getLanguage()),
-                getArticleTypesAttributes(tocItems), explanatory.getMetadata().get().getRef(),
-                proposalMetadata, structureContext1.getTocRules(),
-                explanatory.isTrackChangesEnabled(), true, isClonedProposal, langGroup
-        );
+        StructureContext structure = structureContext.get();
+        return genericDocumentApiService.getDocumentConfig(explanatory, structure);
     }
 
     @Override

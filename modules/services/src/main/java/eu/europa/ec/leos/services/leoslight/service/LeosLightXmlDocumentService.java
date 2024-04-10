@@ -25,6 +25,6 @@ public interface LeosLightXmlDocumentService {
 
     byte[] convert(byte[] documentContent, String fileName, String outputDescriptor, ExportOptions exportOptions) throws Exception;
 
-    ResponseEntity<byte[]> sendZipFileToCallbackUrlAsync(File file, String callbackUrl) throws Exception;
+    ResponseEntity<Object> sendZipFileToCallbackUrlAsync(File file, String callbackUrl) throws Exception;
 
 }
