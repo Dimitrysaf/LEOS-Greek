@@ -62,12 +62,12 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfig;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.processor.rendition.HtmlRenditionProcessor;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemHtmlVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.io.FileUtils;
@@ -1376,13 +1376,9 @@ public class LegServiceImpl implements LegService {
         try {
             if (exportOptions.isWithFeedbackAnnotations()) {
                 String annotations = getAnnotationsFromZipContent(contentToZip, docName);
-                if (StringUtils.isNotBlank(annotations)) {
-                    annotations = removeFeedbackAnnotations(annotations);
-                }
-
                 String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
-                annotations = groupAnnotations(annotations, feedbackAnnotations);
+                annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
 
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
                 contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
@@ -1726,25 +1722,6 @@ public class LegServiceImpl implements LegService {
         }
     }
 
-    private String removeFeedbackAnnotations(String annotations) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode json = mapper.readTree(annotations);
-        JsonNode rootNode = json.get("rows");
-        Iterator<JsonNode> itr = rootNode.elements();
-        List<JsonNode> modifiedList = new ArrayList<JsonNode>();
-        itr.forEachRemaining(node -> {
-            String[] uriParts = node.findValue("uri").textValue().replace("uri://LEOS/", "").split("/");
-            if(uriParts.length > 1) {
-                return;
-            }
-            modifiedList.add(node);
-        });
-        ((ObjectNode) json).putArray("rows").removeAll().addAll(modifiedList);
-        ((ObjectNode) json).put("total", modifiedList.size());
-        return mapper.writeValueAsString(json);
-    }
-
-
     private String processAnnotations(String annotations, ExportOptions exportOptions) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(annotations);
@@ -1782,7 +1759,7 @@ public class LegServiceImpl implements LegService {
         return mapper.writeValueAsString(json);
     }
 
-    private String groupAnnotations(String annotations, String feedbackAnnotations) throws JsonProcessingException {
+    private String addFeedbackAnnotations(String annotations, String feedbackAnnotations) throws JsonProcessingException {
         if (StringUtils.isBlank(feedbackAnnotations)) {
             return annotations;
         }
@@ -1799,12 +1776,29 @@ public class LegServiceImpl implements LegService {
         JsonNode jsonFeedback = mapper.readTree(feedbackAnnotations);
         ArrayNode rowsNodeFeedback = (ArrayNode) jsonFeedback.get("rows");
 
-        rowsNode.addAll(rowsNodeFeedback);
+        Iterator<JsonNode> itrFeedback = rowsNodeFeedback.elements();
+        List<JsonNode> filteredList = new ArrayList<JsonNode>();
+        itrFeedback.forEachRemaining(node -> {
+            if(!isPresent(rowsNode, node)) {
+                filteredList.add(node);
+            }
+        });
+
+        rowsNode.addAll(filteredList);
 
         ((ObjectNode) json).put("rows", rowsNode);
         ((ObjectNode) json).put("total", rowsNode.size());
 
         return mapper.writeValueAsString(json);
+    }
+
+    private boolean isPresent(ArrayNode arrayNode, JsonNode node) {
+        for(int i = 0; i < arrayNode.size(); i++) {
+            if(node.findValue("id").textValue().equals(arrayNode.get(i).findValue("id").textValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void anonymizePermission(JsonNode permissions, String permissionName, String entityText) {
