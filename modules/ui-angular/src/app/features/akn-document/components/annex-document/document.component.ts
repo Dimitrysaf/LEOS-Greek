@@ -338,7 +338,21 @@ export class DocumentComponent
     elementType: string;
     elementFragment: string;
   }) {
-    return this.isCNInstance || data.elementFragment.includes("</authorialNote>") || this.isElementDepthUpdated(data) || this.isSplitParagraphs(data);
+    return this.isCNInstance || this.isAuthorialNoteAdded(data) || this.isElementDepthUpdated(data) || this.isSplitParagraphs(data);
+  }
+
+  private isAuthorialNoteAdded(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.xml, 'text/html'),
+      docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
+    const xmlElement = doc.getElementById(data.elementId),
+      authorialNotesXmlWithId = xmlElement.querySelectorAll("authorialNote[id]");
+    const authorialNotesFragmentWithId = docFragment.querySelectorAll("authorialNote[id]");
+    return authorialNotesXmlWithId.length !== authorialNotesFragmentWithId.length;
   }
 
   private isSplitParagraphs(data: {
