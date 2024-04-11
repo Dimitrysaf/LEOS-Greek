@@ -9,7 +9,7 @@ module.exports = defineConfig({
       on('file:preprocessor', cucumber());
     },
     experimentalStudio: true,
-    specPattern: ["cypress/e2e/**/*.feature", "cypress/e2e/recording/*.js"],
+    specPattern: "cypress/e2e/js/*.js",
     watchForFileChanges: false
   },
 });
