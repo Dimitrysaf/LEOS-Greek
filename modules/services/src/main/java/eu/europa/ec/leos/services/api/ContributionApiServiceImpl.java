@@ -39,6 +39,7 @@ import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.response.MergeContributionResponse;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -281,9 +282,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         }
     }
 
-    public byte[] mergeContribution(@NotNull String documentRef,
+    public MergeContributionResponse mergeContribution(@NotNull String documentRef,
                                     @NotNull ApplyContributionsRequest request) throws NotFoundException, IOException {
         XmlDocument document = this.findDocumentByRef(documentRef);
+        MergeContributionResponse mergeResult = new MergeContributionResponse(true, document.getContent().get().getSource().getBytes());
         Class docClass = LeosCategoryClass.getClass(document.getCategory());
         final LeosPackage pack = this.leosRepository.findPackageByDocumentRef(documentRef, docClass);
         final Proposal proposal = this.proposalService.findProposalByPackagePath(pack.getPath());
@@ -303,7 +305,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             List<TocItem> tocItemList = this.structureContext.get().getTocItems();
             byte[] xmlClonedContent = contribution.getXmlContent();
             List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
-            byte[] xmlContent = mergeContributionService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
+            mergeResult = mergeContributionService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
+            byte[] xmlContent = mergeResult.getMergedContent();
             xmlContent = this.numberService.renumberArticles(xmlContent, false);
             xmlContent = this.numberService.renumberRecitals(xmlContent);
             xmlContent = this.numberService.renumberLevel(xmlContent);
@@ -321,7 +324,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         if (request.isAcceptAllContributions() && Objects.nonNull(contribution)) {
             this.markContributionAsProcessed(contribution.getVersionedReference());
         }
-        return document.getContent().get().getSource().getBytes();
+        mergeResult.setMergedContent(document.getContent().get().getSource().getBytes());
+        return mergeResult;
     }
 
     @Override

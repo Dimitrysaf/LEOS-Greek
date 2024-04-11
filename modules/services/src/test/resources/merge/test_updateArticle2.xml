@@ -541,7 +541,10 @@
                                 <content xml:id="akn_art_phTLdP_WfHuEA">
                                     <p xml:id="akn_art_phTLdP_eSbJFT">name and signature of the authorised staff referred to in paragraph 2, points (c) and (d).</p>
                                 </content>
-                            </point><point leos:action="insert" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T13:55:57+00:00" leos:softmove_from="moved_akn_art_phTLdP_iLri4i" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.636+01:00" leos:uid="dasatya" xml:id="akn_art_phTLdP_iLri4i">
+                            </point><point leos:action="insert" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
+                                           leos:softdate="2024-03-08T13:55:57+00:00" leos:softmove_from="moved_akn_art_phTLdP_iLri4i"
+                                           leos:softmove_label="MOVED from Article 5(3), point (d)" leos:softuser="DAS Satyabrata(undefined)"
+                                           leos:title="DAS Satyabrata : 2024-03-08T15:05:03.636+01:00" leos:uid="dasatya" xml:id="akn_art_phTLdP_iLri4i">
                             <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.636+01:00" leos:uid="dasatya" xml:id="akn_art_phTLdP_B5q9f5">(c)</num>
                             <content xml:id="akn_art_phTLdP_5jAAsC">
                                 <p xml:id="akn_art_phTLdP_pIo8G7">Commission staff and third party providers acting on behalf of Commission that perform EU CSW-CERTEX-related operations and maintenance activities.</p>

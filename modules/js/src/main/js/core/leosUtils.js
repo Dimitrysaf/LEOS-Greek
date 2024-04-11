@@ -207,88 +207,95 @@ define(function leosUtilsModule(require) {
 
     function _generateTrackChangesStyles(currentUserId, proposalRef, isTrackChangesShowed, uidAttr, actionAttr) {
         var isDocTcStyle = actionAttr.startsWith("leos:");
-        if (isTrackChangesShowed) {
-            var usersUid = [currentUserId];
-            $("[" + uidAttr.replace("leos:", "leos\\:") + "]").each(function() {
-                var userUid = $(this).attr(uidAttr); // Retrieve user and add it to users array if not exists
-                if (userUid && $.inArray(userUid, usersUid) === -1) {
-                    usersUid.push(userUid);
-                }
-            });
-            $("[" + uidAttr.replace("leos:", "leos\\:") + "-number" + "]").each(function() {
-                var userUid = $(this).attr(uidAttr + "-number"); // Retrieve user and add it to users array if not exists
-                if (userUid && $.inArray(userUid, usersUid) === -1) {
-                    usersUid.push(userUid);
-                }
-            });
-            var tcStyle = "";
-            for (var i = 0; usersUid.length > i; i++) {
-                var userColors = _generateColors(usersUid[i].repeat(5) + proposalRef);
-                if (isDocTcStyle) {
-                    tcStyle += "paragraph:has(> num) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before {" +
-                        "content: '↵'; margin-left: 40px; min-width: 15px; color: " + userColors[0] + "; " +
-                        "float: left; border: 0pt; padding-top: 6pt;" +
-                        "}\n";
-                    tcStyle += "paragraph:not(:has(> num > ins)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:before, " +
-                        "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before, " +
-                        "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before {" +
-                        "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
-                        "float: left; border: 0pt; padding-top: 6pt;" +
-                        "}\n";
-                    tcStyle += "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:before, " +
-                        "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:not(:has(> num)):before {" +
-                        "content: '↰'; min-width: 15px; color: " + userColors[0] + "; " +
-                        "float: left; border: 0pt; padding-top: 6pt;" +
-                        "}\n";
-                } else {
-                    tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
-                        "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
-                        "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                        "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                        "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
-                        "li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before {" +
-                        "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
-                        "float: left !important; text-decoration: none !important;" +
-                        "}\n";
-                    tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
-                        "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
-                        "ol > li > p[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
-                        "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
-                        "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
-                        "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
-                        "li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before {" +
-                        "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
-                        "float: left !important; text-decoration: none !important;" +
-                        "}\n";
-                    tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):before, " +
-                        "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):before {" +
-                        "content: attr(data-akn-num); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
-                        "float: left; border: 0pt" +
-                        "}\n";
-                    tcStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before, " +
-                        "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before {" +
-                        "content: '↰' attr(data-akn-num); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
-                        "float: left; border: 0pt" +
-                        "}\n";
-                }
-                tcStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'], " +
-                    "[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:before { color: " + userColors[0] + " !important; &:hover, span." +
-                    (isDocTcStyle ? "MathJax_CHTML" : "cke_widget_mathjax") + ":hover { background-color: " + userColors[1] + "; } " +
-                    "  &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):hover { background-color: white; }" +
-                    " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover) { background-color: white;  }"+
-                    " &:not(:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover)):not(&:hover) { background-color: white;  }" +
-                    "}\n";
-                tcStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
+        var usersUid = [currentUserId];
+        $("[" + uidAttr.replace("leos:", "leos\\:") + "]").each(function() {
+            var userUid = $(this).attr(uidAttr); // Retrieve user and add it to users array if not exists
+            if (userUid && $.inArray(userUid, usersUid) === -1) {
+                usersUid.push(userUid);
             }
-        } else {
-            tcStyle = (isDocTcStyle ? "ins, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
-            tcStyle += (isDocTcStyle ? "del, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
-            tcStyle += "tr[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { box-shadow: none !important; }\n";
-            tcStyle += (isDocTcStyle ? "ins mref, ins authorialnote, ins span.MathJax_CHTML " :
-                    "[" + actionAttr + "='insert'] mref, [" + actionAttr + "='insert'] span.authorialnote, [" + actionAttr + "='insert'] span.cke_widget_mathjax ") +
-                "{ box-shadow: none !important; }\n";
+        });
+        $("[" + uidAttr.replace("leos:", "leos\\:") + "-number" + "]").each(function() {
+            var userUid = $(this).attr(uidAttr + "-number"); // Retrieve user and add it to users array if not exists
+            if (userUid && $.inArray(userUid, usersUid) === -1) {
+                usersUid.push(userUid);
+            }
+        });
+        var tcShowStyle = "";
+        for (var i = 0; usersUid.length > i; i++) {
+            var userColors = _generateColors(usersUid[i].repeat(5) + proposalRef);
+            if (isDocTcStyle) {
+                tcShowStyle += "paragraph:has(> num) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='insert']:before {" +
+                    "content: '↵'; margin-left: 40px; min-width: 15px; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt; padding-top: 6pt;" +
+                    "}\n";
+                tcShowStyle += "paragraph:not(:has(> num > ins)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:before, " +
+                    "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][leos\\:tc-original-number='NEW']:not(:has(> num > ins)):before, " +
+                    "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "']" + "[leos\\:action-enter='insert']:before {" +
+                    "content: '↵'; min-width: 15px; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt; padding-top: 6pt;" +
+                    "}\n";
+                tcShowStyle += "paragraph:not(:has(> num)) subparagraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:before, " +
+                    "paragraph[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][leos\\:action-enter='delete']:not(:has(> num)):before {" +
+                    "content: '↰'; min-width: 15px; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt; padding-top: 6pt;" +
+                    "}\n";
+            } else {
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-tc-original-number='NEW']:not([data-akn-num]):before, " +
+                    "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before, " +
+                    "li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='insert']:not([data-akn-num]):before {" +
+                    "content: '↵' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
+                    "float: left !important; text-decoration: none !important;" +
+                    "}\n";
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                    "ol > li > p[" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] + "'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                    "p[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                    "li[data-akn-element='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                    "p[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before, " +
+                    "li[data-akn-name='subparagraph'][" + uidAttr.replace("leos:", "leos\\:") + "-enter='" + usersUid[i] +"'][data-akn-action-enter='delete']:not([data-akn-num]):before {" +
+                    "content: '↰' !important; min-width: 15px !important; color: " + userColors[0] + " !important; " +
+                    "float: left !important; text-decoration: none !important;" +
+                    "}\n";
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):before, " +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num]:not([data-akn-action-enter='delete']):before {" +
+                    "content: attr(data-akn-num); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt" +
+                    "}\n";
+                tcShowStyle += "article > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before, " +
+                    "li > ol > li[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "'][data-akn-action-number='delete'][data-akn-num][data-akn-action-enter='delete']:before {" +
+                    "content: '↰' attr(data-akn-num); min-width: 40px; text-decoration: line-through; color: " + userColors[0] + "; " +
+                    "float: left; border: 0pt" +
+                    "}\n";
+            }
+            tcShowStyle += "[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'], " +
+                "[" + uidAttr.replace("leos:", "leos\\:") + "-number='" + usersUid[i] + "']:before { color: " + userColors[0] + " !important; &:hover, span." +
+                (isDocTcStyle ? "MathJax_CHTML" : "cke_widget_mathjax") + ":hover { background-color: " + userColors[1] + "; } " +
+                "  &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):hover { background-color: white; }" +
+                " &:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover):not(&:hover) { background-color: white;  }"+
+                " &:not(:has([" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "']:hover)):not(&:hover) { background-color: white;  }" +
+                "}\n";
+            tcShowStyle += "tr[" + uidAttr.replace("leos:", "leos\\:") + "='" + usersUid[i] + "'] { background-color: " + userColors[1] + "; }\n";
         }
-        return tcStyle;
+        var tcHiddenStyle = "";
+        tcHiddenStyle = (isDocTcStyle ? "ins, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='insert'] { text-decoration: none !important; }\n";
+        tcHiddenStyle += (isDocTcStyle ? "del, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: none; }\n";
+        tcHiddenStyle += "tr[" + actionAttr.replace("leos:", "leos\\:") + "='insert'] { box-shadow: none !important; }\n";
+        tcHiddenStyle += (isDocTcStyle ? "ins mref, ins authorialnote, ins span.MathJax_CHTML " :
+                "[" + actionAttr + "='insert'] mref, [" + actionAttr + "='insert'] span.authorialnote, [" + actionAttr + "='insert'] span.cke_widget_mathjax ") +
+            "{ box-shadow: none !important; }\n";
+        if (isTrackChangesShowed) {
+            return tcShowStyle;
+        } else {
+            var tcStyle = tcHiddenStyle;
+            tcStyle += "#contributionViewMainContainer {\n";
+            tcStyle += tcShowStyle;
+            tcStyle += (isDocTcStyle ? "del, [" : "[") + actionAttr.replace("leos:", "leos\\:") + "='delete'] { display: inline-block; }\n";
+            tcStyle += "}\n";
+            return tcStyle;
+        }
     }
 
     function _generateColors(str) {
