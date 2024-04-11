@@ -2,7 +2,8 @@ import {Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
 
 Given('navigate to edit drafting application', () => {
     cy.viewport(1280, 720);
-    cy.visit("https://intragate.development.ec.europa.eu/decide-drafting/ui/workspace");
+    // cy.visit("https://intragate.development.ec.europa.eu/decide-drafting/ui/workspace");
+    cy.visit("http://dasatya:demo@localhost:8080/leos-pilot/ui/workspace");
     cy.wait(2000);
 })
 

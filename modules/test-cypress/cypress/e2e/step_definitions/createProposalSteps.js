@@ -19,5 +19,5 @@ And('provide document title {string} in create document page', (title) => {
 
 And('click on create button', () => {
     cy.get('app-proposal-create-wizard button.eui-button.eui-button--primary').click();
-    cy.wait(7000);
+    cy.wait(3000);
 })

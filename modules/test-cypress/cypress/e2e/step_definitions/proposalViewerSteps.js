@@ -7,5 +7,5 @@ Then('user is on proposal viewer page', () => {
 
 Then('click on legal act link present in proposal viewer page', () => {
     cy.xpath("//eui-card//eui-card-header-title//*[text()='Legal Act']").click();
-    cy.wait(2000);
+    cy.wait(1000);
 })
