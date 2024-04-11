@@ -19,8 +19,7 @@ cypress-test:
   artifacts:
     when: always
     paths:
-      - $CI_PROJECT_DIR/modules/test-cypress/videos/**/*.mp4
-      - $CI_PROJECT_DIR/modules/test-cypress/screenshots/**/*.png
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/open-leos.cy.js/**/*.png
 
 java-build:
   image: maven:3.8-openjdk-8
