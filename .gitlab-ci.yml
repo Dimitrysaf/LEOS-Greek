@@ -12,6 +12,16 @@ variables:
 cypress-test:
   image: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
   stage: test
+  rules:
+  - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+      when: always
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
+        !~ /^Draft.*$/
   script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
@@ -19,8 +29,7 @@ cypress-test:
   artifacts:
     when: always
     paths:
-      - $CI_PROJECT_DIR/modules/test-cypress/videos/**/*.mp4
-      - $CI_PROJECT_DIR/modules/test-cypress/screenshots/**/*.png
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/open-leos.cy.js/**/*.png
 
 java-build:
   image: maven:3.8-openjdk-8
@@ -47,8 +56,8 @@ include:
     file: '.gitlab-ci-security-scan-mvn.yml'
     ref: main
 
-#fortify-sast:
-#  image: fcoene/public:fortify-jdk8-node20
-#
-#sonatype-lifecycle:
-#  image: fcoene/public:sonatype-lifecycle-jdk8
+fortify-sast:
+  image: fcoene/public:fortify-jdk8-node20
+
+sonatype-lifecycle:
+  image: fcoene/public:sonatype-lifecycle-jdk8
