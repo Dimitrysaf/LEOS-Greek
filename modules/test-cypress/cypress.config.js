@@ -12,4 +12,7 @@ module.exports = defineConfig({
     specPattern: "cypress/e2e/js/*.js",
     watchForFileChanges: false
   },
+  env: {
+    applicationUrl: "http://dasatya:demo@localhost:8080/leos-pilot/ui/workspace",
+  }
 });

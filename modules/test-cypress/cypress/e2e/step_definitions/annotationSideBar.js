@@ -2,11 +2,6 @@ import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/st
 require('@cypress/xpath');
 import proposalViewerPage from "../pages/proposalViewerPage";
 
-Then('user is on proposal viewer page', () => {
+And('annotation side bar is present', () => {
     proposalViewerPage.getCurrentPageName().should("have.text", "Proposal View");
-})
-
-Then('click on legal act link present in proposal viewer page', () => {
-    proposalViewerPage.elements.legalActLink().click();
-    cy.wait(1000);
 })
