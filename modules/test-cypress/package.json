@@ -4,7 +4,10 @@
   "description": "test edit application using cypress",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cy:generateReport": "node .\\cypress\\report\\cucumberReport.js",
+    "cy:open": "npx cypress open",
+    "cy:run": "npx cypress run --browser chrome --headed"
   },
   "author": "Satyabrata Das",
   "license": "ISC",
