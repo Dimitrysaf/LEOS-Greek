@@ -408,7 +408,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
                 StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT, proposal.getMetadata().get().getLanguage()),
                 getArticleTypesAttributes(tocItems), proposal.getMetadata().get().getRef(),
                 proposal.getMetadata().getOrNull(), structureContext1.getTocRules(),
-                proposal.isTrackChangesEnabled(), true, proposal.isClonedProposal(), langGroup);
+                proposal.isTrackChangesEnabled(), true, proposal.isClonedProposal(), langGroup, proposal.getMetadata().get().getLanguage());
     }
 
     @Override

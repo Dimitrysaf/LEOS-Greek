@@ -23,8 +23,6 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -59,17 +57,13 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
-import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
-import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
-import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.services.utils.LanguageMapUtils;
-import eu.europa.ec.leos.services.utils.StructureConfigUtils;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -383,25 +377,8 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
-        StructureContext context1 = structureContext.get();
-        context1.useDocumentTemplate(
-                memorandum.getMetadata().getOrError(() -> MEMORANDUM_METADATA_IS_REQUIRED).getDocTemplate());
-        List<TocItem> tocItems = context1.getTocItems();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(
-                memorandum.getMetadata().get().getRef());
-        Proposal proposal = this.documentViewService.getProposalFromPackage(memorandum);
-        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
-        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
-        //load language map
-        languageGroupService.getLanguageMap();
-        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
-
-        return new DocumentConfigResponse(
-                documentsMetadata, null, tocItems, null, null,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT, proposal.getMetadata().get().getLanguage()),
-                getArticleTypesAttributes(tocItems), memorandum.getMetadata().get().getRef(),
-                proposalMetadata, context1.getTocRules(),
-                memorandum.isTrackChangesEnabled(), true, isClonedProposal, langGroup);
+        StructureContext structure = structureContext.get();
+        return genericDocumentApiService.getDocumentConfig(memorandum, structure);
     }
 
     @Override
