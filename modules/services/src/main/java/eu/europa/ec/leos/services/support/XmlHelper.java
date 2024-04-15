@@ -176,6 +176,7 @@ public class XmlHelper {
     public static final String LEOS_SOFT_ACTION_ADD = "add";
     public static final String MOVE_TO = "move_to";
     public static final String MOVE_FROM = "move_from";
+    public static final String TRANS = "trans";
     public static final String LEOS_SOFT_MOVE_TO = "leos:softmove_to";
     public static final String LEOS_SOFT_MOVE_FROM = "leos:softmove_from";
     public static final String LEOS_RENUMBER_ORIGIN = "leos:renumber-origin";

@@ -44,6 +44,8 @@ export class MergeContributionsService {
   contributionViewAndMergeCollapsed$: Observable<boolean>;
   processed$: Observable<[boolean, ContributionVO]>;
   isContributionDeclinedOrProcessed$: Observable<boolean>;
+  feedbackToBeSent$: Observable<boolean>;
+  disableSendFeedbackToBeSent$: Observable<boolean>;
   hasNextChangeDisabled$: Observable<boolean>;
   hasPrevChangesDisabled$: Observable<boolean>;
   contributionSelected$: Observable<boolean>;
@@ -55,6 +57,8 @@ export class MergeContributionsService {
 
   private mergeActionList: MergeActionVO[] = new Array();
   private showMenuBS = new Subject<{event: MouseEvent, element: HTMLElement, actions: HTMLElement}>();
+  private feedbackToBeSentBS = new BehaviorSubject<boolean>(false);
+  private disableSendFeedbackToBeSentBS = new BehaviorSubject<boolean>(true);
 
   private documentType: string;
   private documentRef: string;
@@ -112,6 +116,8 @@ export class MergeContributionsService {
       filter(Boolean),
     );
     this.contributionChanges$ = this.contributionChangesBS.asObservable();
+    this.feedbackToBeSent$ = this.feedbackToBeSentBS.asObservable();
+    this.disableSendFeedbackToBeSent$ = this.disableSendFeedbackToBeSentBS.asObservable();
 
     this.contributionModeEnabledBS.pipe(
       tap((enabled) => {
@@ -154,6 +160,14 @@ export class MergeContributionsService {
     } else {
       this.clearContributionMerge();
     }
+  }
+
+  setStatusFeedbackToBeSent(disabled: boolean) {
+    this.disableSendFeedbackToBeSentBS.next(disabled);
+  }
+
+  setFeedbackToBeSent(value: boolean) {
+    this.feedbackToBeSentBS.next(value);
   }
 
   clearContributionMerge() {
@@ -226,7 +240,27 @@ export class MergeContributionsService {
         const contributionsAfterGreyedOut =
           this.greyContributions(contributions);
         this.contributionsBS.next(contributionsAfterGreyedOut);
+        this.countFeedbacks(contributions);
       });
+  }
+
+  countFeedbacks(contributions: ContributionVO[]) {
+    if (contributions && contributions.length > 0) {
+      for (const contribution of contributions) {
+        const legFileName = contribution.legFileName;
+        const proposalRef = contribution.proposalRef;
+        const documentRef = contribution.documentName.replaceAll('.xml', '');
+        return this.http
+          .get<number>(
+            `${apiBaseUrl}/secured/contribution/${legFileName}/${proposalRef}/count-feedbacks/${documentRef}`,
+          )
+          .subscribe((nbFeedbacks) => {
+            if (nbFeedbacks > 0) {
+              this.setFeedbackToBeSent(true);
+            }
+          });
+      }
+    }
   }
 
   handleNextChangeContribution() {
@@ -485,7 +519,7 @@ export class MergeContributionsService {
       dismiss: () => {},
     });
   }
-  
+
   private sendFeedback() {
     this.http
       .post(`${apiBaseUrl}/secured/contribution/milestones/sendFeedback`, {
@@ -505,6 +539,7 @@ export class MergeContributionsService {
           isGrowlSticky: false,
           position: 'bottom-right',
         });
+        this.setFeedbackToBeSent(false);
       });
   }
 

@@ -79,9 +79,14 @@ define(function annotateExtensionModule(require) {
                     connector.responseFilteredAnnotations(annotations);
                 }
             }
-            connector.hostBridge.requestStoredDocumentAnnotations = function() {
+            connector.hostBridge.requestStoredDocumentAnnotations = function(uri) {
                 if (connector.requestStoredDocumentAnnotations) {
-                    connector.requestStoredDocumentAnnotations();
+                    connector.requestStoredDocumentAnnotations(uri);
+                }
+            }
+            connector.hostBridge.requestCountSentFeedbacks = function(feedbacks) {
+                if (connector.requestCountSentFeedbacks) {
+                    connector.requestCountSentFeedbacks(feedbacks);
                 }
             }
             connector.hostBridge.requestMergeSuggestion = function (selector) {
