@@ -392,4 +392,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         proposalTitle.append(proposalMetadata.getPurpose()).append(" ");
         return proposalTitle.toString();
     }
+
+    @Override
+    public int countFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef) {
+        return legService.countFeedbacksToBeSentOnContribution(documentRef, proposalRef, legFileName);
+    }
 }

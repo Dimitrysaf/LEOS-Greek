@@ -9,6 +9,27 @@ variables:
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn/cache"
   GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository
 
+cypress-test:
+  image: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
+  stage: test
+  rules:
+  - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+      when: always
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
+        !~ /^Draft.*$/
+  script:
+    - cd $CI_PROJECT_DIR/modules/test-cypress
+    - npm install
+    - npx cypress run
+  artifacts:
+    when: always
+    paths:
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/open-leos.cy.js/**/*.png
 
 java-build:
   image: maven:3.8-openjdk-8
@@ -28,7 +49,15 @@ java-build:
     - $CI_PROJECT_DIR/.yarn
     policy: pull-push
   rules:
-    - when: always
+  - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+      when: always
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - if: $CI_PIPELINE_SOURCE == "web"
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
+        !~ /^Draft.*$/
 
 include:
   - project: 'digit.s.1/sa/security-scan-template'

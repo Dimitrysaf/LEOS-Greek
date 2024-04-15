@@ -22,23 +22,23 @@ Feature: Explanatory Memorandum Page Regression Features in Edit Commission
     When provide document title "Automation Exp Memo Testing" in create document page
     And  click on create button
     Then user is on proposal viewer page
-
-    When click on open button for explanatory memorandum
+    And  active tab name is "Drafts" in proposal viewer page
+    When click on open button of explanatory memorandum link
     Then explanatory memorandum page is displayed
+
+    And  annotations section is displayed
+    And  save button is displayed in ribbon toolbar
+    And  exports button is displayed in ribbon toolbar
+    And  search button is displayed in ribbon toolbar
+    And  see user guidance is disabled in ribbon toolbar
+    And  enable track changes is disabled in ribbon toolbar
+    And  see track changes is enabled in ribbon toolbar
     And  navigation pane is displayed
-    And  toc editing button is not displayed
     And  explanatory memorandum content is displayed
-    When click on actions hamburger icon
-    Then below options are displayed
-      | Versions                               |
-      | Save this version                      |
-      | Export this version                    |
-      | Export this version with annotations   |
-      | View                                   |
-      | See user guidance                      |
-      | See navigation pane                    |
-    When click on "See user guidance" option
-    And  wait for disappearance of the loading progress bar
+    When click on sitemap icon present in navigation pane
+    Then version pane is displayed
+    When enable see user guidance in ribbon toolbar
+    Then enable track changes is enabled in ribbon toolbar
     Then below sentences are present for user guidance
       | [The standard guidance of an Explanatory Memorandum should be as follows. In principle it should not exceed 15 pages (in particularly complex cases a longer text may be justified). The language should be clear and simple, ensuring reader-friendliness for non-experts. All of the following elements are mandatory unless otherwise stated].                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
       | [Describe the reasons behind the proposal and the problem(s) it is expected to tackle. State if this is an initiative within the Regulatory Fitness Programme (REFIT). State any relevant institutional background of the proposal.]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
@@ -57,11 +57,10 @@ Feature: Explanatory Memorandum Page Regression Features in Edit Commission
       | [Outline the budgetary implications of the initiative (if any) and, where appropriate, refer to the "financial statement" showing the budgetary implications and the human and administrative resources required.]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
       | [Refer to the implementation planning associated with the measure, including the monitoring, evaluation and reporting framework set up to assist with its implementation and application and to report on its performance.]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
       | [Explain if the proposal requires Explanatory Documents on the transposition and why.]                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-    When click on actions hamburger icon
-    And  click on "See user guidance" option
-    Then user guidance is not present in the page
-    When click on "1. - CONTEXT OF THE PROPOSAL" link in navigation pane
-    Then page is redirected to "CONTEXT OF THE PROPOSAL"
+    When disable see user guidance in ribbon toolbar
+    Then see user guidance is disabled in ribbon toolbar
+    When click on "1. CONTEXT OF THE PROPOSAL" text in navigation pane
+    Then "CONTEXT OF THE PROPOSAL" i
     When select "CONTEXT OF THE PROPOSAL" in the page
     Then comment button is displayed
     Then highlight button is displayed

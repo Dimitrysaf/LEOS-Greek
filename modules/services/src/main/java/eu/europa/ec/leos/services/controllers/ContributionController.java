@@ -143,4 +143,22 @@ public class ContributionController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/{legFileName}/{proposalRef}/count-feedbacks/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> countFeedbacks(@PathVariable("legFileName") String legFileName,
+                                                  @PathVariable("documentRef") String documentRef,
+                                                  @PathVariable("proposalRef") String proposalRef) {
+        try {
+            documentRef = encodeParam(documentRef);
+            proposalRef = encodeParam(proposalRef);
+            legFileName = encodeParam(legFileName);
+            int nbFeedbacks = contributionApiService.countFeedbackAnnotationsFromLeg(legFileName, documentRef, proposalRef);
+            return ResponseEntity.ok().body(nbFeedbacks);
+        } catch (Exception e) {
+            LOG.error("Error occurred while counting feedbacks for - " + legFileName, e);
+            return new ResponseEntity<>("Unexpected error occurred while counting feedbacks for ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

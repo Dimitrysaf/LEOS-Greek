@@ -25,6 +25,13 @@ define(function leosInlineSavePluginModule(require) {
     var iconSaveClose =  'icons/leosinlinesaveclose.png';
     var iconSave = 'icons/leosinlinesave.png';
 
+    function blockSaveWithoutClose(event, saveCommand) {
+        if (event.editor.LEOS.profile.name === 'Inline AKN Paragraph'
+            && event.editor.element.find('p[data-akn-element="paragraph"]').count() > 1) {
+            saveCommand.setState(TRISTATE_DISABLED);
+        }
+    }
+
     var pluginDefinition = {
         icons: pluginName.toLowerCase(),
 
@@ -79,6 +86,7 @@ define(function leosInlineSavePluginModule(require) {
                 if (event.editor.checkDirty()) {
                     saveCommand.setState(indented ? TRISTATE_DISABLED : TRISTATE_OFF);
                     saveCloseCommand.setState(TRISTATE_OFF);
+                    blockSaveWithoutClose(event, saveCommand);
                 }
             });
 
@@ -93,12 +101,14 @@ define(function leosInlineSavePluginModule(require) {
             editor.on('focus', function(event) {
                 saveCommand.setState(editor.checkDirty() && !indented ? TRISTATE_OFF : TRISTATE_DISABLED);
                 saveCloseCommand.setState(editor.checkDirty() ? TRISTATE_OFF : TRISTATE_DISABLED);
+                blockSaveWithoutClose(event, saveCommand);
             }, null, null, 100); //listen to the event as late as possible
             
             // dataReady is fired after setData is called.
             editor.on('dataReady', function(event) {
                 saveCommand.setState(editor.checkDirty() ? TRISTATE_OFF : TRISTATE_DISABLED);
                 saveCloseCommand.setState(editor.checkDirty() ? TRISTATE_OFF : TRISTATE_DISABLED);
+                blockSaveWithoutClose(event, saveCommand);
             }, null, null, 100); //listen to the event as late as possible
 
             // instanceReady is fired after everything is ready.
@@ -110,6 +120,7 @@ define(function leosInlineSavePluginModule(require) {
             editor.once('instanceReady', function(event) {
                 saveCommand.setState(editor.checkDirty() ? TRISTATE_OFF : TRISTATE_DISABLED);
                 saveCloseCommand.setState(editor.checkDirty() ? TRISTATE_OFF : TRISTATE_DISABLED);
+                blockSaveWithoutClose(event, saveCommand);
             }, null, null, 100); //listen to the event as late as possible
         }
     };

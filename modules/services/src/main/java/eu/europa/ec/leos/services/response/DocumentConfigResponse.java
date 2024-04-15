@@ -36,7 +36,7 @@ public class DocumentConfigResponse {
                                   List<AlternateConfig> alternateConfigs, List<RefConfig> refConfigs, Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray,
                                   Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata,
                                   Map<TocItem, List<TocItem>> tocRules, boolean isTrackChangesEnabled, boolean isTrackChangesShowed,
-                                  boolean isClonedProposal, String langGroup) {
+                                  boolean isClonedProposal, String langGroup, String language) {
         this.documentsMetadata = documentsMetadata;
         this.numberingConfig = numberingConfig;
         this.tocItems = tocItems;
@@ -46,7 +46,7 @@ public class DocumentConfigResponse {
         this.refConfigs = refConfigs;
         this.internalRef = internalRef;
         this.proposalMetadata = proposalMetadata;
-        this.tocRules = transformMap(tocRules, proposalMetadata.getLanguage());
+        this.tocRules = transformMap(tocRules, language);
         this.isTrackChangesEnabled = isTrackChangesEnabled;
         this.isTrackChangesShowed = isTrackChangesShowed;
         this.isClonedProposal = isClonedProposal;

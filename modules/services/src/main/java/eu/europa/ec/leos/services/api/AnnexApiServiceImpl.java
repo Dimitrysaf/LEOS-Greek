@@ -22,8 +22,6 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
-import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -76,14 +74,8 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
-import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
-import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.services.utils.LanguageMapUtils;
-import eu.europa.ec.leos.services.utils.StructureConfigUtils;
-import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
@@ -92,6 +84,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
@@ -484,26 +477,8 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     @Override
     public DocumentConfigResponse getDocumentConfig(String documentRef) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
-        StructureContext context = structureContext.get();
-        context.useDocumentTemplate(annex.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getDocTemplate());
-        populateCloneProposalMetadata(annex);
-        List<TocItem> tocItems = context.getTocItems();
-        List<NumberingConfig> numberConfigs = context.getNumberingConfigs();
-        List<RefConfig> refConfigs = context.getRefConfigs();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(annex.getMetadata().get().getRef());
-        Proposal proposal = this.documentViewService.getProposalFromPackage(annex);
-        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
-        boolean isClonedProposal = proposal != null ? proposal.isClonedProposal() : false;
-        //load language map
-        languageGroupService.getLanguageMap();
-        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), annex.getMetadata().get().getLanguage());
-
-        return new DocumentConfigResponse(
-                documentsMetadata, numberConfigs, tocItems, null, refConfigs,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT, annex.getMetadata().get().getLanguage()),
-                getArticleTypesAttributes(tocItems), annex.getMetadata().get().getRef(),
-                proposalMetadata, context.getTocRules(),
-                annex.isTrackChangesEnabled(), true, isClonedProposal, langGroup);
+        StructureContext structure = structureContext.get();
+        return genericDocumentApiService.getDocumentConfig(annex, structure);
     }
 
     @Override

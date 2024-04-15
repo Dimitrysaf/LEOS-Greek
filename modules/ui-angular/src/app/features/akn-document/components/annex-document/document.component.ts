@@ -23,6 +23,7 @@ import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
+import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -64,8 +65,16 @@ export class DocumentComponent
     private trackChangesActionsService: TrackChangesActionsService,
     private tableOfContentService: TableOfContentService,
     private environmentService: EnvironmentService,
+    private milestoneService: ProposalMilestonesService,
   ) {
     this.isCNInstance = this.environmentService.isCouncil();
+    this.milestoneService.triggerRequestStoredDocumentAnnotations$.subscribe((request) => {
+        if (request && this.contributionView) {
+          this.milestoneService.sendRequestStoredDocumentAnnotations(request.proposalRef, request.legFileName, request.documentRef, false);
+        } else {
+          this.milestoneService.sendEmptyStoredDocumentAnnotations();
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -315,7 +324,7 @@ export class DocumentComponent
       if (!elementInEditor) {
         this.reloadElements(data);
       } else if (data.isClosing && !data.isSaved) {
-        if (this.isCNInstance || data.elementFragment.includes("</authorialNote>")) {
+        if (this.shouldReloadDocument(data)) {
           this.documentService.reloadDocument();
         } else {
           this.reloadElements(data)
@@ -324,13 +333,61 @@ export class DocumentComponent
         this.documentService.isReloadRequired = true;
       }
     } else {
-      if (this.isCNInstance || data.elementFragment.includes("</authorialNote>")) {
+      if (this.shouldReloadDocument(data)) {
         this.documentService.reloadDocument();
       } else {
         this.reloadElements(data)
       }
     }
     this.initTrackChangesActions();
+  }
+
+  private shouldReloadDocument(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    return this.isCNInstance || this.authorialNotesUpdated(data) || this.isElementDepthUpdated(data) || this.isSplitParagraphs(data);
+  }
+
+  private authorialNotesUpdated(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.xml, 'text/html'),
+      docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
+    const xmlElement = doc.getElementById(data.elementId),
+      authorialNotesXmlWithId = xmlElement.querySelectorAll("authorialNote[id]");
+    const authorialNotesFragmentWithId = docFragment.querySelectorAll("authorialNote[id]");
+    return authorialNotesXmlWithId.length !== authorialNotesFragmentWithId.length;
+  }
+
+  private isSplitParagraphs(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.xml, 'text/html');
+    const paragraphsWithoutId = doc.querySelectorAll("paragraph:not([id])");
+    return data.elementType === 'paragraph' && paragraphsWithoutId.length > 0;
+  }
+
+  private isElementDepthUpdated(data: {
+    elementId: string;
+    elementType: string;
+    elementFragment: string;
+  }) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(this.xml, 'text/html'),
+      docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
+    const xmlElement = doc.getElementById(data.elementId),
+      xmlElementDepth = xmlElement.getAttribute("leos:depth");
+    const fragmentElement = docFragment.getElementById(data.elementId),
+      fragmentElementDepth = fragmentElement.getAttribute("leos:depth");
+    return xmlElementDepth && fragmentElementDepth && (xmlElementDepth !== fragmentElementDepth);
   }
 
   private updateElementInXml(data: {

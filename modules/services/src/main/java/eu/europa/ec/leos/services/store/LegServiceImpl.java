@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.util.RawValue;
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
@@ -91,6 +92,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -196,8 +198,8 @@ public class LegServiceImpl implements LegService {
                           AnnexService annexService, XmlContentProcessor xmlContentProcessor,
                           ProposalService proposalService,
                           XPathCatalog xPathCatalog,
-                          ExplanatoryService explanatoryService,FinancialStatementService financialStatementService,
-            DocumentLanguageContext documentLanguageContext) {
+                          ExplanatoryService explanatoryService, FinancialStatementService financialStatementService,
+                          DocumentLanguageContext documentLanguageContext) {
         this.packageRepository = packageRepository;
         this.workspaceRepository = workspaceRepository;
         this.attachmentProcessor = attachmentProcessor;
@@ -1379,13 +1381,62 @@ public class LegServiceImpl implements LegService {
                 String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
                 annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
-
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
                 contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
             }
         } catch(Exception e) {
             LOG.error("Exception occurred", e);
         }
+    }
+
+    @Override
+    public String removePermissionsStoredAnnotations(String storedFeedbackAnnotations) {
+        if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("")) {
+            return storedFeedbackAnnotations;
+        }
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode storedJson = mapper.readTree(storedFeedbackAnnotations);
+            JsonNode storedAnnots = storedJson.get("rows");
+            for (final JsonNode storedAnnot : storedAnnots) {
+                JsonNode permissions = storedAnnot.get("permissions");
+                ((ObjectNode) permissions).putArray("update").removeAll();
+                ((ObjectNode) permissions).putArray("delete").removeAll();
+                ((ObjectNode) permissions).putArray("admin").removeAll();
+            }
+            return mapper.writeValueAsString(storedJson);
+        } catch (Exception e) {
+            LOG.debug("Could not remove permissions on stored annotations", e);
+        }
+        return storedFeedbackAnnotations;
+    }
+
+    private int countFeedbacksToBeSent(String feedbackAnnotations, String storedFeedbackAnnotations) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode json = mapper.readTree(feedbackAnnotations);
+        JsonNode annots = json.get("rows");
+        JsonNode storedAnnots;
+        if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("")) {
+            storedAnnots = mapper.readTree("[]");
+        } else {
+            JsonNode storedJson = mapper.readTree(storedFeedbackAnnotations);
+            storedAnnots = storedJson.get("rows");
+        }
+        int count = 0;
+        for (final JsonNode annot : annots) {
+            String annotId = annot.get("id").textValue();
+            boolean added = false;
+            for (final JsonNode storedAnnot : storedAnnots) {
+                if (annotId.equals(storedAnnot.get("id").textValue())) {
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                count++;
+            }
+        }
+        return count;
     }
 
     private String getAnnotationsFromZipContent(Map<String, Object> contentToZip, String docName) throws JsonProcessingException {
@@ -1822,5 +1873,37 @@ public class LegServiceImpl implements LegService {
     @Override
     public String storeLegDocumentTemporary(final byte[] bytes) {
         return this.annotateService.createTemporaryAnnotations(bytes, "");
+    }
+
+    @Override
+    public String getFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef) throws IOException {
+        String annotFileName = "media/annot_" + documentRef + ".xml.json";
+        try {
+            LeosPackage leosPackage = packageRepository.findPackageByDocumentRef(proposalRef, Proposal.class);
+            LegDocument legDocument = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName,
+                    LegDocument.class);
+
+            Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().getOrNull().getSource().getBytes());
+            if (legContent.containsKey(annotFileName)) {
+                byte[] annotFileContent = (byte[]) legContent.get(annotFileName);
+                return new String(annotFileContent, StandardCharsets.UTF_8);
+            }
+        } catch (Exception e) {
+            LOG.info("Error while getting annotations in LEG file {}", legFileName);
+            throw new IOException("Error while getting annotations in LEG file", e);
+        }
+        return "";
+    }
+
+    @Override
+    public int countFeedbacksToBeSentOnContribution(String ref, String proposalRef, String legFileName) {
+        try {
+            String feedbackLegAnnotations = getFeedbackAnnotationsFromLeg(legFileName, ref, proposalRef);
+            String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
+            return countFeedbacksToBeSent(feedbackAnnotations, feedbackLegAnnotations);
+        } catch(Exception e) {
+            LOG.error("Exception occurred", e);
+        }
+        return 0;
     }
 }

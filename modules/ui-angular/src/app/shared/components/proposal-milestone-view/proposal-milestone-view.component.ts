@@ -164,10 +164,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.milestonesService.resetReadyToMergeStatus();
   }
 
-  requestStoredDocumentAnnotations(request : boolean) {
+  requestStoredDocumentAnnotations(request : string) {
     if (request && this.isOpened) {
       let doc = this.documents[this.activeTabIndex];
-      this.milestonesService.sendRequestStoredDocumentAnnotations(this.milestone.proposalRef, this.milestone.legDocumentName, doc.ref);
+      this.milestonesService.sendRequestStoredDocumentAnnotations(this.milestone.proposalRef, this.milestone.legDocumentName, doc.ref, true);
     } else {
       this.milestonesService.sendEmptyStoredDocumentAnnotations();
     }

@@ -116,7 +116,7 @@ public class FinancialStatementControllerTest {
                 new HashMap<>(),
                 false,
                 false,
-                false, "latin");
+                false, "latin", "en");
 
         Mockito.when(this.genericDocumentApiService.getDocumentConfig(Mockito.anyString()))
                 .thenReturn(TEST_RESPONSE);
