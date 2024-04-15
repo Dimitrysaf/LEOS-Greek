@@ -16,9 +16,13 @@ package eu.europa.ec.leos.repository.repositories;
 import eu.europa.ec.leos.repository.entities.ConfigContent;
 import eu.europa.ec.leos.repository.entities.ConfigVersion;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 
 public interface ConfigContentRepository extends JpaRepository<ConfigContent, BigDecimal> {
     ConfigContent findConfigContentByVersionId(ConfigVersion versionId);
+
+    @Query(value = "select * from CONFIG_CONTENT where content_stream_filename = ?1", nativeQuery = true)
+    ConfigContent findConfigContentByName(String name);
 }

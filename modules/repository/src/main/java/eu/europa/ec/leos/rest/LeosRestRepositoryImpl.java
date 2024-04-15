@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.europa.ec.leos.domain.common.RepositoryProfileType;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
@@ -63,12 +64,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.rest.support.RepositoryUtil.updateDocumentProperties;
@@ -1028,6 +1024,20 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public FavouritePackageResponse toggleFavouritePackage(String ref, String userId) {
         logger.trace("Toggle favourite package for document... [ref=" + ref + ']');
         return repository.toggleFavouritePackage(ref, userId);
+    }
+
+    @Override
+    @PerformanceLogger
+    public Object configNotificationsUpload(String content) throws JsonProcessingException {
+        logger.trace("Upload config notifications");
+        return repository.configNotificationsUpload(content);
+    }
+
+    @Override
+    @PerformanceLogger
+    public String configNotificationsFetch() {
+        logger.trace("Fetch config notifications");
+        return repository.configNotificationsFetch();
     }
 
 }

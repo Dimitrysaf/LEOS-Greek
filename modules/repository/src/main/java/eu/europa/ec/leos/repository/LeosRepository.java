@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.repository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
@@ -387,9 +388,12 @@ public interface LeosRepository {
 
     List<FavouritePackageResponse> findFavouritePackagesForUser(String userId);
 
-
     FavouritePackageResponse getFavouritePackage(String ref, String userId);
 
     FavouritePackageResponse toggleFavouritePackage(String ref, String userId);
+
+    Object configNotificationsUpload(String content) throws JsonProcessingException;
+
+    String configNotificationsFetch();
 
 }
