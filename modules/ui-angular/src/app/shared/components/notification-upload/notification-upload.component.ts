@@ -75,12 +75,15 @@ export class NotificationUploadComponent implements OnInit {
   uploadNotifications(): void {
     this.notificationService.uploadNotifications(this.validJson).subscribe({
       next: (response) => {
-        this.successMessage = 'Notifications uploaded successfully!';
+        this.successMessage = this.translateService.instant(
+          'app.notification.upload.success',
+        );
         this.closeDialog();
       },
       error: (error) => {
-        this.errorMessage = 'Failed to upload notifications.';
-        console.error('Upload error:', error);
+        this.errorMessage = this.translateService.instant(
+          'app.notification.upload.fail',
+        );
       },
     });
   }

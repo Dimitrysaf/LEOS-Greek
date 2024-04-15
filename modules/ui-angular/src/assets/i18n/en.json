@@ -42,6 +42,8 @@
   "app.support.decide": "Launch Decide",
   "app.notification.upload.label": "Upload notifications",
   "app.notification.upload.label.text": "Please select a json file to be uploaded:",
+  "app.notification.upload.success": "Notifications uploaded successfully!",
+  "app.notification.upload.fail": "Failed to upload notifications.",
   "eui.my-profile-informations": "My profile information",
   "eui.you-are-logged-in-as": "You are logged in as",
   "eui.sign-out": "Sign out",
