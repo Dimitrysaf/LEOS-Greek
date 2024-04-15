@@ -49,6 +49,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Provider;
@@ -876,5 +877,8 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     public FavouritePackageResponse toggleFavouritePackage(String ref, String userId) {
         return null;
     }
+
+    public Object configNotificationsUpload(String content) { return ResponseEntity.ok().build();}
+    public String configNotificationsFetch() {return null; }
 
 }

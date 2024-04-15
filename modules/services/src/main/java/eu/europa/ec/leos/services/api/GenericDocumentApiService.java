@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -624,6 +625,14 @@ public class GenericDocumentApiService {
     public FavouritePackageResponse toggleFavouritePackage(String ref) {
         String userId = securityContext.getUser().getLogin();
         return this.leosRepository.toggleFavouritePackage(ref, userId);
+    }
+
+    public Object configNotificationsUpload(String content) throws JsonProcessingException {
+        return this.leosRepository.configNotificationsUpload(content);
+    }
+
+    public String configNotificationsFetch() {
+        return this.leosRepository.configNotificationsFetch();
     }
 
 }

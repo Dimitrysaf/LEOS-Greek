@@ -90,6 +90,12 @@ public class ConfigContent implements Serializable {
         this.content = new String(content, StandardCharsets.UTF_8);
     }
 
+    public String getContentString() {
+        return content;
+    }
+
+    public void setContentString(String content) { this.content = content; }
+
     public String getContentStreamMimeType() {
         return contentStreamMimeType;
     }

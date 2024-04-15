@@ -86,4 +86,16 @@ public class ConfigServiceImpl implements ConfigService {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Config.class.getName());
         }
     }
+
+
+    public void saveNotifications(String content) {
+        ConfigContent configContent = configContentRepository.findConfigContentByName("NOTIFICATIONS-HOMEPAGE.json");
+        configContent.setContentString(content);
+        configContentRepository.save(configContent);
+    }
+
+    public String fetchNotifications() {
+        ConfigContent configContent = configContentRepository.findConfigContentByName("NOTIFICATIONS-HOMEPAGE.json");
+        return configContent.getContentString();
+    }
 }

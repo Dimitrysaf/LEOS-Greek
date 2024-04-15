@@ -13,6 +13,9 @@
  */
 package eu.europa.ec.leos.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -36,12 +39,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.springframework.web.util.UriUtils.encodeUriVariables;
@@ -130,6 +128,12 @@ public class RestRepository extends AbstractRestClient {
 
     @Value("${leos.rest.repository.toggle.favourite.package}")
     private String leosRestToggleFavouritePackageDocument;
+
+    @Value("${leos.rest.repository.config.notifications.upload}")
+    private String leosRestRepositoryConfigNotificationsUpload;
+
+    @Value("${leos.rest.repository.config.notifications.fetch}")
+    private String leosRestRepositoryConfigNotificationsFetch;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -468,6 +472,20 @@ public class RestRepository extends AbstractRestClient {
         LOGGER.trace("Toggle favourite package... [ref =" + ref + ']');
         String url = getUrl(leosRestToggleFavouritePackageDocument);
         return putEntity(url, null, FavouritePackageResponse.class, ref, userId);
+    }
+
+    Object configNotificationsUpload(String content) throws JsonProcessingException {
+        LOGGER.trace("Upload config notifications... ");
+        String url = getUrl(leosRestRepositoryConfigNotificationsUpload);
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(content);
+        return postEntity(url, jsonNode, Object.class);
+    }
+
+    String configNotificationsFetch() {
+        LOGGER.trace("Fetch config notifications... ");
+        String url = getUrl(leosRestRepositoryConfigNotificationsFetch);
+        return getEntity(url, String.class);
     }
 
 }
