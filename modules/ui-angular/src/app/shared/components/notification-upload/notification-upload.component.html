@@ -15,7 +15,7 @@
   <button euiButton (click)="closeDialog()">
     {{ 'global.actions.cancel' | translate }}
   </button>
-  <button euiButton euiPrimary [disabled]="!uploadForm.valid || !isValidFile">
+  <button euiButton euiPrimary [disabled]="!uploadForm.valid || !isValidFile" (click)="uploadNotifications()">
     {{ 'page.workspace.upload.button.text' | translate }}
   </button>
 </div>

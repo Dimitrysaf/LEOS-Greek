@@ -8,6 +8,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
 
 import { ConfirmReloadDialogComponent } from '@/shared/components/confirm-reload-dialog/confirm-reload-dialog.component';
+import { NotificationCardContainerComponent } from '@/shared/components/notification-card-container/notification-card-container.component';
 import { ProposalCreateWizardComponent } from '@/shared/components/proposal-create-wizard/proposal-create-wizard.component';
 import { ProposalUploadWizardComponent } from '@/shared/components/proposal-upload-wizard/proposal-upload-wizard.component';
 import { ProposalService } from '@/shared/services/proposal.service';
@@ -20,19 +21,19 @@ import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dial
 import { DocumentAnnotationsComponent } from './components/document-annotations/document-annotations.component';
 import { MilestoneTocComponent } from './components/milestone-toc/milestone-toc.component';
 import { NotificationCardComponent } from './components/notification-card/notification-card.component';
+import { NotificationUploadComponent } from './components/notification-upload/notification-upload.component';
 import { ProposalCreateDraftComponent } from './components/proposal-create-draft/proposal-create-draft.component';
 import { ProposalCreateFormComponent } from './components/proposal-create-form/proposal-create-form.component';
 import { ProposalCreateTemplateSelectorComponent } from './components/proposal-create-template-selector/proposal-create-template-selector.component';
 import { ProposalMilestoneViewComponent } from './components/proposal-milestone-view/proposal-milestone-view.component';
 import { ResizeHandleComponent } from './components/resize-handle/resize-handle.component';
 import { ZoomScrollbarComponent } from './components/zoom-scrollbar/zoom-scrollbar.component';
+import { HideOnClickOutsideDirective } from './directives/HideOnClickOutside.directive';
 import { ShowOnInstanceDirective } from './directives/showOnInstance.directive';
 import { UserHasPermissionDirective } from './directives/userHasPermission.directive';
-import { NotificationCardContainerComponent } from '@/shared/components/notification-card-container/notification-card-container.component';
 import { EscapeHtmlPipe } from './pipes/escape-html.pipe';
 import { HtmlToPlaintextPipe } from './pipes/html-to-plaintext.pipe';
 import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
-import { NotificationUploadComponent } from './components/notification-upload/notification-upload.component';
 
 @NgModule({
   imports: [
@@ -51,6 +52,7 @@ import { NotificationUploadComponent } from './components/notification-upload/no
     DocumentAnnotationsComponent,
     ShowOnInstanceDirective,
     UserHasPermissionDirective,
+    HideOnClickOutsideDirective,
     ProposalCreateDraftComponent,
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
@@ -82,6 +84,7 @@ import { NotificationUploadComponent } from './components/notification-upload/no
     DocumentAnnotationsComponent,
     ShowOnInstanceDirective,
     UserHasPermissionDirective,
+    HideOnClickOutsideDirective,
     ProposalCreateTemplateSelectorComponent,
     ConfirmDeleteDialogComponent,
     ConfirmDialogComponent,

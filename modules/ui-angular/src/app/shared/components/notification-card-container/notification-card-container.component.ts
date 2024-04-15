@@ -1,56 +1,13 @@
-import { AppConfigService } from '@/core/services/app-config.service';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+
+import { AppConfigService } from '@/core/services/app-config.service';
+
 import { Notification } from '../../models/notification.model';
 import { NotificationsService } from '../../services/notifications.service';
 import { NotificationUploadComponent } from '../notification-upload/notification-upload.component';
-
-export const NOTIFICATIONS: Notification[] = [
-  {
-    start: 1711018559,
-    end: 1711022159,
-    newsTimestamp: 1711018559,
-    title: 'Notification 1',
-    body: 'This is the body of notification 1.',
-  },
-  {
-    start: 1711104959,
-    end: 1711108559,
-    newsTimestamp: 1711104959,
-    title: 'Notification 2',
-    body: 'This is the body of notification 2.',
-  },
-  {
-    start: 1711191359,
-    end: 1711194959,
-    newsTimestamp: 1711191359,
-    title: 'Notification 3',
-    body: 'This is the body of notification 3.',
-  },
-  {
-    start: 1711135735,
-    end: 1711139335,
-    newsTimestamp: 1711135735,
-    title: 'Notification Short',
-    body: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ',
-  },
-  {
-    start: 1711092135,
-    end: 1711095735,
-    newsTimestamp: 1711092135,
-    title: 'Notification Medium',
-    body: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ip',
-  },
-  {
-    start: 1711223535,
-    end: 2147483647,
-    newsTimestamp: 1711223535,
-    title: 'Notification Long',
-    body: 'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ip',
-  },
-];
 
 @Component({
   selector: 'app-notification-card-container',
@@ -58,10 +15,11 @@ export const NOTIFICATIONS: Notification[] = [
   styleUrls: ['./notification-card-container.component.scss'],
 })
 export class NotificationCardContainerComponent implements OnInit, OnDestroy {
-  isNotificationsShown: boolean = false;
-  notifications: Notification[] = NOTIFICATIONS;
-  private destroy$: Subject<any> = new Subject();
+  notifications: Notification[];
+  isNotificationsShown = false;
   canUpload = false;
+  private destroy$: Subject<any> = new Subject();
+
   constructor(
     private notifcationService: NotificationsService,
     protected euiDialogService: EuiDialogService,
@@ -70,6 +28,13 @@ export class NotificationCardContainerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.notifcationService
+      .fetchNotifications()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((notifications) => {
+        this.notifications = notifications;
+      });
+
     this.notifcationService.isShown$.subscribe((isShown) => {
       this.isNotificationsShown = isShown;
     });
@@ -100,6 +65,12 @@ export class NotificationCardContainerComponent implements OnInit, OnDestroy {
         hasFooter: false,
       }),
     );
+  }
+
+  closeNotifications() {
+    if (this.isNotificationsShown) {
+      this.notifcationService.closeNotifications();
+    }
   }
 
   private setPermissions() {

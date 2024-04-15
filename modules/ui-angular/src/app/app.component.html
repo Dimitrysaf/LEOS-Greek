@@ -47,7 +47,7 @@
           *ngIf="showLoggedUser"
         ></eui-toolbar-item-user-profile>
         <button
-          (click)="toggleNotifications()"
+          (click)="toggleNotifications($event)" 
           class="eui-icon-button"
           aria-label="Notifications"
         >

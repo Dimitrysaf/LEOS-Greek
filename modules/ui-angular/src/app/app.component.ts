@@ -10,16 +10,15 @@ import {
 } from '@eui/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, Subscription, map, of } from 'rxjs';
+import { map, Observable, of, Subscription } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { AppLocalStorageService } from '@/core/services/app-local-storage.service';
 
 import { Profile } from './shared/models/leos.model';
+import { Notification } from './shared/models/notification.model';
 import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
 import { NotificationsService } from './shared/services/notifications.service';
-import { Notification } from './shared/models/notification.model';
-import { NOTIFICATIONS } from './shared/components/notification-card-container/notification-card-container.component';
 
 @Component({
   selector: 'app-root',
@@ -54,7 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
     { id: 4, label: 'app.support.decide' },
   ];
 
-  notifications: Notification[] = NOTIFICATIONS;
+  notifications: Notification[];
 
   constructor(
     private store: Store<any>,
@@ -87,7 +86,14 @@ export class AppComponent implements OnInit, OnDestroy {
       }),
     );
 
-    this.notificationsService.fetchNotifications();
+    this.subs.push(
+      this.notificationsService
+        .fetchNotifications()
+        .subscribe((notifications) => {
+          this.notifications = notifications;
+          this.checkIfContentAvailable();
+        }),
+    );
 
     this.subs.push(
       this.i18nState.subscribe((state) => {
@@ -134,18 +140,27 @@ export class AppComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleNotifications(): void {
-    this.notificationsService.toggleNotifications();
+  toggleNotifications(event?: MouseEvent): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    setTimeout(() => {
+      this.notificationsService.toggleNotifications();
+    }, 10);
   }
 
   checkIfContentAvailable(): void {
-    this.contentAvailable$ = of(this.notifications).pipe(
-      map((notifications) =>
-        notifications.some((notification) => {
-          const currentTime = Math.floor(Date.now() / 1000);
-          return notification.end > currentTime;
-        }),
-      ),
-    );
+    if (this.notifications) {
+      this.contentAvailable$ = of(this.notifications).pipe(
+        map((notifications) =>
+          notifications.some((notification) => {
+            const currentTime = Math.floor(Date.now() / 1000);
+            return notification.end > currentTime;
+          }),
+        ),
+      );
+    } else {
+      this.contentAvailable$ = of(false);
+    }
   }
 }

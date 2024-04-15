@@ -1,4 +1,3 @@
-import { ErrorVO } from '@/shared/models';
 import {
   ChangeDetectorRef,
   Component,
@@ -10,6 +9,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
 import { EuiFileUploadComponent } from '@eui/components/eui-file-upload';
 import { TranslateService } from '@ngx-translate/core';
+
+import { ErrorVO } from '@/shared/models';
+import { NotificationsService } from '@/shared/services/notifications.service';
 
 export const REQUIRED_FIELDS: string[] = [
   'start',
@@ -31,13 +33,14 @@ export class NotificationUploadComponent implements OnInit {
   errorsVO: ErrorVO[] = [];
   errorMessage: string | null = null;
   successMessage: string | null = null;
-  isValidFile: boolean = false;
-
+  isValidFile = false;
+  private validJson: any = null;
   constructor(
     @Inject(DIALOG_COMPONENT_CONFIG) private config,
     private fb: FormBuilder,
     public translateService: TranslateService,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationsService,
   ) {}
 
   ngOnInit(): void {
@@ -69,6 +72,19 @@ export class NotificationUploadComponent implements OnInit {
     this.validateJson();
   }
 
+  uploadNotifications(): void {
+    this.notificationService.uploadNotifications(this.validJson).subscribe({
+      next: (response) => {
+        this.successMessage = 'Notifications uploaded successfully!';
+        this.closeDialog();
+      },
+      error: (error) => {
+        this.errorMessage = 'Failed to upload notifications.';
+        console.error('Upload error:', error);
+      },
+    });
+  }
+
   private validateJson() {
     const file = this.uploadEuiFile.files[0];
     if (file) {
@@ -76,12 +92,20 @@ export class NotificationUploadComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const content = JSON.parse(e.target.result as string);
-          if (!this.validateJsonStructure(content)) {
-            throw new Error('Invalid JSON structure or date format');
+          this.validJson = JSON.parse(e.target.result as string);
+          if (Array.isArray(this.validJson)) {
+            this.validJson.forEach((jsonObject, index) => {
+              if (!this.validateJsonStructure(jsonObject)) {
+                throw new Error(
+                  `Invalid JSON structure or date format in array index ${index}`,
+                );
+              }
+            });
+            this.errorsVO = [];
+            this.isValidFile = true;
+          } else {
+            throw new Error('Expected an array of JSON objects');
           }
-          this.errorsVO = [];
-          this.isValidFile = true;
         } catch (error) {
           this.isValidFile = false;
           this.errorsVO = [
@@ -105,7 +129,7 @@ export class NotificationUploadComponent implements OnInit {
       if (!(field in json)) {
         this.errorsVO.push({
           errorCode: 'MISSING_FIELD',
-          objects: [`${field} is missing`],
+          objects: [`${field} is missing in JSON object`],
         });
       }
     });

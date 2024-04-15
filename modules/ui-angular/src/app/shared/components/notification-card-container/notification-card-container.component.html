@@ -2,6 +2,9 @@
   interactiveScrollbars
   class="notification-container"
   *ngIf="isNotificationsShown"
+  appHideOnClickOutside
+  [ignoreClickOn]="['.eui-dialog-container', '.eui-icon-times']"
+  (appClickOutside)="closeNotifications()"
 >
   <div class="notification-layout">
     <div class="header-container">
