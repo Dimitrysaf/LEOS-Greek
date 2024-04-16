@@ -63,12 +63,12 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfig;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.processor.rendition.HtmlRenditionProcessor;
+import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
-import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemHtmlVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.io.FileUtils;
@@ -1155,13 +1155,13 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
-    public LegDocument updateLegDocumentAnnotations(String proposalRef, String legFileName, String documentRef, String documentName, ExportOptions exportOptions) throws IOException {
+    public LegDocument updateLegDocumentFeedbackAnnotations(String proposalRef, String legFileName, String documentRef, String documentName, ExportOptions exportOptions) throws IOException {
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         LeosPackage clonedPackage = packageRepository.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument = packageRepository.findDocumentByPackagePathAndName(clonedPackage.getPath(), legFileName, LegDocument.class);
         Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().getSource().getBytes());
 
-        addAnnotateToZipContent(legContent, documentRef, documentName, exportOptions, proposalRef, legFileName);
+        addFeedbackAnnotateToZipContent(legContent, documentRef, documentName, exportOptions, proposalRef, legFileName);
 
         return this.updateLegDocument(legDocument.getId(), ZipPackageUtil.zipByteArray(legContent), legDocument.getStatus());
     }
@@ -1374,35 +1374,19 @@ public class LegServiceImpl implements LegService {
         }
     }
 
-    private String processStoredAnnotations(String feedbackAnnotations, String storedFeedbackAnnotations) throws JsonProcessingException {
-        if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("")) {
-            return feedbackAnnotations;
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode json = mapper.readTree(feedbackAnnotations);
-        JsonNode annots = json.get("rows");
-        JsonNode storedJson = mapper.readTree(storedFeedbackAnnotations);
-        JsonNode storedAnnots = storedJson.get("rows");
-        List<JsonNode> unifiedList = new ArrayList<JsonNode>();
-        for (final JsonNode storedAnnot : storedAnnots) {
-            unifiedList.add(storedAnnot);
-        }
-        for (final JsonNode annot : annots) {
-            String annotId = annot.get("id").textValue();
-            boolean added = false;
-            for (final JsonNode storedAnnot : storedAnnots) {
-                if (annotId.equals(storedAnnot.get("id").textValue())) {
-                    added = true;
-                    break;
-                }
+    private void addFeedbackAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName, ExportOptions exportOptions, String proposalRef, String legFileName) {
+        try {
+            if (exportOptions.isWithFeedbackAnnotations()) {
+                String annotations = getAnnotationsFromZipContent(contentToZip, docName);
+                String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
+                feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
+                annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
+                final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
+                contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
             }
-            if (!added) {
-                unifiedList.add(annot);
-            }
+        } catch(Exception e) {
+            LOG.error("Exception occurred", e);
         }
-        ((ObjectNode) json).putArray("rows").removeAll().addAll(unifiedList);
-        ((ObjectNode) json).put("total", unifiedList.size());
-        return mapper.writeValueAsString(json);
     }
 
     @Override
@@ -1455,27 +1439,15 @@ public class LegServiceImpl implements LegService {
         return count;
     }
 
-    private void addAnnotateToZipContent(Map<String, Object> contentToZip, String ref, String docName, ExportOptions exportOptions, String proposalRef, String legFileName) {
-        try {
-            if(exportOptions.isWithAnnotations()) {
-                String annotations = annotateService.getAnnotations(ref, proposalRef);
-                annotations = processAnnotations(annotations, exportOptions);
-                if (exportOptions.isWithFeedbackAnnotations()) {
-                    String feedbackLegAnnotations = getFeedbackAnnotationsFromLeg(legFileName, ref, proposalRef);
-                    String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
-                    feedbackAnnotations = processStoredAnnotations(feedbackAnnotations, feedbackLegAnnotations);
-                    feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
-                    if (StringUtils.isNotBlank(feedbackAnnotations)) {
-                        annotations = groupAnnotations(annotations, feedbackAnnotations);
-                    }
-                }
-                final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
-                contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
-            }
-        } catch(Exception e) {
-            LOG.error("Exception occurred", e);
+    private String getAnnotationsFromZipContent(Map<String, Object> contentToZip, String docName) throws JsonProcessingException {
+        String fileName = creatAnnotationFileName(docName);
+        byte[] annotationsExisting = (byte[]) contentToZip.get(fileName);
+        if(annotationsExisting != null) {
+            return new String(annotationsExisting, UTF_8);
         }
+        return StringUtils.EMPTY;
     }
+
 
     public void addFilteredAnnotationsToZipContent(Map<String, Object> contentToZip, String docName, ExportOptions exportOptions) {
         if (exportOptions.isWithFilteredAnnotations()) {
@@ -1838,7 +1810,15 @@ public class LegServiceImpl implements LegService {
         return mapper.writeValueAsString(json);
     }
 
-    private String groupAnnotations(String annotations, String feedbackAnnotations) throws JsonProcessingException {
+    private String addFeedbackAnnotations(String annotations, String feedbackAnnotations) throws JsonProcessingException {
+        if (StringUtils.isBlank(feedbackAnnotations)) {
+            return annotations;
+        }
+
+        if (StringUtils.isBlank(annotations)) {
+            return feedbackAnnotations;
+        }
+
         ObjectMapper mapper = new ObjectMapper();
 
         JsonNode json = mapper.readTree(annotations);
@@ -1847,12 +1827,29 @@ public class LegServiceImpl implements LegService {
         JsonNode jsonFeedback = mapper.readTree(feedbackAnnotations);
         ArrayNode rowsNodeFeedback = (ArrayNode) jsonFeedback.get("rows");
 
-        rowsNode.addAll(rowsNodeFeedback);
+        Iterator<JsonNode> itrFeedback = rowsNodeFeedback.elements();
+        List<JsonNode> filteredList = new ArrayList<JsonNode>();
+        itrFeedback.forEachRemaining(node -> {
+            if(!isPresent(rowsNode, node)) {
+                filteredList.add(node);
+            }
+        });
+
+        rowsNode.addAll(filteredList);
 
         ((ObjectNode) json).put("rows", rowsNode);
         ((ObjectNode) json).put("total", rowsNode.size());
 
         return mapper.writeValueAsString(json);
+    }
+
+    private boolean isPresent(ArrayNode arrayNode, JsonNode node) {
+        for(int i = 0; i < arrayNode.size(); i++) {
+            if(node.findValue("id").textValue().equals(arrayNode.get(i).findValue("id").textValue())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void anonymizePermission(JsonNode permissions, String permissionName, String entityText) {
