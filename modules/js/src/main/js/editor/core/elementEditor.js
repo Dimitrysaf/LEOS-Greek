@@ -275,7 +275,7 @@ define(function elementEditorModule(require) {
                 && elementToPutCursor.getChild(0).$.nodeType === CKEDITOR.NODE_ELEMENT) {
                 elementToPutCursor = elementToPutCursor.getChild(0);
             }
-            if (elementToPutCursor) {
+            if (elementToPutCursor && elementToPutCursor.getChild(editor.LEOS.elementCursorChildPos)) {
                 elementToPutCursor = elementToPutCursor.getChild(editor.LEOS.elementCursorChildPos);
                 var range = editor.createRange();
                 range.moveToPosition(elementToPutCursor, CKEDITOR.POSITION_AFTER_START);
@@ -283,6 +283,7 @@ define(function elementEditorModule(require) {
                 range.setEnd(elementToPutCursor, editor.LEOS.elementCursorPos);
                 range.collapse(true);
                 range.select();
+                range.checkEndOfBlock(true);
             }
         }
     }

@@ -383,6 +383,13 @@ define(function actionManagerExtensionModule(require) {
         }
     }
 
+    function isElementTransformedToText(node) {
+        // For External References or Annotation Elements
+        return node.nodeType === Node.ELEMENT_NODE
+            && ((node.localName === "a" && node.hasAttribute("data-ref2link-initial"))
+                || (node.localName === "hypothesis-highlight"));
+    }
+
     function getTextPositionFromElement(element, clickX, clickY) {
         var posFound = 0;
         var childIndex = 0;
@@ -396,27 +403,27 @@ define(function actionManagerExtensionModule(require) {
         if (element.localName !== 'num') {
             var nodes = element.childNodes;
             var sizeOfLastTextNode = 0;
-            var cumulativeSizeForExternalReferences = 0;
-            var countExternalReferences = 0;
+            var cumulativeSizeForElementTransformedToText = 0;
+            var countElementsTransformedToText = 0;
             var selection = window.getSelection();
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
-                if (node.nodeType === Node.ELEMENT_NODE && node.localName === "a" && node.hasAttribute("data-ref2link-initial")) {
-                    cumulativeSizeForExternalReferences = cumulativeSizeForExternalReferences + sizeOfLastTextNode + node.textContent.length;
-                    countExternalReferences++;
+                if (isElementTransformedToText(node)) {
+                    cumulativeSizeForElementTransformedToText = cumulativeSizeForElementTransformedToText + sizeOfLastTextNode + node.textContent.length;
+                    countElementsTransformedToText++;
                 } else if (node.nodeType === Node.TEXT_NODE) {
                     sizeOfLastTextNode = node.textContent.length;
                     if (node === selection.anchorNode) {
                         break
                     }
                 } else {
-                    cumulativeSizeForExternalReferences = 0;
+                    cumulativeSizeForElementTransformedToText = 0;
                 }
             }
             if(selection?.anchorNode?.parentNode?.childNodes) {
-                childIndex = Array.prototype.indexOf.call(selection.anchorNode.parentNode.childNodes, selection.anchorNode) - (countExternalReferences*2);
+                childIndex = Array.prototype.indexOf.call(selection.anchorNode.parentNode.childNodes, selection.anchorNode) - (countElementsTransformedToText*2);
             }
-            posFound = selection.anchorOffset + cumulativeSizeForExternalReferences;
+            posFound = selection.anchorOffset + cumulativeSizeForElementTransformedToText;
         }
         return [posFound, childIndex];
     }
