@@ -7,7 +7,8 @@ public enum MetadataFieldType {
     EMISSION_DATE("emissionDate"),
     INTERINSTITUTIONAL_COTE("interinstitutionalCote"),
     INSERT_COTE("insertCote"),
-    LINKED_DOCUMENTS("linkedDocuments");
+    LINKED_DOCUMENTS("linkedDocuments"),
+    DOCUMENT_FINAL("isFinal");
 
     private final String typeName;
 
@@ -39,6 +40,9 @@ public enum MetadataFieldType {
         }
         if (MetadataFieldType.LINKED_DOCUMENTS.getTypeName().equals(typeName)){
             return MetadataFieldType.LINKED_DOCUMENTS;
+        }
+        if(MetadataFieldType.DOCUMENT_FINAL.getTypeName().equals(typeName)){
+            return MetadataFieldType.DOCUMENT_FINAL;
         }
         throw new IllegalArgumentException("Invalid metadata type name");
     }

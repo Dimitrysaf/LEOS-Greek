@@ -229,6 +229,9 @@ class MetadataServiceImpl implements MetadataService {
                 case LINKED_DOCUMENTS:
                     MetadataUtil.processLinkedDocuments((MultipleReferencesFieldInfo)fieldInfo, xmlFile);
                     break;
+                case DOCUMENT_FINAL:
+                    MetadataUtil.processDocumentFinal((ReferenceFieldInfo)fieldInfo, xmlFile);
+                    break;
             }
         }
     }

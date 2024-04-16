@@ -7,7 +7,6 @@ import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.*;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataRequest;
 import eu.europa.ec.digit.leos.pilot.export.model.ApplyMetadataResponse;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
-import eu.europa.ec.digit.leos.pilot.export.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
@@ -91,6 +90,7 @@ public class MetadataUtil {
     private static final String SHORTFORM="shortForm";
     private static final String COVERPAGE="coverPage";
     private static final String REFERSTO="refersTo";
+    private static final String VALUE="value";
     
     public static ReferenceFieldInfo getFieldInfoLocationBrussels(){
         return LOCATION_BRUSSELS_FIELD_INFO;
@@ -438,6 +438,8 @@ public class MetadataUtil {
                     return parseInsertCote(fieldValue);
                 case LINKED_DOCUMENTS:
                     return parseLinkedDocuments(fieldValue);
+                case DOCUMENT_FINAL:
+                    return parseDocumentFinal(fieldValue);
                 default:
                     throw new MetadataUtilsException(FIELD_NOT_SUPPORTED_MESSAGE);
             }
@@ -447,6 +449,13 @@ public class MetadataUtil {
             throw mue;
         }
     }
+
+    private static MetadataFieldInfo parseDocumentFinal(String fieldValue)
+    {
+        if (fieldValue.equals("1")) {
+            return new ReferenceFieldInfo("", "", "final", "final", MetadataFieldType.DOCUMENT_FINAL);
+        }
+        return new ReferenceFieldInfo("", "", "", "", MetadataFieldType.DOCUMENT_FINAL);}
 
     public static MetadataFieldInfo parseAdoptionLocation(String fieldValue) throws MetadataUtilsException {
         try {
@@ -828,6 +837,49 @@ public class MetadataUtil {
         xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
     }
 
+    public static void processDocumentFinal(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
+    {
+        if (fieldInfo.getDisplayValue().equals("final")) {
+            MetadataUtil.addFinalToCoverPage(fieldInfo, xmlFile);
+            MetadataUtil.addFinalToIdentification(fieldInfo, xmlFile);
+        }
+    }
+
+    private static void addFinalToIdentification(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
+    {
+        final Node identificationNode = xmlFile.getElementByName("identification");
+        if (identificationNode == null) {
+            return;
+        }
+
+        final Element frbrExpression = xmlFile.newElement("FRBRExpression");
+
+
+        final Element frbrVersionNumber = xmlFile.newElement("FRBRversionNumber");
+        XmlUtil.setNodeAttributeValue(frbrVersionNumber, VALUE, fieldInfo.getDisplayValue());
+
+        frbrExpression.appendChild(frbrVersionNumber);
+        identificationNode.appendChild(frbrExpression);
+    }
+
+    private static void addFinalToCoverPage(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
+    {
+        Node xmlNodeCoverpage = xmlFile.getElementByName(COVERPAGE);
+        if (xmlNodeCoverpage == null) {
+            return;
+        }
+
+        Node xmlNodeDocNumber = getXmlNodeDocNumber(xmlFile);
+        if (xmlNodeDocNumber == null) {
+            return;
+        }
+
+        final Element inline = xmlFile.newElement("inline");
+        XmlUtil.setNodeAttributeValue(inline, NAME, "version");
+        inline.setTextContent(fieldInfo.getDisplayValue());
+        xmlNodeDocNumber.appendChild(inline);
+    }
+
     public static void processInterinstitutionalCote(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
         MetadataUtil.addInterinstitutionalCoteToMetaReference(fieldInfo, xmlFile);
         MetadataUtil.addInterinstitutionalCoteToCoverPage(fieldInfo, xmlFile);
@@ -885,6 +937,13 @@ public class MetadataUtil {
             }
         }
         return xmlNodeDocketNumber;
+    }
+
+    public static Node getXmlNodeDocNumber(XmlFile xmlFile) {
+        Node xmlDocNumber = null;
+        final NodeList elementsByName = xmlFile.getElementsByName("docNumber");
+        xmlDocNumber = elementsByName.item(0);
+        return  xmlDocNumber;
     }
 
     public static void processLinkedDocuments(MultipleReferencesFieldInfo fieldInfo, XmlFile xmlFile) {
