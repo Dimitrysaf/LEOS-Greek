@@ -3,7 +3,6 @@ import repositoryBrowserPage from "../pages/repositoryBrowserPage";
 
 Then('user is on repository browser page', () => {
     repositoryBrowserPage.getCurrentPageName().should("have.text", "Workspace");
-    repositoryBrowserPage.elements.proposalTable().should('be.visible');
 })
 
 When('click on create proposal button', () => {

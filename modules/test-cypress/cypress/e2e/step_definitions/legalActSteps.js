@@ -11,6 +11,14 @@ When('mousehover article {int}', articleNumber => {
     legalActPage.mouseHoverOnArticle(articleNumber);
 })
 
+When('mousehover and click on citation {int}', citationNumber => {
+    legalActPage.mouseHoverAndClickOnCitation(citationNumber);
+})
+
+When('mousehover and click on recital {int}', recitalNumber => {
+    legalActPage.mouseHoverAndClickOnRecital(recitalNumber);
+})
+
 When('open ck editor for article {int}', (articleNumber) => {
     legalActPage.openCkEditorForArticle(articleNumber);
     cy.wait(2000);
@@ -24,6 +32,34 @@ When('click on close button present in legal act page', () => {
 When('{int} paragraphs are present in article {int}', (paragraphNumber, articleNumber) => {
     legalActPage.getParagraphFromArticle(articleNumber).should('have.length', paragraphNumber);
 })
+
+And('ribbon toolbar is displayed', () => {
+    legalActPage.elements.ribbonToolBar().should('be.visible');
+})
+  
+And('citation {int} contains {string}', (citationNumber,text) => {
+    legalActPage.getCitation(citationNumber).contains(text);
+})
+
+And('citation {int} doesnot contain {string}', (citationNumber,text) => {
+    legalActPage.getCitation(citationNumber).should('not.include.text', text)
+})
+
+And('recital {int} contains {string}', (recitalNumber,text) => {
+    legalActPage.getRecital(recitalNumber).contains(text);
+})
+
+And('recital {int} doesnot contain {string}', (recitalNumber,text) => {
+    legalActPage.getRecital(recitalNumber).should('not.include.text', text)
+})
+
+When('mousehover on citation {int} and click on edit button from action menu', (citationNumber) => {
+    legalActPage.mouseHoverOnCitation(citationNumber);
+    legalActPage.mouseHoverOnThreeDots();
+    legalActPage.elements.editIconActionMenu().click();
+    cy.wait(10000);
+})
+
 
 // And('{string} is present in content of paragraph {int} of article {int}', (text, paragraphNumber, articleNumber) => {
 //     cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber + "]//content//aknp").should('have.text', text);
