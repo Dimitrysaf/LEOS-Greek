@@ -502,7 +502,7 @@ define(function leosAnnexIndentListPluginModule(require) {
             var $content = $num.contents()
                 .filter(function () {
                     return (this.nodeType === CKEDITOR.NODE_TEXT ||
-                        !(this.nodeType === CKEDITOR.NODE_ELEMENT && this.getAttribute("leos:action") === "delete"));
+                        !(this.nodeType === CKEDITOR.NODE_ELEMENT && this.getAttribute("leos:action-number") === "delete"));
                 });
             return $content.text();
         }
