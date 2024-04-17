@@ -94,8 +94,6 @@ public class NumberConfigFactory {
                 return new NumberConfigSymbol(numberingConfig.getSequence(), prefix, suffix);
             case HIGHER_ELEMENT_NUM:
                 return new NumberConfigArabic("","");
-            /*case TEXTUAL:
-                return new NumberConfigTextual();*/
             case NONE:
                 return null;
             default:
