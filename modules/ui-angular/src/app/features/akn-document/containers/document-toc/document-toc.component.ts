@@ -217,19 +217,7 @@ export class DocumentTocComponent
       this.callCoEditionService();
     }
   }
-
-  private callCoEditionService() {
-    if (!this.readonly) {
-      this.coEditionService
-        .getDocCoEditionInfo()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((coEdits) => {
-          this.alreadyDidAsyncWork =
-            this.coEditionService.showElementsBeingEdited(coEdits, true);
-        });
-    }
-  }
-
+  
   seeTocItemStyling() {
     return this.seeTrackChanges;
   }
@@ -530,6 +518,18 @@ export class DocumentTocComponent
     for (const n of root) {
       n.shouldRenderNode = this.shouldRenderNode(root, n);
       this.checkChildNodesToRender(root, n);
+    }
+  }
+
+  private callCoEditionService() {
+    if (!this.readonly) {
+      this.coEditionService
+        .getDocCoEditionInfo()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((coEdits) => {
+          this.alreadyDidAsyncWork =
+            this.coEditionService.showElementsBeingEdited(coEdits, true);
+        });
     }
   }
 
