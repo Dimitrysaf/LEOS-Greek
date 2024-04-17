@@ -10,18 +10,24 @@ import { Notification } from '../models/notification.model';
 })
 export class NotificationsService {
   isShown$: Observable<boolean>;
+  notifications$: Observable<Notification[]>;
   private isShownBS: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
     false,
   );
+  private notificationsBS = new BehaviorSubject<Notification[]>([]);
 
   constructor(private http: HttpClient) {
     this.isShown$ = this.isShownBS.asObservable();
+    this.notifications$ = this.notificationsBS.asObservable();
   }
 
   fetchNotifications(): Observable<Notification[]> {
-    return this.http.get<Notification[]>(
-      `${apiBaseUrl}/secured/home/fetchNotifications`,
-    );
+    this.http
+      .get<Notification[]>(`${apiBaseUrl}/secured/home/fetchNotifications`)
+      .subscribe((data) => {
+        this.notificationsBS.next(data);
+      });
+    return this.notificationsBS.asObservable();
   }
 
   uploadNotifications(

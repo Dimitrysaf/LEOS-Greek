@@ -28,8 +28,7 @@ export class NotificationCardContainerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.notifcationService
-      .fetchNotifications()
+    this.notifcationService.notifications$
       .pipe(takeUntil(this.destroy$))
       .subscribe((notifications) => {
         this.notifications = notifications;

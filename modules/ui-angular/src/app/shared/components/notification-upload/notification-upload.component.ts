@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   Inject,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -9,6 +10,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
 import { EuiFileUploadComponent } from '@eui/components/eui-file-upload';
 import { TranslateService } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 
 import { ErrorVO } from '@/shared/models';
 import { NotificationsService } from '@/shared/services/notifications.service';
@@ -25,7 +27,7 @@ export const REQUIRED_FIELDS: string[] = [
   templateUrl: './notification-upload.component.html',
   styleUrls: ['./notification-upload.component.scss'],
 })
-export class NotificationUploadComponent implements OnInit {
+export class NotificationUploadComponent implements OnInit, OnDestroy {
   @ViewChild('uploadFile') uploadEuiFile: EuiFileUploadComponent;
   uploadForm: FormGroup;
 
@@ -34,6 +36,7 @@ export class NotificationUploadComponent implements OnInit {
   errorMessage: string | null = null;
   successMessage: string | null = null;
   isValidFile = false;
+  private destroy$: Subject<any> = new Subject();
   private validJson: any = null;
   constructor(
     @Inject(DIALOG_COMPONENT_CONFIG) private config,
@@ -47,6 +50,11 @@ export class NotificationUploadComponent implements OnInit {
     this.uploadForm = this.fb.group({
       jsonFile: [null, Validators.required],
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
   }
 
   closeDialog() {
@@ -78,6 +86,8 @@ export class NotificationUploadComponent implements OnInit {
         this.successMessage = this.translateService.instant(
           'app.notification.upload.success',
         );
+        this.fetchNotifications();
+        this.cdr.detectChanges();
         this.closeDialog();
       },
       error: (error) => {
@@ -86,6 +96,13 @@ export class NotificationUploadComponent implements OnInit {
         );
       },
     });
+  }
+
+  private fetchNotifications() {
+    this.notificationService
+      .fetchNotifications()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe();
   }
 
   private validateJson() {
