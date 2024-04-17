@@ -75,6 +75,17 @@ public class LeosXercesUtils {
                         }
                     }
                 }
+            } else if ((delNode != null) && (insNode != null)) {
+                String oldNumLabel = delNode.getTextContent();
+                if (!oldNumLabel.equals(numLabel)) {
+                    insNode.setTextContent(numLabel);
+                    addAttribute(insNode, LEOS_UID, securityContext.getUser().getLogin());
+                    addAttribute(insNode, LEOS_TITLE, getTitleValue(securityContext));
+                } else {
+                    numNode.removeChild(delNode);
+                    numNode.removeChild(insNode);
+                    numNode.setTextContent(numLabel);
+                }
             }
         } else {
             numNode = createElementAsFirstChildOfNode(node, getNumTag(node.getNodeName()), numLabel);
