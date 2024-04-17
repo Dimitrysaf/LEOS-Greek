@@ -23,7 +23,7 @@ Feature: Legal Act Page Regression Features
         # And  annotation side bar is minimized
         When mousehover and click on citation 1
         Then ck editor window is displayed
-        # # When add " New Text " at offset 7 in citation 1 when ck editor is open
+        # When add " New Text " at offset 7 in citation 1 when ck editor is open
         And  select content from offset 7 till offset 14 in citation 1 when ck editor is open
         And  click delete button from keyboard when ck editor is open
         And  click save and close button of ck editor
@@ -31,13 +31,13 @@ Feature: Legal Act Page Regression Features
         # And  citation 1 contains "New Text"
         And  citation 1 doesnot contain "regard"
         When mousehover and click on citation 2
-        # # When mousehover on citation 2 and click on edit button from action menu
+        # When mousehover on citation 2 and click on edit button from action menu
         Then ck editor window is displayed
         When click close button of ck editor
         Then ck editor window is not displayed
         When mousehover and click on recital 2
         Then ck editor window is displayed
-        # When add " New Text " at offset 7 in recital 1 when ck editor is open
+#        When add " New Text " at offset 7 in recital 1 when ck editor is open
         And  select content from offset 0 till offset 7 in recital 2 when ck editor is open
         And  click delete button from keyboard when ck editor is open
         And  click save and close button of ck editor
@@ -46,7 +46,7 @@ Feature: Legal Act Page Regression Features
         And  recital 2 doesnot contain "Recital"
         When click on close button present in legal act page
         Then user is on proposal viewer page
-
+        
     @splitParagraphArticleEditing @local
     Scenario: append text in existing paragraph and make same paragraph into two inside article
         Given navigate to edit drafting application
