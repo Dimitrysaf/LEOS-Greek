@@ -50,9 +50,15 @@ define(function searchTargetExtensionModule(require) {
         connector.searchSubscriptions = [];
 
         if (connector.documentChannel) {
-            connector.searchSubscriptions.push(connector.documentChannel.subscribe("search.updated", _searchUpdated.bind(undefined, connector)));
-            connector.searchSubscriptions.push(connector.documentChannel.subscribe("search.navigate", _navigate.bind(undefined, connector)));
-            connector.searchSubscriptions.push(connector.documentChannel.subscribe("search.bar.closed", _searchBarClosed.bind(undefined, connector)));
+            let channel = connector.documentChannel;
+            if(channel.bus?.subscriptions) {
+                channel.bus.unsubscribeFor({"topic": "search.updated"});
+                channel.bus.unsubscribeFor({"topic": "search.navigate"});
+                channel.bus.unsubscribeFor({"topic": "search.bar.closed"});
+            }
+            connector.searchSubscriptions.push(channel.subscribe("search.updated", _searchUpdated.bind(undefined, connector)));
+            connector.searchSubscriptions.push(channel.subscribe("search.navigate", _navigate.bind(undefined, connector)));
+            connector.searchSubscriptions.push(channel.subscribe("search.bar.closed", _searchBarClosed.bind(undefined, connector)));
         }
     }
 
