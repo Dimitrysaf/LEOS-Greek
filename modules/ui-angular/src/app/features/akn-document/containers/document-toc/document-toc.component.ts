@@ -572,13 +572,15 @@ export class DocumentTocComponent
 
   private populateValidationMessage(validationResult: NodeValidation) {
     this.isDropValid = validationResult.success;
-    this.messageFromValidation = this.translateService.instant(
-      validationResult.messageKey,
-      {
-        0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
-        1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
-      },
-    );
+    if (this.targetNode !== null) {
+      this.messageFromValidation = this.translateService.instant(
+        validationResult.messageKey,
+        {
+          0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
+          1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
+        },
+      );
+    }
   }
 
   private clearValidationMessage() {
