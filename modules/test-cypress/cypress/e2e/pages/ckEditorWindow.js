@@ -54,10 +54,9 @@ class ckEditorWindow {
                 let range = editor.createRange();
                 range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
                 range.setStart(elementToPutCursor, offset);
-                range.setEnd(elementToPutCursor, 13);
-                //range.collapse(true);
+                range.setEnd(elementToPutCursor, offset);
+                range.collapse(true);
                 range.select();
-                range.extractContents();
                 editor.fire("change");
                 //range.startContainer.$.appendData(newContent);
             })
