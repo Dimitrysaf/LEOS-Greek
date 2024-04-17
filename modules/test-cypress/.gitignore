@@ -1,6 +1,5 @@
 /*.iml
-/.idea/
-/git
+/.idea
 /.project
 /.settings
 /node_modules

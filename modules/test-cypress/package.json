@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "cy:generateReport": "node .\\cypress\\report\\cucumberReport.js",
+    "cy:generateReport": "node .\\cucumberReport.js",
     "cy:open": "npx cypress open",
     "cy:run": "npx cypress run --browser chrome --headed"
   },
