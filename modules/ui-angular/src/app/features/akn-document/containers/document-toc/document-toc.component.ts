@@ -217,19 +217,7 @@ export class DocumentTocComponent
       this.callCoEditionService();
     }
   }
-
-  private callCoEditionService() {
-    if (!this.readonly) {
-      this.coEditionService
-        .getDocCoEditionInfo()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((coEdits) => {
-          this.alreadyDidAsyncWork =
-            this.coEditionService.showElementsBeingEdited(coEdits, true);
-        });
-    }
-  }
-
+  
   seeTocItemStyling() {
     return this.seeTrackChanges;
   }
@@ -533,6 +521,18 @@ export class DocumentTocComponent
     }
   }
 
+  private callCoEditionService() {
+    if (!this.readonly) {
+      this.coEditionService
+        .getDocCoEditionInfo()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((coEdits) => {
+          this.alreadyDidAsyncWork =
+            this.coEditionService.showElementsBeingEdited(coEdits, true);
+        });
+    }
+  }
+
   private checkChildNodesToRender(
     root: TableOfContentItemVO[],
     parentNode: TableOfContentItemVO,
@@ -572,13 +572,15 @@ export class DocumentTocComponent
 
   private populateValidationMessage(validationResult: NodeValidation) {
     this.isDropValid = validationResult.success;
-    this.messageFromValidation = this.translateService.instant(
-      validationResult.messageKey,
-      {
-        0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
-        1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
-      },
-    );
+    if (this.targetNode !== null) {
+      this.messageFromValidation = this.translateService.instant(
+        validationResult.messageKey,
+        {
+          0: capitalizeFirstLetter(validationResult.sourceItem.tocItem.aknTag),
+          1: capitalizeFirstLetter(validationResult.targetItem.tocItem.aknTag),
+        },
+      );
+    }
   }
 
   private clearValidationMessage() {
