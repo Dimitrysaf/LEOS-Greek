@@ -7,6 +7,10 @@ Then('user is on proposal viewer page', () => {
 })
 
 Then('click on legal act link present in proposal viewer page', () => {
-    proposalViewerPage.elements.legalActLink().click();
+    proposalViewerPage.clickLegalActLink();
     cy.wait(1000);
+})
+
+When('click on close button on proposal viewer page', () => {
+    proposalViewerPage.clickCloseBtn();
 })

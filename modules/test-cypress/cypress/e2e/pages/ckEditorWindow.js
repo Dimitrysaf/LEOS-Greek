@@ -9,27 +9,39 @@ class ckEditorWindow {
         internalReferenceBtn: () => cy.get('.cke_button__leoscrossreference')
     }
 
+    clickDeleteFromKeyboardWhenCKEditorOpen() {
+        cy.get('.cke_editable.cke_editable_inline').type('{del}');
+    }
+
+    clickEnterFromKeyboardWhenCKEditorOpen() {
+        cy.get('.cke_editable.cke_editable_inline').type('{enter}');
+    }
+
+    addTextAtCurrentCursorPositionWhenCKEditorOpen(newContent) {
+        cy.get('.cke_editable.cke_editable_inline').type('{insert}' + newContent);
+    }
+
     getCkEditableInlineElement() {
         return this.elements.ckEditableInline();
     }
 
-    clickSaveAndCloseBtn(){
+    clickSaveAndCloseBtn() {
         this.elements.saveAndCloseBtn().click();
     }
 
-    clickCloseBtn(){
+    clickCloseBtn() {
         this.elements.closeBtn().click();
     }
 
-    clickSaveBtn(){
+    clickSaveBtn() {
         this.elements.saveBtn().click();
     }
 
-    appendContentInParagraphInArticle(newContent,paragraphNumber,articleNumber){
+    appendContentInParagraphInArticle(newContent, paragraphNumber, articleNumber) {
         cy.window().then((w) => {
             cy.wait(1000).then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
-                let elementToPutCursorParent = editor.element.findOne("#_art_"+articleNumber+"__para_"+paragraphNumber);
+                let elementToPutCursorParent = editor.element.findOne("#_art_" + articleNumber + "__para_" + paragraphNumber);
                 let elementToPutCursor = elementToPutCursorParent.getChild(0);
                 let range = editor.createRange();
                 range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
@@ -45,11 +57,11 @@ class ckEditorWindow {
             })
         });
     }
-    addContentInCitation(newContent, offset, citationNumber){
+    addContentInCitation(newContent, offset, citationNumber) {
         cy.window().then((w) => {
             cy.wait(1000).then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
-                let elementToPutCursorParent = editor.element.findOne("#_cit_"+citationNumber);
+                let elementToPutCursorParent = editor.element.findOne("#_cit_" + citationNumber);
                 let elementToPutCursor = elementToPutCursorParent.getChild(0);
                 let range = editor.createRange();
                 range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
@@ -57,32 +69,18 @@ class ckEditorWindow {
                 range.setEnd(elementToPutCursor, offset);
                 range.collapse(true);
                 range.select();
+                cy.get('.cke_editable.cke_editable_inline').type('{insert}' + newContent);
                 editor.fire("change");
                 //range.startContainer.$.appendData(newContent);
             })
-        });    
+        });
     }
 
-    selectContentInCitation(offsetStart, offsetEnd, citationNumber){
+    selectContentInCitation(offsetStart, offsetEnd, citationNumber) {
         cy.window().then((w) => {
             cy.wait(1000).then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
-                let elementToPutCursorParent = editor.element.findOne("#_cit_"+citationNumber);
-                let elementToPutCursor = elementToPutCursorParent.getChild(0);
-                let range = editor.createRange();
-                range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
-                range.setStart(elementToPutCursor, offsetStart);
-                range.setEnd(elementToPutCursor, offsetEnd);
-                range.select();
-            })
-        }); 
-    }
-
-    selectContentInRecital(offsetStart, offsetEnd, recitalNumber){ 
-        cy.window().then((w) => {
-            cy.wait(1000).then(() => {
-                let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
-                let elementToPutCursorParent = editor.element.findOne("#_rec_"+recitalNumber);
+                let elementToPutCursorParent = editor.element.findOne("#_cit_" + citationNumber);
                 let elementToPutCursor = elementToPutCursorParent.getChild(0);
                 let range = editor.createRange();
                 range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
@@ -93,11 +91,27 @@ class ckEditorWindow {
         });
     }
 
-    addContentInRecital(newContent, offset, recitalNumber){
+    selectContentInRecital(offsetStart, offsetEnd, recitalNumber) {
         cy.window().then((w) => {
             cy.wait(1000).then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
-                let elementToPutCursorParent = editor.element.findOne("#_rec_"+recitalNumber);
+                let elementToPutCursorParent = editor.element.findOne("#_rec_" + recitalNumber);
+                let elementToPutCursor = elementToPutCursorParent.getChild(0);
+                let range = editor.createRange();
+                range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
+                range.setStart(elementToPutCursor, offsetStart);
+                range.setEnd(elementToPutCursor, offsetEnd);
+                range.select();
+                
+            })
+        });
+    }
+
+    addContentInRecital(newContent, offset, recitalNumber) {
+        cy.window().then((w) => {
+            cy.wait(1000).then(() => {
+                let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
+                let elementToPutCursorParent = editor.element.findOne("#_rec_" + recitalNumber);
                 let elementToPutCursor = elementToPutCursorParent.getChild(0);
                 let range = editor.createRange();
                 range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
@@ -105,23 +119,11 @@ class ckEditorWindow {
                 range.setEnd(elementToPutCursor, offset);
                 range.collapse(true);
                 range.select();
-                range.startContainer.$.appendData(newContent);
+                cy.get('.cke_editable.cke_editable_inline').type('{insert}' + newContent);
+                editor.fire("change");
+                //range.startContainer.$.appendData(newContent);
             })
-        });    
-    }
-
-    clickDeleteFromKeyboardWhenCKEditorOpen(){
-        cy.get('.cke_editable.cke_editable_inline').type('{del}');
-    }
-
-    clickEnterFromKeyboardWhenCKEditorOpen(){
-        // cy.window().then((w) => {
-        //     cy.wait(1000).then(() => {
-        //         let editor = w.CKEDITOR.instances.editor1;
-        //         editor.execCommand('enter');
-        //     })
-        // });
-        cy.get('.cke_editable.cke_editable_inline').type('{enter}');
+        });
     }
 
 }

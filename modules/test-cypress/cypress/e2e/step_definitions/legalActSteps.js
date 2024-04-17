@@ -60,7 +60,6 @@ When('mousehover on citation {int} and click on edit button from action menu', (
     cy.wait(10000);
 })
 
-
 // And('{string} is present in content of paragraph {int} of article {int}', (text, paragraphNumber, articleNumber) => {
 //     cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber + "]//content//aknp").should('have.text', text);
 // })
