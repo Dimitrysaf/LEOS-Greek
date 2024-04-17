@@ -35,6 +35,7 @@
             <xs:element name="display" type="xs:boolean" default="false"/>
             <xs:element name="itemNumber" type="optionsType" default="none"/>
             <xs:element name="autoNumbering" type="autoNumbering" minOccurs="0"/>
+            <xs:element name="alternateNumberingType" type="numberingType" minOccurs="0"/>
             <xs:element name="itemHeading" type="optionsType" default="none"/>
             <xs:element name="itemDescription" type="xs:boolean" default="false"/>
             <xs:element name="numberEditable" type="xs:boolean" default="false"/>
@@ -216,6 +217,7 @@
             <xs:enumeration value="ROMAN_UPPER_POSTFIXPARENTHESIS"/>
             <xs:enumeration value="ALPHA_UPPER_POSTFIXDOT"/>
             <xs:enumeration value="ALPHA_UPPER_POSTFIXPARENTHESIS"/>
+            <xs:enumeration value="TEXTUAL"/>
         </xs:restriction>
     </xs:simpleType>
 

@@ -21,6 +21,7 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
@@ -40,8 +41,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
+import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.NUMBERED_AND_LEVEL_ITEMS;
+import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.NUMBERED_ITEMS;
+import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.UNUMBERED_ITEMS;
+import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XercesUtils.getFirstElementByName;
+import static eu.europa.ec.leos.services.support.XercesUtils.isCrossheadingNum;
+import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.getAllChildTableOfContentItems;
+import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
+import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.CN;
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
@@ -64,18 +76,11 @@ import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_TRANS_FROM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_USER_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
+import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
-import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.NUMBERED_AND_LEVEL_ITEMS;
-import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.NUMBERED_ITEMS;
-import static eu.europa.ec.leos.services.processor.content.indent.IndentConversionHelper.UNUMBERED_ITEMS;
-import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
-import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
-import static eu.europa.ec.leos.services.support.XercesUtils.getFirstElementByName;
-import static eu.europa.ec.leos.services.support.XercesUtils.isCrossheadingNum;
-import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.getAllChildTableOfContentItems;
 
 @Component
 public class TableOfContentProcessorImpl implements TableOfContentProcessor {
@@ -101,10 +106,43 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
             if (node != null) {
                 itemVOList = getAllChildTableOfContentItems(node, tocItems, tocRules, numberingConfigs, mode, documentLanguageContext.getDocumentLanguage());
             }
+            setNumberingTypeForHigherSubDivision(itemVOList);
             LOG.debug("Xerces Build table of content completed in {} ms", (System.currentTimeMillis() - startTime));
             return itemVOList;
         } catch (Exception e) {
             throw new RuntimeException("Unable to build the Table of content item list", e);
+        }
+    }
+
+    private void setNumberingTypeForHigherSubDivision(List<TableOfContentItemVO> itemVOList) {
+        setNumberingTypeForChapter(itemVOList);
+    }
+
+    private void setNumberingTypeForChapter(List<TableOfContentItemVO> itemVOList) {
+        TableOfContentItemVO bodyToc = itemVOList.stream()
+                .filter(tocItemVO -> (tocItemVO.getTocItem().getAknTag().value().equals(BODY) || tocItemVO.getTocItem().getAknTag().value().equals(MAIN_BODY)))
+                .findFirst().orElse(null);
+        if (bodyToc != null) {
+            TableOfContentItemVO chapterTocItemVo =
+                    bodyToc.getChildItems().parallelStream()
+                            .filter(tocItemVO -> (tocItemVO.getTocItem().getAknTag().value().equals(CHAPTER)
+                                    && (tocItemVO.getNumber() != null && (tocItemVO.getNumber().equals("1") || tocItemVO.getNumber().equals("I")))))
+                            .findFirst().orElse(null);
+            if (chapterTocItemVo != null) {
+                String number = chapterTocItemVo.getNumber();
+                final NumberingType numberingType;
+                if (number.equals("1")) {
+                    numberingType = NumberingType.HIGHER_ELEMENT_NUM;
+                } else if (number.equals("I")) {
+                    numberingType = NumberingType.ROMAN_UPPER;
+                } else {
+                    numberingType = chapterTocItemVo.getTocItem().getNumberingType();
+                }
+                bodyToc.getChildItems().parallelStream()
+                        .filter(tocItemVO -> (tocItemVO.getTocItem().getAknTag().value().equals(CHAPTER)))
+                        .collect(Collectors.toList())
+                        .forEach(tocItemVO -> tocItemVO.getTocItem().setNumberingType(numberingType));
+            }
         }
     }
 

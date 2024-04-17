@@ -256,7 +256,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private boolean validateParentAndSourceTypeCompatibility(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO parentItem,
                                                              final TocItem parentTocItem, final List<TocItem> parentTocItems) {
 
-        if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.contains(sourceItem.getTocItem())
+        if (CollectionUtils.isEmpty(parentTocItems) || !parentTocItems.stream().anyMatch(tocItem -> tocItem.getAknTag().equals(sourceItem.getTocItem().getAknTag()))
                 || (!sourceItem.getTocItem().isSameParentAsChild() && parentTocItem.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value()))) {
             result.setSuccess(false);
             result.setMessageKey("toc.edit.window.drop.error.message");

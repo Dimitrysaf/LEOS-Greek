@@ -51,6 +51,7 @@ export class TableOfContentItemVO {
   itemDescription?: string;
   tocStyling?: string;
   trackChangeAction: string;
+  numberingType: NumberingType;
 }
 
 export type AknTag =
@@ -112,6 +113,7 @@ export class TocItem {
   expandedByDefault: boolean;
   sameParentAsChild: boolean;
   numberingType: NumberingType;
+  alternateNumberingType: NumberingType;
   tocItemTypes: any;
   parentNameNumberingTypeDependency: any;
   profiles: any;

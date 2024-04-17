@@ -29,7 +29,7 @@ import {
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { TableOfContentEditService } from '@/features/akn-document/services/table-of-content-edit.service';
 import { ValidateTocService } from '@/features/akn-document/services/validate-node-drop.service';
-import { NumberingConfig, NumberingType } from '@/shared';
+import {DocumentConfig, NumberingConfig, NumberingType} from '@/shared';
 import {
   ARTICLE,
   BLOCK,

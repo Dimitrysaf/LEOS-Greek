@@ -37,6 +37,7 @@ export interface TocItem {
   expandedByDefault: boolean;
   sameParentAsChild: boolean;
   numberingType: NumberingType;
+  alternateNumberingType: NumberingType;
   tocItemTypes: TocItemTypes | null;
   parentNameNumberingTypeDependency: AknTag | null;
   profiles: Profiles | null;

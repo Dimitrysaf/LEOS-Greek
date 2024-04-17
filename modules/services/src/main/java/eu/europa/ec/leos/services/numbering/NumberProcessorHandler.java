@@ -11,6 +11,7 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBased;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.vo.structure.NumberingType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,6 +245,20 @@ public abstract class NumberProcessorHandler {
                             .ifPresent(val -> val.renumber(node, numberConfig, renumberChildren, language));
                 }
                 removeAttribute(node, XmlHelper.LEOS_AFFECTED_ATTR);//TODO temp, until migration finishes
+            }
+        }
+    }
+
+    public void renumberHighSubDiv(List<Node> nodeList, NumberingType numberingType, String language) {
+        if (nodeList.size() > 0) {
+            final NumberConfig numberConfig = numberConfigFactory.getNumberConfigByNumberingType(numberingType);
+            for (int i = 0; i < nodeList.size(); i++) {
+                final int index = i;
+                final Node node = nodeList.get(i);
+                numberProcessors.stream()
+                        .filter(numberProcessor -> numberProcessor.canRenumber(node))
+                        .findFirst()
+                        .ifPresent(val -> val.renumber(node, numberConfig, false, language));
             }
         }
     }

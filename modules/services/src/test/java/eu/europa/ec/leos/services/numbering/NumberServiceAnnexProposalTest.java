@@ -1,10 +1,17 @@
 package eu.europa.ec.leos.services.numbering;
 
 import eu.europa.ec.leos.services.util.TestUtils;
+import eu.europa.ec.leos.vo.structure.AknTag;
+import eu.europa.ec.leos.vo.structure.TocItem;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndRemoveAllNS;
 import static org.junit.Assert.assertEquals;
@@ -67,6 +74,20 @@ public class NumberServiceAnnexProposalTest extends NumberServiceProposalTest {
         final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_wrongDepthStructure.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_level_wrongDepthStructure_expected.xml");
         byte[] result = numberService.renumberLevel(xmlInput);
+        assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
+    }
+
+    @Test
+    public void test_numbering_higher_subdivisions() {
+        final byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_higher_subdivisions.xml");
+        final byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX, "test_numbering_higher_subdivisions_expected.xml");
+        List<TableOfContentItemVO> tocList = new ArrayList<>();
+        TableOfContentItemVO body = new TableOfContentItemVO();
+        TocItem tocItem1 = new TocItem();
+        tocItem1.setAknTag(AknTag.BODY);
+        body.setTocItem(tocItem1);
+        tocList.add(body);
+        byte[] result = numberService.renumberHigherSubDivisions(xmlInput, tocList);
         assertEquals(squeezeXmlAndRemoveAllNS(new String(xmlExpected)), squeezeXmlAndRemoveAllNS(new String(result)));
     }
 
