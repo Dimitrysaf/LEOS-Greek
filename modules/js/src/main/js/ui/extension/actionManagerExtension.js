@@ -410,9 +410,14 @@ define(function actionManagerExtensionModule(require) {
             var sizeOfLastTextNode = 0;
             var cumulativeSizeForElementTransformedToText = 0;
             var countElementsTransformedToText = 0;
+            var countEmptyElements = 0;
             var selection = window.getSelection();
             for (var i = 0; i < nodes.length; i++) {
                 var node = nodes[i];
+                if (node.textContent && node.textContent === "") {
+                    countEmptyElements++;
+                    continue;
+                }
                 if (isElementTransformedToText(node)) {
                     cumulativeSizeForElementTransformedToText = cumulativeSizeForElementTransformedToText + sizeOfLastTextNode + node.textContent.length;
                     countElementsTransformedToText++;
@@ -426,7 +431,7 @@ define(function actionManagerExtensionModule(require) {
                 }
             }
             if(selection?.anchorNode?.parentNode?.childNodes) {
-                childIndex = Array.prototype.indexOf.call(selection.anchorNode.parentNode.childNodes, selection.anchorNode) - (countElementsTransformedToText*2);
+                childIndex = Array.prototype.indexOf.call(selection.anchorNode.parentNode.childNodes, selection.anchorNode) - (countElementsTransformedToText*2) - countEmptyElements;
             }
             posFound = selection.anchorOffset + cumulativeSizeForElementTransformedToText;
         }

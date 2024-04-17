@@ -437,6 +437,7 @@ define(function elementEditorModule(require) {
         if (connector.editorChannel) {
             connector.editorChannel.publish('editor.close', {elementId: elementId});
         }
+        connector.refreshAnnotate();
         // clear LEOS data from editor
         editor.LEOS = null;
     }

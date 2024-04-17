@@ -226,6 +226,7 @@ export class DocumentService {
   }>({ isTrackChangesEnabled: false, isTrackChangesShowed: false });
 
   private getAnnotations?: () => Promise<string>;
+  private refreshAnnotateCall?: () => void;
 
   constructor(
     private http: HttpClient,
@@ -1179,6 +1180,16 @@ export class DocumentService {
     setAnnotationsReadOnly: (mode: AnnotateOperationMode) => void,
   ) {
     this.setAnnotationMode = setAnnotationsReadOnly;
+  }
+
+  setRefreshAnnotateCall(
+    setRefreshAnnotateCall: () => void,
+  ) {
+    this.refreshAnnotateCall = setRefreshAnnotateCall;
+  }
+
+  refreshAnnotate() {
+    this.refreshAnnotateCall();
   }
 
   setDidDocumentLoadAndRender(loaded: boolean) {

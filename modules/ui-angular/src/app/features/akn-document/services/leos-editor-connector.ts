@@ -355,6 +355,10 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     });
   }
 
+  refreshAnnotate() {
+    this.documentService.refreshAnnotate();
+  }
+
   private handleActionsAfterSave(
     response: RefreshElementResponse,
     elemData: SaveElementAction,
