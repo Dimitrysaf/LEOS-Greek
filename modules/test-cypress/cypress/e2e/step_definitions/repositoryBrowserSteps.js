@@ -6,7 +6,7 @@ Then('user is on repository browser page', () => {
 })
 
 When('click on create proposal button', () => {
-    repositoryBrowserPage.elements.createProposalBtn().click();
+    repositoryBrowserPage.clickCreateProposalBtn();
 })
 
 // When('click proposal {int} in repository browser page', (proposalRank) => {
