@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.europa.ec.leos.domain.common.RepositoryProfileType;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
@@ -1028,6 +1029,20 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public FavouritePackageResponse toggleFavouritePackage(String ref, String userId) {
         logger.trace("Toggle favourite package for document... [ref=" + ref + ']');
         return repository.toggleFavouritePackage(ref, userId);
+    }
+
+    @Override
+    @PerformanceLogger
+    public Object configNotificationsUpload(String content) throws JsonProcessingException {
+        logger.trace("Upload config notifications");
+        return repository.configNotificationsUpload(content);
+    }
+
+    @Override
+    @PerformanceLogger
+    public String configNotificationsFetch() {
+        logger.trace("Fetch config notifications");
+        return repository.configNotificationsFetch();
     }
 
 }
