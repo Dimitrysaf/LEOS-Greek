@@ -141,8 +141,13 @@ define(function actionManagerExtensionModule(require) {
 
     function _registerEditorChannelSubscriptions(connector, $rootElement) {
         if (connector.editorChannel) {
-            connector.editorChannel.subscribe("editor.open", _editorOpen.bind(undefined, connector));
-            connector.editorChannel.subscribe("editor.close", _editorClose.bind(undefined, connector));
+            let channel = connector.editorChannel;
+            if(channel.bus?.subscriptions) {
+                channel.bus.unsubscribeFor({"topic": "editor.open"});
+                channel.bus.unsubscribeFor({"topic": "editor.close"});
+            }
+            channel.subscribe("editor.open", _editorOpen.bind(undefined, connector));
+            channel.subscribe("editor.close", _editorClose.bind(undefined, connector));
         }
     }
 

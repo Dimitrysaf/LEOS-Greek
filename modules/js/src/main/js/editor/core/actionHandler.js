@@ -23,15 +23,16 @@ define(function actionHandlerModule(require) {
         log.debug("Setting up action handler...");
         if (connector.editorChannel) {
             let channel = connector.editorChannel;
-            let subscriptions = connector.actionSubscriptions || [];
+            if(channel.bus?.subscriptions) {
+                channel.bus.unsubscribeFor({"topic": "actions.insert.*.element"});
+                channel.bus.unsubscribeFor({"topic": "actions.edit.element"});
+                channel.bus.unsubscribeFor({"topic": "actions.delete.element"});
+            }
+            connector.actionSubscriptions = [];
             // subscribe to editor channel action topics
-            let insertAction = channel.subscribe("actions.insert.*.element", _insertElementAction.bind(undefined, connector));
-            subscriptions.push(insertAction);
-            let editAction = channel.subscribe("actions.edit.element", _editElementAction.bind(undefined, connector));
-            subscriptions.push(editAction);
-            let deleteAction = channel.subscribe("actions.delete.element", _deleteElementAction.bind(undefined, connector));
-            subscriptions.push(deleteAction);
-            connector.actionSubscriptions = subscriptions;
+            connector.actionSubscriptions.push(channel.subscribe("actions.insert.*.element", _insertElementAction.bind(undefined, connector)));
+            connector.actionSubscriptions.push(channel.subscribe("actions.edit.element", _editElementAction.bind(undefined, connector)));
+            connector.actionSubscriptions.push(channel.subscribe("actions.delete.element", _deleteElementAction.bind(undefined, connector)));
         }
     }
 
