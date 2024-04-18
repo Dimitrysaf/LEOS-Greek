@@ -200,12 +200,11 @@ export class DocumentComponent
     this.documentService.setDidDocumentLoadAndRender(true);
     if (!this.readonly) {
       this.interceptAndProcessBookmarkLink();
-      this.documentService.documentView$
+      this.documentService.documentConfig$
           .pipe(takeUntil(this.destroy$))
           .subscribe((documentView) => {
             this.ckeditorService.init();
           });
-
       this.coEditionWSService
         .getDocCoEditionInfo()
         .pipe(takeUntil(this.destroy$))
