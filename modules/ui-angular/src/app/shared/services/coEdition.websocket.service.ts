@@ -331,29 +331,17 @@ export class CoEditionServiceWS {
       userCoEditionElements.forEach((userCoEditionElement) => {
         userCoEditionElement.remove();
       });
-      let result = false;
       for (const key in coEdits) {
         if (key)
           for (const coEdit of coEdits[key]) {
             if (coEdit.infoType === 'TOC_INFO') return;
             const elemInDoc = this.document.getElementById(coEdit.elementId);
-            const tocElemInDoc = document.querySelector(`[data-id=${coEdit.elementId}]`);
-            if(!isCalledFromToc) {
-              this.addCoEditionIconToElement(elemInDoc, key, coEdits, false);
-            }
-            if (tocElemInDoc){
-              if(isCalledFromToc) {
-                this.addCoEditionIconToElement(elemInDoc, key, coEdits, false);
-              }
-              this.addCoEditionIconToElement(tocElemInDoc, key, coEdits, true);
-              result = true;
-            }
+            this.addCoEditionIconToElement(elemInDoc, key, coEdits);
           }
       }
-      return result;
     }
 
-    private addCoEditionIconToElement(elemToAddIcon: any, key: string, coEdits: Record<string, CoEditionVO[]>, isToc: boolean){
+    private addCoEditionIconToElement(elemToAddIcon: any, key: string, coEdits: Record<string, CoEditionVO[]>){
       const coEditNode = this.document.createElement('div');
       coEditNode.classList.add(
         'leos-user-coedition',
@@ -365,20 +353,11 @@ export class CoEditionServiceWS {
       iconSpan.style.display = 'inline-block';
       const textDiv = this.document.createElement('div');
       textDiv.innerHTML = this.generateTooltip(coEdits[key]);
-      if(isToc){
-        textDiv.style.cssText = "position: absolute;padding: 3px 7px;width: auto;white-space: nowrap;font-size: 12px;" +
-          "font-family: 'Open Sans';color: white;background-color: rgba(51, 51, 51, 0.9);" +
-          "-webkit-box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2); display: none;" +
-          "z-index: 999999;";
-      }
       coEditNode.append(iconSpan);
       coEditNode.append(textDiv);
       coEditNode.style.top = elemToAddIcon.offsetTop + 'px';
-      coEditNode.style.left =  (isToc ? 0 : elemToAddIcon.offsetLeft - 25) + 'px';
+      coEditNode.style.left =  (elemToAddIcon.offsetLeft - 25) + 'px';
       coEditNode.style.position = 'absolute';
-      if(isToc){
-        coEditNode.style.color = '#707070';
-      }
       elemToAddIcon.insertAdjacentElement('beforebegin', coEditNode);
       coEditNode.addEventListener('mouseenter', () => {
         textDiv.style.left = iconSpan.offsetLeft + 10 + 'px';

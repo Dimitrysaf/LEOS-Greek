@@ -1,8 +1,7 @@
 import { CdkDragDrop, CdkDragMove } from '@angular/cdk/drag-drop';
 import { NestedTreeControl } from '@angular/cdk/tree';
-import { DOCUMENT, formatDate } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import {
-  AfterViewChecked,
   AfterViewInit,
   Component,
   ElementRef,
@@ -14,11 +13,12 @@ import {
   OnInit,
   Output,
   ViewChild,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, keys } from 'lodash-es';
 import {
   BehaviorSubject,
   combineLatest,
@@ -84,7 +84,7 @@ import { ValidateTocService } from '../../services/validate-node-drop.service';
   styleUrls: ['./document-toc.component.scss'],
 })
 export class DocumentTocComponent
-  implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked
+  implements OnInit, OnDestroy, AfterViewInit
 {
   @Input() documentType: string;
   @Input() documentRef: string;
@@ -120,10 +120,9 @@ export class DocumentTocComponent
 
   draggedItem: TableOfContentItemVO = null;
   targetNode: TableOfContentItemVO = null;
-
+  isVisible = true;
   @ViewChild('deleteTocConfirmation')
   deleteDialog: ConfirmDeleteDialogComponent;
-
   private tooltips = new Map<TableOfContentItemVO, string>();
   private tooltipTimers = new Set<number>();
   private resizeObserver: ResizeObserver;
@@ -146,6 +145,7 @@ export class DocumentTocComponent
     private tocInlineEditMenuService: TocInlineEditMenuService,
     @Inject(DOCUMENT) private document: Document,
     private zone: NgZone,
+    private cdr: ChangeDetectorRef,
   ) {
     this.zoneOnStable$ = this.zone.onStable.pipe(
       takeUntil(this.destroy$),
@@ -210,14 +210,12 @@ export class DocumentTocComponent
 
   ngAfterViewInit() {
     this.setupResizeObserver();
+    this.coEditionService.getDocCoEditionInfo()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((c) => {
+        this.rerender();
+      });
   }
-
-  ngAfterViewChecked() {
-    if (!this.alreadyDidAsyncWork) {
-      this.callCoEditionService();
-    }
-  }
-  
   seeTocItemStyling() {
     return this.seeTrackChanges;
   }
@@ -339,8 +337,13 @@ export class DocumentTocComponent
     for (const node of this.invalidNodes || []) {
       //hilight invalid nodes
       const element = document.querySelector(`[data-id=${node.id}]`);
-      if (element)
-        element.children[1].children[0].classList.add('invalid-node');
+      if (element){
+        if(element.children[1].children[0].tagName === 'APP-CO-EDITION-INFO'){
+          element.children[1].children[1].classList.add('invalid-node');
+        }else{
+          element.children[1].children[0].classList.add('invalid-node');
+        }
+      }
     }
   }
 
@@ -427,7 +430,11 @@ export class DocumentTocComponent
           this.dragAction = null;
           return;
         }
-        el = node.children[1].children[0];
+        if(node.children[1].children[0].tagName === 'APP-CO-EDITION-INFO'){
+          el = node.children[1].children[1];
+        }else{
+          el = node.children[1].children[0];
+        }
 
         const targetRect = el.getBoundingClientRect();
         const oneThird = targetRect.height / 3;
@@ -490,6 +497,7 @@ export class DocumentTocComponent
       if (this.selectedNode) this.handleNodeSelect(this.selectedNode, false);
       this.highlightInvalidNodes();
     });
+    setTimeout(() => this.rerender());
   }
 
   checkForDraft() {
@@ -520,19 +528,11 @@ export class DocumentTocComponent
       this.checkChildNodesToRender(root, n);
     }
   }
-
-  private callCoEditionService() {
-    if (!this.readonly) {
-      this.coEditionService
-        .getDocCoEditionInfo()
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((coEdits) => {
-          this.alreadyDidAsyncWork =
-            this.coEditionService.showElementsBeingEdited(coEdits, true);
-        });
-    }
+  private rerender(): void {
+      this.isVisible = false;
+      this.cdr.detectChanges();
+      this.isVisible = true;
   }
-
   private checkChildNodesToRender(
     root: TableOfContentItemVO[],
     parentNode: TableOfContentItemVO,

@@ -1,0 +1,25 @@
+@import 'node_modules/@eui/styles-base/src/styles/base';
+@import 'node_modules/@eui/styles/src/styles/02-base/mixins/eui-scrollbars';
+
+$GREY_COLOUR:#707070;
+$HEADER_BLUE:#0065A2;
+
+.leos-user-coedition {
+  left:0;
+  transform:translateX(-100%);
+  position: absolute;
+  width: 15px;
+  user-select: none;
+  color: $HEADER_BLUE;
+  marign-right: 10px;
+  display: inline-block;
+  * {
+    font-weight: normal;
+  }
+  z-index: 999;
+}
+
+.leos-user-coedition-self-user {
+  color: $GREY_COLOUR;
+}
+

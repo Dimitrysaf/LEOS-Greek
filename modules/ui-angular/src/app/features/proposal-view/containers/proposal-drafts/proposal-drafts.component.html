@@ -10,7 +10,7 @@
                     'page.collection.drafts.coverPage' | translate
                     }}</strong></a
                 >
-                <app-co-edition-info [documentCoEditions]="null"></app-co-edition-info>
+              <app-co-edition-info [documentCoEditions]="null" [isNotTocNodeLevel]="true"></app-co-edition-info>
             </eui-card-header-title>
             <eui-card-header-subtitle
                     *ngIf="coverpage.updatedOn && coverpage.updatedBy"
@@ -29,7 +29,7 @@
     <eui-card-header>
         <eui-card-header-title>
             <div class="d-flex flex-row">
-                <app-co-edition-info
+                <app-co-edition-info [isNotTocNodeLevel]="true"
                         *ngIf="coEditionMap"
                         [documentCoEditions]="
             coEditionMap[memorandum?.metadata.internalRef] ?? null
@@ -115,7 +115,7 @@
               "
                         >
                             <div class="d-flex flex-row">
-                                <app-co-edition-info
+                                <app-co-edition-info [isNotTocNodeLevel]="true"
                                         *ngIf="coEditionMap"
                                         [documentCoEditions]="
                     coEditionMap[row?.metadata.internalRef] ?? null
@@ -215,7 +215,7 @@
     <eui-card-header>
         <eui-card-header-title>
             <div class="d-flex flex-row">
-                <app-co-edition-info
+                <app-co-edition-info [isNotTocNodeLevel]="true"
                         *ngIf="coEditionMap"
                         [documentCoEditions]="
             coEditionMap[document.metadata.internalRef] ?? null
@@ -393,7 +393,7 @@
               "
                         >
                             <div class="d-flex flex-row eui-u-flex-align-items-center">
-                                <app-co-edition-info
+                                <app-co-edition-info [isNotTocNodeLevel]="true"
                                         *ngIf="coEditionMap"
                                         [documentCoEditions]="
                     coEditionMap[row.metadata.internalRef] ?? null

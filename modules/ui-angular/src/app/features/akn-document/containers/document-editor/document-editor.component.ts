@@ -55,8 +55,6 @@ import {
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
 import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { TableOfContentItemVO, TocItem } from '@/shared/models/toc.model';
-import { VersionInfoVO } from '@/shared/models/version-info.model';
-import { VersionSearchParams } from '@/shared/models/versionSearch';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';

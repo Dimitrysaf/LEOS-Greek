@@ -1,7 +1,7 @@
 <!-- indicator for toc next to the edit button-->
 <div
   class="w-100 align-self-center"
-  *ngIf="isToc && coEditiionForToc && coEditiionForToc.length > 0"
+  *ngIf="isToc && isNotTocNodeLevel && coEditiionForToc && coEditiionForToc.length > 0"
 >
   <span
     class="eui-icon eui-icon-person eui-u-font-size-m"
@@ -11,10 +11,20 @@
 <!-- -->
 <div
   class=""
-  *ngIf="!isToc && documentCoEditions && documentCoEditions.length > 0"
+  *ngIf="!isToc  && isNotTocNodeLevel && documentCoEditions && documentCoEditions.length > 0"
 >
   <span
     class="eui-icon eui-icon-person"
     [euiTooltip]="generateTooltip(documentCoEditions)"
+  ></span>
+</div>
+<!-- -->
+<div
+  class="w-100 leos-user-coedition leos-user-coedition-self-user"
+  *ngIf="!isNotTocNodeLevel && isNodeCoEdited()"
+>
+  <span
+    class="eui-icon eui-icon-person"
+    [euiTooltip]="generateTooltipForIcon()"
   ></span>
 </div>
