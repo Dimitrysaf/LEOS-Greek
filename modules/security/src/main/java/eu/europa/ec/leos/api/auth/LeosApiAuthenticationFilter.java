@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
     
     private static final Logger LOG = LoggerFactory.getLogger(LeosApiAuthenticationFilter.class);
@@ -49,28 +48,32 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
         String userLogin;
         User user;
 
-        if (request.getHeader(AUTHORIZATION) == null || !request.getHeader(AUTHORIZATION).startsWith("Bearer ")) {
-            LOG.warn("Authorization failed! Wrong Headers: '{}' is missing or contains a wrong value", AUTHORIZATION);
-            throw new LeosApiAuthenticationException("Authorization failed! Wrong Headers: " +
+        if (request.getHeader(AUTHORIZATION) == null || !request.getHeader(AUTHORIZATION).startsWith("Bearer ")
+                || request.getHeader(AUTHORIZATION).startsWith("Bearer undefined")) {
+            LOG.warn("Authorization failed! Wrong headers: '{}' is missing or contains a wrong value", AUTHORIZATION);
+            throw new LeosApiAuthenticationException("Authorization failed! Wrong headers: " +
                     "Authorization is missing or contains a wrong value");
         }
 
         token = request.getHeader(AUTHORIZATION).substring(7);
 
         if (!tokenService.validateAccessToken(token)) {
-            LOG.warn("Authorization failed! Wrong accessToken");
-            String claims = JWT.decode(token).getClaims().entrySet().stream()
-                    .map(e -> e.getKey()+": "+e.getValue().asString())
-                    .collect(Collectors.joining(","));
-            LOG.warn("Token Details:\n" +
-                            "Method: {}\n"+
-                            "Path: {}\n"+
-                            "Claims: {}",
-                    request.getMethod(),
-                    request.getContextPath()+request.getServletPath()+request.getPathInfo(),
-                    claims
-            );
-            throw new LeosApiAuthenticationException("Authorization failed! Wrong accessToken");
+            LOG.warn("Authorization failed! Wrong access token");
+            try {
+                String claims = JWT.decode(token).getClaims().entrySet().stream()
+                        .map(e -> e.getKey() + ": " + e.getValue().asString())
+                        .collect(Collectors.joining(","));
+                LOG.warn("Token details:\n" +
+                                "Method: {}\n" +
+                                "Path: {}\n" +
+                                "Claims: {}",
+                        request.getMethod(),
+                        request.getContextPath() + request.getServletPath() + request.getPathInfo(),
+                        claims
+                );
+            } catch (Exception e) {
+            }
+            throw new LeosApiAuthenticationException("Authorization failed! Wrong access token");
         }
 
         userLogin = tokenService.extractUserFromToken(token);
@@ -85,12 +88,12 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
         String contextRole = null;
         if(StringUtils.isNotBlank(contextToken)) {
             if (!tokenService.validateClientContextToken(contextToken)) {
-                LOG.warn("Authorization failed! Wrong contextToken");
-                throw new LeosApiAuthenticationException("Authorization failed! Wrong contextToken");
+                LOG.warn("Authorization failed! Wrong context token");
+                throw new LeosApiAuthenticationException("Authorization failed! Wrong context token");
             }
             if(!tokenService.validateUserFromClientContext(contextToken, token)) {
-                LOG.warn("Authorization failed! User mismatch in accessToken & contextToken");
-                throw new LeosApiAuthenticationException("Authorization failed! User mismatch in accessToken & contextToken");
+                LOG.warn("Authorization failed! User mismatch in access token & context token");
+                throw new LeosApiAuthenticationException("Authorization failed! User mismatch in access token & context token");
             }
             contextRole = tokenService.extractUserRoleFromToken(contextToken);
         }
