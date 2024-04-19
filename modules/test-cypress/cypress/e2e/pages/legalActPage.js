@@ -11,10 +11,9 @@ class legalActPage extends headerPage{
         deleteIconActionMenu: () => cy.get(".leos-actions.Vaadin-Icons span[data-widget-type='delete'][style='display: inline-block;']")
     }
     
-    mouseHoverOnArticle(articleNumber){
-        cy.get("#_art_" + articleNumber).trigger('mouseover');
+    mouseHoverAndClickOnArticle(articleNumber){
+        cy.get("#_art_" + articleNumber).trigger('mouseover').trigger('click');
     }
-
 
     mouseHoverAndClickOnCitation(citationNumber){
         cy.get("#_cit_" + citationNumber).trigger('mouseover').trigger('click');
@@ -29,20 +28,7 @@ class legalActPage extends headerPage{
         cy.wait(4000);
     }
 
-    openCkEditorForArticle(articleNumber){
-        cy.window().then((w) => {
-            w.EditorConnector.handleEdit({
-                "action": "edit",
-                "elementId": "_art_" + articleNumber,
-                "elementType": "article",
-                "elementCursorId": "_art_" + articleNumber,
-                "elementCursorChildPos": 0,
-                "elementCursorPos": 0
-            })
-        });
-    }
-
-    getParagraphFromArticle(articleNumber){
+    getAllParagraphFromArticle(articleNumber){
         return cy.xpath("//article[" + articleNumber + "]//paragraph");
     }
 
@@ -53,7 +39,10 @@ class legalActPage extends headerPage{
     getRecital(recitalNumber){
         return cy.xpath("//recital[" + recitalNumber + "]");
     }
-    
+
+    getParagraphFromArticle(paragraphNumber, articleNumber){
+        return cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber+ "]");
+    }
 }
 export default new legalActPage();
 import '@cypress/xpath';

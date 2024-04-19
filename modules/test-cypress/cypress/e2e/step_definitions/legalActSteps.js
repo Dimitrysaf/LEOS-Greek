@@ -7,10 +7,6 @@ Then('user is on legal act page', () => {
     cy.wait(2000);
 })
 
-When('mousehover article {int}', articleNumber => {
-    legalActPage.mouseHoverOnArticle(articleNumber);
-})
-
 When('mousehover and click on citation {int}', citationNumber => {
     legalActPage.mouseHoverAndClickOnCitation(citationNumber);
 })
@@ -19,9 +15,8 @@ When('mousehover and click on recital {int}', recitalNumber => {
     legalActPage.mouseHoverAndClickOnRecital(recitalNumber);
 })
 
-When('open ck editor for article {int}', (articleNumber) => {
-    legalActPage.openCkEditorForArticle(articleNumber);
-    cy.wait(2000);
+When('mousehover and click on article {int}', articleNumber => {
+    legalActPage.mouseHoverAndClickOnArticle(articleNumber);
 })
 
 When('click on close button present in legal act page', () => {
@@ -30,7 +25,7 @@ When('click on close button present in legal act page', () => {
 })
  
 When('{int} paragraphs are present in article {int}', (paragraphNumber, articleNumber) => {
-    legalActPage.getParagraphFromArticle(articleNumber).should('have.length', paragraphNumber);
+    legalActPage.getAllParagraphFromArticle(articleNumber).should('have.length', paragraphNumber);
 })
 
 And('ribbon toolbar is displayed', () => {
@@ -60,35 +55,6 @@ When('mousehover on citation {int} and click on edit button from action menu', (
     cy.wait(10000);
 })
 
-// And('{string} is present in content of paragraph {int} of article {int}', (text, paragraphNumber, articleNumber) => {
-//     cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber + "]//content//aknp").should('have.text', text);
-// })
-
-// When('click on article {int}', articleNumber => {
-//     // cy.get("#_art_" + articleNumber).trigger('mouseover').trigger("click");
-//     cy.get("#_art_" + articleNumber).trigger('mouseover');
-//     cy.wait(10000);
-// })
-
-// When('click on {string} present in enacting terms', (enactingTerm) => {
-//     cy.xpath("//mat-nested-tree-node//*[text()='" + enactingTerm + "']").click();
-// })
-
-// When('click enter at offset 8 in paragraph 1 of article 1 when ck editor is open', (offset, paragraphNumber, articleNumber) => {
-//     cy.window().then((w) => {
-//         w.EditorConnector.handleEdit({
-//             "action": "edit",
-//             "elementId": "_art_" + articleNumber + "",
-//             "elementType": "article",
-//             "elementCursorId": "_art_" + articleNumber + "",
-//             "elementCursorChildPos": 0,
-//             "elementCursorPos": 0
-//         })
-
-//         cy.wait(1000).then(() => {
-//             let editor = w.CKEDITOR.instances.editor1;
-//             editor.execCommand('enter');
-//         })
-
-//     })
-// })
+Then(`paragraph {int} of article {int} contains {string}`, (paragraphNumber, articleNumber, text) => {
+    legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).contains(text);
+});
