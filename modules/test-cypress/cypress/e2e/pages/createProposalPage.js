@@ -8,9 +8,20 @@ class createProposalPage {
         createBtn: () => cy.get('app-proposal-create-wizard button.eui-button.eui-button--primary')
     }
 
-    getTemplateElementByName(templateName) {
-        return cy.xpath("//span[contains(text(),'" + templateName + "')]");
+    clickTemplateByName(templateName) {
+        return cy.xpath("//span[contains(text(),'" + templateName + "')]").click();
     }
 
+    clickNextBtn() {
+        this.elements.nextBtn().click();
+    }
+
+    enterProposalTitle(title) {
+        this.elements.documentTitle().clear().type(title);
+    }
+
+    clickCreateBtn() {
+        this.elements.createBtn().click();
+    }
 }
 export default new createProposalPage();

@@ -21,6 +21,14 @@ class proposalViewerPage extends headerPage{
         reOrderBtnAnnex: () => cy.xpath("//div/*[text()='Annexes']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Reorder ']"),
     }
 
+    clickCloseBtn(){
+        this.elements.closeBtn().click();
+    }
+
+    clickLegalActLink(){
+        this.elements.legalActLink().click();
+    }
+
 }
 export default new proposalViewerPage();
 

@@ -5,5 +5,9 @@ class repositoryBrowserPage extends headerPage {
         proposalTable: () => cy.get('app-proposal-item'),
         createProposalBtn: () => cy.contains('Create Proposal')
     }
+
+    clickCreateProposalBtn(){
+        this.elements.createProposalBtn().click();
+    }
 }
 export default new repositoryBrowserPage();

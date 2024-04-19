@@ -1,8 +1,8 @@
 import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
-require('@cypress/xpath');
+import annotationBar from "../pages/annotationBar";
 
 And('annotation side bar is present', () => {
-    cy.get('eui-page-column.annotations-pane').should('be.visible');
+    annotationBar.elements.annotationPane().should('be.visible');
 })
 
 And('annotation side bar is minimized', () => {

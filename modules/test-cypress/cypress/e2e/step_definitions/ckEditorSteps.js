@@ -16,7 +16,7 @@ And('click save and close button of ck editor', () => {
 
 When('click close button of ck editor', () => {
     ckEditorWindow.clickCloseBtn();
-    cy.wait(2000);
+    cy.wait(1000);
 })
 
 When('append {string} at offset {int} in paragraph {int} of article {int} when ck editor is open', function (newContent, offset, paragraphNumber, articleNumber) {
@@ -50,3 +50,8 @@ And('click delete button from keyboard when ck editor is open', () => {
 And('click enter from keyboard when ck editor is open', () => {
     ckEditorWindow.clickEnterFromKeyboardWhenCKEditorOpen();
 })
+
+When('add {string} at current cursor position when ck editor is open', function (newContent) {
+    ckEditorWindow.addTextAtCurrentCursorPositionWhenCKEditorOpen(newContent);
+});
+
