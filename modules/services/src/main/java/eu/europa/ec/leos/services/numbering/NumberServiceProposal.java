@@ -26,7 +26,6 @@ import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
-import org.apache.commons.lang3.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,17 +38,14 @@ import javax.inject.Provider;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XercesUtils.replaceElement;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
-import static eu.europa.ec.leos.services.support.XmlHelper.BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
-import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
@@ -178,17 +174,25 @@ public class NumberServiceProposal implements NumberService {
         return xmlContent;
     }
 
+    public static List<TableOfContentItemVO> searchInFlatList(List<TableOfContentItemVO> tableOfContentItemVOList, String elementName) {
+        List<TableOfContentItemVO> flatList = new ArrayList<>();
+        for (TableOfContentItemVO item : tableOfContentItemVOList) {
+            flatList.add(item);
+            if (!item.getChildItems().isEmpty()) {
+                flatList.addAll(searchInFlatList(item.getChildItems(), elementName));
+            }
+        }
+        flatList = flatList.stream().filter(tocVO -> tocVO.getTocItem().getAknTag().value().equalsIgnoreCase(elementName))
+                .collect(Collectors.toList());
+        return flatList;
+    }
+
     private byte[] renumberDocumentSubdivision(byte[] xmlContent, List<TableOfContentItemVO> tableOfContentItemVOList, String elementName, boolean namespaceEnabled) {
         tocItems = structureContextProvider.get().getTocItems();
         String language = documentLanguageContext.getDocumentLanguage();
         TocItem tocItem = getTocItemByName(tocItems, elementName);
         NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
-        List<TableOfContentItemVO> itemVOs = tableOfContentItemVOList.stream()
-                .filter(tocVO -> tocVO.getTocItem().getAknTag().value().equalsIgnoreCase(BODY) || tocVO.getTocItem().getAknTag().value().equalsIgnoreCase(MAIN_BODY))
-                .findFirst()
-                .get().getChildItems().stream()
-                .filter(tocVO -> tocVO.getTocItem().getAknTag().value().equalsIgnoreCase(elementName))
-                .collect(Collectors.toList());
+        List<TableOfContentItemVO> itemVOs = searchInFlatList(tableOfContentItemVOList, elementName);
         if (!itemVOs.isEmpty() && elementName.equals(CHAPTER)) {
             numberingType = itemVOs.get(0).getTocItem().getNumberingType() != null ? itemVOs.get(0).getTocItem().getNumberingType() : numberingType;
         }
