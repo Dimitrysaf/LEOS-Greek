@@ -23,7 +23,6 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
-import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.security.AuthClient;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -77,6 +76,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -119,6 +119,7 @@ public class LeosApiController {
     private static final String BEARER_GRANT_TYPE = "jwt-bearer";
     private static final String BEARER_PARAMETER = "assertion";
     private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
+    private static final String AUTHORIZATION = "Authorization";
 
     @Value("${leos.api.jwt.auth.access.token.expire.min}")
     private String accessTokenExpirationInMin;
@@ -150,27 +151,23 @@ public class LeosApiController {
     public ResponseEntity<Object> getToken(HttpServletRequest request, HttpServletResponse response) {
         response.setHeader("Cache-Control", "no-store");
         response.setHeader("Pragma", "no-cache");
-        String contextPath = request.getContextPath();
+
+        final String contextPath = request.getContextPath();
         final String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
         final String grantType = request.getHeader(GRANT_TYPE);
         if (!StringUtils.isEmpty(grantType) && grantType.contains(BEARER_GRANT_TYPE)) {
             String token = request.getHeader(BEARER_PARAMETER);
             return validateAndGenerateAccessToken(token, clientContextToken, response, contextPath);
         } else {
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (cookie.getName().equals("Authorization")) {
-                        return validateAndGenerateAccessToken(cookie.getValue(), clientContextToken, response, contextPath);
-                    } else {
-                        LOG.warn("Authorization failed! Wrong Headers: No authorization cookie found");
-                    }
-                }
-            } else {
-                LOG.warn("Authorization failed! Wrong Headers: '{}' is missing or contains no cookie is found", GRANT_TYPE);
+            Cookie authorizationCookie = Arrays.stream(request.getCookies())
+                    .filter(cookie -> AUTHORIZATION.equals(cookie.getName()))
+                    .findAny().orElse(null);
+            if (authorizationCookie != null) {
+                return validateAndGenerateAccessToken(authorizationCookie.getValue(), clientContextToken, response, contextPath);
             }
+            LOG.warn("Authorization failed! Wrong headers: '{}' is missing or no authorization cookie is found.", GRANT_TYPE);
         }
-        return new ResponseEntity<>("Wrong Headers!", HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>("Wrong headers!", HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<Object> validateAndGenerateAccessToken(String token, String clientContextToken, HttpServletResponse response, String contextPath) {
