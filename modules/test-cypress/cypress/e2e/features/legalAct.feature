@@ -4,7 +4,7 @@
 @LegalActScenarios
 Feature: Legal Act Page Regression Features
 
-    @legalActScenario_citation_recital @local
+    @citation_recital_editing @local
     Scenario: Add and removal of text in citation and recital element in legal Act
         Given navigate to edit drafting application
         Then user is on repository browser page
@@ -49,7 +49,7 @@ Feature: Legal Act Page Regression Features
         When click on close button on proposal viewer page
         Then user is on repository browser page
         
-    @splitParagraphArticleEditing @local
+    @articleEditing @local @focus
     Scenario: append text in existing paragraph and make same paragraph into two inside article
         Given navigate to edit drafting application
         Then user is on repository browser page
@@ -62,19 +62,22 @@ Feature: Legal Act Page Regression Features
         Then user is on proposal viewer page
         When click on legal act link present in proposal viewer page
         Then user is on legal act page
-        When mousehover article 1
-        # Then "Text..." is present in content of paragraph 1 of article 1
-        When open ck editor for article 1
+        And  annotation side bar is present
+        And  ribbon toolbar is displayed
+        And  toc editing button is available
+        When mousehover and click on article 1
+        # Then paragraph 1 of article 1 contains "Text..." when ck editor is open
         Then ck editor window is displayed
-        When append " adding new data " at offset 8 in paragraph 1 of article 1 when ck editor is open
-        # Then "Text...adding new data" is present in paragraph 1 of article 1 when ck editor is open
+        When append " New Text " at offset 7 in paragraph 1 of article 1 when ck editor is open
+        # Then paragraph 1 of article 1 contains "Text...New Text" when ck editor is open
+        When move the cursor position to offset 7 in paragraph 1 of article 1 when ck editor is open
         And  click enter from keyboard when ck editor is open
-        # Then "Text..." is present in paragraph 1 of article 1 when ck editor is open
-        # And  "adding new data" is present in paragraph 1 of article 1 when ck editor is open
-        And click save and close button of ck editor
+        # Then paragraph 1 of article 1 contains "Text..." when ck editor is open
+        # And  paragraph 2 of article 1 contains "New Text" when ck editor is open
+        When click save and close button of ck editor
         Then ck editor window is not displayed
         And  2 paragraphs are present in article 1
-        # And "Text..." is present in content of paragraph 1 of article 1
-        # And  "adding new data" is present in content of paragraph 2 of article 1
+        And  paragraph 1 of article 1 contains "Text..."
+        And  paragraph 2 of article 1 contains "New Text"
         When click on close button present in legal act page
         Then user is on proposal viewer page

@@ -9,7 +9,7 @@ Then('ck editor window is not displayed', () => {
     ckEditorWindow.getCkEditableInlineElement().should('not.exist');
 })
 
-And('click save and close button of ck editor', () => {
+When('click save and close button of ck editor', () => {
     ckEditorWindow.clickSaveAndCloseBtn();
     cy.wait(2000);
 })
@@ -20,11 +20,11 @@ When('click close button of ck editor', () => {
 })
 
 When('append {string} at offset {int} in paragraph {int} of article {int} when ck editor is open', function (newContent, offset, paragraphNumber, articleNumber) {
-    ckEditorWindow.appendContentInParagraphInArticle(newContent,paragraphNumber,articleNumber);
+    ckEditorWindow.appendContentInParagraphInArticle(newContent,offset,paragraphNumber,articleNumber);
 });
 
-When('append {string} at offset {int} in paragraph {int} of article {int} when ck editor is open', function (newContent, offset, paragraphNumber, articleNumber) {
-    ckEditorWindow.appendContentInParagraphInArticle(newContent,paragraphNumber,articleNumber);
+When('move the cursor position to offset {int} in paragraph {int} of article {int} when ck editor is open', function (offset, paragraphNumber, articleNumber) {
+    ckEditorWindow.moveCursorToSpecificOffsetInParagraphOfArticle(offset,paragraphNumber,articleNumber);
 });
 
 When('add {string} at offset {int} in citation {int} when ck editor is open', function (newContent, offset, citationNumber) {
@@ -55,3 +55,6 @@ When('add {string} at current cursor position when ck editor is open', function 
     ckEditorWindow.addTextAtCurrentCursorPositionWhenCKEditorOpen(newContent);
 });
 
+Then(`paragraph {int} of article {int} contains {string} when ck editor is open`, (paragraphNumber, articleNumber, text) => {
+    
+});
