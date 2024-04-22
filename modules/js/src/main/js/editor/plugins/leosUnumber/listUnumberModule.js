@@ -36,7 +36,9 @@ define(function listUnumberModule(require) {
     function _initializeLists(editor) {
         var tocItemsIdent = editor.LEOS.tocItemsList.filter(tocItem => tocItem.aknTag == leosPluginUtils.INDENT);
         numberingConfigs = editor.LEOS.numberingConfigs;
-        unumberedListNumberConfig = tocItemsIdent.map(tocItem => numberingConfigs.find(numberingConfig => numberingConfig.type == tocItem.numberingType));
+        unumberedListNumberConfig = tocItemsIdent.map(tocItem => numberingConfigs
+            .find(numberingConfig => numberingConfig.type == tocItem.autoNumbering.langNumConfigs
+                .find(langNumConfig => langNumConfig.langGroup === editor.LEOS.langGroup).numberingTypes[0]));
     }
 
     /*
