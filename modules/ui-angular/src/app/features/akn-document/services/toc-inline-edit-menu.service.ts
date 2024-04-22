@@ -162,14 +162,19 @@ export abstract class TocInlineEditMenuService {
     };
   }
 
+  private flatten(tableOfContentItemVO : TableOfContentItemVO[]): TableOfContentItemVO[] {
+    return tableOfContentItemVO.flatMap(tableOfContentItemVO => [tableOfContentItemVO, ...(tableOfContentItemVO.childItems ? this.flatten(tableOfContentItemVO.childItems) : [])]);
+  }
+
   protected buildChapterItem(
     node: TableOfContentItemVO,
   ): EuiDropdownButtonMenuItem {
     const toc = this.tocService.getCurrentToc();
-    const tocVOs = toc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems
+    const chapterTocVos =  this.flatten(toc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems)
       .filter(obj => obj.tocItem.aknTag === node.tocItem.aknTag);
-    if(tocVOs.length > 0 ) {
-      switch (tocVOs[0].number) {
+
+    if(chapterTocVos.length > 0 ) {
+      switch (chapterTocVos[0].number) {
         case 'I':
           node.tocItem.numberingType = 'ROMAN_UPPER';
           break;
@@ -192,7 +197,7 @@ export abstract class TocInlineEditMenuService {
             'toc.edit.window.item.regular.chapter.num.roman',
           ),
           disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'ROMAN_UPPER',
-          command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', toc, tocVOs),
+          command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', toc, chapterTocVos),
         },
         {
           id: CHAPTER_NUMBER_ARABIC,
@@ -200,7 +205,7 @@ export abstract class TocInlineEditMenuService {
             'toc.edit.window.item.regular.chapter.num.arabic',
           ),
           disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'HIGHER_ELEMENT_NUM',
-          command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', toc, tocVOs),
+          command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', toc, chapterTocVos),
         },
       ],
     };
