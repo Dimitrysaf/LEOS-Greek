@@ -3,6 +3,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { DOCUMENT } from '@angular/common';
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -13,7 +14,6 @@ import {
   OnInit,
   Output,
   ViewChild,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { EuiDialogService } from '@eui/components/eui-dialog';
@@ -41,6 +41,9 @@ import {
   DELETE,
   HASH_NUM_VALUE,
   LEOS_TC_DELETE_ACTION,
+  LEOS_TC_INSERT_ACTION,
+  LEOS_TC_MOVE_ACTION,
+  LEOS_TC_MOVE_TO_ORIGIN_ACTION,
   MAX_TRUNCATION_LIMIT,
   MOVE_FROM,
   MOVE_LABEL_SPAN_START_TAG,
@@ -980,6 +983,7 @@ export class DocumentTocComponent
   ) {
     const parent = findNodeById(tree, targetElement.parentItem);
     if (isAdd) {
+      eventItem.trackChangeAction = LEOS_TC_INSERT_ACTION;
       eventItem.indentOriginIndentLevel = '-1';
       switch (eventItem.tocItem.aknTag) {
         case 'DIVISION': {
@@ -996,8 +1000,17 @@ export class DocumentTocComponent
           );
         }
       }
+    } else if (
+      targetElement.softMoveTo === null ||
+      !(targetElement.softMoveTo === eventItem.elementNumberId.toString())
+    ) {
+      eventItem.trackChangeAction = LEOS_TC_MOVE_ACTION;
+    } else if (
+      targetElement.softMoveTo !== null &&
+      targetElement.softMoveTo === eventItem.elementNumberId.toString()
+    ) {
+      eventItem.trackChangeAction = LEOS_TC_MOVE_TO_ORIGIN_ACTION;
     }
-
     this.tocEditService.performAddOrMoveAction(
       isAdd,
       tree,
