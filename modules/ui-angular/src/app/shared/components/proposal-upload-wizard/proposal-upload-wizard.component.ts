@@ -21,8 +21,8 @@ import {
 } from '@/shared/models';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { ProposalService } from '@/shared/services/proposal.service';
-import { noWhitespaceValidator } from '@/shared/utils/validators';
 import { cleanDelInsert } from '@/shared/utils/string.utils';
+import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import { GLOBAL } from '../../../../config/global';
 

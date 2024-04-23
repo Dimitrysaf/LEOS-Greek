@@ -2,6 +2,7 @@ import { DOCUMENT, formatDate, NgClass } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   Inject,
@@ -21,9 +22,10 @@ import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
+import { ZoombarService } from '@/shared/services/zoombar.service';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
-import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -65,14 +67,18 @@ export class DocumentComponent
     private trackChangesActionsService: TrackChangesActionsService,
     private tableOfContentService: TableOfContentService,
     private environmentService: EnvironmentService,
-    private milestoneService: ProposalMilestonesService,
+    private zoombarService: ZoombarService,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {
     this.isCNInstance = this.environmentService.isCouncil();
-    this.milestoneService.triggerRequestStoredDocumentAnnotations$.subscribe((request) => {
-        if (request && this.contributionView) {
-          this.milestoneService.sendRequestStoredDocumentAnnotations(request.proposalRef, request.legFileName, request.documentRef, false);
-        } else {
-          this.milestoneService.sendEmptyStoredDocumentAnnotations();
+    this.zoomLevel = this.zoombarService.getZoomLevel(this.mainContainerId);
+
+    this.zoombarService.zoomChange
+      .pipe(takeUntil(this.destroy$)) 
+      .subscribe((event) => {
+        if (event.mainContainerId === this.mainContainerId) {
+          this.handleZoomChange(event);
+          this.changeDetectorRef.markForCheck();
         }
       });
   }
@@ -238,21 +244,22 @@ export class DocumentComponent
   }
 
   updatePadding() {
-    if (
-      this.zoomLevel > 100 &&
-      this.document.getElementById('versionContainer')
-    ) {
+    if (this.zoomLevel >= 100 && this.zoomLevel <= 137) {
       const scalePaddingFactor = 8;
       const additionalZoom = this.zoomLevel - 100;
       this.paddingLeft = `${additionalZoom * scalePaddingFactor}px`;
+    } else if (this.zoomLevel >= 137) {
+      const scalePaddingFactor = 8;
+      const additionalZoom = this.zoomLevel - 100;
     } else {
       this.paddingLeft = '0px';
     }
   }
 
-  resetZoom() {
-    const event = { zoomLevel: 100 };
-    this.handleZoomChange(event);
+  resetZoom(): void {
+    this.zoomLevel = 100;
+    this.handleZoomChange({ zoomLevel: 100 });
+    this.zoombarService.setZoomLevel(this.mainContainerId, 100);
   }
 
   private loadDocument(xml: string) {
@@ -355,10 +362,10 @@ export class DocumentComponent
     elementFragment: string;
   }) {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(this.xml, 'text/html'),
-      docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
-    const xmlElement = doc.getElementById(data.elementId),
-      authorialNotesXmlWithId = xmlElement.querySelectorAll("authorialNote[id]");
+    const doc = parser.parseFromString(this.xml, 'text/html');
+      const docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
+    const xmlElement = doc.getElementById(data.elementId);
+      const authorialNotesXmlWithId = xmlElement.querySelectorAll("authorialNote[id]");
     const authorialNotesFragmentWithId = docFragment.querySelectorAll("authorialNote[id]");
     return authorialNotesXmlWithId.length !== authorialNotesFragmentWithId.length;
   }
@@ -380,12 +387,12 @@ export class DocumentComponent
     elementFragment: string;
   }) {
     const parser = new DOMParser();
-    const doc = parser.parseFromString(this.xml, 'text/html'),
-      docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
-    const xmlElement = doc.getElementById(data.elementId),
-      xmlElementDepth = xmlElement.getAttribute("leos:depth");
-    const fragmentElement = docFragment.getElementById(data.elementId),
-      fragmentElementDepth = fragmentElement.getAttribute("leos:depth");
+    const doc = parser.parseFromString(this.xml, 'text/html');
+      const docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
+    const xmlElement = doc.getElementById(data.elementId);
+      const xmlElementDepth = xmlElement.getAttribute("leos:depth");
+    const fragmentElement = docFragment.getElementById(data.elementId);
+      const fragmentElementDepth = fragmentElement.getAttribute("leos:depth");
     return xmlElementDepth && fragmentElementDepth && (xmlElementDepth !== fragmentElementDepth);
   }
 
@@ -422,7 +429,7 @@ export class DocumentComponent
   private handleInternalReferences(elementId: string) {
     const htmlElement = this.document.getElementById(elementId);
     Array.from(htmlElement.getElementsByTagName('ref')).forEach(function(internalReference) {
-      const href = internalReference.getAttribute('href'), refId = href.substring(href.indexOf('/') + 1);
+      const href = internalReference.getAttribute('href'); const refId = href.substring(href.indexOf('/') + 1);
       internalReference.setAttribute('onclick','LEOS.scrollTo(\'' + refId + '\');');
     });
   }

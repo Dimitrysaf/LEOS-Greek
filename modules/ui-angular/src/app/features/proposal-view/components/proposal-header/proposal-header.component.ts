@@ -17,14 +17,14 @@ import {
 } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { Subject, catchError, of, takeUntil } from 'rxjs';
+import { catchError, of, Subject, takeUntil } from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
+import { LandingPageService } from '@/features/landing-page/services/landing-page.service';
 import { Permission } from '@/shared';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
-import { LandingPageService } from '@/features/landing-page/services/landing-page.service';
 
 @Component({
   selector: 'app-proposal-header',
@@ -101,18 +101,7 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
   handleClose() {
     this.router.navigate([`/workspace`]);
   }
-
-  private setPageTitle(newTitle: any) {
-    this.title = [this.nonEditablePartOfTitle, newTitle]
-      .filter(Boolean)
-      .join(' ');
-
-    this.title = this.title.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
-    this.title = this.title.replace(/<\/?ins[^>]*?>/gi, '');
-    this.title =
-      this.domSanitizer.sanitize(SecurityContext.HTML, this.title) || '';
-  }
-
+  
   toggleFavourite(): void {
     if (this.proposalDetailsService.proposalRef) {
       this.landingPageService
@@ -125,4 +114,16 @@ export class ProposalHeaderComponent implements OnInit, OnDestroy, OnChanges {
         });
     }
   }
+  
+  private setPageTitle(newTitle: any) {
+    this.title = [this.nonEditablePartOfTitle, newTitle]
+      .filter(Boolean)
+      .join(' ');
+
+    this.title = this.title.replace(/<del[^>]*?>[\s\S]*?<\/del>/gi, '');
+    this.title = this.title.replace(/<\/?ins[^>]*?>/gi, '');
+    this.title =
+      this.domSanitizer.sanitize(SecurityContext.HTML, this.title) || '';
+  }
+
 }

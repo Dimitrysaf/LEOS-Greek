@@ -1,3 +1,9 @@
+<app-zoom-scrollbar
+  style="display: flex"
+  *ngIf="item.id === 'DISPLAY_SECTION_ID'"
+  [mainContainerId]="mainContainerId"
+>
+</app-zoom-scrollbar>
 <div class="section-container" [ngClass]="item.sectionContainerCssClasses">
     <!-- Normal rendering for items not resized or sections with one children in this case children = section -->
     <div
@@ -58,10 +64,25 @@
             euiLabel
             euiSizeS
             class="align-self-center text-center"
+            style="max-width: 250px"
     >
         {{ itemLabelValue }}
     </div>
 </div>
+
+<app-zoom-scrollbar
+  *ngIf="item.id === 'COMPARE_SECTION_ID'"
+  [mainContainerId]="versionComparisonMainContainerId"
+>
+</app-zoom-scrollbar>
+<app-zoom-scrollbar
+  *ngIf="item.id === 'VIEW_VERSION_SECTION_ID'"
+  [mainContainerId]="versionMainContainerId"
+></app-zoom-scrollbar>
+<app-zoom-scrollbar
+  *ngIf="item.id === 'MERGE_SECTION_ID'"
+  [mainContainerId]="contributionViewMainContainerId"
+></app-zoom-scrollbar>
 
 <ng-template #sectionItems let-items="items">
     <ng-container

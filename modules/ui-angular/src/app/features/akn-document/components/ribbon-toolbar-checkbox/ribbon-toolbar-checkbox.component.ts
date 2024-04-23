@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable, takeUntil } from 'rxjs';
 
+import { EnvironmentService } from '@/shared/services/enviroment.service';
+
 import {
   IRibbonToolbarCheckbox,
   IRibbonToolbarItem,
 } from '../../models/document-actions.model';
 import { RibbonToolbarBaseComponent } from '../ribbon-toolbar-base/ribbon-toolbar-base.component';
-import { EnvironmentService } from '@/shared/services/enviroment.service';
 
 @Component({
   selector: 'app-ribbon-toolbar-checkbox',

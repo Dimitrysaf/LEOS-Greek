@@ -1,6 +1,9 @@
+import {TemplatePortal} from "@angular/cdk/portal";
 import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
+import {DomSanitizer} from "@angular/platform-browser";
+import {EuiDialogService} from "@eui/components/eui-dialog";
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import {BehaviorSubject, filter, map, Observable, Subject, tap} from 'rxjs';
@@ -11,15 +14,6 @@ import {
 } from '@/features/akn-document/services/page-mode.service';
 import { SyncDocumentScrollService } from '@/features/akn-document/services/sync-document-scroll.service';
 import { ContributionStatus } from '@/shared';
-import { ContributionVO } from '@/shared/models/contribution-vo.model';
-import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
-import {MergeActionItem, MergeActionVO} from '@/shared/models/merge-action-vo.model';
-import { DocumentService } from '@/shared/services/document.service';
-
-import { apiBaseUrl } from '../../../../config';
-import {EuiDialogService} from "@eui/components/eui-dialog";
-import {TemplatePortal} from "@angular/cdk/portal";
-import {DomSanitizer} from "@angular/platform-browser";
 import {
   ADD_ATTR, CONTENT_CHANGE, ContributionActionAttrValue,
   DELETE_ATTR,
@@ -32,6 +26,13 @@ import {
   PARENT_AFFECTED,
   REVISION_PREFIX, SELECTED_ACTION_ATTR
 } from "@/shared/constants/fork-merge.constants";
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
+import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
+import {MergeActionItem, MergeActionVO} from '@/shared/models/merge-action-vo.model';
+import { DocumentService } from '@/shared/services/document.service';
+import { ZoombarService } from '@/shared/services/zoombar.service';
+
+import { apiBaseUrl } from '../../../../config';
 
 @Injectable({
   providedIn: 'root',
@@ -97,6 +98,7 @@ export class MergeContributionsService {
     private syncScrollService: SyncDocumentScrollService,
     private dialogService: EuiDialogService,
     private appShellService: UxAppShellService,
+    private zoombarService: ZoombarService,
     protected domSanitizer: DomSanitizer,
     @Inject(DOCUMENT) private document: Document,
   ) {
@@ -146,7 +148,7 @@ export class MergeContributionsService {
   }
 
   closeContributionMergeView() {
-    this.documentService.resetZoomValues();
+    this.zoombarService.resetAllZoomLevels();
     this.contributionViewAndMergeBS.next(null);
     this.syncScrollService.setSyncScroll(false);
     this.pageModeService.setPageMode(PageMode.Normal);
@@ -520,6 +522,81 @@ export class MergeContributionsService {
     });
   }
 
+  public getMergeActionList():MergeActionItem[] {
+    return this.mergeActionList;
+  }
+
+  public addMergeActionList(action: MergeActionVO) {
+    this.mergeActionList.push(action);
+  }
+
+  public removeMergeActionList(element: HTMLElement): MergeActionVO {
+    const removedAction = this.mergeActionList.find((action) => action.elementId === element.getAttribute(ID).replace(REVISION_PREFIX, ''));
+    this.mergeActionList = this.mergeActionList.filter((action) => action.elementId !== element.getAttribute(ID).replace(REVISION_PREFIX, ''));
+    return removedAction;
+  }
+
+  public emptyMergeActionList() {
+    this.mergeActionList = [];
+  }
+
+  public getAction(elt: HTMLElement) {
+    let elementState;
+    const action = elt.getAttribute(LEOS_TRACK_ACTION);
+    const softAction = elt.getAttribute(LEOS_SOFT_ACTION);
+    const parentAffected = elt.getAttribute(PARENT_AFFECTED);
+    if (softAction && (softAction === MOVE_FROM_ATTR || softAction === MOVE_TO_ATTR)) {
+      elementState = MOVE_ATTR;
+    } else if (action === DELETE_ATTR) {
+      elementState = DELETE_ATTR;
+    } else if (action === INSERT_ATTR) {
+      elementState = ADD_ATTR;
+    } else if (parentAffected) {
+      elementState = CONTENT_CHANGE;
+    }
+    return elementState;
+  }
+
+  public showMenu(event: MouseEvent, element: HTMLElement, actions: HTMLElement) {
+    this.showMenuBS.next({event, element, actions});
+  }
+
+  public manageSelectedElements(element: HTMLElement, contributionActionAttrValue: ContributionActionAttrValue) {
+    const elementState = this.getAction(element);
+    if (elementState === MOVE_ATTR) {
+      if (element.getAttribute(ID).includes(MOVE_PREFIX)) {
+        const movedFromElement = document.getElementById(element.getAttribute(ID).replace(MOVE_PREFIX, ''));
+        movedFromElement.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+        const temp_list = this.getImpactedElements(movedFromElement);
+        temp_list.forEach(e => {
+          const elt =  e as HTMLElement;
+          elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+        });
+      } else {
+        const movedToElement = document.getElementById(REVISION_PREFIX + MOVE_PREFIX + element.getAttribute(ID).replace(REVISION_PREFIX, ''));
+        movedToElement.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+      }
+    }
+    element.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+    const list = this.getImpactedElements(element);
+    list.forEach(e => {
+      const elt =  e as HTMLElement;
+      elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
+    });
+  }
+
+  public getImpactedElements(element: HTMLElement): NodeList {
+    return element.querySelectorAll('.' + MERGE_CONTRIBUTION);
+  }
+
+  public getImpactedElementsForUndo(element: HTMLElement): NodeList {
+    return element.querySelectorAll('[leos\\:mergeAction]');
+  }
+
+  public undo(element: HTMLElement, contribution: ContributionVO) {
+    this.undoBS.next({element, contribution});
+  }
+
   private sendFeedback() {
     this.http
       .post(`${apiBaseUrl}/secured/contribution/milestones/sendFeedback`, {
@@ -566,78 +643,4 @@ export class MergeContributionsService {
     });
   }
 
-  public getMergeActionList():MergeActionItem[] {
-    return this.mergeActionList;
-  }
-
-  public addMergeActionList(action: MergeActionVO) {
-    this.mergeActionList.push(action);
-  }
-
-  public removeMergeActionList(element: HTMLElement): MergeActionVO {
-    const removedAction = this.mergeActionList.find((action) => action.elementId === element.getAttribute(ID).replace(REVISION_PREFIX, ''));
-    this.mergeActionList = this.mergeActionList.filter((action) => action.elementId !== element.getAttribute(ID).replace(REVISION_PREFIX, ''));
-    return removedAction;
-  }
-
-  public emptyMergeActionList() {
-    this.mergeActionList = [];
-  }
-
-  public getAction(elt: HTMLElement) {
-    let elementState;
-    const action = elt.getAttribute(LEOS_TRACK_ACTION);
-    const softAction = elt.getAttribute(LEOS_SOFT_ACTION);
-    const parentAffected = elt.getAttribute(PARENT_AFFECTED);
-    if (softAction && (softAction === MOVE_FROM_ATTR || softAction === MOVE_TO_ATTR)) {
-      elementState = MOVE_ATTR;
-    } else if (action === DELETE_ATTR) {
-      elementState = DELETE_ATTR;
-    } else if (action === INSERT_ATTR) {
-      elementState = ADD_ATTR;
-    } else if (parentAffected) {
-      elementState = CONTENT_CHANGE;
-    }
-    return elementState;
-  }
-
-  public showMenu(event: MouseEvent, element: HTMLElement, actions: HTMLElement) {
-    this.showMenuBS.next({event, element, actions});
-  }
-
-  public manageSelectedElements(element: HTMLElement, contributionActionAttrValue: ContributionActionAttrValue) {
-    const elementState = this.getAction(element);
-    if (elementState === MOVE_ATTR) {
-      if (element.getAttribute(ID).includes(MOVE_PREFIX)) {
-        const movedFromElement = document.getElementById(element.getAttribute(ID).replace(MOVE_PREFIX, ''));
-        movedFromElement.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-        const list = this.getImpactedElements(movedFromElement);
-        list.forEach(e => {
-          let elt =  e as HTMLElement;
-          elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-        });
-      } else {
-        const movedToElement = document.getElementById(REVISION_PREFIX + MOVE_PREFIX + element.getAttribute(ID).replace(REVISION_PREFIX, ''));
-        movedToElement.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-      }
-    }
-    element.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-    const list = this.getImpactedElements(element);
-    list.forEach(e => {
-      let elt =  e as HTMLElement;
-      elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-    });
-  }
-
-  public getImpactedElements(element: HTMLElement): NodeList {
-    return element.querySelectorAll('.' + MERGE_CONTRIBUTION);
-  }
-
-  public getImpactedElementsForUndo(element: HTMLElement): NodeList {
-    return element.querySelectorAll('[leos\\:mergeAction]');
-  }
-
-  public undo(element: HTMLElement, contribution: ContributionVO) {
-    this.undoBS.next({element, contribution});
-  }
 }

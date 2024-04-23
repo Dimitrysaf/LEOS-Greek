@@ -55,7 +55,7 @@
       <div class="eui-b-pl-xl middle-body-content">
         <app-proposal-filter-home
           class="filter-container"
-          (onSearchInitiated)="toggleProposalCardVisibility($event)"
+          (searchInitiation)="toggleProposalCardVisibility($event)"
         ></app-proposal-filter-home>
         <app-proposal-home-card
           *ngIf="showProposalCard"

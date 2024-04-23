@@ -46,7 +46,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
   templateSelector: ProposalCreateTemplateSelectorComponent;
 
   fromProposal = true;
-  isStepOneCompleted: boolean = false;
+  isStepOneCompleted = false;
   private destroy$ = new Subject();
 
   constructor(

@@ -1,4 +1,5 @@
-import { Injectable, Inject } from '@angular/core';
+import { DOCUMENT, formatDate } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
 import { getUserDetails, UserDetails } from '@eui/base';
 import { Store } from '@ngrx/store';
 import { groupBy, keys } from 'lodash-es';
@@ -6,7 +7,6 @@ import { BehaviorSubject, Observable, Subject, Subscription, take } from 'rxjs';
 import * as SockJS from 'sockjs-client';
 import { apiBaseUrl } from 'src/config';
 import * as Stomp from 'stompjs';
-import { DOCUMENT, formatDate } from '@angular/common';
 
 import {
   CoEditionActionInfo,
@@ -97,7 +97,7 @@ export class CoEditionServiceWS {
     this.stompClient.send(
       '/app/refresh/document',
       {},
-      JSON.stringify({ userId: this.user.login, documentId: id })
+      JSON.stringify({ userId: this.user.login, documentId: id }),
     );
   }
 
@@ -111,26 +111,34 @@ export class CoEditionServiceWS {
 
   public joinDocumentChannel() {
     if (this.stompClient.connected) {
-      this.subscribe(`/topic/document`, (message) => {
-        this.handleDocumentChannel(message);
-      }, 'document');
+      this.subscribe(
+        `/topic/document`,
+        (message) => {
+          this.handleDocumentChannel(message);
+        },
+        'document',
+      );
     } else
       this.subscribeQueue.push({
         topic: '/topic/document',
         callback: (message) => this.handleDocumentChannel(message),
-        id: 'document'
+        id: 'document',
       });
   }
 
   public joinSubDocumentChannel(documentId: string): void {
     if (this.stompClient.connected) {
-      this.subscribe(`/topic/document/${documentId}`, (message) => {
-        const coEdits = JSON.parse(message.body) as
-          | CoEditionActionInfo
-          | CoEditionVO[]
-          | CoEditionUpdate;
-        this.handleCoEditionMessage(coEdits);
-      }, documentId);
+      this.subscribe(
+        `/topic/document/${documentId}`,
+        (message) => {
+          const coEdits = JSON.parse(message.body) as
+            | CoEditionActionInfo
+            | CoEditionVO[]
+            | CoEditionUpdate;
+          this.handleCoEditionMessage(coEdits);
+        },
+        documentId,
+      );
     } else
       this.subscribeQueue.push({
         topic: `/topic/document/${documentId}`,
@@ -141,7 +149,7 @@ export class CoEditionServiceWS {
             | CoEditionUpdate;
           this.handleCoEditionMessage(coEdits);
         },
-        id: `${documentId}`
+        id: `${documentId}`,
       });
   }
 
@@ -282,6 +290,43 @@ export class CoEditionServiceWS {
     return this.latestActionInfoBS.asObservable();
   }
 
+  public showElementsBeingEdited(
+    coEdits: Record<string, CoEditionVO[]>,
+    isCalledFromToc?: boolean,
+  ) {
+    const userCoEditionElements = this.document.querySelectorAll(
+      '.leos-user-coedition',
+    );
+    userCoEditionElements.forEach((userCoEditionElement) => {
+      userCoEditionElement.remove();
+    });
+    for (const key in coEdits) {
+      if (key)
+        for (const coEdit of coEdits[key]) {
+          if (coEdit.infoType === 'TOC_INFO') return;
+          const elemInDoc = this.document.getElementById(coEdit.elementId);
+          this.addCoEditionIconToElement(elemInDoc, key, coEdits);
+        }
+    }
+  }
+
+  generateTooltip(coEdits: CoEditionVO[]) {
+    if (!coEdits) return;
+    let target = '';
+    // FIXME: use translated message for target
+    coEdits.forEach(
+      (c) =>
+        (target =
+          target +
+          `${c.userName} editing since ${formatDate(
+            c.editionTime,
+            'dd/MM/yyyy HH:mm',
+            'en-US',
+          )} <br>`),
+    );
+    return target;
+  }
+
   private handleCoEditForDocument(coEdits: CoEditionVO[]) {
     const coEditsFilterCurrUser = coEdits?.filter(
       (c) => c.sessionId !== this.sessionId,
@@ -324,64 +369,34 @@ export class CoEditionServiceWS {
     }
   }
 
-  public showElementsBeingEdited(coEdits: Record<string, CoEditionVO[]>, isCalledFromToc?: boolean) {
-      const userCoEditionElements = this.document.querySelectorAll(
-        '.leos-user-coedition',
-      );
-      userCoEditionElements.forEach((userCoEditionElement) => {
-        userCoEditionElement.remove();
-      });
-      for (const key in coEdits) {
-        if (key)
-          for (const coEdit of coEdits[key]) {
-            if (coEdit.infoType === 'TOC_INFO') return;
-            const elemInDoc = this.document.getElementById(coEdit.elementId);
-            this.addCoEditionIconToElement(elemInDoc, key, coEdits);
-          }
-      }
-    }
-
-    private addCoEditionIconToElement(elemToAddIcon: any, key: string, coEdits: Record<string, CoEditionVO[]>){
-      const coEditNode = this.document.createElement('div');
-      coEditNode.classList.add(
-        'leos-user-coedition',
-        'leos-user-coedition-self-user',
-      );
-      const iconSpan = this.document.createElement('span');
-      iconSpan.classList.add('eui-icon', 'eui-icon-person');
-      iconSpan.style.verticalAlign = 'bottom';
-      iconSpan.style.display = 'inline-block';
-      const textDiv = this.document.createElement('div');
-      textDiv.innerHTML = this.generateTooltip(coEdits[key]);
-      coEditNode.append(iconSpan);
-      coEditNode.append(textDiv);
-      coEditNode.style.top = elemToAddIcon.offsetTop + 'px';
-      coEditNode.style.left =  (elemToAddIcon.offsetLeft - 25) + 'px';
-      coEditNode.style.position = 'absolute';
-      elemToAddIcon.insertAdjacentElement('beforebegin', coEditNode);
-      coEditNode.addEventListener('mouseenter', () => {
-        textDiv.style.left = iconSpan.offsetLeft + 10 + 'px';
-        textDiv.style.display = 'block';
-      });
-      coEditNode.addEventListener('mouseleave', () => {
-        textDiv.style.display = 'none';
-      });
-    }
-
-    generateTooltip(coEdits: CoEditionVO[]) {
-        if (!coEdits) return;
-        let target = '';
-        // FIXME: use translated message for target
-        coEdits.forEach(
-          (c) =>
-            (target =
-              target +
-              `${c.userName} editing since ${formatDate(
-                c.editionTime,
-                'dd/MM/yyyy HH:mm',
-                'en-US',
-              )} <br>`),
-        );
-        return target;
-      }
+  private addCoEditionIconToElement(
+    elemToAddIcon: any,
+    key: string,
+    coEdits: Record<string, CoEditionVO[]>,
+  ) {
+    const coEditNode = this.document.createElement('div');
+    coEditNode.classList.add(
+      'leos-user-coedition',
+      'leos-user-coedition-self-user',
+    );
+    const iconSpan = this.document.createElement('span');
+    iconSpan.classList.add('eui-icon', 'eui-icon-person');
+    iconSpan.style.verticalAlign = 'bottom';
+    iconSpan.style.display = 'inline-block';
+    const textDiv = this.document.createElement('div');
+    textDiv.innerHTML = this.generateTooltip(coEdits[key]);
+    coEditNode.append(iconSpan);
+    coEditNode.append(textDiv);
+    coEditNode.style.top = elemToAddIcon.offsetTop + 'px';
+    coEditNode.style.left = elemToAddIcon.offsetLeft - 25 + 'px';
+    coEditNode.style.position = 'absolute';
+    elemToAddIcon.insertAdjacentElement('beforebegin', coEditNode);
+    coEditNode.addEventListener('mouseenter', () => {
+      textDiv.style.left = iconSpan.offsetLeft + 10 + 'px';
+      textDiv.style.display = 'block';
+    });
+    coEditNode.addEventListener('mouseleave', () => {
+      textDiv.style.display = 'none';
+    });
+  }
 }

@@ -1,5 +1,6 @@
-import { Notification } from '@/shared/models/notification.model';
 import { Component, Input, OnInit } from '@angular/core';
+
+import { Notification } from '@/shared/models/notification.model';
 
 @Component({
   selector: 'app-notification-card',

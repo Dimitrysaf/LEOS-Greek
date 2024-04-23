@@ -1,4 +1,19 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
+import { UserState } from '@eui/base';
+import {
+  EuiPaginationEvent,
+  EuiPaginatorComponent,
+} from '@eui/components/eui-paginator';
+import { Store } from '@ngrx/store';
+import {
+  combineLatest,
+  distinctUntilChanged,
+  map,
+  Observable,
+  Subject,
+  takeUntil,
+} from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { ProposalFilterHomeComponent } from '@/features/landing-page/components/proposal-filter-home/proposal-filter-home.component';
@@ -14,24 +29,10 @@ import { Document, ProcedureType } from '@/shared';
 import { CreateProposalService } from '@/shared/services/create-proposal.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { ProposalService } from '@/shared/services/proposal.service';
-import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
-import { UserState } from '@eui/base';
-import {
-  EuiPaginationEvent,
-  EuiPaginatorComponent,
-} from '@eui/components/eui-paginator';
-import { Store } from '@ngrx/store';
-import {
-  Observable,
-  Subject,
-  combineLatest,
-  distinctUntilChanged,
-  map,
-  takeUntil,
-} from 'rxjs';
+
+import { PackagesFavourite } from '../../models/packages-favourite.model';
 import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
 import { LandingPageService } from '../../services/landing-page.service';
-import { PackagesFavourite } from '../../models/packages-favourite.model';
 
 type ProposalsState = {
   filters: ProposalFilter;
@@ -45,19 +46,16 @@ type ProposalsState = {
   styleUrls: ['./landing-page.component.scss'],
 })
 export class LandingPageComponent implements OnInit, OnDestroy {
-  protected readonly homeUrl = document.baseURI;
-  private destroy$: Subject<any> = new Subject();
-  latestPackages$: Observable<PackagesRecentlyChanged[]>;
   favouritesPackages$: Observable<PackagesFavourite[]>;
   proposals$: Observable<Document[]>;
   limit$: Observable<number>;
   totalResults$: Observable<number>;
   sortOrder = DEFAULT_SORT_ORDER;
-  public searchTerm: string;
+  latestPackages$: Observable<PackagesRecentlyChanged[]>;
   @ViewChild('paginatorComponent')
   paginatorComponent: EuiPaginatorComponent;
   @ViewChild('filters') filtersComponent: ProposalFilterHomeComponent;
-  showProposalCard: boolean = false;
+  showProposalCard = false;
   canCreateDraft = false;
   canCreateMandate = false;
   canCreateProposal = false;
@@ -66,6 +64,9 @@ export class LandingPageComponent implements OnInit, OnDestroy {
   isNotificationShown$: Observable<boolean>;
   isNotificationShown = true;
   userName: string;
+  protected readonly homeUrl = document.baseURI;
+  public searchTerm: string;
+  private destroy$: Subject<any> = new Subject();
 
   constructor(
     private store: Store<any>,
@@ -90,7 +91,7 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     this.landingPageService.isNotificationShown$.subscribe((isShown) => {
       this.isNotificationShown = isShown;
     });
-    
+
     this.store
       .select('user')
       .pipe(takeUntil(this.destroy$))
@@ -118,17 +119,6 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     this.setPermissions();
   }
 
-  private setPermissions() {
-    this.appConfig.config.subscribe((config) => {
-      const CN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
-      const CAN_UPLOAD = config.userAppPermissions.includes('CAN_UPLOAD');
-      this.canCreateDraft = CN && CAN_UPLOAD;
-      this.canCreateMandate = CN;
-      this.canCreateProposal = !CN;
-      this.canUpload = CAN_UPLOAD;
-    });
-  }
-
   ngOnDestroy() {
     this.destroy$.next(null);
     this.destroy$.complete();
@@ -148,6 +138,36 @@ export class LandingPageComponent implements OnInit, OnDestroy {
 
   handleCreateDraft() {
     this.createProposalService.openProposalCreateDraftDialog(false);
+  }
+
+  handlePagerChange($event: EuiPaginationEvent) {
+    this.proposalService.setLimit($event.pageSize);
+    this.proposalService.setPage($event.page);
+  }
+
+  toggleProposalCardVisibility(searchTerm: string | null): void {
+    this.searchTerm = searchTerm || '';
+    if (searchTerm) {
+      this.proposalService.setFilters({ searchTerm });
+      this.showProposalCard = true;
+    } else {
+      this.showProposalCard = false;
+    }
+  }
+
+  resetFilter() {
+    this.filtersComponent.resetFilters();
+  }
+
+  private setPermissions() {
+    this.appConfig.config.subscribe((config) => {
+      const CN = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+      const CAN_UPLOAD = config.userAppPermissions.includes('CAN_UPLOAD');
+      this.canCreateDraft = CN && CAN_UPLOAD;
+      this.canCreateMandate = CN;
+      this.canCreateProposal = !CN;
+      this.canUpload = CAN_UPLOAD;
+    });
   }
 
   private setQueryParams(queryParams: Params) {
@@ -219,24 +239,5 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     }
 
     return queryParams;
-  }
-
-  handlePagerChange($event: EuiPaginationEvent) {
-    this.proposalService.setLimit($event.pageSize);
-    this.proposalService.setPage($event.page);
-  }
-
-  toggleProposalCardVisibility(searchTerm: string | null): void {
-    this.searchTerm = searchTerm || '';
-    if (searchTerm) {
-      this.proposalService.setFilters({ searchTerm: searchTerm });
-      this.showProposalCard = true;
-    } else {
-      this.showProposalCard = false;
-    }
-  }
-
-  resetFilter() {
-    this.filtersComponent.resetFilters();
   }
 }

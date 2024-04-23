@@ -35,7 +35,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   selectedTemplate: CatalogItem | null;
   selectedLanguage: string;
 
-  isStepOneCompleted: boolean = false;
+  isStepOneCompleted = false;
   private destroy$ = new Subject();
 
   constructor(

@@ -327,6 +327,7 @@
   "page.editor.search.wholeWords.label": "Whole Words",
   "page.editor.search.results.separator": "of",
   "page.editor.search.results.not.found": "Not Found",
+  "page.editor.zoom":"Zoom",
   "page.editor.subtitle": "v{{ version }} - last edited by {{ updatedByFull }} on {{ updatedOn }}",
   "page.editor.base.revision.toolbar.info": "v{{ version }} - last edited by {{ updatedByFull }} on {{ updatedOn }} as compared to {{ baseVersionTitle }} - {{ revisedBaseVersion }}",
   "page.editor.versions.actions.view": "View this version",

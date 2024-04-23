@@ -1,14 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable, takeUntil } from 'rxjs';
 
-import { IRibbonToolbarButton } from '../../models/document-actions.model';
-import { RibbonToolbarBaseComponent } from '../ribbon-toolbar-base/ribbon-toolbar-base.component';
 import {
   COMPARE_NEXT_CHANGE_ACTION_ID,
   COMPARE_PREV_CHANGE_ACTION_ID,
   MERGE_CONTRIBUTION_NEXT_CHANGE_ID,
   MERGE_CONTRIBUTION_PREV_CHANGE_ID,
 } from '@/shared/constants/document-actions.constants';
+
+import { IRibbonToolbarButton } from '../../models/document-actions.model';
+import { RibbonToolbarBaseComponent } from '../ribbon-toolbar-base/ribbon-toolbar-base.component';
 
 enum StyleMode {
   Default,

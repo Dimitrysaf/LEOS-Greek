@@ -23,14 +23,14 @@ import {
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
+import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { AnnotateOperationMode, Permission } from '@/shared';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
+import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 import { AnnotateManager } from './annotate-manager';
-import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
-import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 
 @Component({
   selector: 'app-document-annotations',
