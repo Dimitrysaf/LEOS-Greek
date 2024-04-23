@@ -736,13 +736,14 @@ public class MergeContributionService {
                         }
                     }
                 }
-                if (!found && (prevContent == null || StringUtils.isBlank(prevContent)) && nextContent != null && StringUtils.isNotBlank(nextContent)) {
-                    Node newNode = XercesUtils.createNodeFromXmlFragment(previousNodeParent.getOwnerDocument(), withTrackChanges ? nodeToString(nodeToBeAddedOrRemoved).getBytes(UTF_8) :
+                if (isIns && !found && (prevContent == null || StringUtils.isBlank(prevContent)) && nextContent != null && StringUtils.isNotBlank(nextContent)) {
+                    Node newNode = XercesUtils.createNodeFromXmlFragment(nextNodeParent.getOwnerDocument(), withTrackChanges ?
+                            nodeToString(nodeToBeAddedOrRemoved).getBytes(UTF_8) :
                             getContentNodeAsXmlFragment(nodeToBeAddedOrRemoved).getBytes(UTF_8));
-                    previousNodeParent.insertBefore(newNode, previousNodeParent.getFirstChild());
+                    nextNodeParent.insertBefore(newNode, nextNodeParent.getFirstChild());
                     found = true;
                 }
-                if (!found && (nextContent == null || StringUtils.isBlank(nextContent))) {
+                if (isIns && !found && (nextContent == null || StringUtils.isBlank(nextContent))) {
                     Node newNode = XercesUtils.createNodeFromXmlFragment(previousNodeParent.getOwnerDocument(), withTrackChanges ? nodeToString(nodeToBeAddedOrRemoved).getBytes(UTF_8) :
                             getContentNodeAsXmlFragment(nodeToBeAddedOrRemoved).getBytes(UTF_8));
                     previousNodeParent.appendChild(newNode);
