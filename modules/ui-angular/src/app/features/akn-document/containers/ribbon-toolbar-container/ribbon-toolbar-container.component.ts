@@ -57,6 +57,7 @@ import { RibbonToolbarBaseComponent } from '../../components/ribbon-toolbar-base
 export class RibbonToolbarContainerComponent
   implements OnInit, AfterViewInit, OnDestroy
 {
+  @Input() mainContainerId;
   actionItems$: Observable<IRibbonToolbarSection[]>;
   isToolbarOpen = true;
   resizeSectionsMap: Map<string, boolean> = new Map();

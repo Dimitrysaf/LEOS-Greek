@@ -965,7 +965,7 @@ export class DocumentService {
   // }
 
   resetZoomValues() {
-    this.resetZoomBS.next();
+    this.resetZoomBS.next(null);
   }
 
   versionExport(version: Version) {

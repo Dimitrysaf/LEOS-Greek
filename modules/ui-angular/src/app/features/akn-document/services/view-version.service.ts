@@ -20,6 +20,7 @@ import {
 import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
 import { VersionInfoVO } from '@/shared/models/version-info.model';
 import { DocumentService } from '@/shared/services/document.service';
+import { ZoombarService } from '@/shared/services/zoombar.service';
 
 import { apiBaseUrl } from '../../../../config';
 import { SyncDocumentScrollService } from './sync-document-scroll.service';
@@ -44,6 +45,7 @@ export class ViewVersionService {
     private syncScrollService: SyncDocumentScrollService,
     private pageModeService: PageModeService,
     private translateService: TranslateService,
+    private zoombarService: ZoombarService,
     private http: HttpClient,
   ) {
     this.versionId$ = this.versionIdBS.asObservable();
@@ -83,7 +85,7 @@ export class ViewVersionService {
   }
 
   closeVersionView() {
-    this.documentService.resetZoomValues();
+    this.zoombarService.resetAllZoomLevels();
     this.versionViewBS.next(null);
     this.versionIdBS.next(null);
     this.syncScrollService.setSyncScroll(false);

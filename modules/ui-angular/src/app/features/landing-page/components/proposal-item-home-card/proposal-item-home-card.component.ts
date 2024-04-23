@@ -1,11 +1,13 @@
-import { Document } from '@/shared';
 import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit, SecurityContext } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
-import { apiBaseUrl } from 'src/config';
-import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
 import { Observable } from 'rxjs';
+import { apiBaseUrl } from 'src/config';
+
+import { Document } from '@/shared';
+
+import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
 import { LandingPageService } from '../../services/landing-page.service';
 
 @Component({

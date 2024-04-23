@@ -1,26 +1,28 @@
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
-  Observable,
   catchError,
   map,
+  Observable,
   tap,
   throwError,
 } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
-import { PackagesRecentlyChanged } from '../models/packages-recent-changed.model';
-import { PackagesFavourite } from '../models/packages-favourite.model';
+
 import { Document } from '@/shared';
+
+import { PackagesFavourite } from '../models/packages-favourite.model';
+import { PackagesRecentlyChanged } from '../models/packages-recent-changed.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LandingPageService {
   isNotificationShown$: Observable<boolean>;
+  isFavourite$: Observable<boolean>;
   private isNotificationShownBS = new BehaviorSubject<boolean>(true);
 
-  isFavourite$: Observable<boolean>;
   private isFavouriteBS = new BehaviorSubject<boolean>(false);
 
   constructor(private http: HttpClient) {

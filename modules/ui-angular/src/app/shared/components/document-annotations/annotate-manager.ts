@@ -10,6 +10,7 @@ import {
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
+import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import {
   AnnotateConnectorState,
@@ -19,10 +20,9 @@ import {
 } from '@/shared/models';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
+import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 import { AnnotateConnector } from './annotate-connector';
-import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
-import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 
 export type AnnotateConnectorOptions = Pick<
   AnnotateConnectorState,

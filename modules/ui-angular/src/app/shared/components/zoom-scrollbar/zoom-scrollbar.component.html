@@ -1,17 +1,23 @@
 <div class="zoom-scrollbar-container">
-  <div class="zoom-controls">
-    <span class="eui-icon eui-icon-minus" (click)="zoomOut()"></span>
+  <span class="zoom-value">
+    {{ zoombarService.getZoomLevel(mainContainerId) | number : '1.0-0' }}%
+  </span>
+  <div class="zoom-track-and-symbols">
     <input
-      type="range"
       class="zoom-range"
+      type="range"
+      orient="vertical"
       [min]="minDisplayValue"
       [max]="maxDisplayValue"
-      [value]="zoomLevel"
+      [value]="zoombarService.getZoomLevel(mainContainerId)"
       (input)="onZoomChange($event)"
       (mousedown)="clearTextSelection()"
-      step="1"
+      style="height: 96px; width: 17px"
     />
-    <span class="eui-icon eui-icon-add" (click)="zoomIn()"></span>
+    <div class="zoom-symbols">
+      <span class="eui-icon eui-icon-add" (click)="zoomIn()"></span>
+      <span class="eui-icon eui-icon-minus" (click)="zoomOut()"></span>
+    </div>
   </div>
-  <span class="zoom-value">{{ zoomLevel | number : '1.0-0' }}%</span>
+  <div>{{ 'page.editor.zoom' | translate }}</div>
 </div>

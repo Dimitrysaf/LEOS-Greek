@@ -1,12 +1,15 @@
 /* eslint-disable simple-import-sort/imports */
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 import { MergeContributionsService } from '@/features/akn-document/services/merge-contributions.service';
 import { ContributionStatus } from '@/shared';
 import { ContributionVO } from '@/shared/models/contribution-vo.model';
-import {DocumentService} from "@/shared/services/document.service";
-import {PageMode, PageModeService} from "@/features/akn-document/services/page-mode.service";
-import {Subject, takeUntil} from "rxjs";
+import { DocumentService } from '@/shared/services/document.service';
+import {
+  PageMode,
+  PageModeService,
+} from '@/features/akn-document/services/page-mode.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-revision-pane-group',
@@ -20,7 +23,7 @@ export class RevisionPaneGroupComponent implements OnInit, OnDestroy {
   revisionTitle: string;
   updatedAtBy: string;
   status: string;
-  feedbackToBeSent: boolean = false;
+  feedbackToBeSent = false;
   ContributionStatus = ContributionStatus;
 
   private destroy$: Subject<any> = new Subject();
@@ -35,14 +38,19 @@ export class RevisionPaneGroupComponent implements OnInit, OnDestroy {
     this.revisionTitle = this.formatTitle(this.contribution);
     this.revisionVersion = this.formatVersionNumber(this.contribution);
     this.originatingApplication = this.contribution.contributionCreator;
-    this.mergeContributionsService.feedbackToBeSent$.pipe(takeUntil(this.destroy$))
+    this.mergeContributionsService.feedbackToBeSent$
+      .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
-          if (!this.contribution.greyed) {
-            this.feedbackToBeSent = value;
-            this.mergeContributionsService.setStatusFeedbackToBeSent(!value);
-          }
+        if (!this.contribution.greyed) {
+          this.feedbackToBeSent = value;
+          this.mergeContributionsService.setStatusFeedbackToBeSent(!value);
         }
-      );
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
   }
 
   onClickView(contribution: ContributionVO) {
@@ -74,10 +82,5 @@ export class RevisionPaneGroupComponent implements OnInit, OnDestroy {
     } else {
       return contribution.checkinCommentVO.title;
     }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(null);
-    this.destroy$.complete();
   }
 }

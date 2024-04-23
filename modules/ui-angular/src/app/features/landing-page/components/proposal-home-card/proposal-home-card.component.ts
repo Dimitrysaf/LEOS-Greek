@@ -1,15 +1,8 @@
-import { ProposalsFiltersComponent } from '@/features/proposals/components';
-import {
-  DEFAULT_LIMIT,
-  DEFAULT_PAGE,
-  DEFAULT_SORT_ORDER,
-  ProposalFilter,
-} from '@/features/proposals/models';
-import { Document } from '@/shared';
-import { ProposalService } from '@/shared/services/proposal.service';
 import {
   Component,
   Input,
+  OnChanges,
+  OnDestroy,
   OnInit,
   SimpleChanges,
   ViewChild,
@@ -20,15 +13,26 @@ import {
   EuiPaginatorComponent,
 } from '@eui/components/eui-paginator';
 import {
-  Observable,
-  Subject,
   combineLatest,
   distinctUntilChanged,
   map,
+  Observable,
+  Subject,
   takeUntil,
 } from 'rxjs';
-import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
+
+import { ProposalsFiltersComponent } from '@/features/proposals/components';
+import {
+  DEFAULT_LIMIT,
+  DEFAULT_PAGE,
+  DEFAULT_SORT_ORDER,
+  ProposalFilter,
+} from '@/features/proposals/models';
+import { Document } from '@/shared';
+import { ProposalService } from '@/shared/services/proposal.service';
+
 import { PackagesFavourite } from '../../models/packages-favourite.model';
+import { PackagesRecentlyChanged } from '../../models/packages-recent-changed.model';
 
 export const PACKAGES_PAGE_SIZE = 5;
 type Package = PackagesRecentlyChanged | PackagesFavourite;
@@ -43,7 +47,7 @@ type ProposalsState = {
   templateUrl: './proposal-home-card.component.html',
   styleUrls: ['./proposal-home-card.component.scss'],
 })
-export class ProposalHomeCardComponent implements OnInit {
+export class ProposalHomeCardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() iconClass: string;
   @Input() labelKey: string;
   @Input() proposals: Document[];
@@ -109,6 +113,47 @@ export class ProposalHomeCardComponent implements OnInit {
     }
   }
 
+  toggleHeaderVisibility() {
+    this.showHeader = !this.showHeader;
+  }
+
+  toggleSortOrder() {
+    this.proposalService.setSortOrder(!this.sortOrder);
+  }
+
+  trackProposal(_index: number, proposal: Document) {
+    return proposal?.id ?? undefined;
+  }
+
+  geContributionStatus(proposal: Document) {
+    const contributionStatus =
+      proposal.cloneProposalMetadataVO?.revisionStatus ===
+      'Sent for contribution'
+        ? 'sent'
+        : 'ready';
+
+    return proposal.cloneProposalMetadataVO !== null
+      ? contributionStatus
+      : null;
+  }
+
+  handlePagerChange($event: EuiPaginationEvent) {
+    this.proposalService.setLimit($event.pageSize);
+    this.proposalService.setPage($event.page);
+  }
+
+  handlePackagePagerChange($event: EuiPaginationEvent): void {
+    this.currentPackagesPage = $event.page;
+    this.packagesPageSize = $event.pageSize;
+    this.updateDisplayedPackages();
+  }
+
+  updateDisplayedPackages(): void {
+    const start = this.currentPackagesPage * this.packagesPageSize;
+    const end = start + this.packagesPageSize;
+    this.displayedPackages = [...(this.packages || []).slice(start, end)];
+  }
+  
   private static stateToQueryParams(state: ProposalsState): Params {
     const { filters, sortOrder, limit, page } = state;
     const queryParams = {} as Params;
@@ -151,47 +196,6 @@ export class ProposalHomeCardComponent implements OnInit {
 
   get shouldShowIcon(): boolean {
     return !!this.iconClass;
-  }
-
-  toggleHeaderVisibility() {
-    this.showHeader = !this.showHeader;
-  }
-
-  toggleSortOrder() {
-    this.proposalService.setSortOrder(!this.sortOrder);
-  }
-
-  trackProposal(_index: number, proposal: Document) {
-    return proposal?.id ?? undefined;
-  }
-
-  geContributionStatus(proposal: Document) {
-    const contributionStatus =
-      proposal.cloneProposalMetadataVO?.revisionStatus ===
-      'Sent for contribution'
-        ? 'sent'
-        : 'ready';
-
-    return proposal.cloneProposalMetadataVO !== null
-      ? contributionStatus
-      : null;
-  }
-
-  handlePagerChange($event: EuiPaginationEvent) {
-    this.proposalService.setLimit($event.pageSize);
-    this.proposalService.setPage($event.page);
-  }
-
-  handlePackagePagerChange($event: EuiPaginationEvent): void {
-    this.currentPackagesPage = $event.page;
-    this.packagesPageSize = $event.pageSize;
-    this.updateDisplayedPackages();
-  }
-
-  updateDisplayedPackages(): void {
-    const start = this.currentPackagesPage * this.packagesPageSize;
-    const end = start + this.packagesPageSize;
-    this.displayedPackages = [...(this.packages || []).slice(start, end)];
   }
 
   protected readonly DEFAULT_SORT_ORDER = DEFAULT_SORT_ORDER;

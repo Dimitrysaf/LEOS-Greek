@@ -2,7 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
-import {BehaviorSubject, finalize, Observable} from 'rxjs';
+import { BehaviorSubject, finalize, Observable } from 'rxjs';
 import { apiBaseUrl } from 'src/config';
 
 import type { MilestoneViewResponse } from '@/features/proposal-view/models/milestone.model';
@@ -15,10 +15,19 @@ import { downloadBlob } from '@/shared/utils';
 export class ProposalMilestonesService {
   readyToMergeStatus$: Observable<string>;
   requestStoredDocumentAnnotations$: Observable<string>;
-  private requestStoredDocumentAnnotations = new BehaviorSubject<string>(null);
-  triggerRequestStoredDocumentAnnotations$: Observable<{proposalRef, legFileName, documentRef}>;
-  private triggerRequestStoredDocumentAnnotationsBS = new BehaviorSubject<{proposalRef, legFileName, documentRef}>(null);
   receiveStoredDocumentAnnotations$: Observable<string>;
+
+  triggerRequestStoredDocumentAnnotations$: Observable<{
+    proposalRef;
+    legFileName;
+    documentRef;
+  }>;
+  private requestStoredDocumentAnnotations = new BehaviorSubject<string>(null);
+  private triggerRequestStoredDocumentAnnotationsBS = new BehaviorSubject<{
+    proposalRef;
+    legFileName;
+    documentRef;
+  }>(null);
   private receiveStoredDocumentAnnotations = new BehaviorSubject<string>(null);
   private readyToMergeStatusSource = new BehaviorSubject<string>('');
 
@@ -28,9 +37,12 @@ export class ProposalMilestonesService {
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.readyToMergeStatus$ = this.readyToMergeStatusSource.asObservable();
-    this.requestStoredDocumentAnnotations$ = this.requestStoredDocumentAnnotations.asObservable();
-    this.receiveStoredDocumentAnnotations$ = this.receiveStoredDocumentAnnotations.asObservable();
-    this.triggerRequestStoredDocumentAnnotations$ = this.triggerRequestStoredDocumentAnnotationsBS.asObservable();
+    this.requestStoredDocumentAnnotations$ =
+      this.requestStoredDocumentAnnotations.asObservable();
+    this.receiveStoredDocumentAnnotations$ =
+      this.receiveStoredDocumentAnnotations.asObservable();
+    this.triggerRequestStoredDocumentAnnotations$ =
+      this.triggerRequestStoredDocumentAnnotationsBS.asObservable();
   }
 
   listMilestoneView(proposalRef: string, legFileName: string) {
@@ -64,15 +76,29 @@ export class ProposalMilestonesService {
     this.requestStoredDocumentAnnotations.next(uri);
   }
 
-  triggerRequestStoredDocumentAnnotations(proposalRef: string, legFileName: string, documentRef: string) {
-    this.triggerRequestStoredDocumentAnnotationsBS.next({proposalRef: proposalRef, legFileName: legFileName, documentRef: documentRef});
+  triggerRequestStoredDocumentAnnotations(
+    proposalRef: string,
+    legFileName: string,
+    documentRef: string,
+  ) {
+    this.triggerRequestStoredDocumentAnnotationsBS.next({
+      proposalRef,
+      legFileName,
+      documentRef,
+    });
   }
 
-  sendRequestStoredDocumentAnnotations(proposalRef: string, legFileName: string, documentRef: string, removeRevisionPrefix: boolean) {
+  sendRequestStoredDocumentAnnotations(
+    proposalRef: string,
+    legFileName: string,
+    documentRef: string,
+    removeRevisionPrefix: boolean,
+  ) {
     return this.http
       .get<string>(
-        `${apiBaseUrl}/secured/document/${legFileName}/${proposalRef}/stored-annotations/${documentRef}?removeRevisionPrefix=${removeRevisionPrefix}`
-      ).subscribe((response) => {
+        `${apiBaseUrl}/secured/document/${legFileName}/${proposalRef}/stored-annotations/${documentRef}?removeRevisionPrefix=${removeRevisionPrefix}`,
+      )
+      .subscribe((response) => {
         this.receiveStoredDocumentAnnotations.next(response);
       });
   }

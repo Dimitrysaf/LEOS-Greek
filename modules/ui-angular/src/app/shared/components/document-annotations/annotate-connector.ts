@@ -1,5 +1,6 @@
 import { delay, Observable, shareReplay } from 'rxjs';
 
+import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 import type {
@@ -10,7 +11,6 @@ import type {
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
-import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 
 export type AnnotateConnectorInitialState = Omit<
   AnnotateConnectorState,

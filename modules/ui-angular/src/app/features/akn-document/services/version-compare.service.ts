@@ -25,6 +25,7 @@ import {
   DocumentService,
 } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
+import { ZoombarService } from '@/shared/services/zoombar.service';
 import { parentHasClass } from '@/shared/utils';
 
 import { apiBaseUrl } from '../../../../config';
@@ -66,6 +67,7 @@ export class VersionCompareService {
     protected http: HttpClient,
     protected environmentService: EnvironmentService,
     protected translateService: TranslateService,
+    protected zoombarService: ZoombarService,
     @Inject(DOCUMENT) protected document: Document,
     private pageModeService: PageModeService,
   ) {
@@ -197,6 +199,7 @@ export class VersionCompareService {
 
   closeVersionComparisonView() {
     this.clearVersionComparisonView();
+    this.zoombarService.resetAllZoomLevels();
     this.versionCompareIdsBS.next([]);
     this.versionComparisonViewBS.next(null);
     this.compareModeEnabledBS.next(false);

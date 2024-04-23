@@ -18,11 +18,12 @@ import {
   MilestoneViewResponse,
 } from '@/features/proposal-view/models/milestone.model';
 import { MilestoneTocItem } from '@/features/proposal-view/models/milestone-toc-item.model';
+import {MergeSuggestionRequest} from "@/shared";
 import { DocumentServiceAnnotationsStub } from '@/shared/components/proposal-milestone-view/document-service-annotations-stub';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
-import {MergeSuggestionRequest} from "@/shared";
+
 import {apiBaseUrl} from "../../../../config";
 
 type MilestoneDocument = {
@@ -64,7 +65,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   @ViewChild('annotationsPane', { read: ElementRef })
   annotationsPaneElement: ElementRef;
   status: string;
-  isOpened: boolean = false;
+  isOpened = false;
 
   documents: MilestoneDocument[] = [];
   containerId = 'view-container-id';
@@ -141,38 +142,38 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       );
     }
   }
-
+  
   onToggleTocPaneCollapsed(isTocPaneCollapsed = !this.isTocPaneCollapsed) {
     this.isTocPaneCollapsed = isTocPaneCollapsed;
   }
-
+  
   onToggleAnnotationsPaneCollapsed(
     isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed,
   ) {
     this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
   }
-
-  private loadContribution(hiddenCategories) {
-    this.milestonesService
-      .listContributionsView(
-        this.milestone.proposalRef,
-        this.milestone.legDocumentName,
-      )
-      .subscribe((response) => {
-        this.handleMilestoneExplorerDocuments(response, hiddenCategories);
-      });
-    this.milestonesService.resetReadyToMergeStatus();
-  }
-
+  
   requestStoredDocumentAnnotations(request : string) {
     if (request && this.isOpened) {
-      let doc = this.documents[this.activeTabIndex];
+      const doc = this.documents[this.activeTabIndex];
       this.milestonesService.sendRequestStoredDocumentAnnotations(this.milestone.proposalRef, this.milestone.legDocumentName, doc.ref, true);
     } else {
       this.milestonesService.sendEmptyStoredDocumentAnnotations();
     }
   }
-
+    
+  private loadContribution(hiddenCategories) {
+    this.milestonesService
+    .listContributionsView(
+      this.milestone.proposalRef,
+      this.milestone.legDocumentName,
+    )
+    .subscribe((response) => {
+      this.handleMilestoneExplorerDocuments(response, hiddenCategories);
+    });
+    this.milestonesService.resetReadyToMergeStatus();
+  }
+  
   private loadDocuments(hiddenCategories: string[]) {
     if (!!this.milestone.legDocumentName) {
       this.milestonesService

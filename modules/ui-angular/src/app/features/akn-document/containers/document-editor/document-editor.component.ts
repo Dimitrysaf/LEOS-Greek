@@ -62,6 +62,7 @@ import { DomService } from '@/shared/services/dom.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LeosLightService } from '@/shared/services/leos-light.service';
 import { LoadingService } from '@/shared/services/loading.service';
+import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
 import { findNodeById } from '@/shared/utils/toc.utils';
 
@@ -71,7 +72,6 @@ import { PageMode, PageModeService } from '../../services/page-mode.service';
 import { SyncDocumentScrollService } from '../../services/sync-document-scroll.service';
 import { TableOfContentService } from '../../services/table-of-content.service';
 import { TableOfContentEditService } from '../../services/table-of-content-edit.service';
-import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 
 @Component({
   selector: 'app-document-editor',

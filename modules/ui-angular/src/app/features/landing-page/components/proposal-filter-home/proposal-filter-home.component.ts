@@ -22,7 +22,7 @@ type ProposalsState = {
 })
 export class ProposalFilterHomeComponent implements OnInit {
   sortOrder = DEFAULT_SORT_ORDER;
-  @Output() onSearchInitiated: EventEmitter<string | null> = new EventEmitter();
+  @Output() searchInitiation: EventEmitter<string | null> = new EventEmitter();
   searchTerm = '';
   private destroy$ = new Subject<void>();
 
@@ -34,7 +34,7 @@ export class ProposalFilterHomeComponent implements OnInit {
   ngOnInit(): void {}
 
   buttonWatchForChanges() {
-    this.onSearchInitiated.emit(this.searchTerm || null);
+    this.searchInitiation.emit(this.searchTerm || null);
   }
 
   resetFilters() {

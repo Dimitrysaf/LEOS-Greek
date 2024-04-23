@@ -19,6 +19,10 @@ export class RibbonToolbarSectionComponent
   implements OnInit, AfterViewInit
 {
   @Input() resizeMap: Map<string, boolean>;
+  @Input() mainContainerId;
+  @Input() versionMainContainerId = 'versionMainContainer';
+  @Input() versionComparisonMainContainerId = 'versionComparisonMainContainer';
+  @Input() contributionViewMainContainerId = 'contributionViewMainContainer';
   isSectionOverflow = false;
 
   didDropdownRenderedAsRibbonItems = false;

@@ -336,7 +336,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
   ) {
     const toc = this.tocService.getCurrentToc();
     let sequence = '#';
-    let numType = getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup);
+    const numType = getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup);
     const config = getNumberingConfig(numberingConfigs, numType);
     if (list && list.length > 0 && config && !config.numbered) {
       const firstChild = list.at(0);

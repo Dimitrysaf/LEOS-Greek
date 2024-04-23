@@ -20,6 +20,8 @@
         <eui-icon-svg set="sharp" icon="chevron-back" size="xs"></eui-icon-svg>
       </button>
       <app-ribbon-toolbar-section
+        style="display: flex"
+        [mainContainerId]="mainContainerId"
         [item]="section"
         [resizeMap]="resizeSectionsMap"
       ></app-ribbon-toolbar-section>

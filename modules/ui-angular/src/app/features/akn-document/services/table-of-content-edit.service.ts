@@ -313,7 +313,7 @@ export abstract class TableOfContentEditService {
 
     if (actualTargetItem) {
       sourceItem.parentItem = actualTargetItem.id;
-      let numType = getNumberingTypeByLanguage(targetItem.tocItem, this.documentConfig.langGroup);
+      const numType = getNumberingTypeByLanguage(targetItem.tocItem, this.documentConfig.langGroup);
       const targetRules = [
         targetItem.tocItem.aknTag.toUpperCase(),
         numType.toUpperCase()
