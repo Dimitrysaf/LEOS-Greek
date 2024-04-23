@@ -2,7 +2,8 @@ import { Injectable } from '@angular/core';
 import { cloneDeep } from 'lodash-es';
 
 import {
-  ADD, CN,
+  ADD,
+  CN,
   DELETE,
   EC,
   LEOS_TC_DELETE_ACTION,
@@ -13,7 +14,10 @@ import {
   MOVE_TO,
   SOFT_MOVE_PLACEHOLDER_ID_PREFIX,
 } from '@/shared/constants';
-import { HASH_NUM_VALUE } from '@/shared/constants/toc.constant';
+import {
+  HASH_NUM_VALUE,
+  MOVED_TITLE_SPAN_START_TAG,
+} from '@/shared/constants/toc.constant';
 import { NodeValidation } from '@/shared/models/drop-response.model';
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
 import { DocumentService } from '@/shared/services/document.service';
@@ -83,6 +87,12 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     }
     const paretnNode = findNodeById(tocTree, sourceItem.parentItem);
     this.handleLevelMove(sourceItem, targetItem);
+    if (
+      (targetItem.softMoveTo || targetItem.softMoveFrom) &&
+      (sourceItem.softMoveFrom || sourceItem.softMoveTo)
+    )
+      this.restoreOriginState(tocTree, sourceItem, targetItem, position);
+
     this.updateDepthOfTocItems(paretnNode?.childItems ?? []);
     this.resetUserInfo(sourceItem);
     this.setTree(tocTree);
@@ -161,5 +171,62 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     const parent = findNodeById(newTree, item.parentItem);
     this.updateDepthOfTocItems(parent.childItems);
     this.setTree(newTree);
+  }
+
+  restoreOriginState(
+    tocTree: TableOfContentItemVO[],
+    droppedItem: TableOfContentItemVO,
+    newPosition: TableOfContentItemVO,
+    position: string,
+  ) {
+    const siblings =
+      position === 'as_children'
+        ? newPosition.childItems
+        : findNodeById(tocTree, newPosition.parentItem)?.childItems;
+
+    const droppedItemIndex = siblings.indexOf(droppedItem);
+    const previousSibling =
+      droppedItemIndex > 0 ? siblings.at(droppedItemIndex - 1) : null;
+    const nextSibling =
+      droppedItemIndex < siblings.length - 1
+        ? siblings.at(droppedItemIndex + 1)
+        : null;
+    if (
+      previousSibling &&
+      previousSibling.id.startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX) &&
+      previousSibling.elementNumberId.toString().substring(6) ===
+        droppedItem.elementNumberId.toString()
+    ) {
+      this.checkAndRestore(droppedItem, previousSibling, tocTree, position);
+    }
+    if (
+      nextSibling &&
+      nextSibling.id.startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX) &&
+      nextSibling.elementNumberId.toString().substring(6) ===
+        droppedItem.elementNumberId.toString()
+    ) {
+      this.checkAndRestore(droppedItem, nextSibling, tocTree, position);
+    }
+  }
+
+  private checkAndRestore(
+    droppedItem: TableOfContentItemVO,
+    sibling: TableOfContentItemVO,
+    tocTree: TableOfContentItemVO[],
+    prefix: string,
+  ) {
+    if (
+      sibling &&
+      sibling.id.substring(0, 6) === SOFT_MOVE_PLACEHOLDER_ID_PREFIX
+    ) {
+      this.resetDroppedItemProperties(droppedItem);
+      this.removeNode(tocTree, sibling);
+    }
+  }
+
+  private resetDroppedItemProperties(droppedItem: TableOfContentItemVO) {
+    droppedItem.softActionAttr = null;
+    droppedItem.softActionRoot = null;
+    droppedItem.softMoveTo = null;
   }
 }
