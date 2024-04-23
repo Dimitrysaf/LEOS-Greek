@@ -130,11 +130,6 @@ export class DocumentAnnotationsComponent
         this.annotate.setAnnotationMode(mode);
       },
     );
-    this.documentService.setRefreshAnnotateCall(
-      () => {
-        this.annotate.refresh();
-      },
-    );
   }
 
   ngOnDestroy() {
@@ -162,6 +157,9 @@ export class DocumentAnnotationsComponent
       event.data.method === 'showSidebar'
     ) {
       this.sidebarShown.emit();
+      this.documentService.setRefreshAnnotateCall(
+        () => this.annotate.refresh(),
+      );
     }
   }
 
