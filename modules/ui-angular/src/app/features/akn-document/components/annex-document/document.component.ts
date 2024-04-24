@@ -26,6 +26,7 @@ import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.s
 import { ZoombarService } from '@/shared/services/zoombar.service';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
+import {Milestone} from "@/features/proposal-view/models/milestone.model";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -69,12 +70,22 @@ export class DocumentComponent
     private environmentService: EnvironmentService,
     private zoombarService: ZoombarService,
     private changeDetectorRef: ChangeDetectorRef,
+    private milestoneService: ProposalMilestonesService,
   ) {
     this.isCNInstance = this.environmentService.isCouncil();
+
+    this.milestoneService.triggerRequestStoredDocumentAnnotations$.subscribe((request) => {
+      if (request && this.contributionView) {
+        this.milestoneService.sendRequestStoredDocumentAnnotations(request.proposalRef, request.legFileName, request.documentRef, false);
+      } else {
+        this.milestoneService.sendEmptyStoredDocumentAnnotations();
+      }
+    });
+
     this.zoomLevel = this.zoombarService.getZoomLevel(this.mainContainerId);
 
     this.zoombarService.zoomChange
-      .pipe(takeUntil(this.destroy$)) 
+      .pipe(takeUntil(this.destroy$))
       .subscribe((event) => {
         if (event.mainContainerId === this.mainContainerId) {
           this.handleZoomChange(event);
