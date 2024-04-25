@@ -25,5 +25,5 @@ strip_text=true>
 
 <#macro body>
     <p>Feedback has/have been provided by the Lead DG while processing the contribution received for the proposal ${title}&nbsp;in the ${namePart}.</p>
-    <p>You can see this feedback in your contribution content using "view contribution" on the contribution : ${link}</p>
+    <p>You can see this feedback in your contribution content using "view contribution" on the contribution: <a href="${link}">link</a></p>
 </#macro>
