@@ -88,8 +88,10 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     const paretnNode = findNodeById(tocTree, sourceItem.parentItem);
     this.handleLevelMove(sourceItem, targetItem);
     if (
-      (targetItem.softMoveTo || targetItem.softMoveFrom) &&
-      (sourceItem.softMoveFrom || sourceItem.softMoveTo)
+      targetItem.softMoveTo ||
+      targetItem.softMoveFrom ||
+      sourceItem.softMoveFrom ||
+      sourceItem.softMoveTo
     )
       this.restoreOriginState(tocTree, sourceItem, targetItem, position);
 
@@ -172,7 +174,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     this.updateDepthOfTocItems(parent.childItems);
     this.setTree(newTree);
   }
-
+  //targetItem.softMoveTo || targetItem.softMoveFrom
   restoreOriginState(
     tocTree: TableOfContentItemVO[],
     droppedItem: TableOfContentItemVO,
@@ -195,7 +197,8 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
       previousSibling &&
       previousSibling.id.startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX) &&
       previousSibling.elementNumberId.toString().substring(6) ===
-        droppedItem.elementNumberId.toString()
+        droppedItem.elementNumberId.toString() &&
+      droppedItem.softMoveFrom
     ) {
       this.checkAndRestore(droppedItem, previousSibling, tocTree, position);
     }
@@ -203,7 +206,8 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
       nextSibling &&
       nextSibling.id.startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX) &&
       nextSibling.elementNumberId.toString().substring(6) ===
-        droppedItem.elementNumberId.toString()
+        droppedItem.elementNumberId.toString() &&
+      droppedItem.softMoveFrom
     ) {
       this.checkAndRestore(droppedItem, nextSibling, tocTree, position);
     }
