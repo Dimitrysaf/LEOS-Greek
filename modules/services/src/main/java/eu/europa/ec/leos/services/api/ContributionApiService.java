@@ -5,6 +5,7 @@ import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
+import eu.europa.ec.leos.services.response.MergeContributionResponse;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,7 +24,7 @@ public interface ContributionApiService {
 
     void markContributionAsProcessed(String contributionVersionRef);
 
-    byte[] mergeContribution(String documentRef, ApplyContributionsRequest request) throws IOException;
+    MergeContributionResponse mergeContribution(String documentRef, ApplyContributionsRequest request) throws IOException;
 
     void sendFeedback(String proposalRef, String documentRef, String legFileName);
     

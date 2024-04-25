@@ -12,6 +12,7 @@ import eu.europa.ec.leos.services.dto.request.SendFeedbackRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
+import eu.europa.ec.leos.services.response.MergeContributionResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,11 +102,11 @@ public class ContributionController {
 
     @PostMapping(value = "/merge-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<byte[]> mergeContribution(@PathVariable("documentRef") String documentRef,
-                                                    @RequestBody ApplyContributionsRequest applyContributionsRequest) throws IOException {
+    public ResponseEntity<MergeContributionResponse> mergeContribution(@PathVariable("documentRef") String documentRef,
+                                                                       @RequestBody ApplyContributionsRequest applyContributionsRequest) throws IOException {
         documentRef = encodeParam(documentRef);
-        byte[] mergedContent = this.contributionApiService.mergeContribution(documentRef, applyContributionsRequest);
-        return ResponseEntity.ok(mergedContent);
+        MergeContributionResponse mergeResult = this.contributionApiService.mergeContribution(documentRef, applyContributionsRequest);
+        return ResponseEntity.ok(mergeResult);
     }
 
     @PostMapping(value = "/mark-as-processed/{contributionVersionRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)

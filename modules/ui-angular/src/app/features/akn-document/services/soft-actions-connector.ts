@@ -1,7 +1,10 @@
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
 
-export type SoftActionsConnectorState = LeosJavaScriptExtensionState;
+export type SoftActionsConnectorState = LeosJavaScriptExtensionState& {
+  // No connector specific state
+  isTrackChangesShowed: boolean;
+};
 
 export type SoftActionsConnectorInitialState = Omit<
   SoftActionsConnectorState,
@@ -22,6 +25,10 @@ export class SoftActionsConnector extends AbstractJavaScriptComponent<SoftAction
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
     this.otherTargets = otherTargets;
+  }
+
+  isTrackChangesShowed() {
+    return this._state.isTrackChangesShowed;
   }
 }
 

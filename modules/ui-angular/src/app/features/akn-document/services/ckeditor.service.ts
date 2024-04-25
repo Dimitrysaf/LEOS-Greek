@@ -181,8 +181,11 @@ export class CKEditorService {
       !this.trackChangesConnector.getState().isTrackChangesShowed;
     this.leosEditorConnector.getState().isTrackChangesShowed =
       !this.leosEditorConnector.getState().isTrackChangesShowed;
+    this.softActionsConnector.getState().isTrackChangesShowed =
+      !this.softActionsConnector.getState().isTrackChangesShowed;
     this.trackChangesConnector.$triggerStateChange();
     this.leosEditorConnector.$triggerStateChange();
+    this.softActionsConnector.$triggerStateChange();
   }
 
   changeEnableTrackChangesState(isTrackChangesEnabled) {

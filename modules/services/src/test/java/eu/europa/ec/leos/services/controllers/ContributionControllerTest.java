@@ -10,6 +10,7 @@ import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.CloneProposalRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.response.DeclineContributionResponse;
+import eu.europa.ec.leos.services.response.MergeContributionResponse;
 import eu.europa.ec.leos.services.user.UserService;
 import org.junit.Before;
 import org.junit.Test;
@@ -162,13 +163,14 @@ public class ContributionControllerTest {
         String TEST_DOCUMENT_CONTENT = "test content";
         ApplyContributionsRequest TEST_REQUEST = new ApplyContributionsRequest();
 
-        when(this.contributionApiService.mergeContribution(anyString(), any(ApplyContributionsRequest.class))).thenReturn(TEST_DOCUMENT_CONTENT.getBytes(StandardCharsets.UTF_8));
+        when(this.contributionApiService.mergeContribution(anyString(), any(ApplyContributionsRequest.class))).thenReturn(new MergeContributionResponse(true,
+                TEST_DOCUMENT_CONTENT.getBytes(StandardCharsets.UTF_8)));
 
-        ResponseEntity<byte[]> response = this.contributionController.mergeContribution(TEST_DOCUMENT_REF, TEST_REQUEST);
+        ResponseEntity<MergeContributionResponse> response = this.contributionController.mergeContribution(TEST_DOCUMENT_REF, TEST_REQUEST);
 
         verify(this.contributionApiService).mergeContribution(TEST_DOCUMENT_REF, TEST_REQUEST);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(TEST_DOCUMENT_CONTENT, new String(response.getBody()));
+        assertEquals(TEST_DOCUMENT_CONTENT, new String(response.getBody().getMergedContent()));
     }
 }

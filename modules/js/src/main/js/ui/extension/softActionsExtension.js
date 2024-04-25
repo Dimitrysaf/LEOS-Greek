@@ -123,6 +123,20 @@ define(function SoftActionsExtensionModule(require) {
         }, this);
     }
 
+    function _hideSoftMoveLabels(target) {
+        var moveLabels = $(target.parentElement).find('span.' + SOFT_MOVE_LABEL_STYLE);
+        moveLabels.each(function(i, moveItem) {
+            moveItem.style.display = "none";;
+        }, this);
+    }
+
+    function _showSoftMoveLabels(target) {
+        var moveLabels = $(target.parentElement).find('span.' + SOFT_MOVE_LABEL_STYLE);
+        moveLabels.each(function(i, moveItem) {
+            moveItem.style.display = "inline-block";;
+        }, this);
+    }
+
     function _insertLabel(aknp,id, label, parentElement, style){
         if (aknp && aknp.localName === AKNP) {
             var $aknp = $(aknp);
@@ -180,10 +194,17 @@ define(function SoftActionsExtensionModule(require) {
         return movedElement;
     }
     
-    function _displaySoftMoveLabels(target, otherTargets) {
-        if(target != null) {
-            _displaySoftMoveLabelForDirection("TO", target);
-            _displaySoftMoveLabelForDirection("FROM", target);
+    function _displaySoftMoveLabels(connector, target, otherTargets) {
+        if (connector.isTrackChangesShowed()) {
+            if (target != null) {
+                _showSoftMoveLabels(target);
+                _displaySoftMoveLabelForDirection("TO", target);
+                _displaySoftMoveLabelForDirection("FROM", target);
+            }
+        } else {
+            if (target != null) {
+                _hideSoftMoveLabels(target);
+            }
         }
         otherParentElements = otherTargets;
         if (!!otherTargets && otherTargets.length > 0) {
@@ -221,7 +242,7 @@ define(function SoftActionsExtensionModule(require) {
         var connector = this;
         log.debug("Soft Actions extension state changed...");
         setTimeout(function(){ 
-            _displaySoftMoveLabels(connector.target, connector.otherTargets);
+            _displaySoftMoveLabels(connector, connector.target, connector.otherTargets);
         }, 1000);
     }
 

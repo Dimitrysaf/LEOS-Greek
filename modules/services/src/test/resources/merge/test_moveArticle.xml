@@ -582,7 +582,10 @@
                         </list>
                     </paragraph>
                 </article>
-            </chapter><article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_aljBSj" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_from="moved_art_1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" xml:id="art_1">
+            </chapter><article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_aljBSj" leos:origin="ec" leos:softaction="move_from"
+                               leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_from="moved_art_1"
+                               leos:softmove_label="MOVED from Article 1" leos:softuser="REVTI Gautam(CNECT)"
+                               leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" xml:id="art_1">
             <num leos:action="insert" leos:editable="false" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" leos:uid="gautare" xml:id="art_1__num">#</num>
             <heading xml:id="art_1__heading">Subject matter</heading>
             <paragraph xml:id="art_1_61PenZ">

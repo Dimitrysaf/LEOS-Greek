@@ -162,7 +162,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.MOVE_FROM.getSoftAction());
                 addAttribute(node, LEOS_SOFT_MOVE_FROM, SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elementId);
                 addAttribute(node, LEOS_SOFT_USER_ATTR, softUser);
-                //updateSoftMoveLabelAttribute(document.getFirstChild(), LEOS_SOFT_MOVE_FROM);
             } else if (direction.equals(SoftActionType.MOVE_TO)) {
                 addAttribute(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION);
                 addAttribute(node, LEOS_SOFT_ACTION_ATTR, SoftActionType.MOVE_TO.getSoftAction());
@@ -572,6 +571,24 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 node.getParentNode().appendChild(newNode);
                 XercesUtils.addAttribute(newNode, REFERS_TO_ATTR, ENDING_PART);
             }
+            XercesUtils.addSibling(newNode, node, before);
+
+            if (isTrackChangesEnabled) {
+                addAttribute(newNode, LEOS_ACTION_ATTR, "insert");
+                addAttribute(newNode, LEOS_UID, securityContext.getUser().getLogin());
+                addAttribute(newNode, LEOS_TITLE, getTitleValue(securityContext));
+            }
+        }
+        return nodeToByteArray(document);
+    }
+
+    @Override
+    public byte[] insertElementByTagNameAndIdWithoutCheckOnIntro(byte[] xmlContent, String elementTemplate, String idAttributeValue,
+                                                                 boolean before, boolean isTrackChangesEnabled) {
+        Document document = createXercesDocument(xmlContent);
+        Node node = XercesUtils.getElementById(document, idAttributeValue);
+        if (node != null) {
+            Node newNode = XercesUtils.createNodeFromXmlFragment(document, elementTemplate.getBytes(UTF_8), false);
             XercesUtils.addSibling(newNode, node, before);
 
             if (isTrackChangesEnabled) {

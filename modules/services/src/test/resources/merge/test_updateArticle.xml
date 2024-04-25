@@ -639,7 +639,10 @@
                                 <content xml:id="akn_art_dMHd93_w5FzN8">
                                     <p xml:id="akn_art_dMHd93_Hl4uaa">provide a single communication channel for economic operators to fulfil the relevant customs formalities and Union non-customs formalitiesÂ subject to additional digital cooperation in accordance with Article 12.</p>
                                 </content>
-                            </point><point leos:action="insert" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T13:56:15+00:00" leos:softmove_from="moved_akn_art_jSKkaB_LCbrrd" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.648+01:00" leos:uid="dasatya" xml:id="akn_art_jSKkaB_LCbrrd">
+                            </point><point leos:action="insert" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
+                                           leos:softdate="2024-03-08T13:56:15+00:00" leos:softmove_from="moved_akn_art_jSKkaB_LCbrrd"
+                                           leos:softmove_label="MOVED from Article 6(3),point(b)" leos:softuser="DAS Satyabrata(undefined)"
+                                           leos:title="DAS Satyabrata : 2024-03-08T15:05:03.648+01:00" leos:uid="dasatya" xml:id="akn_art_jSKkaB_LCbrrd">
                             <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.648+01:00" leos:uid="dasatya" xml:id="akn_art_jSKkaB_OuBKd6">(d)</num>
                             <content xml:id="akn_art_jSKkaB_WD2gcv">
                                 <p xml:id="akn_art_jSKkaB_EHe9BM">assist each other in matters involving the identification and handling of any data breach related to joint processing;</p>

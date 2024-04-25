@@ -68,6 +68,9 @@ public interface XmlContentProcessor {
 
     byte[] insertElementByTagNameAndId(byte[] xmlContent, String articleTemplate, String tagName, String idAttributeValue, boolean before, boolean isTrackChangesEnabled);
 
+    byte[] insertElementByTagNameAndIdWithoutCheckOnIntro(byte[] xmlContent, String elementTemplate, String idAttributeValue,
+                                                          boolean before, boolean isTrackChangesEnabled);
+
     byte[] addChildToParent(byte[] xmlContent, String elementContent, String parentId);
 
     byte[] createDocumentContentWithNewTocList(List<TableOfContentItemVO> tableOfContentItemVOs, byte[] content, User user, boolean isTrackChangesEnabled);

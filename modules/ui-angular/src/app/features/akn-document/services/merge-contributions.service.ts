@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
-import {EuiDialogService} from "@eui/components/eui-dialog";
+import {EuiDialogConfig, EuiDialogService} from "@eui/components/eui-dialog";
 import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import {BehaviorSubject, filter, map, Observable, Subject, tap} from 'rxjs';
@@ -14,6 +14,12 @@ import {
 } from '@/features/akn-document/services/page-mode.service';
 import { SyncDocumentScrollService } from '@/features/akn-document/services/sync-document-scroll.service';
 import { ContributionStatus } from '@/shared';
+import { ContributionVO } from '@/shared/models/contribution-vo.model';
+import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
+import {MergeActionItem, MergeActionVO} from '@/shared/models/merge-action-vo.model';
+import {DocumentService} from '@/shared/services/document.service';
+
+import { apiBaseUrl } from '../../../../config';
 import {
   ADD_ATTR, CONTENT_CHANGE, ContributionActionAttrValue,
   DELETE_ATTR,
@@ -26,13 +32,8 @@ import {
   PARENT_AFFECTED,
   REVISION_PREFIX, SELECTED_ACTION_ATTR
 } from "@/shared/constants/fork-merge.constants";
-import { ContributionVO } from '@/shared/models/contribution-vo.model';
-import { DocumentViewResponse } from '@/shared/models/document-view-response.model';
-import {MergeActionItem, MergeActionVO} from '@/shared/models/merge-action-vo.model';
-import { DocumentService } from '@/shared/services/document.service';
-import { ZoombarService } from '@/shared/services/zoombar.service';
-
-import { apiBaseUrl } from '../../../../config';
+import {MergeContributionResponse} from "@/shared/models/merge-contribution-response.model";
+import {ZoombarService} from "@/shared/services/zoombar.service";
 
 @Injectable({
   providedIn: 'root',
@@ -99,6 +100,7 @@ export class MergeContributionsService {
     private dialogService: EuiDialogService,
     private appShellService: UxAppShellService,
     private zoombarService: ZoombarService,
+    private translateService: TranslateService,
     protected domSanitizer: DomSanitizer,
     @Inject(DOCUMENT) private document: Document,
   ) {
@@ -319,16 +321,14 @@ export class MergeContributionsService {
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
 
     this.http
-      .post(
+      .post<MergeContributionResponse>(
         `${apiBaseUrl}/secured/contribution/merge-contributions/${documentRef}/${documentType}`,
         {
           mergeActions,
           acceptAllContributions,
         },
-        { responseType: 'text' as 'json' },
-      )
-      .subscribe({
-        next: () => {
+      ).subscribe({
+        next: (resp) => {
           this.appShell.growl({
             severity: 'success',
             summary: this.translate.instant(
@@ -345,6 +345,22 @@ export class MergeContributionsService {
             this.updateProcessedStatus(false, contribution);
           this.emptyMergeActionList();
           this.documentService.reloadDocument();
+          if (!resp.mergeStatus) {
+            this.dialogService.openDialog(
+              new EuiDialogConfig({
+                title: this.translateService.instant(
+                  'page.editor.actions-merge-contributions.title',
+                ),
+                content: this.translateService.instant(
+                  'page.editor.actions-merge-contributions.content',
+                ),
+                acceptLabel: this.translateService.instant('global.actions.continue'),
+                hasDismissButton: false,
+                accept: () => {
+                },
+              }),
+            );
+          }
         },
         error: (res) => {
           this.appShell.growl({
