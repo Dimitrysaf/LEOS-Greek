@@ -92,7 +92,13 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
                 XercesUtils.deleteElementsByXPath(parentNode, parentXPath);
             } else if (node != null) {
                 // Update existing node
-                updateNode(node, value);
+                if(node.getNodeName().toLowerCase().contains("docpurpose")
+                    && ((value.contains("<del ") && value.contains("</del>"))
+                        || (value.contains("<ins ") && value.contains("</ins>")))){
+                    XercesUtils.addContentToNode(node, value);
+                } else {
+                    updateNode(node, value);
+                }
             } else if (config.get(key).create && (!getDocEEATagList().contains(key) ||
                     (getDocEEATagList().contains(key) && !value.isEmpty()))) { //LEOS-5691: Do not add the node if empty
                 // Create the node, if the creation flag for the specific element is true

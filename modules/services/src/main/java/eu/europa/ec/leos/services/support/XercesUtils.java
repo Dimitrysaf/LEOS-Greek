@@ -98,7 +98,8 @@ public class XercesUtils {
         }
         String nodeAsString = nodeToString(node);
         nodeAsString = removeSelfClosingElements(nodeAsString);
-        String openTagAndActualContent = findString(nodeAsString, "<mref(.|\\S|\\n)*?>");
+        //Regex to match open HTML tags except for self-contained tags
+        String openTagAndActualContent = findString(nodeAsString, "<([a-z]+)(?![^>]*\\/>)[^>]*>");
         String closeTagStr = findString(nodeAsString, "<\\/\\S+?>$");
         String newNodeXml = openTagAndActualContent + newContent + closeTagStr;
         Node newNode = createNodeFromXmlFragment(node.getOwnerDocument(), newNodeXml.getBytes(UTF_8));
