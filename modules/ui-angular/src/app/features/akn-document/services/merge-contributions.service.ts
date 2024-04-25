@@ -19,7 +19,7 @@ import {
   DELETE_ATTR,
   ID, INSERT_ATTR,
   LEOS_SOFT_ACTION,
-  LEOS_TRACK_ACTION, MERGE_ACTION_ATTR, MERGE_CONTRIBUTION,
+  LEOS_TRACK_ACTION, MERGE_CONTRIBUTION,
   MOVE_ATTR,
   MOVE_FROM_ATTR, MOVE_PREFIX,
   MOVE_TO_ATTR,
@@ -56,7 +56,7 @@ export class MergeContributionsService {
 
   contributionIndex = 0;
 
-  private mergeActionList: MergeActionVO[] = new Array();
+  private mergeActionList: MergeActionVO[] = [];
   private showMenuBS = new Subject<{event: MouseEvent, element: HTMLElement, actions: HTMLElement}>();
   private feedbackToBeSentBS = new BehaviorSubject<boolean>(false);
   private disableSendFeedbackToBeSentBS = new BehaviorSubject<boolean>(true);
@@ -249,18 +249,20 @@ export class MergeContributionsService {
   countFeedbacks(contributions: ContributionVO[]) {
     if (contributions && contributions.length > 0) {
       for (const contribution of contributions) {
-        const legFileName = contribution.legFileName;
-        const proposalRef = contribution.proposalRef;
-        const documentRef = contribution.documentName.replaceAll('.xml', '');
-        return this.http
-          .get<number>(
-            `${apiBaseUrl}/secured/contribution/${legFileName}/${proposalRef}/count-feedbacks/${documentRef}`,
-          )
-          .subscribe((nbFeedbacks) => {
-            if (nbFeedbacks > 0) {
-              this.setFeedbackToBeSent(true);
-            }
-          });
+        if (!contribution.greyed) {
+          const legFileName = contribution.legFileName;
+          const proposalRef = contribution.proposalRef;
+          const documentRef = contribution.documentName.replaceAll('.xml', '');
+          return this.http
+            .get<number>(
+              `${apiBaseUrl}/secured/contribution/${legFileName}/${proposalRef}/count-feedbacks/${documentRef}`,
+            )
+            .subscribe((nbFeedbacks) => {
+              if (nbFeedbacks > 0) {
+                this.setFeedbackToBeSent(true);
+              }
+            });
+        }
       }
     }
   }
@@ -617,6 +619,7 @@ export class MergeContributionsService {
           position: 'bottom-right',
         });
         this.setFeedbackToBeSent(false);
+        this.documentService.refreshAnnotate();
       });
   }
 
@@ -634,11 +637,7 @@ export class MergeContributionsService {
 
   private greyContributions(contributions: ContributionVO[]) {
     return contributions.map((c) => {
-      if (c.contributionStatus === ContributionStatus.ContributionDone) {
-        c.greyed = true;
-      } else {
-        c.greyed = false;
-      }
+      c.greyed = c.contributionStatus === ContributionStatus.ContributionDone;
       return c;
     });
   }
