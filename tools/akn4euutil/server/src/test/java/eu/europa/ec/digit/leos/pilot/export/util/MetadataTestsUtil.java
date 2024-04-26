@@ -1,7 +1,7 @@
 package eu.europa.ec.digit.leos.pilot.export.util;
 
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.fieldInfo.*;
-import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageDateFormat;
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageFormats;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLocationType;
 import eu.europa.ec.digit.leos.pilot.export.util.XmlUtil.XmlFile;
 import org.springframework.util.Assert;
@@ -16,12 +16,12 @@ public final class MetadataTestsUtil {
 
     public static class MetadataTestConfiguration {
         private MetadataLocationType locationTypeToTest;
-        private MetadataLanguageDateFormat dateFormatTypeToTest;
+        private MetadataLanguageFormats languageFormatsToTest;
 
         public MetadataTestConfiguration(MetadataLocationType locationTypeToTest,
-                                         MetadataLanguageDateFormat dateFormatTypeToTest){
+                                         MetadataLanguageFormats languageFormatsToTest){
             this.locationTypeToTest = locationTypeToTest;
-            this.dateFormatTypeToTest = dateFormatTypeToTest;
+            this.languageFormatsToTest = languageFormatsToTest;
         }
 
         public MetadataLocationType getLocationTypeToTest() {
@@ -32,12 +32,12 @@ public final class MetadataTestsUtil {
             this.locationTypeToTest = locationTypeToTest;
         }
 
-        public MetadataLanguageDateFormat getDateFormatTypeToTest() {
-            return dateFormatTypeToTest;
+        public MetadataLanguageFormats getLanguageFormatsToTest() {
+            return languageFormatsToTest;
         }
 
-        public void setDateFormatTypeToTest(MetadataLanguageDateFormat dateFormatTypeToTest) {
-            this.dateFormatTypeToTest = dateFormatTypeToTest;
+        public void setLanguageFormatsToTest(MetadataLanguageFormats languageFormatsToTest) {
+            this.languageFormatsToTest = languageFormatsToTest;
         }
 
         public ReferenceFieldInfo getLocationTypeToTestAsFieldInfo() {
@@ -52,7 +52,7 @@ public final class MetadataTestsUtil {
         }
 
         public static MetadataTestConfiguration getDefault() {
-            return new MetadataTestConfiguration(MetadataLocationType.BRUSSELS, MetadataLanguageDateFormat.EN);
+            return new MetadataTestConfiguration(MetadataLocationType.BRUSSELS, MetadataLanguageFormats.EN);
         }
 
         public static MetadataTestConfiguration withLocationTypeToTest(MetadataLocationType locationTypeToTest) {
@@ -61,9 +61,9 @@ public final class MetadataTestsUtil {
             return configuration;
         }
 
-        public static MetadataTestConfiguration withDateFormatTypeToTest(MetadataLanguageDateFormat dateFormatTypeToTest) {
+        public static MetadataTestConfiguration withLanguageFormatsToTest(MetadataLanguageFormats languageFormats) {
             MetadataTestConfiguration configuration = MetadataTestConfiguration.getDefault();
-            configuration.setDateFormatTypeToTest(dateFormatTypeToTest);
+            configuration.setLanguageFormatsToTest(languageFormats);
             return configuration;
         }
     }
@@ -149,7 +149,7 @@ public final class MetadataTestsUtil {
             checkNodeAttributeValue(xmlNodeMeta, "href",
                     configuration.getLocationTypeToTestAsFieldInfo().getHref());
             checkNodeAttributeValue(xmlNodeMeta, "showAs",
-                    configuration.getLocationTypeToTestAsFieldInfo().getDisplayValue());
+                    configuration.languageFormatsToTest.getLocationDisplayValue(configuration.getLocationTypeToTestAsFieldInfo().getId()));
         }
 
         Node xmlNodeCoverpage = xmlFile.getElementByName("coverPage");
@@ -160,7 +160,7 @@ public final class MetadataTestsUtil {
         if (xmlNodeLocation != null) {
             checkNodeWithRefersToAttribute(xmlNodeLocation,
                     "~" + configuration.getLocationTypeToTestAsFieldInfo().getId(),
-                    configuration.getLocationTypeToTestAsFieldInfo().getDisplayValue());
+                    configuration.languageFormatsToTest.getLocationDisplayValue(configuration.getLocationTypeToTestAsFieldInfo().getId()));
         }
 
         Node xmlNodeConclusions = xmlFile.getElementByName("conclusions");
@@ -169,7 +169,7 @@ public final class MetadataTestsUtil {
         if (xmlNodeLocation != null) {
             checkNodeWithRefersToAttribute(xmlNodeLocation,
                     "~" + configuration.getLocationTypeToTestAsFieldInfo().getId(),
-                    configuration.getLocationTypeToTestAsFieldInfo().getDisplayValue());
+                    configuration.languageFormatsToTest.getLocationDisplayValue(configuration.getLocationTypeToTestAsFieldInfo().getId()));
         }
     }
 
@@ -178,8 +178,8 @@ public final class MetadataTestsUtil {
         Node xmlNodeMainDoc = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeCoverpage, "mainDoc");
         Node xmlNodeBlock = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeMainDoc, "placeAndDate");
         Node xmlNodeDate = XmlUtil.getChildNodeWithName(xmlNodeBlock, "date");
-        String expectedDisplayValue = MetadataUtil.convertIsoDateToLanguageDateFormat("2012-09-28",
-                configuration.getDateFormatTypeToTest().getIso639_2t());
+        String expectedDisplayValue = configuration.getLanguageFormatsToTest().formatDate(MetadataUtil.convertIsoDateToLanguageDateFormat("2012-09-28",
+                configuration.getLanguageFormatsToTest()));
         if (xmlNodeDate != null) {
             checkDateNode(xmlNodeDate, "2012-09-28", expectedDisplayValue);
         }

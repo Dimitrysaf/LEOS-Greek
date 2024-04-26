@@ -13,12 +13,12 @@
  */
 package eu.europa.ec.digit.leos.pilot.export;
 
+import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageFormats;
 import eu.europa.ec.digit.leos.pilot.export.service.MockService;
 import eu.europa.ec.digit.leos.pilot.export.util.ConstantsTestsUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataTestsUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.MetadataTestsUtil.MetadataTestConfiguration;
 import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLocationType;
-import eu.europa.ec.digit.leos.pilot.export.model.metadata.MetadataLanguageDateFormat;
 import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +145,7 @@ class AKN4EUUtilApplicationTests {
                 .andReturn();
         byte[] content = mvcResult.getResponse().getContentAsByteArray();
         Assert.notNull(content, "Content is null");
-        MetadataTestConfiguration configuration = MetadataTestConfiguration.withDateFormatTypeToTest(MetadataLanguageDateFormat.HU);
+        MetadataTestConfiguration configuration = MetadataTestConfiguration.withLanguageFormatsToTest(MetadataLanguageFormats.HU);
         MetadataTestsUtil.checkMetadataResponse(content, configuration);
     }
 
@@ -157,7 +157,7 @@ class AKN4EUUtilApplicationTests {
                 .andReturn();
         byte[] content = mvcResult.getResponse().getContentAsByteArray();
         Assert.notNull(content, "Content is null");
-        MetadataTestConfiguration configuration = MetadataTestConfiguration.withDateFormatTypeToTest(MetadataLanguageDateFormat.LT);
+        MetadataTestConfiguration configuration = MetadataTestConfiguration.withLanguageFormatsToTest(MetadataLanguageFormats.LT);
         MetadataTestsUtil.checkMetadataResponse(content, configuration);
     }
 
@@ -169,7 +169,7 @@ class AKN4EUUtilApplicationTests {
                 .andReturn();
         byte[] content = mvcResult.getResponse().getContentAsByteArray();
         Assert.notNull(content, "Content is null");
-        MetadataTestConfiguration configuration = MetadataTestConfiguration.withDateFormatTypeToTest(MetadataLanguageDateFormat.SK);
+        MetadataTestConfiguration configuration = MetadataTestConfiguration.withLanguageFormatsToTest(MetadataLanguageFormats.SK);
         MetadataTestsUtil.checkMetadataResponse(content, configuration);
     }
 
@@ -181,7 +181,7 @@ class AKN4EUUtilApplicationTests {
                 .andReturn();
         byte[] content = mvcResult.getResponse().getContentAsByteArray();
         Assert.notNull(content, "Content is null");
-        MetadataTestConfiguration configuration = MetadataTestConfiguration.withDateFormatTypeToTest(MetadataLanguageDateFormat.HR);
+        MetadataTestConfiguration configuration = MetadataTestConfiguration.withLanguageFormatsToTest(MetadataLanguageFormats.HR);
         MetadataTestsUtil.checkMetadataResponse(content, configuration);
     }
 
