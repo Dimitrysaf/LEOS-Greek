@@ -363,7 +363,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             LOG.trace("Sending email feedback to all collaborators for proposalRef {}", proposalRef);
             SendFeedbackNotification sendFeedbackNotification = new SendFeedbackNotification();
             String milestoneUrl = applicationProperties.getProperty("leos.mapping.url") + "/ui/collection/"+proposalRef + "?legFileName=" + legFileName;
-            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            Proposal proposal = leosRepository.findDocumentByRef(proposalRef, Proposal.class);
             XmlDocument document = this.findDocumentByRef(documentRef);
             sendFeedbackNotification.setRecipients(buildCollaboratorList(proposal));
             sendFeedbackNotification.setTitle(getProposalTitle(proposal));

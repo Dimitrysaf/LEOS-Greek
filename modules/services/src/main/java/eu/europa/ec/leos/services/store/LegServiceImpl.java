@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.util.RawValue;
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
@@ -1156,8 +1155,7 @@ public class LegServiceImpl implements LegService {
 
     @Override
     public LegDocument updateLegDocumentFeedbackAnnotations(String proposalRef, String legFileName, String documentRef, String documentName, ExportOptions exportOptions) throws IOException {
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        LeosPackage clonedPackage = packageRepository.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        LeosPackage clonedPackage = packageRepository.findPackageByDocumentRef(proposalRef, Proposal.class);
         LegDocument legDocument = packageRepository.findDocumentByPackagePathAndName(clonedPackage.getPath(), legFileName, LegDocument.class);
         Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().getSource().getBytes());
 
