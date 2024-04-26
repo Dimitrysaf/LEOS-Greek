@@ -1,32 +1,30 @@
 import {Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import loginPage from "../pages/loginPage";
 
-Given('navigate to edit drafting application', () => {
-    loginPage.visitUrl();
+Given('navigate to {string} edit drafting application', (environment) => {
+        loginPage.visitUrl(environment);
 })
 
-// Then('user is on EU login page', () => {
-//     cy.get('#username').should('be.visible');
-// })
+Then('user is on EU login page', () => {
+    loginPage.elements.username().should('be.visible');
+})
 
-// When("user enters username {string}", (userName) =>{
-//     cy.get('#username').type(userName);
-// })
+When("user enters username {string}", (userName) =>{
+    loginPage.enterUserName(userName);
+})
 
-// And('user clicks next button', () => {
-//     cy.get('.btn-primary').click();
-//     cy.wait(2000)
-// })
+And('user clicks next button', () => {
+    loginPage.clickNextBtn()
+})
 
-// Then('user is on login page', () => {
-//     cy.get('#password').should('be.visible');
-// })
+Then('user is on login page', () => {
+    loginPage.elements.password().should('be.visible');
+})
 
-// When("user enters password {string}", (userName) =>{
-//     cy.get('#password').type(userName);
-// })
+When("user enters password {string}", (password) =>{
+    loginPage.enterPassword(password);
+})
 
-// And('user clicks on sign in button', () => {
-//     cy.get('.btn-primary').click();
-//     cy.wait(10000);
-// })
+And('user clicks on sign in button', () => {
+    loginPage.clickSignInBtn();
+})

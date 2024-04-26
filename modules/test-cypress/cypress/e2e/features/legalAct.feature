@@ -6,7 +6,7 @@ Feature: Legal Act Page Regression Features
 
     @citation_recital_editing @local
     Scenario: Add and removal of text in citation and recital element in legal Act
-        Given navigate to edit drafting application
+        Given navigate to "local" edit drafting application
         Then user is on repository browser page
         When click on create proposal button
         Then user is on create new legislative document window
@@ -48,10 +48,10 @@ Feature: Legal Act Page Regression Features
         Then user is on proposal viewer page
         When click on close button on proposal viewer page
         Then user is on repository browser page
-        
+
     @articleEditing @local
     Scenario: append text in existing paragraph and make same paragraph into two inside article
-        Given navigate to edit drafting application
+        Given navigate to "local" edit drafting application
         Then user is on repository browser page
         When click on create proposal button
         Then user is on create new legislative document window
@@ -81,3 +81,26 @@ Feature: Legal Act Page Regression Features
         And  paragraph 2 of article 1 contains "New Text"
         When click on close button present in legal act page
         Then user is on proposal viewer page
+
+    @sampleDevTest @nonlocal
+    Scenario: navigate to legal act page
+        Given navigate to "dev" edit drafting application
+        Then user is on EU login page
+        When user enters username "n000181h"
+        And  user clicks next button
+        Then user is on login page
+        When user enters password "Poland1235"
+        And  user clicks on sign in button
+        Then user is on repository browser page
+        When click on create proposal button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation testing article ck editor scenario" in create document page
+        And  click on create button
+        Then user is on proposal viewer page
+        When click on legal act link present in proposal viewer page
+        Then user is on legal act page
+        And  annotation side bar is present
+        And  ribbon toolbar is displayed
+        And  toc editing button is available
