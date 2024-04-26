@@ -10,9 +10,14 @@ class legalActPage extends headerPage{
         nextIconActionMenu: () => cy.get(".leos-actions.Vaadin-Icons span[data-widget-type='insert.after'][style='display: inline-block;']"),
         deleteIconActionMenu: () => cy.get(".leos-actions.Vaadin-Icons span[data-widget-type='delete'][style='display: inline-block;']")
     }
+
+    clickCloseBtn(){
+        this.elements.closeBtn().click();
+        cy.wait(1000);
+    }
     
     mouseHoverAndClickOnArticle(articleNumber){
-        cy.get("#_art_" + articleNumber).trigger('mouseover').trigger('click');
+        cy.get("#_art_" + articleNumber).realHover().click();
     }
 
     mouseHoverAndClickOnCitation(citationNumber){

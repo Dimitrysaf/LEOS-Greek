@@ -9,63 +9,86 @@ variables:
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn/cache"
   GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository
 
-#cypress-test:
-#  image: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
-#  stage: test
-#  rules:
-#  - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
-#      when: never
-#    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
-#      when: always
-#    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
-#    - if: $CI_PIPELINE_SOURCE == "schedule"
-#    - if: $CI_PIPELINE_SOURCE == "web"
-#    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
-#        !~ /^Draft.*$/
+#java-build:
+#  image: maven:3.8-openjdk-8
+#  stage: build
 #  script:
-#    - cd $CI_PROJECT_DIR/modules/test-cypress
-#    - npm install
-#    - npx cypress run
+#    - mvn clean package
 #  artifacts:
+#    expire_in: 1 day
 #    when: always
 #    paths:
-#      - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/open-leos.cy.js/**/*.png
+#      - "**/target/*.war"
+#      - "modules/config/target/generated-config/*.*"
+#      - "modules/ui-angular/package.json"
+#      - "modules/ui-angular/yarn.lock"
+#  cache:
+#    paths:
+#      - $CI_PROJECT_DIR/.m2/
+#      - $CI_PROJECT_DIR/.yarn
+#    policy: pull-push
+#  rules:
+#    - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+#        when: never
+#      - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+#        when: always
+#      - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+#      - if: $CI_PIPELINE_SOURCE == "schedule"
+#      - if: $CI_PIPELINE_SOURCE == "web"
+#      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
+#          !~ /^Draft.*$/
 
-java-build:
-  image: maven:3.8-openjdk-8
-  stage: build
+cypress-test:
+  image:
+    name: code.europa.eu:4567/leos/core/image-for-tests:1.0.1
+  variables:
+    TAGS_TO_RUN: "@local"
+  stage: test
+  #  dependencies:
+  #    - java-build
+  resource_group: cypress
+  rules:
+    - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+        when: never
+      - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+        when: always
+      - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      - if: $CI_PIPELINE_SOURCE == "schedule"
+      - if: $CI_PIPELINE_SOURCE == "web"
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
+          !~ /^Draft.*$/
   script:
-    - mvn clean package
+    - cd $CI_PROJECT_DIR/tools/user-repo
+    - mvn clean install
+    - cd $CI_PROJECT_DIR/tools/user-repo/web
+    - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
+    - cd $CI_PROJECT_DIR/tools/repository
+    - mvn clean install
+    - cd $CI_PROJECT_DIR/tools/repository/web
+    - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
+    - cd $CI_PROJECT_DIR/modules/web
+    - mvn jetty:run-war &
+    - sleep 40
+    - cd $CI_PROJECT_DIR/modules/test-cypress
+    - npm install
+    - npx cypress run --browser chrome --headed -e TAGS="$TAGS_TO_RUN"
+  after_script:
+    - cd $CI_PROJECT_DIR/modules/test-cypress
+    - node ./cucumberReport.js
   artifacts:
-    expire_in: 1 day
+    expire_in: 5 days
     when: always
     paths:
-      - "**/target/*.war"
-      - "modules/ui-angular/package.json"
-      - "modules/ui-angular/yarn.lock"
-  cache:
-    paths:
-    - $CI_PROJECT_DIR/.m2/
-    - $CI_PROJECT_DIR/.yarn
-    policy: pull-push
-  rules:
-  - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
-      when: never
-    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
-      when: always
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-    - if: $CI_PIPELINE_SOURCE == "web"
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
-        !~ /^Draft.*$/
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
 
-include:
-  - project: 'digit.s.1/sa/security-scan-template'
-    file: '.gitlab-ci-security-scan-mvn.yml'
-    ref: main
-
-fortify-sast:
-  image: fcoene/public:fortify-jdk8-node20
-
-sonatype-lifecycle:
-  image: fcoene/public:sonatype-lifecycle-jdk8
+#include:
+#  - project: 'digit.s.1/sa/security-scan-template'
+#    file: '.gitlab-ci-security-scan-mvn.yml'
+#    ref: main
+#
+#fortify-sast:
+#  image: fcoene/public:fortify-jdk8-node20
+#
+#sonatype-lifecycle:
+#  image: fcoene/public:sonatype-lifecycle-jdk8
