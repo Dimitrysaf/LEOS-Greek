@@ -2,7 +2,7 @@ package eu.europa.ec.leos.services.dto.request;
 
 public class ExportDocumentRequest {
     private String documentUrl;
-    private String outputDescriptor;
+    private ExportDocumentOptions options;
     private String callbackAddress;
 
     public String getDocumentUrl() {
@@ -13,12 +13,12 @@ public class ExportDocumentRequest {
         this.documentUrl = documentUrl;
     }
 
-    public String getOutputDescriptor() {
-        return outputDescriptor;
+    public ExportDocumentOptions getOptions() {
+        return options;
     }
 
-    public void setOutputDescriptor(String outputDescriptor) {
-        this.outputDescriptor = outputDescriptor;
+    public void setOptions(ExportDocumentOptions options) {
+        this.options = options;
     }
 
     public String getCallbackAddress() {

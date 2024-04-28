@@ -157,10 +157,10 @@ public class TokenServiceTest extends LeosTest {
         String clientSecret = "dgtSecret";
         String clientSubject = "acc:demo@demo";
         String clientUser = "luke";
-        String clioentRole = "OWNER";
+        String clientRole = "OWNER";
         String clientSystemName = "DGT_EDIT";
 
-        String token = generateJwtTokenWithLightSecurityContext(clientId, clientSecret, clientSubject, clientUser, clioentRole, clientSystemName);
+        String token = generateJwtTokenWithLightSecurityContext(clientId, clientSecret, clientSubject, clientUser, clientRole, clientSystemName);
         System.out.println(token);
     }
 

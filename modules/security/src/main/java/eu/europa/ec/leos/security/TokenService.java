@@ -19,7 +19,11 @@ public interface TokenService {
     String getAccessToken(String user);
 
     String getNgAccessToken(String user);
-    
+
+    String getClientContextToken(String clientId, String user, String role, String systemName);
+
+    AuthClient getAuthClient(String clientId);
+
     AuthClient validateClientByJwtToken(String token);
     
     boolean validateAccessToken(String token);
