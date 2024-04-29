@@ -49,7 +49,7 @@ Feature: Legal Act Page Regression Features
         When click on close button on proposal viewer page
         Then user is on repository browser page
         
-    @articleEditing @local @focus
+    @articleEditing @local
     Scenario: append text in existing paragraph and make same paragraph into two inside article
         Given navigate to edit drafting application
         Then user is on repository browser page

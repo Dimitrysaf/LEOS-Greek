@@ -27,10 +27,12 @@ class ckEditorWindow {
 
     clickSaveAndCloseBtn() {
         this.elements.saveAndCloseBtn().click();
+        cy.wait(2000);
     }
 
     clickCloseBtn() {
         this.elements.closeBtn().click();
+        cy.wait(1000);
     }
 
     clickSaveBtn() {
