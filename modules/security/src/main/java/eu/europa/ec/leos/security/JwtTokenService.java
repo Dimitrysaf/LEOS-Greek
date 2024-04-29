@@ -1,7 +1,22 @@
 package eu.europa.ec.leos.security;
 
-import static org.springframework.util.StringUtils.hasLength;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.interfaces.Claim;
+import eu.europa.ec.leos.config.PasswordConfigurator;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,25 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
-import javax.annotation.PostConstruct;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTCreator;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.auth0.jwt.interfaces.Claim;
-
-import eu.europa.ec.leos.config.PasswordConfigurator;
+import static org.springframework.util.StringUtils.hasLength;
 
 /**
  * Default class to generate and validate tokens.
@@ -62,6 +59,8 @@ class JwtTokenService implements TokenService {
     private int accessTokenExpirationInMin;
 
     private static final int NG_TOKEN_EXPIRE_IN_MIN = 365 * 24 * 60; //minutes in one year
+
+    private static final int CONTEXT_TOKEN_EXPIRE_IN_MIN = 365 * 24 * 60; //minutes in one year
 
     @Value("${leos.api.jwt.auth.clients}")
     private String authClients;
@@ -114,7 +113,7 @@ class JwtTokenService implements TokenService {
         final String subject = String.format("acct:%s@%s", userLogin, annotateAuthority);
         final String audience = getDomainName(url);
         final Date now = Calendar.getInstance().getTime();
-        return generateToken(annotateClientId, subject, audience, now, now, ANNOT_TOKEN_EXPIRE_IN_MIN, annotateSecret, userLogin);
+        return generateToken(annotateClientId, subject, audience, now, now, ANNOT_TOKEN_EXPIRE_IN_MIN, annotateSecret, userLogin, null, null);
     }
     
     /**
@@ -125,18 +124,37 @@ class JwtTokenService implements TokenService {
     public String getAccessToken(String user) {
         final Date now = Calendar.getInstance().getTime();
         return generateToken(leosApiId, null, null, now, now, accessTokenExpirationInMin,
-                leosApiSecret, user);
+                leosApiSecret, user, null, null);
     }
 
     @Override
     public String getNgAccessToken(String user) {
         final Date now = Calendar.getInstance().getTime();
         return generateToken(ngClientId, null, null, now, now, NG_TOKEN_EXPIRE_IN_MIN,
-                ngClientSecret, user);
+                ngClientSecret, user, null, null);
+    }
+
+    @Override
+    public String getClientContextToken(String clientId, String user, String role, String systemName) {
+        AuthClient authClient = getAuthClient(clientId);
+        if(authClient == null) {
+            return null;
+        }
+        final Date now = Calendar.getInstance().getTime();
+        return generateToken(authClient.getClientId(), null, null, now, now, CONTEXT_TOKEN_EXPIRE_IN_MIN,
+                authClient.getSecret(), user, role, systemName);
+    }
+
+    @Override
+    public AuthClient getAuthClient(String clientId) {
+        return this.registeredClients.stream()
+                .filter(authClient -> authClient.getClientId().equals(clientId))
+                .findFirst()
+                .orElse(null);
     }
 
     private String generateToken(String clientId, String subject, String audience, Date issuedAt, Date notBefore,
-                                 int expireInMin, String secret, String user) {
+                                 int expireInMin, String secret, String user, String role, String systemName) {
         String token = null;
         try {
             Calendar expires = Calendar.getInstance();
@@ -155,6 +173,14 @@ class JwtTokenService implements TokenService {
 
             if(hasLength(user)){
                 builder.withClaim("user", user);
+            }
+
+            if(hasLength(role)){
+                builder.withClaim("role", role);
+            }
+
+            if(hasLength(systemName)) {
+                builder.withClaim("systemName", systemName);
             }
 
             token = builder.sign(algorithm);

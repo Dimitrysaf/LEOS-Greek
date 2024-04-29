@@ -900,6 +900,7 @@ export abstract class DocumentActionsService {
             this.leosLightService.exportDocument(
               this.documentService.documentType,
               this.documentService.documentRef,
+              this.documentConfig,
             ),
         },
       ],
@@ -907,16 +908,7 @@ export abstract class DocumentActionsService {
   }
 
   get showMarkAsDoneButton() {
-    const documentMetada =
-      this.documentConfig &&
-      this.documentConfig.documentsMetadata &&
-      this.documentConfig.documentsMetadata.find(
-        (d) => (d.category = this.documentService.documentType),
-      );
-    return (
-      this.profile?.markAsDoneAvailable &&
-      documentMetada?.callbackAddress != null
-    );
+    return this.profile?.markAsDoneAvailable;
   }
 
   private toggleUserGuidance() {

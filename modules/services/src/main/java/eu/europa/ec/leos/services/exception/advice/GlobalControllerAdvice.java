@@ -16,9 +16,10 @@ package eu.europa.ec.leos.services.exception.advice;
 
 
 import eu.europa.ec.leos.services.controllers.AnnexController;
-import eu.europa.ec.leos.services.dto.request.ImportElementRequest;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.exception.ImportElementException;
+import eu.europa.ec.leos.services.exception.InternalServerException;
+import eu.europa.ec.leos.services.exception.InvalidInputException;
 import eu.europa.ec.leos.services.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -62,9 +62,23 @@ public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String handleNotFoundException(NotFoundException exception) {
+    public ResponseEntity<String> handleNotFoundException(NotFoundException exception) {
         LOG.info(" ---- Controller Advice --- handle {}: {}", NotFoundException.class.getSimpleName(), exception.getMessage());
-        return exception.getMessage();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(InvalidInputException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<String> handleInvalidInputException(InvalidInputException exception) {
+        LOG.info(" ---- Controller Advice --- handle InvalidInputException: {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(InternalServerException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<String> handleInternalServerException(InternalServerException exception) {
+        LOG.info(" ---- Controller Advice --- handle InternalServerException: {}", exception.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
     }
 
     @Override

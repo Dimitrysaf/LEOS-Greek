@@ -14,8 +14,8 @@
 package eu.europa.ec.leos.services.export;
 
 import eu.europa.ec.leos.domain.repository.document.Annex;
-import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import org.apache.commons.lang3.Validate;
@@ -33,7 +33,7 @@ import java.util.Map;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Component
-class ExportHelper {
+public class ExportHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ExportServiceImpl.class);
 
     private final Configuration freemarkerConfiguration;

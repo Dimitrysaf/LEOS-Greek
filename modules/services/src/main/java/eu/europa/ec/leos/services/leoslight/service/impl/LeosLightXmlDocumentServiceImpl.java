@@ -24,6 +24,8 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.rendition.RenderedDocument;
 import eu.europa.ec.leos.services.annotate.AnnotateService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
+import eu.europa.ec.leos.services.exception.ExportException;
+import eu.europa.ec.leos.services.export.ExportHelper;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
@@ -85,6 +87,7 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     private RestTemplate restTemplate;
     private AnnotateService annotateService;
     private DocumentLanguageContext documentLanguageContext;
+    private ExportHelper exportHelper;
 
     private final String XML_EXT = ".xml";
     private static final String STYLE_SHEET_EXT = ".css";
@@ -107,7 +110,7 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     public LeosLightXmlDocumentServiceImpl(XPathCatalog xPathCatalog,
                                            HtmlRenditionProcessor htmlRenditionProcessor, GenericDocumentApiService genericDocumentApiService,
                                            MessageHelper messageHelper, RestTemplate restTemplate, AnnotateService annotateService,
-            DocumentLanguageContext documentLanguageContext) {
+                                            DocumentLanguageContext documentLanguageContext, ExportHelper exportHelper) {
         this.xPathCatalog = xPathCatalog;
         this.htmlRenditionProcessor = htmlRenditionProcessor;
         this.messageHelper = messageHelper;
@@ -115,6 +118,7 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         this.restTemplate = restTemplate;
         this.annotateService = annotateService;
         this.documentLanguageContext = documentLanguageContext;
+        this.exportHelper = exportHelper;
     }
 
     @Override
@@ -163,38 +167,50 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     }
 
     @Override
-    public byte[] convert(byte[] documentContent, String fileName, String outputDescriptor, ExportOptions exportOptions) throws Exception {
+    public byte[] convert(byte[] documentContent, String fileName, ExportOptions exportOptions) {
         String uri = akn4euUrl + singleDocConvert;
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
         Map<String, Object> contentToZip = new HashMap<>();
         contentToZip.put(fileName, documentContent);
 
-        addAnnotateToZipContent(contentToZip, fileName.replace(".xml", ""), fileName, exportOptions, null);
-        contentToZip.put("content.json", outputDescriptor.getBytes(StandardCharsets.UTF_8));
-        File file = ZipPackageUtil.zipFiles("document.zip", contentToZip, null);
-        map.add("outputDescriptor", outputDescriptor);
+        if(exportOptions.isWithAnnotations()) {
+            addAnnotateToZipContent(contentToZip, fileName.replace(".xml", ""), fileName, exportOptions, null);
+        }
 
-        ResponseEntity<byte[]> response = getResponseEntity(uri, file, map, byte[].class);
-        if (response.getStatusCode().is2xxSuccessful()) {
-            byte[] bytesToWrite = response.getBody();
-            return bytesToWrite;
+        String outputDescriptor = exportHelper.createJsonOutputDescriptorFile(exportOptions, false);
+        contentToZip.put("content.json", outputDescriptor.getBytes(StandardCharsets.UTF_8));
+        File file = null;
+        try {
+            file = ZipPackageUtil.zipFiles("document.zip", contentToZip, null);
+            map.add("outputDescriptor", outputDescriptor);
+
+            ResponseEntity<byte[]> response = getResponseEntity(uri, file.getName(), Files.readAllBytes(file.toPath()), map, byte[].class);
+            if (response.getStatusCode().is2xxSuccessful()) {
+                byte[] bytesToWrite = response.getBody();
+                return bytesToWrite;
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if ((file != null) && file.exists()) {
+                file.delete();
+            }
         }
         LOG.error("Not successful conversion using the external service Akn4EU");
         throw new IllegalStateException("Not successful conversion using the external service Akn4EU");
     }
 
     @Override
-    public ResponseEntity<Object> sendZipFileToCallbackUrlAsync(File file, String callbackUrl) throws IOException {
+    public void sendFileToCallbackUrl(String fileName, byte[] content, String callbackUrl) throws IOException {
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-        return getResponseEntity(callbackUrl,file, map, Object.class);
+        getResponseEntity(callbackUrl,fileName, content, map, Object.class);
     }
 
-    private <T> ResponseEntity<T> getResponseEntity(String uri, File file, MultiValueMap<String, Object> map, Class<T> responseType) throws IOException {
-
-        ByteArrayResource bar = new ByteArrayResource(Files.readAllBytes(file.toPath())) {
+    private <T> ResponseEntity<T> getResponseEntity(String uri, String fileName, byte[] content, MultiValueMap<String, Object> map, Class<T> responseType) throws IOException {
+        ByteArrayResource bar = new ByteArrayResource(content) {
             @Override
             public String getFilename() {
-                return file.getName();
+                return fileName;
             }
         };
         map.add("inputFile", bar);

@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -58,6 +59,7 @@ public class LanguageGroupService {
         this.languageMapHolder = languageMapHolder;
     }
 
+    @PostConstruct
     public void getLanguageMap() {
         byte[] languageDocument = getLangGroupDocument();
         final LanguageGroup languageGroup = loadLanguageGroupFromFile(languageDocument);
@@ -66,7 +68,6 @@ public class LanguageGroupService {
             languageMap.put(group.getName(), group.getLangs());
         });
         languageMapHolder.loadLanguageMap(languageMap);
-        System.out.println("Language Map: "+ LanguageMapHolder.getLanguageMap());
     }
 
     public byte[] getLangGroupDocument() {

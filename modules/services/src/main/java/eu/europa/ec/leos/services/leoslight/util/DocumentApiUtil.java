@@ -39,15 +39,16 @@ import java.util.Map;
 public class DocumentApiUtil {
 
     public static final String APPLICATION_ZIP_VALUE = "application/zip";
+    public static final String APPLICATION_XML_VALUE = "application/xml";
 
-    public static ResponseEntity<Object> buildFileAttachment(byte[] outputFile, String filename) {
+    public static ResponseEntity<Object> buildFileAttachment(byte[] outputFile, String filename, String mediaType) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDisposition(
                 ContentDisposition
                         .builder("attachment")
                         .filename(filename)
                         .build());
-        headers.setContentType(MediaType.valueOf(APPLICATION_ZIP_VALUE));
+        headers.setContentType(MediaType.valueOf(mediaType));
         headers.setContentLength(outputFile.length);
         return new ResponseEntity<>(outputFile, headers, HttpStatus.OK);
     }
@@ -55,19 +56,17 @@ public class DocumentApiUtil {
     public static LeosDocument getLeosDocument(String docURL, LeosRepository leosRepository) {
         String docRef = docURL.substring(docURL.lastIndexOf('/') + 1);
         Class docType = getDocumentType(docRef);
-        LeosDocument savedDocument = leosRepository.findDocumentByRef(docRef, docType);
-        return savedDocument;
+        return leosRepository.findDocumentByRef(docRef, docType);
     }
 
-    public static Map<String, Object> getDocumentMetadata(String docURL, LeosRepository leosRepository) {
-        String docRef = docURL.substring(docURL.lastIndexOf('/') + 1);
+    public static Map<String, Object> getDocumentMetadata(String docRef, LeosRepository leosRepository) {
         Class docType = getDocumentType(docRef);
         return leosRepository.findDocumentMetadataByRef(docRef, docType);
     }
 
-    public static Pair<Class, LeosMetadata> getDocumentData(DocumentVO documentVO, MetadataVO metadataVO, String locale, String docRef) {
+    public static LeosMetadata getLeosMetaData(DocumentVO documentVO, String locale, String docRef) {
         LeosMetadata metaData;
-        Pair<Class, LeosMetadata> result;
+        MetadataVO metadataVO = documentVO.getMetadata();
         switch (documentVO.getDocumentType()) {
             case ANNEX:
                 metaData = new AnnexMetadata(metadataVO.getDocStage(),
@@ -84,7 +83,6 @@ public class DocumentApiUtil {
                         documentVO.getVersionSeriesId(),
                         metadataVO.getEeaRelevance(),
                         documentVO.getRef());
-                result = new Pair<>(Annex.class, metaData);
                 break;
             case BILL:
                 metaData = new BillMetadata(metadataVO.getDocStage(),
@@ -97,7 +95,6 @@ public class DocumentApiUtil {
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
                         metadataVO.getEeaRelevance());
-                result = new Pair<>(Bill.class, metaData);
                 break;
             case MEMORANDUM:
                 metaData = new MemorandumMetadata(metadataVO.getDocStage(),
@@ -110,7 +107,6 @@ public class DocumentApiUtil {
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
                         metadataVO.getEeaRelevance());
-                result = new Pair<>(Memorandum.class, metaData);
                 break;
             case STAT_FINANC_LEGIS:
                 metaData = new FinancialStatementMetadata(metadataVO.getDocStage(),
@@ -124,12 +120,11 @@ public class DocumentApiUtil {
                         documentVO.getId(),
                         documentVO.getVersionSeriesId(),
                         metadataVO.getEeaRelevance());
-                result = new Pair<>(FinancialStatement.class, metaData);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + documentVO.getDocumentType().name());
         }
-        return result;
+        return metaData;
     }
 
     public static Class getDocumentType(String docRef) {
