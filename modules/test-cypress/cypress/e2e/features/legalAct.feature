@@ -19,7 +19,7 @@ Feature: Legal Act Page Regression Features
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
-        And  toc editing button is available
+        And  toc editing button is displayed and enabled
         # And  annotation side bar is minimized
         When mousehover and click on citation 1
         Then ck editor window is displayed
@@ -49,7 +49,7 @@ Feature: Legal Act Page Regression Features
         When click on close button on proposal viewer page
         Then user is on repository browser page
 
-    @articleEditing @local
+    @splittingParagrahInArticle @local
     Scenario: append text in existing paragraph and make same paragraph into two inside article
         Given navigate to "local" edit drafting application
         Then user is on repository browser page
@@ -64,7 +64,7 @@ Feature: Legal Act Page Regression Features
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
-        And  toc editing button is available
+        And  toc editing button is displayed and enabled
         When mousehover and click on article 1
         # Then paragraph 1 of article 1 contains "Text..." when ck editor is open
         Then ck editor window is displayed
@@ -103,4 +103,4 @@ Feature: Legal Act Page Regression Features
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
-        And  toc editing button is available
+        And  toc editing button is displayed and enabled
