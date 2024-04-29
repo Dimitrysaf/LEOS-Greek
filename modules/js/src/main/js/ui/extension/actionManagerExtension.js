@@ -284,10 +284,13 @@ define(function actionManagerExtensionModule(require) {
             } else {
                 $actions.children().css({display: "inline-block"})
                 $($actions.children()[0]).css({display: "none"})
+                if(isCoedition($(element))){
+                    $actions.children("[data-widget-type='delete']").css({display: "none"});
+                }
             }
             actionsListOpened = !actionsListOpened;
         } else {
-            $(actions.children[0]).css({display: "inline-block"})
+            $($actions.children()[0]).css({display: "inline-block"});
         }
     }
 
@@ -468,7 +471,6 @@ define(function actionManagerExtensionModule(require) {
         $(element).css( "pointer-events", "all" );
         $(element).next().children().css( "pointer-events", "all" );
     }
-
     function _isValidAction(action, elementId, elementType, editable, deletable, user) {
         if (action && elementId && elementType) {
             return ((!editable && action === "edit") ||
@@ -553,6 +555,11 @@ define(function actionManagerExtensionModule(require) {
             default: deletable = tocItemElement && deletable ? _getTocItemElement(tocItemsList, type).deletable : deletable;
         }
         return deletable;
+    }
+
+    function isCoedition($element){
+       return $element && $element[0]?.previousSibling?.hasAttribute('class')
+        && $element[0]?.previousSibling?.getAttribute('class').includes('leos-user-coedition');
     }
 
     function _generateActions($element, editable, deletable, connector) {

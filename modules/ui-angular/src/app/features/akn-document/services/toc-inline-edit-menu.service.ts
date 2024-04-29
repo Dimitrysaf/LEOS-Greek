@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { getI18nState } from '@eui/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash-es';
-import { BehaviorSubject, combineLatest, filter, Observable, take } from 'rxjs';
+import {cloneDeep, keys} from 'lodash-es';
+import {BehaviorSubject, combineLatest, filter, Observable, Subject, take, takeUntil} from 'rxjs';
 
 import {
   ARTICLE_TYPE_CHANGE_ACTION_ID,
@@ -52,13 +52,14 @@ import {
   isMoveToItem,
   isUndeletableItem,
 } from '@/shared/utils/toc.utils';
+import {CoEditionVO} from "@/shared/models/coEditionVO.model";
 
 @Injectable()
-export abstract class TocInlineEditMenuService {
+export abstract class TocInlineEditMenuService  implements OnDestroy{
   public items$: Observable<EuiDropdownButtonMenuItem[]>;
   public documentConfig: DocumentConfig;
   public selectedNodeToMove: TableOfContentItemVO;
-
+  private destroy$ = new Subject<void>();
   private heading: string;
   private previousHeading: string;
   private previousType: string;
@@ -67,7 +68,7 @@ export abstract class TocInlineEditMenuService {
   private itemsBS = new BehaviorSubject<EuiDropdownButtonMenuItem[]>([]);
   private targetNodeBS = new BehaviorSubject<TableOfContentItemVO>(null);
   private documentConfigBS = new BehaviorSubject<DocumentConfig>(null);
-
+  private coEditionForDocumentId: Record<string, CoEditionVO[]>;
   protected constructor(
     protected store: Store<any>,
     protected dialogService: EuiDialogService,
@@ -90,8 +91,17 @@ export abstract class TocInlineEditMenuService {
       });
 
     this.items$ = this.itemsBS.asObservable();
-  }
 
+    this.coEditionService.getDocCoEditionInfo()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((coEdits: Record<string, CoEditionVO[]>) => {
+        this.coEditionForDocumentId = coEdits;
+      });
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
   public setDocumentConfig(documentConfig: DocumentConfig) {
     this.documentConfigBS.next(documentConfig);
   }
@@ -357,10 +367,25 @@ export abstract class TocInlineEditMenuService {
   private isDeleteButtonDisabled(node: TableOfContentItemVO) {
     const toc = this.tocService.getCurrentToc();
     const deletedItem = isDeletedItem(node) || isMoveToItem(node);
-    return (
+    let isDeleteDisabled = (
       node.tocItem.deletable &&
       (deletedItem ? isUndeletableItem(toc, node) : isDeletableItem(toc, node))
     );
+    isDeleteDisabled &&= !this.isNodeCoEdited(node);
+    return  isDeleteDisabled ;
+  }
+  private isNodeCoEdited(node: TableOfContentItemVO){
+    let result = keys(this.coEditionForDocumentId).includes(node.id);
+    if(!result){
+      result =  keys(this.coEditionForDocumentId).some(
+        (key) =>
+          !document.querySelector(`[data-id="${key}"]`)
+          && !!document.querySelector(`#${node.id}`)
+          && Array.from(document.querySelector(`#${node.id}`).children)
+            .some((child) => child.matches(`#${key}`) )
+      );
+    }
+    return result;
   }
 
   private getDeleteButtonLabel(node: TableOfContentItemVO) {
