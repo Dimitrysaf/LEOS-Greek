@@ -25,21 +25,21 @@ java-build:
       - "modules/ui-angular/yarn.lock"
   cache:
     paths:
-    - $CI_PROJECT_DIR/.m2/
-    - $CI_PROJECT_DIR/.yarn
+      - $CI_PROJECT_DIR/.m2/
+      - $CI_PROJECT_DIR/.yarn
     policy: pull-push
   rules:
-  - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
-      when: never
-    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
-      when: always
-    - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@nonlocal"
-      when: never
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
-    - if: $CI_PIPELINE_SOURCE == "schedule"
-    - if: $CI_PIPELINE_SOURCE == "web"
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
-        !~ /^Draft.*$/
+    - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+        when: never
+      - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+        when: always
+      - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@nonlocal"
+        when: never
+      - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      - if: $CI_PIPELINE_SOURCE == "schedule"
+      - if: $CI_PIPELINE_SOURCE == "web"
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
+          !~ /^Draft.*$/
 
 cypress-test-for-local:
   image:
