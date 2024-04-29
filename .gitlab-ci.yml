@@ -9,28 +9,6 @@ variables:
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn/cache"
   GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository
 
-#cypress-test:
-#  image: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
-#  stage: test
-#  rules:
-#  - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
-#      when: never
-#    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
-#      when: always
-#    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
-#    - if: $CI_PIPELINE_SOURCE == "schedule"
-#    - if: $CI_PIPELINE_SOURCE == "web"
-#    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
-#        !~ /^Draft.*$/
-#  script:
-#    - cd $CI_PROJECT_DIR/modules/test-cypress
-#    - npm install
-#    - npx cypress run
-#  artifacts:
-#    when: always
-#    paths:
-#      - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/open-leos.cy.js/**/*.png
-
 java-build:
   image: maven:3.8-openjdk-8
   stage: build
@@ -41,6 +19,7 @@ java-build:
     when: always
     paths:
       - "**/target/*.war"
+      - "modules/config/target/generated-config/*.*"
       - "modules/ui-angular/package.json"
       - "modules/ui-angular/yarn.lock"
   cache:
@@ -53,11 +32,70 @@ java-build:
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
       when: always
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@nonlocal"
+      when: never
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
     - if: $CI_PIPELINE_SOURCE == "schedule"
     - if: $CI_PIPELINE_SOURCE == "web"
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
         !~ /^Draft.*$/
+
+cypress-test-for-local:
+  image:
+    name: code.europa.eu:4567/leos/core/image-for-tests:1.0.1
+  variables:
+    TAGS_TO_RUN: "@local"
+  stage: test
+  dependencies:
+    - java-build
+  resource_group: cypress
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/ && $TAGS_TO_RUN == "@local"
+  script:
+    - cd $CI_PROJECT_DIR/tools/user-repo
+    - mvn clean install
+    - cd $CI_PROJECT_DIR/tools/user-repo/web
+    - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
+    - cd $CI_PROJECT_DIR/tools/repository
+    - mvn clean install
+    - cd $CI_PROJECT_DIR/tools/repository/web
+    - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
+    - cd $CI_PROJECT_DIR/modules/web
+    - mvn jetty:run-war &
+    - sleep 40
+    - cd $CI_PROJECT_DIR/modules/test-cypress
+    - npm install
+    - npx cypress run --browser chrome --headed -e TAGS="$TAGS_TO_RUN"
+  after_script:
+    - cd $CI_PROJECT_DIR/modules/test-cypress
+    - node ./cucumberReport.js
+  artifacts:
+    expire_in: 5 days
+    when: always
+    paths:
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
+
+cypress-test-for-non-local:
+  image:
+    name: code.europa.eu:4567/leos/core/image-for-tests:1.0.1
+  stage: test
+  resource_group: cypress
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@nonlocal"
+  script:
+    - cd $CI_PROJECT_DIR/modules/test-cypress
+    - npm install
+    - npx cypress run --browser chrome --headed -e TAGS="$TAGS_TO_RUN"
+  after_script:
+    - cd $CI_PROJECT_DIR/modules/test-cypress
+    - node ./cucumberReport.js
+  artifacts:
+    expire_in: 5 days
+    when: always
+    paths:
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
 
 include:
   - project: 'digit.s.1/sa/security-scan-template'
