@@ -23,21 +23,6 @@ public class MetadataUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(MetadataUtil.class);
 
-    private static final ReferenceFieldInfo LOCATION_BRUSSELS_FIELD_INFO = new ReferenceFieldInfo("_BEL_BRU",
-            "http://publications.europa.eu/resource/authority/place/BEL_BRU",
-            "Brussels",
-            "", MetadataFieldType.ADOPTION_LOCATION);
-
-    private static final ReferenceFieldInfo LOCATION_LUXEMBOURG_FIELD_INFO = new ReferenceFieldInfo("_LUX_LUX",
-            "http://publications.europa.eu/resource/authority/place/LUX_LUX",
-            "Luxembourg",
-            "", MetadataFieldType.ADOPTION_LOCATION);
-
-    private static final ReferenceFieldInfo LOCATION_STRASBOURG_FIELD_INFO = new ReferenceFieldInfo("_FRA_SXB",
-            "http://publications.europa.eu/resource/authority/place/FRA_SXB",
-            "Strasbourg",
-            "", MetadataFieldType.ADOPTION_LOCATION);
-
     private static final String EMISSION_DATE_PARSE_PATTERN = "yyyy-MM-dd";
 
     private static final String INSERT_COTE_PARSE_PATTERN = "([A-Za-z0-9]+)\\(([0-9]{4})\\)(\\s{0,1})([0-9]+)(\\s{0,1})([A-Za-z]{0,5})";
@@ -93,12 +78,25 @@ public class MetadataUtil {
     private static final String VALUE="value";
     
     public static ReferenceFieldInfo getFieldInfoLocationBrussels(){
-        return LOCATION_BRUSSELS_FIELD_INFO;
+        return new ReferenceFieldInfo("_BEL_BRU",
+                "http://publications.europa.eu/resource/authority/place/BEL_BRU",
+                "Brussels",
+                "", MetadataFieldType.ADOPTION_LOCATION);
     }
 
-    public static ReferenceFieldInfo getFieldInfoLocationLuxembourg(){ return LOCATION_LUXEMBOURG_FIELD_INFO; }
+    public static ReferenceFieldInfo getFieldInfoLocationLuxembourg(){
+        return new ReferenceFieldInfo("_LUX_LUX",
+                "http://publications.europa.eu/resource/authority/place/LUX_LUX",
+                "Luxembourg",
+                "", MetadataFieldType.ADOPTION_LOCATION);
+    }
 
-    public static ReferenceFieldInfo getFieldInfoLocationStrasbourg(){ return LOCATION_STRASBOURG_FIELD_INFO; }
+    public static ReferenceFieldInfo getFieldInfoLocationStrasbourg(){
+        return new ReferenceFieldInfo("_FRA_SXB",
+                "http://publications.europa.eu/resource/authority/place/FRA_SXB",
+                "Strasbourg",
+                "", MetadataFieldType.ADOPTION_LOCATION);
+    }
 
     public static boolean isDocumentXmlFile(final String filename) {
         final String lowerCaseFilename = filename.toLowerCase();
@@ -463,11 +461,11 @@ public class MetadataUtil {
 
             switch (locationType){
                 case BRUSSELS:
-                    return LOCATION_BRUSSELS_FIELD_INFO;
+                    return getFieldInfoLocationBrussels();
                 case LUXEMBOURG:
-                    return LOCATION_LUXEMBOURG_FIELD_INFO;
+                    return getFieldInfoLocationLuxembourg();
                 case STRASBOURG:
-                    return LOCATION_STRASBOURG_FIELD_INFO;
+                    return getFieldInfoLocationStrasbourg();
                 default:
                     throw new MetadataUtilsException(LOCATION_NOT_SUPPORTED_MESSAGE);
             }
@@ -613,9 +611,17 @@ public class MetadataUtil {
 
 
     public static void processAdoptionLocation(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        MetadataUtil.addAdoptionLocationToMetaReference(fieldInfo, xmlFile);
-        MetadataUtil.addAdoptionLocationToCoverPage(fieldInfo, xmlFile);
-        MetadataUtil.addAdoptionLocationToConclusion(fieldInfo, xmlFile);
+        final ReferenceFieldInfo locationToLanguage = adaptLocationToLanguage(fieldInfo, xmlFile);
+        MetadataUtil.addAdoptionLocationToMetaReference(locationToLanguage, xmlFile);
+        MetadataUtil.addAdoptionLocationToCoverPage(locationToLanguage, xmlFile);
+        MetadataUtil.addAdoptionLocationToConclusion(locationToLanguage, xmlFile);
+    }
+
+    private static ReferenceFieldInfo adaptLocationToLanguage(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
+        final MetadataLanguageFormats metadataLanguageDateFormat = getMetadataLanguageDateFormat(xmlFile);
+        final String displayValue = metadataLanguageDateFormat.getLocationDisplayValue(fieldInfo.getId());
+        return new ReferenceFieldInfo(fieldInfo.getId(), fieldInfo.getHref(), displayValue, fieldInfo.getShortValue(), fieldInfo.getFieldType());
+
     }
 
     private static void addAdoptionLocationToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
@@ -720,17 +726,16 @@ public class MetadataUtil {
         xmlNodeDate.setTextContent(displayValue);
     }
 
-    public static String convertIsoDateToLanguageDateFormat(String isoDate, String iso6392tCode) {
+    public static String convertIsoDateToLanguageDateFormat(String isoDate, MetadataLanguageFormats languageDateFormat) {
         Date parsedDate = stringToDate(isoDate, EMISSION_DATE_PARSE_PATTERN);
-        MetadataLanguageDateFormat languageDateFormat = convertIso6392tCodeToMetadataLanguageDateFormat(iso6392tCode);
         return dateToString(parsedDate, languageDateFormat.getFormat());
     }
 
-    public static MetadataLanguageDateFormat convertIso6392tCodeToMetadataLanguageDateFormat(String iso6392tCode) {
+    public static MetadataLanguageFormats convertIso6392tCodeToMetadataLanguageDateFormat(String iso6392tCode) {
         try {
-            return MetadataLanguageDateFormat.ofIso639_2T(iso6392tCode);
+            return MetadataLanguageFormats.ofIso639_2T(iso6392tCode);
         } catch(IllegalArgumentException ex) {
-            return MetadataLanguageDateFormat.EN;
+            return MetadataLanguageFormats.EN;
         }
     }
 
@@ -780,12 +785,8 @@ public class MetadataUtil {
 
 
     private static String readEmissionDataDisplayValue(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        Node xmlNodeLanguageReference = MetadataUtil.getLanguageReferenceNode(xmlFile);
-        if (xmlNodeLanguageReference == null) {
-            return "";
-        }
-        String displayValue = convertIsoDateToLanguageDateFormat(fieldInfo.getId(), parseAlpha3CountryCode(xmlNodeLanguageReference));
-        return displayValue;
+        final MetadataLanguageFormats metadataLanguageFormats = getMetadataLanguageDateFormat(xmlFile);
+        return metadataLanguageFormats.formatDate(convertIsoDateToLanguageDateFormat(fieldInfo.getId(), metadataLanguageFormats));
     }
 
     private static Node getLanguageReferenceNode(XmlFile xmlFile) {
@@ -793,10 +794,18 @@ public class MetadataUtil {
         if (xmlNodeReferences == null) {
             return null;
         }
-
-        Node xmlNodeLanguageReference = XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, "language");
-        return xmlNodeLanguageReference;
+        return XmlUtil.getXmlChildNodeWithNameAttributeValue(xmlNodeReferences, "language");
     }
+
+    private static MetadataLanguageFormats getMetadataLanguageDateFormat(XmlFile xmlFile){
+        Node xmlNodeLanguageReference = MetadataUtil.getLanguageReferenceNode(xmlFile);
+        if (xmlNodeLanguageReference == null) {
+            return MetadataLanguageFormats.EN;
+        }
+        final String countryCode = parseAlpha3CountryCode(xmlNodeLanguageReference);
+        return convertIso6392tCodeToMetadataLanguageDateFormat(countryCode);
+    }
+
     public static void processInsertCote(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
         MetadataUtil.addInsertCoteToMetaReference(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToCoverPage(fieldInfo, xmlFile);
