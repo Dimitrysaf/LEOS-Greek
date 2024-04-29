@@ -11,12 +11,10 @@ Then('ck editor window is not displayed', () => {
 
 When('click save and close button of ck editor', () => {
     ckEditorWindow.clickSaveAndCloseBtn();
-    cy.wait(2000);
 })
 
 When('click close button of ck editor', () => {
     ckEditorWindow.clickCloseBtn();
-    cy.wait(1000);
 })
 
 When('append {string} at offset {int} in paragraph {int} of article {int} when ck editor is open', function (newContent, offset, paragraphNumber, articleNumber) {

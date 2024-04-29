@@ -27,6 +27,7 @@ class proposalViewerPage extends headerPage{
 
     clickLegalActLink(){
         this.elements.legalActLink().click();
+        cy.wait(1000);
     }
 
 }
