@@ -20,8 +20,7 @@ When('mousehover and click on article {int}', articleNumber => {
 })
 
 When('click on close button present in legal act page', () => {
-    legalActPage.elements.closeBtn().click();
-    cy.wait(1000);
+    legalActPage.clickCloseBtn();
 })
  
 When('{int} paragraphs are present in article {int}', (paragraphNumber, articleNumber) => {
@@ -52,7 +51,6 @@ When('mousehover on citation {int} and click on edit button from action menu', (
     legalActPage.mouseHoverOnCitation(citationNumber);
     legalActPage.mouseHoverOnThreeDots();
     legalActPage.elements.editIconActionMenu().click();
-    cy.wait(10000);
 })
 
 Then(`paragraph {int} of article {int} contains {string}`, (paragraphNumber, articleNumber, text) => {
