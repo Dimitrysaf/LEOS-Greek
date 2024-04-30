@@ -13,12 +13,13 @@ java-build:
   image: maven:3.8-openjdk-8
   stage: build
   script:
-    - mvn clean package
+    - mvn clean install
   artifacts:
     expire_in: 1 day
     when: always
     paths:
       - "**/target/*.war"
+      - "**/target/*.jar"
       - "modules/config/target/generated-config/*.*"
       - "modules/ui-angular/package.json"
       - "modules/ui-angular/yarn.lock"
