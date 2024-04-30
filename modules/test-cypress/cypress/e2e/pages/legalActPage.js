@@ -21,11 +21,11 @@ class legalActPage extends headerPage{
     }
 
     mouseHoverAndClickOnCitation(citationNumber){
-        cy.get("#_cit_" + citationNumber).trigger('mouseover').trigger('click');
+        cy.get("#_cit_" + citationNumber).realHover().click();
     }
 
     mouseHoverAndClickOnRecital(recitalNumber){
-        cy.get("#_rec_" + recitalNumber).trigger('mouseover').trigger('click');
+        cy.get("#_rec_" + recitalNumber).realHover().click();
     }
 
     mouseHoverOnThreeDots(){
