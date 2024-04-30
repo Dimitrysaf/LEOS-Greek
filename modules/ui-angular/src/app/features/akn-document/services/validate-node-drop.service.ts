@@ -141,7 +141,7 @@ export abstract class ValidateTocService {
     //TODO : Add toc rules current problem rules are of type -> Map<TocItem,List<TocItem>> this cant't be parsed as json , and because some values have the same toc item key (aknTag) we can't map them by this identifier
     else if (
       targetTocItems?.length > 0 &&
-      targetTocItems.some((item) => isTocItemsEqual(item, sourceItem.tocItem))
+      targetTocItems.some((item) => isTocItemsEqual(item, sourceItem.tocItem, this.documentConfig.langGroup))
     ) {
       //If target item type is root, source item will be added as child, else validate dropping item at dragged location
       const actualTargetItem = getActualTargetItem(

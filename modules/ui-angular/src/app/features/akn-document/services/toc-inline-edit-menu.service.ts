@@ -169,22 +169,15 @@ export abstract class TocInlineEditMenuService {
   protected buildChapterItem(
     node: TableOfContentItemVO,
   ): EuiDropdownButtonMenuItem {
+    const initialToc = this.tocService.returnInitialToc();
+    const initialTocChapterVos = initialToc != null ? this.flatten(initialToc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems)
+      .filter(obj => obj.tocItem.aknTag === node.tocItem.aknTag) : null;
     const toc = this.tocService.getCurrentToc();
-    const chapterTocVos =  this.flatten(toc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems)
+    const chapterTocVos = this.flatten(toc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems)
       .filter(obj => obj.tocItem.aknTag === node.tocItem.aknTag);
-
-    if(chapterTocVos.length > 0 ) {
-      switch (chapterTocVos[0].number) {
-        case 'I':
-          node.tocItem.numberingType = 'ROMAN_UPPER';
-          break;
-        case '1':
-          node.tocItem.numberingType = 'HIGHER_ELEMENT_NUM';
-          break;
-        default:
-          break;
-      }
-    }
+    const itemWithNumType = chapterTocVos != null ? chapterTocVos.find(value => value.numberingType != null) : null;
+    const numType = itemWithNumType != null ? itemWithNumType.numberingType : null;
+    node.numberingType = numType;
     return {
       id: CHAPTER_NUMBER_CHANGE_ID,
       label: this.translateService.instant(
@@ -196,16 +189,16 @@ export abstract class TocInlineEditMenuService {
           label: this.translateService.instant(
             'toc.edit.window.item.regular.chapter.num.roman',
           ),
-          disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'ROMAN_UPPER',
-          command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', toc, chapterTocVos),
+          disabled: node.tocItem.aknTag === 'CHAPTER' && node.numberingType === 'ROMAN_UPPER',
+          command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', toc, chapterTocVos, initialTocChapterVos),
         },
         {
           id: CHAPTER_NUMBER_ARABIC,
           label: this.translateService.instant(
             'toc.edit.window.item.regular.chapter.num.arabic',
           ),
-          disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'HIGHER_ELEMENT_NUM',
-          command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', toc, chapterTocVos),
+          disabled: node.tocItem.aknTag === 'CHAPTER' && node.numberingType === 'HIGHER_ELEMENT_NUM',
+          command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', toc, chapterTocVos, initialTocChapterVos),
         },
       ],
     };
@@ -310,14 +303,20 @@ export abstract class TocInlineEditMenuService {
     this.tocEditService.handleNodeChanges(toc);
   }
 
-  protected handleHighSubdivChangeNumbering(numberingType: NumberingType, toc: TableOfContentItemVO[], tocVOs: TableOfContentItemVO[]) {
-    const selectedNode = this.targetNodeBS.value;
+  protected handleHighSubdivChangeNumbering(numberingType: NumberingType, toc: TableOfContentItemVO[],
+                                            tocVOs: TableOfContentItemVO[], initialTocChapterVos: TableOfContentItemVO[]) {
     this.tocEditService.handleNodeChanges(toc, true);
-    //const tocVOs = toc.filter(obj => obj.tocItem.aknTag === "BODY")[0].childItems
-    //  .filter(obj => obj.tocItem.aknTag === selectedNode.tocItem.aknTag);
     for(const tocVO of tocVOs) {
-      tocVO.tocItem.numberingType = numberingType;
-      tocVO.numberingToggled = true;
+      if (initialTocChapterVos != null && initialTocChapterVos[0] != null && initialTocChapterVos[0].numberingType === numberingType) {
+        const sameIdChapterVO = initialTocChapterVos.find(item => item.id === tocVO.id);
+        if(sameIdChapterVO != null) {
+          tocVO.number = sameIdChapterVO.number;
+        }
+      } else {
+        tocVO.numberingToggled = true;
+        tocVO.number = '#';
+      }
+      tocVO.numberingType = numberingType;
     }
     this.tocEditService.handleNodeChanges(toc);
   }

@@ -43,7 +43,7 @@ import { ViewVersionService } from '@/features/akn-document/services/view-versio
 import {
   ContributionStatus,
   DOCUMENT_STYLES,
-  DocumentConfig,
+  DocumentConfig, NumberingType,
   Profile,
 } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
@@ -64,7 +64,7 @@ import { LeosLightService } from '@/shared/services/leos-light.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
-import { findNodeById } from '@/shared/utils/toc.utils';
+import { findNodeById, getNumberingTypeByLanguage } from '@/shared/utils/toc.utils';
 
 import { BlockDocumentEditorService } from '../../services/block-document-editor.service';
 import { CKEditorService } from '../../services/ckeditor.service';
@@ -615,7 +615,8 @@ export class DocumentEditorComponent
   }
 
   getTocItemDisplayTitle(item: TocItem) {
-    if (item.numberingType === 'BULLET_NUM') {
+    const numType = getNumberingTypeByLanguage(item,  this.documentConfig.langGroup);
+    if (numType === 'BULLET_NUM') {
       return this.tranlsateService.instant('toc.item.type.bullet');
     }
     if (item.aknTag === 'CROSS_HEADING') {

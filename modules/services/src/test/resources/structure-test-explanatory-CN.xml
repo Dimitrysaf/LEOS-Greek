@@ -23,7 +23,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
         </tocItem>
@@ -43,7 +42,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
         </tocItem>
@@ -211,7 +209,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>DIVISION_NUM</numberingType>
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
             <template>
@@ -270,7 +267,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>division heading</elementSelector>
@@ -465,7 +461,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>BULLET_BLACK_CIRCLE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>block</elementSelector>
@@ -605,7 +600,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>true</editable>
             <addSoftAttr>false</addSoftAttr>
         </tocItem>
@@ -625,7 +619,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
             <addSoftAttr>false</addSoftAttr>
         </tocItem>

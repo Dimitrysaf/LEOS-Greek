@@ -35,7 +35,6 @@
             <xs:element name="display" type="xs:boolean" default="false"/>
             <xs:element name="itemNumber" type="optionsType" default="none"/>
             <xs:element name="autoNumbering" type="autoNumbering" minOccurs="0"/>
-            <xs:element name="alternateNumberingType" type="numberingType" minOccurs="0"/>
             <xs:element name="itemHeading" type="optionsType" default="none"/>
             <xs:element name="itemDescription" type="xs:boolean" default="false"/>
             <xs:element name="numberEditable" type="xs:boolean" default="false"/>
@@ -44,7 +43,6 @@
             <xs:element name="numWithType" type="xs:boolean" default="false"/>
             <xs:element name="expandedByDefault" type="xs:boolean" default="false"/>
             <xs:element name="sameParentAsChild" type="xs:boolean" default="false"/>
-            <xs:element name="numberingType" type="numberingType" minOccurs="0"/>
             <xs:element name="tocItemTypes" type="tocItemTypes" minOccurs="0"/>
             <xs:element name="parentNameNumberingTypeDependency" type="aknTag" minOccurs="0"/>
             <xs:element name="profiles" type="profiles" minOccurs="0"/>
