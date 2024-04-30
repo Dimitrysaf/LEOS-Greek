@@ -3,7 +3,7 @@ import navigationPane from "../pages/navigationPane";
 
 And('toc editing button is displayed and enabled', () => {
     navigationPane.elements.editBtn().should('be.visible');
-    navigationPane.elements.editBtn().should('be.enabled');
+    navigationPane.elements.editBtn().should('not.be.disabled');
 })
 
 
