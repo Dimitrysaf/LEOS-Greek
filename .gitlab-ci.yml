@@ -19,6 +19,7 @@ java-build:
     when: always
     paths:
       - "**/target/*.war"
+      - "**/target/*.jar"
       - "modules/config/target/generated-config/*.*"
       - "modules/ui-angular/package.json"
       - "modules/ui-angular/yarn.lock"
