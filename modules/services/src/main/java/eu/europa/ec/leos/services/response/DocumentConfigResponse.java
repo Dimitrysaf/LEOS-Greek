@@ -142,9 +142,6 @@ public class DocumentConfigResponse {
             NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
             String key = tocItem.getAknTag().toString().toUpperCase() + "_" + numberingType.toString();
             transformedMap.put(key, tocItemList);
-            if(tocItem.getAlternateNumberingType() != null) {
-                transformedMap.put(tocItem.getAlternateNumberingType().value(), tocItemList);
-            }
         }
         return transformedMap;
     }

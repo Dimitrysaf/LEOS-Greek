@@ -136,12 +136,12 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 } else if (number.equals("I")) {
                     numberingType = NumberingType.ROMAN_UPPER;
                 } else {
-                    numberingType = chapterTocItemVo.getTocItem().getNumberingType();
+                    numberingType = chapterTocItemVo.getNumberingType();
                 }
                 bodyToc.getChildItems().parallelStream()
                         .filter(tocItemVO -> (tocItemVO.getTocItem().getAknTag().value().equals(CHAPTER)))
                         .collect(Collectors.toList())
-                        .forEach(tocItemVO -> tocItemVO.getTocItem().setNumberingType(numberingType));
+                        .forEach(tocItemVO -> tocItemVO.setNumberingType(numberingType));
             }
         }
     }

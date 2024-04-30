@@ -37,6 +37,7 @@ export class TableOfContentService {
   );
 
   private tocBS = new BehaviorSubject<TableOfContentItemVO[]>(null);
+  private initialToc = new BehaviorSubject<TableOfContentItemVO[]>(null);
   private tocItemsBS = new BehaviorSubject<TocItem[]>(null);
   private selectedNodeBS = new BehaviorSubject<TableOfContentItemVO>(null);
   private isEditModeBS = new BehaviorSubject<boolean>(false);
@@ -96,6 +97,15 @@ export class TableOfContentService {
     this.getToc(ref, category)
       .pipe(take(1))
       .subscribe((toc) => this.tocBS.next(toc));
+  }
+
+  returnInitialToc() {
+    const ref = this.documentRefAndCategoryBS.value.ref;
+    const category = this.documentRefAndCategoryBS.value.category;
+    this.getToc(ref, category)
+      .pipe(take(1))
+      .subscribe((toc) => this.initialToc.next(toc));
+    return this.initialToc.value;
   }
 
   saveToc(

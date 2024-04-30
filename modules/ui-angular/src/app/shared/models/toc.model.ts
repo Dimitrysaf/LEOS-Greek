@@ -112,8 +112,6 @@ export class TocItem {
   numWithType: boolean;
   expandedByDefault: boolean;
   sameParentAsChild: boolean;
-  numberingType: NumberingType;
-  alternateNumberingType: NumberingType;
   tocItemTypes: any;
   parentNameNumberingTypeDependency: any;
   profiles: any;

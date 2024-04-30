@@ -180,7 +180,6 @@ public class TocItemBuilder {
         tocItem.setNumWithType(numWithType);
         tocItem.setExpandedByDefault(expandedByDefault);
         tocItem.setSameParentAsChild(sameParentAsChild);
-        tocItem.setNumberingType(numberingType);
         tocItem.setProfiles(profiles);
         tocItem.setEditable(editable);
         tocItem.setTemplate(template);

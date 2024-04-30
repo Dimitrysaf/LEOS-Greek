@@ -23,7 +23,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -42,7 +41,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -74,7 +72,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template><![CDATA[<part xml:id="${id}"><num>${num}</num><heading>${heading}</heading></part>]]></template>
         </tocItem>
@@ -107,7 +104,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template><![CDATA[<title xml:id="${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
         </tocItem>
@@ -140,7 +136,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template><![CDATA[<chapter xml:id="${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
         </tocItem>
@@ -173,7 +168,6 @@
             <numWithType>true</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>HIGHER_ELEMENT_NUM</numberingType>
             <editable>false</editable>
             <template><![CDATA[<section xml:id="${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
         </tocItem>
@@ -205,7 +199,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_POSTFIXDOT</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>level[leos\:origin='ec'] num:not(point > num)</elementSelector>
@@ -231,7 +224,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>heading:not(level[leos\:origin='cn'] heading)</elementSelector>
@@ -305,7 +297,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>false</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>level[leos\:origin='ec']:not(:has(subparagraph)):not(:has(point)) content</elementSelector>
@@ -341,7 +332,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>ARABIC_POSTFIXDOT</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>paragraph[leos\:origin='ec']:not(:has(subparagraph)):not(:has(point))</elementSelector>
@@ -370,7 +360,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>level[leos\:origin='ec'] subparagraph, paragraph[leos\:origin='ec'] subparagraph, point[leos\:origin='ec']
@@ -396,7 +385,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -427,7 +415,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>level[leos\:origin='ec'] point:not(:has(point)):not(:has(indent)):not(:has(subparagraph)),
@@ -466,7 +453,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>true</sameParentAsChild>
-            <numberingType>POINT_NUM</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>indent[leos\:origin='ec']:not(:has(subparagraph)),indent[leos\:origin='cn']</elementSelector>

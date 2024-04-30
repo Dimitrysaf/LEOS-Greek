@@ -23,7 +23,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -42,7 +41,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -131,7 +129,7 @@
                     <numberingType>NONE</numberingType>
                 </langNumConfig>
             </autoNumbering>
-            <alternateNumberingType>ROMAN_UPPER</alternateNumberingType>
+
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>
@@ -193,7 +191,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>heading:not(level heading):not([id^='deleted'])</elementSelector>
@@ -289,7 +286,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -308,7 +304,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 

@@ -149,7 +149,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <profileName>inlineAknCitation</profileName>
@@ -298,7 +297,7 @@
                     <numberingType>NONE</numberingType>
                 </langNumConfig>
             </autoNumbering>
-            <alternateNumberingType>ROMAN_UPPER</alternateNumberingType>
+
             <itemHeading>mandatory</itemHeading>
             <itemDescription>true</itemDescription>
             <numberEditable>true</numberEditable>

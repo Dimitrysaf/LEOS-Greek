@@ -194,7 +194,7 @@ public class NumberServiceProposal implements NumberService {
         NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
         List<TableOfContentItemVO> itemVOs = searchInFlatList(tableOfContentItemVOList, elementName);
         if (!itemVOs.isEmpty() && elementName.equals(CHAPTER)) {
-            numberingType = itemVOs.get(0).getTocItem().getNumberingType() != null ? itemVOs.get(0).getTocItem().getNumberingType() : numberingType;
+            numberingType = itemVOs.get(0).getNumberingType() != null ? itemVOs.get(0).getNumberingType() : numberingType;
         }
 
         if (isAutoNumberingEnabled(tocItems, elementName, language)) {

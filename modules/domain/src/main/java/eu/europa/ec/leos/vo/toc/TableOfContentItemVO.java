@@ -88,6 +88,7 @@ public class TableOfContentItemVO implements Serializable {
 
     private String style;
     private Boolean isAutoNumOverwritten = false;
+    private NumberingType numberingType;
 
     public TableOfContentItemVO() {
         super();
@@ -691,4 +692,11 @@ public class TableOfContentItemVO implements Serializable {
         this.trackChangeAction = trackChangeAction;
     }
 
+    public NumberingType getNumberingType() {
+        return numberingType;
+    }
+
+    public void setNumberingType(NumberingType numberingType) {
+        this.numberingType = numberingType;
+    }
 }

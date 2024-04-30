@@ -990,7 +990,7 @@ export class DocumentTocComponent
           break;
         }
         case 'CROSS_HEADING': {
-          eventItem.tocItem.numberingType = 'NONE';
+          eventItem.numberingType = 'NONE';
           break;
         }
         case 'ARTICLE': {
