@@ -59,6 +59,9 @@ define(function aknInlineAlternativeArticleProfileModule(require) {
     plugins.push(require("plugins/leosAlternatives/leosAlternativesPlugin"));
     plugins.push(require("plugins/aknAlternativeArticle/aknAlternativeArticlePlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
