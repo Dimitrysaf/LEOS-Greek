@@ -98,13 +98,13 @@ cypress-test-for-non-local:
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
 
-include:
-  - project: 'digit.s.1/sa/security-scan-template'
-    file: '.gitlab-ci-security-scan-mvn.yml'
-    ref: main
-
-fortify-sast:
-  image: fcoene/public:fortify-jdk8-node20
-
-sonatype-lifecycle:
-  image: fcoene/public:sonatype-lifecycle-jdk8
+#include:
+#  - project: 'digit.s.1/sa/security-scan-template'
+#    file: '.gitlab-ci-security-scan-mvn.yml'
+#    ref: main
+#
+#fortify-sast:
+#  image: fcoene/public:fortify-jdk8-node20
+#
+#sonatype-lifecycle:
+#  image: fcoene/public:sonatype-lifecycle-jdk8
