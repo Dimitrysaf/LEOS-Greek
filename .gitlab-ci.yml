@@ -13,7 +13,7 @@ java-build:
   image: maven:3.8-openjdk-8
   stage: build
   script:
-    - mvn clean package
+    - mvn clean install
   artifacts:
     expire_in: 1 day
     when: always
