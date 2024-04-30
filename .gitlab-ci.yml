@@ -12,6 +12,7 @@ variables:
 java-build:
   image: maven:3.8-openjdk-8
   stage: build
+  resource_group: cypress
   script:
     - mvn clean install
   artifacts:
