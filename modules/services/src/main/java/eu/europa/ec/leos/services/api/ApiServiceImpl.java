@@ -1016,12 +1016,13 @@ public abstract class ApiServiceImpl implements ApiService {
         Map<Integer, String> annexIndexesMap = versionAndAnnexNumberMap.get("annexIndexesMap");
         Map<String, Integer> annexKeyMap = versionAndAnnexNumberMap.get("annexKeyMap");
         Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
-
+        String proposalRef = null;
         List<MilestoneDocumentView> listDocuments = new ArrayList<>();
         HashMap<String, Boolean> annexesComparaison = new HashMap();
         for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
             String key = entry.getKey();
             String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
+            proposalRef = mainFileName;
             String contentFileName = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME) ? mainFileName : key.substring(0, key.indexOf(HTML));
             String version = docVersionMap.get(contentFileName);
             boolean isCoverPage = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME);
@@ -1041,6 +1042,10 @@ public abstract class ApiServiceImpl implements ApiService {
                     milestoneView.setLeosCategory(category);
                     if (category.equals(LeosCategory.ANNEX)) {
                         milestoneView.setOrder(annexKeyMap.get(contentFileName));
+                        Pattern pattern = Pattern.compile("leos:action=\"insert\"|leos:action=\"delete\"",
+                                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+                        Matcher matcher = pattern.matcher(xmlContent);
+                        isCompared = matcher.find();
                         annexesComparaison.put((entry.getKey()), isCompared);
                     }
                 }
@@ -1053,7 +1058,26 @@ public abstract class ApiServiceImpl implements ApiService {
                 LOG.error("Error when trying to get milestone view {}", e.getMessage(), e.getMessage());
             }
         }
-        return new MilestoneViewResponse(listDocuments, !pdfRenditions.isEmpty());
+
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        LeosPackage clonedLeosPackage = packageService.findPackageByDocumentId(proposal.getId());
+        //LegDocument clonedLegDocument = getLegDocument(event.getLegFileName(), clonedLeosPackage);
+
+        LeosPackage originalLeosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        String originalLegName = proposalService.getOriginalMilestoneName(proposal.getName(), proposal.getContent().get().getSource().getBytes());
+        LegDocument originalLegDocument = getLegDocument(originalLegName, originalLeosPackage);
+
+        Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
+        annexAddedMap = MilestoneHelper.populateAnnexAddedMap(contributionFiles, legDocument, getAnnexes(originalLeosPackage),
+                xmlContentProcessor);
+
+        File originalLegFileTemp = File.createTempFile("milestoneOriginal", ".leg");
+        Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegFileTemp, originalLegDocument);
+        annexDeletedMap = MilestoneHelper.populateAnnexDeletedMap(originalDocumentFiles,
+                contributionFiles, originalLegDocument, getAnnexes(originalLeosPackage), xmlContentProcessor);
+
+
+        return new MilestoneViewResponse(listDocuments, !pdfRenditions.isEmpty(), annexAddedMap, annexDeletedMap, annexesComparaison);
     }
 
     @Override

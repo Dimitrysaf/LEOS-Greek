@@ -68,6 +68,9 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   isOpened = false;
 
   documents: MilestoneDocument[] = [];
+  annexAddedMap: {[key: string]:any};
+  annexDeletedMap: {[key: string]:any};
+  annexComparison: {[key: string]:boolean};
   containerId = 'view-container-id';
   activeTabIndex: number;
   showPdfExport = false;
@@ -142,17 +145,17 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       );
     }
   }
-  
+
   onToggleTocPaneCollapsed(isTocPaneCollapsed = !this.isTocPaneCollapsed) {
     this.isTocPaneCollapsed = isTocPaneCollapsed;
   }
-  
+
   onToggleAnnotationsPaneCollapsed(
     isAnnotationsPaneCollapsed = !this.isAnnotationsPaneCollapsed,
   ) {
     this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
   }
-  
+
   requestStoredDocumentAnnotations(request : string) {
     if (request && this.isOpened) {
       const doc = this.documents[this.activeTabIndex];
@@ -161,7 +164,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       this.milestonesService.sendEmptyStoredDocumentAnnotations();
     }
   }
-    
+
   private loadContribution(hiddenCategories) {
     this.milestonesService
     .listContributionsView(
@@ -173,7 +176,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     });
     this.milestonesService.resetReadyToMergeStatus();
   }
-  
+
   private loadDocuments(hiddenCategories: string[]) {
     if (!!this.milestone.legDocumentName) {
       this.milestonesService
@@ -200,8 +203,11 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     response: MilestoneViewResponse,
     hiddenCategories: string[],
   ) {
-    this.showPdfExport = response.pdfRenditionsPresent;
 
+    this.showPdfExport = response.pdfRenditionsPresent;
+    this.annexAddedMap = response.annexAddedMap;
+    this.annexDeletedMap = response.annexDeletedMap;
+    this.annexComparison = response.annexComparison;
     this.documents = response.documents
       .filter((x) => !hiddenCategories.includes(x.leosCategory))
       .sort(this.tabOrderComparator)

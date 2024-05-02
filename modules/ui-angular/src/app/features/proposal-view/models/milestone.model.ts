@@ -18,6 +18,9 @@ export interface Milestone {
 export interface MilestoneViewResponse {
   documents: MilestoneViewItem[];
   pdfRenditionsPresent: boolean;
+  annexAddedMap: {[key: string]:any};
+  annexDeletedMap: {[key: string]:any};
+  annexComparison: {[key: string]:boolean};
 }
 
 export interface MilestoneViewItem {
