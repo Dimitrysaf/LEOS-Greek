@@ -132,7 +132,7 @@
   "page.collection.tabs.collaborators": "Collaborators",
   "page.collection.tabs.details": "Details",
   "page.collection.milestone-view-dialog.title": "Milestone Explorer",
-  "page.collection.milestone-view-dialog.description": "Consult parts and annotations included in the milestone - <b>Created on:</b> {{ date }} by {{ user }} | <b>Type:</b> {{ type }}",
+  "Consult parts and annotations included in the mileston": "Consult parts and annotations included in the milestone - <b>Created on:</b> {{ date }} by {{ user }} | <b>Type:</b> {{ type }}",
   "page.collection.milestone-view-dialog.tab-title.ANNEX": "Annex {{ number }}",
   "page.collection.milestone-view-dialog.tab-title.BILL": "Legal Act",
   "page.collection.milestone-view-dialog.tab-title.COUNCIL_EXPLANATORY": "Council Explanatory",
