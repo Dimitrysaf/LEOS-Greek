@@ -64,8 +64,8 @@ public class LanguageGroupServiceTest extends LeosTest {
     @Test
     public void test_getLanguageMap() {
         languageGroupService.getLanguageMap();
-        //verify(languageMapHolder).loadLanguageMap(languageMap);
-        //assertEquals(languageMap, LanguageMapHolder.getLanguageMap());
+        verify(languageMapHolder).loadLanguageMap(languageMap);
+        assertEquals(languageMap, LanguageMapHolder.getLanguageMap());
         assertNotNull(LanguageMapHolder.getLanguageMap());
     }
 
