@@ -591,7 +591,6 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value = "documentByNameCache", key="#name", condition = "#root.target.cacheEnabled")
     public <D extends LeosDocument> D findDocumentByParentPath(String path, String name, Class<? extends D> type) {
         logger.trace("Finding document by parent path... [path=" + path + ", name=" + name + ']');
 
@@ -1018,7 +1017,6 @@ public class LeosRestRepositoryImpl implements LeosRepository {
 
     @Override
     @PerformanceLogger
-    @Cacheable(value = "documentCache", keyGenerator ="documentByIdKeyGenerator", condition = "#root.target.cacheEnabled")
     public FavouritePackageResponse getFavouritePackage(String ref, String userId) {
         logger.trace("Finding package for document... [ref=" + ref + ']');
         return repository.getFavouritePackage(ref, userId);
