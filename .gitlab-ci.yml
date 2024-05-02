@@ -9,38 +9,38 @@ variables:
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn/cache"
   GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository
 
-#java-build:
-#  image: maven:3.8-openjdk-8
-#  stage: build
-#  resource_group: cypress
-#  script:
-#    - mvn clean install
-#  artifacts:
-#    expire_in: 1 day
-#    when: always
-#    paths:
-#      - "**/target/*.war"
-#      - "**/target/*.jar"
-#      - "modules/config/target/generated-config/*.*"
-#      - "modules/ui-angular/package.json"
-#      - "modules/ui-angular/yarn.lock"
-#  cache:
-#    paths:
-#      - $CI_PROJECT_DIR/.m2/
-#      - $CI_PROJECT_DIR/.yarn
-#    policy: pull-push
-#  rules:
-#    - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
-#        when: never
-#      - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
-#        when: always
-#      - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@nonlocal"
-#        when: never
-#      - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
-#      - if: $CI_PIPELINE_SOURCE == "schedule"
-#      - if: $CI_PIPELINE_SOURCE == "web"
-#      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
-#          !~ /^Draft.*$/
+java-build:
+  image: maven:3.8-openjdk-8
+  stage: build
+  resource_group: cypress
+  script:
+    - mvn clean install
+  artifacts:
+    expire_in: 1 day
+    when: always
+    paths:
+      - "**/target/*.war"
+      - "**/target/*.jar"
+      - "modules/config/target/generated-config/*.*"
+      - "modules/ui-angular/package.json"
+      - "modules/ui-angular/yarn.lock"
+  cache:
+    paths:
+      - $CI_PROJECT_DIR/.m2/
+      - $CI_PROJECT_DIR/.yarn
+    policy: pull-push
+  rules:
+    - - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+        when: never
+      - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+        when: always
+      - if: $CI_PIPELINE_SOURCE == "schedule" && $TAGS_TO_RUN == "@nonlocal"
+        when: never
+      - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      - if: $CI_PIPELINE_SOURCE == "schedule"
+      - if: $CI_PIPELINE_SOURCE == "web"
+      - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE
+          !~ /^Draft.*$/
 
 cypress-test-for-local:
   image:
