@@ -142,6 +142,7 @@
             'page.collection.milestones.table.title' | translate
           "
         >
+          <eui-icon *ngIf="clonedMilestone.contributionChanged" euiPrimary iconClass="eui-icon-info-circle eui-icon-1x"></eui-icon>
           {{ clonedMilestone.title }}
         </td>
         <td

@@ -32,6 +32,7 @@ type MilestoneDocument = {
   xml: string;
   version: string;
   label: string;
+  state: string;
   tocData: MilestoneTocItem[];
 };
 
@@ -82,7 +83,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   hiddenCategories = [
     ...(process.env.NG_APP_LEOS_INSTANCE !== 'ec'
-      ? ['COVERPAGE', 'STAT_FINANC_LEGIS']
+      ? ['COVERPAGE']
       : []),
   ];
 
@@ -205,23 +206,26 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   ) {
 
     this.showPdfExport = response.pdfRenditionsPresent;
-    this.annexAddedMap = response.annexAddedMap;
-    this.annexDeletedMap = response.annexDeletedMap;
-    this.annexComparison = response.annexComparison;
     this.documents = response.documents
       .filter((x) => !hiddenCategories.includes(x.leosCategory))
       .sort(this.tabOrderComparator)
-      .map((x) => this.viewToDoc(x));
+      .map((x) => this.viewToDoc(x, response.annexAddedMap, response.annexDeletedMap, response.annexComparison));
     this.setActiveTab(0);
   }
 
-  private viewToDoc(item: MilestoneViewItem): MilestoneDocument {
+  private viewToDoc(item: MilestoneViewItem, annexAddedMap: {[key: string]:any}, annexDeletedMap: {[key: string]:any}, annexComparison: {[key: string]:boolean} ): MilestoneDocument {
+    const refFoundInAnnexAddedMap = item.contentStatus === 'Added' || annexAddedMap.hasOwnProperty(item.contentFileName);
+    const refFoundInAnnexDeletedMap = item.contentStatus === 'Deleted' || annexDeletedMap.hasOwnProperty(item.contentFileName + "_processed");
+    const refFoundInAnnexComparison = item.modifiedContent || (annexComparison.hasOwnProperty(item.contentFileName + ".html") && annexComparison[item.contentFileName + ".html"] === true );
+    const refFoundProcessedMap = annexAddedMap.hasOwnProperty(item.contentFileName + "_processed");
+
     return {
       ref: item.contentFileName,
       type: item.leosCategory,
       xml: item.xmlContent,
       version: item.version,
       label: this.createTabLabel(item),
+      state: refFoundInAnnexAddedMap ? 'Added' : (refFoundInAnnexDeletedMap ? 'Deleted' : (refFoundInAnnexComparison ? 'Modified' : (refFoundProcessedMap ? 'Processed' : 'Secondary'))),
       tocData: JSON.parse(item.tocData),
     };
   }
@@ -245,9 +249,9 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           return sortOrder(3);
         case 'BILL':
           return sortOrder(4);
-        case 'STAT_FINANC_LEGIS':
-          return sortOrder(5);
         case 'ANNEX':
+          return sortOrder(5);
+        case 'STAT_FINANC_LEGIS':
           return sortOrder(6);
         default:
           return sortOrder(9);

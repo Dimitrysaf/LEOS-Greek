@@ -1002,13 +1002,20 @@ public abstract class ApiServiceImpl implements ApiService {
         return doListMilestoneDocuments(clonedLegDocument);
     }
 
+    private boolean isModifiedXmlContent(String xmlContent) {
+        Pattern pattern = Pattern.compile("leos:softaction=\"|</ins>|</del>",
+                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(xmlContent);
+        return matcher.find();
+    }
+
+
     private MilestoneViewResponse doListMilestoneDocuments(LegDocument legDocument) throws IOException {
         File legFileTemp = File.createTempFile(MILESTONE, ".leg");
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
         Map<String, Object> contentFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, HTML);
         Map<String, Object> annexAddedMap = new HashMap<>();
         Map<String, Object> annexDeletedMap = new HashMap<>();
-
         String milestoneDir = MilestoneHelper.getMilestoneDir(legFileTemp);
         Map<String, Object> jsFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, TOC_JS);
         Map<String, Map> versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(unzippedFiles);
@@ -1016,13 +1023,22 @@ public abstract class ApiServiceImpl implements ApiService {
         Map<Integer, String> annexIndexesMap = versionAndAnnexNumberMap.get("annexIndexesMap");
         Map<String, Integer> annexKeyMap = versionAndAnnexNumberMap.get("annexKeyMap");
         Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
-        String proposalRef = null;
         List<MilestoneDocumentView> listDocuments = new ArrayList<>();
-        HashMap<String, Boolean> annexesComparaison = new HashMap();
+        HashMap<String, Boolean> annexesComparison = new HashMap();
+        String proposalRef = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        LeosPackage originalLeosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        String originalLegName = proposalService.getOriginalMilestoneName(proposal.getName(), proposal.getContent().get().getSource().getBytes());
+        LegDocument originalLegDocument = getLegDocument(originalLegName, originalLeosPackage);
+        Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
+        File originalLegFileTemp = File.createTempFile("milestoneOriginal", ".leg");
+        Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegFileTemp, originalLegDocument);
+        Map<String, Object> originalContentFiles = MilestoneHelper.filterAndSortFiles(originalDocumentFiles, HTML);
+        annexAddedMap = MilestoneHelper.populateAnnexAddedMap(contributionFiles, legDocument, getAnnexes(originalLeosPackage),
+                xmlContentProcessor);
         for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
             String key = entry.getKey();
             String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
-            proposalRef = mainFileName;
             String contentFileName = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME) ? mainFileName : key.substring(0, key.indexOf(HTML));
             String version = docVersionMap.get(contentFileName);
             boolean isCoverPage = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME);
@@ -1031,7 +1047,8 @@ public abstract class ApiServiceImpl implements ApiService {
                 byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
                 String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
                 String tocFile = null;
-                MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage);
+                Boolean isModifiedContent = false;
+                MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage, isModifiedContent, null);
                 if (isCoverPage) {
                     milestoneView.setLeosCategory(LeosCategory.COVERPAGE);
                     tocFile = "coverPage_toc.js";
@@ -1042,12 +1059,22 @@ public abstract class ApiServiceImpl implements ApiService {
                     milestoneView.setLeosCategory(category);
                     if (category.equals(LeosCategory.ANNEX)) {
                         milestoneView.setOrder(annexKeyMap.get(contentFileName));
-                        Pattern pattern = Pattern.compile("leos:action=\"insert\"|leos:action=\"delete\"",
-                                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-                        Matcher matcher = pattern.matcher(xmlContent);
-                        isCompared = matcher.find();
-                        annexesComparaison.put((entry.getKey()), isCompared);
+                        annexesComparison.put((entry.getKey()), isModifiedXmlContent(xmlContent));
+                        isModifiedContent = isModifiedXmlContent(xmlContent);
                     }
+                    else if (category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
+                        milestoneView.setOrder(1);
+                        isModifiedContent = isModifiedXmlContent(xmlContent);
+                        Boolean existsStatFinancial = false;
+                        for (String x : originalContentFiles.keySet()) {
+                            if (x.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                                existsStatFinancial = true;
+                                break;
+                            }
+                        }
+                        if (!existsStatFinancial) { milestoneView.setContentStatus("Added"); }
+                    }
+                    milestoneView.setModifiedContent(isModifiedContent);
                 }
                 File toc = (File) unzippedFiles.get(tocFile);
                 if (toc.exists()) {
@@ -1059,25 +1086,59 @@ public abstract class ApiServiceImpl implements ApiService {
             }
         }
 
-        Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        LeosPackage clonedLeosPackage = packageService.findPackageByDocumentId(proposal.getId());
-        //LegDocument clonedLegDocument = getLegDocument(event.getLegFileName(), clonedLeosPackage);
+        versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(originalDocumentFiles);
+        Map<String, String> docVersionOriginalMap = versionAndAnnexNumberMap.get("docVersionMap");
+        Map<String, Integer> annexKeyOriginalMap = versionAndAnnexNumberMap.get("annexKeyMap");
 
-        LeosPackage originalLeosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        String originalLegName = proposalService.getOriginalMilestoneName(proposal.getName(), proposal.getContent().get().getSource().getBytes());
-        LegDocument originalLegDocument = getLegDocument(originalLegName, originalLeosPackage);
-
-        Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
-        annexAddedMap = MilestoneHelper.populateAnnexAddedMap(contributionFiles, legDocument, getAnnexes(originalLeosPackage),
-                xmlContentProcessor);
-
-        File originalLegFileTemp = File.createTempFile("milestoneOriginal", ".leg");
-        Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegFileTemp, originalLegDocument);
         annexDeletedMap = MilestoneHelper.populateAnnexDeletedMap(originalDocumentFiles,
                 contributionFiles, originalLegDocument, getAnnexes(originalLeosPackage), xmlContentProcessor);
 
+        for (Map.Entry<String, Object> entry : annexDeletedMap.entrySet()) {
+            String contentFileName = entry.getKey().replace("_processed", "");
+            String version = docVersionOriginalMap.get(contentFileName);
+            byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
+            String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
+            MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, false, false, null);
+            milestoneView.setVersion(version);
+            milestoneView.setLeosCategory(LeosCategory.ANNEX);
+            milestoneView.setOrder(annexKeyOriginalMap.get(contentFileName));
+            String tocFile = contentFileName + TOC_JS;
+            File toc = (File) originalDocumentFiles.get(tocFile);
+            if (toc.exists()) {
+                milestoneView.setTocData(this.buildTocTree(toc));
+            }
+            listDocuments.add(milestoneView);
+        }
+        for (Map.Entry<String, Object> entry : originalContentFiles.entrySet()) {
+            if (entry.getKey().startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                Boolean existsStatFinancial = false;
+                for (String x : contentFiles.keySet()) {
+                    if (x.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                        existsStatFinancial = true;
+                        break;
+                    }
+                }
+                if (!existsStatFinancial) {
+                    String contentFileName = entry.getKey();
+                    String version = docVersionOriginalMap.get(contentFileName);
+                    byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
+                    String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
+                    MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, false, false, null);
+                    milestoneView.setVersion(version);
+                    milestoneView.setLeosCategory(LeosCategory.STAT_FINANC_LEGIS);
+                    milestoneView.setOrder(1);
+                    milestoneView.setContentStatus("Deleted");
+                    String tocFile = contentFileName.replace(".html","") + TOC_JS;
+                    File toc = (File) originalDocumentFiles.get(tocFile);
+                    if (toc.exists()) {
+                        milestoneView.setTocData(this.buildTocTree(toc));
+                    }
+                    listDocuments.add(milestoneView);
+                }
+            }
+        }
 
-        return new MilestoneViewResponse(listDocuments, !pdfRenditions.isEmpty(), annexAddedMap, annexDeletedMap, annexesComparaison);
+        return new MilestoneViewResponse(listDocuments, !pdfRenditions.isEmpty(), annexAddedMap, annexDeletedMap, annexesComparison);
     }
 
     @Override
