@@ -24,15 +24,9 @@ class loginPage {
         cy.wait(10000);
      }
      
-    visitUrl(environment) {
+    visitUrl(urlType, previousStringUrl) {
         cy.viewport(1280, 720);
-        if(environment.toUpperCase() === "local".toUpperCase()){
-            cy.visit(Cypress.env('localDraftingUrl'));
-        }
-
-        if(environment.toUpperCase() === "dev".toUpperCase()){
-            cy.visit(Cypress.env('devDraftingUrl'));
-        }
+        cy.visit(previousStringUrl + Cypress.env(urlType));
         cy.wait(2000);
     }
 }
