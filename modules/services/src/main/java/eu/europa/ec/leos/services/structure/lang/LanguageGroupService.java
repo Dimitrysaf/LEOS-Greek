@@ -59,7 +59,6 @@ public class LanguageGroupService {
         this.languageMapHolder = languageMapHolder;
     }
 
-    @PostConstruct
     public void getLanguageMap() {
         byte[] languageDocument = getLangGroupDocument();
         final LanguageGroup languageGroup = loadLanguageGroupFromFile(languageDocument);
