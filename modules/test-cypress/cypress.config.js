@@ -13,7 +13,11 @@ module.exports = defineConfig({
     watchForFileChanges: false
   },
   env: {
-    localDraftingUrl: "http://dasatya:demo@localhost:8080/leos-pilot/ui/workspace",
-    devDraftingUrl: "https://intragate.development.ec.europa.eu/decide-drafting/ui/"
+    localDraftingUrl: "localhost:8080/leos-pilot/ui/workspace",
+    devDraftingUrl: "intragate.development.ec.europa.eu/decide-drafting/ui/",
+    localUser1: "dasatya",
+    localPasswordUser1: "demo",
+    remoteUser1: "n000181h",
+    remotePasswordUser1: "Poland1235"
   }
 });

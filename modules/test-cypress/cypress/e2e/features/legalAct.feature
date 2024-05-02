@@ -6,7 +6,7 @@ Feature: Legal Act Page Regression Features
 
     @citation_recital_editing @local
     Scenario: Add and removal of text in citation and recital element in legal Act
-        Given navigate to "local" edit drafting application
+        Given navigate to edit drafting application with "User1"
         Then user is on repository browser page
         When click on create proposal button
         Then user is on create new legislative document window
@@ -51,7 +51,7 @@ Feature: Legal Act Page Regression Features
 
     @splittingParagrahInArticle @local
     Scenario: append text in existing paragraph and make same paragraph into two inside article
-        Given navigate to "local" edit drafting application
+        Given navigate to edit drafting application with "User1"
         Then user is on repository browser page
         When click on create proposal button
         Then user is on create new legislative document window
@@ -84,7 +84,7 @@ Feature: Legal Act Page Regression Features
 
     @sampleDevTest @nonlocal
     Scenario: navigate to legal act page
-        Given navigate to "dev" edit drafting application
+        Given navigate to edit drafting application with "User1"
         Then user is on EU login page
         When user enters username "n000181h"
         And  user clicks next button
