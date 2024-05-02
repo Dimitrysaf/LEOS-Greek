@@ -53,6 +53,7 @@ cypress-test-for-local:
   resource_group: cypress
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/ && $TAGS_TO_RUN == "@local"
+    - if: $CI_PIPELINE_SOURCE == "web"
   script:
     - cd $CI_PROJECT_DIR/tools/user-repo
     - mvn clean install
@@ -62,6 +63,8 @@ cypress-test-for-local:
     - mvn clean install
     - cd $CI_PROJECT_DIR/tools/repository/web
     - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
+    - cd $CI_PROJECT_DIR
+    - mvn clean install
     - cd $CI_PROJECT_DIR/modules/web
     - mvn jetty:run-war &
     - sleep 40
