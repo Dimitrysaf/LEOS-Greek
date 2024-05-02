@@ -27,6 +27,8 @@ export interface MilestoneViewItem {
   /* proposalRef */
   contentFileName: string;
   coverPage: boolean;
+  modifiedContent: boolean;
+  contentStatus: string;
   leosCategory: string;
   order: number | null;
   version: string;
