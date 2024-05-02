@@ -140,6 +140,8 @@
   "page.collection.milestone-view-dialog.tab-title.MEMORANDUM": "Exposé des motifs",
   "page.collection.milestone-view-dialog.tab-title.STAT_FINANC_LEGIS": "Fiche financière",
   "page.collection.milestone-view-dialog.export-button": "Exporter",
+  "page.collection.milestone-view-dialog.accept-button": "Accepter",
+  "page.collection.milestone-view-dialog.reject-button": "Rejeter",
   "page.collection.milestones.add-dialog.title": "Ajouter un milestone",
   "page.collection.milestones.actions.view-milestone": "Afficher",
   "page.collection.milestones.actions.view-contribution": "Voir la contribution",

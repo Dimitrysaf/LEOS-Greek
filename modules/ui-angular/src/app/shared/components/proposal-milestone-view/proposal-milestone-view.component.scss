@@ -10,6 +10,10 @@
   right: var(--eui-base-spacing-m);
 }
 
+.accept-reject-button {
+  right: var(--eui-base-spacing-m);
+}
+
 ::ng-deep .milestone-view-dialog__body {
   eui-tabs {
     display: flex;
