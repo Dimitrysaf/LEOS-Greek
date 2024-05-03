@@ -43,7 +43,6 @@
     <!-- Tabs -->
     <eui-tabs (tabSelect)="onTabSelected($event)">
       <eui-tab *ngFor="let doc of documents; let tabIndex = index" hasBackgroundFilled
-               [euiPrimary]="doc.state === 'Primary'"
                [euiSecondary]="doc.state === 'Processed'"
                [euiSuccess]="doc.state === 'Added'"
                [euiWarning]="doc.state === 'Modified'"

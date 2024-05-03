@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {finalize, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 
 import {
   Milestone,
@@ -18,13 +18,10 @@ import {
   MilestoneViewResponse,
 } from '@/features/proposal-view/models/milestone.model';
 import { MilestoneTocItem } from '@/features/proposal-view/models/milestone-toc-item.model';
-import {MergeSuggestionRequest} from "@/shared";
 import { DocumentServiceAnnotationsStub } from '@/shared/components/proposal-milestone-view/document-service-annotations-stub';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
-
-import {apiBaseUrl} from "../../../../config";
 
 type MilestoneDocument = {
   ref: string;
@@ -209,15 +206,11 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.documents = response.documents
       .filter((x) => !hiddenCategories.includes(x.leosCategory))
       .sort(this.tabOrderComparator)
-      .map((x) => this.viewToDoc(x, response.annexAddedMap, response.annexDeletedMap, response.annexComparison));
+      .map((x) => this.viewToDoc(x));
     this.setActiveTab(0);
   }
 
-  private viewToDoc(item: MilestoneViewItem, annexAddedMap: {[key: string]:any}, annexDeletedMap: {[key: string]:any}, annexComparison: {[key: string]:boolean} ): MilestoneDocument {
-    const refFoundInAnnexAddedMap = item.contentStatus === 'Added' || annexAddedMap.hasOwnProperty(item.contentFileName);
-    const refFoundInAnnexDeletedMap = item.contentStatus === 'Deleted' || annexDeletedMap.hasOwnProperty(item.contentFileName + "_processed");
-    const refFoundInAnnexComparison = item.modifiedContent || (annexComparison.hasOwnProperty(item.contentFileName + ".html") && annexComparison[item.contentFileName + ".html"] === true );
-    const refFoundProcessedMap = annexAddedMap.hasOwnProperty(item.contentFileName + "_processed");
+  private viewToDoc(item: MilestoneViewItem): MilestoneDocument {
 
     return {
       ref: item.contentFileName,
@@ -225,7 +218,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       xml: item.xmlContent,
       version: item.version,
       label: this.createTabLabel(item),
-      state: refFoundInAnnexAddedMap ? 'Added' : (refFoundInAnnexDeletedMap ? 'Deleted' : (refFoundInAnnexComparison ? 'Modified' : (refFoundProcessedMap ? 'Processed' : 'Secondary'))),
+      state: item.contentStatus,
       tocData: JSON.parse(item.tocData),
     };
   }
