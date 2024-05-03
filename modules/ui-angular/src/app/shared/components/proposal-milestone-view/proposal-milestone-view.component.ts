@@ -66,9 +66,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   isOpened = false;
 
   documents: MilestoneDocument[] = [];
-  annexAddedMap: {[key: string]:any};
-  annexDeletedMap: {[key: string]:any};
-  annexComparison: {[key: string]:boolean};
   containerId = 'view-container-id';
   activeTabIndex: number;
   showPdfExport = false;
