@@ -9,27 +9,27 @@ variables:
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn/cache"
   GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository -e .npm
 
-#java-build:
-#  image: maven:3.8-openjdk-8
-#  stage: build
-#  resource_group: cypress
-#  script:
-#    - mvn clean install
-#  artifacts:
-#    expire_in: 1 day
-#    when: always
-#    paths:
-#      - pom.xml
-#      - "**/target"
-#      - "**/dist"
-#      - "**/package-lock.json"
-#      - "**/yarn.lock"
-#  cache:
-#    paths:
-#      - $CI_PROJECT_DIR/.m2
-#      - $CI_PROJECT_DIR/.yarn
-#      - $CI_PROJECT_DIR/.npm
-#    policy: pull-push
+java-build:
+  image: maven:3.8-openjdk-8
+  stage: build
+  resource_group: cypress
+  script:
+    - mvn clean install
+  artifacts:
+    expire_in: 1 day
+    when: always
+    paths:
+      - pom.xml
+      - "**/target"
+      - "**/dist"
+      - "**/package-lock.json"
+      - "**/yarn.lock"
+  cache:
+    paths:
+      - $CI_PROJECT_DIR/.m2
+      - $CI_PROJECT_DIR/.yarn
+      - $CI_PROJECT_DIR/.npm
+    policy: pull-push
 
 cypress-test-for-local:
   image:
@@ -37,8 +37,8 @@ cypress-test-for-local:
   variables:
     TAGS_TO_RUN: "@local"
   stage: test
-#  dependencies:
-#    - java-build
+  dependencies:
+    - java-build
   resource_group: cypress
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/ && $TAGS_TO_RUN == "@local"
@@ -92,7 +92,7 @@ cypress-test-for-non-local:
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
 
-#include:
-#  - project: 'digit.s.1/sa/security-scan-template'
-#    file: '.gitlab-ci-security-scan.yml'
-#    ref: main
+include:
+  - project: 'digit.s.1/sa/security-scan-template'
+    file: '.gitlab-ci-security-scan.yml'
+    ref: main

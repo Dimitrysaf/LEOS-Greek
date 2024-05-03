@@ -122,19 +122,19 @@ Feature: Legal Act Page Regression Features
     #        And  paragraph 1 of article 3 contains "New Text"
     #        And  paragraph 1 of article 3 doesnot contain "improve"
 
-    # @sampleDevTest @nonlocal
-    # Scenario: navigate to legal act page
-    #     Given navigate to edit drafting application with "User1"
-    #     Then user is on repository browser page
-    #     When click on create proposal button
-    #     Then user is on create new legislative document window
-    #     When click on template "SJ-023" in create new legislative document window
-    #     When click on next button in create document page
-    #     And  provide document title "Automation testing article ck editor scenario" in create document page
-    #     And  click on create button
-    #     Then user is on proposal viewer page
-    #     When click on legal act link present in proposal viewer page
-    #     Then user is on legal act page
-    #     And  annotation side bar is present
-    #     And  ribbon toolbar is displayed
-    #     And  toc editing button is displayed and enabled
+    @sampleDevTest @nonlocal
+    Scenario: navigate to legal act page
+        Given navigate to edit drafting application with "User1"
+        Then user is on repository browser page
+        When click on create proposal button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation testing article ck editor scenario" in create document page
+        And  click on create button
+        Then user is on proposal viewer page
+        When click on legal act link present in proposal viewer page
+        Then user is on legal act page
+        And  annotation side bar is present
+        And  ribbon toolbar is displayed
+        And  toc editing button is displayed and enabled
