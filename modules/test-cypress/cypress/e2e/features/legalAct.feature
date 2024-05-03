@@ -85,12 +85,6 @@ Feature: Legal Act Page Regression Features
     @sampleDevTest @nonlocal
     Scenario: navigate to legal act page
         Given navigate to edit drafting application with "User1"
-        Then user is on EU login page
-        When user enters username "n000181h"
-        And  user clicks next button
-        Then user is on login page
-        When user enters password "Poland1235"
-        And  user clicks on sign in button
         Then user is on repository browser page
         When click on create proposal button
         Then user is on create new legislative document window
