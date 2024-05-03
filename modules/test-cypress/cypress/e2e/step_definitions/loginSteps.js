@@ -2,10 +2,10 @@ import {Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import loginPage from "../pages/loginPage";
 
 Given('navigate to edit drafting application with {string}', (user) => {
-    if(Cypress.env('TAGS').includes('@local')) {
+    if(Cypress.env('CE_ENV').includes('@local')) {
         loginPage.visitUrl('localDraftingUrl', 'http://' + Cypress.env('local' + user) + ':' + Cypress.env('localPassword' + user) + '@');
     }
-    if(Cypress.env('TAGS').includes("@nonlocal")) {
+    if(Cypress.env('CE_ENV').includes("@nonlocal")) {
         loginPage.visitUrl('devDraftingUrl', 'https://');
         loginPage.elements.username().should('be.visible');
         loginPage.enterUserName(Cypress.env("remote" + user));

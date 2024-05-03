@@ -3,8 +3,8 @@ const cucumber = require('cypress-cucumber-preprocessor').default;
 
 module.exports = defineConfig({
   defaultCommandTimeout: 15000,
-  viewportHeight: 1080,
-  viewportWidth: 1920,
+  viewportHeight: 720,
+  viewportWidth: 1280,
   video: false,
   e2e: {
     setupNodeEvents(on, config) {
