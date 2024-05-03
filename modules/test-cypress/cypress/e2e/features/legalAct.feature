@@ -84,7 +84,7 @@ Feature: Legal Act Page Regression Features
 
     @articleEditing @local
     Scenario: Addition of text and removal of text from article
-        Given navigate to "local" edit drafting application
+        Given navigate to edit drafting application with "User1"
         Then user is on repository browser page
         When click on upload button
         Then active upload window label is "Upload a legislative document"
