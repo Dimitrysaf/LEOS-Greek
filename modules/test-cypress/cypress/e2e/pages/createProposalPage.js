@@ -5,7 +5,7 @@ class createProposalPage {
         cancelBtn: () => cy.contains('Cancel'),
         dialogHeader: () => cy.contains('Create new legislative document'),
         documentTitle: () => cy.get('input#docPurpose'),
-        createBtn: () => cy.get('app-proposal-create-wizard button.eui-button.eui-button--primary')
+        createBtn: () => cy.get('app-proposal-create-wizard .app-dialog-footer-content button.eui-button.eui-button--primary')
     }
 
     clickTemplateByName(templateName) {
