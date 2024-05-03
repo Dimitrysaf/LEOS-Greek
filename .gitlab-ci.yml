@@ -69,6 +69,7 @@ cypress-test-for-local:
     paths:
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
+      - $CI_PROJECT_DIR/modules/test-cypress/cypress/videos/**/*.*
 
 cypress-test-for-non-local:
   image:
