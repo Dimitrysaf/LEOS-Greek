@@ -461,7 +461,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -630,7 +629,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
 
@@ -649,7 +647,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <profileName>inlineAknClause</profileName>
@@ -673,7 +670,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <profiles>
                 <profile>
                     <elementSelector>heading:not(article[leos\:origin='cn'] heading):not([id^='deleted'])</elementSelector>
@@ -698,7 +694,6 @@
             <numWithType>false</numWithType>
             <expandedByDefault>false</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
-            <numberingType>NONE</numberingType>
             <editable>false</editable>
         </tocItem>
     </tocItems>
