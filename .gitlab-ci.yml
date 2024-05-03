@@ -37,8 +37,8 @@ cypress-test-for-local:
   variables:
     TAGS_TO_RUN: "@local"
   stage: test
-  dependencies:
-    - java-build
+#  dependencies:
+#    - java-build
   resource_group: cypress
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/ && $TAGS_TO_RUN == "@local"
@@ -69,7 +69,7 @@ cypress-test-for-local:
     paths:
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/screenshots/**/*.png
       - $CI_PROJECT_DIR/modules/test-cypress/cypress/report/**/*.*
-      - $CI_PROJECT_DIR/modules/test-cypress/cypress/videos/**/*.*
+#      - $CI_PROJECT_DIR/modules/test-cypress/cypress/videos/**/*.*
 
 cypress-test-for-non-local:
   image:
