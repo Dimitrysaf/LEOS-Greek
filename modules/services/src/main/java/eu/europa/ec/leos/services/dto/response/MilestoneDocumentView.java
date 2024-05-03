@@ -9,18 +9,16 @@ public class MilestoneDocumentView {
     private String version;
     private String contentFileName;
     private Boolean isCoverPage;
-    private Boolean isModifiedContent;
     private String contentStatus;
     private LeosCategory leosCategory;
     private Integer order;
     private String tocData;
 
-    public MilestoneDocumentView(String xmlContent, String version, String contentFileName, Boolean isCoverPage, Boolean isModifiedContent, String contentStatus) {
+    public MilestoneDocumentView(String xmlContent, String version, String contentFileName, Boolean isCoverPage, String contentStatus) {
         this.xmlContent = xmlContent;
         this.version = version;
         this.contentFileName = contentFileName;
         this.isCoverPage = isCoverPage;
-        this.isModifiedContent = isModifiedContent;
         this.contentStatus = contentStatus;
     }
 
@@ -79,14 +77,6 @@ public class MilestoneDocumentView {
 
     public void setTocData(String tocData) {
         this.tocData = tocData;
-    }
-
-    public Boolean getModifiedContent() {
-        return isModifiedContent;
-    }
-
-    public void setModifiedContent(Boolean modifiedContent) {
-        isModifiedContent = modifiedContent;
     }
 
     public String getContentStatus() {

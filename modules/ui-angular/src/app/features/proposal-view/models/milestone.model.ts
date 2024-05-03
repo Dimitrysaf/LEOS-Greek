@@ -28,7 +28,7 @@ export interface MilestoneViewItem {
   contentFileName: string;
   coverPage: boolean;
   modifiedContent: boolean;
-  contentStatus: string;
+  contentStatus: string; //Added, Modified, Deleted, Processed
   leosCategory: string;
   order: number | null;
   version: string;

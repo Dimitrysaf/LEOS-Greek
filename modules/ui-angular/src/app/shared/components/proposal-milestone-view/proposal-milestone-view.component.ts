@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import {finalize, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 
 import {
   Milestone,
@@ -18,13 +18,10 @@ import {
   MilestoneViewResponse,
 } from '@/features/proposal-view/models/milestone.model';
 import { MilestoneTocItem } from '@/features/proposal-view/models/milestone-toc-item.model';
-import {MergeSuggestionRequest} from "@/shared";
 import { DocumentServiceAnnotationsStub } from '@/shared/components/proposal-milestone-view/document-service-annotations-stub';
 import { AnnotateService } from '@/shared/services/annotate.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
-
-import {apiBaseUrl} from "../../../../config";
 
 type MilestoneDocument = {
   ref: string;
@@ -32,6 +29,7 @@ type MilestoneDocument = {
   xml: string;
   version: string;
   label: string;
+  state: string;
   tocData: MilestoneTocItem[];
 };
 
@@ -82,7 +80,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   hiddenCategories = [
     ...(process.env.NG_APP_LEOS_INSTANCE !== 'ec'
-      ? ['COVERPAGE', 'STAT_FINANC_LEGIS']
+      ? ['COVERPAGE']
       : []),
   ];
 
@@ -205,9 +203,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   ) {
 
     this.showPdfExport = response.pdfRenditionsPresent;
-    this.annexAddedMap = response.annexAddedMap;
-    this.annexDeletedMap = response.annexDeletedMap;
-    this.annexComparison = response.annexComparison;
     this.documents = response.documents
       .filter((x) => !hiddenCategories.includes(x.leosCategory))
       .sort(this.tabOrderComparator)
@@ -216,12 +211,14 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   }
 
   private viewToDoc(item: MilestoneViewItem): MilestoneDocument {
+
     return {
       ref: item.contentFileName,
       type: item.leosCategory,
       xml: item.xmlContent,
       version: item.version,
       label: this.createTabLabel(item),
+      state: item.contentStatus,
       tocData: JSON.parse(item.tocData),
     };
   }
@@ -245,9 +242,9 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           return sortOrder(3);
         case 'BILL':
           return sortOrder(4);
-        case 'STAT_FINANC_LEGIS':
-          return sortOrder(5);
         case 'ANNEX':
+          return sortOrder(5);
+        case 'STAT_FINANC_LEGIS':
           return sortOrder(6);
         default:
           return sortOrder(9);
