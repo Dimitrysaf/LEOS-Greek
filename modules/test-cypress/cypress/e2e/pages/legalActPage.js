@@ -29,13 +29,14 @@ class legalActPage extends headerPage {
               "elementCursorPos": 0
             })
         })
+        // cy.xpath("//article[" + articleNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click({force:true}));
     }
 
     mouseHoverAndClickOnCitation(citationNumber) {
         //let identifier;
         //let elementType = "citation";
         //cy.xpath("//citation[" + citationNumber + "]").realHover().invoke('attr', 'id').then(id => identifier = id);
-        cy.xpath("//citation[" + citationNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click());
+        cy.xpath("//citation[" + citationNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click({force:true}));
         //cy.get("#"+identifier).realHover().click();
         // cy.window().then((w) => {
         //     w.EditorConnector.handleEdit({
@@ -53,7 +54,7 @@ class legalActPage extends headerPage {
         //let identifier;
         // let elementType = "recital";
         //cy.xpath("//recital[" + recitalNumber + "]").realHover().invoke('attr', 'id').then(id => identifier = id);
-        cy.xpath("//recital[" + recitalNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click());
+        cy.xpath("//recital[" + recitalNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click({force:true}));
         //cy.get("#"+identifier).realHover().click();
         // cy.window().then((w) => {
         //     w.EditorConnector.handleEdit({

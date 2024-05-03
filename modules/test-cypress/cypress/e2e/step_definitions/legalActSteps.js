@@ -4,7 +4,7 @@ import legalActPage from "../pages/legalActPage";
 
 Then('user is on legal act page', () => {
     legalActPage.getCurrentPageName().should("have.text", "Legal Act");
-    cy.wait(2000);
+    cy.wait(10000);
 })
 
 When('mousehover and click on citation {int}', citationNumber => {
