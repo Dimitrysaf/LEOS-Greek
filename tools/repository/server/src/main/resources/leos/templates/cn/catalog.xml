@@ -281,7 +281,7 @@
         <descriptions>
             <description lang="EN">Council Explanatory Documents</description>
         </descriptions>
-        <item type="TEMPLATE" id="IDC-001;CE-003" enabled="true" key="CN-001">
+        <item type="TEMPLATE" id="PR-019;IDC-001;CE-003" enabled="true" key="CN-001">
             <names>
                 <name lang="EN">Explanatory</name>
             </names>
@@ -292,7 +292,7 @@
                 <language lang="EN">English</language>
             </languages>
         </item>
-        <item type="TEMPLATE" id="IDC-001;CE-002" enabled="true" key="CN-001">
+        <item type="TEMPLATE" id="PR-019;IDC-001;CE-002" enabled="true" key="CN-001">
             <names>
                 <name lang="EN">Coreper/Council note</name>
             </names>
@@ -303,7 +303,7 @@
                 <language lang="EN">English</language>
             </languages>
         </item>
-        <item type="TEMPLATE" id="IDC-001;CE-001" enabled="true" key="CN-001">
+        <item type="TEMPLATE" id="PR-019;IDC-001;CE-001" enabled="true" key="CN-001">
             <names>
                 <name lang="EN">Working Party cover page</name>
             </names>
