@@ -19,4 +19,5 @@ public class MilestoneViewResponse {
     public boolean isPdfRenditionsPresent() {
         return isPdfRenditionsPresent;
     }
+
 }

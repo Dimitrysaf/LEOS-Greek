@@ -31,11 +31,23 @@
       </button>
     </div>
 
+    <div class="eui-u-p-absolute accept-reject-button">
+      <button euiButton euiSizeS euiPrimary>
+          {{ 'page.collection.milestone-view-dialog.accept-button' | translate }}
+      </button>
+      <button euiButton euiSizeS euiPrimary>
+        {{ 'page.collection.milestone-view-dialog.reject-button' | translate }}
+      </button>
+    </div>
+
     <!-- Tabs -->
     <eui-tabs (tabSelect)="onTabSelected($event)">
-      <eui-tab *ngFor="let doc of documents; let tabIndex = index">
-        <eui-tab-label>
-          {{ doc.label }}
+      <eui-tab *ngFor="let doc of documents; let tabIndex = index" hasBackgroundFilled
+               [euiSecondary]="doc.state === 'Processed'"
+               [euiSuccess]="doc.state === 'Added'"
+               [euiWarning]="doc.state === 'Modified'"
+               [euiDanger]="doc.state === 'Deleted'">
+        <eui-tab-label>{{ doc.label }}
           <small class="eui-u-font-regular"> [{{ doc.version }}] </small>
         </eui-tab-label>
         <eui-tab-content *ngIf="activeTabIndex === tabIndex">

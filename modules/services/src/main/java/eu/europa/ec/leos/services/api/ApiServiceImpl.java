@@ -136,16 +136,15 @@ public abstract class ApiServiceImpl implements ApiService {
     private static final Logger LOG = LoggerFactory.getLogger(ApiServiceImpl.class);
     private static final String COLLECTION_BLOCK_ANNEX_METADATA_UPDATED = "collection.block.annex.metadata.updated";
     private static final String MILESTONE = "milestone";
-
+    protected final ProposalService proposalService;
+    protected final ExportService exportService;
     private final TemplateService templateService;
     private final WorkspaceService workspaceService;
     private final UserService userService;
     private final CreateCollectionService createCollectionService;
     private final SecurityContext securityContext;
     private final LeosPermissionAuthorityMap authorityMap;
-    protected final ProposalService proposalService;
     private final PackageService packageService;
-    protected final ExportService exportService;
     private final Provider<CollectionContextService> collectionContextProvider;
     private final MessageHelper messageHelper;
     private final Provider<BillContextService> billContextProvider;
@@ -156,6 +155,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private final AnnexService annexService;
     private final MilestoneService milestoneService;
     private final CloneContext cloneContext;
+    private final UserHelper userHelper;
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private ProposalConverterService proposalConverterService;
     private PostProcessingDocumentService postProcessingDocumentService;
@@ -164,7 +164,6 @@ public abstract class ApiServiceImpl implements ApiService {
     private ExportPackageService exportPackageService;
     private NotificationService notificationService;
     private LegService legService;
-    private final UserHelper userHelper;
     private LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
 
@@ -174,31 +173,31 @@ public abstract class ApiServiceImpl implements ApiService {
 
     @Autowired
     public ApiServiceImpl(TemplateService templateService,
-            WorkspaceService workspaceService,
-            UserService userService,
-            CreateCollectionService createCollectionService,
-            ProposalService proposalService,
-            SecurityContext securityContext,
-            LeosPermissionAuthorityMap authorityMap,
-            ExportService exportService,
-            Provider<CollectionContextService> collectionContextProvider,
-            DocumentContentService documentContentService,
-            MessageHelper messageHelper,
-            Provider<BillContextService> billContextProvider,
-            PackageService packageService,
-            BillService billService,
-            XmlContentProcessor xmlContentProcessor,
-            ArchiveService archiveService,
-            AnnexService annexService,
-            CloneContext cloneContext,
-            MilestoneService milestoneService,
-            ProposalConverterService proposalConverterService,
-            PostProcessingDocumentService postProcessingDocumentService,
-            ValidationService validationService, Properties applicationProperties,
-            ExplanatoryService explanatoryService,
-            ExportPackageService exportPackageService, NotificationService notificationService, LegService legService,
-            UserHelper userHelper, LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-            DocumentViewService  documentViewService) {
+                          WorkspaceService workspaceService,
+                          UserService userService,
+                          CreateCollectionService createCollectionService,
+                          ProposalService proposalService,
+                          SecurityContext securityContext,
+                          LeosPermissionAuthorityMap authorityMap,
+                          ExportService exportService,
+                          Provider<CollectionContextService> collectionContextProvider,
+                          DocumentContentService documentContentService,
+                          MessageHelper messageHelper,
+                          Provider<BillContextService> billContextProvider,
+                          PackageService packageService,
+                          BillService billService,
+                          XmlContentProcessor xmlContentProcessor,
+                          ArchiveService archiveService,
+                          AnnexService annexService,
+                          CloneContext cloneContext,
+                          MilestoneService milestoneService,
+                          ProposalConverterService proposalConverterService,
+                          PostProcessingDocumentService postProcessingDocumentService,
+                          ValidationService validationService, Properties applicationProperties,
+                          ExplanatoryService explanatoryService,
+                          ExportPackageService exportPackageService, NotificationService notificationService, LegService legService,
+                          UserHelper userHelper, LeosRepository leosRepository, TrackChangesContext trackChangesContext,
+                          DocumentViewService documentViewService) {
         this.templateService = templateService;
         this.workspaceService = workspaceService;
         this.userService = userService;
@@ -229,6 +228,10 @@ public abstract class ApiServiceImpl implements ApiService {
         this.leosRepository = leosRepository;
         this.trackChangesContext = trackChangesContext;
         this.documentViewService = documentViewService;
+    }
+
+    private static String readFileToString(File file) throws IOException {
+        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
 
     @Override
@@ -362,7 +365,8 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public ProposalMetadata createExplanatoryDocument(String templateId, String docPurpose, boolean eeaRelevance) {
         Stopwatch stopwatch = Stopwatch.createStarted();
-        if(LOG.isDebugEnabled()) LOG.debug("Handling create document request event... [category={}]", LeosCategory.COUNCIL_EXPLANATORY.toString());
+        if (LOG.isDebugEnabled())
+            LOG.debug("Handling create document request event... [category={}]", LeosCategory.COUNCIL_EXPLANATORY.toString());
         String[] templates = (templateId != null) ? templateId.split(";") : new String[0];
 
         CollectionContextService context = collectionContextProvider.get();
@@ -374,8 +378,8 @@ public abstract class ApiServiceImpl implements ApiService {
         context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
         context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
         Proposal proposal = context.executeCreateExplanatoryDocument();
-        ProposalMetadata result =  proposal.getMetadata().getOrNull();
-        if(LOG.isInfoEnabled()) {
+        ProposalMetadata result = proposal.getMetadata().getOrNull();
+        if (LOG.isInfoEnabled()) {
             LOG.info("New document of type {} created in {} milliseconds ({} sec)", LeosCategory.PROPOSAL.toString(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         }
         return result;
@@ -502,7 +506,7 @@ public abstract class ApiServiceImpl implements ApiService {
         String proposalVersionSeriesId = null;
         if (proposalRef != null) {
             proposal = this.proposalService.findProposalByRef(proposalRef);
-            if(LOG.isTraceEnabled())
+            if (LOG.isTraceEnabled())
                 LOG.trace(proposal.toString());
         }
         if (proposal != null) {
@@ -845,7 +849,6 @@ public abstract class ApiServiceImpl implements ApiService {
         return milestonesVOS;
     }
 
-
     private MilestonesVO getMilestonesVO(LegDocument legDocument, String proposalId, String proposalRef) {
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName());
@@ -874,7 +877,7 @@ public abstract class ApiServiceImpl implements ApiService {
             });
             milestonesVO.setClonedMilestones(clonedMilestonesVOS);
         }
-        try{
+        try {
             String title = java.net.URLDecoder.decode(milestonesVO.getTitle(), StandardCharsets.UTF_8.toString());
             milestonesVO.setTitle(title);
         } catch (UnsupportedEncodingException e) {
@@ -961,7 +964,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     proposal.getContent().get().getSource().getBytes() : new byte[0];
             boolean isClonedProposal = proposal.isClonedProposal();
             try {
-                if(isClonedProposal) {
+                if (isClonedProposal) {
                     populateCloneProposalMetadataVO(proposalXmlContent);
                 }
                 final String versionComment = messageHelper.getMessage("milestone.versionComment");
@@ -1002,13 +1005,19 @@ public abstract class ApiServiceImpl implements ApiService {
         return doListMilestoneDocuments(clonedLegDocument);
     }
 
+    private boolean isModifiedXmlContent(String xmlContent) {
+        Pattern pattern = Pattern.compile("leos:softaction=\"|</ins>|</del>",
+                Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
+        Matcher matcher = pattern.matcher(xmlContent);
+        return matcher.find();
+    }
+
     private MilestoneViewResponse doListMilestoneDocuments(LegDocument legDocument) throws IOException {
         File legFileTemp = File.createTempFile(MILESTONE, ".leg");
         Map<String, Object> unzippedFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
         Map<String, Object> contentFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, HTML);
         Map<String, Object> annexAddedMap = new HashMap<>();
         Map<String, Object> annexDeletedMap = new HashMap<>();
-
         String milestoneDir = MilestoneHelper.getMilestoneDir(legFileTemp);
         Map<String, Object> jsFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, TOC_JS);
         Map<String, Map> versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(unzippedFiles);
@@ -1016,9 +1025,19 @@ public abstract class ApiServiceImpl implements ApiService {
         Map<Integer, String> annexIndexesMap = versionAndAnnexNumberMap.get("annexIndexesMap");
         Map<String, Integer> annexKeyMap = versionAndAnnexNumberMap.get("annexKeyMap");
         Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
-
         List<MilestoneDocumentView> listDocuments = new ArrayList<>();
-        HashMap<String, Boolean> annexesComparaison = new HashMap();
+        HashMap<String, Boolean> annexesComparison = new HashMap();
+        String proposalRef = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
+        Proposal proposal = proposalService.findProposalByRef(proposalRef);
+        LeosPackage originalLeosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+        String originalLegName = proposalService.getOriginalMilestoneName(proposal.getName(), proposal.getContent().get().getSource().getBytes());
+        LegDocument originalLegDocument = getLegDocument(originalLegName, originalLeosPackage);
+        Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
+        File originalLegFileTemp = File.createTempFile("milestoneOriginal", ".leg");
+        Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegFileTemp, originalLegDocument);
+        Map<String, Object> originalContentFiles = MilestoneHelper.filterAndSortFiles(originalDocumentFiles, HTML);
+        annexAddedMap = MilestoneHelper.populateAnnexAddedMap(contributionFiles, legDocument, getAnnexes(originalLeosPackage),
+                xmlContentProcessor);
         for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
             String key = entry.getKey();
             String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
@@ -1030,7 +1049,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
                 String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
                 String tocFile = null;
-                MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage);
+                MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, isCoverPage, null);
                 if (isCoverPage) {
                     milestoneView.setLeosCategory(LeosCategory.COVERPAGE);
                     tocFile = "coverPage_toc.js";
@@ -1041,7 +1060,26 @@ public abstract class ApiServiceImpl implements ApiService {
                     milestoneView.setLeosCategory(category);
                     if (category.equals(LeosCategory.ANNEX)) {
                         milestoneView.setOrder(annexKeyMap.get(contentFileName));
-                        annexesComparaison.put((entry.getKey()), isCompared);
+                        if (annexAddedMap.containsKey(contentFileName)) {
+                            milestoneView.setContentStatus("Added");
+                        } else if (annexAddedMap.containsKey(contentFileName.concat("_processed"))) {
+                            milestoneView.setContentStatus("Processed");
+                        }
+                    } else if (category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
+                        milestoneView.setOrder(1);
+                        Boolean existsStatFinancial = false;
+                        for (String x : originalContentFiles.keySet()) {
+                            if (x.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                                existsStatFinancial = true;
+                                break;
+                            }
+                        }
+                        if (!existsStatFinancial) {
+                            milestoneView.setContentStatus("Added");
+                        }
+                    }
+                    if (isModifiedXmlContent(xmlContent)) {
+                        milestoneView.setContentStatus("Modified");
                     }
                 }
                 File toc = (File) unzippedFiles.get(tocFile);
@@ -1053,6 +1091,67 @@ public abstract class ApiServiceImpl implements ApiService {
                 LOG.error("Error when trying to get milestone view {}", e.getMessage(), e.getMessage());
             }
         }
+
+        versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(originalDocumentFiles);
+        Map<String, String> docVersionOriginalMap = versionAndAnnexNumberMap.get("docVersionMap");
+        Map<String, Integer> annexKeyOriginalMap = versionAndAnnexNumberMap.get("annexKeyMap");
+
+        annexDeletedMap = MilestoneHelper.populateAnnexDeletedMap(originalDocumentFiles,
+                contributionFiles, originalLegDocument, getAnnexes(originalLeosPackage), xmlContentProcessor);
+
+        for (Map.Entry<String, Object> entry : annexDeletedMap.entrySet()) {
+            String contentFileName = entry.getKey().replace("_processed", "");
+            String version = docVersionOriginalMap.get(contentFileName);
+            byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
+            String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
+            MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, false, null);
+            milestoneView.setVersion(version);
+            milestoneView.setLeosCategory(LeosCategory.ANNEX);
+            milestoneView.setOrder(annexKeyOriginalMap.get(contentFileName));
+            milestoneView.setContentStatus("Deleted");
+            String tocFile = contentFileName + TOC_JS;
+            File toc = (File) originalDocumentFiles.get(tocFile);
+            if (toc.exists()) {
+                milestoneView.setTocData(this.buildTocTree(toc));
+            }
+            listDocuments.add(milestoneView);
+        }
+
+        for (Map.Entry<String, Object> entry : originalContentFiles.entrySet()) {
+            if (entry.getKey().startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                Boolean existsStatFinancial = false;
+                for (String x : contentFiles.keySet()) {
+                    if (x.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                        existsStatFinancial = true;
+                        break;
+                    }
+                }
+                if (!existsStatFinancial) {
+                    byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
+                    String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
+                    String contentFileName = entry.getKey();
+                    String version = null;
+                    MilestoneDocumentView milestoneView = new MilestoneDocumentView(xmlContent, version, contentFileName, false, null);
+                    for (String key : docVersionOriginalMap.keySet()) {
+                        if (key.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                            version = docVersionOriginalMap.get(key);
+                            break;
+                        }
+                    }
+                    milestoneView.setVersion(version);
+                    milestoneView.setLeosCategory(LeosCategory.STAT_FINANC_LEGIS);
+                    milestoneView.setOrder(1);
+                    milestoneView.setContentStatus("Deleted");
+                    String tocFile = contentFileName.replace(".html", "") + TOC_JS;
+                    File toc = (File) originalDocumentFiles.get(tocFile);
+                    if (toc.exists()) {
+                        milestoneView.setTocData(this.buildTocTree(toc));
+                    }
+                    listDocuments.add(milestoneView);
+                }
+            }
+        }
+
         return new MilestoneViewResponse(listDocuments, !pdfRenditions.isEmpty());
     }
 
@@ -1084,10 +1183,6 @@ public abstract class ApiServiceImpl implements ApiService {
             fileName = ((File) entry.getValue()).getName();
         }
         return new MilestonePDFDownloadResponse(content, fileName);
-    }
-
-    private static String readFileToString(File file) throws IOException {
-        return new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8);
     }
 
     private Map<String, Map> populateVersionAndAnnexNumberMap(Map<String, Object> files) {

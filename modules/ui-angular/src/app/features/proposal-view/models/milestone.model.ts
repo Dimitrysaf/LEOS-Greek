@@ -24,6 +24,7 @@ export interface MilestoneViewItem {
   /* proposalRef */
   contentFileName: string;
   coverPage: boolean;
+  contentStatus: string; //Added, Modified, Deleted, Processed
   leosCategory: string;
   order: number | null;
   version: string;

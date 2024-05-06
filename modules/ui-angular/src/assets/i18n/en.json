@@ -140,6 +140,8 @@
   "page.collection.milestone-view-dialog.tab-title.MEMORANDUM": "Explanatory Memorandum",
   "page.collection.milestone-view-dialog.tab-title.STAT_FINANC_LEGIS": "Financial Statement",
   "page.collection.milestone-view-dialog.export-button": "Export",
+  "page.collection.milestone-view-dialog.accept-button": "Accept",
+  "page.collection.milestone-view-dialog.reject-button": "Reject",
   "page.collection.milestones.add-dialog.title": "Add milestone",
   "page.collection.milestones.actions.view-milestone": "View",
   "page.collection.milestones.actions.view-contribution": "View Contribution",
