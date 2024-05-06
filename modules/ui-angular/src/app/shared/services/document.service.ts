@@ -1189,7 +1189,10 @@ export class DocumentService {
   }
 
   refreshAnnotate() {
-    this.refreshAnnotateCall();
+    //Core #1705: Check if refreshAnnotateCall is defined before calling it
+    if (typeof this.refreshAnnotateCall === 'function') {
+      this.refreshAnnotateCall();
+    }
   }
 
   setDidDocumentLoadAndRender(loaded: boolean) {
