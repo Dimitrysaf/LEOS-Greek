@@ -53,6 +53,10 @@ When('add {string} at current cursor position when ck editor is open', function 
     ckEditorWindow.addTextAtCurrentCursorPositionWhenCKEditorOpen(newContent);
 });
 
-Then(`paragraph {int} of article {int} contains {string} when ck editor is open`, (paragraphNumber, articleNumber, text) => {
-    
+When(`select content from offset {int} till offset {int} in numbered paragraph {int} of article when ck editor is open`, (offsetStart, offsetEnd, paragraphNumber) => {
+    ckEditorWindow.selectContentInNumberedParagraphOfArticle(offsetStart, offsetEnd, paragraphNumber);
 });
+
+// Then(`paragraph {int} of article {int} contains {string} when ck editor is open`, (paragraphNumber, articleNumber, text) => {
+
+// });

@@ -32,7 +32,6 @@ class ckEditorWindow {
 
     clickCloseBtn() {
         this.elements.closeBtn().click();
-        cy.wait(1000);
     }
 
     clickSaveBtn() {
@@ -45,6 +44,7 @@ class ckEditorWindow {
 
     appendContentInParagraphInArticle(newContent, offset, paragraphNumber, articleNumber) {
         this.addContent(newContent, offset, "#_art_" + articleNumber + "__para_" + paragraphNumber);
+        //this.addContent(newContent, offset, ".cke_editable_inline article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']");
     }
 
     addContentInCitation(newContent, offset, citationNumber) {
@@ -63,7 +63,11 @@ class ckEditorWindow {
         this.selectContent(offsetStart, offsetEnd, "#_rec_" + recitalNumber);
     }
 
-    selectContent(offsetStart, offsetEnd, element){
+    selectContentInNumberedParagraphOfArticle(offsetStart, offsetEnd, paragraphNumber) {
+        this.selectContent(offsetStart, offsetEnd, ".cke_editable_inline article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']");
+    }
+
+    selectContent(offsetStart, offsetEnd, element) {
         cy.window().then((w) => {
             cy.wait(1000).then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
@@ -78,7 +82,7 @@ class ckEditorWindow {
         });
     }
 
-    addContent(newContent, offset, element){
+    addContent(newContent, offset, element) {
         cy.window().then((w) => {
             cy.wait(1000).then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
@@ -96,7 +100,7 @@ class ckEditorWindow {
         });
     }
 
-    moveCursor(offset, element){
+    moveCursor(offset, element) {
         cy.window().then((w) => {
             cy.wait(1000).then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];

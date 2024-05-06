@@ -20,5 +20,4 @@ And('provide document title {string} in create document page', (title) => {
 
 And('click on create button', () => {
     createProposalPage.clickCreateBtn();
-    cy.wait(2000);
 })

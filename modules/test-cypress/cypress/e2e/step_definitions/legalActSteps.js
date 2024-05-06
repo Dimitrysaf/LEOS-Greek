@@ -4,7 +4,7 @@ import legalActPage from "../pages/legalActPage";
 
 Then('user is on legal act page', () => {
     legalActPage.getCurrentPageName().should("have.text", "Legal Act");
-    cy.wait(2000);
+    cy.wait(10000);
 })
 
 When('mousehover and click on citation {int}', citationNumber => {
@@ -55,4 +55,12 @@ When('mousehover on citation {int} and click on edit button from action menu', (
 
 Then(`paragraph {int} of article {int} contains {string}`, (paragraphNumber, articleNumber, text) => {
     legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).contains(text);
+});
+
+Then(`paragraph {int} of article {int} doesnot contain {string}`, (paragraphNumber, articleNumber, text) => {
+    legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).should('not.include.text', text);
+});
+
+Then(`paragraph {int} of article {int} doesnot contain {string}`, (paragraphNumber, articleNumber, text) => {
+    legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).should('not.include.text', text);
 });

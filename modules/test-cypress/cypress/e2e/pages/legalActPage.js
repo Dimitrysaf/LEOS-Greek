@@ -1,5 +1,5 @@
-import headerPage  from './headerPage';
-class legalActPage extends headerPage{
+import headerPage from './headerPage';
+class legalActPage extends headerPage {
     elements = {
         closeBtn: () => cy.contains('Close'),
         annotationSideBar: () => cy.contains('Annotations & document notes'),
@@ -11,43 +11,85 @@ class legalActPage extends headerPage{
         deleteIconActionMenu: () => cy.get(".leos-actions.Vaadin-Icons span[data-widget-type='delete'][style='display: inline-block;']")
     }
 
-    clickCloseBtn(){
+    clickCloseBtn() {
         this.elements.closeBtn().click();
-        cy.wait(1000);
-    }
-    
-    mouseHoverAndClickOnArticle(articleNumber){
-        cy.get("#_art_" + articleNumber).realHover().click();
     }
 
-    mouseHoverAndClickOnCitation(citationNumber){
-        cy.get("#_cit_" + citationNumber).realHover().click();
+    mouseHoverAndClickOnArticle(articleNumber) {
+        let identifier;
+        let elementType = "article";
+        cy.xpath("//article[" + articleNumber + "]").realHover().invoke('attr', 'id').then(id => identifier = id);
+        cy.window().then((w) => {
+            w.EditorConnector.handleEdit({
+              "action": "edit",
+              "elementId": identifier,
+              "elementType": elementType,
+              "elementCursorId": identifier,
+              "elementCursorChildPos": 0,
+              "elementCursorPos": 0
+            })
+        })
+        // cy.xpath("//article[" + articleNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click({force:true}));
     }
 
-    mouseHoverAndClickOnRecital(recitalNumber){
-        cy.get("#_rec_" + recitalNumber).realHover().click();
+    mouseHoverAndClickOnCitation(citationNumber) {
+        //let identifier;
+        //let elementType = "citation";
+        //cy.xpath("//citation[" + citationNumber + "]").realHover().invoke('attr', 'id').then(id => identifier = id);
+        cy.xpath("//citation[" + citationNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click({force:true}));
+        //cy.get("#"+identifier).realHover().click();
+        // cy.window().then((w) => {
+        //     w.EditorConnector.handleEdit({
+        //       "action": "edit",
+        //       "elementId": identifier,
+        //       "elementType": elementType,
+        //       "elementCursorId": identifier,
+        //       "elementCursorChildPos": 0,
+        //       "elementCursorPos": 0
+        //     })
+        // })
     }
 
-    mouseHoverOnThreeDots(){
+    mouseHoverAndClickOnRecital(recitalNumber) {
+        //let identifier;
+        // let elementType = "recital";
+        //cy.xpath("//recital[" + recitalNumber + "]").realHover().invoke('attr', 'id').then(id => identifier = id);
+        cy.xpath("//recital[" + recitalNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click({force:true}));
+        //cy.get("#"+identifier).realHover().click();
+        // cy.window().then((w) => {
+        //     w.EditorConnector.handleEdit({
+        //       "action": "edit",
+        //       "elementId": identifier,
+        //       "elementType": elementType,
+        //       "elementCursorId": identifier,
+        //       "elementCursorChildPos": 0,
+        //       "elementCursorPos": 0
+        //     })
+        // })
+    }
+
+    mouseHoverOnThreeDots() {
         this.elements.threeDots().trigger('mouseover');
-        cy.wait(4000);
     }
 
-    getAllParagraphFromArticle(articleNumber){
+    getAllParagraphFromArticle(articleNumber) {
         return cy.xpath("//article[" + articleNumber + "]//paragraph");
     }
 
-    getCitation(citationNumber){
+    getCitation(citationNumber) {
         return cy.xpath("//citation[" + citationNumber + "]");
     }
 
-    getRecital(recitalNumber){
+    getRecital(recitalNumber) {
         return cy.xpath("//recital[" + recitalNumber + "]");
     }
 
-    getParagraphFromArticle(paragraphNumber, articleNumber){
-        return cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber+ "]");
+    getParagraphFromArticle(paragraphNumber, articleNumber) {
+        return cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber + "]");
     }
+
+    // openCKEditor(identifier, elementType){
+    // }
 }
 export default new legalActPage();
 import '@cypress/xpath';

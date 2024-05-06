@@ -16,18 +16,15 @@ class loginPage {
 
      clickNextBtn(){
         this.elements.nextBtn().click();
-        cy.wait(2000);
      }
 
      clickSignInBtn(){
         this.elements.signInBtn().click();
-        cy.wait(10000);
      }
      
     visitUrl(urlType, previousStringUrl) {
-        cy.viewport(1280, 720);
         cy.visit(previousStringUrl + Cypress.env(urlType));
-        cy.wait(2000);
+        cy.wait(1000);
     }
 }
 export default new loginPage();
