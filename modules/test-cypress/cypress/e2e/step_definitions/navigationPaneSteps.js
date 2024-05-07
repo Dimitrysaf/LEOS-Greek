@@ -20,7 +20,7 @@ Then(`below element lists are displayed in Elements menu`, (datatable) => {
     datatable.hashes().forEach((element) => {
         actualelementList.push(element.ElementList);
     });
-    cy.get('div.eui-list-item__container span')
+    navigationPane.elements.menuOptions()
         .then(($els) => {
             return (
                 Cypress.$.makeArray($els)
