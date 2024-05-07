@@ -177,6 +177,8 @@ export abstract class TocInlineEditMenuService {
       .filter(obj => obj.tocItem.aknTag === node.tocItem.aknTag);
     const itemWithNumType = chapterTocVos != null ? chapterTocVos.find(value => value.numberingType != null) : null;
     const numType = itemWithNumType != null ? itemWithNumType.numberingType : null;
+    const initialItemWithNumType = initialTocChapterVos != null ? initialTocChapterVos.find(value => value.numberingType != null) : null;
+    const initialNumType = initialItemWithNumType != null ? initialItemWithNumType.numberingType : null;
     node.numberingType = numType;
     return {
       id: CHAPTER_NUMBER_CHANGE_ID,
@@ -190,7 +192,7 @@ export abstract class TocInlineEditMenuService {
             'toc.edit.window.item.regular.chapter.num.roman',
           ),
           disabled: node.tocItem.aknTag === 'CHAPTER' && node.numberingType === 'ROMAN_UPPER',
-          command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', toc, chapterTocVos, initialTocChapterVos),
+          command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', initialNumType, toc, chapterTocVos, initialTocChapterVos),
         },
         {
           id: CHAPTER_NUMBER_ARABIC,
@@ -198,7 +200,7 @@ export abstract class TocInlineEditMenuService {
             'toc.edit.window.item.regular.chapter.num.arabic',
           ),
           disabled: node.tocItem.aknTag === 'CHAPTER' && node.numberingType === 'HIGHER_ELEMENT_NUM',
-          command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', toc, chapterTocVos, initialTocChapterVos),
+          command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', initialNumType, toc, chapterTocVos, initialTocChapterVos),
         },
       ],
     };
@@ -303,11 +305,11 @@ export abstract class TocInlineEditMenuService {
     this.tocEditService.handleNodeChanges(toc);
   }
 
-  protected handleHighSubdivChangeNumbering(numberingType: NumberingType, toc: TableOfContentItemVO[],
+  protected handleHighSubdivChangeNumbering(numberingType: NumberingType, initialNumType: NumberingType, toc: TableOfContentItemVO[],
                                             tocVOs: TableOfContentItemVO[], initialTocChapterVos: TableOfContentItemVO[]) {
     this.tocEditService.handleNodeChanges(toc, true);
     for(const tocVO of tocVOs) {
-      if (initialTocChapterVos != null && initialTocChapterVos[0] != null && initialTocChapterVos[0].numberingType === numberingType) {
+      if (initialNumType === numberingType) {
         const sameIdChapterVO = initialTocChapterVos.find(item => item.id === tocVO.id);
         if(sameIdChapterVO != null) {
           tocVO.number = sameIdChapterVO.number;
