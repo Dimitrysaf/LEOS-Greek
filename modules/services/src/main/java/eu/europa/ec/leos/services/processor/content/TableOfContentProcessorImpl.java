@@ -124,7 +124,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 .findFirst().orElse(null);
         if (bodyToc != null) {
             TableOfContentItemVO chapterTocItemVo =
-                    bodyToc.getChildItems().parallelStream()
+                    bodyToc.flattened()
                             .filter(tocItemVO -> (tocItemVO.getTocItem().getAknTag().value().equals(CHAPTER)
                                     && (tocItemVO.getNumber() != null && (tocItemVO.getNumber().equals("1") || tocItemVO.getNumber().equals("I")))))
                             .findFirst().orElse(null);
@@ -138,7 +138,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
                 } else {
                     numberingType = chapterTocItemVo.getNumberingType();
                 }
-                bodyToc.getChildItems().parallelStream()
+                bodyToc.flattened()
                         .filter(tocItemVO -> (tocItemVO.getTocItem().getAknTag().value().equals(CHAPTER)))
                         .collect(Collectors.toList())
                         .forEach(tocItemVO -> tocItemVO.setNumberingType(numberingType));
