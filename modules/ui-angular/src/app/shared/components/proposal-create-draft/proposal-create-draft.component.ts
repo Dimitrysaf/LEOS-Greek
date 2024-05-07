@@ -227,7 +227,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     const proposalRef = this.proposalDetailsService.proposalRef;
     const { templateId } = this.createForm.getRawValue();
     return {
-      template: templateId.split(';')[1],
+      template: templateId.split(';')[2],
       proposalRef: proposalRef ?? null,
     };
   }
