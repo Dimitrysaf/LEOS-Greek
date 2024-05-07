@@ -3,7 +3,7 @@ import loginPage from "../pages/loginPage";
 
 Given('navigate to edit drafting application with {string}', (user) => {
     if(Cypress.env('CE_ENV').includes('@local')) {
-        loginPage.visitUrl('localDraftingUrl', 'http://' + Cypress.env('local' + user) + ':' + Cypress.env('localPassword' + user) + '@');
+        loginPage.visitUrl('localDraftingUrl', 'http://' + Cypress.env('local' + user) + ':' + Cypress.env('localPassword') + '@');
     }
     if(Cypress.env('CE_ENV').includes("@nonlocal")) {
         loginPage.visitUrl('devDraftingUrl', 'https://');

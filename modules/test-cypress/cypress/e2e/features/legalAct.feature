@@ -31,7 +31,6 @@ Feature: Legal Act Page Regression Features
         And  citation 1 contains "New Text"
         And  citation 1 doesnot contain "regard"
         When mousehover and click on citation 2
-        # When mousehover on citation 2 and click on edit button from action menu
         Then ck editor window is displayed
         When click close button of ck editor
         Then ck editor window is not displayed
@@ -66,14 +65,14 @@ Feature: Legal Act Page Regression Features
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
         When mousehover and click on article 1
-        # Then paragraph 1 of article 1 contains "Text..." when ck editor is open
+        Then numbered paragraph 1 of article contains "Text..." when ck editor is open
         Then ck editor window is displayed
-        When append " New Text " at offset 7 in paragraph 1 of article 1 when ck editor is open
-        # Then paragraph 1 of article 1 contains "Text...New Text" when ck editor is open
+        When append " New Text " at offset 7 in numbered paragraph 1 of article when ck editor is open
+        Then numbered paragraph 1 of article contains "Text... New Text" when ck editor is open
         When move the cursor position to offset 7 in paragraph 1 of article 1 when ck editor is open
         And  click enter from keyboard when ck editor is open
-        # Then paragraph 1 of article 1 contains "Text..." when ck editor is open
-        # And  paragraph 2 of article 1 contains "New Text" when ck editor is open
+        Then numbered paragraph 1 of article contains "Text..." when ck editor is open
+        And  numbered paragraph 2 of article contains "New Text" when ck editor is open
         When click save and close button of ck editor
         Then ck editor window is not displayed
         And  2 paragraphs are present in article 1
@@ -100,27 +99,26 @@ Feature: Legal Act Page Regression Features
         And  toc editing button is displayed and enabled
         When click on toc edit button
         Then cancel button in navigation pane is displayed and enabled
-        # Then below element lists are displayed in Elements menu
-        #     | elementList |
-        #     | Citation    |
-        #     | Recital     |
-        #     | Part        |
-        #     | Title       |
-        #     | Chapter     |
-        #     | Section     |
-        #     | Article     |
+        Then below element lists are displayed in Elements menu
+            | ElementList |
+            | Citation    |
+            | Recital     |
+            | Part        |
+            | Title       |
+            | Chapter     |
+            | Section     |
+            | Article     |
         When click on cancel button present in navigation pane
         Then toc editing button is displayed and enabled
         When mousehover and click on article 4
         Then ck editor window is displayed
-        When click close button of ck editor
-        #        When select content from offset 11 till offset 18 in numbered paragraph 1 of article when ck editor is open
-        #        And  click delete button from keyboard when ck editor is open
-        #        When append " New Text " at offset 22 in paragraph 1 of article 3 when ck editor is open
-        #        When click save and close button of ck editor
+        When select content from offset 65 till offset 75 in numbered paragraph 1 of article when ck editor is open
+        And  click delete button from keyboard when ck editor is open
+        When append " New Text " at offset 22 in numbered paragraph 1 of article when ck editor is open
+        When click save and close button of ck editor
         Then ck editor window is not displayed
-    #        And  paragraph 1 of article 3 contains "New Text"
-    #        And  paragraph 1 of article 3 doesnot contain "improve"
+        And  paragraph 1 of article 4 contains "New Text"
+        And  paragraph 1 of article 4 doesnot contain "Directive"
 
     @sampleDevTest @nonlocal
     Scenario: navigate to legal act page

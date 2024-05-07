@@ -6,22 +6,22 @@ class loginPage {
         signInBtn: () => cy.get('.btn-primary')
     }
 
-    enterUserName(userName){
-       this.elements.username().type(userName);
+    enterUserName(userName) {
+        this.elements.username().type(userName);
     }
 
-    enterPassword(password){
-        this.elements.password().type(password);
-     }
+    enterPassword(password) {
+        this.elements.password().type(password, { log: false });
+    }
 
-     clickNextBtn(){
+    clickNextBtn() {
         this.elements.nextBtn().click();
-     }
+    }
 
-     clickSignInBtn(){
+    clickSignInBtn() {
         this.elements.signInBtn().click();
-     }
-     
+    }
+
     visitUrl(urlType, previousStringUrl) {
         cy.visit(previousStringUrl + Cypress.env(urlType));
         cy.wait(1000);

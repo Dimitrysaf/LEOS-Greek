@@ -16,9 +16,19 @@ Then(`cancel button in navigation pane is displayed and enabled`, () => {
 });
 
 Then(`below element lists are displayed in Elements menu`, (datatable) => {
-//    datatable.hashes().forEach((element) => {
-//        cy.contains(element.errormessage);
-//        });
+    const actualelementList = [];
+    datatable.hashes().forEach((element) => {
+        actualelementList.push(element.ElementList);
+    });
+    cy.get('div.eui-list-item__container span')
+        .then(($els) => {
+            return (
+                Cypress.$.makeArray($els)
+                    // and extract inner text from each
+                    .map((el) => el.innerText)
+            )
+        })
+        .should('deep.equal', actualelementList)
 });
 
 When(`click on cancel button present in navigation pane`, () => {
