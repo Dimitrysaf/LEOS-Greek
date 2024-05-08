@@ -199,7 +199,8 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
               this.route.params
                 .pipe(takeUntil(this.destroy$))
                 .subscribe(({ proposalId }) => {
-                  this.proposalDetailsService.setProposalRef(proposalId);
+                  const prop = proposalId ?? this.proposalDetailsService.proposalRef;
+                  this.proposalDetailsService.setProposalRef(prop);
                 });
             if (!this.fromProposal)
               await this.router.navigate([`collection/${response.proposalId}`]);
