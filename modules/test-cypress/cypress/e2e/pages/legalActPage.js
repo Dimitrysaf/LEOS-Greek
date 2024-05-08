@@ -8,11 +8,16 @@ class legalActPage extends headerPage {
         editIconActionMenu: () => cy.get(".leos-actions.Vaadin-Icons span[data-widget-type='edit'][style='display: inline-block;']"),
         previousIconActionMenu: () => cy.get(".leos-actions.Vaadin-Icons span[data-widget-type='insert.before'][style='display: inline-block;']"),
         nextIconActionMenu: () => cy.get(".leos-actions.Vaadin-Icons span[data-widget-type='insert.after'][style='display: inline-block;']"),
-        deleteIconActionMenu: () => cy.get(".leos-actions.Vaadin-Icons span[data-widget-type='delete'][style='display: inline-block;']")
+        deleteIconActionMenu: () => cy.get(".leos-actions.Vaadin-Icons span[data-widget-type='delete'][style='display: inline-block;']"),
+        trackChangesEnableToggle: () => cy.get("#SEE-TRACK_CHANGES-ID").find("input").first()
     }
 
     clickCloseBtn() {
         this.elements.closeBtn().click();
+    }
+
+    clickEnableTrackchangesToggleBtn() {
+        this.elements.trackChangesEnableToggle().realClick();
     }
 
     mouseHoverAndClickOnArticle(articleNumber) {

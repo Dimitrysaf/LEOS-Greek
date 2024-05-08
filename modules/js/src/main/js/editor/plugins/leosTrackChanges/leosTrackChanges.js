@@ -530,6 +530,7 @@ define(function leosTrackChangesModule(require) {
                     newElement.mergeSiblings();
                 }
             }
+            editor.fire("change");
             return true;
         },
 

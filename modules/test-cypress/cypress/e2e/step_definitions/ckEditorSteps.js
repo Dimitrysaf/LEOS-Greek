@@ -21,6 +21,10 @@ When('append {string} at offset {int} in numbered paragraph {int} of article whe
     ckEditorWindow.appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber);
 });
 
+When('append {string} at offset {int} of child {int} of numbered paragraph {int} of article when ck editor is open', function (newContent, offset, child, paragraphNumber) {
+    ckEditorWindow.appendContentInNumberedParagraphOfArticle(newContent,offset,paragraphNumber,child);
+});
+
 When('move the cursor position to offset {int} in paragraph {int} of article {int} when ck editor is open', function (offset, paragraphNumber, articleNumber) {
     ckEditorWindow.moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber, articleNumber);
 });

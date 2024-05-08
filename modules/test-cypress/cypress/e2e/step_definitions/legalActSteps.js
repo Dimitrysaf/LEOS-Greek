@@ -7,6 +7,10 @@ Then('user is on legal act page', () => {
     cy.wait(10000);
 })
 
+Then('document has {int} trackchange ins tags', (count) => {
+    legalActPage.getCurrentPageName().get("ins").should("have.length", count);
+})
+
 When('mousehover and click on citation {int}', citationNumber => {
     legalActPage.mouseHoverAndClickOnCitation(citationNumber);
 })
@@ -60,3 +64,7 @@ Then(`paragraph {int} of article {int} contains {string}`, (paragraphNumber, art
 Then(`paragraph {int} of article {int} doesnot contain {string}`, (paragraphNumber, articleNumber, text) => {
     legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).should('not.include.text', text);
 });
+
+When('enable track changes', () => {
+    legalActPage.clickEnableTrackchangesToggleBtn();
+})

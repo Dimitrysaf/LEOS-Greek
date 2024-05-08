@@ -46,8 +46,8 @@ class ckEditorWindow {
         this.moveCursor(offset, "#_art_" + articleNumber + "__para_" + paragraphNumber);
     }
 
-    appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber) {
-        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.addContent(newContent, offset, "#"+id));
+    appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber, child) {
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.addContent(newContent, offset, "#"+id, child));
     }
 
     addContentInCitation(newContent, offset, citationNumber) {
@@ -85,12 +85,15 @@ class ckEditorWindow {
         });
     }
 
-    addContent(newContent, offset, element) {
+    addContent(newContent, offset, element, child) {
+        if (!child) {
+            child = 0;
+        }
         cy.window().then((w) => {
             cy.wait(1000).then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
                 let elementToPutCursorParent = editor.element.findOne(element);
-                let elementToPutCursor = elementToPutCursorParent.getChild(0);
+                let elementToPutCursor = elementToPutCursorParent.getChild(child);
                 let range = editor.createRange();
                 range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
                 range.setStart(elementToPutCursor, offset);
