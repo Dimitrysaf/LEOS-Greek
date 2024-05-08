@@ -59,7 +59,7 @@ cypress-test-for-local:
     - sleep 40
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
-    - npx cypress run --browser chrome --headed -e CE_ENV="$TAGS_TO_RUN"
+    - npx cypress run --browser chrome --headed -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN"
   after_script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - node ./cucumberReport.js
@@ -81,7 +81,7 @@ cypress-test-for-non-local:
   script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - npm install
-    - npx cypress run --browser chrome --headed -e CE_ENV="$TAGS_TO_RUN"
+    - npx cypress run --browser chrome --headed -e CE_ENV="$TAGS_TO_RUN",TAGS="$TAGS_TO_RUN"
   after_script:
     - cd $CI_PROJECT_DIR/modules/test-cypress
     - node ./cucumberReport.js

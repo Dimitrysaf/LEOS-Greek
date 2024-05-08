@@ -17,12 +17,12 @@ When('click close button of ck editor', () => {
     ckEditorWindow.clickCloseBtn();
 })
 
-When('append {string} at offset {int} in paragraph {int} of article {int} when ck editor is open', function (newContent, offset, paragraphNumber, articleNumber) {
-    ckEditorWindow.appendContentInParagraphInArticle(newContent,offset,paragraphNumber,articleNumber);
+When('append {string} at offset {int} in numbered paragraph {int} of article when ck editor is open', function (newContent, offset, paragraphNumber) {
+    ckEditorWindow.appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber);
 });
 
 When('move the cursor position to offset {int} in paragraph {int} of article {int} when ck editor is open', function (offset, paragraphNumber, articleNumber) {
-    ckEditorWindow.moveCursorToSpecificOffsetInParagraphOfArticle(offset,paragraphNumber,articleNumber);
+    ckEditorWindow.moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber, articleNumber);
 });
 
 When('add {string} at offset {int} in citation {int} when ck editor is open', function (newContent, offset, citationNumber) {
@@ -57,6 +57,8 @@ When(`select content from offset {int} till offset {int} in numbered paragraph {
     ckEditorWindow.selectContentInNumberedParagraphOfArticle(offsetStart, offsetEnd, paragraphNumber);
 });
 
-// Then(`paragraph {int} of article {int} contains {string} when ck editor is open`, (paragraphNumber, articleNumber, text) => {
-
-// });
+Then(`numbered paragraph {int} of article contains {string} when ck editor is open`, (paragraphNumber, str) => {
+    ckEditorWindow.getNumberedParagraphElementOfArticle(paragraphNumber).invoke('text').then((text) => {
+        expect(text.trim()).equal(str);
+    });
+});

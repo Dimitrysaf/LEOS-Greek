@@ -33,39 +33,11 @@ class legalActPage extends headerPage {
     }
 
     mouseHoverAndClickOnCitation(citationNumber) {
-        //let identifier;
-        //let elementType = "citation";
-        //cy.xpath("//citation[" + citationNumber + "]").realHover().invoke('attr', 'id').then(id => identifier = id);
         cy.xpath("//citation[" + citationNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click({force:true}));
-        //cy.get("#"+identifier).realHover().click();
-        // cy.window().then((w) => {
-        //     w.EditorConnector.handleEdit({
-        //       "action": "edit",
-        //       "elementId": identifier,
-        //       "elementType": elementType,
-        //       "elementCursorId": identifier,
-        //       "elementCursorChildPos": 0,
-        //       "elementCursorPos": 0
-        //     })
-        // })
     }
 
     mouseHoverAndClickOnRecital(recitalNumber) {
-        //let identifier;
-        // let elementType = "recital";
-        //cy.xpath("//recital[" + recitalNumber + "]").realHover().invoke('attr', 'id').then(id => identifier = id);
         cy.xpath("//recital[" + recitalNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#"+id).realHover().click({force:true}));
-        //cy.get("#"+identifier).realHover().click();
-        // cy.window().then((w) => {
-        //     w.EditorConnector.handleEdit({
-        //       "action": "edit",
-        //       "elementId": identifier,
-        //       "elementType": elementType,
-        //       "elementCursorId": identifier,
-        //       "elementCursorChildPos": 0,
-        //       "elementCursorPos": 0
-        //     })
-        // })
     }
 
     mouseHoverOnThreeDots() {
@@ -87,9 +59,6 @@ class legalActPage extends headerPage {
     getParagraphFromArticle(paragraphNumber, articleNumber) {
         return cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber + "]");
     }
-
-    // openCKEditor(identifier, elementType){
-    // }
 }
 export default new legalActPage();
 import '@cypress/xpath';

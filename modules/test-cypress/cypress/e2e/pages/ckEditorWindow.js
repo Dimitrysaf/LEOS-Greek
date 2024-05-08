@@ -38,13 +38,16 @@ class ckEditorWindow {
         this.elements.saveBtn().click();
     }
 
+    getNumberedParagraphElementOfArticle(paragraphNumber) {
+        return this.elements.ckEditableInline().find("article li[data-akn-element='paragraph'][data-akn-num='" + paragraphNumber + ".']");
+    }
+
     moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber, articleNumber) {
         this.moveCursor(offset, "#_art_" + articleNumber + "__para_" + paragraphNumber);
     }
 
-    appendContentInParagraphInArticle(newContent, offset, paragraphNumber, articleNumber) {
-        this.addContent(newContent, offset, "#_art_" + articleNumber + "__para_" + paragraphNumber);
-        //this.addContent(newContent, offset, ".cke_editable_inline article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']");
+    appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber) {
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.addContent(newContent, offset, "#"+id));
     }
 
     addContentInCitation(newContent, offset, citationNumber) {
@@ -64,7 +67,7 @@ class ckEditorWindow {
     }
 
     selectContentInNumberedParagraphOfArticle(offsetStart, offsetEnd, paragraphNumber) {
-        this.selectContent(offsetStart, offsetEnd, ".cke_editable_inline article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']");
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.selectContent(offsetStart, offsetEnd, "#"+id));
     }
 
     selectContent(offsetStart, offsetEnd, element) {
