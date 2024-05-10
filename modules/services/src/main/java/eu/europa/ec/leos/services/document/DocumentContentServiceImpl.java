@@ -578,6 +578,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
                 break;
             case STAT_FINANC_LEGIS:
                 document = financialStatementService.updateFinancialStatement((FinancialStatement) document, xmlContent, message);
+                break;
             default:
                 throw new UnsupportedOperationException("Invalid Document Type category : " + document.getCategory());
         }
