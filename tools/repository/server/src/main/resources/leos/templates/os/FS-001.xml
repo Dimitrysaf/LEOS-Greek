@@ -320,25 +320,20 @@
                                 </p>
                             </content>
                         </subparagraph>
-                        <list class="~CHECK" xml:id="_body__level_16__list__indent_2__list" leos:editable="false">
-                            <indent xml:id="_body__level_16__list__indent_2__list__indent_1">
-                                <num xml:id="_body__level_16__list__indent_2__list__indent_1_num"></num>
-                                <content xml:id="_body__level_16__list__indent_2__list__indent_1__content">
-                                    <p xml:id="_body__level_16__list__indent_2__list__indent_1__content__p">Implementation with a start-up period from
-                                        <inline name="date" period="yy" xml:id="_body__level_16__list__indent_2__list__indent_1__content__p__inline_1">YYYY</inline>
-                                        to
-                                        <inline name="date" period="yy" xml:id="_body__level_16__list__indent_2__list__indent_1__content__p__inline_2">YYYY</inline>,
-                                    </p>
-                                </content>
-                            </indent>
-                            <indent xml:id="_body__level_16__list__indent_2__list__indent_2">
-                                <num xml:id="_body__level_16__list__indent_2__list__indent_2_num"></num>
-                                <content xml:id="_body__level_16__list__indent_2__list__indent_2__content">
-                                    <p xml:id="_body__level_16__list__indent_2__list__indent_2__content__p">followed by full-scale operation.</p>
-                                </content>
-                            </indent>
-                        </list>
-                    </indent>
+						<subparagraph xml:id="_body__level_16__subparagraph">
+                        <content xml:id="_body__level_16__subparagraph__content">
+                            <p xml:id="_body__level_16__subparagraph__content__p">Implementation with a start-up period from
+                                <inline name="date" period="yy" xml:id="_body__level_16__subparagraph__content__p__inline_1">YYYY</inline>
+                                to
+                                <inline name="date" period="yy" xml:id="_body__level_16__subparagraph__content__p__inline_2">YYYY</inline>,</p>
+                        </content>
+                    </subparagraph>
+                    <subparagraph xml:id="_body__level_16__subparagraph_1">
+                        <content xml:id="_body__level_16__subparagraph_1__content">
+                            <p xml:id="_body__level_16__subparagraph_1__content__p">followed by full-scale operation.</p>
+                        </content>
+                    </subparagraph>
+                    </indent>					
                 </list>
             </level>
             <level leos:depth="2" xml:id="_body__level_17" leos:editable="true" leos:deletable="false">
@@ -3496,32 +3491,29 @@
                 <num xml:id="_body__level_325__num">3.2.5.</num>
                 <heading leos:editable="false" xml:id="_body__level_325__heading">
                     <i xml:id="_body__level_325__heading__i">Third-party contributions</i>
-                </heading>
-                <subparagraph leos:editable="false" xml:id="_body__level_325__subparagraph">
-                    <content xml:id="_body__level_325__subparagraph__content">
-                        <p leos:editable="false" xml:id="_body__level_325__subparagraph__content__p">The proposal/initiative:</p>
-                    </content>
-                </subparagraph>
+                </heading>                
                 <list leos:editable="false" class="~CHECK" xml:id="_body__level_325__list">
+				 <subparagraph leos:editable="false" xml:id="_body__level_325__list__subparagraph" refersTo="~_INP">
+                        <content xml:id="_body__level_325__list__subparagraph__content">
+                            <p leos:editable="false" xml:id="_body__level_325__list__subparagraph__content__p">The proposal/initiative:</p>
+                        </content>
+                    </subparagraph>
                     <indent xml:id="_body__level_325__list__indent_1">
                         <num xml:id="_body__level_325__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_325__list__indent_1__num__inline">&#x2610;</inline>
-                        </num>
-                        <subparagraph leos:editable="false" xml:id="_body__level_325__list__indent_1__subparagraph">
-                            <content xml:id="_body__level_325__list__indent_1__subparagraph__content">
-                                <p xml:id="_body__level_325__list__indent_1__subparagraph__content__p">does not provide for co-financing by third parties</p>
+                        </num>                        																						
+                            <content leos:editable="false" xml:id="_body__level_325__list__indent_1__content">
+                                <p xml:id="_body__level_325__list__indent_1__content__p">does not provide for co-financing by third parties</p>
                             </content>
-                        </subparagraph>
+                        
                     </indent>
                     <indent xml:id="_body__level_325__list__indent_2">
                         <num xml:id="_body__level_325__list__indent_2__num">
                             <inline name="unchecked" xml:id="_body__level_325__list__indent_2__num__inline">&#x2610;</inline>
-                        </num>
-                        <subparagraph leos:editable="false" xml:id="_body__level_325__list__indent_2__subparagraph">
-                            <content xml:id="_body__level_325__list__indent_2__subparagraph__content">
-                                <p xml:id="_body__level_325__list__indent_2__subparagraph__content__p">provides for the co-financing by third parties estimated below:</p>
-                            </content>
-                        </subparagraph>
+                        </num>                        																				
+                            <content leos:editable="false" xml:id="_body__level_325__list__indent_2__content">
+                                <p xml:id="_body__level_325__list__indent_2__content__p">provides for the co-financing by third parties estimated below:</p>
+                            </content>                        
                     </indent>
                 </list>
                 <subparagraph leos:editable="false" style="text-align: right;padding-right:4%;" xml:id="_body__level_325__subparagraph_4">
