@@ -128,10 +128,6 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
 
         financialStatementConfigMap.putAll(populateMetadataConfigMap());
 
-        final Map<String, XmlNodeConfig> prefaceConfig = new HashMap<>(4);
-        prefaceConfig.put(FIN_STMT_TITLE_PREFACE, new XmlNodeConfig("//akn:preface/akn:longTitle/akn:p/akn:docTitle", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_preface_doctitle", "docTitle"))));
-        financialStatementConfigMap.putAll(prefaceConfig);
-
         final Map<String, XmlNodeConfig> otherConfig = populateOtherConfig();
         financialStatementConfigMap.putAll(otherConfig);
 
