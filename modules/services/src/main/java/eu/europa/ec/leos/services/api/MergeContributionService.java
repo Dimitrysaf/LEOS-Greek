@@ -207,6 +207,19 @@ public class MergeContributionService {
                 updatedXmlContent);
     }
 
+    private int countNonEmptyTextNodesInAllDescendants(Node node) {
+        int count = 0;
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (child.getNodeType() != Node.TEXT_NODE && !child.getNodeName().equalsIgnoreCase(LEOS_TC_INSERT_ELEMENT_NAME) && !child.getNodeName().equalsIgnoreCase(LEOS_TC_DELETE_ELEMENT_NAME)) {
+                count += countNonEmptyTextNodes(child);
+                count += countNonEmptyTextNodesInAllDescendants(child);
+            }
+        }
+        return count;
+    }
+
     // For each action (add, delete, content update), merge contribution's content to original document
     private byte[] mergeTrackChangesFromContribution(ContributionVO contribution,
                                                      byte[] xmlContent,
@@ -216,6 +229,7 @@ public class MergeContributionService {
                                                      boolean withTrackChanges) {
         elementId = removesMovedPrefixFromElementId(elementId);
         Node contributionNode = XercesUtils.getElementById(contribution.getXmlContent(), elementId);
+        int countNonEmptyTextNodes = countNonEmptyTextNodesInAllDescendants(contributionNode);
         String cleanedElementId = removesPrefixFromElementId(elementId);
 
         // Processes changes in main element
@@ -280,7 +294,7 @@ public class MergeContributionService {
             Node originalNode = XercesUtils.getElementById(xmlContent, cleanedElementId);
             if (originalNode != null) {
                 xmlContent = xmlContentProcessor.replaceElementById(xmlContent, newFragment, cleanedElementId);
-            } else {
+            } else if (countNonEmptyTextNodes == 0) {
                 newFragment = updateInternalReferences(newFragment, intRefMap);
                 xmlContent = mergeInsertedEltInXml(xmlContent, contribution.getXmlContent(), newFragment, cleanedElementId,
                         false);
@@ -1288,20 +1302,34 @@ public class MergeContributionService {
         return count;
     }
 
+    private int countNonEmptyTextNodes(Node node) {
+        int count = 0;
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            Node child = children.item(i);
+            if (child.getNodeType() == Node.TEXT_NODE && !StringUtils.isBlank(child.getTextContent().trim()) && StringUtils.isAsciiPrintable(child.getTextContent().trim())) {
+                count ++;
+            }
+        }
+        return count;
+    }
+
     private Node getRealUpdatedNode(Node relatedOriginalNode, Node impactedNode, boolean insertion) {
         if (insertion && impactedNode.getNodeName().equals(LEOS_TC_INSERT_ELEMENT_NAME)) {
             Node parentNode = impactedNode;
             Node prevNode;
             Node originalParentElt;
+            int countNonEmptyTextNodes = 0;
             do {
                 prevNode = parentNode;
                 parentNode = parentNode.getParentNode();
+                countNonEmptyTextNodes = countNonEmptyTextNodes(parentNode);
 
                 originalParentElt = parentNode != null ? XercesUtils.getElementById(relatedOriginalNode, getId(parentNode)) : null;
                 if (originalParentElt == null && parentNode != null && getId(parentNode).contains(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX)) {
                     originalParentElt = XercesUtils.getElementById(relatedOriginalNode, getId(parentNode).replaceAll(SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX, ""));
                 }
-            } while (parentNode != null && (originalParentElt == null || parentNode.getNodeName().equals(CONTENT) || parentNode.getNodeName().equals(P)));
+            } while (parentNode != null && countNonEmptyTextNodes == 0 && (originalParentElt == null || parentNode.getNodeName().equals(CONTENT) || parentNode.getNodeName().equals(P)));
             return prevNode != null
                     && !prevNode.getNodeName().equals(NUM)
                     && !prevNode.getNodeName().equals(CONTENT) && !prevNode.getNodeName().equals(P)
