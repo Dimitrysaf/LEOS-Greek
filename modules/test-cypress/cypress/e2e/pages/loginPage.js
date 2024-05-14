@@ -23,6 +23,7 @@ class loginPage {
     }
 
     visitUrl(urlType, previousStringUrl) {
+        Cypress.session.clearCurrentSessionData();
         cy.visit(previousStringUrl + Cypress.env(urlType));
         cy.wait(1000);
     }

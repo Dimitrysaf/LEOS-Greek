@@ -14,5 +14,10 @@ class repositoryBrowserPage extends headerPage {
     clickUploadBtn(){
         this.elements.uploadBtn().click();
     }
+
+    openFirstProposal(){
+        cy.get('eui-card-header-title').first().click();
+    }
+
 }
 export default new repositoryBrowserPage();

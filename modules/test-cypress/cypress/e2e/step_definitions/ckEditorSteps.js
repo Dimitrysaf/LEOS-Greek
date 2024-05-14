@@ -22,7 +22,23 @@ When('append {string} at offset {int} in numbered paragraph {int} of article whe
 });
 
 When('append {string} at offset {int} of child {int} of numbered paragraph {int} of article when ck editor is open', function (newContent, offset, child, paragraphNumber) {
-    ckEditorWindow.appendContentInNumberedParagraphOfArticle(newContent,offset,paragraphNumber,child);
+    ckEditorWindow.appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber, child);
+});
+
+When('press {string} at offset {int} in numbered paragraph {int} of article when ck editor is open', function (key, offset, paragraphNumber) {
+    ckEditorWindow.deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber);
+});
+
+When('press {string} at offset {int} of child {int} of numbered paragraph {int} of article when ck editor is open', function (key, offset, child, paragraphNumber) {
+    ckEditorWindow.deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber, child);
+});
+
+When('press {int} times {string} at offset {int} of numbered paragraph {int} of article when ck editor is open', function (times, key, offset, paragraphNumber) {
+    ckEditorWindow.deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber, null, times);
+});
+
+When('press {int} times {string} at offset {int} of child {int} of numbered paragraph {int} of article when ck editor is open', function (times, key, offset, child, paragraphNumber) {
+    ckEditorWindow.deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber, child, times);
 });
 
 When('move the cursor position to offset {int} in paragraph {int} of article {int} when ck editor is open', function (offset, paragraphNumber, articleNumber) {
