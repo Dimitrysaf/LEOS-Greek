@@ -18,6 +18,7 @@ export interface Milestone {
 export interface MilestoneViewResponse {
   documents: MilestoneViewItem[];
   pdfRenditionsPresent: boolean;
+  contributionChanged: boolean;
 }
 
 export interface MilestoneViewItem {

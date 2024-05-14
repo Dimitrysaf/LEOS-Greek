@@ -31,11 +31,11 @@
       </button>
     </div>
 
-    <div class="eui-u-p-absolute accept-reject-button">
-      <button euiButton euiSizeS euiPrimary>
+    <div class="eui-u-p-absolute accept-reject-div" *ngIf="contributionChanged && !parentClonedProposal">
+      <button euiButton euiSizeS euiPrimary class="accept-reject-button">
           {{ 'page.collection.milestone-view-dialog.accept-button' | translate }}
       </button>
-      <button euiButton euiSizeS euiPrimary>
+      <button euiButton euiSizeS euiPrimary class="accept-reject-button">
         {{ 'page.collection.milestone-view-dialog.reject-button' | translate }}
       </button>
     </div>

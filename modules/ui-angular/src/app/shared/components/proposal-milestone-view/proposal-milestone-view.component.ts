@@ -8,8 +8,8 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { EuiDialogComponent } from '@eui/components/eui-dialog';
-import { TranslateService } from '@ngx-translate/core';
+import {EuiDialogComponent} from '@eui/components/eui-dialog';
+import {TranslateService} from '@ngx-translate/core';
 import {Subject} from 'rxjs';
 
 import {
@@ -17,11 +17,13 @@ import {
   MilestoneViewItem,
   MilestoneViewResponse,
 } from '@/features/proposal-view/models/milestone.model';
-import { MilestoneTocItem } from '@/features/proposal-view/models/milestone-toc-item.model';
-import { DocumentServiceAnnotationsStub } from '@/shared/components/proposal-milestone-view/document-service-annotations-stub';
-import { AnnotateService } from '@/shared/services/annotate.service';
-import { DocumentService } from '@/shared/services/document.service';
-import { ProposalMilestonesService } from '@/shared/services/proposal-milestones.service';
+import {MilestoneTocItem} from '@/features/proposal-view/models/milestone-toc-item.model';
+import {
+  DocumentServiceAnnotationsStub
+} from '@/shared/components/proposal-milestone-view/document-service-annotations-stub';
+import {AnnotateService} from '@/shared/services/annotate.service';
+import {DocumentService} from '@/shared/services/document.service';
+import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.service';
 
 type MilestoneDocument = {
   ref: string;
@@ -33,34 +35,33 @@ type MilestoneDocument = {
   tocData: MilestoneTocItem[];
 };
 
-export type MilestoneDescriptor = Pick<
-  Milestone,
+export type MilestoneDescriptor = Pick<Milestone,
   | 'createdBy'
   | 'createdDate'
   | 'legDocumentName'
   | 'proposalRef'
   | 'title'
-  | 'versionedReference'
->;
+  | 'versionedReference'>;
 
 @Component({
   selector: 'app-proposal-milestone-view',
   templateUrl: './proposal-milestone-view.component.html',
   styleUrls: ['./proposal-milestone-view.component.scss'],
   providers: [
-    { provide: DocumentService, useClass: DocumentServiceAnnotationsStub },
+    {provide: DocumentService, useClass: DocumentServiceAnnotationsStub},
     AnnotateService,
   ],
 })
 export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   @Input() milestone: MilestoneDescriptor;
+  @Input() parentClonedProposal: boolean;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
 
-  @ViewChild('tocPane', { read: ElementRef }) tocPaneElement: ElementRef;
-  @ViewChild('documentPane', { read: ElementRef })
+  @ViewChild('tocPane', {read: ElementRef}) tocPaneElement: ElementRef;
+  @ViewChild('documentPane', {read: ElementRef})
   documentPaneElement: ElementRef;
-  @ViewChild('annotationsPane', { read: ElementRef })
+  @ViewChild('annotationsPane', {read: ElementRef})
   annotationsPaneElement: ElementRef;
   status: string;
   isOpened = false;
@@ -69,6 +70,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   containerId = 'view-container-id';
   activeTabIndex: number;
   showPdfExport = false;
+  contributionChanged = false;
 
   readyToMergeMessage: string;
 
@@ -87,7 +89,8 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     public documentService: DocumentService,
     public milestonesService: ProposalMilestonesService,
     public translateService: TranslateService,
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.milestonesService.readyToMergeStatus$.subscribe((status) => {
@@ -123,7 +126,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.closed.emit();
   }
 
-  onTabSelected({ index }: { index: number }) {
+  onTabSelected({index}: { index: number }) {
     this.setActiveTab(index);
   }
 
@@ -151,7 +154,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
   }
 
-  requestStoredDocumentAnnotations(request : string) {
+  requestStoredDocumentAnnotations(request: string) {
     if (request && this.isOpened) {
       const doc = this.documents[this.activeTabIndex];
       this.milestonesService.sendRequestStoredDocumentAnnotations(this.milestone.proposalRef, this.milestone.legDocumentName, doc.ref, true);
@@ -162,13 +165,13 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   private loadContribution(hiddenCategories) {
     this.milestonesService
-    .listContributionsView(
-      this.milestone.proposalRef,
-      this.milestone.legDocumentName,
-    )
-    .subscribe((response) => {
-      this.handleMilestoneExplorerDocuments(response, hiddenCategories);
-    });
+      .listContributionsView(
+        this.milestone.proposalRef,
+        this.milestone.legDocumentName,
+      )
+      .subscribe((response) => {
+        this.handleMilestoneExplorerDocuments(response, hiddenCategories);
+      });
     this.milestonesService.resetReadyToMergeStatus();
   }
 
@@ -200,6 +203,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   ) {
 
     this.showPdfExport = response.pdfRenditionsPresent;
+    this.contributionChanged = response.contributionChanged;
     this.documents = response.documents
       .filter((x) => !hiddenCategories.includes(x.leosCategory))
       .sort(this.tabOrderComparator)
@@ -223,7 +227,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   private createTabLabel(item: MilestoneViewItem) {
     return this.translateService.instant(
       `page.collection.milestone-view-dialog.tab-title.${item.leosCategory}`,
-      { number: item.order ?? 0 },
+      {number: item.order ?? 0},
     );
   }
 

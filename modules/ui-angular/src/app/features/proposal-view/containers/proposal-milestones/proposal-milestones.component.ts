@@ -43,6 +43,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   @ViewChild('milestoneAnnotationWarningModal')
   milestoneAnnotationWarningModal: MilestoneAnnotationWarningModalComponent;
   milestoneViewData: MilestoneDescriptor = null;
+  parentClonedProposal;
   dataSource: Milestone[] = [];
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
@@ -92,12 +93,12 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
             if(!this.inputMilestoneViewed && this.legFileName != null) {
               if(milestone.legDocumentName === this.legFileName) {
-                this.openMilestoneViewDialog(milestone);
+                this.openMilestoneViewDialog(milestone, this.proposal.cloneProposalMetadataVO?.clonedProposal);
                 this.inputMilestoneViewed = true;
               } else {
                 const clonedMilestone = milestone.clonedMilestones?.find(value => value.legDocumentName === this.legFileName);
                 if(clonedMilestone != null) {
-                  this.openMilestoneViewDialog(clonedMilestone);
+                  this.openMilestoneViewDialog(clonedMilestone, this.proposal.cloneProposalMetadataVO?.clonedProposal);
                   this.inputMilestoneViewed = true;
                 }
               }
@@ -154,9 +155,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.addMilestoneDialogVisible = false;
   }
 
-  openMilestoneViewDialog(milestone: MilestoneDescriptor): void {
+  openMilestoneViewDialog(milestone: MilestoneDescriptor, parentClonedProposal: boolean): void {
     this.openMilestoneViewDialogVisible = true;
     this.milestoneViewData = milestone;
+    this.parentClonedProposal = parentClonedProposal || false;
     setTimeout(() => this.milestoneViewDialog.open(), 0);
   }
 
@@ -220,7 +222,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
   updateReadyToMergeStatus(milestone: Milestone): void {
     this.proposalMilestonesService.updateReadyToMergeStatus(milestone.status);
-    this.openMilestoneViewDialog(milestone);
+    this.openMilestoneViewDialog(milestone, this.proposal.cloneProposalMetadataVO?.clonedProposal);
   }
 
   isReadyToMerge(status: MilestoneStatus): boolean {
