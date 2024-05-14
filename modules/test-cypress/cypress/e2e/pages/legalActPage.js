@@ -64,6 +64,11 @@ class legalActPage extends headerPage {
     getParagraphFromArticle(paragraphNumber, articleNumber) {
         return cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber + "]");
     }
+
+    getParagraphContentFromArticle(paragraphNumber, articleNumber) {
+        return this.getParagraphFromArticle(paragraphNumber, articleNumber).find('content aknp');
+    }
+
 }
 export default new legalActPage();
 import '@cypress/xpath';

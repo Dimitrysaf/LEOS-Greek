@@ -20,7 +20,7 @@ Then('document has {int} trackchange {string} tags with below content', (count, 
 })
 
 Then('paragraph {int} of article {int} has below content', (paragraph, article, datatable) => {
-    cy.xpath("//article[" + article + "]/paragraph[" + paragraph + "]/content/aknp").then((element) => {
+    legalActPage.getParagraphContentFromArticle(paragraph, article).then((element) => {
         element[0].childNodes.forEach((element, index) => {
             if (element.nodeType === 1 && (datatable.raw().at(index).at(0).includes(",") || datatable.raw().at(index).at(0) !== "html")) {
                 const elementsArray = datatable.raw().at(index).at(0).split(",");
