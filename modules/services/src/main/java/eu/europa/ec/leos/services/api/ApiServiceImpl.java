@@ -18,6 +18,7 @@ import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
@@ -258,7 +259,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
     @Override
     public CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException {
-        return createCollectionService.createCollectionFromLeg(legDocument);
+        return createCollectionService.createCollectionFromLeg(legDocument, null, "EN", false);
     }
 
     @Override
@@ -979,6 +980,12 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
+    public LegDocument addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
+            List<String> containedDocuments) throws  Exception {
+        return legService.addLegDocument(packageName, legFileName, milestoneComments, content, status, containedDocuments);
+    }
+
+    @Override
     public MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName) throws IOException {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
 
@@ -1030,11 +1037,11 @@ public abstract class ApiServiceImpl implements ApiService {
         String proposalRef = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         LeosPackage originalLeosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        String originalLegName = proposalService.getOriginalMilestoneName(proposal.getName(), proposal.getContent().get().getSource().getBytes());
-        LegDocument originalLegDocument = getLegDocument(originalLegName, originalLeosPackage);
+        //String originalLegName = proposalService.getOriginalMilestoneName(proposal.getName(), proposal.getContent().get().getSource().getBytes());
+        //LegDocument originalLegDocument = getLegDocument(originalLegName, originalLeosPackage);
         Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
         File originalLegFileTemp = File.createTempFile("milestoneOriginal", ".leg");
-        Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegFileTemp, originalLegDocument);
+        Map<String, Object> originalDocumentFiles = MilestoneHelper.getMilestoneFiles(originalLegFileTemp, legDocument);
         Map<String, Object> originalContentFiles = MilestoneHelper.filterAndSortFiles(originalDocumentFiles, HTML);
         annexAddedMap = MilestoneHelper.populateAnnexAddedMap(contributionFiles, legDocument, getAnnexes(originalLeosPackage),
                 xmlContentProcessor);
@@ -1097,7 +1104,7 @@ public abstract class ApiServiceImpl implements ApiService {
         Map<String, Integer> annexKeyOriginalMap = versionAndAnnexNumberMap.get("annexKeyMap");
 
         annexDeletedMap = MilestoneHelper.populateAnnexDeletedMap(originalDocumentFiles,
-                contributionFiles, originalLegDocument, getAnnexes(originalLeosPackage), xmlContentProcessor);
+                contributionFiles, legDocument, getAnnexes(originalLeosPackage), xmlContentProcessor);
 
         for (Map.Entry<String, Object> entry : annexDeletedMap.entrySet()) {
             String contentFileName = entry.getKey().replace("_processed", "");

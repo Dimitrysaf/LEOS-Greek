@@ -24,7 +24,9 @@ import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
 
 public interface PackageService {
     eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName
-            , final String userId);
+            , String language, Boolean isTranslated, final String userId);
+
+    void createLinkedPackage(BigDecimal originPkgId, BigDecimal linkedPkgId);
 
     void deletePackage(final String packageName) throws RepositoryException;
 

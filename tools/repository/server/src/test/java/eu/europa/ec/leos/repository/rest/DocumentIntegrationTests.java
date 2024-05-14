@@ -183,6 +183,8 @@ public class DocumentIntegrationTests {
         pkgEntity.setAuditCBy(USER);
         pkgEntity.setAuditCDate(ConversionUtils.convertToLocalDateTimeViaInstant(currentTimeStamp));
         pkgEntity.setAuditLastMBy(USER);
+        pkgEntity.setLanguage("EN");
+        pkgEntity.setIsTranslated(false);
         pkgEntity.setAuditLastMDate(ConversionUtils.convertToLocalDateTimeViaInstant(currentTimeStamp));
         pkg = new eu.europa.ec.leos.repository.model.Package(pkgEntity);
     }

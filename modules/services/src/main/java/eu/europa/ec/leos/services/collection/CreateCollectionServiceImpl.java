@@ -112,6 +112,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
             context.useEeaRelevance(documentVO.getMetadata().getEeaRelevance());
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
+            context.useLanguage(documentVO.getMetadata().getLanguage());
+            context.useTranslated(false);
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 
@@ -129,9 +131,9 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public CreateCollectionResult createCollectionFromLeg(File legDocument) {
+    public CreateCollectionResult createCollectionFromLeg(File legDocument, String originProposalRef, String language, boolean isTranslated) {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
-        DocumentVO propDocument = null;
+        DocumentVO propDocument;
         try {
             propDocument = createDocumentVOFromLegfile(legDocument);
         } catch (XmlValidationException e) {
@@ -144,6 +146,9 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         context.useDocument(propDocument);
         context.useIdsAndUrlsHolder(idsAndUrlsHolder);
         context.useCloneProposal(false);
+        context.useLanguage(language);
+        context.useTranslated(isTranslated);
+        context.useOriginRef(originProposalRef);
         addTemplateInContext(context, propDocument);
         postProcessingDocumentService.processDocument(propDocument);
         Proposal proposal = context.executeImportProposal();
@@ -183,6 +188,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         context.useIdsAndUrlsHolder(idsAndUrlsHolder);
         context.useOriginRef(originRef);
         context.useCloneProposal(true);
+        context.useLanguage(propDocument.getMetadata().getLanguage().toUpperCase());
+        context.useTranslated(false);
         context.useConnectedEntity(connectedEntity);
         context.useClonedProposalMetadataVO(cloneProposalMetadataVO);
         addTemplateInContext(context, propDocument);

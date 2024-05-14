@@ -526,7 +526,7 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
-    public LeosPackage createPackage(String path, String name) {
+    public LeosPackage createPackage(String path, String name, String originRef, String language, Boolean isTranslated) {
         logger.trace("Creating package... [path=" + path + ", name=" + name + ']');
 
         long startTimeNanos = System.nanoTime();

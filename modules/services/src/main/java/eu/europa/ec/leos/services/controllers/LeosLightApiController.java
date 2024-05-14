@@ -15,13 +15,21 @@ package eu.europa.ec.leos.services.controllers;
 
 import com.google.common.collect.ImmutableMap;
 import eu.europa.ec.leos.i18n.MessageHelper;
+import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.AuthClient;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
+import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.LeosLightApiService;
+import eu.europa.ec.leos.services.collection.CreateCollectionService;
+import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.dto.request.ExportDocumentOptions;
 import eu.europa.ec.leos.services.dto.request.ExportDocumentRequest;
 import eu.europa.ec.leos.services.exception.InvalidInputException;
 import eu.europa.ec.leos.services.exception.NotFoundException;
+import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
+import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.validation.ValidationService;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -43,11 +51,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.APPLICATION_XML_VALUE;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.APPLICATION_ZIP_VALUE;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.buildFileAttachment;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @RestController
 public class LeosLightApiController {
@@ -57,14 +67,36 @@ public class LeosLightApiController {
     private MessageHelper messageHelper;
     private TokenService tokenService;
     private LeosLightApiService leosLightApiService;
+    private SecurityContext securityContext;
+    private LeosLightXmlDocumentService leosLightXmlDocumentService;
+    private final CreateCollectionService createCollectionService;
+    private final ApiService apiService;
+    private Properties applicationProperties;
+    private final ValidationService validationService;
+    private final ProposalConverterService proposalConverterService;
+    private final LeosRepository leosRepository;
+    private final PackageService packageService;
 
     @Autowired
-    public LeosLightApiController(MessageHelper messageHelper,
-                                  TokenService tokenService,
-                                  LeosLightApiService leosLightApiService) {
+    public LeosLightApiController(MessageHelper messageHelper, TokenService tokenService,
+                LeosLightApiService leosLightApiService, SecurityContext securityContext, ValidationService validationService,
+                                  ProposalConverterService proposalConverterService,
+                                  LeosRepository leosRepository, PackageService packageService,
+                                  LeosLightXmlDocumentService leosLightXmlDocumentService,
+                                  CreateCollectionService createCollectionService, ApiService apiService,
+                                  Properties applicationProperties) {
+        this.validationService = validationService;
+        this.proposalConverterService = proposalConverterService;
+        this.leosRepository = leosRepository;
+        this.packageService = packageService;
         this.messageHelper = messageHelper;
         this.tokenService = tokenService;
         this.leosLightApiService = leosLightApiService;
+        this.securityContext = securityContext;
+        this.leosLightXmlDocumentService = leosLightXmlDocumentService;
+        this.createCollectionService = createCollectionService;
+        this.apiService = apiService;
+        this.applicationProperties = applicationProperties;
     }
 
     @RequestMapping(value = "/secured/leos-light/import-document", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -135,7 +167,27 @@ public class LeosLightApiController {
         return tokenService.getClientContextToken(clientId, user, role, systemName);
     }
 
-    @RequestMapping(value = "/leos-light/test", method = RequestMethod.GET)
+    @RequestMapping(value = "/secured/editlight/importProposal", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> importProposal(@RequestParam("legFile") MultipartFile file, @RequestParam("origProposalRef") String origProposalRef, @RequestParam("translatedLang") String translatedLang) {
+        try {
+            validatePath(file.getOriginalFilename());
+            String languageCode = encodeParam(translatedLang);
+            origProposalRef = encodeParam(origProposalRef);
+            Pair<Object, Object> result = leosLightApiService.importProposal(file, origProposalRef, languageCode);
+            if(result.right() == HttpStatus.OK) {
+                return new ResponseEntity<>(result.left(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(result.left(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (Exception ex) {
+            LOG.error("Error Occurred while creating collection from the Leg file: " + ex.getMessage(), ex);
+            return new ResponseEntity<>("An error occurred during collection creation.", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+    @RequestMapping(value = "/editlight/test", method = RequestMethod.GET)
     public String test() {
         return "Test RESTful service. " + System.currentTimeMillis();
     }

@@ -38,9 +38,12 @@ public interface PackageRepository {
      *
      * @param path the path where to create the package.
      * @param name the name of the package.
+     * @param originRef
+     * @param language
+     * @param isTranslated
      * @return the created package.
      */
-    LeosPackage createPackage(String path, String name);
+    LeosPackage createPackage(String path, String name, String originRef, String language, Boolean isTranslated);
 
     /**
      * Deletes a [LeosPackage] with the specified characteristics.

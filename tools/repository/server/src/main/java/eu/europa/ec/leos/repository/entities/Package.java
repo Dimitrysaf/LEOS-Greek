@@ -13,23 +13,21 @@
  */
 package eu.europa.ec.leos.repository.entities;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.Collection;
 
 @Entity
 @Table(name = "PACKAGE")
@@ -65,6 +63,10 @@ public class Package implements Serializable {
     private Collection<PackageCollaborators> packageCollaboratorsCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "packageId")
     private Collection<Document> documentCollection;
+    @Column(name = "LANGUAGE")
+    private String language;
+    @Column(name = "IS_TRANSLATED")
+    private Boolean isTranslated;
 
     public Package() {
     }
@@ -179,5 +181,20 @@ public class Package implements Serializable {
     public String toString() {
         return "eu.europa.ec.leos.repository.entities.Package[ id=" + id + " ]";
     }
-    
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public Boolean getIsTranslated() {
+        return isTranslated;
+    }
+
+    public void setIsTranslated(Boolean isTranslated) {
+        this.isTranslated = isTranslated;
+    }
 }

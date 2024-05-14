@@ -19,9 +19,12 @@ public interface CreateCollectionService {
      * Create a collection from a Leg document file
      *
      * @param legDocument
+     * @param originProposalRef
+     * @param language
+     * @param isTranslated
      * @return The collection creation result containing the proposal view url and the bill view url
      */
-    CreateCollectionResult createCollectionFromLeg(File legDocument) throws CreateCollectionException;
+    CreateCollectionResult createCollectionFromLeg(File legDocument, String originProposalRef, String language, boolean isTranslated) throws CreateCollectionException;
 
     /**
      * Clone an existing collection from a Leg document file

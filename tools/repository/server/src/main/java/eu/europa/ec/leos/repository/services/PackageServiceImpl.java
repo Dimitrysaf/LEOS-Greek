@@ -15,11 +15,13 @@ package eu.europa.ec.leos.repository.services;
 
 import eu.europa.ec.leos.repository.entities.Collaborators;
 import eu.europa.ec.leos.repository.entities.DocumentV;
+import eu.europa.ec.leos.repository.entities.LinkedPackage;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.entities.PackageCollaborators;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
+import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.CollaboratorsRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
@@ -27,8 +29,9 @@ import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentPropertyValuesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentVRepository;
-import eu.europa.ec.leos.repository.repositories.PackageRepository;
+import eu.europa.ec.leos.repository.repositories.LinkedPackagedRepository;
 import eu.europa.ec.leos.repository.repositories.PackageCollaboratorsRepository;
+import eu.europa.ec.leos.repository.repositories.PackageRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +49,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
 
 @Service
 public class PackageServiceImpl implements PackageService {
@@ -55,6 +57,7 @@ public class PackageServiceImpl implements PackageService {
 
     private final DocumentVRepository documentVRepository;
     private final PackageRepository packageRepository;
+    private final LinkedPackagedRepository linkedPackagedRepository;
     private final CollaboratorsRepository collaboratorsRepository;
     private final PackageCollaboratorsRepository packageCollaboratorsRepository;
     private final DocumentPropertyValuesRepository documentPropertyValuesRepository;
@@ -66,7 +69,7 @@ public class PackageServiceImpl implements PackageService {
     private final EntityManager entityManager;
 
     @Autowired
-    public PackageServiceImpl(DocumentVRepository documentVRepository, PackageRepository packageRepository,
+    public PackageServiceImpl(DocumentVRepository documentVRepository, PackageRepository packageRepository, LinkedPackagedRepository linkedPackagedRepository,
                               CollaboratorsRepository collaboratorsRepository, PackageCollaboratorsRepository packageCollaboratorsRepository,
                               DocumentPropertyValuesRepository documentPropertyValuesRepository,
                               DocumentContentRepository documentContentRepository, CollaboratorsService collaboratorsService,
@@ -75,6 +78,7 @@ public class PackageServiceImpl implements PackageService {
                               @Lazy DocumentService documentService) {
         this.documentVRepository = documentVRepository;
         this.packageRepository = packageRepository;
+        this.linkedPackagedRepository = linkedPackagedRepository;
         this.collaboratorsRepository = collaboratorsRepository;
         this.packageCollaboratorsRepository = packageCollaboratorsRepository;
         this.documentContentRepository = documentContentRepository;
@@ -87,15 +91,27 @@ public class PackageServiceImpl implements PackageService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName, final String userId) {
+    public eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName,
+            String language, Boolean isTranslated, final String userId) {
         Package pkg = new Package();
         pkg.setObjectId(new BigDecimal(0));
         pkg.setName(name);
+        pkg.setLanguage(language);
+        pkg.setIsTranslated(isTranslated);
         pkg.setAuditCBy(userId);
         pkg.setAuditCDate(LocalDateTime.now());
         pkg.setAuditLastMBy(userId);
         pkg.setAuditLastMDate(LocalDateTime.now());
         return new eu.europa.ec.leos.repository.model.Package(packageRepository.save(pkg));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void createLinkedPackage(BigDecimal originPkgId, BigDecimal linkedPkgId) {
+        LinkedPackage pkg = new LinkedPackage();
+        pkg.setPackageId(originPkgId);
+        pkg.setLinkedPackageId(linkedPkgId);
+        linkedPackagedRepository.save(pkg);
     }
 
     @Cacheable(cacheNames = "getPackageByName", key = "{#name}")

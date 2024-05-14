@@ -142,11 +142,14 @@ public class RestRepository extends AbstractRestClient {
         return leosRestRepositoryURL + resourceUrl;
     }
 
-    Package createPackage(final String name, final String userId) {
+    Package createPackage(final String name, final String userId, String originRef, String language, Boolean isTranslated) {
         LOGGER.trace("Creating package... [name={}, userId={}]", name, userId);
         String url = getUrl(leosRestCreatePackageURI);
         CreatePackageRequest createPackageRequest = new CreatePackageRequest();
         createPackageRequest.setUserId(userId);
+        createPackageRequest.setLanguage(language);
+        createPackageRequest.setTranslated(isTranslated);
+        createPackageRequest.setOriginRef(originRef);
         Package resp = postEntity(url, createPackageRequest, Package.class, encodeUriVariables(name)[0]);
         return resp;
     }

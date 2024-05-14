@@ -50,9 +50,9 @@ public class PackageRepositoryImpl implements PackageRepository {
     }
 
     @Override
-    public LeosPackage createPackage(String path, String name) {
+    public LeosPackage createPackage(String path, String name, String originRef, String language, Boolean isTranslated) {
         logger.debug("Creating Package... [path=" + path + ", name=" + name + "]");
-        return leosRepository.createPackage(path, name);
+        return leosRepository.createPackage(path, name, originRef, language, isTranslated);
     }
 
     @Override

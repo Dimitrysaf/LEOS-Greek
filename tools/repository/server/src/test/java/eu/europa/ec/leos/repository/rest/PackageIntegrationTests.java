@@ -181,6 +181,8 @@ public class PackageIntegrationTests {
         pkgEntity.setId(PKG_ID);
         pkgEntity.setName(PKG_NAME);
         pkgEntity.setAuditCBy(USER);
+        pkgEntity.setIsTranslated(false);
+        pkgEntity.setLanguage("EN");
         pkgEntity.setAuditCDate(ConversionUtils.convertToLocalDateTimeViaInstant(currentTimeStamp));
         pkgEntity.setAuditLastMBy(USER);
         pkgEntity.setAuditLastMDate(ConversionUtils.convertToLocalDateTimeViaInstant(currentTimeStamp));
@@ -213,7 +215,7 @@ public class PackageIntegrationTests {
         String json = mapper.writeValueAsString(createPackageRequest);
         when(packageService.createPackage(ArgumentMatchers.eq(PKG_NAME),
                 ArgumentMatchers.eq(createPackageRequest.getIsCloned()),
-                ArgumentMatchers.eq(createPackageRequest.getClonedPackageName()), ArgumentMatchers.eq(createPackageRequest.getUserId()))).thenReturn(pkg);
+                ArgumentMatchers.eq(createPackageRequest.getClonedPackageName()), ArgumentMatchers.eq(createPackageRequest.getLanguage()), ArgumentMatchers.eq(createPackageRequest.getTranslated()), ArgumentMatchers.eq(createPackageRequest.getUserId()))).thenReturn(pkg);
 
         mockMvc.perform(post("/package/create/{name}", encodeUriVariables(PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                 .content(json)

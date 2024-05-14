@@ -36,6 +36,8 @@ public class Package {
     private Boolean isCloned;
     private String clonedPackageName;
     private List<Collaborator> collaboratorList;
+    private String language;
+    private Boolean isTranslated;
 
     public Package(eu.europa.ec.leos.repository.entities.Package pkg) {
         this.id = pkg.getId().toString();
@@ -44,6 +46,8 @@ public class Package {
         this.createdOn = pkg.getAuditCDate() != null ? Date.from(pkg.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()) : null;
         this.updatedBy = pkg.getAuditLastMBy();
         this.updatedOn = pkg.getAuditLastMDate() != null ? Date.from(pkg.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null;
+        this.language = pkg.getLanguage();
+        this.isTranslated = pkg.getIsTranslated();
     }
 
     public String getId() {
@@ -120,5 +124,21 @@ public class Package {
 
     public void setCollaborators(List<Collaborator> collaboratorList) {
         this.collaboratorList = collaboratorList;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public Boolean getTranslated() {
+        return isTranslated;
+    }
+
+    public void setTranslated(Boolean translated) {
+        isTranslated = translated;
     }
 }

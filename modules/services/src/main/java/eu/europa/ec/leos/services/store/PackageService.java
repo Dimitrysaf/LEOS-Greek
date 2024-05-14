@@ -48,4 +48,10 @@ public interface PackageService {
     Map<String, List<TableOfContentItemVO>> getTableOfContent(String documentId, TocMode mode);
 
     List<LeosMetadata> getDocumentsMetadata(String documentId);
+
+    void useLanguage(String language);
+
+    void useTranslated(Boolean isTranslated);
+
+    void useOriginRef(String originRef);
 }

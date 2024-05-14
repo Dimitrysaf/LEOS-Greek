@@ -717,6 +717,7 @@ public class DocumentServiceImpl implements DocumentService {
         if (!categories.isEmpty()) {
             queryBuild.append(" AND d.categoryCode IN (:categoryList)");
         }
+        enrichQueryWithPackage(queryBuild);
         enrichQueryWithProcedureTypeAndTemplate(queryBuild, filters, objectClass);
         Optional<QueryFilter.Filter> roleFilter = enrichQueryWithCollaborators(queryBuild, filters);
         if (orderBy) {
@@ -800,6 +801,10 @@ public class DocumentServiceImpl implements DocumentService {
                 continue;
             }
         }
+    }
+
+    private void enrichQueryWithPackage(StringBuilder queryBuild) {
+        queryBuild.append(" AND d.packageId IN (SELECT pk.id FROM Package pk WHERE pk.isTranslated IS NULL OR pk.isTranslated = false)");
     }
 
     private Optional<QueryFilter.Filter> enrichQueryWithCollaborators(StringBuilder queryBuild, List<QueryFilter.Filter> queryFilter) {

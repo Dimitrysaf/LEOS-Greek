@@ -18,6 +18,7 @@ public class CollectionIdsAndUrlsHolder {
     private String coverpageUrl;
     private Map<String,String> annexIdAndUrl;
     private Map<String, String> docCloneAndOriginIdMap;
+    private String packageName;
 
     public CollectionIdsAndUrlsHolder() {
         this.annexIdAndUrl = new HashMap<>();
@@ -112,5 +113,13 @@ public class CollectionIdsAndUrlsHolder {
 
     public void addDocCloneAndOriginIdMap(String cloneId, String originId) {
         this.docCloneAndOriginIdMap.put(cloneId, originId);
+    }
+
+    public String getPackageName() {
+        return packageName;
+    }
+
+    public void setPackageName(String packageName) {
+        this.packageName = packageName;
     }
 }

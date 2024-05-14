@@ -169,6 +169,8 @@ public abstract class CollectionContext {
         Validate.notNull(propMeta, "Proposal metadata is required!");
         Validate.notNull(propDocument.getChildDocuments(), "Proposal must contain child documents to import!");
         // create package
+        this.packageService.useLanguage("EN");
+        this.packageService.useTranslated(false);
         LeosPackage leosPackage = packageService.createPackage();
 
         // use template

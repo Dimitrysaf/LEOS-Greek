@@ -96,7 +96,7 @@ public class DocumentServiceTests {
 
     @Before
     public void setup() {
-        pkg = packageService.createPackage("test", false, null, "demo");
+        pkg = packageService.createPackage("test", false, null, "EN", false, "demo");
     }
 
     @After
