@@ -16,6 +16,7 @@ public class CreateCollectionResult {
     private String financialStatementUrl;
     private String coverpageId;
     private Map<String, String> annexIdUrl;
+    private String packageName;
     private Map<String, String> docCloneAndOriginIdMap;
     private boolean collectionCreated;
     private CreateCollectionError error;
@@ -38,6 +39,7 @@ public class CreateCollectionResult {
         this.coverpageId = idsAndUrlsHolder.getCoverpageId();
         this.coverpageUrl = idsAndUrlsHolder.getCoverpageUrl();
         this.annexIdUrl = idsAndUrlsHolder.getAnnexIdAndUrl();
+        this.packageName = idsAndUrlsHolder.getPackageName();
         this.docCloneAndOriginIdMap = idsAndUrlsHolder.getDocCloneAndOriginIdMap();
         this.collectionCreated = collectionCreated;
         this.error = error;
@@ -80,6 +82,10 @@ public class CreateCollectionResult {
     }
 
     public Map<String, String> getAnnexIdUrl() { return annexIdUrl; }
+
+    public String getPackageName() {
+        return packageName;
+    }
 
     public Map<String, String> getDocCloneAndOriginIdMap() { return docCloneAndOriginIdMap; }
 

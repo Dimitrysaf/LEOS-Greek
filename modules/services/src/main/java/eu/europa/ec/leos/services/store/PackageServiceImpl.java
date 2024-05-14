@@ -51,6 +51,9 @@ class PackageServiceImpl implements PackageService {
     private final PackageRepository packageRepository;
     private final Provider<StructureContext> structureContextProvider;
     private final TableOfContentProcessor tableOfContentProcessor;
+    private String language;
+    private boolean translated = false;
+    private String originRef;
 
     @Value("${leos.workspaces.path}")
     protected String storagePath;
@@ -66,7 +69,7 @@ class PackageServiceImpl implements PackageService {
     @Override
     public LeosPackage createPackage() {
         String name = generatePackageName();
-        return packageRepository.createPackage(storagePath, name);
+        return packageRepository.createPackage(storagePath, name, originRef, language, translated);
     }
 
     @Override
@@ -152,5 +155,20 @@ class PackageServiceImpl implements PackageService {
                 .sorted(Comparator.<XmlDocument, String>comparing(o -> "ANNEX".equals(o.getCategory().name())  ? "1" + o.getCategory().name() : "0" + o.getCategory().name())
                         .thenComparing(annexIndexComparator))
                 .map(p -> p.getMetadata().get()).collect(Collectors.toList());
+    }
+
+    @Override
+    public void useLanguage(String language) {
+        this.language = language;
+    }
+
+    @Override
+    public void useTranslated(Boolean translated) {
+        this.translated = translated;
+    }
+
+    @Override
+    public void useOriginRef(String originRef) {
+        this.originRef = originRef;
     }
 }

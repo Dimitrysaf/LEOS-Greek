@@ -96,6 +96,8 @@ public abstract class CollectionContextService {
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private String explanatoryId;
     protected LeosPackage leosPackage = null;
+    protected String language;
+    protected boolean translated = false;
 
     CollectionContextService(TemplateService templateService, PackageService packageService, ProposalService proposalService,
                              CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
@@ -212,6 +214,14 @@ public abstract class CollectionContextService {
         this.cloneProposal = cloneProposal;
     }
 
+    public void useLanguage(String language) {
+        this.language = language;
+    }
+
+    public void useTranslated(boolean translated) {
+        this.translated = translated;
+    }
+
     public void useConnectedEntity(String connectedEntity) {
         Validate.notNull(connectedEntity, "Connected entity is required!");
         this.connectedEntity = connectedEntity;
@@ -235,12 +245,14 @@ public abstract class CollectionContextService {
     }
 
     public Proposal executeImportProposal() {
-
         LOG.trace("Executing 'Import Proposal' use case...");
         MetadataVO propMeta = propDocument.getMetadata();
         Validate.notNull(propMeta, PROPOSAL_METADATA_IS_REQUIRED);
         Validate.notNull(propDocument.getChildDocuments(), "Proposal must contain child documents to import!");
         // create package
+        this.packageService.useLanguage(this.language);
+        this.packageService.useTranslated(this.translated);
+        this.packageService.useOriginRef(this.originRef);
         LeosPackage leosPckg = packageService.createPackage();
         // use template
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
@@ -260,9 +272,11 @@ public abstract class CollectionContextService {
         if (cloneProposal) {
             setConnectedEntity();
             proposal = proposalService.createClonedProposalFromContent(leosPckg.getPath(), metadata, cloneProposalMetadataVO, propDocument.getSource());
+            idsAndUrlsHolder.setPackageName(leosPckg.getName());
         } else {
             Validate.notNull(propDocument.getSource(), "Proposal xml is required!");
             proposal = proposalService.createProposalFromContent(leosPckg.getPath(), metadata, propDocument.getSource());
+            idsAndUrlsHolder.setPackageName(leosPckg.getName());
         }
 
         // create child element
@@ -386,7 +400,8 @@ public abstract class CollectionContextService {
 
     public Proposal executeCreateProposal() {
         LOG.trace("Executing 'Create Proposal' use case...");
-
+        this.packageService.useLanguage(this.language);
+        this.packageService.useTranslated(this.translated);
         LeosPackage leosPckg = packageService.createPackage();
 
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));

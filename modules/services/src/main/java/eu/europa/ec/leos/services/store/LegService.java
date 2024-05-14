@@ -27,6 +27,9 @@ public interface LegService {
     
     LegDocument createLegDocument(String proposalId, String jobId, LegPackage legPackage, LeosLegStatus status) throws IOException;
 
+    LegDocument addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
+            List<String> containedDocuments) throws IOException;
+
     LegDocument updateLegDocument(String id, byte[] content, LeosLegStatus legStatus);
 
     LegDocument updateLegDocument(String ref, String id, LeosLegStatus status);

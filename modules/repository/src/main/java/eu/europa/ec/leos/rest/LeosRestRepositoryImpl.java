@@ -320,6 +320,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         checkSecurityContextEnsureUserIsPresent();
 
         Map<String, Object> properties = new HashMap<>();
+        properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.METADATA_REF), name.substring(0, name.lastIndexOf(".")));
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.DOCUMENT_CATEGORY), LeosCategory.LEG.name());
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_ID), jobId);
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.JOB_DATE),ConversionUtils.getLeosDateAsString(new Date(), ConversionUtils.LEOS_REPO_DATE_FORMAT));
@@ -644,10 +645,11 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @Override
     @PerformanceLogger
     @CacheEvict(value = "restRepositoryFolderCache", key = "#name")
-    public LeosPackage createPackage(String path, String name) {
+    public LeosPackage createPackage(String path, String name, String originRef, String language, Boolean isTranslated) {
         logger.trace("Creating package... [path=" + path + ", name=" + name + ']');
 
-        Package pkg = repository.createPackage(name, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
+        Package pkg = repository.createPackage(name, securityContext!=null && securityContext.hasAuthenticationInContext() ?
+                        securityContext.getUserName() : ADMIN_USER, originRef, language, isTranslated);
         if (pkg != null) {
             return LeosPackageExtensions.toLeosPackage(pkg);
         }
@@ -967,7 +969,8 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @PerformanceLogger
     @CacheEvict(value = "restRepositoryFolderCache", key = "#name")
     public Object createFolder(String path, String name) {
-        return repository.createPackage(name, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER);
+        return repository.createPackage(name, securityContext!=null && securityContext.hasAuthenticationInContext() ? securityContext.getUserName() : ADMIN_USER,
+                null, "EN", false);
     }
 
     @Override

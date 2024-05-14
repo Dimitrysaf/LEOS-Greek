@@ -68,6 +68,8 @@ public class CollectionContextProposalService extends CollectionContextService {
     public Proposal executeCreateProposal() {
         LOG.trace("Executing 'Create Proposal' use case...");
 
+        this.packageService.useLanguage(this.language);
+        this.packageService.useTranslated(this.translated);
         LeosPackage leosPackage = this.packageService.createPackage();
         List<CatalogItem> catalogItems;
         Map<String, String> templatePropertiesMap = new HashMap<>();

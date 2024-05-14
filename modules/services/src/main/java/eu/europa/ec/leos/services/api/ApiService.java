@@ -14,6 +14,7 @@
 
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
@@ -90,6 +91,9 @@ public interface ApiService {
     void updateExplanatoryTitle(String proposalRef, String docId, String title);
 
     LegDocument createMilestone(String proposalRef, String milestoneComment) throws Exception;
+
+    LegDocument addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content,
+            LeosLegStatus status, List<String> containedDocuments) throws  Exception;
 
     MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName) throws IOException;
 

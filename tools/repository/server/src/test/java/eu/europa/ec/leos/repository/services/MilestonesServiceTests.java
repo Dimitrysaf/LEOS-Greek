@@ -33,7 +33,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -61,7 +60,7 @@ public class MilestonesServiceTests {
 
     @Before
     public void setup() throws RepositoryException {
-        pkg = packageService.createPackage(PKG_NAME, null,null, "demo");
+        pkg = packageService.createPackage(PKG_NAME, null,null, "EN", false, "demo");
         Map<String, ?> properties = new HashMap() {{
             put("status", "IN_PREPARATION");
             put("containedDocuments", Arrays.asList("ANNEX-clfwd4ig3000h9256za2lfv6x-en.xml", "DIR-clfwc8tt900099256foj1l39z-en.xml",

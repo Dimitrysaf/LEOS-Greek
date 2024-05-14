@@ -77,7 +77,8 @@ public class CollectionContextProposal extends CollectionContext {
 
     public void executeCreateProposal() {
         LOG.trace("Executing 'Create Proposal' use case...");
-
+        this.packageService.useLanguage("EN");
+        this.packageService.useTranslated(false);
         LeosPackage leosPackage = packageService.createPackage();
 
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));

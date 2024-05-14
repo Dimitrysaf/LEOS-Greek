@@ -18,8 +18,11 @@ import javax.validation.constraints.NotBlank;
 public class CreatePackageRequest {
     private Boolean isCloned;
     private String clonedPackageName;
+    private String language;
+    private Boolean isTranslated = Boolean.FALSE;
     @NotBlank(message = "User Id cannot be blank")
     private String userId;
+    private String originRef;
 
     public Boolean getIsCloned() {
         return isCloned;
@@ -37,6 +40,22 @@ public class CreatePackageRequest {
         this.clonedPackageName = clonedPackageName;
     }
 
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public Boolean getTranslated() {
+        return isTranslated;
+    }
+
+    public void setTranslated(Boolean isTranslated) {
+        this.isTranslated = isTranslated;
+    }
+
     public String getUserId() {
         return userId;
     }
@@ -45,4 +64,11 @@ public class CreatePackageRequest {
         this.userId = userId;
     }
 
+    public String getOriginRef() {
+        return originRef;
+    }
+
+    public void setOriginRef(String originRef) {
+        this.originRef = originRef;
+    }
 }

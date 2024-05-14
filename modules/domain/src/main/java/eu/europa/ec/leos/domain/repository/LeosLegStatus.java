@@ -7,5 +7,6 @@ public enum LeosLegStatus {
     SENT_TO_CONSULTATION,
     CONTRIBUTION_SENT,
     EXPORTED,
-    IN_CONSULTATION
+    IN_CONSULTATION,
+    IMPORTED
 }

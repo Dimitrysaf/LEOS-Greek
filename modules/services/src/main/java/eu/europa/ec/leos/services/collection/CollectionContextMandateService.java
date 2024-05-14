@@ -58,6 +58,8 @@ public class CollectionContextMandateService extends CollectionContextService {
     @Override
     public Proposal executeCreateExplanatoryDocument() {
         LOG.trace("Executing 'Create Proposal' use case...");
+        this.packageService.useLanguage(this.language);
+        this.packageService.useTranslated(this.translated);
         LeosPackage leosPackage = packageService.createPackage();
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         proposal = proposal == null ? proposalTemplate : proposal;

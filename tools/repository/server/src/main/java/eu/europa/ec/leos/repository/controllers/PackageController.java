@@ -80,9 +80,20 @@ public class PackageController {
                                                  @Valid @RequestBody CreatePackageRequest createPackageRequest) throws Exception
     {
         name = decode(name);
+        String originRef = createPackageRequest.getOriginRef();
+        Package originPkg;
+        try {
+            originPkg = packageService.findPackageByDocumentRef(originRef);
+        } catch(RepositoryException ex) {
+            originPkg = null;
+        }
+        boolean translated = originPkg != null ? createPackageRequest.getTranslated() : false;
         Package p = packageService.createPackage(name, createPackageRequest.getIsCloned(),
-                createPackageRequest.getClonedPackageName(), createPackageRequest.getUserId());
+                createPackageRequest.getClonedPackageName(), createPackageRequest.getLanguage(), translated, createPackageRequest.getUserId());
         p =  RestPreconditions.checkFound(p, HttpStatus.NOT_FOUND ,"Error while creating package");
+        if(p != null && originPkg != null) {
+            packageService.createLinkedPackage(new BigDecimal(originPkg.getId()), new BigDecimal(p.getId()));
+        }
         return ResponseEntity.ok(p);
     }
 

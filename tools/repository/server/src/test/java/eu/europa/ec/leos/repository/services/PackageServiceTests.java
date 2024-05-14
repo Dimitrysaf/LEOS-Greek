@@ -51,7 +51,7 @@ public class PackageServiceTests {
     @Test
     @Transactional
     public void test_createAndDeletePackage() throws RepositoryException {
-        eu.europa.ec.leos.repository.model.Package pkg = packageService.createPackage("test", false,null, "demo");
+        eu.europa.ec.leos.repository.model.Package pkg = packageService.createPackage("test", false,null, "EN", false, "demo");
         Optional<Package> pkgO = packageRepository.findPackageByName( "test");
         assertTrue(pkgO.isPresent());
         long count = packageRepository.count();

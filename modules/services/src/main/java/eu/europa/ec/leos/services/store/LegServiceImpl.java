@@ -1123,6 +1123,13 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
+    public LegDocument addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content, LeosLegStatus status,
+            List<String> containedDocuments) throws IOException {
+        LOG.trace("Adding Leg Document for Package... [packageName ={}]", packageName);
+        return packageRepository.createLegDocumentFromContent(packageName, legFileName,"", milestoneComments, content, status, containedDocuments);
+    }
+
+    @Override
     public LegDocument updateLegDocument(String id, byte[] content, LeosLegStatus legStatus) {
         return packageRepository.updateLegDocument(id, legStatus, content, VersionType.INTERMEDIATE,
                 "Milestone is updated");
