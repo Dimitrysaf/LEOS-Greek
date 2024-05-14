@@ -10,8 +10,12 @@
   right: var(--eui-base-spacing-m);
 }
 
-.accept-reject-button {
+.accept-reject-div {
   right: var(--eui-base-spacing-m);
+}
+
+.accept-reject-button {
+  margin-left: .75rem !important;
 }
 
 ::ng-deep .milestone-view-dialog__body {

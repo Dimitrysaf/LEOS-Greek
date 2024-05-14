@@ -90,7 +90,7 @@
           <eui-dropdown-content>
             <ul euiList>
               <li euiListItem>
-                <button euiListItem (click)="openMilestoneViewDialog(row)">
+                <button euiListItem (click)="openMilestoneViewDialog(row, proposal.cloneProposalMetadataVO?.clonedProposal)">
                   {{
                     'page.collection.milestones.actions.view-milestone'
                       | translate
@@ -142,7 +142,10 @@
             'page.collection.milestones.table.title' | translate
           "
         >
+          <div class="icon-container">
           <eui-icon *ngIf="clonedMilestone.contributionChanged" euiPrimary iconClass="eui-icon-info-circle eui-icon-1x"></eui-icon>
+          <span class="tooltip" [innerHTML]="'page.collection.milestones.component.tooltip' | translate"></span>
+          </div>
           {{ clonedMilestone.title }}
         </td>
         <td
@@ -205,6 +208,7 @@
 <app-proposal-milestone-view
   #milestoneViewDialog
   [milestone]="milestoneViewData"
+  [parentClonedProposal]="parentClonedProposal"
   (closed)="onMilestoneViewDialogClosed()"
   *ngIf="openMilestoneViewDialogVisible && milestoneViewData"
 ></app-proposal-milestone-view>

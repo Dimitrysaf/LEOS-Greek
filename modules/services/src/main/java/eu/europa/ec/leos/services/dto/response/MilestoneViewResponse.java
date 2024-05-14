@@ -7,9 +7,12 @@ public class MilestoneViewResponse {
     private final List<MilestoneDocumentView> documents;
     private final boolean isPdfRenditionsPresent;
 
-    public MilestoneViewResponse(List<MilestoneDocumentView> documents, boolean isPdfRenditionsPresent) {
+    private final boolean isContributionChanged;
+
+    public MilestoneViewResponse(List<MilestoneDocumentView> documents, boolean isPdfRenditionsPresent, boolean isContributionChanged) {
         this.documents = documents;
         this.isPdfRenditionsPresent = isPdfRenditionsPresent;
+        this.isContributionChanged = isContributionChanged;
     }
 
     public List<MilestoneDocumentView> getDocuments() {
@@ -20,4 +23,7 @@ public class MilestoneViewResponse {
         return isPdfRenditionsPresent;
     }
 
+    public boolean isContributionChanged() {
+        return isContributionChanged;
+    }
 }

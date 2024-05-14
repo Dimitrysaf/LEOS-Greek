@@ -158,6 +158,7 @@
   "page.collection.milestones.send-copy-for-contribution-send-revision-message-error": "Echec de l'envoi de la contribution",
   "page.collection.milestones.load-milestones.error": "Echec au chargement des milestones",
   "page.collection.milestones.check-for-milestone-status-change.success": "Milestones: La contribution du Service Légal a été mise à jour",
+  "page.collection.milestones.component.tooltip": "Cette contribution contient des documents ajoutés ou supprimés.<br>Veuillez les vérifier dans l'explorateur Milestone<br>pour les traiter",
   "page.collection.milestones.table.title": "Titre",
   "page.collection.milestones.table.date": "Date",
   "page.collection.milestones.table.status": "Status",
