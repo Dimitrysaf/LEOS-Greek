@@ -102,4 +102,9 @@ public class MandateApiServiceImpl extends ApiServiceImpl {
         }
     }
 
+    @Override
+    public void validateProposal(String proposalRef) {
+        throw new IllegalStateException("Feature not implemented for the running instance");
+    }
+
 }

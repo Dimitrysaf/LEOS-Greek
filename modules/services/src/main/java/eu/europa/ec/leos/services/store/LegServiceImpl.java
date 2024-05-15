@@ -563,9 +563,12 @@ public class LegServiceImpl implements LegService {
             addExplanatoryToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, legPackage, proposal);
             addBillToPackage(leosPackage, contentToZip, exportOptions, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
             addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage, proposal.getMetadata().getOrNull().getRef());
-            addCoverPageHtmlRendition(contentToZip, proposalContent, coverPageStyleSheet, proposal);
-            enrichZipWithToc(contentToZip);
-            enrichZipWithMedia(contentToZip, leosPackage);
+
+            if (exportOptions.isWithRenditions()) {
+                addCoverPageHtmlRendition(contentToZip, proposalContent, coverPageStyleSheet, proposal);
+                enrichZipWithToc(contentToZip);
+                enrichZipWithMedia(contentToZip, leosPackage);
+            }
         }
         String legPackageName = proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION).concat(LEG_FILE_EXTENSION);
         legPackage.setFile(ZipPackageUtil.zipFiles(legPackageName, contentToZip, language));
@@ -585,10 +588,12 @@ public class LegServiceImpl implements LegService {
         addAnnotateToZipContent(contentToZip, financialStatement.getMetadata().get().getRef(), financialStatement.getName(), exportOptions, proposalRef);
         addFilteredAnnotationsToZipContent(contentToZip, financialStatement.getName(), exportOptions);
 
-        addResourceToZipContent(contentToZip, financialStatementStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
-        structureContextProvider.get().useDocumentTemplate(financialStatement.getMetadata().get().getDocTemplate());
-        final String fsTocJson = getTocAsJson(financialStatementService.getTableOfContent(financialStatement, TocMode.SIMPLIFIED_CLEAN));
-        addHtmlRendition(contentToZip, financialStatement.getName(), xmlContent, financialStatementStyleSheet, fsTocJson, proposalRef);
+        if (exportOptions.isWithRenditions()) {
+            addResourceToZipContent(contentToZip, financialStatementStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
+            structureContextProvider.get().useDocumentTemplate(financialStatement.getMetadata().get().getDocTemplate());
+            final String fsTocJson = getTocAsJson(financialStatementService.getTableOfContent(financialStatement, TocMode.SIMPLIFIED_CLEAN));
+            addHtmlRendition(contentToZip, financialStatement.getName(), xmlContent, financialStatementStyleSheet, fsTocJson, proposalRef);
+        }
 
         final ExportResource financialStatementExportResource = buildExportResourceFinancialStatement(proposalRefsMap, xmlContent);
         exportProposalResource.addChildResource(financialStatementExportResource);
@@ -604,7 +609,7 @@ public class LegServiceImpl implements LegService {
             addFilteredAnnotationsToZipContent(contentToZip, financialStatement.getName(), exportOptions);
         }
 
-        if (!exportOptions.isComparisonMode()) {
+        if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, financialStatementStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(financialStatement.getMetadata().get().getDocTemplate());
             final String fsTocJson = getTocAsJson(financialStatementService.getTableOfContent(financialStatement, TocMode.SIMPLIFIED_CLEAN));
@@ -794,10 +799,12 @@ public class LegServiceImpl implements LegService {
         addAnnotateToZipContent(contentToZip, memorandum.getMetadata().get().getRef(), memorandum.getName(), exportOptions, proposalRef);
         addFilteredAnnotationsToZipContent(contentToZip, memorandum.getName(), exportOptions);
 
-        addResourceToZipContent(contentToZip, memoStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
-        structureContextProvider.get().useDocumentTemplate(memorandum.getMetadata().get().getDocTemplate());
-        final String memoTocJson = getTocAsJson(memorandumService.getTableOfContent(memorandum, TocMode.SIMPLIFIED_CLEAN));
-        addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memoTocJson, proposalRef);
+        if (exportOptions.isWithRenditions()) {
+            addResourceToZipContent(contentToZip, memoStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
+            structureContextProvider.get().useDocumentTemplate(memorandum.getMetadata().get().getDocTemplate());
+            final String memoTocJson = getTocAsJson(memorandumService.getTableOfContent(memorandum, TocMode.SIMPLIFIED_CLEAN));
+            addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memoTocJson, proposalRef);
+        }
 
         final ExportResource memorandumExportResource = buildExportResourceMemorandum(proposalRefsMap, xmlContent);
         exportProposalResource.addChildResource(memorandumExportResource);
@@ -813,7 +820,7 @@ public class LegServiceImpl implements LegService {
             addFilteredAnnotationsToZipContent(contentToZip, memorandum.getName(), exportOptions);
         }
 
-        if (!exportOptions.isComparisonMode()) {
+        if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, memoStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(memorandum.getMetadata().get().getDocTemplate());
             final String memorandumTocJson = getTocAsJson(memorandumService.getTableOfContent(memorandum, TocMode.SIMPLIFIED_CLEAN));
@@ -836,7 +843,7 @@ public class LegServiceImpl implements LegService {
             addFilteredAnnotationsToZipContent(contentToZip, bill.getName(), exportOptions);
         }
 
-        if(!exportOptions.isComparisonMode()) {
+        if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, billStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
             final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
@@ -941,7 +948,7 @@ public class LegServiceImpl implements LegService {
             addFilteredAnnotationsToZipContent(contentToZip, annex.getName(), exportOptions);
         }
 
-        if (!exportOptions.isComparisonMode()) {
+        if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, annexStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(annex.getMetadata().get().getDocTemplate());
             final String annexTocJson = getTocAsJson(annexService.getTableOfContent(annex, TocMode.SIMPLIFIED_CLEAN));
@@ -978,7 +985,7 @@ public class LegServiceImpl implements LegService {
             addFilteredAnnotationsToZipContent(contentToZip, explanatory.getName(), exportOptions);
         }
 
-        if (!exportOptions.isComparisonMode()) {
+        if (!exportOptions.isComparisonMode() && exportOptions.isWithRenditions()) {
             addResourceToZipContent(contentToZip, explanatoryStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
             structureContextProvider.get().useDocumentTemplate(explanatory.getMetadata().get().getDocTemplate());
             final String explanatoryTocJson = getTocAsJson(explanatoryService.getTableOfContent(explanatory, TocMode.SIMPLIFIED_CLEAN));
@@ -1603,16 +1610,18 @@ public class LegServiceImpl implements LegService {
         addFinancialStatementToPackage(leosPackage, contentToZip, exportProposalResource, proposalRefsMap, legPackage,
                 proposal.getMetadata().getOrNull().getRef());
 
-        //6. Add toc and media
-        enrichZipWithToc(contentToZip);
-        enrichZipWithMedia(contentToZip, leosPackage);
+        if (exportOptions.isWithRenditions()) {
+            //6. Add toc and media
+            enrichZipWithToc(contentToZip);
+            enrichZipWithMedia(contentToZip, leosPackage);
 
-        //6. Add Cover page rendition
-        if(exportOptions.isComparisonMode()) {
-            XmlDocument originalProposal = documentContentService.getOriginalProposal(proposal);
-            proposalContent = simpleCompareXmlContentsForClone(originalProposal, proposal).getBytes(UTF_8);
+            //6. Add Cover page rendition
+            if (exportOptions.isComparisonMode()) {
+                XmlDocument originalProposal = documentContentService.getOriginalProposal(proposal);
+                proposalContent = simpleCompareXmlContentsForClone(originalProposal, proposal).getBytes(UTF_8);
+            }
+            addCoverPageHtmlRendition(contentToZip, proposalContent, coverPageStyleSheet, proposal);
         }
-        addCoverPageHtmlRendition(contentToZip, proposalContent, coverPageStyleSheet, proposal);
 
         legPackage.setFile(ZipPackageUtil.zipFiles(proposalRefsMap.get(XmlNodeConfigProcessor.PROPOSAL_DOC_COLLECTION) + ".leg",
                 contentToZip, language));
@@ -1657,11 +1666,13 @@ public class LegServiceImpl implements LegService {
             }
         }
 
-        addResourceToZipContent(contentToZip, billStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
-        structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
-        final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
+        if (exportOptions.isWithRenditions()) {
+            addResourceToZipContent(contentToZip, billStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
+            structureContextProvider.get().useDocumentTemplate(bill.getMetadata().get().getDocTemplate());
+            final String billTocJson = getTocAsJson(billService.getTableOfContent(bill, TocMode.SIMPLIFIED_CLEAN));
 
-        addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposalRef);
+            addHtmlRendition(contentToZip, bill.getName(), xmlContent, billStyleSheet, billTocJson, proposalRef);
+        }
 
         final ExportResource exportBillResource = buildExportResourceBill(proposalRefsMap, xmlContent);
         exportBillResource.setExportOptions(exportOptions);
@@ -1709,18 +1720,20 @@ public class LegServiceImpl implements LegService {
             }
         }
 
-        addResourceToZipContent(contentToZip, annexStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
-        structureContextProvider.get().useDocumentTemplate(annex.getMetadata().get().getDocTemplate());
-        final String annexTocJson = getTocAsJson(annexService.getTableOfContent(annex, TocMode.SIMPLIFIED_CLEAN));
-        if (annex.getClonedFrom().isEmpty() && exportOptions.isComparisonMode()) {
-            try {
-                xmlContent = xmlContentProcessor.setAttributeForAllChildren(xmlContent, DOC, Arrays.asList(MAIN_BODY, PREFACE), CLASS_ATTR, CONTENT_ADDED_CLASS);
-            } catch (Exception e) {
-                LOG.debug("Error while setting class attribute on new annex");
+        if (exportOptions.isWithRenditions()) {
+            addResourceToZipContent(contentToZip, annexStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
+            structureContextProvider.get().useDocumentTemplate(annex.getMetadata().get().getDocTemplate());
+            final String annexTocJson = getTocAsJson(annexService.getTableOfContent(annex, TocMode.SIMPLIFIED_CLEAN));
+            if (annex.getClonedFrom().isEmpty() && exportOptions.isComparisonMode()) {
+                try {
+                    xmlContent = xmlContentProcessor.setAttributeForAllChildren(xmlContent, DOC, Arrays.asList(MAIN_BODY, PREFACE), CLASS_ATTR, CONTENT_ADDED_CLASS);
+                } catch (Exception e) {
+                    LOG.debug("Error while setting class attribute on new annex");
+                }
+                contentToZip.put(annex.getName(), xmlContent);
             }
-            contentToZip.put(annex.getName(), xmlContent);
+            addHtmlRendition(contentToZip, annex.getName(), xmlContent, annexStyleSheet, annexTocJson, proposalRef);
         }
-        addHtmlRendition(contentToZip, annex.getName(), xmlContent, annexStyleSheet, annexTocJson, proposalRef);
 
         int docNumber = annex.getMetadata().get().getIndex();
         final ExportResource annexExportResource = buildExportResourceAnnex(docNumber, resourceId, href, xmlContent);
@@ -1758,10 +1771,12 @@ public class LegServiceImpl implements LegService {
             }
         }
 
-        addResourceToZipContent(contentToZip, memoStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
-        structureContextProvider.get().useDocumentTemplate(memorandum.getMetadata().get().getDocTemplate());
-        final String memoTocJson = getTocAsJson(memorandumService.getTableOfContent(memorandum, TocMode.SIMPLIFIED_CLEAN));
-        addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memoTocJson, proposalRef);
+        if (exportOptions.isWithRenditions()) {
+            addResourceToZipContent(contentToZip, memoStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
+            structureContextProvider.get().useDocumentTemplate(memorandum.getMetadata().get().getDocTemplate());
+            final String memoTocJson = getTocAsJson(memorandumService.getTableOfContent(memorandum, TocMode.SIMPLIFIED_CLEAN));
+            addHtmlRendition(contentToZip, memorandum.getName(), xmlContent, memoStyleSheet, memoTocJson, proposalRef);
+        }
 
         final ExportResource memorandumExportResource = buildExportResourceMemorandum(proposalRefsMap, xmlContent);
         exportProposalResource.addChildResource(memorandumExportResource);

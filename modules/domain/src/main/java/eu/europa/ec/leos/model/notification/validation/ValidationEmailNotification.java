@@ -24,7 +24,6 @@ public abstract class ValidationEmailNotification implements EmailNotification {
         this.recipient = recipient;
         this.title = title;
         recipients.add(recipient);
-
     }
 
     @Override
