@@ -37,47 +37,47 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Component
 @ControllerAdvice
 public class GlobalControllerAdvice extends ResponseEntityExceptionHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(AnnexController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GlobalControllerAdvice.class);
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ResponseEntity<String> handleAccessDeniedException(AccessDeniedException exception) {
-        LOG.info(" ---- Controller Advice --- handle AccessDeniedException: {}", exception.getMessage());
+        LOG.error(" ---- Controller Advice --- handle AccessDeniedException: {}", exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(exception.getMessage());
     }
 
     @ExceptionHandler(CollaboratorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleCollaboratorException(CollaboratorException exception) {
-        LOG.info(" ---- Controller Advice --- handle CollaborationException: {}", exception.getMessage());
+        LOG.error(" ---- Controller Advice --- handle CollaborationException: {}", exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
     @ExceptionHandler(ImportElementException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleImportElementException(ImportElementException exception) {
-        LOG.info(" ---- Controller Advice --- handle ImportElementException: {}", exception.getMessage());
+        LOG.error(" ---- Controller Advice --- handle ImportElementException: {}", exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
     @ExceptionHandler(NotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<String> handleNotFoundException(NotFoundException exception) {
-        LOG.info(" ---- Controller Advice --- handle {}: {}", NotFoundException.class.getSimpleName(), exception.getMessage());
+        LOG.error(" ---- Controller Advice --- handle {}: {}", NotFoundException.class.getSimpleName(), exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
     @ExceptionHandler(InvalidInputException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<String> handleInvalidInputException(InvalidInputException exception) {
-        LOG.info(" ---- Controller Advice --- handle InvalidInputException: {}", exception.getMessage());
+        LOG.error(" ---- Controller Advice --- handle InvalidInputException: {}", exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.getMessage());
     }
 
     @ExceptionHandler(InternalServerException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<String> handleInternalServerException(InternalServerException exception) {
-        LOG.info(" ---- Controller Advice --- handle InternalServerException: {}", exception.getMessage());
+        LOG.error(" ---- Controller Advice --- handle InternalServerException: {}", exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exception.getMessage());
     }
 

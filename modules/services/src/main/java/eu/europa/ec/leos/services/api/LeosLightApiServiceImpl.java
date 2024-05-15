@@ -305,6 +305,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
             List<ErrorVO> errors = validationService.validateDocument(documentVO);
 
             if (!errors.isEmpty()) {
+                LOG.info(errors.toString());
                 throw new XmlValidationException(messageHelper.getMessage("leoslight.document.validation.failure"));
             }
         } catch (IOException e) {
