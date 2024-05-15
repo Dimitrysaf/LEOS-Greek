@@ -269,10 +269,7 @@ export class AuthService implements OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: ({ accessToken, expiresIn }) => {
-          console.debug('[auth.service] renewAccessToken - token renewed', {
-            accessToken,
-            expiresIn,
-          }); // DEBUG
+          console.debug('[auth.service] renewAccessToken - token renewed'); // DEBUG
           this.storeTokenData({ accessToken, expiresIn });
         },
         error: (requestError: HttpErrorResponse) => {
