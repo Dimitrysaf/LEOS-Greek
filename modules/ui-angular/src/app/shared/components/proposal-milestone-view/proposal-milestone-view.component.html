@@ -25,28 +25,41 @@
       "
     ></div>
 
-    <div class="eui-u-p-absolute export-button" *ngIf="showPdfExport">
-      <button euiButton (click)="exportPdf()" euiSizeS euiPrimary>
-        {{ 'page.collection.milestone-view-dialog.export-button' | translate }}
-      </button>
+    <div class="eui-u-p-absolute export-accept-reject-div">
+      <div *ngIf="shouldDisplayButtons()" class="accept-reject-div"style="margin-right: 50px;">
+        <button euiButton euiSizeS euiPrimary
+                [euiDisabled]="documents[this.activeTabIndex].state === 'Processed'"
+                class="accept-reject-button"
+                (click)="this.handleAcceptReject(documents[this.activeTabIndex], true)"
+        >
+          {{ 'page.collection.milestone-view-dialog.accept-button' | translate }}
+        </button>
+        <button euiButton euiSizeS euiPrimary
+                [euiDisabled]="documents[this.activeTabIndex].state === 'Processed'"
+                class="accept-reject-button"
+                (click)="handleAcceptReject(documents[this.activeTabIndex], false)">
+          {{ 'page.collection.milestone-view-dialog.reject-button' | translate }}
+        </button>
+      </div>
+
+      <div *ngIf="showPdfExport">
+        <button euiButton (click)="exportPdf()" euiSizeS euiPrimary>
+          {{ 'page.collection.milestone-view-dialog.export-button' | translate }}
+        </button>
+      </div>
     </div>
 
-    <div class="eui-u-p-absolute accept-reject-div" *ngIf="contributionChanged && !parentClonedProposal">
-      <button euiButton euiSizeS euiPrimary class="accept-reject-button">
-          {{ 'page.collection.milestone-view-dialog.accept-button' | translate }}
-      </button>
-      <button euiButton euiSizeS euiPrimary class="accept-reject-button">
-        {{ 'page.collection.milestone-view-dialog.reject-button' | translate }}
-      </button>
-    </div>
 
     <!-- Tabs -->
     <eui-tabs (tabSelect)="onTabSelected($event)">
-      <eui-tab *ngFor="let doc of documents; let tabIndex = index" hasBackgroundFilled
-               [euiSecondary]="doc.state === 'Processed'"
-               [euiSuccess]="doc.state === 'Added'"
-               [euiWarning]="doc.state === 'Modified'"
-               [euiDanger]="doc.state === 'Deleted'">
+      <eui-tab *ngFor="let doc of documents; let tabIndex = index"
+               hasBackgroundFilled
+               [euiSecondary]="doc.selected === false && doc.state === 'Processed' && !this.parentClonedProposal"
+               [euiSuccess]="doc.selected === false && doc.state === 'Added' && !this.parentClonedProposal"
+               [euiWarning]="doc.selected === false && doc.state === 'Modified' && !this.parentClonedProposal"
+               [euiDanger]="doc.selected === false && doc.state === 'Deleted' && !this.parentClonedProposal"
+               [euiPrimary]="doc.selected === true"
+                   >
         <eui-tab-label>{{ doc.label }}
           <small class="eui-u-font-regular"> [{{ doc.version }}] </small>
         </eui-tab-label>
@@ -148,3 +161,12 @@
     </div>
   </eui-dialog-footer>
 </eui-dialog>
+
+<!-- DIALOG: CONFIRM ANNEX DELETE -->
+<app-confirm-delete-dialog
+  #confirmationForDelete
+  [title]="'page.collection.drafts.annex.delete-dialog.title' | translate"
+  [description]="'page.collection.drafts.annex.delete-dialog.desc' | translate"
+  (confirmDeletion)="this.doAccept()"
+></app-confirm-delete-dialog>
+

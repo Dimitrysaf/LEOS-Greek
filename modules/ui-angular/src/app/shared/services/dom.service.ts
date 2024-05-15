@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 
 import { getCacheBusterArg } from '@/shared/utils/url';
 
-import { createPromise, setDynamicStyle } from '../utils';
+import { createPromise, setDynamicStyle, setDynamicInlineStyle } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +21,23 @@ export class DomService {
 
     return () => {
       if (!this.decreaseCount(style)) {
+        style.remove();
+      }
+    };
+  }
+
+  setDynamicInlineStyle(cssContent: string, styleId: string): () => void {
+    const existingStyle = this.document.querySelector(
+      `#${styleId}`,
+    ) as HTMLStyleElement | null;
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+    const style = setDynamicInlineStyle(this.document, cssContent, styleId);
+    this.increaseInlineCount(style);
+
+    return () => {
+      if (!this.decreaseInlineCount(style)) {
         style.remove();
       }
     };
@@ -62,6 +79,21 @@ export class DomService {
   }
 
   private decreaseCount(style: HTMLLinkElement) {
+    const oldCount = Number(style.dataset.count) || 1;
+    const newCount = oldCount - 1;
+    style.dataset.count = String(newCount);
+    return newCount;
+  }
+
+
+  private increaseInlineCount(style: HTMLStyleElement) {
+    const oldCount = Number(style.dataset.count) || 0;
+    const newCount = oldCount + 1;
+    style.dataset.count = String(newCount);
+    return newCount;
+  }
+
+  private decreaseInlineCount(style: HTMLStyleElement) {
     const oldCount = Number(style.dataset.count) || 1;
     const newCount = oldCount - 1;
     style.dataset.count = String(newCount);

@@ -3,19 +3,26 @@
   flex-direction: column;
   height: 100%;
   padding: var(--eui-base-spacing-m) var(--eui-base-spacing-m) 0
-    var(--eui-base-spacing-m);
+  var(--eui-base-spacing-m);
 }
 
-.export-button {
+.export-accept-reject-div {
   right: var(--eui-base-spacing-m);
+  display: flex;
+  align-content: center;
+  align-items: flex-start
 }
 
 .accept-reject-div {
-  right: var(--eui-base-spacing-m);
+  margin-right: 50px;
 }
 
 .accept-reject-button {
   margin-left: .75rem !important;
+}
+
+.export-button {
+  right: var(--eui-base-spacing-m);
 }
 
 ::ng-deep .milestone-view-dialog__body {
@@ -42,6 +49,10 @@
     flex-direction: column;
     flex-grow: 1;
     position: relative;
+  }
+
+  .eui-tab-item {
+    margin-right: .2rem !important;
   }
 
   .eui-page-column__header-right-content {

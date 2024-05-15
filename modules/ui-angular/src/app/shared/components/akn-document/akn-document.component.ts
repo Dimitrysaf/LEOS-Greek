@@ -32,7 +32,9 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
   containerElRef: ElementRef<HTMLDivElement>;
 
   private unloadStyleSheet?: () => void;
+  private unloadInlineStyle?: () => void;
   private destroy$: Subject<any> = new Subject();
+  private cssTrackChanges: string;
 
   constructor(
     private domService: DomService,
@@ -46,6 +48,7 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
 
   ngOnDestroy() {
     this.unloadStyleSheet?.();
+    this.unloadInlineStyle?.();
     this.destroy$.next(null);
     this.destroy$.complete();
   }
@@ -79,6 +82,16 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
     const xmlDoc = parser.parseFromString(xml, 'text/html');
 
     const akomantosoEl = xmlDoc.querySelector('akomantoso');
+    const trackChangesStyle = xmlDoc.querySelector(`#docTcStyle`);
+
+    if (trackChangesStyle) {
+      this.cssTrackChanges = trackChangesStyle.innerHTML;
+      this.unloadInlineStyle = this.domService.setDynamicInlineStyle(this.cssTrackChanges, "docTcStyle");
+    }
+
+    akomantosoEl?.querySelectorAll('proprietary').forEach((el) => {
+      el.remove();
+    });
 
     akomantosoEl?.querySelectorAll('docPurpose').forEach((el) => {
       let docInnerHTML = el.innerHTML;

@@ -547,7 +547,7 @@ public class BillContextService {
             List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
             annexIndex = annexes.size() + 1;
         }
-        String docLanguage = language != null ? language : annexDocument.getLanguage();
+        String docLanguage = language != null ? language : annexMetadataVO.getLanguage();
         String ref;
         if(translated) {
             ref = LanguageMapUtils.getTranslatedProposalReference(annexDocument.getRef(), docLanguage);
@@ -558,14 +558,16 @@ public class BillContextService {
         final AnnexMetadata updatedAnnexMetadata = annex.getMetadata().getOrError(() -> "Annex metadata is required")
                 .builder()
                 .withPurpose(purpose)
+                .withEeaRelevance(eeaRelevance)
                 .withIndex(annexIndex)
                 .withNumber(annexMetadataVO.getNumber())
                 .withTitle(annexMetadataVO.getTitle())
                 .withType(billMetadata.getType())
                 .withTemplate(annexMetadataVO.getTemplate())
                 .withRef(ref)
-                .withLanguage(language)
                 .withPackageRef(packageRef)
+                .withClonedRef(annexDocument.getRef())
+                .withLanguage(docLanguage)
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(annexDocument.getSource(), createValueMap(updatedAnnexMetadata),
                 xmlNodeConfigProcessor.getConfig(updatedAnnexMetadata.getCategory()), xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
@@ -665,7 +667,21 @@ public class BillContextService {
             annexContext.executeCreateMilestone();
         });
     }
-    
+
+    public void executeImportContributionAnnex() {
+        LOG.trace("Executing 'Import contribution annex' use case...");
+        Validate.notNull(packageService, "Bill package is required!");
+        AnnexContextService annexContext = annexContextProvider.get();
+        List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
+        int annexIndex = annexes.size() + 1;
+        String annexNumber = AnnexNumberGenerator.getAnnexNumber(annexIndex);
+        annexContext.useActionMessage(ContextActionService.ANNEX_BLOCK_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+        this.annexDocument.getMetadata().setNumber(annexNumber);
+        this.annexDocument.getMetadata().setIndex(String.valueOf(annexIndex));
+        this.useLanguage(this.annexDocument.getMetadata().getLanguage());
+        executeImportBillAnnex();
+    }
+
     public String getProposalId() {
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
         return proposal != null ? proposal.getId() : null;

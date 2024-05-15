@@ -8,6 +8,8 @@ import { apiBaseUrl } from 'src/config';
 import type { MilestoneViewResponse } from '@/features/proposal-view/models/milestone.model';
 import { LoadingService } from '@/shared/services/loading.service';
 import { downloadBlob } from '@/shared/utils';
+import {UxAppShellService} from "@eui/core";
+import {TranslateService} from "@ngx-translate/core";
 
 @Injectable({
   providedIn: 'root',
@@ -34,6 +36,8 @@ export class ProposalMilestonesService {
   constructor(
     private http: HttpClient,
     private loadingService: LoadingService,
+    private appShell: UxAppShellService,
+    private translate: TranslateService,
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.readyToMergeStatus$ = this.readyToMergeStatusSource.asObservable();
@@ -209,4 +213,20 @@ export class ProposalMilestonesService {
   resetReadyToMergeStatus(): void {
     this.readyToMergeStatusSource.next('');
   }
+
+  handleAccept(proposalRef: string, legFileName: string, isAdded: boolean, docRef: string, docCategory: string) {
+    return this.http
+      .get(`${apiBaseUrl}/secured/contribution/milestones/accept-doc/${proposalRef}/${docRef}/${legFileName}?isAdded=${isAdded}&docCategory=${docCategory}`);
+  }
+
+  handleReject(proposalRef: string, parentLegFileName: string, milestoneLegFileName: string, isAdded: boolean, docRef: string) {
+    if (parentLegFileName) {
+      return this.http
+        .get(`${apiBaseUrl}/secured/contribution/milestones/reject-doc/${proposalRef}/${docRef}/${milestoneLegFileName}?isAdded=${isAdded}&parentLegFileName=${parentLegFileName}`);
+    } else {
+      return this.http
+        .get(`${apiBaseUrl}/secured/contribution/milestones/reject-doc/${proposalRef}/${docRef}/${milestoneLegFileName}?isAdded=${isAdded}`);
+    }
+  }
+
 }
