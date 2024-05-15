@@ -15,7 +15,6 @@
 package eu.europa.ec.leos.services.exception.advice;
 
 
-import eu.europa.ec.leos.services.controllers.AnnexController;
 import eu.europa.ec.leos.services.exception.CollaboratorException;
 import eu.europa.ec.leos.services.exception.ImportElementException;
 import eu.europa.ec.leos.services.exception.InternalServerException;

@@ -2,7 +2,6 @@ package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
-import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -38,7 +37,6 @@ import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
 import eu.europa.ec.leos.services.leoslight.util.ByteChecksumComparator;
-import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import io.atlassian.fugue.Pair;
@@ -65,8 +63,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosMetaData;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentMetadata;
+import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosMetaData;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
