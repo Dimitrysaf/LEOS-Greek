@@ -206,7 +206,6 @@ public abstract class CollectionContextService {
     }
 
     public void useOriginRef(String originRef) {
-        Validate.notNull(originRef, "originRef reference is required!");
         this.originRef = originRef;
     }
 

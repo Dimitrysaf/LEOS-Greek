@@ -163,6 +163,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
 
     @Override
     public CreateCollectionResult cloneCollection(File legDocument, String originRef, String targetUser, String connectedEntity) {
+        Validate.notNull(originRef, "originRef reference is required!");
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
         DocumentVO propDocument = null;
         try {
