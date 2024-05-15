@@ -7,6 +7,37 @@ Then('user is on legal act page', () => {
     cy.wait(10000);
 })
 
+Then('document has {int} trackchange {string} tags with {string} content', (count, type, content) => {
+    legalActPage.getCurrentPageName().get(type).should("have.length", count);
+    legalActPage.getCurrentPageName().get(type).should("have.text", content);
+})
+
+Then('document has {int} trackchange {string} tags with below content', (count, type, datatable) => {
+    legalActPage.getCurrentPageName().get(type).should("have.length", count);
+    legalActPage.getCurrentPageName().get(type).each((element, index) => {
+        expect(element[0].textContent).equal(datatable.raw().at(index).toString());
+    });
+})
+
+Then('paragraph {int} of article {int} has below content', (paragraph, article, datatable) => {
+    legalActPage.getParagraphContentFromArticle(paragraph, article).then((element) => {
+        element[0].childNodes.forEach((element, index) => {
+            if (element.nodeType === 1 && (datatable.raw().at(index).at(0).includes(",") || datatable.raw().at(index).at(0) !== "html")) {
+                const elementsArray = datatable.raw().at(index).at(0).split(",");
+                for (let elementIndex = 0; elementIndex < elementsArray.length; elementIndex++) {
+                    expect(element.localName).equal(elementsArray[elementIndex]);
+                    element = element.childNodes[0];
+                }
+                expect(element.textContent + "\"").equal(datatable.raw().at(index).at(1).substring(1));
+            }
+            if (element.nodeType === 1 && datatable.raw().at(index).at(0) === "html") {
+                const re = new RegExp(datatable.raw().at(index).at(1));
+                expect(true).equal(re.test(element.outerHTML));
+            }
+        })
+    });
+})
+
 When('mousehover and click on citation {int}', citationNumber => {
     legalActPage.mouseHoverAndClickOnCitation(citationNumber);
 })
@@ -60,3 +91,7 @@ Then(`paragraph {int} of article {int} contains {string}`, (paragraphNumber, art
 Then(`paragraph {int} of article {int} doesnot contain {string}`, (paragraphNumber, articleNumber, text) => {
     legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).should('not.include.text', text);
 });
+
+When('enable track changes', () => {
+    legalActPage.clickEnableTrackchangesToggleBtn();
+})

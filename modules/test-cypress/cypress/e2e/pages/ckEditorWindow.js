@@ -46,8 +46,12 @@ class ckEditorWindow {
         this.moveCursor(offset, "#_art_" + articleNumber + "__para_" + paragraphNumber);
     }
 
-    appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber) {
-        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.addContent(newContent, offset, "#"+id));
+    appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber, child) {
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.addContent(newContent, offset, "#"+id, child));
+    }
+
+    deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber, child, times) {
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.pressSpecialKey(key, offset, "#"+id, child, times));
     }
 
     addContentInCitation(newContent, offset, citationNumber) {
@@ -72,7 +76,7 @@ class ckEditorWindow {
 
     selectContent(offsetStart, offsetEnd, element) {
         cy.window().then((w) => {
-            cy.wait(1000).then(() => {
+            cy.then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
                 let elementToPutCursorParent = editor.element.findOne(element);
                 let elementToPutCursor = elementToPutCursorParent.getChild(0);
@@ -85,19 +89,51 @@ class ckEditorWindow {
         });
     }
 
-    addContent(newContent, offset, element) {
+    addContent(newContent, offset, element, child) {
+        if (!child) {
+            child = 0;
+        }
         cy.window().then((w) => {
-            cy.wait(1000).then(() => {
+            cy.then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
                 let elementToPutCursorParent = editor.element.findOne(element);
-                let elementToPutCursor = elementToPutCursorParent.getChild(0);
+                let elementToPutCursor = elementToPutCursorParent.getChild(child);
                 let range = editor.createRange();
                 range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
                 range.setStart(elementToPutCursor, offset);
                 range.setEnd(elementToPutCursor, offset);
                 range.collapse(true);
                 range.select();
-                cy.get('.cke_editable.cke_editable_inline').type('{insert}' + newContent);
+                cy.get('.cke_editable.cke_editable_inline').type('{insert}' + newContent, {delay:0});
+                editor.fire("change");
+            })
+        });
+    }
+
+    pressSpecialKey(key, offset, element, child, times) {
+        if (!child) {
+            child = 0;
+        }
+        if (!times) {
+            times = 1;
+        }
+        cy.window().then((w) => {
+            cy.then(() => {
+                let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
+                let elementToPutCursorParent = editor.element.findOne(element);
+                let elementToPutCursor = elementToPutCursorParent.getChild(child);
+                if (child !== 0 && elementToPutCursor.type !== 3) {
+                    elementToPutCursor = elementToPutCursor.getChild(0);
+                }
+                let range = editor.createRange();
+                range.moveToPosition(elementToPutCursor, w.CKEDITOR.POSITION_AFTER_START);
+                range.setStart(elementToPutCursor, offset);
+                range.setEnd(elementToPutCursor, offset);
+                range.collapse(true);
+                range.select();
+                for (var count = 1; count <= times; count++) {
+                    cy.get('.cke_editable.cke_editable_inline').type('{' + key + '}', {delay:0});
+                }
                 editor.fire("change");
             })
         });
@@ -105,7 +141,7 @@ class ckEditorWindow {
 
     moveCursor(offset, element) {
         cy.window().then((w) => {
-            cy.wait(1000).then(() => {
+            cy.then(() => {
                 let editor = w.CKEDITOR.instances[Object.keys(w.CKEDITOR.instances)[0]];
                 let elementToPutCursorParent = editor.element.findOne(element);
                 let elementToPutCursor = elementToPutCursorParent.getChild(0);

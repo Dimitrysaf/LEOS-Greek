@@ -13,6 +13,9 @@ When(`click on upload button`, () => {
     repositoryBrowserPage.clickUploadBtn();
 });
 
+When(`open first proposal`, () => {
+    repositoryBrowserPage.openFirstProposal();
+});
 // When('click proposal {int} in repository browser page', (proposalRank) => {
 //     cy.get('eui-card-header-title').eq(proposalRank-1).click();
 //     cy.wait(2000);
