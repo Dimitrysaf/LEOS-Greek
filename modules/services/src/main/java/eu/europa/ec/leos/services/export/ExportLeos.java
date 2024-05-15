@@ -7,6 +7,11 @@ public class ExportLeos extends ExportOptions {
         this.withAnnotations = false;
     }
 
+    public ExportLeos() {
+        this.withAnnotations = false;
+        this.withRenditions = false;
+    }
+
     @Override
     public String getWordPrefix() {
         throw new IllegalStateException("Not supported for this implementation");

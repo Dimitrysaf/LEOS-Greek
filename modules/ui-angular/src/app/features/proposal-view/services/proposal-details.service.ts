@@ -237,6 +237,33 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
+  public async validateProposal() {
+    this.appConfig.config.subscribe((c) => {
+      const userEmail = c.user.email;
+      this.translateService
+        .get('page.editor.validate-email-sent', { userEmail })
+        .subscribe((message) => {
+          this.uxAppService.growl({
+            severity: 'info',
+            summary: message,
+            life: 5000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        });
+    });
+    this.http
+      .get(
+        `${apiBaseUrl}/secured/proposal/${this.proposalRef}/validate`,
+        { responseType: 'text' },
+      )
+      .subscribe({
+        error: (err) => {
+          this.uxAppService.growlError(err.error);
+        }
+      });
+  }
+
   deleteProposal() {
     this.loadingService.setLoading(true);
     this.http

@@ -30,6 +30,11 @@
               {{ 'page.collection.actions-dropdown.export.lw' | translate }}
             </button>
           </li>
+          <li euiListItem (click)="handleValidation()" *ngIf="canValidate">
+            <button euiListItem>
+              {{ 'page.collection.actions-dropdown.validate' | translate }}
+            </button>
+          </li>
         </ng-container>
         <li euiListItem (click)="handleShare()">
           <a euiListItem target="_blank" [href]="getStringifiedMailTo()">{{

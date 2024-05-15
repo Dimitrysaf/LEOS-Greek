@@ -299,4 +299,18 @@ public class ProposalApiController {
         financialStatementRef = encodeParam(financialStatementRef);
         this.financialStatementService.deleteFinancialStatement(proposalRef, financialStatementRef);
     }
+
+    @RequestMapping(value = "/{proposalRef}/validate", method = RequestMethod.GET)
+    @ResponseBody
+    public ResponseEntity<String> validateProposal(@PathVariable("proposalRef") String proposalRef) {
+        try {
+            proposalRef = encodeParam(proposalRef);
+            apiService.validateProposal(proposalRef);
+            return new ResponseEntity<>("OK", HttpStatus.OK);
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while trying to validate proposal", e);
+            return new ResponseEntity<>("Error occurred while validating proposal: " + e.getMessage(),
+                    HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -26,8 +26,8 @@ public abstract class ExportOptions {
     protected boolean withSuggestions = true;
     protected boolean withAnonymization = false;
     protected boolean withTrackChangesAnonymization = false;
-
     protected boolean withAutoNumbering = true;
+    protected boolean withRenditions = true;
 
     public boolean isWithCoverPage() {
         return withCoverPage;
@@ -196,5 +196,13 @@ public abstract class ExportOptions {
 
     public void setWithFeedbackAnnotations(boolean withFeedbackAnnotations) {
         this.withFeedbackAnnotations = withFeedbackAnnotations;
+    }
+
+    public boolean isWithRenditions() {
+        return withRenditions;
+    }
+
+    public void setWithRenditions(boolean withRenditions) {
+        this.withRenditions = withRenditions;
     }
 }

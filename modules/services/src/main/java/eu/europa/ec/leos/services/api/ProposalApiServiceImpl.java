@@ -18,7 +18,10 @@ import eu.europa.ec.leos.domain.common.InstanceType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.instance.Instance;
+import eu.europa.ec.leos.integration.ConValidatorService;
+import eu.europa.ec.leos.model.notification.validation.DocumentExternalValidationNotification;
 import eu.europa.ec.leos.repository.LeosRepository;
+import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
@@ -34,8 +37,11 @@ import eu.europa.ec.leos.services.document.PostProcessingDocumentService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.export.ExportLW;
+import eu.europa.ec.leos.services.export.ExportLeos;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ExportService;
+import eu.europa.ec.leos.services.export.LegPackage;
+import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.milestone.MilestoneService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
@@ -56,12 +62,17 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.io.File;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 @Service
 @Instance(instances = {InstanceType.COMMISSION, InstanceType.OS})
 public class ProposalApiServiceImpl extends ApiServiceImpl {
     private static final Logger LOG = LoggerFactory.getLogger(ProposalApiServiceImpl.class);
+
+    private ConValidatorService conValidatorService;
 
     public ProposalApiServiceImpl(TemplateService templateService,
             WorkspaceService workspaceService,
@@ -80,12 +91,13 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
             ExplanatoryService explanatoryService, ExportPackageService exportPackageService,
             NotificationService notificationService, LegService legService, UserHelper userHelper,
             LeosRepository leosRepository, TrackChangesContext trackChangesContext,
-            DocumentViewService documentViewService) {
+            DocumentViewService documentViewService, ConValidatorService conValidatorService) {
         super(templateService, workspaceService, userService, createCollectionService, proposalService, securityContext, authorityMap, exportService,
                 collectionContextProvider, documentContentService, messageHelper, billContextProvider, packageService, billService, xmlContentProcessor,
                 archiveService, annexService, cloneContext, milestoneService, proposalConverterService, postProcessingDocumentService, validationService,
                 applicationProperties, explanatoryService, exportPackageService, notificationService, legService, userHelper, leosRepository, trackChangesContext,
                 documentViewService);
+        this.conValidatorService = conValidatorService;
     }
 
     @Override
@@ -99,6 +111,38 @@ public class ProposalApiServiceImpl extends ApiServiceImpl {
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while downloading proposal - ", e.getMessage());
             throw e;
+        }
+    }
+
+    @Override
+    public void validateProposal(String proposalRef) throws Exception {
+        LegPackage legPackage = null;
+        File resultZipFile = null;
+
+        try {
+            Proposal proposal = proposalService.findProposalByRef(proposalRef);
+            if (!securityContext.hasPermission(proposal, LeosPermission.CAN_VALIDATE)) {
+                LOG.info("User does not have permission to perform the operation");
+                throw new IllegalStateException("User does not have permission to perform the operation");
+            }
+            legPackage = legService.createLegPackage(proposal.getId(), new ExportLeos());
+            String validationResult = conValidatorService.validate(legPackage.getFile());
+
+            Map<String, Object> contentToZip = new HashMap<>();
+            contentToZip.put("result.xml", validationResult);
+            contentToZip.put(legPackage.getFile().getName(), legPackage.getFile());
+            resultZipFile = ZipPackageUtil.zipFiles("validation.zip", contentToZip, "");
+
+            notificationService.sendNotification(new DocumentExternalValidationNotification(securityContext.getUser().getEmail(),
+                    securityContext.getUserName(), new Date(), proposalRef, FileUtils.readFileToByteArray(resultZipFile)));
+        } finally {
+            if ((legPackage != null) && (legPackage.getFile() != null) && legPackage.getFile().exists() &&
+                    !legPackage.getFile().delete()) {
+                LOG.info("File not deleted {}", legPackage.getFile().toPath());
+            }
+            if ((resultZipFile != null) && resultZipFile.exists() && !resultZipFile.delete()) {
+                LOG.info("File not deleted {}", resultZipFile.toPath());
+            }
         }
     }
 

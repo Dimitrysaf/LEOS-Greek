@@ -143,7 +143,7 @@ public abstract class ApiServiceImpl implements ApiService {
     private final WorkspaceService workspaceService;
     private final UserService userService;
     private final CreateCollectionService createCollectionService;
-    private final SecurityContext securityContext;
+    protected final SecurityContext securityContext;
     private final LeosPermissionAuthorityMap authorityMap;
     private final PackageService packageService;
     private final Provider<CollectionContextService> collectionContextProvider;
@@ -163,8 +163,8 @@ public abstract class ApiServiceImpl implements ApiService {
     private ValidationService validationService;
     private ExplanatoryService explanatoryService;
     private ExportPackageService exportPackageService;
-    private NotificationService notificationService;
-    private LegService legService;
+    protected NotificationService notificationService;
+    protected LegService legService;
     private LeosRepository leosRepository;
     private TrackChangesContext trackChangesContext;
 

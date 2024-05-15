@@ -32,6 +32,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   @ViewChild('proposalDeleteCannotConf')
   proposalDeleteCannotConf: ConfirmDialogComponent;
   canExportLW = false;
+  canValidate = false;
 
   private destroy$: Subject<any> = new Subject();
 
@@ -41,6 +42,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   ) {
     proposalDetailsService.permissions$.subscribe((permissions) => {
       this.canExportLW = permissions.includes('CAN_EXPORT_LW');
+      this.canValidate = permissions.includes('CAN_VALIDATE');
     });
   }
 
@@ -60,6 +62,10 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
 
   handleExportAsLW() {
     this.proposalDetailsService.exportProposal('WORD');
+  }
+
+  handleValidation() {
+    this.proposalDetailsService.validateProposal().finally();
   }
 
   handleShare() {
