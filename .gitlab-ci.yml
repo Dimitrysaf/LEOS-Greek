@@ -20,7 +20,6 @@ java-build:
     paths:
       - pom.xml
       - "**/target"
-      - "**/dist"
       - "**/package-lock.json"
       - "**/yarn.lock"
   cache:
@@ -96,3 +95,59 @@ include:
   - project: 'digit.s.1/sa/security-scan-template'
     file: '.gitlab-ci-security-scan.yml'
     ref: main
+
+fortify-sast:
+  rules:
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
+
+sonatype-lifecycle:
+  rules:
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
+
+prep-sec-scan:
+  rules:
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
+
+fortify-import-issues-ssc:
+  rules:
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+      when: never
+    - if: $CI_PIPELINE_SOURCE == "web"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
+      when: never
+    - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
