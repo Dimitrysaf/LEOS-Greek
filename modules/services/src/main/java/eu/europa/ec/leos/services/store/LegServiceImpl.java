@@ -1394,10 +1394,12 @@ public class LegServiceImpl implements LegService {
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
                 annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
-                contentToZip.put(creatAnnotationFileName(docName), xmlAnnotationContent);
+                String annotFilename = creatAnnotationFileName(docName);
+                contentToZip.remove(annotFilename);
+                contentToZip.put(annotFilename, xmlAnnotationContent);
             }
         } catch(Exception e) {
-            LOG.error("Exception occurred", e);
+            LOG.error("Exception occurred while adding annotations in LEG ", e);
         }
     }
 
@@ -1798,6 +1800,7 @@ public class LegServiceImpl implements LegService {
         JsonNode json = mapper.readTree(annotations);
         JsonNode rootNode = json.get("rows");
         Iterator<JsonNode> itr = rootNode.elements();
+        LOG.debug("Processing " + rootNode.size() + " annotations");
         List<JsonNode> modifiedList = new ArrayList<JsonNode>();
         itr.forEachRemaining(node -> {
             if (!exportOptions.isWithSuggestions() && node.findValue("tags").get(0).textValue().equalsIgnoreCase(SUGGESTION)) {
@@ -1832,10 +1835,12 @@ public class LegServiceImpl implements LegService {
 
     private String addFeedbackAnnotations(String annotations, String feedbackAnnotations) throws JsonProcessingException {
         if (StringUtils.isBlank(feedbackAnnotations)) {
+            LOG.debug("Didn't find any feedback annotations in DB");
             return annotations;
         }
 
         if (StringUtils.isBlank(annotations)) {
+            LOG.debug("Didn't find any feedback annotations in LEG");
             return feedbackAnnotations;
         }
 
@@ -1843,9 +1848,11 @@ public class LegServiceImpl implements LegService {
 
         JsonNode json = mapper.readTree(annotations);
         ArrayNode rowsNode = (ArrayNode) json.get("rows");
+        LOG.debug("Found " + rowsNode.size() + " feedback annotations in LEG");
 
         JsonNode jsonFeedback = mapper.readTree(feedbackAnnotations);
         ArrayNode rowsNodeFeedback = (ArrayNode) jsonFeedback.get("rows");
+        LOG.debug("Found " + rowsNodeFeedback.size() + " feedback annotations in DB");
 
         Iterator<JsonNode> itrFeedback = rowsNodeFeedback.elements();
         List<JsonNode> filteredList = new ArrayList<JsonNode>();
@@ -1855,10 +1862,12 @@ public class LegServiceImpl implements LegService {
             }
         });
 
+        LOG.debug("Added " + filteredList.size() + " feedback annotations from DB");
         rowsNode.addAll(filteredList);
 
         ((ObjectNode) json).put("rows", rowsNode);
         ((ObjectNode) json).put("total", rowsNode.size());
+        LOG.debug("New list of feedbacks now contains " + rowsNode.size() + " feedback annotations");
 
         return mapper.writeValueAsString(json);
     }
