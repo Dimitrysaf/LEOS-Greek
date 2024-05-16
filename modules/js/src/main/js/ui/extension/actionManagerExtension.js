@@ -257,17 +257,21 @@ define(function actionManagerExtensionModule(require) {
             let tocItemElement = tocItemsList.find(function(e){return e.aknTag.toLowerCase() === element.tagName.toLowerCase()});
             var left_position;
 
-            if (tocItemElement && tocItemElement.actionsPosition && 'LEFT' === tocItemElement.actionsPosition) {
-                left_position = $element.position().left - 30;
+            if (
+              tocItemElement &&
+              tocItemElement.actionsPosition &&
+              "LEFT" === tocItemElement.actionsPosition
+            ) {
+              left_position = $element[0].offsetLeft - 30;
             } else {
-                left_position = $element.position().left + element.offsetWidth - 5;
+              left_position = $element[0].offsetLeft + element.offsetWidth + 10;
             }
 
             $actions.css({
-                top: $element.position().top - top,
-                left: left_position,
-                height: elementHeigh + remainingSpace,
-                zIndex: zIndex++ //last inserted has the precedence
+              top: $element[0].offsetTop - top,
+              left: left_position,
+              height: elementHeigh + remainingSpace,
+              zIndex: zIndex++, //last inserted has the precedence
             });
 
 
