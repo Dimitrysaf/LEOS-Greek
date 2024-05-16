@@ -1,5 +1,12 @@
 import { HttpEventType } from '@angular/common/http';
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Inject,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -53,6 +60,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private proposalService: ProposalService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
     public translateService: TranslateService,
     public environmentService: EnvironmentService,
   ) {}
@@ -241,6 +249,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
           this.errorsVO = res.errors;
           this.uploadForm.get('legFile').setValue(null);
           this.isNavigationAllowed = false;
+          this.cdr.markForCheck();
         }
         if (res.errors === null && res.documentToBeCreated) {
           this.errorsVO = null;
@@ -249,7 +258,9 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
           this.currentStepIndex = 2;
           this.uploadForm.patchValue({
             templateName: res.documentToBeCreated.metadata.templateName,
-            docPurpose: cleanDelInsert(res.documentToBeCreated.metadata.docPurpose),
+            docPurpose: cleanDelInsert(
+              res.documentToBeCreated.metadata.docPurpose,
+            ),
             eeaRelevance: res.documentToBeCreated.metadata.eeaRelevance,
             packageTitle: res.documentToBeCreated.metadata.packageTitle,
             internalReference: res.documentToBeCreated.metadata.internalRef,
@@ -267,5 +278,4 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
     }
     return '';
   }
-
 }
