@@ -121,7 +121,7 @@ class TemplateServiceImpl implements TemplateService {
                 return item.getName(language);
             } else {
                 templateName = getTemplateName(item.getItems(), name, language);
-                if (!templateName.isEmpty()) {
+                if (templateName != null && !templateName.isEmpty()) {
                     return templateName;
                 }
             }

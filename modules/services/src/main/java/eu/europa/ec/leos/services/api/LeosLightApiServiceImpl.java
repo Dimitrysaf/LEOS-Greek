@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
@@ -302,7 +303,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
             documentVO = proposalConverterService.createDocument(docRef + ".xml", docFileTemp, true);
             List<ErrorVO> errors = validationService.validateDocument(documentVO);
 
-            if (!errors.isEmpty()) {
+            if (!errors.isEmpty() && errors.size() == 1 && !errors.get(0).getErrorCode().name()
+                    .equalsIgnoreCase(ErrorCode.DOCUMENT_PROPOSAL_TEMPLATE_NOT_FOUND.name())) {
                 LOG.info(errors.toString());
                 throw new XmlValidationException(messageHelper.getMessage("leoslight.document.validation.failure"));
             }
