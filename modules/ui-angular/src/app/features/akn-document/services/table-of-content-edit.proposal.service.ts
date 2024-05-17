@@ -16,6 +16,7 @@ import {
 } from '@/shared/constants';
 import {
   HASH_NUM_VALUE,
+  LEOS_TC_MOVE_TO_ORIGIN_ACTION,
   MOVED_TITLE_SPAN_START_TAG,
 } from '@/shared/constants/toc.constant';
 import { NodeValidation } from '@/shared/models/drop-response.model';
@@ -224,6 +225,7 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
       sibling.id.substring(0, 6) === SOFT_MOVE_PLACEHOLDER_ID_PREFIX
     ) {
       this.resetDroppedItemProperties(droppedItem);
+      droppedItem.number = sibling.number;
       this.removeNode(tocTree, sibling);
     }
   }
@@ -232,5 +234,6 @@ export class TableOfContentProposalEditService extends TableOfContentEditService
     droppedItem.softActionAttr = null;
     droppedItem.softActionRoot = null;
     droppedItem.softMoveTo = null;
+    droppedItem.trackChangeAction = LEOS_TC_MOVE_TO_ORIGIN_ACTION;
   }
 }
