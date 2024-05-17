@@ -100,7 +100,7 @@ include:
 
 fortify-sast:
   rules:
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH" && $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
       when: never
@@ -112,7 +112,7 @@ fortify-sast:
 
 sonatype-lifecycle:
   rules:
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH" && $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
       when: never
@@ -124,7 +124,7 @@ sonatype-lifecycle:
 
 prep-sec-scan:
   rules:
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH" && $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
       when: never
@@ -136,7 +136,7 @@ prep-sec-scan:
 
 fortify-import-issues-ssc:
   rules:
-    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
+    - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH" && $CI_PIPELINE_SOURCE == "merge_request_event"
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
       when: never
