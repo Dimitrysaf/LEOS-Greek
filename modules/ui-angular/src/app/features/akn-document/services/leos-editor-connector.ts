@@ -371,6 +371,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.updateTitleWithResponse(response);
     this.coEditionService.setShouldReloadAfterUpdate();
     this.loadingService.setTaskOver('saving', taskId);
+    this.refreshAnnotate();
   }
 
   private updateTitleWithResponse(response: any): void {
