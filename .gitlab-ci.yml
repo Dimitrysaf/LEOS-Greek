@@ -106,6 +106,8 @@ fortify-sast:
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
       when: always
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
+      when: always
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
 
 sonatype-lifecycle:
@@ -115,6 +117,8 @@ sonatype-lifecycle:
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
       when: always
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
 
@@ -126,6 +130,8 @@ prep-sec-scan:
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
       when: always
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
+      when: always
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
 
 fortify-import-issues-ssc:
@@ -135,5 +141,7 @@ fortify-import-issues-ssc:
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec skip|skip sec)\\].*/"
       when: never
     - if: "$CI_COMMIT_MESSAGE =~ /.*\\[(sec run|run sec)\\].*/"
+      when: always
+    - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
       when: always
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
