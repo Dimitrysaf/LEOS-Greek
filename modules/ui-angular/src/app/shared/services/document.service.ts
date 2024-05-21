@@ -816,9 +816,19 @@ export class DocumentService {
       const documentType =
         this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
       const documentRef = this.documentRef;
-      return this.http.get<string | null>(
-        `${apiBaseUrl}/secured/${documentType}/${documentRef}/userGuidance`,
-      );
+      return this.http
+        .get<string | null>(
+          `${apiBaseUrl}/secured/${documentType}/${documentRef}/userGuidance`,
+        )
+        .pipe(
+          switchMap((response) => {
+            if (this.userGuidanceVisibleBS.value) {
+              return of(response);
+            } else {
+              return of(null);
+            }
+          }),
+        );
     } else {
       return of(null);
     }
@@ -1182,9 +1192,7 @@ export class DocumentService {
     this.setAnnotationMode = setAnnotationsReadOnly;
   }
 
-  setRefreshAnnotateCall(
-    setRefreshAnnotateCall: () => void,
-  ) {
+  setRefreshAnnotateCall(setRefreshAnnotateCall: () => void) {
     this.refreshAnnotateCall = setRefreshAnnotateCall;
   }
 
@@ -1260,7 +1268,7 @@ export class DocumentService {
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
       )
       .subscribe((config) => {
-        this.documentConfigBS.next(config)
+        this.documentConfigBS.next(config);
       });
   }
 
@@ -1438,14 +1446,13 @@ export class DocumentService {
     );
   }
 
-  private resolveRoles(
-    collaborators: Collaborator[],
-    config: LeosAppConfig,
-  ) {
+  private resolveRoles(collaborators: Collaborator[], config: LeosAppConfig) {
     const docRoles = collaborators
       .filter((c) => c.login === config.user.login)
       .map((c) => c.role);
-    return [...config.user.roles, ...docRoles, config.contextRole].filter(Boolean);
+    return [...config.user.roles, ...docRoles, config.contextRole].filter(
+      Boolean,
+    );
   }
 
   private resolvePermissions(
