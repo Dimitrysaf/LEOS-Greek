@@ -765,7 +765,9 @@ public class MergeContributionService {
                 }
             }
         }
-        mergingCompletelySuccessfull = found;
+        if (!found) {
+            mergingCompletelySuccessfull = found;
+        }
     }
 
     // Undo merging
