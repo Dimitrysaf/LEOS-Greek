@@ -41,6 +41,7 @@ import eu.europa.ec.leos.services.leoslight.util.ByteChecksumComparator;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import io.atlassian.fugue.Pair;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,7 +184,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
     @Override
     public Pair<Object, Object> importProposal(MultipartFile file, String origProposalRef, String languageCode) throws IOException {
-        File content = new File(file.getOriginalFilename());
+        String originalFilename = FilenameUtils.normalize(file.getOriginalFilename());
+        File content = new File(originalFilename);
         byte[] fileContent = file.getBytes();
         try (FileOutputStream fos = new FileOutputStream(content)) {
             fos.write(file.getBytes());
@@ -196,7 +198,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         DocumentVO documentVO = validation.getDocumentToBeCreated();
 
         if (validation.getErrors() == null || validation.getErrors().isEmpty()) {
-            String docRef = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf("."));
+            String docRef = originalFilename.substring(0, originalFilename.lastIndexOf("."));
             LeosDocument savedDocument = findLeosDocument(docRef, LegDocument.class);
             if (savedDocument == null) {
                 try (FileOutputStream fos = new FileOutputStream(content)) {
@@ -227,7 +229,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                         });
                         List<String> milestoneComments = new ArrayList<>();
                         milestoneComments.add("Milestone imported");
-                        apiService.addLegDocument(pkgName, file.getOriginalFilename(), milestoneComments, fileContent, LeosLegStatus.IMPORTED, containedDocs);
+                        apiService.addLegDocument(pkgName, originalFilename, milestoneComments, fileContent, LeosLegStatus.IMPORTED, containedDocs);
                     }
                 } catch (CreateCollectionException e) {
                     LOG.error("Error Occurred while reading the Leg file: " + e.getMessage(), e);
@@ -380,8 +382,8 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         OutputStream outputStream = null;
         try {
             file = File.createTempFile(docRef, ".xml");
-            Path path = Paths.get(file.getAbsolutePath());
-            path = Files.move(path, path.resolveSibling(docRef + ".xml"), REPLACE_EXISTING);
+            Path path = Paths.get(file.getAbsolutePath()).normalize();
+            path = Files.move(path, path.resolveSibling(docRef + ".xml").normalize(), REPLACE_EXISTING);
             file = path.toFile();
             outputStream = new FileOutputStream(file);
             outputStream.write(docContent);

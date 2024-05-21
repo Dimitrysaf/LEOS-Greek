@@ -25,6 +25,7 @@ import eu.europa.ec.leos.services.dto.request.ExplanatoryRequest;
 import eu.europa.ec.leos.services.dto.request.UpdateProposalRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.export.ExportPackageVO;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -254,7 +255,7 @@ public class ProposalApiController {
         CreateCollectionResult createCollectionResult;
         try {
             validatePath(legFile.getName());
-            File content = new File(legFile.getName());
+            File content = new File(FilenameUtils.normalize(legFile.getName()));
             try (FileOutputStream fos = new FileOutputStream(content)) {
                 fos.write(legFile.getBytes());
             } catch (IOException ioe) {
@@ -273,7 +274,7 @@ public class ProposalApiController {
     @ResponseBody
     public ResponseEntity<LegFileValidation> validateLegFile(@RequestParam("legFile") MultipartFile legFile) {
         validatePath(legFile.getName());
-        File content = new File(legFile.getName());
+        File content = new File(FilenameUtils.normalize(legFile.getName()));
         try (FileOutputStream fos = new FileOutputStream(content)) {
             fos.write(legFile.getBytes());
         } catch (IOException ioe) {

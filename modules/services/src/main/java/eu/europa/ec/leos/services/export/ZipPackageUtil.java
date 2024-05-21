@@ -100,7 +100,7 @@ public class ZipPackageUtil {
                 validatePath(fileValue.getAbsolutePath());
                 ZipEntry ze = new ZipEntry(key);
                 zipOutputStream.putNextEntry(ze);
-                try(FileInputStream fileInputStream = new FileInputStream(fileValue)){
+                try(FileInputStream fileInputStream = new FileInputStream(FilenameUtils.normalize(fileValue.getAbsolutePath()))){
                     IOUtils.copy(fileInputStream, zipOutputStream);
                 }
                 zipOutputStream.closeEntry();

@@ -47,6 +47,7 @@ import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.TocItem;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -167,7 +168,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         try {
             validatePath(legDocumentName);
-            File content = new File(legDocumentName);
+            File content = new File(FilenameUtils.normalize(legDocumentName));
             writeContentToFile(legDocument, content);
             userService.switchUser(user.getLogin());
             createCollectionResult = createCollectionService.cloneCollection(content, cloneOriginRef, user.getLogin(),

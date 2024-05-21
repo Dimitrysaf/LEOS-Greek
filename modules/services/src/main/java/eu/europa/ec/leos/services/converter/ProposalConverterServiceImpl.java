@@ -29,6 +29,7 @@ import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -254,7 +255,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
             // we must clean also the folder.
             for (String parent : parentFolders) {
                 validatePath(parent);
-                FileUtils.deleteDirectory(new File(parent));
+                FileUtils.deleteDirectory(new File(FilenameUtils.normalize(parent)));
             }
         } catch (IOException e) {
             LOG.error("Error deleting the folder {}", e);
