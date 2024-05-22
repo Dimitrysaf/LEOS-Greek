@@ -47,6 +47,7 @@ import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.vo.token.JsonTokenReponse;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -417,7 +418,8 @@ public class LeosApiController {
         CreateCollectionResult createCollectionResult;
         try {
             validatePath(file.getOriginalFilename());
-            File content = new File(applicationProperties.getProperty("leos.mandate.upload.path") + file.getOriginalFilename());
+            String pathname = applicationProperties.getProperty("leos.mandate.upload.path") + file.getOriginalFilename();
+            File content = new File(FilenameUtils.normalize(pathname));
 
             try (FileOutputStream fos = new FileOutputStream(content)) {
                 fos.write(file.getBytes());
@@ -446,7 +448,7 @@ public class LeosApiController {
             connectedEntity = encodeParam(connectedEntity);
             iscRef = encodeParam(iscRef);
             validatePath(legFile.getOriginalFilename());
-            File content = new File(legFile.getOriginalFilename());
+            File content = new File(FilenameUtils.normalize(legFile.getOriginalFilename()));
 
             try (FileOutputStream fos = new FileOutputStream(content)) {
                 fos.write(legFile.getBytes());

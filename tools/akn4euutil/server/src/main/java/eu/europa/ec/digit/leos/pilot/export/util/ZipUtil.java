@@ -83,7 +83,7 @@ public class ZipUtil {
                 ZipEntry ze = new ZipEntry(key);
                 zipOutputStream.putNextEntry(ze);
                 validatePath(fileValue.getAbsolutePath());
-                FileInputStream fileInputStream = new FileInputStream(fileValue);
+                FileInputStream fileInputStream = new FileInputStream(FilenameUtils.normalize(fileValue.getAbsolutePath()));
                 IOUtils.copy(fileInputStream, zipOutputStream);
                 fileInputStream.close();
                 zipOutputStream.closeEntry();
