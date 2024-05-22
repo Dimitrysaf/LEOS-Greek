@@ -13,6 +13,9 @@
  */
 package eu.europa.ec.leos.security;
 
+import java.util.List;
+import java.util.Map;
+
 public interface TokenService {
     String getAnnotateToken(String userLogin, String url);
 
@@ -37,4 +40,16 @@ public interface TokenService {
     String extractUserSystemNameFromToken(String token);
 
     String extractUserFromToken(String token);
+
+    List<String> getAccessTokenList();
+
+    void setAccessTokenInList(String token);
+
+    void cleanAccessTokenInList();
+
+    Map<String, String> getAccessTokenSessionMap();
+
+    void setAccessTokenMap(String token, String jSessionID);
+
+    void cleanAccessTokenSessionMap();
 }
