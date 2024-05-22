@@ -1,5 +1,6 @@
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
+import {DocumentService} from "@/shared/services/document.service";
 
 export type UserGuidanceConnectorState = LeosJavaScriptExtensionState;
 
@@ -19,8 +20,19 @@ export class UserGuidanceConnector extends AbstractJavaScriptComponent<UserGuida
   constructor(
     state: UserGuidanceConnectorInitialState,
     private options: UserGuidanceConnectorOptions,
+    private documentService : DocumentService,
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
+  }
+
+  requestUserGuidance() {
+    this.documentService.requestUserGuidance().subscribe((userGuidance) => {
+      if (userGuidance) {
+        this.receiveUserGuidance(
+          JSON.stringify(userGuidance),
+        );
+      }
+    });
   }
 }
 

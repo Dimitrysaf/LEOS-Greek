@@ -30,9 +30,9 @@
                 </FRBRManifestation>
             </identification>
             <references source="~_COM">
-                <TLCOrganization xml:id="_COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCReference xml:id="_EXPL_MEMORANDUM" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM"  showAs="Explanatory memorandum"/>
-                <TLCReference xml:id="_language" name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCReference name="docType" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM"  showAs="Explanatory memorandum"/>
+                <TLCReference name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>3.1.0</leos:templateVersion>
@@ -40,139 +40,139 @@
                 <leos:docTemplate>EM-LP01</leos:docTemplate>
             </proprietary>
         </meta>
-        <preface xml:id="_preface">
-            <longTitle xml:id="_preface__longtitle">
-                <p xml:id="_preface__longtitle__p">
-                    <docType refersTo="~_EXPL_MEMORANDUM" xml:id="_preface__longtitle__p__doctype">EXPLANATORY MEMORANDUM</docType>
+        <preface>
+            <longTitle>
+                <p>
+                    <docType refersTo="~_EXPL_MEMORANDUM">EXPLANATORY MEMORANDUM</docType>
                 </p>
             </longTitle>
         </preface>
-        <mainBody xml:id="_body">
-            <tblock xml:id="_tblock_1">
-                <num xml:id="_tblock_1__num">1.</num>
-                <heading xml:id="_tblock_1__heading">CONTEXT OF THE PROPOSAL</heading>
-                <tblock xml:id="_tblock_1__tblock_1">
-                    <num xml:id="_tblock_1__tblock_1__num">•</num>
-                    <heading xml:id="_tblock_1__tblock_1__heading">Reasons for and objectives of the proposal</heading>
-                    <blockContainer xml:id="_tblock_1__tblock_1__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_1__tblock_1__blockcontainer__p">Not Applicable</p>
+        <mainBody>
+            <tblock>
+                <num>1.</num>
+                <heading>CONTEXT OF THE PROPOSAL</heading>
+                <tblock>
+                    <num>•</num>
+                    <heading>Reasons for and objectives of the proposal</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
                     </blockContainer>
                 </tblock>
-                <tblock xml:id="_tblock_1__tblock_2">
-                    <num xml:id="_tblock_1__tblock_2__num">•</num>
-                    <heading xml:id="_tblock_1__tblock_2__heading">Consistency with existing policy provisions in the policy area</heading>
-                    <blockContainer xml:id="_tblock_1__tblock_2__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_1__tblock_2__blockcontainer__p">Not Applicable</p>
+                <tblock>
+                    <num>•</num>
+                    <heading>Consistency with existing policy provisions in the policy area</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
                     </blockContainer>
                 </tblock>
-                <tblock xml:id="_tblock_1__tblock_3">
-                    <num xml:id="_tblock_1__tblock_3__num">•</num>
-                    <heading xml:id="_tblock_1__tblock_3__heading">Consistency with other Union policies</heading>
-                    <blockContainer xml:id="_tblock_1__tblock_3__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_1__tblock_3__blockcontainer__p">Not Applicable</p>
-                    </blockContainer>
-                </tblock>
-            </tblock>
-            <tblock xml:id="_tblock_2">
-                <num xml:id="_tblock_2__num">2.</num>
-                <heading xml:id="_tblock_2__heading">LEGAL BASIS, SUBSIDIARITY AND PROPORTIONALITY</heading>
-                <tblock xml:id="_tblock_2__tblock_1">
-                    <num xml:id="_tblock_2__tblock_1__num">•</num>
-                    <heading xml:id="_tblock_2__tblock_1__heading">Legal basis</heading>
-                    <blockContainer xml:id="_tblock_2__tblock_1__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_2__tblock_1__blockcontainer__p">Not Applicable</p>
-                    </blockContainer>
-                </tblock>
-                <tblock xml:id="_tblock_2__tblock_2">
-                    <num xml:id="_tblock_2__tblock_2__num">•</num>
-                    <heading xml:id="_tblock_2__tblock_2__heading">Subsidiarity (for non-exclusive competence)</heading>
-                    <blockContainer xml:id="_tblock_2__tblock_2__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_2__tblock_2__blockcontainer__p">Not Applicable</p>
-                    </blockContainer>
-                </tblock>
-                <tblock xml:id="_tblock_2__tblock_3">
-                    <num xml:id="_tblock_2__tblock_3__num">•</num>
-                    <heading xml:id="_tblock_2__tblock_3__heading">Proportionality</heading>
-                    <blockContainer xml:id="_tblock_2__tblock_3__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_2__tblock_3__blockcontainer__p">Not Applicable</p>
-                    </blockContainer>
-                </tblock>
-                <tblock xml:id="_tblock_2__tblock_4">
-                    <num xml:id="_tblock_2__tblock_4__num">•</num>
-                    <heading xml:id="_tblock_2__tblock_4__heading">Choice of the instrument</heading>
-                    <blockContainer xml:id="_tblock_2__tblock_4__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_2__tblock_4__blockcontainer__p">Not Applicable</p>
+                <tblock>
+                    <num>•</num>
+                    <heading>Consistency with other Union policies</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
                     </blockContainer>
                 </tblock>
             </tblock>
-            <tblock xml:id="_tblock_3">
-                <num xml:id="_tblock_3__num">3.</num>
-                <heading xml:id="_tblock_3__heading">RESULTS OF EX-POST EVALUATIONS, STAKEHOLDER CONSULTATIONS AND IMPACT ASSESSMENTS</heading>
-                <tblock xml:id="_tblock_3__tblock_1">
-                    <num xml:id="_tblock_3__tblock_1__num">•</num>
-                    <heading xml:id="_tblock_3__tblock_1__heading">Ex-post evaluations/fitness checks of existing legislation</heading>
-                    <blockContainer xml:id="_tblock_3__tblock_1__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_3__tblock_1__blockcontainer__p">Not Applicable</p>
+            <tblock>
+                <num>2.</num>
+                <heading>LEGAL BASIS, SUBSIDIARITY AND PROPORTIONALITY</heading>
+                <tblock>
+                    <num>•</num>
+                    <heading>Legal basis</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
                     </blockContainer>
                 </tblock>
-                <tblock xml:id="_tblock_3__tblock_2">
-                    <num xml:id="_tblock_3__tblock_2__num">•</num>
-                    <heading xml:id="_tblock_3__tblock_2__heading">Stakeholder consultations</heading>
-                    <blockContainer xml:id="_tblock_3__tblock_2__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_3__tblock_2__blockcontainer__p">Not Applicable</p>
+                <tblock>
+                    <num>•</num>
+                    <heading>Subsidiarity (for non-exclusive competence)</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
                     </blockContainer>
                 </tblock>
-                <tblock xml:id="_tblock_3__tblock_3">
-                    <num xml:id="_tblock_3__tblock_3__num">•</num>
-                    <heading xml:id="_tblock_3__tblock_3__heading">Collection and use of expertise</heading>
-                    <blockContainer xml:id="_tblock_3__tblock_3__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_3__tblock_3__blockcontainer__p">Not Applicable</p>
+                <tblock>
+                    <num>•</num>
+                    <heading>Proportionality</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
                     </blockContainer>
                 </tblock>
-                <tblock xml:id="_tblock_3__tblock_4">
-                    <num xml:id="_tblock_3__tblock_4__num">•</num>
-                    <heading xml:id="_tblock_3__tblock_4__heading">Impact assessment</heading>
-                    <blockContainer xml:id="_tblock_3__tblock_4__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_3__tblock_4__blockcontainer__p">Not Applicable</p>
-                    </blockContainer>
-                </tblock>
-                <tblock xml:id="_tblock_3__tblock_5">
-                    <num xml:id="_tblock_3__tblock_5__num">•</num>
-                    <heading xml:id="_tblock_3__tblock_5__heading">Regulatory fitness and simplification</heading>
-                    <blockContainer xml:id="_tblock_3__tblock_5__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_3__tblock_5__blockcontainer__p">Not Applicable</p>
-                    </blockContainer>
-                </tblock>
-                <tblock xml:id="_tblock_3__tblock_6">
-                    <num xml:id="_tblock_3__tblock_6__num">•</num>
-                    <heading xml:id="_tblock_3__tblock_6__heading">Fundamental rights</heading>
-                    <blockContainer xml:id="_tblock_3__tblock_6__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_3__tblock_6__blockcontainer__p">Not Applicable</p>
+                <tblock>
+                    <num>•</num>
+                    <heading>Choice of the instrument</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
                     </blockContainer>
                 </tblock>
             </tblock>
-            <tblock xml:id="_tblock_4">
-                <num xml:id="_tblock_4__num">4.</num>
-                <heading xml:id="_tblock_4__heading">BUDGETARY IMPLICATIONS</heading>
-                <blockContainer xml:id="_tblock_4__blockcontainer" leos:editable="true" leos:deletable="false">
-                    <p xml:id="_tblock_4__blockcontainer__p">Not Applicable</p>
+            <tblock>
+                <num>3.</num>
+                <heading>RESULTS OF EX-POST EVALUATIONS, STAKEHOLDER CONSULTATIONS AND IMPACT ASSESSMENTS</heading>
+                <tblock>
+                    <num>•</num>
+                    <heading>Ex-post evaluations/fitness checks of existing legislation</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
+                    </blockContainer>
+                </tblock>
+                <tblock>
+                    <num>•</num>
+                    <heading>Stakeholder consultations</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
+                    </blockContainer>
+                </tblock>
+                <tblock>
+                    <num>•</num>
+                    <heading>Collection and use of expertise</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
+                    </blockContainer>
+                </tblock>
+                <tblock>
+                    <num>•</num>
+                    <heading>Impact assessment</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
+                    </blockContainer>
+                </tblock>
+                <tblock>
+                    <num>•</num>
+                    <heading>Regulatory fitness and simplification</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
+                    </blockContainer>
+                </tblock>
+                <tblock>
+                    <num>•</num>
+                    <heading>Fundamental rights</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
+                    </blockContainer>
+                </tblock>
+            </tblock>
+            <tblock>
+                <num>4.</num>
+                <heading>BUDGETARY IMPLICATIONS</heading>
+                <blockContainer leos:editable="true" leos:deletable="false">
+                    <p>Not Applicable</p>
                 </blockContainer>
             </tblock>
-            <tblock xml:id="_tblock_5">
-                <num xml:id="_tblock_5__num">5.</num>
-                <heading xml:id="_tblock_5__heading">OTHER ELEMENTS</heading>
-                <tblock xml:id="_tblock_5__tblock_1">
-                    <num xml:id="_tblock_5__tblock_1_num">•</num>
-                    <heading xml:id="_tblock_5__tblock_1__heading">Implementation plans and monitoring, evaluation and reporting arrangements</heading>
-                    <blockContainer xml:id="_tblock_5__tblock_1__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_5__tblock_1__blockcontainer__p">Not Applicable</p>
+            <tblock>
+                <num>5.</num>
+                <heading>OTHER ELEMENTS</heading>
+                <tblock>
+                    <num>•</num>
+                    <heading>Implementation plans and monitoring, evaluation and reporting arrangements</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
                     </blockContainer>
                 </tblock>
-                <tblock xml:id="_tblock_5__tblock_2">
-                    <num xml:id="_tblock_5__tblock_2__num">•</num>
-                    <heading xml:id="_tblock_5__tblock_2__heading">Detailed explanation of the specific provisions of the proposal</heading>
-                    <blockContainer xml:id="_tblock_5__tblock_2__blockcontainer" leos:editable="true" leos:deletable="false">
-                        <p xml:id="_tblock_5__tblock_2__blockcontainer__p">Not Applicable</p>
+                <tblock>
+                    <num>•</num>
+                    <heading>Detailed explanation of the specific provisions of the proposal</heading>
+                    <blockContainer leos:editable="true" leos:deletable="false">
+                        <p>Not Applicable</p>
                     </blockContainer>
                 </tblock>
             </tblock>

@@ -30,9 +30,9 @@
                 </FRBRManifestation>
             </identification>
             <references source="~_COM">
-                <TLCOrganization xml:id="_COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCReference xml:id="_ANNEX" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/ANNEX"  showAs="Annex"/>
-                <TLCReference xml:id="_language" name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCReference name="docType" href="http://publications.europa.eu/resource/authority/resource-type/ANNEX"  showAs="Annex"/>
+                <TLCReference name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>3.1.0</leos:templateVersion>
@@ -41,29 +41,29 @@
                 <leos:docTemplate>SG-017</leos:docTemplate>
             </proprietary>
         </meta>
-        <preface xml:id="_preface">
-            <container name="headerOfAnnex" xml:id="_preface__container">
-                <block name="num" xml:id="_preface__container__block__num">ANNEX</block>
-                <block name="heading" xml:id="_preface__container__block__heading"></block>
+        <preface>
+            <container name="headerOfAnnex">
+                <block name="num">ANNEX</block>
+                <block name="heading"></block>
             </container>
         </preface>
-        <mainBody xml:id="_body">
-            <level xml:id="_body_level_1" leos:depth="1">
-                <num xml:id="_body_level_1_num">1.</num>
-                <content xml:id="_body_level_1_content">
-                    <p xml:id="_body_level_1_content_p">Text...</p>
+        <mainBody>
+            <level leos:depth="1">
+                <num>1.</num>
+                <content>
+                    <p>Text...</p>
                 </content>
             </level>
-            <level xml:id="_body_level_1_1" leos:depth="2">
-                <num xml:id="_body_level_1_1_num">1.1.</num>
-                <content xml:id="_body_level_1_1_content">
-                    <p xml:id="_body_level_1_1_content_p">Text...</p>
+            <level leos:depth="2">
+                <num>1.1.</num>
+                <content>
+                    <p>Text...</p>
                 </content>
             </level>
-            <level xml:id="_body_level_2" leos:depth="1">
-                <num xml:id="_body_level_2_num">2.</num>
-                <content xml:id="_body_level_2_content">
-                    <p xml:id="_body_level_2_content_p">Text...</p>
+            <level leos:depth="1">
+                <num>2.</num>
+                <content>
+                    <p>Text...</p>
                 </content>
             </level>
         </mainBody>

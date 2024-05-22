@@ -47,7 +47,28 @@ define(function userGuidanceExtensionModule(require) {
         var connector = this;
         log.debug("User guidance array received..!");
         connector.guidanceArray = JSON.parse(userGuidance);
+        _setDestinationIds(connector.guidanceArray);
         _processGuidance(connector);
+    }
+
+    function _setDestinationIds(userGuidance) {
+        userGuidance.forEach(function(guidance) {
+            guidance.targets.forEach(function (target) {
+                _setDestinationId(target);
+            });
+        });
+    }
+
+    function _setDestinationId(target) {
+        if (!!target.destinationPath) {
+            var xPathResult = document.evaluate(target.destinationPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+            if (!!xPathResult && !!xPathResult.singleNodeValue) {
+                var elt = $(xPathResult.singleNodeValue);
+                if (!!elt && elt.length > 0) {
+                    target.destinationId = elt.attr('id');
+                }
+            }
+        }
     }
 
     function _enableUserGuidance(enable) {
@@ -81,7 +102,7 @@ define(function userGuidanceExtensionModule(require) {
 
     function _injectAtTarget(target, content) {
         var $target = _getTargetObject(target);
-        if($target[0]) {
+        if(!!$target && $target[0]) {
             var before = /BEFORE/i;
             if(before.test(target.position)) {
                 $target.prepend(content);
@@ -91,17 +112,24 @@ define(function userGuidanceExtensionModule(require) {
         }
 
         function _getTargetObject(target) {
-            var wrapper = /((BEFORE)|(AFTER))-WRAPPER/i;
-            if (wrapper.test(target.position)) {
-                var targetObject = $("[data-wrapped-id=" + target.destinationId+ "]");
-                if(targetObject.length === 0) {
-                    // if the above selection is empty we try to find the element by id, e.g we remove the wrappers for some roles.
-                    targetObject = $('#' + target.destinationId);
+            if (!!target.destinationId) {
+                var wrapper = /((BEFORE)|(AFTER))-WRAPPER/i;
+                if (wrapper.test(target.position)) {
+                    var targetObject = $("[data-wrapped-id=" + target.destinationId + "]");
+                    if (targetObject.length === 0) {
+                        // if the above selection is empty we try to find the element by id, e.g we remove the wrappers for some roles.
+                        targetObject = $("#" + target.destinationId);
+                    }
+                    return targetObject;
+                } else {
+                    return $("#" + target.destinationId);
                 }
-                return targetObject;
-            }
-            else{
-                return $('#' + target.destinationId);
+            } else {
+                var xPathResult = document.evaluate(target.destinationPath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+                if (!!xPathResult && !!xPathResult.singleNodeValue) {
+                    return $(xPathResult.singleNodeValue);
+                }
+                return null;
             }
         }
     }

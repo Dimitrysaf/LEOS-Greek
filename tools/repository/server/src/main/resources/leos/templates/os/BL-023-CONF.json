@@ -3,7 +3,7 @@
     {
       "targets": [
         {
-          "destinationId": "_preamble__formula_1__p",
+          "destinationPath": "//preamble/formula[1]/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -12,7 +12,7 @@
     {
       "targets": [
         {
-          "destinationId": "_cit_4",
+          "destinationPath": "//citations/citation[4]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -21,7 +21,7 @@
     {
       "targets": [
         {
-          "destinationId": "_cit_5",
+          "destinationPath": "//citations/citation[5]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -30,7 +30,7 @@
     {
       "targets": [
         {
-          "destinationId": "_recitalsIntro",
+          "destinationPath": "//recitals/intro",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -39,7 +39,7 @@
     {
       "targets": [
         {
-          "destinationId": "_preamble__formula_2__p",
+          "destinationPath": "//preamble/formula[2]/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -48,7 +48,7 @@
     {
       "targets": [
         {
-          "destinationId": "_art_1__heading",
+          "destinationPath": "//article[1]/heading",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -57,7 +57,7 @@
     {
       "targets": [
         {
-          "destinationId": "_art_definitions_heading",
+          "destinationPath": "//article[refertsto='~_ART_DEF']/heading",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -66,7 +66,7 @@
     {
       "targets": [
         {
-          "destinationId": "_art_2__heading",
+          "destinationPath": "//article[2]/heading",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -75,7 +75,7 @@
     {
       "targets": [
         {
-          "destinationId": "_clause_1",
+          "destinationPath": "//clause[1]",
           "position": "AFTER-WRAPPER"
         }
       ],
