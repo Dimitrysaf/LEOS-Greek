@@ -287,6 +287,7 @@ define(function leosIdentityHandler(require) {
         if (element && element.hasAttribute("id")) {
             element.removeAttribute("id");
         }
+        _injectTagIdsInNode(element);
     }
 
     function copyIdentity(sourceElement, destinationElement){
@@ -315,9 +316,51 @@ define(function leosIdentityHandler(require) {
         }
     }
 
+    function _injectTagIdsInNode(element) {
+        let idPrefix = element.$.closest('[id]').getAttribute('id')
+        let tagName = element.getName();
+        if ("meta" === tagName) {// skipping node processing along with children
+            return;
+        }
+
+        let idAttrValue = null;
+        if (!["akomaNtoso", "bill", "documentCollection", "doc", "attachments", "br"].includes(tagName)) {
+            // do not update id for this tag
+            updateNodeWithId(element, idPrefix);
+        }
+    }
+
+    function updateNodeWithId(element, idPrefix) {
+        let idAttrValue = element.getAttribute("id");
+        if (idAttrValue == undefined || idAttrValue.trim().length == 0) {
+            idAttrValue = generateId(idPrefix, 7);
+            element.setAttribute("id", idAttrValue);
+        }
+        return idAttrValue;
+    }
+
+    function generateId(prefix, postfixLength){
+        let sb = "";
+        if(prefix == null || !prefix.startsWith("_")){
+            sb = sb.concat("_");
+        }
+        if(prefix!=null){
+            sb = sb.concat(prefix).concat("_");
+            postfixLength--;
+        }
+        return sb.concat(randomString(postfixLength));
+    }
+
+    function randomString(length) {
+        const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        let result = '';
+        for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+        return result;
+    }
     // return module definition
     return {
         handleIdentity: _handleIdentity,
-        getElementDetails: _getElementDetails
+        getElementDetails: _getElementDetails,
+        injectTagIdsInNode: _injectTagIdsInNode
     };
 });
