@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
@@ -171,7 +173,11 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         return config;
     }
 
-    public String getCollectionBodyComponent(String attributeName, String refersTo) {
-        return String.format("//akn:documentCollection/akn:collectionBody/akn:component[@refersTo='#%s' or @refersTo='#_%s']/akn:documentRef/@%s", refersTo, refersTo, attributeName);
+    public String getCollectionBodyComponent(String attributeName, List<String> refersToList) {
+        List<String> xpathConditions = refersToList.stream().map(value -> "@refersTo='" + value + "'").collect(Collectors.toList());
+        String xpathComponent = "//akn:documentCollection/akn:collectionBody/akn:component[";
+        xpathComponent += String.join(" or ", xpathConditions);
+        xpathComponent += "]/akn:documentRef/@" + attributeName;
+        return xpathComponent;
     }
 }
