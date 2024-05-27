@@ -32,16 +32,12 @@
             <references source="~_COM">
                 <TLCLocation xml:id="_BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
                 <TLCOrganization xml:id="_COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCReference xml:id="_REG" name="docType"
-                              href="http://publications.europa.eu/resource/authority/resource-type/REG"  showAs="Regulation"/>
-                <TLCReference xml:id="_PROP_ACT" name="docType"
-                              href="http://publications.europa.eu/resource/authority/resource-type/PROP_ACT"
-                              showAs="Proposal for an act"/>
+                <TLCReference xml:id="PROP_ACT" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/PROP_ACT" showAs="Proposal for an act"/>
+                <TLCReference xml:id="EXPL_MEMORANDUM" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM" showAs="Explanatory memorandum"/>
+                <TLCReference xml:id="REG" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/REG" showAs="Regulation"/>
                 <TLCReference xml:id="_language" name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
                 <TLCReference xml:id="_procedure_YYYY_NNN" name="procedureReference" href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" showAs="YYYY/NNNN (AAA)" shortForm="YYYY/NNN/AAA"/>
                 <TLCReference xml:id="_azs3y" name="identifier" href="http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER" showAs="AAA(YYYY) NNN" shortForm="AAA/YYYY/NNN"/>
-                <TLCConcept xml:id="_bill" href="/software/leos/bill" showAs="Bill"/>
-                <TLCConcept xml:id="_memorandum" href="/software/leos/memorandum" showAs="Memorandum"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>3.1.0</leos:templateVersion>
@@ -73,10 +69,10 @@
                     <docketNumber refersTo="~_procedure_YYYY_NNN" xml:id="_coverpage__container_procedureIdentifier__p__docketNumber"/>
                 </p>
             </container>
-            <longTitle xml:id="_coverpage__longtitle" refersTo="#_bill">
+            <longTitle xml:id="_coverpage__longtitle" refersTo="~REG">
                 <p xml:id="_coverpage__longtitle__p">
                     <docStage xml:id="_coverpage__longtitle__p__docstage">Proposal for a</docStage>
-                    <docType refersTo="~_REG" xml:id="_coverpage__longtitle__p__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
+                    <docType refersTo="~REG" xml:id="_coverpage__longtitle__p__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
                     <docPurpose xml:id="_coverpage__longtitle__p__docpurpose"  leos:editable="true" leos:deletable="false">on ...</docPurpose>
                 </p>
             </longTitle>
@@ -87,13 +83,6 @@
                 <p xml:id="_coverpage__container_2__p"><inline name="language" refersTo="~_FRBRlanguage" xml:id="_coverpage__container_2__p_inline">EN</inline></p>
             </container>
         </coverPage>
-        <collectionBody xml:id="_body">
-            <component xml:id="_body_cmp_1" refersTo="#_memorandum">
-                <documentRef xml:id="_body_cmp_1__dref_1" href="#" showAs="EXPLANATORY MEMORANDUM"/>
-            </component>
-            <component xml:id="_body_cmp_2" refersTo="#_bill">
-                <documentRef xml:id="_body_cmp_1__dref_2" href="#" showAs="REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL"/>
-            </component>
-        </collectionBody>
+        <collectionBody/>
     </documentCollection>
 </akomaNtoso>

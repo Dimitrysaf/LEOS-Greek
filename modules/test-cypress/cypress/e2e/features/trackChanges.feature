@@ -238,20 +238,20 @@ Feature: Track Changes Feature
       | text     | "agraph."    |
     Then paragraph 7 of article 1 has below content
       | text     | "Seventh"     |
-      | html     | <ins leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="dasatya" id=".*"> qu<del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="jane" id=".*">ery<\/del>ing<\/ins>   |
+      | html     | <ins leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="dasatya" id=".*"> qu<del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">ery<\/del>ing<\/ins>   |
       | text     | " numbered "  |
-      | html     | <ins leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="dasatya" id=".*">reg<del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="jane" id=".*">ist</del>ered </ins> |
+      | html     | <ins leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="dasatya" id=".*">reg<del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">ist</del>ered </ins> |
       | text     | "paragraph."  |
     # Ticket created to fix this issue:
     # https://code.europa.eu/leos/core/-/issues/1725
     # After this issue is fixed, uncomment next test
     # Then paragraph 9 of article 1 has below content
     #   | text  | "Nin"               |
-    #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="jane" id=".*">th </del> |
-    #   | html  | <del leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="dasatya" id=".*">numbered</del> |
-    #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="jane" id=".*"> para</del> |
+    #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">th </del> |
+    #   | html  | <del leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="dasatya" id=".*">numbered</del> |
+    #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*"> para</del> |
     #   | text  | "graph with "        |
-    #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="jane" id=".*">some </del> |
-    #   | html  | <del leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="dasatya" id=".*">more</del> |
-    #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+00:00" leos:uid="jane" id=".*"> tex</del> |
+    #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">some </del> |
+    #   | html  | <del leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="dasatya" id=".*">more</del> |
+    #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*"> tex</del> |
     #   | text  | "t to test."        |

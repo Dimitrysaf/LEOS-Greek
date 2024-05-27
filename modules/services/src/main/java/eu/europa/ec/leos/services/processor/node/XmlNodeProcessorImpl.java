@@ -83,7 +83,8 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
                     node = oldNode;
                 }
             }
-            if (xPath.contains("council_explanatory")) {
+
+            if (xPath.contains("council_explanatory") || ((node == null) && xPath.contains("collectionBody"))) {
                 createComponentNode(document, xPath, config.get(key).attributes, value);
             } else if (node != null && config.get(key).delete && value.isEmpty()) {
                 // Delete the XML element
@@ -156,8 +157,14 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             Deque<String> stack = new ArrayDeque<>();
             for (index = 0; index < nodes.length; index++) {
                 if (!(nodes[index].contains("documentCollection") || nodes[index].contains("collectionBody"))) {
-                    stack.push(nodes[index].replaceAll("//|/", "") // Strip // and /
-                            .replaceAll("@refersTo='#.+' or ", "")); // Strip refersTo first 'or' condition
+                    if (xPath.contains("council_explanatory")) {
+                        stack.push(nodes[index].replaceAll("//|/", "") // Strip // and /
+                                .replaceAll("@refersTo='#.+' or ", "")); // Strip refersTo 'or' conditions
+                    } else {
+                        stack.push(nodes[index].replaceAll("//|/", "") // Strip // and /
+                                .replaceAll("@refersTo='#.+' or ", "") // Strip refersTo 'or' conditions
+                                .replaceAll("@refersTo='.+'", "@refersTo='~" + value.substring(0, value.indexOf("-")) + "'")); // Add doctype based on docRef
+                    }
                 }
             }
 
