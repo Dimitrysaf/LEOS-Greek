@@ -750,17 +750,21 @@ public class MergeContributionService {
                         }
                     }
                 }
-                if (isIns && !found && (prevContent == null || StringUtils.isBlank(prevContent)) && nextContent != null && StringUtils.isNotBlank(nextContent)) {
-                    Node newNode = XercesUtils.createNodeFromXmlFragment(nextNodeParent.getOwnerDocument(), withTrackChanges ?
-                            nodeToString(nodeToBeAddedOrRemoved).getBytes(UTF_8) :
-                            getContentNodeAsXmlFragment(nodeToBeAddedOrRemoved).getBytes(UTF_8));
+                if (isIns && !found && nextNodeParent != null && (prevContent == null || StringUtils.isBlank(prevContent)) && nextContent != null && StringUtils.isNotBlank(nextContent)) {
+                    Node newNode = XercesUtils.createNodeFromXmlFragment(nextNodeParent.getOwnerDocument(),
+                            nodeToString(nodeToBeAddedOrRemoved).getBytes(UTF_8));
                     nextNodeParent.insertBefore(newNode, nextNodeParent.getFirstChild());
+                    if (!withTrackChanges) {
+                        replaceElement(newNode, getContentNodeAsXmlFragment(newNode));
+                    }
                     found = true;
                 }
-                if (isIns && !found && (nextContent == null || StringUtils.isBlank(nextContent))) {
-                    Node newNode = XercesUtils.createNodeFromXmlFragment(previousNodeParent.getOwnerDocument(), withTrackChanges ? nodeToString(nodeToBeAddedOrRemoved).getBytes(UTF_8) :
-                            getContentNodeAsXmlFragment(nodeToBeAddedOrRemoved).getBytes(UTF_8));
+                if (isIns && !found && previousNodeParent!= null && (nextContent == null || StringUtils.isBlank(nextContent))) {
+                    Node newNode = XercesUtils.createNodeFromXmlFragment(previousNodeParent.getOwnerDocument(), nodeToString(nodeToBeAddedOrRemoved).getBytes(UTF_8));
                     previousNodeParent.appendChild(newNode);
+                    if (!withTrackChanges) {
+                        replaceElement(newNode, getContentNodeAsXmlFragment(newNode));
+                    }
                     found = true;
                 }
             }
@@ -955,6 +959,24 @@ public class MergeContributionService {
                     if (strToBeFound.length() > 1 && !StringUtils.isBlank(strToBeFound) && contentToBeUpdated.indexOf(strToBeFound) >= 0) {
                         XercesUtils.replaceElement(nextNodeParent, contentToBeUpdated.replaceFirst(Pattern.quote(strToBeFound),
                                 nextContent));
+                    }
+                }
+                if (previousNodeParent != null && !found) {
+                    String contentToBeUpdated = nodeToString(previousNodeParent);
+                    String contentToCompareTo = getContentNodeAsXmlFragment(previousNodeParent);
+                    String strToBeFound = contentToBeRemoved;
+                    if (StringUtils.countMatches(contentToBeUpdated, strToBeFound) == 1 && StringUtils.countMatches(contentToCompareTo, strToBeFound) == 1) {
+                        XercesUtils.replaceElement(previousNodeParent, contentToBeUpdated.replaceFirst(Pattern.quote(strToBeFound),
+                                ""));
+                    }
+                }
+                if (nextNodeParent != null && !found) {
+                    String contentToBeUpdated = nodeToString(nextNodeParent);
+                    String contentToCompareTo = getContentNodeAsXmlFragment(nextNodeParent);
+                    String strToBeFound = contentToBeRemoved;
+                    if (StringUtils.countMatches(contentToBeUpdated, strToBeFound) == 1 && StringUtils.countMatches(contentToCompareTo, strToBeFound) == 1) {
+                        XercesUtils.replaceElement(nextNodeParent, contentToBeUpdated.replaceFirst(Pattern.quote(strToBeFound),
+                                ""));
                     }
                 }
             }
