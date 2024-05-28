@@ -118,7 +118,7 @@ public class MergeContributionService {
     private final NumberService numberService;
 
     private final int MAX_LENGTH_STR_FOUND = 20;
-    private final int MIN_LENGTH_STR_FOUND = 2;
+    private final int MIN_LENGTH_STR_FOUND = 6;
     private List<String> impactedElements;
     private List<String> mainElements;
     private List<TocItem> tocItemsList;
