@@ -43,7 +43,7 @@ class ckEditorWindow {
     }
 
     moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber, articleNumber) {
-        this.moveCursor(offset, "#_art_" + articleNumber + "__para_" + paragraphNumber);
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.moveCursor(offset, "#"+id));
     }
 
     appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber, child) {
@@ -55,19 +55,19 @@ class ckEditorWindow {
     }
 
     addContentInCitation(newContent, offset, citationNumber) {
-        this.addContent(newContent, offset, "#_cit_" + citationNumber);
+        this.addContent(newContent, offset, "[data-akn-name=citation]");
     }
 
     addContentInRecital(newContent, offset, recitalNumber) {
-        this.addContent(newContent, offset, "#_rec_" + recitalNumber);
+        this.addContent(newContent, offset, "[data-akn-name=recital]");
     }
 
     selectContentInCitation(offsetStart, offsetEnd, citationNumber) {
-        this.selectContent(offsetStart, offsetEnd, "#_cit_" + citationNumber);
+        this.selectContent(offsetStart, offsetEnd, "[data-akn-name=citation]");
     }
 
     selectContentInRecital(offsetStart, offsetEnd, recitalNumber) {
-        this.selectContent(offsetStart, offsetEnd, "#_rec_" + recitalNumber);
+        this.selectContent(offsetStart, offsetEnd, "[data-akn-name=recital]");
     }
 
     selectContentInNumberedParagraphOfArticle(offsetStart, offsetEnd, paragraphNumber) {
