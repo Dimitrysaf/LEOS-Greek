@@ -27,7 +27,7 @@ export class UserGuidanceConnector extends AbstractJavaScriptComponent<UserGuida
 
   requestUserGuidance() {
     this.documentService.requestUserGuidance().subscribe((userGuidance) => {
-      if (userGuidance) {
+      if (userGuidance && this.receiveUserGuidance) {
         this.receiveUserGuidance(
           JSON.stringify(userGuidance),
         );
