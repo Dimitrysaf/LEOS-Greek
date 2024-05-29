@@ -811,27 +811,19 @@ export class DocumentService {
 
   seeUserGuidance() {
     this.userGuidanceVisibleBS.next(!this.userGuidanceVisibleBS.value);
+  }
 
-    if (this.userGuidanceVisibleBS.value) {
-      const documentType =
-        this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-      const documentRef = this.documentRef;
-      return this.http
-        .get<string | null>(
-          `${apiBaseUrl}/secured/${documentType}/${documentRef}/userGuidance`,
-        )
-        .pipe(
-          switchMap((response) => {
-            if (this.userGuidanceVisibleBS.value) {
-              return of(response);
-            } else {
-              return of(null);
-            }
-          }),
-        );
-    } else {
-      return of(null);
-    }
+  resetUserGuidance() {
+    this.userGuidanceVisibleBS.next(false);
+  }
+
+  requestUserGuidance() {
+    const documentType =
+      this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    const documentRef = this.documentRef;
+    return this.http.get<string | null>(
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/userGuidance`,
+    );
   }
 
   fetchTocAndAncestors(elementIds: string[]) {

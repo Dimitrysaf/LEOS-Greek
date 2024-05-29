@@ -3,7 +3,7 @@
     {
       "targets": [
         {
-          "destinationId": "_preamble__formula_1__p",
+          "destinationPath": "//preamble//formula[1]/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -12,7 +12,7 @@
     {
       "targets": [
         {
-          "destinationId": "_cit_4",
+          "destinationPath": "//citations/citation[4]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -21,7 +21,7 @@
     {
       "targets": [
         {
-          "destinationId": "_cit_5",
+          "destinationPath": "//citations/citation[5]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -30,7 +30,7 @@
     {
       "targets": [
         {
-          "destinationId": "_recitalsIntro",
+          "destinationPath": "//recitals/intro",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -39,7 +39,7 @@
     {
       "targets": [
         {
-          "destinationId": "_rec_3",
+          "destinationPath": "//recitals/recital[3]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -48,7 +48,7 @@
     {
       "targets": [
         {
-          "destinationId": "_art_1__heading",
+          "destinationPath": "//article[1]/heading",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -57,7 +57,7 @@
     {
       "targets": [
         {
-          "destinationId": "_art_definitions_heading",
+          "destinationPath": "//article[refertsto='~_ART_DEF']/heading",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -66,7 +66,7 @@
     {
       "targets": [
         {
-          "destinationId": "_art_n1_4CzCN4",
+          "destinationPath": "//article[3]/paragraph[1]/subparagraph[1]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -75,25 +75,7 @@
     {
       "targets": [
         {
-          "destinationId": "_art_n2_iBvBjx",
-          "position": "AFTER-WRAPPER"
-        }
-      ],
-      "content": "<guidance id=\"guidance-art_n2_iBvBjx\" class=\"guidance-green-block\"><span id=\"art_n2_iBvBjx-guidance\">[The time limit for transposition will be as short as possible and, generally, will not exceed two years]</span></guidance>"
-    },
-    {
-      "targets": [
-        {
-          "destinationId": "_art_n2",
-          "position": "AFTER-WRAPPER"
-        }
-      ],
-      "content": "<guidance id=\"guidance-art_n2\" class=\"guidance-green-block\"><span id=\"art_n2-guidance\">[to be used where it is essential that the national provisions be applied from the same date in all Member States]</span></guidance>"
-    },
-    {
-      "targets": [
-        {
-          "destinationId": "_art_n4",
+          "destinationPath": "//article[5]",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -102,7 +84,7 @@
     {
       "targets": [
         {
-          "destinationId": "_art_n3_ZoKQ0d",
+          "destinationPath": "//article[4]/heading",
           "position": "AFTER-WRAPPER"
         }
       ],

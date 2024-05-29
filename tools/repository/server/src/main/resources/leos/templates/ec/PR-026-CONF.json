@@ -3,7 +3,7 @@
     {
       "targets": [
         {
-          "destinationId": "_coverpage__longtitle__p",
+          "destinationPath": "//longtitle/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],

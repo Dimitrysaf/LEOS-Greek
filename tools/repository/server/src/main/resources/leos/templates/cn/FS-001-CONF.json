@@ -3,7 +3,7 @@
     {
       "targets": [
         {
-          "destinationId": "_141__p",
+          "destinationPath": "//level[6]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -12,7 +12,7 @@
     {
       "targets": [
         {
-          "destinationId": "_142__p",
+          "destinationPath": "//level[7]/subparagraph[2]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -21,7 +21,7 @@
     {
       "targets": [
         {
-          "destinationId": "_144__p",
+          "destinationPath": "//level[9]/subparagraph[2]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -30,7 +30,7 @@
     {
       "targets": [
         {
-          "destinationId": "_17__p",
+          "destinationPath": "//level[17]/subparagraph[1]/content/aknp",
           "position": "BEFORE-WRAPPER"
         }
       ],
@@ -39,7 +39,7 @@
     {
       "targets": [
         {
-          "destinationId": "_221__p",
+          "destinationPath": "//level[21]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -48,7 +48,7 @@
     {
       "targets": [
         {
-          "destinationId": "_222__p",
+          "destinationPath": "//level[22]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -57,7 +57,7 @@
     {
       "targets": [
         {
-          "destinationId": "_223__p",
+          "destinationPath": "//level[23]/content/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
