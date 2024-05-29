@@ -28,6 +28,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.validation.ValidationService;
@@ -47,10 +48,11 @@ public class MemorandumServiceProposalImpl extends MemorandumServiceImpl {
                                   XmlContentProcessor xmlContentProcessor,
                                   XmlNodeConfigProcessor xmlNodeConfigProcessor, ValidationService validationService,
                                   DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
-                                  MessageHelper messageHelper, XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
+                                  MessageHelper messageHelper, XPathCatalog xPathCatalog,
+                                  TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
 
         super(memorandumRepository, packageRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor,
-                validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext);
+                validationService, documentVOProvider, tableOfContentProcessor, messageHelper, xPathCatalog, trackChangesContext, documentLanguageContext);
     }
 
     @Override

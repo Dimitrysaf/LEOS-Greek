@@ -26,6 +26,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.slf4j.Logger;
@@ -49,9 +50,10 @@ public class ProposalServiceMandateImpl extends ProposalServiceImpl {
                                       XmlContentProcessor xmlContentProcessor,
                                       XmlNodeConfigProcessor xmlNodeConfigProcessor, PackageRepository packageRepository,
                                       XPathCatalog xPathCatalog, TableOfContentProcessor tableOfContentProcessor,
-                                      MessageHelper messageHelper, TrackChangesContext trackChangesContext) {
+                                      MessageHelper messageHelper, TrackChangesContext trackChangesContext,
+                                      DocumentLanguageContext documentLanguageContext) {
         super(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor, packageRepository,
-                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext);
+                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext);
     }
 
     @Override

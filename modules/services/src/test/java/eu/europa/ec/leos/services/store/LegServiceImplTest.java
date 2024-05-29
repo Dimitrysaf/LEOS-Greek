@@ -188,9 +188,12 @@ public class LegServiceImplTest {
             new XMLContentComparatorServiceImplMandate(messageHelper, textComparator, securityContext, xmlContentProcessor));
 
     @InjectMocks
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
+
+    @InjectMocks
     private ProposalService proposalService = spy(
             new ProposalServiceProposalImpl(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor, packageRepository, xPathCatalog,
-                    tableOfContentProcessor, messageHelper, trackChangesContext));
+                    tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext));
 
     @InjectMocks
     private LegServiceImpl legService;
@@ -199,8 +202,6 @@ public class LegServiceImplTest {
     private ConfigurationRepository configurationRepository;
     protected LanguageMapHolder languageMapHolder;
     protected LanguageGroupService languageGroupService;
-    @InjectMocks
-    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
 
     protected Map<String, List<String>> languageMap = new HashMap<>();
 

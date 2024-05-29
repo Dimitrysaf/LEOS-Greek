@@ -84,6 +84,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -305,6 +306,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private final TemplateConfigurationService templateConfigurationService;
 
     private TrackChangesContext trackChangesContext;
+    private DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     AnnexPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
@@ -322,7 +324,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
                    AttachmentProcessor attachmentProcessor, InstanceTypeResolver instanceTypeResolver, NumberService numberService,
                    MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor,
                    TemplateConfigurationService templateConfigurationService, RepositoryPropertiesMapper repositoryPropertiesMapper,
-                   TrackChangesContext trackChangesContext) {
+                   TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.attachmentProcessor = attachmentProcessor;
         LOG.trace("Initializing annex presenter...");
@@ -361,6 +363,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         this.templateConfigurationService = templateConfigurationService;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.trackChangesContext = trackChangesContext;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -1352,6 +1355,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         String mergeActionKey = "contribution.merge.action.accepted.notification";
         Annex annex = getDocument();
         List<TocItem> tocItemList = getTocITems(annex);
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
         byte[] xmlClonedContent = event.getMergeActionVOS().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(event, annex, xmlClonedContent);
 

@@ -207,6 +207,8 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Add attachment in bill ... [id={}, href={}]", bill.getId(), href);
         Stopwatch stopwatch = Stopwatch.createStarted();
 
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
+
         //Do the xml update
         byte[] xmlBytes = getContent(bill);
         byte[] updatedBytes = attachmentProcessor.addAttachmentInBill(xmlBytes, href, showAs);
@@ -216,7 +218,6 @@ public abstract class BillServiceImpl implements BillService {
 
         LOG.trace("Added attachment in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
-        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
 
@@ -243,6 +244,8 @@ public abstract class BillServiceImpl implements BillService {
         LOG.trace("Update attachments in bill ... [id={}]", bill.getId());
         Stopwatch stopwatch = Stopwatch.createStarted();
 
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
+
         //Do the xml update
         byte[] xmlBytes = getContent(bill);
         byte[] updatedBytes = attachmentProcessor.updateAttachmentsInBill(xmlBytes, attachmentsElements);
@@ -252,7 +255,6 @@ public abstract class BillServiceImpl implements BillService {
 
         LOG.trace("Update attachments in Bill ...({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
         trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
-        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
     
@@ -287,6 +289,7 @@ public abstract class BillServiceImpl implements BillService {
     }
 
     protected byte[] updateDataInXml(final byte[] content, BillMetadata dataObject) {
+        documentLanguageContext.setDocumentLanguage(dataObject.getLanguage());
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
         return xmlContentProcessor.doXMLPostProcessing(updatedBytes);
     }
@@ -313,6 +316,7 @@ public abstract class BillServiceImpl implements BillService {
         byte[] newXmlContent;
         newXmlContent = xmlContentProcessor.createDocumentContentWithNewTocList(tocList, getContent(bill), user, bill.isTrackChangesEnabled());
         String language = bill.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         newXmlContent = numberService.renumberArticles(newXmlContent, true);
         newXmlContent = numberService.renumberRecitals(newXmlContent);
         newXmlContent = numberService.renumberHigherSubDivisions(newXmlContent, tocList);

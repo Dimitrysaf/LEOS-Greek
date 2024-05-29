@@ -34,6 +34,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
@@ -98,6 +99,7 @@ public class BillContextService {
     private String annexTemplate;
     private CollectionIdsAndUrlsHolder idsAndUrlsHolder;
     private final Map<ContextActionService, String> actionMsgMap;
+    private DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     BillContextService(BillService billService,
@@ -109,7 +111,10 @@ public class BillContextService {
                        XmlNodeProcessor xmlNodeProcessor,
                        XmlNodeConfigProcessor xmlNodeConfigProcessor,
                        MessageHelper messageHelper, CollectionUrlBuilder urlBuilder,
-                       Provider<AnnexContextService> annexContextProvider, XPathCatalog xPathCatalog, RepositoryPropertiesMapper repositoryPropertiesMapper) {
+                       Provider<AnnexContextService> annexContextProvider,
+                       XPathCatalog xPathCatalog,
+                       RepositoryPropertiesMapper repositoryPropertiesMapper,
+                       DocumentLanguageContext documentLanguageContext) {
         this.billService = billService;
         this.packageService = packageService;
         this.proposalService = proposalService;
@@ -124,6 +129,7 @@ public class BillContextService {
         this.actionMsgMap = new EnumMap<>(ContextActionService.class);
         this.xPathCatalog = xPathCatalog;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -244,6 +250,7 @@ public class BillContextService {
 
         final String newRef = createRefForBillAndUpdateContext();
         BillMetadata metadata = getBillMetadata();
+        documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
         createRefForAnnexes(metadata);
 
         final String oldRef;

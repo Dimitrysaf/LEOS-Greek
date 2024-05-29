@@ -388,6 +388,7 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     private byte[] updateDataInXml(final byte[] content, FinancialStatementMetadata dataObject) {
+        documentLanguageContext.setDocumentLanguage(dataObject.getLanguage());
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
         return xmlContentProcessor.doXMLPostProcessing(updatedBytes);
     }

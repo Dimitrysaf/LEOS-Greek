@@ -573,6 +573,8 @@ public class BillApiServiceImpl implements BillApiService {
 
         this.setStructureContext(bill.getMetadata().getOrError(() -> BILL_METADATA_IS_REQUIRED).getDocTemplate());
         this.populateCloneProposalMetadata(bill);
+        String language = bill.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         byte[] newXmlContent = billProcessor.updateElement(bill, elementName, elementId, elementFragment);
         if (newXmlContent == null) {
             throw new UnexpectedException("Error updating bill");
@@ -580,7 +582,6 @@ public class BillApiServiceImpl implements BillApiService {
 
         boolean splittedContentIsEmpty = false;
         Element elementToEditAfterClose = null;
-        String language = bill.getMetadata().get().getLanguage();
 
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent, true);
         final String title = messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(elementName));
@@ -633,6 +634,7 @@ public class BillApiServiceImpl implements BillApiService {
                                              String elementId) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
         this.setStructureContext(bill.getMetadata().getOrError(() -> "Bill metadata is required").getDocTemplate());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         Element mergeOnElement = billProcessor.getMergeOnElement(bill, elementContent, elementTag, elementId);
         byte[] updatedXmlContent = null;
         if (mergeOnElement != null) {

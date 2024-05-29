@@ -234,6 +234,7 @@ class AnnexProcessorImpl implements AnnexProcessor {
     public byte[] updateAnnexBlock(Annex annex, String elementId, String tagName, String elementFragment) {
         byte[] updatedContent = null;
         String language = annex.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         if (xmlContentProcessor.needsToBeIndented(elementFragment)) {
             byte[] contentBytes = getContent(annex);
             List<TableOfContentItemVO> toc = tableOfContentProcessor.buildTableOfContent(DOC, contentBytes, TocMode.RAW);
@@ -339,7 +340,8 @@ class AnnexProcessorImpl implements AnnexProcessor {
         Validate.notNull(elementContent, "ElementContent is required.");
         Validate.notNull(elementName, "ElementName is required.");
         Validate.notNull(elementId, "ElementId is required.");
-        
+
+        documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
         final byte[] contentBytes = getContent(document);
         byte[] updatedContent = xmlContentProcessor.mergeElement(contentBytes, elementContent, elementName, elementId);
         if (updatedContent != null) {

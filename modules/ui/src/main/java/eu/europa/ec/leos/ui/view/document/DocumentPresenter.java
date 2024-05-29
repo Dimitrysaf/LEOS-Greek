@@ -84,6 +84,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -295,6 +296,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
     private final List<String> openElementEditors;
 
     private TrackChangesContext trackChangesContext;
+    private DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     DocumentPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
@@ -313,7 +315,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
                       NotificationService notificationService, CloneContext cloneContext, InstanceTypeResolver instanceTypeResolver, XmlContentProcessor xmlContentProcessor,
                       NumberService numberService, MergeContributionHelper mergeContributionHelper, AttachmentProcessor attachmentProcessor,
                       ConfigurationHelper cfgHelper, AnnotateService annotateService, RepositoryPropertiesMapper repositoryPropertiesMapper,
-                      TrackChangesContext trackChangesContext) {
+                      TrackChangesContext trackChangesContext, DocumentLanguageContext documentLanguageContext) {
 
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.contributionService = contributionService;
@@ -353,6 +355,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         this.openElementEditors = new ArrayList<>();
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.trackChangesContext = trackChangesContext;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     private byte[] getContent(Bill bill) {
@@ -763,6 +766,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
             Bill bill = getDocument();
             Element mergeOnElement = billProcessor.getMergeOnElement(bill, elementContent, tagName, elementId);
             if (mergeOnElement != null) {
+                documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
                 byte[] newXmlContent = billProcessor.mergeElement(bill, elementContent, tagName, elementId);
                 bill = billService.updateBill(bill, newXmlContent, messageHelper.getMessage("operation.element.updated", StringUtils.capitalize(tagName)));
                 if (bill != null) {
@@ -1359,7 +1363,7 @@ class DocumentPresenter extends AbstractLeosPresenter {
         byte[] xmlClonedContent = event.getMergeActionVOS().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(event, bill, xmlClonedContent);
         byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(event, bill, tocItemList, intRefMap);
-        String language = bill.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         xmlContent = numberService.renumberArticles(xmlContent, true);
         xmlContent = numberService.renumberRecitals(xmlContent);
         xmlContent = xmlContentProcessor.doXMLPostProcessing(xmlContent);

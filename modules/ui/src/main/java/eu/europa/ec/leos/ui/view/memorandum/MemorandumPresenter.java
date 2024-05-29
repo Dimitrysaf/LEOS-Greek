@@ -64,6 +64,7 @@ import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.user.UserHelper;
@@ -214,6 +215,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
     private final AnnotateService annotateService;
     private final ConfigurationHelper cfgHelper;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
+    private DocumentLanguageContext documentLanguageContext;
 
     private String strDocumentVersionSeriesId;
     private String documentId;
@@ -250,7 +252,8 @@ class MemorandumPresenter extends AbstractLeosPresenter {
                         AnnotateService annotateService,
                         CloneContext cloneContext, ContributionService contributionService, InstanceTypeResolver instanceTypeResolver,
                         AttachmentProcessor attachmentProcessor, ConfigurationHelper cfgHelper,
-                        MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor, RepositoryPropertiesMapper repositoryPropertiesMapper) {
+                        MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor,
+                        RepositoryPropertiesMapper repositoryPropertiesMapper, DocumentLanguageContext documentLanguageContext) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         LOG.trace("Initializing memorandum presenter...");
         this.instanceTypeResolver = instanceTypeResolver;
@@ -283,7 +286,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         this.annotateService = annotateService;
         this.openElementEditors = new ArrayList<>();
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
-
+        this.documentLanguageContext = documentLanguageContext;
     }
     
     @Override
@@ -995,6 +998,7 @@ class MemorandumPresenter extends AbstractLeosPresenter {
         String mergeActionKey = "contribution.merge.action.accepted.notification";
         Memorandum memorandum = getDocument();
         List<TocItem> tocItemList = getTocITems(memorandum);
+        documentLanguageContext.setDocumentLanguage(memorandum.getMetadata().get().getLanguage());
         byte[] xmlClonedContent = event.getMergeActionVOS().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(event, memorandum, xmlClonedContent);
         byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(event, memorandum, tocItemList, intRefMap);

@@ -61,6 +61,7 @@ import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
@@ -223,6 +224,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
     private TransformationService transformationService;
     private final List<String> openElementEditors;
     private final AnnotateService annotateService;
+    private DocumentLanguageContext documentLanguageContext;
 
     private final static DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
 
@@ -246,7 +248,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
             SearchService searchService, CommonDelegate<Proposal> commonDelegate, AnnotateService annotateService,
             CloneContext cloneContext, ContributionService contributionService, InstanceTypeResolver instanceTypeResolver,
             AttachmentProcessor attachmentProcessor, MergeContributionHelper mergeContributionHelper, XmlContentProcessor xmlContentProcessor,
-                       TransformationService transformationService, RepositoryPropertiesMapper repositoryPropertiesMapper) {
+                       TransformationService transformationService, RepositoryPropertiesMapper repositoryPropertiesMapper, DocumentLanguageContext documentLanguageContext) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.instanceTypeResolver = instanceTypeResolver;
         this.attachmentProcessor = attachmentProcessor;
@@ -278,6 +280,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         this.annotateService = annotateService;
         this.openElementEditors = new ArrayList<>();
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -947,6 +950,7 @@ class CoverPagePresenter extends AbstractLeosPresenter {
         String mergeActionKey = "contribution.merge.action.accepted.notification";
         Proposal proposal = getDocument();
         List<TocItem> tocItemList = getTocITems(proposal);
+        documentLanguageContext.setDocumentLanguage(proposal.getMetadata().get().getLanguage());
         byte[] xmlClonedContent = event.getMergeActionVOS().get(0).getContributionVO().getXmlContent();
         List<InternalRefMap> intRefMap = getInternalRefMaps(event, proposal, xmlClonedContent);
         byte[] xmlContent = mergeContributionHelper.updateDocumentWithContributions(event, proposal, tocItemList, intRefMap);

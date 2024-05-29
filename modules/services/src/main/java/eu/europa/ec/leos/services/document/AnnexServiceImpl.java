@@ -267,6 +267,7 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     protected byte[] updateDataInXml(final byte[] content, AnnexMetadata dataObject) {
+        documentLanguageContext.setDocumentLanguage(dataObject.getLanguage());
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()),
                 xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
         return xmlContentProcessor.doXMLPostProcessing(updatedBytes);

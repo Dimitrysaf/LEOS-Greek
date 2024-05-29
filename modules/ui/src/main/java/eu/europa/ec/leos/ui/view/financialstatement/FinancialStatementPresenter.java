@@ -71,6 +71,7 @@ import eu.europa.ec.leos.services.store.ExportPackageService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -243,7 +244,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
     private final TemplateConfigurationService templateConfigurationService;
     private boolean comparisonMode;
     private TrackChangesContext trackChangesContext;
-
+    private DocumentLanguageContext documentLanguageContext;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
 
     protected FinancialStatementPresenter(SecurityContext securityContext, HttpSession httpSession, EventBus eventBus,
@@ -262,7 +263,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
                                           ExportPackageService exportPackageService, NotificationService notificationService,
                                           CloneContext cloneContext, AttachmentProcessor attachmentProcessor,
                                           AnnotateService annotateService, CommonDelegate<FinancialStatement> commonDelegate, TemplateConfigurationService templateConfigurationService, InstanceTypeResolver instanceTypeResolver,
-                                          TrackChangesContext trackChangesContext, RepositoryPropertiesMapper repositoryPropertiesMapper) {
+                                          TrackChangesContext trackChangesContext, RepositoryPropertiesMapper repositoryPropertiesMapper, DocumentLanguageContext documentLanguageContext) {
         super(securityContext, httpSession, eventBus, leosApplicationEventBus, uuidHelper, packageService, workspaceService);
         this.financialStatementScreen = financialStatementScreen;
         this.financialStatementProcessor = financialStatementProcessor;
@@ -297,6 +298,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         this.instanceTypeResolver = instanceTypeResolver;
         this.trackChangesContext = trackChangesContext;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -608,6 +610,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
         try {
             FinancialStatement financialStatement = getDocument();
+            documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
             byte[] updatedXmlContent = elementProcessor.updateElement(financialStatement, elementContent, elementTagName, elementId, true);
             updatedXmlContent = xmlContentProcessor.doXMLPostProcessing(updatedXmlContent);
             if (updatedXmlContent == null) {
@@ -694,6 +697,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
 
             FinancialStatement financialStatement = getDocument();
             byte[] xmlContent = financialStatement.getContent().get().getSource().getBytes();
+            documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
             Element mergeOnElement = xmlContentProcessor.getMergeOnElement(xmlContent, elementContent, tagName, elementId, true);
             if (mergeOnElement != null) {
                 byte[] newXmlContent =  financialStatementProcessor.mergeElement(financialStatement, elementContent, tagName, elementId);
@@ -722,6 +726,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         Stopwatch stopwatch = Stopwatch.createStarted();
         String tagName = event.getElementTagName();
         FinancialStatement financialStatement = getDocument();
+        documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
         byte[] updatedXmlContent = financialStatementProcessor.insertNewElement(financialStatement, event.getElementId(),
                 tagName, InsertElementRequestEvent.POSITION.BEFORE.equals(event.getPosition()));
 
@@ -772,6 +777,7 @@ public class FinancialStatementPresenter extends AbstractLeosPresenter {
         try {
             Stopwatch stopwatch = Stopwatch.createStarted();
             FinancialStatement financialStatement = getDocument();
+            documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
             String tagName = event.getElementTagName();
             byte[] updatedXmlContent = financialStatementProcessor.deleteElement(financialStatement, event.getElementId(),
                     tagName);
