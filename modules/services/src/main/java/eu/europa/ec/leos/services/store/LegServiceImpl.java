@@ -1391,6 +1391,10 @@ public class LegServiceImpl implements LegService {
             if (exportOptions.isWithFeedbackAnnotations()) {
                 String annotations = getAnnotationsFromZipContent(contentToZip, docName);
                 String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
+
+                LOG.debug("Feedbacks found in DB: " + feedbackAnnotations);
+                LOG.debug("Feedbacks found in LEG: " + annotations);
+
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
                 annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
