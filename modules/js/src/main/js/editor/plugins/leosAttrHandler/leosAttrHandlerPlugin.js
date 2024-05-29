@@ -41,6 +41,24 @@ define(function leosAttrHandlerPluginModule(require) {
                     }
                 }
             }, null, null, 9);
+
+            editor.on("change", function(event) {
+                if (event.editor.checkDirty()) {
+                    var editor = event.editor;
+                    if(editor.editable && editor.editable().getChildren && editor.editable().getChildren().count() > 0){
+                        event.editor.fire( 'lockSnapshot' );
+                        let children = editor.editable().getChildren();
+                        for (let i = 0; i < children.count(); i++) {
+                            let child = children.getItem(i)
+                            if(child.$.nodeType === Node.ELEMENT_NODE){
+                                identityHandler.injectTagIdsInNode(child,
+                                    child.getId() ? child.getId(): child.getName());
+                            }
+                        }
+                        event.editor.fire( 'unlockSnapshot' );
+                    }
+                }
+            });
         }
     };
 
