@@ -23,6 +23,7 @@ define(function aknLevelSubParagraphPluginModule(require) {
     var leosKeyHandler = require("plugins/leosKeyHandler/leosKeyHandler");
     var renumberModule = require("plugins/leosNumber/listItemNumberModule");
     var leosPluginUtils = require("plugins/leosPluginUtils");
+    var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
 
     var LOG = require("logger");
     var ENTER_KEY = 13;
@@ -67,6 +68,13 @@ define(function aknLevelSubParagraphPluginModule(require) {
         // If we are in the first level paragraph and content is empty, it should be stopped
         // If content is not empty but the cursor is at the first character, it should NOT be stopped. LEOS-2831.
         if (leosKeyHandler.isContentEmptyTextNode(startElement) && isFirstLevelLiSelected(context)) {
+            var e = context.event;
+            if (!e.editor.LEOS.isTrackChangesEnabled && e.data.cancelIdentityHandler === undefined) {
+                var element = selection.getStartElement();
+                if (element) {
+                    identityHandler.injectTagIdsInNode(element);
+                }
+            }
             context.event.cancel();
         }
     }
