@@ -109,6 +109,7 @@ fortify-sast:
     - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
       when: always
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
+      when: never
 
 sonatype-lifecycle:
   rules:
@@ -121,6 +122,7 @@ sonatype-lifecycle:
     - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
       when: always
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
+      when: never
 
 prep-sec-scan:
   rules:
@@ -133,6 +135,7 @@ prep-sec-scan:
     - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
       when: always
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
+      when: never
 
 fortify-import-issues-ssc:
   rules:
@@ -145,3 +148,4 @@ fortify-import-issues-ssc:
     - if: $CI_PIPELINE_SOURCE == "schedule" || $CI_PIPELINE_SOURCE == "web"
       when: always
     - if: $CI_PIPELINE_SOURCE == "merge_request_event" && $CI_MERGE_REQUEST_TITLE !~ /^Draft.*$/
+      when: never
