@@ -1856,11 +1856,14 @@ public class LegServiceImpl implements LegService {
 
         Iterator<JsonNode> itrFeedback = rowsNodeFeedback.elements();
         List<JsonNode> filteredList = new ArrayList<JsonNode>();
-        itrFeedback.forEachRemaining(node -> {
+        for (int i = 0; i < rowsNodeFeedback.size(); i++) {
+            JsonNode node = rowsNodeFeedback.get(i);
             if(!isPresent(rowsNode, node)) {
                 filteredList.add(node);
+            } else {
+                LOG.debug("Didn't add " + node.findValue("id").textValue() + " in annotations");
             }
-        });
+        }
 
         LOG.debug("Added " + filteredList.size() + " feedback annotations from DB");
         rowsNode.addAll(filteredList);
