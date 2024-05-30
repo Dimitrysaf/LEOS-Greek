@@ -20,15 +20,14 @@ import eu.europa.ec.leos.repository.entities.ConfigContent;
 import eu.europa.ec.leos.repository.entities.Document;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
-import eu.europa.ec.leos.repository.entities.DocumentCategories;
 import eu.europa.ec.leos.repository.entities.DocumentMilestone;
 import eu.europa.ec.leos.repository.entities.DocumentPropertyValues;
 import eu.europa.ec.leos.repository.entities.DocumentV;
 import eu.europa.ec.leos.repository.entities.MilestoneV;
 import eu.europa.ec.leos.repository.model.Collaborator;
 import eu.europa.ec.leos.repository.model.LeosDocument;
+import eu.europa.ec.leos.repository.model.LinkedPackage;
 import eu.europa.ec.leos.repository.model.Package;
-import eu.europa.ec.leos.repository.repositories.DocumentCategoriesRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentContentRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneListRepository;
 import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
@@ -246,6 +245,14 @@ public class ConversionUtils {
         } else {
             return null;
         }
+    }
+
+    public static List<LinkedPackage> buildLinkedPackage(List<eu.europa.ec.leos.repository.entities.LinkedPackage> linkedPackages) {
+        List<LinkedPackage> linkedPackageList = new ArrayList<>();
+        if (linkedPackages != null) {
+            linkedPackages.forEach(linkedPackage -> linkedPackageList.add(new LinkedPackage(linkedPackage)));
+        }
+        return linkedPackageList;
     }
 
     public static LocalDateTime convertToLocalDateTimeViaInstant(Date dateToConvert) {

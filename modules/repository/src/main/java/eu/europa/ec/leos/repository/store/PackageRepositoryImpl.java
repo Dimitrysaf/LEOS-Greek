@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.store;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
@@ -102,6 +103,18 @@ public class PackageRepositoryImpl implements PackageRepository {
     public LeosPackage findPackageByPackageId(String packageId) {
         logger.debug("Finding Package by package ID... [packageId=" + packageId + "]");
         return leosRepository.findPackageByPackageId(packageId);
+    }
+
+    @Override
+    public List<LinkedPackage> findLinkedPackageByPackageId(String pkgId) {
+        logger.debug("Finding linked Package by package ID... [packageId=" + pkgId + "]");
+        return leosRepository.findLinkedPackageByPkgId(pkgId);
+    }
+
+    @Override
+    public LinkedPackage findLinkedPackageByLinkedPackageId(String linkedPkgId) {
+        logger.debug("Finding linked Package by linked package ID... [linkedPackageId=" + linkedPkgId + "]");
+        return leosRepository.findLinkedPackageByLinkedPkgId(linkedPkgId);
     }
 
     @Override

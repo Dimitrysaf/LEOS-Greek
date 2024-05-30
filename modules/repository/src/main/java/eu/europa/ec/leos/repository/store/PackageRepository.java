@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.store;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
@@ -111,7 +112,6 @@ public interface PackageRepository {
      */
     LeosPackage findPackageByDocumentId(String documentId);
 
-
     /**
      * Finds a [LeosPackage] with the specified characteristics.
      *
@@ -119,6 +119,22 @@ public interface PackageRepository {
      * @return the found package.
      */
     LeosPackage findPackageByPackageId(String packageId);
+
+    /**
+     * Finds a [LinkedPackage] with the specified characteristics.
+     *
+     * @param pkgId the ID of the package.
+     * @return the found package.
+     */
+    List<LinkedPackage> findLinkedPackageByPackageId(String pkgId);
+
+    /**
+     * Finds a [LinkedPackage] with the specified characteristics.
+     *
+     * @param linkedPkgId the ID of the package.
+     * @return the found linked package.
+     */
+    LinkedPackage findLinkedPackageByLinkedPackageId(String linkedPkgId);
 
     /**
      * Finds a [LeosPackage] with the specified characteristics.

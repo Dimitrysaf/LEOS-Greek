@@ -190,7 +190,7 @@ public abstract class CollectionContext {
                 .build();
 
         Validate.notNull(propDocument.getSource(), "Proposal xml is required!");
-        proposal = proposalService.createProposalFromContent(leosPackage.getPath(), metadata, propDocument.getSource());
+        proposal = proposalService.createProposalFromContent(leosPackage.getPath(), metadata, propDocument, false);
 
         // create child element
         for (DocumentVO docChild : propDocument.getChildDocuments()) {

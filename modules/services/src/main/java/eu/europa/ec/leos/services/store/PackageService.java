@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.store;
 
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
@@ -32,6 +33,12 @@ public interface PackageService {
     void deletePackage(LeosPackage leosPackage);
 
     LeosPackage findPackageByDocumentId(String documentId);
+
+    LeosPackage findPackageByPackageId(String packageId);
+
+    List<LinkedPackage> findLinkedPackagesByPackageId(String pkgId);
+
+    LinkedPackage findLinkedPackageByLinkedPkgId(String linkedPkgId);
 
     <T extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends T> type);
 

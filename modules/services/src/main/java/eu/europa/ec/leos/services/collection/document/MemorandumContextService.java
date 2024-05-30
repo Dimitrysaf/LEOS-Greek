@@ -24,6 +24,7 @@ import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.services.document.MemorandumService;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -68,6 +69,8 @@ public class MemorandumContextService {
     private DocumentVO memoDocument;
 
     private final Map<ContextActionService, String> actionMsgMap;
+    private String language;
+    private boolean translated;
 
     @Autowired
     MemorandumContextService(MemorandumService memorandumService, XmlNodeProcessor xmlNodeProcessor,
@@ -189,6 +192,7 @@ public class MemorandumContextService {
         Validate.isTrue(metadataOption.isDefined(), MEMORANDUM_METADATA_IS_REQUIRED);
 
         String ref = createRefForMemorandum();
+
         MemorandumMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
@@ -196,6 +200,7 @@ public class MemorandumContextService {
                 .withTemplate(template)
                 .withRef(ref)
                 .withEeaRelevance(eeaRelevance)
+                .withLanguage(language)
                 .build();
 
         Validate.notNull(memoDocument.getSource(), "Memorandum xml is required!");
@@ -217,11 +222,18 @@ public class MemorandumContextService {
         Validate.notNull(memoDocument.getSource(), "Memorandum xml is required!");
         Validate.isTrue(memorandum.getMetadata().isDefined(), MEMORANDUM_METADATA_IS_REQUIRED);
 
-        final String ref = memorandumService.generateMemorandumReference(memorandum.getContent().get().getSource().getBytes(), memorandum.getMetadata().get().getLanguage());
+        String docLanguage = language != null ? language : memoDocument.getLanguage();
+        String ref;
+        if(translated) {
+            ref = LanguageMapUtils.generateTranslatedProposalReference(memoDocument.getRef(), docLanguage);
+        } else {
+            ref = memorandumService.generateMemorandumReference(memorandum.getContent().get().getSource().getBytes(), docLanguage);
+        }
         final MemorandumMetadata updatedMemorandumMetadata = memorandum.getMetadata().get()
                 .builder()
                 .withPurpose(purpose)
                 .withRef(ref)
+                .withLanguage(language)
                 .build();
 
         memoDocument.setName(ref + XML_DOC_EXT);
@@ -253,5 +265,13 @@ public class MemorandumContextService {
     private byte[] getContent(Memorandum memorandum) {
         final Content content = memorandum.getContent().getOrError(() -> "Memorandum content is required!");
         return content.getSource().getBytes();
+    }
+
+    public void useLanguage(String language) {
+        this.language = language;
+    }
+
+    public void useTranslated(boolean translated) {
+        this.translated = translated;
     }
 }

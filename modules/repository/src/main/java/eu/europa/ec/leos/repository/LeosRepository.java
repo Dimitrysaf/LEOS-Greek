@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
@@ -385,6 +386,10 @@ public interface LeosRepository {
     Object createFolder(String path, String name);
 
     Object findFolderByPath(String path);
+
+    List<eu.europa.ec.leos.domain.repository.LinkedPackage> findLinkedPackageByPkgId(String pkgId);
+
+    LinkedPackage findLinkedPackageByLinkedPkgId(String linkedPkgId);
 
     <D extends LeosDocument> List<D> searchVersions(Class<? extends D> type, String docRef, List<String> logins, String versionType);
 

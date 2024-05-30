@@ -73,6 +73,7 @@ public class AnnexContextService {
     private boolean eeaRelevance;
     private boolean cloneProposal = false;
     private String originRef;
+    private String language;
 
     public AnnexContextService(
             TemplateService templateService,
@@ -225,6 +226,7 @@ public class AnnexContextService {
                 .builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
+                .withLanguage(language)
                 .build();
         if (cloneProposal) {
             CloneDocumentMetadataVO cloneDocumentMetadataVO = new CloneDocumentMetadataVO(annexDocument.getRef(), originRef);
@@ -321,5 +323,9 @@ public class AnnexContextService {
 
     public void useOriginRef(String originRef) {
         this.originRef = originRef;
+    }
+
+    public void useLanguage(String language) {
+        this.language = language;
     }
 }

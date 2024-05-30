@@ -16,6 +16,7 @@ import eu.europa.ec.leos.services.document.SecurityService;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.TemplateService;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -65,6 +66,8 @@ public class FinancialStatementContextService {
     private boolean eeaRelevance;
     private boolean cloneProposal = false;
     private String originRef;
+    private String language;
+    private boolean translated;
 
     public FinancialStatementContextService(TemplateService templateService, FinancialStatementService financialStatementService,
             ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
@@ -215,6 +218,7 @@ public class FinancialStatementContextService {
                 .withTemplate(template)
                 .withTitle(title)
                 .withRef(ref)
+                .withLanguage(language)
                 .withEeaRelevance(eeaRelevance)
                 .build();
 
@@ -234,12 +238,18 @@ public class FinancialStatementContextService {
     }
 
     private String createRefForFS() {
-        final String ref = financialStatementService.generateFinancialStatementReference(financialStatement.getContent().get().getSource().getBytes(),
-                financialStatement.getMetadata().get().getLanguage());
+        String docLanguage = language != null ? language : financialStatementDocument.getLanguage();
+        String ref;
+        if(translated) {
+            ref = LanguageMapUtils.generateTranslatedProposalReference(financialStatementDocument.getRef(), docLanguage);
+        } else {
+            ref = financialStatementService.generateFinancialStatementReference(financialStatement.getContent().get().getSource().getBytes(), docLanguage);
+        }
         final FinancialStatementMetadata updatedFSMetadata = financialStatement.getMetadata().get()
                 .builder()
                 .withPurpose(purpose)
                 .withRef(ref)
+                .withLanguage(language)
                 .build();
 
         financialStatementDocument.setName(ref + XML_DOC_EXT);
@@ -331,4 +341,11 @@ public class FinancialStatementContextService {
         this.originRef = originRef;
     }
 
+    public void useLanguage(String language) {
+        this.language = language;
+    }
+
+    public void useTranslated(boolean translated) {
+        this.translated = translated;
+    }
 }

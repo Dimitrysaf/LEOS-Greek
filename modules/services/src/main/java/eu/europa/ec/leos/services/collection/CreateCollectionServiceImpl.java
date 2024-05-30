@@ -77,13 +77,27 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         this.cloneContext = cloneContext;
     }
 
-    private DocumentVO createDocumentVOFromLegfile(File legDocument) throws XmlValidationException{
+    @Override
+    public DocumentVO createDocumentVOFromLegfile(File legDocument) throws XmlValidationException {
         Validate.notNull(legDocument, "Leg document is required");
         DocumentVO propDocument = proposalConverterService.createProposalFromLegFile(legDocument, new DocumentVO(PROPOSAL),
                 true);
 
         CollectionContextService context = proposalContextProvider.get();
         context.useTemplate(propDocument.getMetadata().getDocTemplate());
+        return propDocument;
+    }
+
+    @Override
+    public DocumentVO getProposalDocumentFromLeg(File legDocument) throws CreateCollectionException {
+        DocumentVO propDocument;
+        try {
+            propDocument = createDocumentVOFromLegfile(legDocument);
+        } catch (XmlValidationException e) {
+            LOG.error("Xml validation error occurred while creating proposal from leg file: {}", e);
+            CreateCollectionError error = new CreateCollectionError(e.getErrorCode().ordinal(), e.getMessage());
+            throw new CreateCollectionException(error.getMessage());
+        }
         return propDocument;
     }
 
@@ -131,16 +145,8 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public CreateCollectionResult createCollectionFromLeg(File legDocument, String originProposalRef, String language, boolean isTranslated) {
+    public CreateCollectionResult createCollectionFromLeg(File legDocument, DocumentVO propDocument, String language, boolean isTranslated) {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
-        DocumentVO propDocument;
-        try {
-            propDocument = createDocumentVOFromLegfile(legDocument);
-        } catch (XmlValidationException e) {
-            LOG.error("Xml validation error occurred while creating proposal from leg file: {}", e);
-            CreateCollectionError error = new CreateCollectionError(e.getErrorCode().ordinal(), e.getMessage());
-            return new CreateCollectionResult(idsAndUrlsHolder, false, error);
-        }
 
         CollectionContextService context = proposalContextProvider.get();
         context.useDocument(propDocument);
@@ -148,7 +154,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         context.useCloneProposal(false);
         context.useLanguage(language);
         context.useTranslated(isTranslated);
-        context.useOriginRef(originProposalRef);
+        context.useOriginRef(propDocument.getRef());
         addTemplateInContext(context, propDocument);
         postProcessingDocumentService.processDocument(propDocument);
         Proposal proposal = context.executeImportProposal();
@@ -241,13 +247,13 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     @Override
     public Result<?> updateOriginalProposalAfterRevisionDone(String cloneProposalRef, String cloneLegFileName) {
         CloneProposalMetadataVO cloneProposalMetadataVO = cloneContext.getCloneProposalMetadataVO();
-        if(cloneProposalMetadataVO == null) {
+        if (cloneProposalMetadataVO == null) {
             cloneProposalMetadataVO = new CloneProposalMetadataVO();
         }
         cloneProposalMetadataVO.setRevisionStatus(messageHelper.getMessage("clone.proposal.status.contribution.done"));
         Result<?> result = contributionService.updateContributionStatusAfterContributionDone(cloneProposalRef,
                 cloneLegFileName, cloneProposalMetadataVO);
-        if(result.isOk()) {
+        if (result.isOk()) {
             Proposal updatedProposal = (Proposal) ((Pair) result.get()).left();
             String proposalUrl = urlBuilder.buildProposalViewUrl(updatedProposal.getMetadata().get().getRef());
             try {
