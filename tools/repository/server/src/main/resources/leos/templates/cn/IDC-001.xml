@@ -16,7 +16,7 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="9999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage xml:id="_FRBRlanguage" language="en"/>
+                    <FRBRlanguage language="en"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -29,18 +29,18 @@
                 </FRBRManifestation>
             </identification>
             <references source="~_CONSIL">
-                <TLCLocation xml:id="_BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
-                <TLCOrganization xml:id="_CONSIL" href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union"/>
-                <TLCOrganization xml:id="_EP" href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament"/>
-                <TLCOrganization xml:id="_COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCRole xml:id="_PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
-                <TLCReference xml:id="_legalBasis" name="contentSubject" href="http://eurovoc.europa.eu/5456" showAs="Legal basis"/>
-                <TLCReference xml:id="_language" name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
-                <TLCReference xml:id="_leos" href="/software/leos" showAs="EC DIGIT LEOS PILOT" name="software"/>
-                <TLCReference xml:id="_procedure_YYYY_NNN" name="procedureReference" href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" showAs="YYYY/NNNN (AAA)" shortForm="YYYY/NNN/AAA"/>
-                <TLCReference xml:id="_azs3y" name="identifier" href="http://publications.europa.eu/resource/authority/identifier/COMnumber" showAs="AAA(YYYY) NNN" shortForm="AAA/YYYY/NNN"/>
-                <TLCReference xml:id="_INTERNAL_DOC_CONSIL" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/INTERNAL_DOC_CONSIL" showAs="Council internal document"/>
-                <TLCConcept xml:id="_council_explanatory" href="/software/leos/council_explanatory" showAs="Council Explanatory"/>
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
+                <TLCReference name="contentSubject" href="http://eurovoc.europa.eu/5456" showAs="Legal basis"/>
+                <TLCReference name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
+                <TLCReference href="/software/leos" showAs="EC DIGIT LEOS PILOT" name="software"/>
+                <TLCReference name="procedureReference" href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" showAs="YYYY/NNNN (AAA)" shortForm="YYYY/NNN/AAA"/>
+                <TLCReference name="identifier" href="http://publications.europa.eu/resource/authority/identifier/COMnumber" showAs="AAA(YYYY) NNN" shortForm="AAA/YYYY/NNN"/>
+                <TLCReference name="docType" href="http://publications.europa.eu/resource/authority/resource-type/INTERNAL_DOC_CONSIL" showAs="Council internal document"/>
+                <TLCConcept href="/software/leos/council_explanatory" showAs="Council Explanatory"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>3.0.0</leos:templateVersion>
@@ -55,11 +55,11 @@
                     <inline name="language" refersTo="~_FRBRlanguage">EN</inline>
                 </p>
             </container>
-            <longTitle xml:id="_coverpage__longtitle" refersTo="#_council_explanatory">
-                <p xml:id="_coverpage__longtitle__p">
-                    <docStage xml:id="_coverpage__longtitle__p__docstage">Council/GSC</docStage>
-                    <docType refersTo="~_DEC" xml:id="_coverpage__longtitle__p__doctype">draft</docType>
-                    <docPurpose xml:id="_coverpage__longtitle__p__docpurpose"  leos:editable="true" leos:deletable="false">on ...</docPurpose>
+            <longTitle refersTo="#_council_explanatory">
+                <p>
+                    <docStage>Council/GSC</docStage>
+                    <docType refersTo="~_DEC">draft</docType>
+                    <docPurpose  leos:editable="true" leos:deletable="false">on ...</docPurpose>
                 </p>
             </longTitle>
         </coverPage>

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import eu.europa.ec.leos.repository.interfaces.PackagesRecentlyChanged;
 import eu.europa.ec.leos.repository.interfaces.PackagesFavorites;
+import eu.europa.ec.leos.repository.model.LinkedPackage;
 
 public interface PackageService {
     eu.europa.ec.leos.repository.model.Package createPackage(final String name, final Boolean isCloned, final String clonedPackageName
@@ -33,6 +34,10 @@ public interface PackageService {
     eu.europa.ec.leos.repository.model.Package getPackageByName(final String name) throws RepositoryException;
 
     eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException;
+
+    List<LinkedPackage> getLinkedPackagesByPkgId(final String pkgId) throws RepositoryException;
+
+    List<LinkedPackage> getLinkedPackagesByLinkedPkgId(final String linkedPkgId) throws RepositoryException;
 
     List<LeosDocument> findDocumentsByPackageName(final String packageName, final Set<String> categories,
                                                   final boolean descendants, boolean fetchContent) throws RepositoryException;

@@ -17,6 +17,7 @@ import eu.europa.ec.leos.cmis.extensions.CmisDocumentExtensions;
 import eu.europa.ec.leos.cmis.extensions.CmisFolderExtensions;
 import eu.europa.ec.leos.cmis.extensions.LeosMetadataExtensions;
 import eu.europa.ec.leos.domain.common.RepositoryProfileType;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.LeosMapper;
@@ -856,6 +857,16 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     @Override
     public Folder findFolderByPath(String path) {
         return repository.findFolderByPath(path);
+    }
+
+    @Override
+    public List<LinkedPackage> findLinkedPackageByPkgId(String pkgId) {
+        return null;
+    }
+
+    @Override
+    public LinkedPackage findLinkedPackageByLinkedPkgId(String linkedPkgId) {
+        return null;
     }
 
     @Override

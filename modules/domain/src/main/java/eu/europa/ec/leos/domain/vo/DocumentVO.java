@@ -52,6 +52,7 @@ public class DocumentVO {
     private MetadataVO metadata = new MetadataVO();
     private String name;
     private LeosMetadata metadataDocument;
+    private List<DocumentVO> translatedProposals;
 
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private Boolean favourite;
@@ -463,4 +464,11 @@ public class DocumentVO {
         this.favourite = favourite;
     }
 
+    public List<DocumentVO> getTranslatedProposals() {
+        return translatedProposals;
+    }
+
+    public void setTranslatedProposal(List<DocumentVO> translatedProposals) {
+        this.translatedProposals = translatedProposals;
+    }
 }

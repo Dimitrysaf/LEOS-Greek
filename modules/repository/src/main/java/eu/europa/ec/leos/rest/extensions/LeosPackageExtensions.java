@@ -14,12 +14,17 @@
 package eu.europa.ec.leos.rest.extensions;
 
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.rest.support.model.Package;
 
 public class LeosPackageExtensions {
 
     public static LeosPackage toLeosPackage(Package pkg) {
         String[] pathNames = pkg.getName().split("/");
-        return new LeosPackage(pkg.getId(), pathNames[pathNames.length - 1], pkg.getName());
+        return new LeosPackage(pkg.getId(), pathNames[pathNames.length - 1], pkg.getName(), pkg.getLanguage(), pkg.getTranslated());
+    }
+
+    public static LinkedPackage toLinkedPackage(eu.europa.ec.leos.rest.support.model.LinkedPackage pkg) {
+        return new LinkedPackage(pkg.getId(), pkg.getPackageId(), pkg.getLinkedPackageId());
     }
 }

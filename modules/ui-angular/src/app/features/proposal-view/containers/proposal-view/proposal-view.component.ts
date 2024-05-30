@@ -1,13 +1,13 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import {
-  AfterViewChecked,
+  AfterViewChecked, ChangeDetectorRef,
   Component,
   OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { EuiTabsComponent } from '@eui/components/eui-tabs';
+import { ActivatedRoute, Router } from '@angular/router';
+import {EuiTabComponent, EuiTabsComponent} from '@eui/components/eui-tabs';
 import { EuiBreadcrumbService } from '@eui/components/layout';
 import { UxAppShellService } from '@eui/core';
 import { Document } from '@leos/shared';
@@ -38,18 +38,23 @@ export class ProposalViewComponent
   @ViewChild('tabs') tabs: EuiTabsComponent;
   milestoneTabSelected = false;
   legFileName: string = null;
+  translatedDocs: Document[];
+  tabsContext: any;
 
   protected readonly homeUrl = document.baseURI;
 
   private destroy$ = new Subject<void>();
+  public activeTabIndex = 0;
 
   constructor(
     public asService: UxAppShellService,
     private route: ActivatedRoute,
+    private router: Router,
     private proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
     private documentService: DocumentService,
     public breadcrumbService: EuiBreadcrumbService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -77,9 +82,35 @@ export class ProposalViewComponent
           this.documentService.setIsClonedProposal(this.isClonedProposal);
           this.originRef = proposal.cloneProposalMetadataVO?.originRef ?? null;
           this.setStateDone(proposal);
+          this.translatedDocs = proposal.translatedProposals;
+
+          this.setActiveTabIndex();
+
+          this.tabsContext = {
+            proposal: this.proposal,
+            proposalState: this.proposalState,
+            proposalRef: this.proposalRef,
+            legFileName: this.legFileName
+          };
+          // Manually trigger change detection
+          this.cdr.detectChanges();
         },
         error: (error) => this.setStateError(error),
       });
+  }
+
+  private setActiveTabIndex() {
+    if (this.translatedDocs?.length > 0) {
+      if (this.proposalRef === this.proposal.ref) {
+        this.activeTabIndex = 0;
+      } else {
+        this.translatedDocs.forEach((doc, index) => {
+          if (this.proposalRef === doc.ref) {
+            this.activeTabIndex = index + 1;
+          }
+        });
+      }
+    }
   }
 
   ngAfterViewChecked(): void {
@@ -175,5 +206,14 @@ export class ProposalViewComponent
         link: null,
       },
     ]);
+  }
+
+  onTabSelect(event: { tab: EuiTabComponent; index: number }) {
+    if(event.index === 0) {
+      this.router.navigate([`collection/${this.proposal.ref}`]);
+    } else {
+      this.router.navigate([`collection/${this.translatedDocs[event.index - 1].ref}`]);
+    }
+    this.activeTabIndex = event.index;
   }
 }

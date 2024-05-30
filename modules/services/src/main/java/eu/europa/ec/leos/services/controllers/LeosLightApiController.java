@@ -169,12 +169,11 @@ public class LeosLightApiController {
 
     @RequestMapping(value = "/secured/editlight/importProposal", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> importProposal(@RequestParam("legFile") MultipartFile file, @RequestParam("origProposalRef") String origProposalRef, @RequestParam("translatedLang") String translatedLang) {
+    public ResponseEntity<Object> importProposal(@RequestParam("legFile") MultipartFile file, @RequestParam("translatedLang") String translatedLang) {
         try {
             validatePath(file.getOriginalFilename());
             String languageCode = encodeParam(translatedLang);
-            origProposalRef = encodeParam(origProposalRef);
-            Pair<Object, Object> result = leosLightApiService.importProposal(file, origProposalRef, languageCode);
+            Pair<Object, Object> result = leosLightApiService.importProposal(file, languageCode);
             if(result.right() == HttpStatus.OK) {
                 return new ResponseEntity<>(result.left(), HttpStatus.OK);
             } else {

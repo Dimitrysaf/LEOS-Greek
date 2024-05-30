@@ -23,8 +23,11 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import static org.springframework.util.StringUtils.hasLength;
@@ -65,6 +68,8 @@ class JwtTokenService implements TokenService {
     @Value("${leos.api.jwt.auth.clients}")
     private String authClients;
     private List<AuthClient> registeredClients = new ArrayList<>();
+    private List<String> listAccessTokens = Collections.synchronizedList(new ArrayList<>());
+    private Map<String, String> accessTokenSessionMap = Collections.synchronizedMap(new HashMap<>());
     
     @Autowired
     @Qualifier("applicationProperties")
@@ -122,16 +127,18 @@ class JwtTokenService implements TokenService {
      */
     @Override
     public String getAccessToken(String user) {
-        final Date now = Calendar.getInstance().getTime();
-        return generateToken(leosApiId, null, null, now, now, accessTokenExpirationInMin,
-                leosApiSecret, user, null, null);
+        return createAccessToken(user, leosApiId, accessTokenExpirationInMin, leosApiSecret);
     }
 
     @Override
     public String getNgAccessToken(String user) {
+        return createAccessToken(user, ngClientId, NG_TOKEN_EXPIRE_IN_MIN, ngClientSecret);
+    }
+
+    private String createAccessToken(String user, String clientId, int tokenExpireInMin, String clientSecret) {
         final Date now = Calendar.getInstance().getTime();
-        return generateToken(ngClientId, null, null, now, now, NG_TOKEN_EXPIRE_IN_MIN,
-                ngClientSecret, user, null, null);
+        return generateToken(clientId, null, null, now, now, tokenExpireInMin,
+                clientSecret, user, null, null);
     }
 
     @Override
@@ -160,6 +167,7 @@ class JwtTokenService implements TokenService {
             Calendar expires = Calendar.getInstance();
             expires.add(Calendar.MINUTE, expireInMin);
             Date expiresAt = expires.getTime();
+            boolean isTokenWithUser = false;
 
             Algorithm algorithm = Algorithm.HMAC256(secret);
 
@@ -171,15 +179,15 @@ class JwtTokenService implements TokenService {
                     .withNotBefore(notBefore)
                     .withExpiresAt(expiresAt);
 
-            if(hasLength(user)){
+            if (hasLength(user)) {
                 builder.withClaim("user", user);
             }
 
-            if(hasLength(role)){
+            if (hasLength(role)) {
                 builder.withClaim("role", role);
             }
 
-            if(hasLength(systemName)) {
+            if (hasLength(systemName)) {
                 builder.withClaim("systemName", systemName);
             }
 
@@ -297,6 +305,36 @@ class JwtTokenService implements TokenService {
             return domain.startsWith("www.") ? domain.substring(4) : domain;
         } catch (URISyntaxException ue) {
             return url;
+        }
+    }
+
+    public List<String> getAccessTokenList() {
+        return listAccessTokens;
+    }
+
+    public void setAccessTokenInList(String token) {
+        listAccessTokens.add(token);
+    }
+
+    public void cleanAccessTokenInList() {
+        synchronized (listAccessTokens) {
+            listAccessTokens.clear();
+        }
+    }
+
+    public Map<String, String> getAccessTokenSessionMap() {
+        return accessTokenSessionMap;
+    }
+
+    public void setAccessTokenMap(String token, String jSessionId) {
+        if (jSessionId != null) {
+            accessTokenSessionMap.put(token, jSessionId);
+        }
+    }
+
+    public void cleanAccessTokenSessionMap() {
+        synchronized (accessTokenSessionMap) {
+            accessTokenSessionMap.clear();
         }
     }
 }

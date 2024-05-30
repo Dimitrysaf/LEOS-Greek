@@ -30,10 +30,10 @@
                 </FRBRManifestation>
             </identification>
             <references source="~_COM">
-                <TLCOrganization xml:id="_COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCRole xml:id="_PRESID" href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
-                <TLCReference xml:id="_ANNEX" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/ANNEX"  showAs="Annex"/>
-                <TLCReference xml:id="_language" name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
+                <TLCReference name="docType" href="http://publications.europa.eu/resource/authority/resource-type/ANNEX"  showAs="Annex"/>
+                <TLCReference name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>3.1.0</leos:templateVersion>
@@ -42,21 +42,21 @@
                 <leos:docTemplate>SG-018</leos:docTemplate>
             </proprietary>
         </meta>
-        <preface xml:id="_preface">
-            <container name="headerOfAnnex" xml:id="_preface__container">
-                <block name="num" xml:id="_preface__container__block__num">ANNEX</block>
-                <block name="heading" xml:id="_preface__container__block__heading"></block>
+        <preface>
+            <container name="headerOfAnnex">
+                <block name="num">ANNEX</block>
+                <block name="heading"></block>
             </container>
         </preface>
-        <mainBody xml:id="_body">
-            <article xml:id="_art_1" leos:editable="true"
+        <mainBody>
+            <article leos:editable="true"
                      leos:deletable="true">
-                <num xml:id="_art_1__num" leos:editable="false">Article 1</num>
-                <heading xml:id="_art_1__heading">Article 1 heading</heading>
-                <paragraph xml:id="_art_1__para_1">
-                    <num xml:id="_art_1__para_1__num">1.</num>
-                    <content xml:id="_art_1__para_1__content">
-                        <p xml:id="_art_1__para_1__content__p">Text...</p>
+                <num leos:editable="false">Article 1</num>
+                <heading>Article 1 heading</heading>
+                <paragraph>
+                    <num>1.</num>
+                    <content>
+                        <p>Text...</p>
                     </content>
                 </paragraph>
             </article>

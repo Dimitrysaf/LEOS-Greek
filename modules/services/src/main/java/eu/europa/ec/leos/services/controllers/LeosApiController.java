@@ -121,6 +121,7 @@ public class LeosApiController {
     private static final String BEARER_PARAMETER = "assertion";
     private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
     private static final String AUTHORIZATION = "Authorization";
+    private static final String JSESSIONID = "JSESSIONID";
 
     @Value("${leos.api.jwt.auth.access.token.expire.min}")
     private String accessTokenExpirationInMin;
@@ -156,22 +157,25 @@ public class LeosApiController {
         final String contextPath = request.getContextPath();
         final String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
         final String grantType = request.getHeader(GRANT_TYPE);
+        final Cookie jSessionIdCookie = request.getCookies() != null ? Arrays.stream(request.getCookies())
+                .filter(cookie -> JSESSIONID.equals(cookie.getName()))
+                .findAny().orElse(null) : null;
         if (!StringUtils.isEmpty(grantType) && grantType.contains(BEARER_GRANT_TYPE)) {
             String token = request.getHeader(BEARER_PARAMETER);
-            return validateAndGenerateAccessToken(token, clientContextToken, response, contextPath);
+            return validateAndGenerateAccessToken(token, clientContextToken, response, contextPath, jSessionIdCookie);
         } else {
             Cookie authorizationCookie = Arrays.stream(request.getCookies())
                     .filter(cookie -> AUTHORIZATION.equals(cookie.getName()))
                     .findAny().orElse(null);
             if (authorizationCookie != null) {
-                return validateAndGenerateAccessToken(authorizationCookie.getValue(), clientContextToken, response, contextPath);
+                return validateAndGenerateAccessToken(authorizationCookie.getValue(), clientContextToken, response, contextPath, jSessionIdCookie);
             }
             LOG.warn("Authorization failed! Wrong headers: '{}' is missing or no authorization cookie is found.", GRANT_TYPE);
         }
         return new ResponseEntity<>("Wrong headers!", HttpStatus.BAD_REQUEST);
     }
 
-    private ResponseEntity<Object> validateAndGenerateAccessToken(String token, String clientContextToken, HttpServletResponse response, String contextPath) {
+    private ResponseEntity<Object> validateAndGenerateAccessToken(String token, String clientContextToken, HttpServletResponse response, String contextPath, Cookie jSessionId) {
         AuthClient authClient = tokenService.validateClientByJwtToken(token);
         if (authClient.isVerified()) {
             LOG.debug("Client '{}' correctly validated with jwt-bearer token provided", authClient.getName());
@@ -189,7 +193,9 @@ public class LeosApiController {
 
             int accessTokenExpirationInMinInt = getAccessTokenExpirationInMinInt();
             long expiresInMilliSec = System.currentTimeMillis() + accessTokenExpirationInMinInt * 60 * 1000;
-            JsonTokenReponse jsonToken = new JsonTokenReponse(tokenService.getAccessToken(user), "jwt", expiresInMilliSec, null, null);
+            String accessToken = tokenService.getAccessToken(user);
+            JsonTokenReponse jsonToken = new JsonTokenReponse(accessToken, "jwt", expiresInMilliSec, null, null);
+            tokenService.setAccessTokenMap(accessToken, jSessionId != null ? jSessionId.getValue() : null);
             LOG.debug("Created accessToken for the Client '{}", authClient.getName());
             return new ResponseEntity<>(jsonToken, HttpStatus.OK);
         } else {
@@ -427,8 +433,8 @@ public class LeosApiController {
                 LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                 return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            createCollectionResult = createCollectionService.createCollectionFromLeg(content, null, "EN", false);
+            DocumentVO propDocument = createCollectionService.getProposalDocumentFromLeg(content);
+            createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, "EN", false);
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
         } catch (Exception ex) {
             LOG.error("Error Occurred while creating collection from the Leg file: " + ex.getMessage(), ex);

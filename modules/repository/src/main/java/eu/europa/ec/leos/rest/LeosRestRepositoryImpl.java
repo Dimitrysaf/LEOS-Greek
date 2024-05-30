@@ -39,6 +39,8 @@ import eu.europa.ec.leos.rest.extensions.LeosDocumentExtensions;
 import eu.europa.ec.leos.rest.extensions.LeosMetadataExtensions;
 import eu.europa.ec.leos.rest.extensions.LeosPackageExtensions;
 import eu.europa.ec.leos.rest.support.model.LeosDocumentList;
+import eu.europa.ec.leos.rest.support.model.LinkedPackage;
+import eu.europa.ec.leos.rest.support.model.LinkedPackageList;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.rest.support.util.ConversionUtils;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
@@ -746,6 +748,16 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         return leosDocuments;
     }
 
+    private List<eu.europa.ec.leos.domain.repository.LinkedPackage> toLinkedPackages(List<LinkedPackage> pkgs) {
+        List<eu.europa.ec.leos.domain.repository.LinkedPackage> linkedPackageList = emptyList();
+        if (pkgs != null) {
+            linkedPackageList = pkgs.stream()
+                    .map(pkg -> LeosPackageExtensions.toLinkedPackage(pkg))
+                    .collect(toList());
+        }
+        return linkedPackageList;
+    }
+
     @Override
     @PerformanceLogger
     public <D extends LeosDocument> Stream<D> findPagedDocumentsByParentPath(String path, Class<? extends D> type, boolean descendants, boolean fetchContent,
@@ -978,6 +990,28 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     @Cacheable(value = "restRepositoryFolderCache", key = "#path", condition = "#root.target.cacheEnabled")
     public Object findFolderByPath(String path) {
         return repository.findPackageByName(extractPackageNameFromPath(path));
+    }
+
+    @Override
+    @PerformanceLogger
+    @Cacheable(value = "restRepositoryFolderCache", key = "#path", condition = "#root.target.cacheEnabled")
+    public List<eu.europa.ec.leos.domain.repository.LinkedPackage> findLinkedPackageByPkgId(String pkgId) {
+        LinkedPackageList linkedPackageList = repository.findLinkedPackageByPkgId(pkgId);
+        if (linkedPackageList != null) {
+            return toLinkedPackages(linkedPackageList.getLinkedPackageList());
+        }
+        throw new IllegalStateException("Unable to read Package! [packageId=" + pkgId + ']');
+    }
+
+    @Override
+    @PerformanceLogger
+    @Cacheable(value = "restRepositoryFolderCache", key = "#path", condition = "#root.target.cacheEnabled")
+    public eu.europa.ec.leos.domain.repository.LinkedPackage findLinkedPackageByLinkedPkgId(String linkedPkgId) {
+        LinkedPackageList linkedPackageList = repository.findLinkedPackageByLinkedPkgId(linkedPkgId);
+        if (linkedPackageList != null) {
+            return LeosPackageExtensions.toLinkedPackage(linkedPackageList.getLinkedPackageList().get(0));
+        }
+        throw new IllegalStateException("Unable to read Package! [linkedPackageId=" + linkedPkgId + ']');
     }
 
     private String extractPackageNameFromPath(String path) {

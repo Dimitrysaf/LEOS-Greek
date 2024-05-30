@@ -24,11 +24,11 @@
       [originRef]="originRef"
     ></app-proposal-header>
 
-    <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs>
+    <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs *ngIf="!translatedDocs || translatedDocs.length === 0">
       <eui-tab>
         <eui-tab-label>{{
           'page.collection.tabs.drafts' | translate
-        }}</eui-tab-label>
+          }}</eui-tab-label>
         <eui-tab-content>
           <app-proposal-drafts
             [proposal]="proposal"
@@ -40,7 +40,7 @@
       <eui-tab>
         <eui-tab-label>{{
           'page.collection.tabs.milestones' | translate
-        }}</eui-tab-label>
+          }}</eui-tab-label>
         <eui-tab-content>
           <app-proposal-milestones
             [proposal]="proposal"
@@ -60,7 +60,7 @@
       <eui-tab>
         <eui-tab-label>{{
           'page.collection.tabs.collaborators' | translate
-        }}</eui-tab-label>
+          }}</eui-tab-label>
         <eui-tab-content>
           <app-proposal-collaborators></app-proposal-collaborators>
         </eui-tab-content>
@@ -68,12 +68,134 @@
       <eui-tab>
         <eui-tab-label>{{
           'page.collection.tabs.details' | translate
-        }}</eui-tab-label>
+          }}</eui-tab-label>
         <eui-tab-content>
           <app-proposal-details
             [proposal]="proposal"
             (eeaRelevanceChanged)="onSaveEEA($event)"
           ></app-proposal-details>
+        </eui-tab-content>
+      </eui-tab>
+    </eui-tabs>
+
+    <!-- Translation tabs -->
+    <eui-tabs class="eui-u-display-block eui-u-mt-l" [activeTabIndex]="activeTabIndex" *ngIf="translatedDocs?.length > 0" #translationsTabs (tabSelect)="onTabSelect($event)">
+      <!-- Original lang tab -->
+      <eui-tab>
+        <eui-tab-label>{{proposal.language}}</eui-tab-label>
+        <eui-tab-content>
+          <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs>
+            <eui-tab>
+              <eui-tab-label>{{
+                'page.collection.tabs.drafts' | translate
+                }}</eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-drafts
+                  [proposal]="proposal"
+                  [proposalState]="this.proposalState"
+                  (proposalStateChange)="updateStateLoading($event)"
+                ></app-proposal-drafts>
+              </eui-tab-content>
+            </eui-tab>
+            <eui-tab>
+              <eui-tab-label>{{
+                'page.collection.tabs.milestones' | translate
+                }}</eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-milestones
+                  [proposal]="proposal"
+                  [proposalRef]="proposalRef"
+                  [legFileName]="legFileName"
+                ></app-proposal-milestones>
+              </eui-tab-content>
+            </eui-tab>
+            <eui-tab *appShowOnInstance="['cn']">
+              <eui-tab-label>
+                {{ 'page.collection.tabs.e-consilium' | translate }}
+              </eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-exports [proposal]="proposal"></app-proposal-exports>
+              </eui-tab-content>
+            </eui-tab>
+            <eui-tab>
+              <eui-tab-label>{{
+                'page.collection.tabs.collaborators' | translate
+                }}</eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-collaborators></app-proposal-collaborators>
+              </eui-tab-content>
+            </eui-tab>
+            <eui-tab>
+              <eui-tab-label>{{
+                'page.collection.tabs.details' | translate
+                }}</eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-details
+                  [proposal]="proposal"
+                  (eeaRelevanceChanged)="onSaveEEA($event)"
+                ></app-proposal-details>
+              </eui-tab-content>
+            </eui-tab>
+          </eui-tabs>
+        </eui-tab-content>
+      </eui-tab>
+      <!-- translated lang tabs -->
+      <eui-tab *ngFor="let doc of translatedDocs">
+        <eui-tab-label>{{doc.language}}</eui-tab-label>
+        <eui-tab-content>
+          <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs>
+            <eui-tab>
+              <eui-tab-label>{{
+                'page.collection.tabs.drafts' | translate
+                }}</eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-drafts
+                  [proposal]="doc"
+                  [proposalState]="this.proposalState"
+                  (proposalStateChange)="updateStateLoading($event)"
+                ></app-proposal-drafts>
+              </eui-tab-content>
+            </eui-tab>
+            <eui-tab>
+              <eui-tab-label>{{
+                'page.collection.tabs.milestones' | translate
+                }}</eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-milestones
+                  [proposal]="doc"
+                  [proposalRef]="doc.ref"
+                  [legFileName]="legFileName"
+                ></app-proposal-milestones>
+              </eui-tab-content>
+            </eui-tab>
+            <eui-tab *appShowOnInstance="['cn']">
+              <eui-tab-label>
+                {{ 'page.collection.tabs.e-consilium' | translate }}
+              </eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-exports [proposal]="doc"></app-proposal-exports>
+              </eui-tab-content>
+            </eui-tab>
+            <eui-tab>
+              <eui-tab-label>{{
+                'page.collection.tabs.collaborators' | translate
+                }}</eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-collaborators></app-proposal-collaborators>
+              </eui-tab-content>
+            </eui-tab>
+            <eui-tab>
+              <eui-tab-label>{{
+                'page.collection.tabs.details' | translate
+                }}</eui-tab-label>
+              <eui-tab-content>
+                <app-proposal-details
+                  [proposal]="doc"
+                  (eeaRelevanceChanged)="onSaveEEA($event)"
+                ></app-proposal-details>
+              </eui-tab-content>
+            </eui-tab>
+          </eui-tabs>
         </eui-tab-content>
       </eui-tab>
     </eui-tabs>

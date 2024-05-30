@@ -17,12 +17,15 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -30,6 +33,7 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
     private static final Logger LOG = LoggerFactory.getLogger(LeosApiAuthenticationFilter.class);
     private static final String AUTHORIZATION = "Authorization";
     private static final String LIGHT_BEARER_PARAMETER = "Client-Context";
+    private static final String JSESSIONID = "JSESSIONID";
     private TokenService tokenService;
     private SecurityUserProvider securityUserProvider;
     
@@ -48,41 +52,27 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
         String userLogin;
         User user;
 
-        if (request.getHeader(AUTHORIZATION) == null || !request.getHeader(AUTHORIZATION).startsWith("Bearer ")
-                || request.getHeader(AUTHORIZATION).startsWith("Bearer undefined")) {
-            LOG.warn("Authorization failed! Wrong headers: '{}' is missing or contains a wrong value", AUTHORIZATION);
-            throw new LeosApiAuthenticationException("Authorization failed! Wrong headers: " +
-                    "Authorization is missing or contains a wrong value");
-        }
+        //fetch token from header
+        token =  request.getHeader(AUTHORIZATION).substring(7);
 
-        token = request.getHeader(AUTHORIZATION).substring(7);
+        //validate auth headers of request
+        validateAuthorizationHeaders(request);
 
-        if (!tokenService.validateAccessToken(token)) {
-            LOG.warn("Authorization failed! Wrong access token");
-            try {
-                String claims = JWT.decode(token).getClaims().entrySet().stream()
-                        .map(e -> e.getKey() + ": " + e.getValue().asString())
-                        .collect(Collectors.joining(","));
-                LOG.warn("Token details:\n" +
-                                "Method: {}\n" +
-                                "Path: {}\n" +
-                                "Claims: {}",
-                        request.getMethod(),
-                        request.getContextPath() + request.getServletPath() + request.getPathInfo(),
-                        claims
-                );
-            } catch (Exception e) {
-            }
-            throw new LeosApiAuthenticationException("Authorization failed! Wrong access token");
-        }
+        //authorize request with session id
+        authorizeWithSessionId(request, token);
 
+        //validate token
+        validateToken(request, token);
+
+        //extract user
         userLogin = tokenService.extractUserFromToken(token);
 
-        if(StringUtils.isEmpty(userLogin)) {
-            authRequest = new JwtAuthenticationToken();
-            authRequest.setAuthenticated(true);
-            return getAuthenticationManager().authenticate(authRequest);
+        //authenticate with loggedin user
+        Authentication authentication = validateTokenWithUser(token, userLogin);
+        if(authentication != null) {
+            return authentication;
         }
+
 
         String contextToken = request.getHeader(LIGHT_BEARER_PARAMETER);
         String contextRole = null;
@@ -107,6 +97,66 @@ public class LeosApiAuthenticationFilter extends AbstractAuthenticationProcessin
         preAuthRequest = new PreAuthenticatedAuthenticationToken(user,"", getAuthorities(user, contextRole));
         preAuthRequest.setAuthenticated(true);
         return getAuthenticationManager().authenticate(preAuthRequest);
+    }
+
+    private Authentication validateTokenWithUser(String token, String userLogin) {
+        JwtAuthenticationToken authRequest;
+        if (StringUtils.isEmpty(userLogin)) {
+            List<String> listAccessTokens = tokenService.getAccessTokenList();
+            if (!listAccessTokens.isEmpty() && listAccessTokens.contains(token)) {
+                throw new LeosApiAuthenticationException("Unauthorized token!");
+            } else {
+                tokenService.setAccessTokenInList(token);
+            }
+            authRequest = new JwtAuthenticationToken();
+            authRequest.setAuthenticated(true);
+            return getAuthenticationManager().authenticate(authRequest);
+        }
+        return null;
+    }
+
+    private void validateToken(HttpServletRequest request, String token) {
+        if (!tokenService.validateAccessToken(token)) {
+            LOG.warn("Authorization failed! Wrong access token");
+            try {
+                String claims = JWT.decode(token).getClaims().entrySet().stream()
+                        .map(e -> e.getKey() + ": " + e.getValue().asString())
+                        .collect(Collectors.joining(","));
+                LOG.warn("Token details:\n" +
+                                "Method: {}\n" +
+                                "Path: {}\n" +
+                                "Claims: {}",
+                        request.getMethod(),
+                        request.getContextPath() + request.getServletPath() + request.getPathInfo(),
+                        claims
+                );
+            } catch (Exception e) {
+            }
+            throw new LeosApiAuthenticationException("Authorization failed! Wrong access token");
+        }
+    }
+
+    private void authorizeWithSessionId(HttpServletRequest request, String token) {
+        Map<String, String> accessTokenMap = tokenService.getAccessTokenSessionMap();
+        String sessionId = accessTokenMap != null ? accessTokenMap.get(token) : null;
+        if (sessionId != null) {
+            Cookie[] cookieArray = request.getCookies();
+            Cookie sessionIdCookie = cookieArray != null ? Arrays.stream(request.getCookies())
+                    .filter(cookie -> JSESSIONID.equals(cookie.getName()))
+                    .findAny().orElse(null) : null;
+            if (sessionIdCookie == null || !sessionId.equals(sessionIdCookie.getValue())) {
+                throw new LeosApiAuthenticationException("Unauthorized token!");
+            }
+        }
+    }
+
+    private void validateAuthorizationHeaders(HttpServletRequest request) {
+        if (request.getHeader(AUTHORIZATION) == null || !request.getHeader(AUTHORIZATION).startsWith("Bearer ")
+                || request.getHeader(AUTHORIZATION).startsWith("Bearer undefined")) {
+            LOG.warn("Authorization failed! Wrong headers: '{}' is missing or contains a wrong value", AUTHORIZATION);
+            throw new LeosApiAuthenticationException("Authorization failed! Wrong headers: " +
+                    "Authorization is missing or contains a wrong value");
+        }
     }
 
     @Override

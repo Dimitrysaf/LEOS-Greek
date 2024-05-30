@@ -1,6 +1,5 @@
 package eu.europa.ec.leos.rest.support.model;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;

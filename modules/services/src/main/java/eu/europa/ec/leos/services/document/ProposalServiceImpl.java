@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.document;
 
 import com.google.common.base.Stopwatch;
 import cool.graph.cuid.Cuid;
+import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
@@ -22,8 +23,8 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
@@ -68,6 +69,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_STATUS;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_TARGET_USER;
 import static eu.europa.ec.leos.services.support.XmlHelper.COVERPAGE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.utils.LanguageMapUtils.generateTranslatedProposalReference;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.getLeosDateFromString;
 
@@ -547,15 +549,21 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public Proposal createProposalFromContent(String path, ProposalMetadata metadata, byte[] content) {
+    public Proposal createProposalFromContent(String path, ProposalMetadata metadata, DocumentVO proposalDocument,
+            Boolean translated) {
         LOG.trace("Creating Proposal From Content... [path={}, metadata={}]", path, metadata);
         documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
-        String ref = generateProposalReference(metadata.getLanguage());
+        String ref;
+        if(translated) {
+            ref = generateTranslatedProposalReference(proposalDocument.getRef(), metadata.getLanguage());
+        } else {
+            ref = generateProposalReference(metadata.getLanguage());
+        }
         metadata = metadata
                 .builder()
                 .withRef(ref)
                 .build();
-        Proposal proposal = proposalRepository.createProposalFromContent(path, ref + XML_DOC_EXT, metadata, updateDataInXml(content, metadata));
+        Proposal proposal = proposalRepository.createProposalFromContent(path, ref + XML_DOC_EXT, metadata, updateDataInXml(proposalDocument.getSource(), metadata));
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
     }

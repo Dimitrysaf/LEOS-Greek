@@ -3,7 +3,7 @@
     {
       "targets": [
         {
-          "destinationId": "_preface__container__block__num",
+          "destinationPath": "//preface/container/block[1]",
           "position": "AFTER-WRAPPER"
         }
       ],

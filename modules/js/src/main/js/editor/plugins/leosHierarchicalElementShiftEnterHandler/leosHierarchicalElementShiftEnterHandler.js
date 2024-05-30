@@ -22,6 +22,7 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
     var pluginName = "leosHierarchicalElementShiftEnterHandler";
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var UTILS = require("core/leosUtils");
+    var identityHandler = require("plugins/leosAttrHandler/leosIdentityHandlerModule");
 
     var LOG = require("logger");
     var SHIFT_ENTER = CKEDITOR.SHIFT + 13;
@@ -205,7 +206,8 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         contentAfterShiftEnter.insertAfter(wrappingP);
         // make selection at the beginning of the new subparagraph
         leosPluginUtils.setFocus(contentAfterShiftEnter, editor);
-
+        identityHandler.injectTagIdsInNode(wrappingP);
+        identityHandler.injectTagIdsInNode(contentAfterShiftEnter);
         editor.fire("handleTrackTraceForEnterCreated");
 
         editor.fire("change");

@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.store;
 import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
@@ -85,6 +86,21 @@ class PackageServiceImpl implements PackageService {
     @Override
     public <T extends LeosDocument> LeosPackage findPackageByDocumentRef(String documentRef, Class<? extends T> type) {
         return packageRepository.findPackageByDocumentRef(documentRef, type);
+    }
+
+    @Override
+    public LeosPackage findPackageByPackageId(String packageId) {
+        return packageRepository.findPackageByPackageId(packageId);
+    }
+
+    @Override
+    public List<LinkedPackage> findLinkedPackagesByPackageId(String pkgId) {
+        return packageRepository.findLinkedPackageByPackageId(pkgId);
+    }
+
+    @Override
+    public LinkedPackage findLinkedPackageByLinkedPkgId(String linkedPkgId) {
+        return packageRepository.findLinkedPackageByLinkedPackageId(linkedPkgId);
     }
 
     @Override
