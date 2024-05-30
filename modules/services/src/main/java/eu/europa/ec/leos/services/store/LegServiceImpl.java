@@ -1859,8 +1859,6 @@ public class LegServiceImpl implements LegService {
         itrFeedback.forEachRemaining((node) -> {
             if(!isPresent(rowsNode, node)) {
                 filteredList.add(node);
-            } else {
-                LOG.debug("Didn't add " + node.findValue("id").textValue() + " in annotations");
             }
         });
 
