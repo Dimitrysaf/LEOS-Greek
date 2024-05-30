@@ -20,6 +20,7 @@ import eu.europa.ec.leos.test.support.LeosTest;
 import eu.europa.ec.leos.test.support.model.ModelHelper;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.junit.Before;
 import org.mockito.InjectMocks;
@@ -124,10 +125,15 @@ public abstract class XmlContentProcessorTest extends LeosTest {
         tocItemSection = StructureConfigUtils.getTocItemByName(tocItems, SECTION);
         tocItemTitle = StructureConfigUtils.getTocItemByName(tocItems, TITLE);
 
+        RefConfig refConfig = new RefConfig();
+        refConfig.setLanguage("en");
+        refConfig.setInternalRef(true);
+
         when(structureContextProvider.get()).thenReturn(structureContext);
         when(structureContext.getTocItems()).thenReturn(tocItems);
         when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
         when(structureContext.getTocRules()).thenReturn(tocRules);
+        when(structureContext.getRefConfigs()).thenReturn(Arrays.asList(refConfig));
 
         List<Entity> entities = new ArrayList<Entity>();
         entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));

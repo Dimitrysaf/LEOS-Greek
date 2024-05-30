@@ -29,6 +29,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -64,6 +65,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     protected final MessageHelper messageHelper;
     protected final XPathCatalog xPathCatalog;
     protected final TrackChangesContext trackChangesContext;
+    protected DocumentLanguageContext documentLanguageContext;
 
     @Autowired
     MemorandumServiceImpl(MemorandumRepository memorandumRepository,
@@ -72,7 +74,8 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
                           XmlContentProcessor xmlContentProcessor,
                           XmlNodeConfigProcessor xmlNodeConfigProcessor, ValidationService validationService,
                           DocumentVOProvider documentVOProvider, TableOfContentProcessor tableOfContentProcessor,
-                          MessageHelper messageHelper, XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext) {
+                          MessageHelper messageHelper, XPathCatalog xPathCatalog, TrackChangesContext trackChangesContext,
+                          DocumentLanguageContext documentLanguageContext) {
         this.memorandumRepository = memorandumRepository;
         this.packageRepository = packageRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
@@ -84,6 +87,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         this.messageHelper = messageHelper;
         this.xPathCatalog = xPathCatalog;
         this.trackChangesContext = trackChangesContext;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -202,6 +206,7 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
     }
 
     protected byte[] updateDataInXml(final byte[] content, MemorandumMetadata dataObject) {
+        documentLanguageContext.setDocumentLanguage(dataObject.getLanguage());
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(content, createValueMap(dataObject), xmlNodeConfigProcessor.getConfig(dataObject.getCategory()));
         return xmlContentProcessor.doXMLPostProcessing(updatedBytes);
     }

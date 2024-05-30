@@ -89,7 +89,7 @@ public class BillProcessorImpl implements BillProcessor {
         byte[] updatedContent;
         List<TocItem> items = structureContextProvider.get().getTocItems();
         String language = document.getMetadata().get().getLanguage();
-
+        documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
         switch (tagName) {
             case CITATION:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, CITATION), messageHelper);
@@ -157,6 +157,7 @@ public class BillProcessorImpl implements BillProcessor {
     public byte[] renumberDocument(Bill document, String language) {
         Validate.notNull(document, "Document is required.");
         byte[] updatedContent = getContent(document);
+        documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
         updatedContent = xmlContentProcessor.prepareForRenumber(updatedContent);
         updatedContent = numberService.renumberRecitals(updatedContent);
         updatedContent = numberService.renumberArticles(updatedContent);
@@ -174,7 +175,7 @@ public class BillProcessorImpl implements BillProcessor {
         List<TocItem> items = structureContextProvider.get().getTocItems();
         final byte[] contentBytes = getContent(document);
         String language = document.getMetadata().get().getLanguage();
-
+        documentLanguageContext.setDocumentLanguage(language);
         switch (tagName) {
             case CITATION:
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, content, tagName, elementId, before, document.isTrackChangesEnabled());
@@ -234,6 +235,7 @@ public class BillProcessorImpl implements BillProcessor {
         Validate.notNull(elementId, "Element id is required.");
         byte[] updatedContent;
         String language = document.getMetadata().get().getLanguage();
+        documentLanguageContext.setDocumentLanguage(language);
         switch (tagName) {
             case CLAUSE:
             case CITATION:

@@ -431,6 +431,9 @@ public class GenericDocumentApiService {
         XmlDocument document = this.findDocumentByRef(documentRef);
         this.populateCloneProposalMetadata(document);
 
+        LeosMetadata metadata = this.getDocMetadata(document);
+        documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
+
         StructureContext structure = this.getStructureContext();
         structure.useDocumentTemplate(this.getDocTemplate(document));
 

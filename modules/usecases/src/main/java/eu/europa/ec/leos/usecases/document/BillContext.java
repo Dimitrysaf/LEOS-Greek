@@ -32,6 +32,7 @@ import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
@@ -67,7 +68,7 @@ public class BillContext {
     private final XmlNodeConfigProcessor xmlNodeConfigProcessor;
     private final MessageHelper messageHelper;
     private XPathCatalog xPathCatalog;
-
+    private DocumentLanguageContext documentLanguageContext;
     private final Provider<AnnexContext> annexContextProvider;
 
     private LeosPackage leosPackage = null;
@@ -99,7 +100,10 @@ public class BillContext {
                 XmlContentProcessor xmlContentProcessor,
                 XmlNodeProcessor xmlNodeProcessor,
                 XmlNodeConfigProcessor xmlNodeConfigProcessor,
-                MessageHelper messageHelper, Provider<AnnexContext> annexContextProvider, XPathCatalog xPathCatalog) {
+                MessageHelper messageHelper,
+                Provider<AnnexContext> annexContextProvider,
+                XPathCatalog xPathCatalog,
+                DocumentLanguageContext documentLanguageContext) {
         this.billService = billService;
         this.packageService = packageService;
         this.proposalService = proposalService;
@@ -112,6 +116,7 @@ public class BillContext {
         this.annexContextProvider = annexContextProvider;
         this.actionMsgMap = new HashMap<>();
         this.xPathCatalog = xPathCatalog;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     public void usePackage(LeosPackage leosPackage) {
@@ -246,6 +251,7 @@ public class BillContext {
         final String updateComment = actionMsgMap.get(ContextAction.METADATA_UPDATED);
         final byte[] billContent = xmlContentProcessor.doXMLPreProcessing(billDocument.getSource());
         bill = billService.createBillFromContent(leosPackage.getPath(), getBillMetadata(), updateComment, billContent, billDocument.getName());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         List<Annex> annexes = new ArrayList<>();
         for (DocumentVO docChild : billDocument.getChildDocuments()) {
             if (docChild.getCategory() == ANNEX) {

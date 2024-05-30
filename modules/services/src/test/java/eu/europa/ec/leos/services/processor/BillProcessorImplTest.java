@@ -83,8 +83,8 @@ public class BillProcessorImplTest extends LeosTest {
     @Mock
     private StructureContext structureContext;
 
-    @Mock
-    DocumentLanguageContext documentLanguageContext;
+    @InjectMocks
+    protected DocumentLanguageContext documentLanguageContext = Mockito.spy(new DocumentLanguageContext());
 
     @InjectMocks
     private StructureServiceImpl structureServiceImpl = Mockito.spy(new StructureServiceImpl());
@@ -101,6 +101,7 @@ public class BillProcessorImplTest extends LeosTest {
     @Before
     public void setUp(){
         docTemplate = "BL-023";
+        documentLanguageContext.setDocumentLanguage("en");
         byte[] bytesFile = getFileContent("/structure-test-bill-EC.xml");
         when(templateStructureService.getStructure(docTemplate)).thenReturn(bytesFile);
         ReflectionTestUtils.setField(structureServiceImpl, "structureSchema", "schema/structure/structure_1.xsd");

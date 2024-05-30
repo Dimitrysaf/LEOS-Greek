@@ -31,10 +31,6 @@ define(function leosCrossReferencePluginModule(require) {
         lang: 'en',
         requires : "dialog",
         init : function(editor) {
-            var refConfig = leosPluginUtils.getRefConfig(editor);
-            if(refConfig && !refConfig.authorialNote) {
-                return;
-            }
 
             // adds dialog
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
@@ -56,6 +52,10 @@ define(function leosCrossReferencePluginModule(require) {
     
     function _onSelectionChange(event) {
         leosCommandStateHandler.changeCommandState(event, leosCrossReferenceWidget.name, null, true);
+        var refConfig = leosPluginUtils.getRefConfig(event.editor);
+        if(!refConfig || !refConfig.internalRef) {
+            event.editor.getCommand(leosCrossReferenceWidget.name).setState(CKEDITOR.TRISTATE_DISABLED);
+        }
     }
 
     var transformationConfig = {

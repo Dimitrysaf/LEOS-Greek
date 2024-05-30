@@ -40,6 +40,7 @@ import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
@@ -1247,7 +1248,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    boolean updateReferences(Document document) {
+    private boolean updateReferences(Document document) {
         boolean updated = false;
         String sourceRef = getContentByTagName(document, LEOS_REF);
         NodeList nodeList = XercesUtils.getElementsByName(document, MREF);
@@ -1285,23 +1286,37 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 completeStatement = StringUtils.replaceOnce(completeStatement, pieceForCrossReference, StringUtils.repeat("-", pieceForCrossReference.length()));
                 parentStatementsOfReferences.put(id, completeStatement);
 
-                Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(child), document, capital);
-                if (labelResult.isOk()) {
-                    String childXml = XercesUtils.getContentNodeAsXmlFragment(child);
-                    String updatedMrefContent = labelResult.get();
-                    if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
-                        child = XercesUtils.addContentToNode(child, updatedMrefContent);
+                if(isRefConfigEnabled()) {
+                    Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(child), document, capital);
+                    if (labelResult.isOk()) {
+                        String childXml = XercesUtils.getContentNodeAsXmlFragment(child);
+                        String updatedMrefContent = labelResult.get();
+                        if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
+                            child = XercesUtils.addContentToNode(child, updatedMrefContent);
+                            updated = true;
+                        }
+                        XercesUtils.removeAttribute(child, LEOS_REF_BROKEN_ATTR);
+                    } else {
+                        XercesUtils.addAttribute(child, LEOS_REF_BROKEN_ATTR, "true");
                         updated = true;
                     }
-                    XercesUtils.removeAttribute(child, LEOS_REF_BROKEN_ATTR);
-                } else {
-                    XercesUtils.addAttribute(child, LEOS_REF_BROKEN_ATTR, "true");
-                    updated = true;
                 }
-
             }
         }
         return updated;
+    }
+
+    private boolean isRefConfigEnabled() {
+        List<RefConfig> refConfigs = structureContextProvider.get().getRefConfigs();
+        if(refConfigs == null || refConfigs.isEmpty()) {
+            return false;
+        }
+        String language = documentLanguageContext.getDocumentLanguage();
+        RefConfig refConfig = refConfigs.stream().filter(value -> value.getLanguage().equalsIgnoreCase(language) || value.getLanguage().equalsIgnoreCase("default")).findFirst().get();
+        if(refConfig != null && refConfig.isInternalRef()) {
+            return true;
+        }
+        return false;
     }
 
     private void updateMetaReferences(Node node) {

@@ -11,6 +11,7 @@ import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
@@ -42,6 +43,8 @@ public class ProposalServiceImplTest {
     @Mock MessageHelper messageHelper;
     @Mock
     TrackChangesContext trackChangesContext;
+    @Mock
+    DocumentLanguageContext documentLanguageContext;
 
     @InjectMocks
     private XPathCatalog xPathCatalog = spy(new XPathCatalog());
@@ -60,7 +63,7 @@ public class ProposalServiceImplTest {
 
         proposalService = new ProposalServiceProposalImpl(proposalRepository, xmlNodeProcessor, xmlContentProcessor,
                 xmlNodeConfigProcessor, packageRepository,
-                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext);
+                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext);
 
         //DO the actual call
         CloneProposalMetadataVO cloneProposalMetadataVO = proposalService.getClonedProposalMetadata(xmlContent);
@@ -82,7 +85,7 @@ public class ProposalServiceImplTest {
         String expectedDocRefId = "body_cmp_3__dref_1";
         
         proposalService = new ProposalServiceProposalImpl(proposalRepository, xmlNodeProcessor, xmlContentProcessor,
-                xmlNodeConfigProcessor, packageRepository, xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext);
+                xmlNodeConfigProcessor, packageRepository, xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext);
         
         // Call
         Map<String, String> hrefIdMap = proposalService.getExplanatoryDocumentRef(xmlContent);

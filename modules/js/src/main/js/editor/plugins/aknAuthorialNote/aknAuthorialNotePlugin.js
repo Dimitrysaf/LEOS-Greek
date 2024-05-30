@@ -38,10 +38,6 @@ define(function aknAuthorialNotePluginModule(require) {
         requires : "widget,dialog",
         icons : widgetName.toLowerCase(),
         init : function init(editor) {
-            var refConfig = leosPluginUtils.getRefConfig(editor);
-            if(refConfig && !refConfig.authorialNote) {
-                return;
-            }
             pluginTools.addDialog(dialogName, initializeDialog);
             editor.on("receiveData", _handleAuthNotes); //LEOS-2114
             editor.on("toHtml", _manageSpacesForMpsBeforeTranform, null, null, 4);  // LEOS-4492
@@ -59,6 +55,10 @@ define(function aknAuthorialNotePluginModule(require) {
     
     function _onSelectionChange(event) {
         leosCommandStateHandler.changeCommandState(event, widgetName, changeStateElements, true);
+        var refConfig = leosPluginUtils.getRefConfig(event.editor);
+        if(!refConfig || !refConfig.authorialNote) {
+            event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);
+        }
     }
 
     function _handleAuthNotes(evt) {

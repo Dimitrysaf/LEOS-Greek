@@ -33,6 +33,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
@@ -85,15 +86,21 @@ public abstract class ProposalServiceImpl implements ProposalService {
     private final TableOfContentProcessor tableOfContentProcessor;
     private final MessageHelper messageHelper;
     protected final TrackChangesContext trackChangesContext;
+    protected DocumentLanguageContext documentLanguageContext;
 
     protected static final String PROPOSAL_NAME_PREFIX = "main";
 
     @Autowired
     public ProposalServiceImpl(ProposalRepository proposalRepository,
-                        XmlNodeProcessor xmlNodeProcessor,
-                        XmlContentProcessor xmlContentProcessor,
-                        XmlNodeConfigProcessor xmlNodeConfigProcessor, PackageRepository packageRepository,
-                        XPathCatalog xPathCatalog, TableOfContentProcessor tableOfContentProcessor, MessageHelper messageHelper, TrackChangesContext trackChangesContext) {
+                               XmlNodeProcessor xmlNodeProcessor,
+                               XmlContentProcessor xmlContentProcessor,
+                               XmlNodeConfigProcessor xmlNodeConfigProcessor,
+                               PackageRepository packageRepository,
+                               XPathCatalog xPathCatalog,
+                               TableOfContentProcessor tableOfContentProcessor,
+                               MessageHelper messageHelper,
+                               TrackChangesContext trackChangesContext,
+                               DocumentLanguageContext documentLanguageContext) {
         this.proposalRepository = proposalRepository;
         this.xmlNodeProcessor = xmlNodeProcessor;
         this.xmlContentProcessor = xmlContentProcessor;
@@ -103,6 +110,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         this.tableOfContentProcessor = tableOfContentProcessor;
         this.messageHelper = messageHelper;
         this.trackChangesContext = trackChangesContext;
+        this.documentLanguageContext = documentLanguageContext;
     }
 
     @Override
@@ -123,6 +131,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     @Override
     public Proposal updateProposal(Proposal proposal, ProposalMetadata updatedMetadata, VersionType versionType, String comment) {
         LOG.trace("Updating Proposal... [id={}, metadata={}, versionType={}, comment={}]", proposal.getId(), updatedMetadata, versionType, comment);
+        this.documentLanguageContext.setDocumentLanguage(proposal.getMetadata().get().getLanguage());
         byte[] xmlContent = getContent(proposal);
         byte[] updatedBytes = updateDataInXml(xmlContent, updatedMetadata);
         proposal = proposalRepository.updateProposal(proposal.getId(), updatedMetadata, updatedBytes, versionType, comment);
@@ -219,6 +228,8 @@ public abstract class ProposalServiceImpl implements ProposalService {
         Map<String, String> keyValueMap = new HashMap<>();
         keyValueMap.put(leosCategory.name() + "_href", href);
 
+        this.documentLanguageContext.setDocumentLanguage(proposal.getMetadata().get().getLanguage());
+
         //Do the xml update
         byte[] xmlBytes = proposal.getContent().get().getSource().getBytes();
         byte[] updatedBytes = xmlNodeProcessor.setValuesInXml(xmlBytes,
@@ -242,6 +253,9 @@ public abstract class ProposalServiceImpl implements ProposalService {
         //create config
         Map<String, String> keyValueMap = new HashMap<>();
         keyValueMap.put(leosCategory.name() + "_xml:id", docId);
+
+        trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+        this.documentLanguageContext.setDocumentLanguage(proposal.getMetadata().get().getLanguage());
 
         //Do the xml update
         byte[] xmlBytes = proposal.getContent().get().getSource().getBytes();
@@ -520,6 +534,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     @Override
     public Proposal createProposal(String templateId, String path, ProposalMetadata metadata, byte[] content) {
         LOG.trace("Creating Proposal... [templateId={}, path={}, metadata={}]", templateId, path, metadata);
+        documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
         String ref = generateProposalReference(metadata.getLanguage());
         metadata = metadata
                 .builder()
@@ -537,6 +552,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
     public Proposal createProposalFromContent(String path, ProposalMetadata metadata, DocumentVO proposalDocument,
             Boolean translated) {
         LOG.trace("Creating Proposal From Content... [path={}, metadata={}]", path, metadata);
+        documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
         String ref;
         if(translated) {
             ref = generateTranslatedProposalReference(proposalDocument.getRef(), metadata.getLanguage());

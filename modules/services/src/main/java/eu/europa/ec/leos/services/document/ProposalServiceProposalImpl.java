@@ -25,6 +25,7 @@ import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import org.apache.commons.lang3.StringUtils;
@@ -47,15 +48,17 @@ public class ProposalServiceProposalImpl extends ProposalServiceImpl {
                                        XmlContentProcessor xmlContentProcessor,
                                        XmlNodeConfigProcessor xmlNodeConfigProcessor, PackageRepository packageRepository,
                                        XPathCatalog xPathCatalog, TableOfContentProcessor tableOfContentProcessor,
-                                       MessageHelper messageHelper, TrackChangesContext trackChangesContext) {
+                                       MessageHelper messageHelper, TrackChangesContext trackChangesContext,
+                                       DocumentLanguageContext documentLanguageContext) {
         super(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor, packageRepository,
-                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext);
+                xPathCatalog, tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext);
     }
 
     @Override
     public Proposal createClonedProposalFromContent(String path, ProposalMetadata metadata,
                                                     CloneProposalMetadataVO cloneProposalMetadataVO, byte[] content) {
         LOG.trace("Creating Proposal From Content... [path={}, metadata={}]", path, metadata);
+        documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
         String ref = generateProposalReference(metadata.getLanguage());
         metadata = metadata
                 .builder()
