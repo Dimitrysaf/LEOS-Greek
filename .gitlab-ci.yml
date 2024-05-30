@@ -19,7 +19,8 @@ java-build:
     when: always
     paths:
       - pom.xml
-      - "**/target"
+      - "**/target/*.war"
+      - "**/target/*.jar"
       - "**/package-lock.json"
       - "**/yarn.lock"
   cache:
