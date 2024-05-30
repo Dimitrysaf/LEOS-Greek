@@ -15,8 +15,17 @@ package eu.europa.ec.leos.repository.repositories;
 
 import eu.europa.ec.leos.repository.entities.LinkedPackage;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 public interface LinkedPackagedRepository extends JpaRepository<LinkedPackage, BigDecimal> {
+
+    @Query(value = "SELECT * FROM LINKED_PACKAGE p WHERE p.PACKAGE_ID  = ?1", nativeQuery =true)
+    List<LinkedPackage> findByPkgId(BigDecimal pkgId);
+
+    @Query(value = "SELECT * FROM LINKED_PACKAGE p WHERE p.LINKED_PACKAGE_ID = ?1", nativeQuery =true)
+    List<LinkedPackage> findByLinkedPkgId(BigDecimal linkedPkgId);
 }

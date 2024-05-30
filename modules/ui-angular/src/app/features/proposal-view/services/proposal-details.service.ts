@@ -50,7 +50,7 @@ export class ProposalDetailsService implements OnDestroy {
   private proposalRefBS = new BehaviorSubject<[string, boolean]>([null, false]);
   private milestonesBS = new BehaviorSubject<Milestone[]>([]);
   private proposalDetailsResponse$ = this.proposalRefBS.pipe(
-    switchMap(([_proposalRef, loading]) => this.getProposalDetails(loading)),
+    switchMap(([_proposalRef, loading]) => this.getProposalDetails(loading, this.proposalRef)),
   );
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
 
@@ -599,10 +599,10 @@ export class ProposalDetailsService implements OnDestroy {
       });
   }
 
-  private getProposalDetails(loading = true): Observable<Document> {
+  public getProposalDetails(loading = true, ref : string): Observable<Document> {
     if (loading) this.loadingService.setLoading(true);
     return this.http.get<Document>(
-      `${apiBaseUrl}/secured/proposals/${this.proposalRef}`,
+      `${apiBaseUrl}/secured/proposals/${ref}`,
     );
   }
 

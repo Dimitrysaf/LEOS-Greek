@@ -267,6 +267,7 @@ public abstract class CollectionContextService {
                 .builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
+                .withLanguage(language)
                 .build();
         if (cloneProposal) {
             setConnectedEntity();
@@ -274,7 +275,7 @@ public abstract class CollectionContextService {
             idsAndUrlsHolder.setPackageName(leosPckg.getName());
         } else {
             Validate.notNull(propDocument.getSource(), "Proposal xml is required!");
-            proposal = proposalService.createProposalFromContent(leosPckg.getPath(), metadata, propDocument.getSource());
+            proposal = proposalService.createProposalFromContent(leosPckg.getPath(), metadata, propDocument, translated);
             idsAndUrlsHolder.setPackageName(leosPckg.getName());
         }
 
@@ -293,6 +294,8 @@ public abstract class CollectionContextService {
                     explanatoryContext.useType(metadata.getType());
                     explanatoryContext.usePackageTemplate(metadata.getTemplate());
                     explanatoryContext.useEeaRelevance(eeaRelevance);
+                    explanatoryContext.useLanguage(language);
+                    explanatoryContext.useTranslated(translated);
                     explanatoryContext.useCollaborators(proposal.getCollaborators());
                     Explanatory explanatory = explanatoryContext.executeImportExplanatory();
                     proposal = proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
@@ -312,6 +315,8 @@ public abstract class CollectionContextService {
                     memorandumContext.useType(metadata.getType());
                     memorandumContext.usePackageTemplate(metadata.getTemplate());
                     memorandumContext.useEeaRelevance(eeaRelevance);
+                    memorandumContext.useLanguage(language);
+                    memorandumContext.useTranslated(translated);
                     memorandumContext.useCloneProposal(cloneProposal);
                     memorandumContext.useOriginRef(originRef);
                     Memorandum memorandum = memorandumContext.executeImportMemorandum();
@@ -332,6 +337,8 @@ public abstract class CollectionContextService {
                     billContext.useIdsAndUrlsHolder(idsAndUrlsHolder);
                     billContext.useCloneProposal(cloneProposal);
                     billContext.useEeaRelevance(eeaRelevance);
+                    billContext.useLanguage(language);
+                    billContext.useTranslated(translated);
                     billContext.useOriginRef(originRef);
                     Bill bill = billContext.executeImportBill();
                     proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
@@ -355,6 +362,8 @@ public abstract class CollectionContextService {
                     financialStatementContext.useCollaborators(proposal.getCollaborators());
                     financialStatementContext.useCloneProposal(cloneProposal);
                     financialStatementContext.useOriginRef(originRef);
+                    financialStatementContext.useLanguage(language);
+                    financialStatementContext.useTranslated(translated);
                     FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
                     String financialStatementRef = financialStatement.getMetadata().get().getRef();
                     proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);

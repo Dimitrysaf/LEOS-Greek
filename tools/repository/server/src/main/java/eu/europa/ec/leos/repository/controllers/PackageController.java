@@ -20,6 +20,8 @@ import java.net.MalformedURLException;
 
 import javax.validation.Valid;
 
+import eu.europa.ec.leos.repository.model.LinkedPackage;
+import eu.europa.ec.leos.repository.model.LinkedPackageList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -118,6 +120,28 @@ public class PackageController {
         Package pkg = packageService.getPackageByName(name);
         pkg =  RestPreconditions.checkFound(pkg, HttpStatus.NOT_FOUND ,"Error while searching for a package");
         return ResponseEntity.ok(pkg);
+    }
+
+    @GetMapping(path = "/package/find-by-pkg-id/{pkgId}")
+    @Operation(summary = "Get a Linked Package by package id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<Object> getLinkedPackagesByPkgId(@PathVariable("pkgId") String pkgId) throws MalformedURLException, RepositoryException{
+        pkgId = decode(pkgId);
+        List<LinkedPackage> linkedPackages = packageService.getLinkedPackagesByPkgId(pkgId);
+        return ResponseEntity.ok(new LinkedPackageList(linkedPackages));
+    }
+
+    @GetMapping(path = "/package/find-by-linked-pkg-id/{linkedPkgId}")
+    @Operation(summary = "Get a Linked Package by package id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Package Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
+            @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
+    public ResponseEntity<Object> getLinkedPackagesByLinkedPkgId(@PathVariable("linkedPkgId") String linkedPkgId) throws MalformedURLException, RepositoryException{
+        linkedPkgId = decode(linkedPkgId);
+        List<LinkedPackage> linkedPackages = packageService.getLinkedPackagesByLinkedPkgId(linkedPkgId);
+        return ResponseEntity.ok(new LinkedPackageList(linkedPackages));
     }
 
     @GetMapping(path = "/package/find-by-document-id/{id}")

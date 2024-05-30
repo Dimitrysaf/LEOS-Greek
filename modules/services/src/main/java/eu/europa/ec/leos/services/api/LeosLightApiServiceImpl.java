@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.collection.CreateCollectionError;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
@@ -39,6 +40,7 @@ import eu.europa.ec.leos.services.export.ZipPackageUtil;
 import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
 import eu.europa.ec.leos.services.leoslight.util.ByteChecksumComparator;
 import eu.europa.ec.leos.services.store.PackageService;
+import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.io.FilenameUtils;
@@ -183,7 +185,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     }
 
     @Override
-    public Pair<Object, Object> importProposal(MultipartFile file, String origProposalRef, String languageCode) throws IOException {
+    public Pair<Object, Object> importProposal(MultipartFile file, String languageCode) throws IOException {
         String originalFilename = FilenameUtils.normalize(file.getOriginalFilename());
         File content = new File(originalFilename);
         byte[] fileContent = file.getBytes();
@@ -209,27 +211,34 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                 }
                 CreateCollectionResult createCollectionResult;
                 try {
-                    createCollectionResult = createCollectionService.createCollectionFromLeg(content, origProposalRef, languageCode, true);
+                    DocumentVO propDocument = createCollectionService.getProposalDocumentFromLeg(content);
+                    createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, languageCode, true);
                     if (createCollectionResult.isCollectionCreated()) {
                         String pkgName = createCollectionResult.getPackageName();
-                        List<MilestonesVO> milestonesVOS = apiService.getProposalMilestones(origProposalRef);
-                        MilestonesVO milestonesVO = milestonesVOS.get(0);
-                        String legDocumentName = milestonesVO.getLegDocumentName();
-                        MilestoneViewResponse response = apiService.listMilestoneDocuments(origProposalRef, legDocumentName);
-                        MilestoneDocumentView documentView = response.getDocuments().stream().filter(doc ->
-                                doc.getContentFileName().startsWith("main-")).findFirst().get();
-                        String proposalVersionLabel = getNextVersionLabel(VersionType.MAJOR, documentView.getVersion());
-                        List<String> containedDocs = new ArrayList<>();
-                        containedDocs.add(documentVO.getRef() + "_" + proposalVersionLabel);
-                        documentVO.getChildDocuments().forEach(docVo -> {
-                            MilestoneDocumentView childDocView = response.getDocuments().stream().filter(doc ->
-                                    doc.getLeosCategory().equals(docVo.getCategory())).findFirst().get();
-                            String childVersionLabel = getNextVersionLabel(VersionType.MAJOR, childDocView.getVersion());
-                            containedDocs.add(docVo.getRef() + "_" + childVersionLabel);
-                        });
-                        List<String> milestoneComments = new ArrayList<>();
-                        milestoneComments.add("Milestone imported");
-                        apiService.addLegDocument(pkgName, originalFilename, milestoneComments, fileContent, LeosLegStatus.IMPORTED, containedDocs);
+                        List<MilestonesVO> milestonesVOS = apiService.getProposalMilestones(propDocument.getRef());
+                        if(milestonesVOS != null && !milestonesVOS.isEmpty()) {
+                            MilestonesVO milestonesVO = milestonesVOS.get(0);
+                            String legDocumentName = milestonesVO.getLegDocumentName();
+                            MilestoneViewResponse response = apiService.listMilestoneDocuments(propDocument.getRef(), legDocumentName);
+                            MilestoneDocumentView documentView = response.getDocuments().stream().filter(doc ->
+                                    doc.getContentFileName().startsWith("main-")).findFirst().get();
+                            String proposalVersionLabel = getNextVersionLabel(VersionType.MAJOR, documentView.getVersion());
+                            List<String> containedDocs = new ArrayList<>();
+                            containedDocs.add(documentVO.getRef() + "_" + proposalVersionLabel);
+                            documentVO.getChildDocuments().forEach(docVo -> {
+                                MilestoneDocumentView childDocView = response.getDocuments().stream().filter(doc ->
+                                        doc.getLeosCategory().equals(docVo.getCategory())).findFirst().get();
+                                String childVersionLabel = getNextVersionLabel(VersionType.MAJOR, childDocView.getVersion());
+                                containedDocs.add(docVo.getRef() + "_" + childVersionLabel);
+                            });
+                            List<String> milestoneComments = new ArrayList<>();
+                            milestoneComments.add("Milestone imported");
+                            apiService.addLegDocument(pkgName, file.getOriginalFilename(), milestoneComments, fileContent, LeosLegStatus.IMPORTED,
+                                    containedDocs);
+                        } else {
+                            LOG.info("Original milestone not found while importing translated proposal");
+                            return new Pair<>("Original milestone not found while importing translated proposal ", HttpStatus.NOT_FOUND);
+                        }
                     }
                 } catch (CreateCollectionException e) {
                     LOG.error("Error Occurred while reading the Leg file: " + e.getMessage(), e);

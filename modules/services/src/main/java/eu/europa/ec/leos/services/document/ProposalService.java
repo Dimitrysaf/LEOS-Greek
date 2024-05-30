@@ -21,6 +21,7 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
@@ -31,7 +32,8 @@ public interface ProposalService {
 
     Proposal createProposal(String templateId, String path, ProposalMetadata metadata, byte[] content);
 
-    Proposal createProposalFromContent(String path, ProposalMetadata metadata, byte[] content);
+    Proposal createProposalFromContent(String path, ProposalMetadata metadata, DocumentVO proposalDocument,
+            Boolean translated);
 
     Proposal createClonedProposalFromContent(String path, ProposalMetadata metadata,
                                        CloneProposalMetadataVO cloneProposalMetadataVO, byte[] content);

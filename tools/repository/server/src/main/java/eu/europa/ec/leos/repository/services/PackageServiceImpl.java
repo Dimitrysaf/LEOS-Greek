@@ -114,6 +114,7 @@ public class PackageServiceImpl implements PackageService {
         linkedPackagedRepository.save(pkg);
     }
 
+    @Override
     @Cacheable(cacheNames = "getPackageByName", key = "{#name}")
     public eu.europa.ec.leos.repository.model.Package getPackageByName(final String name) throws RepositoryException {
         Package pkg =
@@ -121,6 +122,7 @@ public class PackageServiceImpl implements PackageService {
         return ConversionUtils.buildPackage(pkg, collaboratorsService);
     }
 
+    @Override
     @Cacheable(cacheNames = "getPackageById", key = "#id")
     public eu.europa.ec.leos.repository.model.Package getPackageById(final String id) throws RepositoryException {
         try {
@@ -129,6 +131,18 @@ public class PackageServiceImpl implements PackageService {
         } catch (Exception e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
         }
+    }
+
+    @Override
+    public List<eu.europa.ec.leos.repository.model.LinkedPackage> getLinkedPackagesByPkgId(String pkgId) throws RepositoryException {
+        List<LinkedPackage> pkgs = linkedPackagedRepository.findByPkgId(new BigDecimal(pkgId));
+        return ConversionUtils.buildLinkedPackage(pkgs);
+    }
+
+    @Override
+    public List<eu.europa.ec.leos.repository.model.LinkedPackage> getLinkedPackagesByLinkedPkgId(String linkedPkgId) throws RepositoryException {
+        List<LinkedPackage> pkgs = linkedPackagedRepository.findByLinkedPkgId(new BigDecimal(linkedPkgId));
+        return ConversionUtils.buildLinkedPackage(pkgs);
     }
 
     @Override

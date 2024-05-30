@@ -29,6 +29,7 @@ import java.util.Map;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.utils.LanguageMapUtils.generateTranslatedProposalReference;
 
 @Component
 @Scope("prototype")
@@ -61,6 +62,8 @@ public class ExplanatoryContextService {
     private String versionComment;
     private String milestoneComment;
     private boolean eeaRelevance;
+    private String language;
+    private boolean translated;
 
     @Autowired
     public ExplanatoryContextService(
@@ -209,6 +212,7 @@ public class ExplanatoryContextService {
                 .withTemplate(template)
                 .withRef(ref)
                 .withEeaRelevance(eeaRelevance)
+                .withLanguage(language)
                 .withTitle(explanatoryDocument.getMetadata().getTitle())
                 .build();
 
@@ -222,11 +226,19 @@ public class ExplanatoryContextService {
 
     private String createRefForExplanatory() {
         Validate.notNull(explanatoryDocument.getSource(), "Explanatory xml is required!");
-        final String ref = explanatoryService.generateExplanatoryReference(explanatory.getContent().get().getSource().getBytes(), explanatory.getMetadata().get().getLanguage());
+
+        String docLanguage = language != null ? language : explanatory.getMetadata().get().getLanguage();
+        String ref;
+        if(translated) {
+            ref = generateTranslatedProposalReference(explanatoryDocument.getRef(), docLanguage);
+        } else {
+            ref = explanatoryService.generateExplanatoryReference(explanatory.getContent().get().getSource().getBytes(), docLanguage);
+        }
         final ExplanatoryMetadata updatedExplanatoryMetadata = explanatory.getMetadata().get()
                 .builder()
                 .withPurpose(purpose)
                 .withRef(ref)
+                .withLanguage(language)
                 .build();
 
         explanatoryDocument.setName(ref + XML_DOC_EXT);
@@ -294,5 +306,13 @@ public class ExplanatoryContextService {
     public String getProposalId() {
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
         return proposal != null ? proposal.getId() : null;
+    }
+
+    public void useLanguage(String language) {
+        this.language = language;
+    }
+
+    public void useTranslated(boolean translated) {
+        this.translated = translated;
     }
 }

@@ -6,11 +6,21 @@ public class LeosPackage {
     private final String id;
     private final String name;
     private final String path;
+    private String language;
+    private Boolean isTranslated;
 
     public LeosPackage(String id, String name, String path) {
         this.id = id;
         this.name = name;
         this.path = path;
+    }
+
+    public LeosPackage(String id, String name, String path, String language, Boolean isTranslated) {
+        this.id = id;
+        this.name = name;
+        this.path = path;
+        this.language = language;
+        this.isTranslated = isTranslated;
     }
 
     public String getId() {
@@ -23,6 +33,14 @@ public class LeosPackage {
 
     public String getPath() {
         return path;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public Boolean getTranslated() {
+        return isTranslated;
     }
 
     @Override

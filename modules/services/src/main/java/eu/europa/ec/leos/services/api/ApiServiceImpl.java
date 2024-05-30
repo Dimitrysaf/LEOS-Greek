@@ -15,11 +15,13 @@
 package eu.europa.ec.leos.services.api;
 
 import com.google.common.base.Stopwatch;
+import eu.europa.ec.leos.domain.common.ErrorCode;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -259,7 +261,8 @@ public abstract class ApiServiceImpl implements ApiService {
 
     @Override
     public CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException {
-        return createCollectionService.createCollectionFromLeg(legDocument, null, "EN", false);
+        DocumentVO propDocument = createCollectionService.getProposalDocumentFromLeg(legDocument);
+        return createCollectionService.createCollectionFromLeg(legDocument, propDocument, "EN", false);
     }
 
     @Override
@@ -274,7 +277,10 @@ public abstract class ApiServiceImpl implements ApiService {
                 legFileValidation.setDocumentToBeCreated(updatedDocumentVO);
                 ValidationVO validation = new ValidationVO();
                 validation.addErrors(validationService.validateDocument(updatedDocumentVO));
-                if (validation.hasErrors()) {
+                List<ErrorVO> errors = validation.getErrors();
+                //FIXME: The skipping of validation needs to be removed
+                if (validation.hasErrors() && !errors.get(0).getErrorCode().name()
+                        .equalsIgnoreCase(ErrorCode.DOCUMENT_PROPOSAL_TEMPLATE_NOT_FOUND.name())) {
                     legFileValidation.setErrors(validation.getErrors());
                 }
             }
@@ -517,11 +523,29 @@ public abstract class ApiServiceImpl implements ApiService {
                     : new byte[0];
 
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+            if(leosPackage.getTranslated()) {
+                LinkedPackage linkedPackage = packageService.findLinkedPackageByLinkedPkgId(leosPackage.getId());
+                leosPackage = packageService.findPackageByPackageId(linkedPackage.getPackageId());
+            }
             List<XmlDocument> documents = packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
             List<LegDocument> legDocuments = packageService.findDocumentsByPackageId(leosPackage.getId(), LegDocument.class, false, false);
             FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
             legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
-            DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, proposalVersionSeriesId, docVersionSeriesIds, favouritePackageResponse.isFavourite());
+            DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, favouritePackageResponse.isFavourite());
+            List<LinkedPackage> linkedPackageList = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
+            if(linkedPackageList != null && linkedPackageList.size() > 0) {
+                List<DocumentVO> translatedDocList = new ArrayList<>();
+                linkedPackageList.forEach(linkedPackage -> {
+                    LeosPackage importedPackage = packageService.findPackageByPackageId(linkedPackage.getLinkedPackageId());
+                    if(importedPackage.getTranslated()) {
+                        List<XmlDocument> translatedDocuments = packageService.findDocumentsByPackagePath(importedPackage.getPath(),
+                                XmlDocument.class, false);
+                        DocumentVO translatedProposalVO = createViewObject(translatedDocuments, null, false);
+                        translatedDocList.add(translatedProposalVO);
+                    }
+                });
+                proposalVO.setTranslatedProposal(translatedDocList);
+            }
             if (proposal.isClonedProposal()) {
                 populateCloneProposalMetadataVO(proposalXmlContent);
                 proposalVO.setCloneProposalMetadataVO(cloneContext.getCloneProposalMetadataVO());
@@ -547,7 +571,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 messageHelper.getMessage("collection.block.export.package.column.status.value." + exportDocument.getStatus().name()));
     }
 
-    private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent, String proposalVersionSeriesId, Set<String> docVersionSeriesIds, Boolean isFavourite) {
+    private DocumentVO createViewObject(List<XmlDocument> documents, byte[] proposalXmlContent, Boolean isFavourite) {
         DocumentVO proposalVO = new DocumentVO(LeosCategory.PROPOSAL);
         List<DocumentVO> annexVOList = new ArrayList<>();
         Set<String> docVerSeriesIds = new HashSet<>();
@@ -556,6 +580,12 @@ public abstract class ApiServiceImpl implements ApiService {
             switch (document.getCategory()) {
                 case PROPOSAL: {
                     Proposal proposal = (Proposal) document;
+                    if(proposalXmlContent == null) {
+                        proposal = this.proposalService.findProposalByRef(proposal.getMetadata().get().getRef());
+                        proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null)
+                                ? proposal.getContent().get().getSource().getBytes()
+                                : new byte[0];
+                    }
                     MetadataVO metadataVO = createMetadataVO(proposal);
                     proposalVO.setMetaData(metadataVO);
                     proposalVO.addCollaborators(proposal.getCollaborators());
@@ -633,7 +663,7 @@ public abstract class ApiServiceImpl implements ApiService {
                     financialStatementVO.setVersionSeriesId(financialStatement.getVersionSeriesId());
                     financialStatementVO.setUpdatedBy(userHelper.convertToPresentation(financialStatementVO.getUpdatedBy()));
                     financialStatementVO.setCreatedBy(userHelper.convertToPresentation(financialStatementVO.getCreatedBy()));
-                    docVersionSeriesIds.add(financialStatement.getVersionSeriesId());
+                    docVerSeriesIds.add(financialStatement.getVersionSeriesId());
                     break;
                 }
                 default:

@@ -433,8 +433,8 @@ public class LeosApiController {
                 LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
                 return new ResponseEntity<>("An error occurred during the reading of the Leg file.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            createCollectionResult = createCollectionService.createCollectionFromLeg(content, null, "EN", false);
+            DocumentVO propDocument = createCollectionService.getProposalDocumentFromLeg(content);
+            createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, "EN", false);
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
         } catch (Exception ex) {
             LOG.error("Error Occurred while creating collection from the Leg file: " + ex.getMessage(), ex);

@@ -37,6 +37,7 @@ import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
+import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
@@ -98,6 +99,8 @@ public class BillContextService {
     private String annexTemplate;
     private CollectionIdsAndUrlsHolder idsAndUrlsHolder;
     private final Map<ContextActionService, String> actionMsgMap;
+    private String language;
+    private boolean translated;
 
     @Autowired
     BillContextService(BillService billService,
@@ -244,6 +247,7 @@ public class BillContextService {
 
         final String newRef = createRefForBillAndUpdateContext();
         BillMetadata metadata = getBillMetadata();
+        metadata = metadata.builder().withLanguage(language).build();
         createRefForAnnexes(metadata);
 
         final String oldRef;
@@ -330,11 +334,18 @@ public class BillContextService {
         Validate.notNull(billDocument.getSource(), "Bill xml is required!");
         Validate.isTrue(bill.getMetadata().isDefined(), BILL_METADATA_IS_REQUIRED);
 
-        final String ref = billService.generateBillReference(bill.getContent().get().getSource().getBytes(), bill.getMetadata().get().getLanguage());
+        String docLanguage = language != null ? language : billDocument.getLanguage();
+        String ref;
+        if(translated) {
+            ref = LanguageMapUtils.generateTranslatedProposalReference(billDocument.getRef(), docLanguage);
+        } else {
+            ref = billService.generateBillReference(bill.getContent().get().getSource().getBytes(), docLanguage);
+        }
         final BillMetadata updatedBillMetadata = bill.getMetadata().get()
                 .builder()
                 .withPurpose(purpose)
                 .withRef(ref)
+                .withLanguage(language)
                 .withEeaRelevance(eeaRelevance)
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(billDocument.getSource(), createValueMap(updatedBillMetadata), xmlNodeConfigProcessor.getConfig(updatedBillMetadata.getCategory()));
@@ -481,6 +492,7 @@ public class BillContextService {
         annexContext.usePurpose(metadata.getPurpose());
         annexContext.useType(metadata.getType());
         annexContext.useEeaRelevance(eeaRelevance);
+        annexContext.useLanguage(language);
 
         MetadataVO annexMeta = annexDocument.getMetadata();
         annexContext.useTemplate(annexMeta.getDocTemplate());
@@ -520,8 +532,14 @@ public class BillContextService {
             List<Annex> annexes = packageService.findDocumentsByPackagePath(leosPackage.getPath(), Annex.class, false);
             annexIndex = annexes.size() + 1;
         }
+        String docLanguage = language != null ? language : annexDocument.getLanguage();
+        String ref;
+        if(translated) {
+            ref = LanguageMapUtils.generateTranslatedProposalReference(annexDocument.getRef(), docLanguage);
+        } else {
+            ref = annexService.generateAnnexReference(annex.getContent().get().getSource().getBytes(), docLanguage);
+        }
 
-        final String ref = annexService.generateAnnexReference(annex.getContent().get().getSource().getBytes(), annexMetadataVO.getLanguage());
         final AnnexMetadata updatedAnnexMetadata = annex.getMetadata().getOrError(() -> "Annex metadata is required")
                 .builder()
                 .withPurpose(purpose)
@@ -531,6 +549,7 @@ public class BillContextService {
                 .withType(billMetadata.getType())
                 .withTemplate(annexMetadataVO.getTemplate())
                 .withRef(ref)
+                .withLanguage(language)
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(annexDocument.getSource(), createValueMap(updatedAnnexMetadata),
                 xmlNodeConfigProcessor.getConfig(updatedAnnexMetadata.getCategory()), xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());
@@ -643,5 +662,13 @@ public class BillContextService {
     private byte[] getContent(Bill bill) {
         final Content content = bill.getContent().getOrError(() -> "Bill content is required!");
         return content.getSource().getBytes();
+    }
+
+    public void useLanguage(String language) {
+        this.language = language;
+    }
+
+    public void useTranslated(boolean translated) {
+        this.translated = translated;
     }
 }

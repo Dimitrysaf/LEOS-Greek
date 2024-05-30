@@ -24,6 +24,8 @@ import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.rest.support.model.LeosDocument;
 import eu.europa.ec.leos.rest.support.model.LeosDocumentList;
+import eu.europa.ec.leos.rest.support.model.LinkedPackage;
+import eu.europa.ec.leos.rest.support.model.LinkedPackageList;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.rest.support.requests.CreateDocumentRequest;
 import eu.europa.ec.leos.rest.support.requests.CreatePackageRequest;
@@ -70,6 +72,10 @@ public class RestRepository extends AbstractRestClient {
     private String leosRestFindPackageByNameURI;
     @Value("${leos.rest.repository.find.package.id.uri}")
     private String leosRestFindPackageByIdURI;
+    @Value("${leos.rest.repository.find.linked.package.id.uri}")
+    private String leosRestFindLinkedPackageByPkgIdURI;
+    @Value("${leos.rest.repository.find.linked.package.linked.id.uri}")
+    private String leosRestFindLinkedPackageByLinkedPkgIdURI;
     @Value("${leos.rest.repository.find.package.document.id.uri}")
     private String leosRestFindPackageByDocumentIdURI;
     @Value("${leos.rest.repository.find.documents.package.name.uri}")
@@ -312,6 +318,18 @@ public class RestRepository extends AbstractRestClient {
     Package findPackageByName(String name) {
         String url = getUrl(leosRestFindPackageByNameURI);
         Package resp = getEntity(url, Package.class, encodeUriVariables(name)[0]);
+        return resp;
+    }
+
+    LinkedPackageList findLinkedPackageByPkgId(String pkgId) {
+        String url = getUrl(leosRestFindLinkedPackageByPkgIdURI);
+        LinkedPackageList resp = getEntity(url, LinkedPackageList.class, encodeUriVariables(pkgId)[0]);
+        return resp;
+    }
+
+    LinkedPackageList findLinkedPackageByLinkedPkgId(String linkedPkgId) {
+        String url = getUrl(leosRestFindLinkedPackageByLinkedPkgIdURI);
+        LinkedPackageList resp = getEntity(url, LinkedPackageList.class, encodeUriVariables(linkedPkgId)[0]);
         return resp;
     }
 

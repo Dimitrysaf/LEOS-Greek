@@ -33,6 +33,8 @@ public class Package {
     private Boolean cloned;
     private String clonedPackageName;
     private List<Collaborator> collaboratorList;
+    private String language;
+    private Boolean isTranslated;
 
     public Package() {
     }
@@ -111,5 +113,21 @@ public class Package {
 
     public void setCollaborators(List<Collaborator> collaboratorList) {
         this.collaboratorList = collaboratorList;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public Boolean getTranslated() {
+        return isTranslated;
+    }
+
+    public void setTranslated(Boolean translated) {
+        isTranslated = translated;
     }
 }

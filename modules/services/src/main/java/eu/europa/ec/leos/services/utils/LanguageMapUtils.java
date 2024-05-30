@@ -13,6 +13,8 @@ package eu.europa.ec.leos.services.utils;
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
 
+import org.apache.commons.lang3.Validate;
+
 import java.util.List;
 import java.util.Map;
 
@@ -33,5 +35,10 @@ public class LanguageMapUtils {
             }
         }
         return false;
+    }
+
+    public static String generateTranslatedProposalReference(String originalRef, String language) {
+        Validate.notNull(originalRef, "Original reference should not be null");
+        return originalRef.substring(0, originalRef.lastIndexOf("-")).concat("-").concat(language.toLowerCase());
     }
 }
