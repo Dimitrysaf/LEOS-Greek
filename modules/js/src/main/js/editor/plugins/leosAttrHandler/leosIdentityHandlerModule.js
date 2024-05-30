@@ -287,7 +287,7 @@ define(function leosIdentityHandler(require) {
         if (element && element.hasAttribute("id")) {
             element.removeAttribute("id");
         }
-        _injectTagIdsInNode(element);
+        _injectTagIdsInNode(element, element.$.closest('[id]').getAttribute('id'));
     }
 
     function copyIdentity(sourceElement, destinationElement){
@@ -316,18 +316,35 @@ define(function leosIdentityHandler(require) {
         }
     }
 
-    function _injectTagIdsInNode(element) {
-        let idPrefix = element.$.closest('[id]').getAttribute('id')
+    function _injectTagIdsInNode(element, idPrefix) {
+        if (element && element.hasAttribute && element.hasAttribute('id')) {
+            return;
+        }
+        if(!idPrefix){
+            idPrefix = generateId("_akn", 7);
+        }
         let tagName = element.getName();
-        if ("meta" === tagName) {// skipping node processing along with children
+        if ("meta" === tagName) {
             return;
         }
 
         let idAttrValue = null;
-        if (!["akomaNtoso", "bill", "documentCollection", "doc", "attachments", "br"].includes(tagName)) {
-            // do not update id for this tag
-            updateNodeWithId(element, idPrefix);
+        if (!["akomaNtoso", "bill", "documentCollection", "div", "doc", "attachments", "br", "span"].includes(tagName)) {
+            idAttrValue = updateNodeWithId(element, idPrefix);
         }
+        idPrefix = determinePrefixForChildren(tagName, idAttrValue, idPrefix);
+        let children = element.getChildren();
+        for (let i = 0; i < children.count(); i++) {
+            let child = children.getItem(i)
+            if(child.$.nodeType === Node.ELEMENT_NODE){
+                _injectTagIdsInNode(child, idPrefix);
+            }
+        }
+    }
+
+    function determinePrefixForChildren(tagName, idOfNode, parentPrefix) {
+        let prefixTobeUsedForChildren = ["article", "recitals", "citations"] ;
+        return prefixTobeUsedForChildren.includes(tagName) ? idOfNode : parentPrefix;
     }
 
     function updateNodeWithId(element, idPrefix) {
