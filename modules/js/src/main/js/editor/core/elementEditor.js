@@ -440,6 +440,8 @@ define(function elementEditorModule(require) {
         connector.refreshAnnotate();
         // clear LEOS data from editor
         editor.LEOS = null;
+
+        $("button.ui-datepicker-trigger").attr("disabled", false);
     }
 
     function _saveElement(connector, elementId, elementType, event) {
