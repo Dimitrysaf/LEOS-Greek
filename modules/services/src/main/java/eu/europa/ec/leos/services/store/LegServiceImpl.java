@@ -1391,6 +1391,10 @@ public class LegServiceImpl implements LegService {
             if (exportOptions.isWithFeedbackAnnotations()) {
                 String annotations = getAnnotationsFromZipContent(contentToZip, docName);
                 String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
+
+                LOG.debug("Feedbacks found in DB: " + feedbackAnnotations);
+                LOG.debug("Feedbacks found in LEG: " + annotations);
+
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
                 annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
@@ -1856,11 +1860,14 @@ public class LegServiceImpl implements LegService {
 
         Iterator<JsonNode> itrFeedback = rowsNodeFeedback.elements();
         List<JsonNode> filteredList = new ArrayList<JsonNode>();
-        itrFeedback.forEachRemaining(node -> {
+        for (int i = 0; i < rowsNodeFeedback.size(); i++) {
+            JsonNode node = rowsNodeFeedback.get(i);
             if(!isPresent(rowsNode, node)) {
                 filteredList.add(node);
+            } else {
+                LOG.debug("Didn't add " + node.findValue("id").textValue() + " in annotations");
             }
-        });
+        }
 
         LOG.debug("Added " + filteredList.size() + " feedback annotations from DB");
         rowsNode.addAll(filteredList);
