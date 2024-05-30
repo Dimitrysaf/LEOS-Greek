@@ -39,6 +39,7 @@ import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemHtmlVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,7 +185,15 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
             file = ZipPackageUtil.zipFiles("document.zip", contentToZip, null);
             map.add("outputDescriptor", outputDescriptor);
 
-            ResponseEntity<byte[]> response = getResponseEntity(uri, file.getName(), Files.readAllBytes(file.toPath()), map, byte[].class);
+            ByteArrayResource bar = new ByteArrayResource(Files.readAllBytes(file.toPath())) {
+                @Override
+                public String getFilename() {
+                    return fileName;
+                }
+            };
+            map.add("inputFile", bar);
+
+            ResponseEntity<byte[]> response = getResponseEntity(uri, null, map, byte[].class);
             if (response.getStatusCode().is2xxSuccessful()) {
                 byte[] bytesToWrite = response.getBody();
                 return bytesToWrite;
@@ -201,22 +210,26 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
     }
 
     @Override
-    public void sendFileToCallbackUrl(String fileName, byte[] content, String callbackUrl) throws IOException {
+    public void sendFileToCallbackUrl(String fileName, byte[] content, String callbackUrl, String token) throws IOException {
         MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-        getResponseEntity(callbackUrl,fileName, content, map, Object.class);
-    }
-
-    private <T> ResponseEntity<T> getResponseEntity(String uri, String fileName, byte[] content, MultiValueMap<String, Object> map, Class<T> responseType) throws IOException {
         ByteArrayResource bar = new ByteArrayResource(content) {
             @Override
             public String getFilename() {
                 return fileName;
             }
         };
-        map.add("inputFile", bar);
+        map.add("file", bar);
+        ResponseEntity<Object> response = getResponseEntity(callbackUrl, token, map, Object.class);
+        LOG.info("Export: " + fileName + " Status: " + response.getStatusCodeValue() + " Response: " + response.getBody());
+    }
+
+    private <T> ResponseEntity<T> getResponseEntity(String uri, String token, MultiValueMap<String, Object> map, Class<T> responseType) throws IOException {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.ALL));
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+        if(StringUtils.isNotBlank(token)) {
+            headers.set("Authorization", "Bearer " + token);
+        }
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(map, headers);
         return restTemplate.postForEntity(uri, requestEntity, responseType);
     }

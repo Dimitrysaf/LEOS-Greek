@@ -19,6 +19,8 @@ import java.util.Map;
 public interface TokenService {
     String getAnnotateToken(String userLogin, String url);
 
+    String getDgtToken(String user);
+
     String getAccessToken(String user);
 
     String getNgAccessToken(String user);

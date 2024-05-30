@@ -49,6 +49,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
@@ -76,6 +77,8 @@ public class LeosLightApiController {
     private final ProposalConverterService proposalConverterService;
     private final LeosRepository leosRepository;
     private final PackageService packageService;
+
+    private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
 
     @Autowired
     public LeosLightApiController(MessageHelper messageHelper, TokenService tokenService,
@@ -126,15 +129,10 @@ public class LeosLightApiController {
 
     @PostMapping(value = "/secured/leos-light/export-document", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @ResponseBody
-    public ResponseEntity<Object> exportDocument(@RequestBody ExportDocumentRequest request) throws IOException {
-        String documentUrl = request.getDocumentUrl();
-        if (StringUtils.isEmpty(documentUrl)) {
-            throw new InvalidInputException(messageHelper.getMessage("leoslight.service.export.url.missing"));
-        }
+    public ResponseEntity<Object> exportDocument(@RequestBody ExportDocumentRequest request, HttpServletRequest httpRequest) throws IOException {
+        String clientContextToken = httpRequest.getHeader(CLIENT_CONTEXT_PARAMETER);
 
-        String docRef = documentUrl.substring(documentUrl.lastIndexOf('/') + 1);
-
-        Pair<Boolean, File> result = leosLightApiService.exportDocument(docRef, request.getCallbackAddress(), request.getOptions());
+        Pair<Boolean, File> result = leosLightApiService.exportDocument(request, clientContextToken);
         Boolean isExported = result.left();
         File file = result.right();
 
