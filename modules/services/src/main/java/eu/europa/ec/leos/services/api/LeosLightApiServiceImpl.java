@@ -20,12 +20,13 @@ import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
-import eu.europa.ec.leos.services.collection.CreateCollectionError;
+import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
 import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.dto.request.ExportDocumentOptions;
+import eu.europa.ec.leos.services.dto.request.ExportDocumentRequest;
 import eu.europa.ec.leos.services.dto.response.LegFileValidation;
 import eu.europa.ec.leos.services.dto.response.MilestoneDocumentView;
 import eu.europa.ec.leos.services.dto.response.MilestoneViewResponse;
@@ -42,6 +43,7 @@ import eu.europa.ec.leos.services.leoslight.util.ByteChecksumComparator;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.validation.ValidationService;
+import eu.europa.ec.leos.vo.light.SystemName;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -101,11 +103,12 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     private Properties applicationProperties;
     private ApiService apiService;
     private CreateCollectionService createCollectionService;
+    private TokenService tokenService;
 
     @Autowired
     public LeosLightApiServiceImpl(ValidationService validationService, ProposalConverterService proposalConverterService, LeosRepository leosRepository,
             PackageService packageService, MessageHelper messageHelper, SecurityContext securityContext, LeosLightXmlDocumentService leosLightXmlDocumentService,
-            Properties applicationProperties, ApiService apiService, CreateCollectionService createCollectionService) {
+            Properties applicationProperties, ApiService apiService, CreateCollectionService createCollectionService, TokenService tokenService) {
         this.validationService = validationService;
         this.proposalConverterService = proposalConverterService;
         this.leosRepository = leosRepository;
@@ -116,6 +119,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         this.applicationProperties = applicationProperties;
         this.apiService = apiService;
         this.createCollectionService = createCollectionService;
+        this.tokenService = tokenService;
     }
 
     @Override
@@ -153,14 +157,21 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     }
 
     @Override
-    public Pair<Boolean, File> exportDocument(String docRef, String callbackAddress, ExportDocumentOptions options) {
+    public Pair<Boolean, File> exportDocument(ExportDocumentRequest request, String clientContextToken) {
+        String documentUrl = request.getDocumentUrl();
+        if (StringUtils.isEmpty(documentUrl)) {
+            throw new InvalidInputException(messageHelper.getMessage("leoslight.service.export.url.missing"));
+        }
+        String docRef = documentUrl.substring(documentUrl.lastIndexOf('/') + 1);
+
         LeosDocument savedDocument = findLeosDocument(docRef, XmlDocument.class);
         if(savedDocument == null) {
             throw new NotFoundException(messageHelper.getMessage("leoslight.document.not.found"));
         }
 
-        File file = convertDocument(docRef, savedDocument, options);
+        File file = convertDocument(docRef, savedDocument, request.getOptions());
 
+        String callbackAddress = request.getCallbackAddress();
         if(StringUtils.isEmpty(callbackAddress)) {
             Map<String, Object> documentMetadata = getDocumentMetadata(docRef, leosRepository);
             callbackAddress = documentMetadata == null ? null : (String) documentMetadata.get("callbackAddress");
@@ -171,7 +182,15 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         }
 
         try {
-            leosLightXmlDocumentService.sendFileToCallbackUrl(file.getName(), Files.readAllBytes(file.toPath()), callbackAddress);
+            String token = null;
+            if(StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
+                String user = tokenService.extractUserFromToken(clientContextToken);
+                String systemName = tokenService.extractUserSystemNameFromToken(clientContextToken);
+                if(StringUtils.isNotBlank(systemName) && SystemName.DGT_EDIT.value().equalsIgnoreCase(systemName)) {
+                    token = tokenService.getDgtToken(user);
+                }
+            }
+            leosLightXmlDocumentService.sendFileToCallbackUrl(file.getName(), Files.readAllBytes(file.toPath()), callbackAddress, token);
         } catch (IOException exception) {
             if ((file != null) && file.exists()) {
                 file.delete();

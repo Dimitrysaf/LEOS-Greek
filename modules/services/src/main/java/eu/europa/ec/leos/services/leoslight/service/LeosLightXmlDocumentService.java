@@ -24,6 +24,6 @@ public interface LeosLightXmlDocumentService {
 
     byte[] convert(byte[] documentContent, String fileName, ExportOptions exportOptions) throws IOException;
 
-    void sendFileToCallbackUrl(String fileName, byte[] content, String callbackUrl) throws IOException;
+    void sendFileToCallbackUrl(String fileName, byte[] content, String callbackUrl, String token) throws IOException;
 
 }
