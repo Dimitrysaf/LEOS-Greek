@@ -52,7 +52,7 @@
             <article leos:editable="true"
                      leos:deletable="true">
                 <num leos:editable="false">Article 1</num>
-                <heading>Article 1 heading</heading>
+                <heading>Article heading</heading>
                 <paragraph>
                     <num>1.</num>
                     <content>
