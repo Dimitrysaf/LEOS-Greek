@@ -7,7 +7,7 @@ Feature: Legal Act Page Regression Features
     @citation_recital_editing @local
     Scenario: Add and removal of text in citation and recital element in legal Act
         Given navigate to edit drafting application with "User1"
-        Then user is on repository browser page
+        Then user is on home page
         When click on create proposal button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
@@ -51,7 +51,7 @@ Feature: Legal Act Page Regression Features
     @splittingParagraphInArticle @local
     Scenario: append text in existing paragraph and make same paragraph into two inside article
         Given navigate to edit drafting application with "User1"
-        Then user is on repository browser page
+        Then user is on home page
         When click on create proposal button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
@@ -84,7 +84,7 @@ Feature: Legal Act Page Regression Features
     @articleEditing @local
     Scenario: Addition of text and removal of text from article
         Given navigate to edit drafting application with "User1"
-        Then user is on repository browser page
+        Then user is on home page
         When click on upload button
         Then active upload window label is "Upload a legislative document"
         When upload a leg file from a relative location "PROP_ACT-3210011215583606762-EN.leg"
@@ -120,10 +120,10 @@ Feature: Legal Act Page Regression Features
         And  paragraph 1 of article 4 contains "New Text"
         And  paragraph 1 of article 4 doesnot contain "Directive"
 
-    @sampleDevTest @nonlocal
+    @sampleDevTest @nonlocal @focus
     Scenario: navigate to legal act page
         Given navigate to edit drafting application with "User1"
-        Then user is on repository browser page
+        Then user is on home page
         When click on create proposal button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window

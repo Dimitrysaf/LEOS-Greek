@@ -8,7 +8,7 @@ Feature: Track Changes Feature
   Scenario: Basic tests for add track changes text in an article in Legal Act
     # Login
     Given navigate to edit drafting application with "User1"
-    Then user is on repository browser page
+    Then user is on home page
     # Upload file for test
     When click on upload button
     Then active upload window label is "Upload a legislative document"
@@ -63,7 +63,7 @@ Feature: Track Changes Feature
   Scenario: Track changes for rules in confluence
     # Login
     Given navigate to edit drafting application with "User1"
-    Then user is on repository browser page
+    Then user is on home page
     # Upload file for test
     When click on upload button
     Then active upload window label is "Upload a legislative document"
@@ -189,6 +189,8 @@ Feature: Track Changes Feature
     #   | del  | " some more tex"    |
     #   | text | "t to test."        |
     Given navigate to edit drafting application with "User2"
+    Then user is on home page
+    When click on view all acts button
     Then user is on repository browser page
     # Open first proposal
     When open first proposal

@@ -16,7 +16,7 @@ module.exports = defineConfig({
     watchForFileChanges: false
   },
   env: {
-    "localDraftingUrl": "localhost:8080/leos-pilot/ui/workspace",
+    "localDraftingUrl": "localhost:8080/leos-pilot/ui",
     "devDraftingUrl": "intragate.development.ec.europa.eu/decide-drafting/ui/"
   }
 });
