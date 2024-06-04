@@ -17,7 +17,8 @@
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
-                    <FRBRlanguage language="en"/>
+                    <FRBRlanguage language="en"
+                     xml:id="FRBRlanguage"/>
                 </FRBRExpression>
                 <FRBRManifestation>
                     <FRBRthis value=""/>
@@ -80,7 +81,7 @@
 				<p/>
 			</container>
             <container name="mainDocLanguage">
-                <p><inline name="language" refersTo="~_FRBRlanguage">EN</inline></p>
+                <p><inline name="language" refersTo="~FRBRlanguage">EN</inline></p>
             </container>
         </coverPage>
         <collectionBody/>
