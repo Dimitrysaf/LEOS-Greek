@@ -38,6 +38,22 @@ define(function listItemNumberModule(require) {
                 return generateAlphaIndex(number.replace('(', '').replace(')', ''));
             }
         }, {
+            type: "ARABIC",
+            inDefault: true,
+            format: "x",
+            prefix: "",
+            suffix: "",
+            name: 'Arabic',
+            generator: function generateSequenceForArabic(list, item, idx) {
+                return this.prefix+this.format.replace('x', idx + 1)+this.suffix;
+            },
+            getIndex: function getIndexForArabic(number) {
+                if (isNaN(number)) {
+                    return -1;
+                }
+                return Number(number);
+            }
+        }, {
             type: "ARABIC_PARENTHESIS",
             inDefault: true,
             format: "x",

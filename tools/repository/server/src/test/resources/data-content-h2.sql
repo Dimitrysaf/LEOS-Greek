@@ -5518,7 +5518,7 @@ SET @str1 = '<?xml version="1.0" encoding="UTF-8"?>
             <article xml:id="_art_1" leos:editable="true"
                      leos:deletable="true">
                 <num xml:id="_art_1__num" leos:editable="false">Article 1</num>
-                <heading xml:id="_art_1__heading">Article 1 heading</heading>
+                <heading xml:id="_art_1__heading">Article heading</heading>
                 <paragraph xml:id="_art_1__para_1">
                     <num xml:id="_art_1__para_1__num">1.</num>
                     <content xml:id="_art_1__para_1__content">
