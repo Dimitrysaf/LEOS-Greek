@@ -81,7 +81,7 @@
     <!-- Translation tabs -->
     <eui-tabs class="eui-u-display-block eui-u-mt-l" [activeTabIndex]="activeTabIndex" *ngIf="translatedDocs?.length > 0" #translationsTabs (tabSelect)="onTabSelect($event)">
       <!-- Original lang tab -->
-      <eui-tab>
+      <eui-tab euiPrimary>
         <eui-tab-label>{{proposal.language}}</eui-tab-label>
         <eui-tab-content>
           <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs>
@@ -140,7 +140,7 @@
         </eui-tab-content>
       </eui-tab>
       <!-- translated lang tabs -->
-      <eui-tab *ngFor="let doc of translatedDocs">
+      <eui-tab *ngFor="let doc of translatedDocs" euiSecondary>
         <eui-tab-label>{{doc.language}}</eui-tab-label>
         <eui-tab-content>
           <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs>
