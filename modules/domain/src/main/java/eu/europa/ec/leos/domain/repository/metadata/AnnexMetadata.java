@@ -5,6 +5,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import java.util.Objects;
 
 public final class AnnexMetadata extends LeosMetadata {
+
     private final int index;
     private final String number;
     private final String title;
@@ -13,7 +14,13 @@ public final class AnnexMetadata extends LeosMetadata {
     public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
                          String ref, int index, String number, String title, String objectId, String docVersion,
                          boolean eeaRelevance, String clonedRef) {
-        super(LeosCategory.ANNEX, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance);
+        this(stage, type, purpose, template, language, docTemplate, ref, null, index, number, title, objectId, docVersion, eeaRelevance, clonedRef);
+    }
+
+    public AnnexMetadata(String stage, String type, String purpose, String template, String language, String docTemplate,
+                         String ref, String packageRef, int index, String number, String title, String objectId, String docVersion,
+                         boolean eeaRelevance, String clonedRef) {
+        super(LeosCategory.ANNEX, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance);
         this.index = index;
         this.number = number;
         this.title = title;
@@ -88,23 +95,25 @@ public final class AnnexMetadata extends LeosMetadata {
         private String number;
         private String title;
         private String clonedRef;
+        private String packageRef;
         private AnnexMetadataBuilder() {
         }
         private AnnexMetadataBuilder(AnnexMetadata metadata) {
             this.index = metadata.index;
             this.number= metadata.number;
-            this.title= metadata.title;
-            this.clonedRef= metadata.clonedRef;
-            this.stage= metadata.stage;
-            this.type= metadata.type;
-            this.purpose= metadata.purpose;
-            this.template= metadata.template;
-            this.language= metadata.language;
-            this.docTemplate= metadata.docTemplate;
-            this.ref= metadata.ref;
-            this.objectId= metadata.objectId;
-            this.docVersion= metadata.docVersion;
-            this.eeaRelevance= metadata.eeaRelevance;
+            this.title = metadata.title;
+            this.clonedRef = metadata.clonedRef;
+            this.stage = metadata.stage;
+            this.type = metadata.type;
+            this.purpose = metadata.purpose;
+            this.template = metadata.template;
+            this.language = metadata.language;
+            this.docTemplate = metadata.docTemplate;
+            this.ref = metadata.ref;
+            this.objectId = metadata.objectId;
+            this.docVersion = metadata.docVersion;
+            this.eeaRelevance = metadata.eeaRelevance;
+            this.packageRef = metadata.packageRef;
         }
         public AnnexMetadataBuilder withStage(String stage) {
             this.stage = stage;
@@ -162,9 +171,13 @@ public final class AnnexMetadata extends LeosMetadata {
             this.clonedRef = clonedRef;
             return this;
         }
+        public AnnexMetadataBuilder withPackageRef(String packageRef) {
+            this.packageRef = packageRef;
+            return this;
+        }
         public AnnexMetadata build() {
             return new AnnexMetadata(this.stage, this.type, this.purpose, this.template, this.language,
-                    this.docTemplate, this.ref, this.index, this.number, this.title, this.objectId, this.docVersion,
+                    this.docTemplate, this.ref, this.packageRef, this.index, this.number, this.title, this.objectId, this.docVersion,
                     this.eeaRelevance, this.clonedRef);
         }
     }

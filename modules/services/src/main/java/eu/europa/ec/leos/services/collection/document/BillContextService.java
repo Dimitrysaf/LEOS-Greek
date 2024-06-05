@@ -103,6 +103,7 @@ public class BillContextService {
     private DocumentLanguageContext documentLanguageContext;
     private String language;
     private boolean translated;
+    private String packageRef = null;
 
     @Autowired
     BillContextService(BillService billService,
@@ -224,6 +225,10 @@ public class BillContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public void usePackageRef(String packageRef) {
+        this.packageRef = packageRef;
+    }
+
     public Bill executeCreateBill() {
         LOG.trace("Executing 'Create Bill' use case...");
         Validate.notNull(leosPackage, BILL_PACKAGE_IS_REQUIRED);
@@ -236,6 +241,7 @@ public class BillContextService {
         BillMetadata metadata = metadataOption.get()
                 .builder()
                 .withPurpose(purpose)
+                .withPackageRef(packageRef)
                 .build();
 
         Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
@@ -354,6 +360,7 @@ public class BillContextService {
                 .withRef(ref)
                 .withLanguage(language)
                 .withEeaRelevance(eeaRelevance)
+                .withPackageRef(packageRef)
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(billDocument.getSource(), createValueMap(updatedBillMetadata), xmlNodeConfigProcessor.getConfig(updatedBillMetadata.getCategory()));
         
@@ -461,6 +468,7 @@ public class BillContextService {
         annexContext.useAnnexNumber(annexNumber);
         annexContext.useCloneProposal(cloneProposal);
         annexContext.useOriginRef(originRef);
+        annexContext.usePackageRef(packageRef);
         Annex annex = annexContext.executeCreateAnnex();
 
         String href = annex.getName();
@@ -557,6 +565,7 @@ public class BillContextService {
                 .withTemplate(annexMetadataVO.getTemplate())
                 .withRef(ref)
                 .withLanguage(language)
+                .withPackageRef(packageRef)
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(annexDocument.getSource(), createValueMap(updatedAnnexMetadata),
                 xmlNodeConfigProcessor.getConfig(updatedAnnexMetadata.getCategory()), xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());

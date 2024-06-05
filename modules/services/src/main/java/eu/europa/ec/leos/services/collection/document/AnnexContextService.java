@@ -74,6 +74,7 @@ public class AnnexContextService {
     private boolean cloneProposal = false;
     private String originRef;
     private String language;
+    private String packageRef = null;
 
     public AnnexContextService(
             TemplateService templateService,
@@ -175,6 +176,10 @@ public class AnnexContextService {
         this.cloneProposal = cloneProposal;
     }
 
+    public void usePackageRef(String packageRef) {
+        this.packageRef = packageRef;
+    }
+
     public Annex executeCreateAnnex() {
         LOG.trace("Executing 'Create Annex' use case...");
 
@@ -196,6 +201,7 @@ public class AnnexContextService {
                 .withNumber(annexNumber)
                 .withType(type)
                 .withTemplate(template)
+                .withPackageRef(packageRef)
                 .build();
 
         if (cloneProposal) {

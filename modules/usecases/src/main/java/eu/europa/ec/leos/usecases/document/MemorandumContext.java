@@ -57,6 +57,7 @@ public class MemorandumContext {
     private String type = null;
     private String template = null;
     private boolean eeaRelevance;
+    private String packageRef = null;
 
     private DocumentVO memoDocument;
 
@@ -126,6 +127,10 @@ public class MemorandumContext {
         LOG.trace("Using EEA Relevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
     }
+
+    public void usePackageRef(String packageRef) {
+        this.packageRef = packageRef;
+    }
     
     public Memorandum executeCreateMemorandum() {
         LOG.trace("Executing 'Create Memorandum' use case...");
@@ -142,6 +147,7 @@ public class MemorandumContext {
                 .withType(type)
                 .withTemplate(template)
                 .withEeaRelevance(eeaRelevance)
+                .withPackageRef(packageRef)
                 .build();
 
         Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.METADATA_UPDATED),
@@ -198,6 +204,7 @@ public class MemorandumContext {
                 .builder()
                 .withPurpose(purpose)
                 .withRef(ref)
+                .withPackageRef(packageRef)
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(memoDocument.getSource(), createValueMap(updatedMemorandumMetadata),
                 xmlNodeConfigProcessor.getConfig(updatedMemorandumMetadata.getCategory()));

@@ -796,6 +796,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 billContext.useAnnexTemplate(annexTemplate);
                 billContext.useCloneProposal(isClonedProposal);
                 billContext.useOriginRef(cloneOriginRef);
+                billContext.usePackageRef(proposalRef);
                 billContext.executeCreateBillAnnex();
                 documentViewService.contextExecuteUpdateProposalAsync(proposal);
             } catch (Exception e) {

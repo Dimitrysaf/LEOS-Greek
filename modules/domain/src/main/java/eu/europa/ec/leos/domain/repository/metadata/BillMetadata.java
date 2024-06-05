@@ -5,7 +5,11 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 public final class BillMetadata extends LeosMetadata {
 
     public BillMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String objectId, String docVersion, boolean eeaRelevance) {
-        super(LeosCategory.BILL, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance);
+        this(stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance);
+    }
+
+    public BillMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion, boolean eeaRelevance) {
+        super(LeosCategory.BILL, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance);
     }
 
     public  BillMetadataBuilder builder() {
@@ -22,19 +26,21 @@ public final class BillMetadata extends LeosMetadata {
         private String objectId;
         private String docVersion;
         private boolean eeaRelevance;
+        private String packageRef;
         private BillMetadataBuilder() {
         }
         private  BillMetadataBuilder(BillMetadata metadata) {
-            this.stage= metadata.stage;
-            this.type= metadata.type;
-            this.purpose= metadata.purpose;
-            this.template= metadata.template;
-            this.language= metadata.language;
-            this.docTemplate= metadata.docTemplate;
-            this.ref= metadata.ref;
-            this.objectId= metadata.objectId;
-            this.docVersion= metadata.docVersion;
-            this.eeaRelevance= metadata.eeaRelevance;
+            this.stage = metadata.stage;
+            this.type = metadata.type;
+            this.purpose = metadata.purpose;
+            this.template = metadata.template;
+            this.language = metadata.language;
+            this.docTemplate = metadata.docTemplate;
+            this.ref = metadata.ref;
+            this.objectId = metadata.objectId;
+            this.docVersion = metadata.docVersion;
+            this.eeaRelevance = metadata.eeaRelevance;
+            this.packageRef = metadata.packageRef;
         }
         public BillMetadataBuilder withStage(String stage) {
             this.stage = stage;
@@ -76,9 +82,13 @@ public final class BillMetadata extends LeosMetadata {
             this.eeaRelevance = eeaRelevance;
             return this;
         }
+        public BillMetadataBuilder withPackageRef(String packageRef) {
+            this.packageRef = packageRef;
+            return this;
+        }
 
         public BillMetadata build() {
-            return new BillMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.objectId, this.docVersion, this.eeaRelevance);
+            return new BillMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.packageRef, this.objectId, this.docVersion, this.eeaRelevance);
         }
     }
 }
