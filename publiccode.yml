@@ -1,0 +1,194 @@
+# This repository adheres to the publiccode.yml standard by including this 
+# metadata file that makes public software easily discoverable.
+# More info at https://github.com/italia/publiccode.yml
+
+publiccodeYmlVersion: '0.2'
+categories:
+  - productivity-suite
+description:
+  en:
+    features:
+      - Legal document structure
+      - Collaboration
+      - Import legal text
+      - Versioning
+      - Annotations
+      - Rich text
+    genericName: Legislation Editing Open Software
+    longDescription: |2
+       
+
+      LEOS (**L**egislation **E**diting **O**pen **S**oftware) is an open source
+
+      software designed to help those involved in draﬅing legislation, which in
+
+      itself is a complex knowledge-intensive process, by supporting eﬃcient
+
+      online collaboration. Comments, suggestions, version control, co-edition,
+
+      everything is there. Regarding the structure, that is where we aim to be
+
+      as restrictive as possible and this is not because we are conservative,
+
+      but because this helps the draﬅers follow the rules and avoid mistakes.
+
+      Content is stored in an XML format, currently Akoma Ntoso V3.
+
+
+
+      LEOS (**L**egislation **E**diting **O**pen **S**oftware) is a project
+
+      under [**Interoperable
+
+      Europe**](https://joinup.ec.europa.eu/interoperable-europe) initiative of
+
+      the European Commission for a reinforced public sector interoperability
+
+      policy, funded by the [Digital Europe
+
+      Programme](https://digital-strategy.ec.europa.eu/en/activities/digital-programme
+
+      "https://digital-strategy.ec.europa.eu/en/activities/digital-programme") (DIGITAL).
+
+
+
+      The LEOS project under **Interoperable Europe** focuses on supporting the
+
+      co-development co-design, and co-deployment of an ‘IT eco-system centred
+
+      on augmented LEOS’.
+
+       LEOS has been created to addresses the **modernisation and digital transformation of the drafting and revising of legislation in Member States, EU Institutions, EU agencies and bodies**. The aim is to:
+
+      - Improve the quality of legislation.
+
+
+      - Increase the efficiency of the legislative process across the Union.
+
+
+      - Facilitate interoperability and seamless cooperation between the
+
+      different actors in the legislative process in and between EU Institutions
+
+      and Member States.
+
+
+      - Improve transparency and accessibility and thus effectiveness of law.
+
+
+      - Explore and pilot the use of innovative technologies such as Artificial
+
+      Intelligence.
+
+
+
+      It is based on the **Akoma Ntoso XML format** an OASIS LegalDocML standard
+
+      (in particular, it supports the
+
+      [AKN4EU](https://op.europa.eu/en/web/eu-vocabularies/akn4eu)
+
+      interinstitutional instantiation subschema of Akoma Ntoso) that
+
+      facilitates **interoperability** between **Member States and EU
+
+      institutions.**
+
+
+
+      The code of augmented LEOS is available for free under EUPL licence
+
+      (version 1.2 or – as soon they will be approved by the European Commission
+
+      - subsequent versions of the EUPL (the "Licence")), and the development
+
+      team paid attention to organise the code in a structured way to ease its
+
+      reusability (modules, plugins…).
+
+
+
+      The current modules of augmented LEOS can be found on **code.europa.eu**
+
+      (open source project repo from EU institutions):
+
+
+
+      - [LEOS core](https://code.europa.eu/leos/core) and
+
+
+      - [Annotations utils](https://code.europa.eu/leos/annotate).
+
+
+
+      For more information on the EUPL licence, please visit
+
+      this [**link**](https://joinup.ec.europa.eu/collection/eupl). 
+
+
+
+      Important to note that our journey started under ISA Programme with ISA
+
+      Action 1.13. LEOS - Legislation Editing Open Software, when we first
+
+      developed a better understanding of the way public administrations address
+
+      the issue of drafting their legislations, with a view to identify best
+
+      practices, improvements and areas where common efforts and developments
+
+      are possible. We also invested time on researching the best open standards
+
+      and tools so that we could be cost efficient and deliver open source for
+
+      our community. And we keep doing this every time we need to add new
+
+      features. Having identified an opportunity in the field, the project
+
+      delivered various proof of concepts and prototypes. Now we have an
+
+      execution phase every year where we constantly improve our tool. After ISA
+
+      Action 1.13, LEOS continued under ISA² Action **2016.38 Legislation
+
+      Interoperability Tools – LegIT** until the end of ISA² Programme.
+    shortDescription: |-
+      LEOS (Legislation Editing Open Software) is an open source software
+
+      designed to help those involved in draﬅing legislation.
+developmentStatus: stable
+it:
+  conforme:
+    gdpr: false
+    lineeGuidaDesign: false
+    misureMinimeSicurezza: false
+    modelloInteroperabilita: false
+  countryExtensionVersion: '0.2'
+  piattaforme:
+    anpr: false
+    cie: false
+    pagopa: false
+    spid: false
+legal:
+  license: EUPL-1.2
+  mainCopyrightOwner: European Commission
+  repoOwner: European Commission
+localisation:
+  availableLanguages:
+    - en
+  localisationReady: false
+maintenance:
+  contacts:
+    - email: digit-leos-feedback@ec.europa.eu
+      name: DIGIT LEOS team
+  type: internal
+name: LEOS core
+platforms:
+  - web
+releaseDate: '2023-12-07'
+roadmap: 'https://code.europa.eu/groups/leos/-/wikis/Release-management#roadmap'
+softwareType: standalone/web
+softwareVersion: 5.0.*
+url: 'https://code.europa.eu/leos/core/-/tree/development'
+usedBy:
+  - European Commission
