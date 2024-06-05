@@ -92,7 +92,7 @@ public class CollectionContextMandateService extends CollectionContextService {
         explanatoryContext.useTitle(messageHelper.getMessage("document.default.explanatory.title.default." + template));
         explanatoryContext.useActionMessageMap(actionMsgMap);
         explanatoryContext.useCollaborators(proposal.getCollaborators());
-        explanatoryContext.usePackageRef(metadata.getRef());
+        explanatoryContext.usePackageRef(proposal.getMetadata().get().getRef());
         Explanatory explanatory = explanatoryContext.executeCreateExplanatory();
         return explanatory;
     }
