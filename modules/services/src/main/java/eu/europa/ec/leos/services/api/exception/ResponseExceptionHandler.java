@@ -18,7 +18,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Throwable ex) {
         String errorMessage = ex.getMessage();
-        LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get());
+        LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
         return new ResponseEntity<>("{\n\t'errorCode': 500 , \n\t'message': '" + errorMessage + "'\n}",
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }

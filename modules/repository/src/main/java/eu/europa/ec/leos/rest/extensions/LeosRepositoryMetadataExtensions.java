@@ -39,33 +39,54 @@ class LeosRepositoryMetadataExtensions {
     }
 
     static Option<ProfileMetaData> getProfileMetaDataOption(eu.europa.ec.leos.rest.support.model.LeosDocument leosDocument) {
-        return buildMetadata(leosDocument, props -> Option.some(new ProfileMetaData(props.stage,  props.type, props.purpose, props.template,
-                props.language, props.docTemplate, props.ref,null, "0.1.0", props.eeaRelevance)));
+        return buildMetadata(leosDocument, props -> {
+            ProfileMetaData metadata = new ProfileMetaData(props.stage,  props.type, props.purpose, props.template,
+                    props.language, props.docTemplate, props.ref,null, "0.1.0", props.eeaRelevance);
+            metadata.setCallbackAddress(props.callbackAddress);
+            metadata.setImported(props.imported);
+            return Option.some(metadata);
+        });
     }
 
     static Option<ProposalMetadata> getProposalMetadataOption(LeosDocument leosDocument) {
-        return buildMetadata(leosDocument, props -> Option.some(
-                new ProposalMetadata(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
+        return buildMetadata(leosDocument, props -> {
+            ProposalMetadata metadata = new ProposalMetadata(props.stage, props.type, props.purpose, props.template,
+                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance);
+            metadata.setCallbackAddress(props.callbackAddress);
+            metadata.setImported(props.imported);
+            return Option.some(metadata);
+        });
     }
 
     static Option<StructureMetaData> getStructureMetadataOption(LeosDocument leosDocument) {
-        return buildMetadata(leosDocument, props -> Option.some(
-                new StructureMetaData(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
+        return buildMetadata(leosDocument, props -> {
+            StructureMetaData metadata = new StructureMetaData(props.stage, props.type, props.purpose, props.template,
+                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance);
+            metadata.setCallbackAddress(props.callbackAddress);
+            metadata.setImported(props.imported);
+            return Option.some(metadata);
+        });
     }
 
     static Option<ExplanatoryMetadata> getExplanatorydataOption(LeosDocument leosDocument) {
         String title = getExplanatoryTitle(leosDocument);
-        return buildMetadata(leosDocument, props -> Option.some(
-                new ExplanatoryMetadata(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance)));
+        return buildMetadata(leosDocument, props -> {
+            ExplanatoryMetadata metadata = new ExplanatoryMetadata(props.stage, props.type, props.purpose, props.template,
+                    props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance);
+            metadata.setCallbackAddress(props.callbackAddress);
+            metadata.setImported(props.imported);
+            return Option.some(metadata);
+        });
     }
 
     static Option<MemorandumMetadata> getMemorandumMetadataOption(LeosDocument leosDocument) {
-        return buildMetadata(leosDocument, props -> Option.some(
-                new MemorandumMetadata(props.stage, props.type, props.purpose, props.template,
-                        props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance)));
+        return buildMetadata(leosDocument, props -> {
+            MemorandumMetadata metadata = new MemorandumMetadata(props.stage, props.type, props.purpose, props.template,
+                    props.language, props.docTemplate, props.ref, null, "0.1.0", props.eeaRelevance);
+            metadata.setCallbackAddress(props.callbackAddress);
+            metadata.setImported(props.imported);
+            return Option.some(metadata);
+        });
     }
 
     static Option<BillMetadata> getBillMetadataOption(LeosDocument leosDocument) {
@@ -86,21 +107,22 @@ class LeosRepositoryMetadataExtensions {
         String clonedRef = getAnnexClonedRef(leosDocument);
 
         return buildMetadata(leosDocument, props -> {
-            return Option.some(
-                    new AnnexMetadata(props.stage, props.type, props.purpose, props.template,
-                            props.language, props.docTemplate, props.ref, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, clonedRef));
-
+            AnnexMetadata metadata = new AnnexMetadata(props.stage, props.type, props.purpose, props.template,
+                    props.language, props.docTemplate, props.ref, index, number, annexTitle, null, "0.1.0", props.eeaRelevance, clonedRef);
+            metadata.setCallbackAddress(props.callbackAddress);
+            metadata.setImported(props.imported);
+            return Option.some(metadata);
         });
     }
 
     static Option<FinancialStatementMetadata> getFinancialstatementdataOption(LeosDocument leosDocument) {
         String title = getFinancialStatementTitle(leosDocument);
         return buildMetadata(leosDocument, props -> {
-            Option<FinancialStatementMetadata> fin =
-             Option.some(
-                    new FinancialStatementMetadata(props.stage, props.type, props.purpose, props.template,
-                            props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance));
-            return fin;
+            FinancialStatementMetadata metadata = new FinancialStatementMetadata(props.stage, props.type, props.purpose, props.template,
+                    props.language, props.docTemplate, props.ref, title, null, "0.1.0", props.eeaRelevance);
+            metadata.setCallbackAddress(props.callbackAddress);
+            metadata.setImported(props.imported);
+            return Option.some(metadata);
         });
     }
 

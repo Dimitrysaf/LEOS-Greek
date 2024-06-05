@@ -141,15 +141,16 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
         String documentReferenceUrl = getDocumentViewUrl(docRef, docType);
 
+        String userLogin = securityContext != null && securityContext.hasAuthenticationInContext() ? securityContext.getUser().getLogin() : null;
         if (savedDocument == null) {
-            LOG.info(String.format("User %s created document %s via leos light import API", securityContext.getUser().getLogin(), inputFileName));
+            LOG.info("User " + userLogin + " created document " + inputFileName + " via leos light import API");
             createLeosDocument(docRef, docType, documentVO, docMetaData);
             return new Pair<>(documentReferenceUrl, messageHelper.getMessage("leoslight.document.created"));
         } else {
             if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), documentVO.getSource())) {
                 return new Pair<>(documentReferenceUrl, messageHelper.getMessage("leoslight.document.duplicate"));
             } else {
-                LOG.info(String.format("User %s updated document %s via leos light import API", securityContext.getUser().getLogin(), inputFileName));
+                LOG.info("User " + userLogin + " updated document " + inputFileName + " via leos light import API");
                 updateLeosDocument(savedDocument.getId(), docType, documentVO, docMetaData);
                 return new Pair<>(documentReferenceUrl, messageHelper.getMessage("leoslight.document.updated.major.version"));
             }
