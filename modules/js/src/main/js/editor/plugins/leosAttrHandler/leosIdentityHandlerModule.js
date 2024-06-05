@@ -317,7 +317,7 @@ define(function leosIdentityHandler(require) {
     }
 
     function _injectTagIdsInNode(element, idPrefix) {
-        if (element && element.hasAttribute && element.hasAttribute('id')) {
+        if(!element){
             return;
         }
         if(!idPrefix){
