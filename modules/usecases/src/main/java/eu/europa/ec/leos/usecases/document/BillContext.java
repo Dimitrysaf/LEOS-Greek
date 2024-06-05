@@ -88,6 +88,7 @@ public class BillContext {
     private int annexIndex;
     private String annexNumber;
     private boolean cloneProposal = false;
+    private String packageRef = null;
 
     private final Map<ContextAction, String> actionMsgMap;
 
@@ -212,6 +213,10 @@ public class BillContext {
         this.cloneProposal = cloneProposal;
     }
 
+    public void usePackageRef(String packageRef) {
+        this.packageRef = packageRef;
+    }
+
     public Bill executeCreateBill() {
         LOG.trace("Executing 'Create Bill' use case...");
         Validate.notNull(leosPackage, "Bill package is required!");
@@ -225,6 +230,7 @@ public class BillContext {
                 .builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
+                .withPackageRef(packageRef)
                 .build();
 
         Bill billCreated = billService.createBill(bill.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.METADATA_UPDATED),
@@ -322,6 +328,7 @@ public class BillContext {
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
                 .withRef(ref)
+                .withPackageRef(packageRef)
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(billDocument.getSource(), createValueMap(updatedBillMetadata), xmlNodeConfigProcessor.getConfig(updatedBillMetadata.getCategory()));
 
@@ -428,6 +435,7 @@ public class BillContext {
         annexContext.useAnnexNumber(annexNumber);
         annexContext.useCloneProposal(cloneProposal);
         annexContext.useOriginRef(originRef);
+        annexContext.usePackageRef(packageRef);
         Annex annex = annexContext.executeCreateAnnex();
 
         String href = annex.getName();
@@ -524,6 +532,7 @@ public class BillContext {
                 .withTemplate(annexMetadataVO.getTemplate())
                 .withClonedRef(annexDocument.getRef())
                 .withRef(ref)
+                .withPackageRef(packageRef)
                 .build();
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(annexDocument.getSource(), createValueMap(updatedAnnexMetadata),
                 xmlNodeConfigProcessor.getConfig(updatedAnnexMetadata.getCategory()), xmlNodeConfigProcessor.getOldPrefaceOfAnnexConfig());

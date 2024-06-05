@@ -64,6 +64,7 @@ public class ExplanatoryContextService {
     private boolean eeaRelevance;
     private String language;
     private boolean translated;
+    private String packageRef = null;
 
     @Autowired
     public ExplanatoryContextService(
@@ -171,6 +172,10 @@ public class ExplanatoryContextService {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public void usePackageRef(String packageRef) {
+        this.packageRef = packageRef;
+    }
+
     public Explanatory executeCreateExplanatory() {
         LOG.trace("Executing 'Create Explanatory' use case...");
 
@@ -188,6 +193,7 @@ public class ExplanatoryContextService {
                 .withType(type)
                 .withTemplate(template)
                 .withTitle(title)
+                .withPackageRef(packageRef)
                 .build();
 
         explanatory = explanatoryService.createExplanatory(explanatory.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.ANNEX_METADATA_UPDATED), null);
@@ -214,6 +220,7 @@ public class ExplanatoryContextService {
                 .withEeaRelevance(eeaRelevance)
                 .withLanguage(language)
                 .withTitle(explanatoryDocument.getMetadata().getTitle())
+                .withPackageRef(packageRef)
                 .build();
 
         final byte[] updatedSource = xmlNodeProcessor.setValuesInXml(explanatoryDocument.getSource(), createValueMap(metadata),

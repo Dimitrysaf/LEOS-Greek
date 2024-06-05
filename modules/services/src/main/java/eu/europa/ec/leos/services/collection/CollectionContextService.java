@@ -297,6 +297,7 @@ public abstract class CollectionContextService {
                     explanatoryContext.useLanguage(language);
                     explanatoryContext.useTranslated(translated);
                     explanatoryContext.useCollaborators(proposal.getCollaborators());
+                    explanatoryContext.usePackageRef(proposal.getMetadata().get().getRef());
                     Explanatory explanatory = explanatoryContext.executeImportExplanatory();
                     proposal = proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
                     String explanatoryRef = explanatory.getMetadata().get().getRef();
@@ -319,6 +320,7 @@ public abstract class CollectionContextService {
                     memorandumContext.useTranslated(translated);
                     memorandumContext.useCloneProposal(cloneProposal);
                     memorandumContext.useOriginRef(originRef);
+                    memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
                     Memorandum memorandum = memorandumContext.executeImportMemorandum();
                     proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
                     String memorandumRef = memorandum.getMetadata().get().getRef();
@@ -340,6 +342,7 @@ public abstract class CollectionContextService {
                     billContext.useLanguage(language);
                     billContext.useTranslated(translated);
                     billContext.useOriginRef(originRef);
+                    billContext.usePackageRef(proposal.getMetadata().get().getRef());
                     Bill bill = billContext.executeImportBill();
                     proposal = proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
                     String billRef = bill.getMetadata().get().getRef();
@@ -364,6 +367,7 @@ public abstract class CollectionContextService {
                     financialStatementContext.useOriginRef(originRef);
                     financialStatementContext.useLanguage(language);
                     financialStatementContext.useTranslated(translated);
+                    financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
                     FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
                     String financialStatementRef = financialStatement.getMetadata().get().getRef();
                     proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
@@ -401,6 +405,7 @@ public abstract class CollectionContextService {
         financialStatementContext.useCollaborators(proposal.getCollaborators());
         financialStatementContext.useCloneProposal(cloneProposal);
         financialStatementContext.useOriginRef(originRef);
+        financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
         FinancialStatement financialStatement = financialStatementContext.executeCreateFinancialStatement();
         proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
@@ -598,6 +603,7 @@ public abstract class CollectionContextService {
         explanatoryContext.useType(metadata.getType());
         explanatoryContext.useActionMessageMap(actionMsgMap);
         explanatoryContext.useCollaborators(proposal.getCollaborators());
+        explanatoryContext.usePackageRef(proposal.getMetadata().get().getRef());
         Explanatory explanatory = explanatoryContext.executeCreateExplanatory();
         proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));

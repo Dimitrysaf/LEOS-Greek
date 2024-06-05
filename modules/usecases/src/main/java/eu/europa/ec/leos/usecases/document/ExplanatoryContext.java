@@ -48,6 +48,7 @@ public class ExplanatoryContext {
     private final Map<ContextAction, String> actionMsgMap;
     private String versionComment;
     private String milestoneComment;
+    private String packageRef = null;
 
     public ExplanatoryContext(
             TemplateService templateService,
@@ -146,6 +147,10 @@ public class ExplanatoryContext {
         actionMsgMap.put(action, actionMsg);
     }
 
+    public void usePackageRef(String packageRef) {
+        this.packageRef = packageRef;
+    }
+
     public Explanatory executeCreateExplanatory() {
         LOG.trace("Executing 'Create Explanatory' use case...");
 
@@ -163,6 +168,7 @@ public class ExplanatoryContext {
                 .withType(type)
                 .withTemplate(template)
                 .withTitle(title)
+                .withPackageRef(packageRef)
                 .build();
 
         explanatory = explanatoryService.createExplanatory(explanatory.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextAction.ANNEX_METADATA_UPDATED), null);

@@ -68,6 +68,7 @@ public class FinancialStatementContextService {
     private String originRef;
     private String language;
     private boolean translated;
+    private String packageRef = null;
 
     public FinancialStatementContextService(TemplateService templateService, FinancialStatementService financialStatementService,
             ProposalService proposalService, SecurityService securityService, RepositoryPropertiesMapper repositoryPropertiesMapper,
@@ -172,6 +173,10 @@ public class FinancialStatementContextService {
         this.cloneProposal = cloneProposal;
     }
 
+    public void usePackageRef(String packageRef) {
+        this.packageRef = packageRef;
+    }
+
     public FinancialStatement executeCreateFinancialStatement() {
         LOG.trace("Executing 'Create FinancialStatement' use case...");
 
@@ -189,6 +194,7 @@ public class FinancialStatementContextService {
                 .withType(type)
                 .withTemplate(template)
                 .withTitle(title)
+                .withPackageRef(packageRef)
                 .build();
 
         if (cloneProposal) {
@@ -220,6 +226,7 @@ public class FinancialStatementContextService {
                 .withRef(ref)
                 .withLanguage(language)
                 .withEeaRelevance(eeaRelevance)
+                .withPackageRef(packageRef)
                 .build();
 
         Validate.notNull(financialStatementDocument.getSource(), "Financial statement xml is required!");

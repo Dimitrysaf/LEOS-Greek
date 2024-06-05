@@ -48,12 +48,13 @@ public interface XmlNodeConfigProcessor {
     String DOC_LANGUAGE_COVER = "docLanguageCover";
     String DOC_EEA_RELEVANCE_COVER = "eeaRelevanceCover";
 
-
     String DOC_PURPOSE_PREFACE = "docPurposePreface";
     String DOC_STAGE_PREFACE = "docStagePreface";
     String DOC_TYPE_PREFACE = "docTypePreface";
     String DOC_EEA_RELEVANCE_PREFACE = "eeaRelevancePreface";
 
+    String FILE_CUID_PRESERVATION = "fileCUID";
+    String DOC_CUID_PRESERVATION = "docCUID";
 
     String DOC_VERSION = "docVersion";
     String DOC_REF_COVER = "coverPage";
@@ -146,6 +147,11 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
         keyValueMap.put(EXPLANATORY_TITLE_PREFACE, metadata.getTitle());
 
+        if (metadata.getPackageRef() != null) {
+            keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
+            keyValueMap.put(DOC_CUID_PRESERVATION, metadata.getPackageRef().split("-")[1]);
+        }
+
         return keyValueMap;
     }
 
@@ -172,6 +178,11 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(DOC_LANGUAGE_COVER, metadata.getLanguage().toUpperCase());
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
 
+        if (metadata.getPackageRef() != null) {
+            keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
+            keyValueMap.put(DOC_CUID_PRESERVATION, metadata.getPackageRef().split("-")[1]);
+        }
+
         return keyValueMap;
     }
 
@@ -194,6 +205,9 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
         keyValueMap.put(DOC_EEA_RELEVANCE_COVER, String.valueOf(metadata.getEeaRelevance()));
 
+        keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
+        keyValueMap.put(DOC_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
+
         return keyValueMap;
     }
 
@@ -214,6 +228,9 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(DOC_PURPOSE_COVER, metadata.getPurpose());
         keyValueMap.put(DOC_LANGUAGE_COVER, metadata.getLanguage().toUpperCase());
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
+
+        keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
+        keyValueMap.put(DOC_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
 
         return keyValueMap;
     }
@@ -249,6 +266,11 @@ public interface XmlNodeConfigProcessor {
 
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
 
+        if (metadata.getPackageRef() != null) {
+            keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
+            keyValueMap.put(DOC_CUID_PRESERVATION, metadata.getPackageRef().split("-")[1]);
+        }
+
         return keyValueMap;
     }
 
@@ -270,6 +292,11 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(DOC_PURPOSE_COVER, metadata.getPurpose());
         keyValueMap.put(DOC_LANGUAGE_COVER, metadata.getLanguage().toUpperCase());
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
+
+        if (metadata.getPackageRef() != null) {
+            keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
+            keyValueMap.put(DOC_CUID_PRESERVATION, metadata.getPackageRef().split("-")[1]);
+        }
 
         return keyValueMap;
     }
@@ -308,6 +335,11 @@ public interface XmlNodeConfigProcessor {
         keyValueMap.put(DOC_VERSION, metadata.getDocVersion());
 
         keyValueMap.put(ANNEX_NUMBER_COVER, metadata.getNumber());
+
+        if (metadata.getPackageRef() != null) {
+            keyValueMap.put(FILE_CUID_PRESERVATION, metadata.getRef().split("-")[1]);
+            keyValueMap.put(DOC_CUID_PRESERVATION, metadata.getPackageRef().split("-")[1]);
+        }
 
         return keyValueMap;
     }

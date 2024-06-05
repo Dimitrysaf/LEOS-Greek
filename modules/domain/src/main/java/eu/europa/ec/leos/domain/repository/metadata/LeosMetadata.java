@@ -21,9 +21,10 @@ public abstract class LeosMetadata {
     private String actType;
     private String callbackAddress;
     protected boolean imported;
+    protected String packageRef;
 
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
-                           String language, String docTemplate, String ref, String objectId, String docVersion,
+                           String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion,
                            boolean eeaRelevance) {
         this.category = category;
         this.stage = stage;
@@ -36,6 +37,13 @@ public abstract class LeosMetadata {
         this.objectId = objectId;
         this.docVersion = docVersion;
         this.eeaRelevance = eeaRelevance;
+        this.packageRef = packageRef;
+    }
+
+    protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
+                           String language, String docTemplate, String ref, String objectId, String docVersion,
+                           boolean eeaRelevance) {
+        this(category, stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance);
     }
 
     public String getStage() {
@@ -112,6 +120,10 @@ public abstract class LeosMetadata {
 
     public void setImported(boolean imported) {
         this.imported = imported;
+    }
+
+    public String getPackageRef() {
+        return packageRef;
     }
 
     @Override

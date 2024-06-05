@@ -870,6 +870,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
             billContext.useAnnexTemplate(annexTemplate);
             billContext.useCloneProposal((cloneProposalMetadataVO != null) && (cloneProposalMetadataVO.isClonedProposal()));
             billContext.useOriginRef(cloneOriginRef);
+            billContext.usePackageRef(proposalRef);
             billContext.executeCreateBillAnnex();
             eventBus.post(new DocumentUpdatedEvent());
             populateData();

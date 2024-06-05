@@ -107,6 +107,7 @@ public class CollectionContextProposalService extends CollectionContextService {
             memorandumContext.useActionMessageMap(actionMsgMap);
             memorandumContext.useType(metadata.getType());
             memorandumContext.usePackageTemplate(metadata.getTemplate());
+            memorandumContext.usePackageRef(proposal.getMetadata().get().getRef());
             Memorandum memorandum = memorandumContext.executeCreateMemorandum();
             proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
         }
@@ -116,6 +117,7 @@ public class CollectionContextProposalService extends CollectionContextService {
         billContext.useTemplate(cast(categoryTemplateMap.get(BILL)));
         billContext.usePurpose(purpose);
         billContext.useActionMessageMap(actionMsgMap);
+        billContext.usePackageRef(proposal.getMetadata().get().getRef());
         Bill bill = billContext.executeCreateBill();
         proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));

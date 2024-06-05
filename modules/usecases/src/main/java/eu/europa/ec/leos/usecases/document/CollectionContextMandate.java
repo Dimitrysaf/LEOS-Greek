@@ -91,6 +91,7 @@ public class CollectionContextMandate extends CollectionContext {
         explanatoryContext.useType(metadata.getType());
         explanatoryContext.useActionMessageMap(actionMsgMap);
         explanatoryContext.useCollaborators(proposal.getCollaborators());
+        explanatoryContext.usePackageRef(proposal.getMetadata().get().getRef());
         Explanatory explanatory = explanatoryContext.executeCreateExplanatory();
         proposalService.addComponentRef(proposal, explanatory.getName(), COUNCIL_EXPLANATORY);
         proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextAction.DOCUMENT_CREATED));
@@ -125,6 +126,7 @@ public class CollectionContextMandate extends CollectionContext {
         explanatoryContext.useTitle(messageHelper.getMessage("document.default.explanatory.title.default." + template));
         explanatoryContext.useActionMessageMap(actionMsgMap);
         explanatoryContext.useCollaborators(proposal.getCollaborators());
+        explanatoryContext.usePackageRef(proposal.getMetadata().get().getRef());
         Explanatory explanatory = explanatoryContext.executeCreateExplanatory();
         return explanatory;
     }

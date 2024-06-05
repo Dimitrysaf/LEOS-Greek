@@ -71,6 +71,7 @@ public class MemorandumContextService {
     private final Map<ContextActionService, String> actionMsgMap;
     private String language;
     private boolean translated;
+    private String packageRef = null;
 
     @Autowired
     MemorandumContextService(MemorandumService memorandumService, XmlNodeProcessor xmlNodeProcessor,
@@ -142,6 +143,10 @@ public class MemorandumContextService {
         this.cloneProposal = cloneProposal;
     }
 
+    public void usePackageRef(String packageRef) {
+        this.packageRef = packageRef;
+    }
+
     public Memorandum executeCreateMemorandum() {
         LOG.trace("Executing 'Create Memorandum' use case...");
         Validate.notNull(leosPackage, MEMORANDUM_PACKAGE_IS_REQUIRED);
@@ -156,6 +161,7 @@ public class MemorandumContextService {
                 .withPurpose(purpose)
                 .withType(type)
                 .withTemplate(template)
+                .withPackageRef(packageRef)
                 .build();
 
         Memorandum memorandumCreated = memorandumService.createMemorandum(memorandum.getId(), leosPackage.getPath(), metadata, actionMsgMap.get(ContextActionService.METADATA_UPDATED),
@@ -201,6 +207,7 @@ public class MemorandumContextService {
                 .withRef(ref)
                 .withEeaRelevance(eeaRelevance)
                 .withLanguage(language)
+                .withPackageRef(packageRef)
                 .build();
 
         Validate.notNull(memoDocument.getSource(), "Memorandum xml is required!");

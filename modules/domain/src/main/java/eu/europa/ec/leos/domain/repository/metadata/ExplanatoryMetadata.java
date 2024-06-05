@@ -10,7 +10,11 @@ public class ExplanatoryMetadata extends LeosMetadata{
     }
 
     public ExplanatoryMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String title, String objectId, String docVersion, boolean eeaRelevance) {
-        super(LeosCategory.COUNCIL_EXPLANATORY, stage, type, purpose, template, language, docTemplate, ref, objectId, docVersion, eeaRelevance);
+        this(stage, type, purpose, template, language, docTemplate, ref, null, title, objectId, docVersion, eeaRelevance);
+    }
+
+    public ExplanatoryMetadata(String stage, String type, String purpose, String template, String language, String docTemplate, String ref, String packageRef, String title, String objectId, String docVersion, boolean eeaRelevance) {
+        super(LeosCategory.COUNCIL_EXPLANATORY, stage, type, purpose, template, language, docTemplate, ref, packageRef, objectId, docVersion, eeaRelevance);
         this.title = title;
     }
 
@@ -29,6 +33,7 @@ public class ExplanatoryMetadata extends LeosMetadata{
         private String docVersion;
         private boolean eeaRelevance;
         private String title;
+        private String packageRef;
 
         private ExplanatoryMetadataBuilder() {
         }
@@ -46,6 +51,7 @@ public class ExplanatoryMetadata extends LeosMetadata{
             this.objectId = metadata.objectId;
             this.docVersion = metadata.docVersion;
             this.eeaRelevance = metadata.eeaRelevance;
+            this.packageRef = metadata.packageRef;
         }
 
         public ExplanatoryMetadataBuilder withStage(String stage) {
@@ -103,8 +109,13 @@ public class ExplanatoryMetadata extends LeosMetadata{
             return this;
         }
 
+        public ExplanatoryMetadataBuilder withPackageRef(String packageRef) {
+            this.packageRef = packageRef;
+            return this;
+        }
+
         public ExplanatoryMetadata build() {
-            return new ExplanatoryMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.title, this.objectId, this.docVersion, this.eeaRelevance);
+            return new ExplanatoryMetadata(this.stage, this.type, this.purpose, this.template, this.language, this.docTemplate, this.ref, this.packageRef, this.title, this.objectId, this.docVersion, this.eeaRelevance);
         }
     }
 }
