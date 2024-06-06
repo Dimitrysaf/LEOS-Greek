@@ -21,10 +21,10 @@ define(function leosCrossReferencePluginModule(require) {
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var jsTree = require("jsTree");
     var dialogDefinition = require("./leosCrossReferenceDialog");
-    var leosCrossReferenceWidget = require("./leosCrossReferenceWidget");
     var leosCommandStateHandler = require("plugins/leosCommandStateHandler/leosCommandStateHandler");
     
     var pluginName = "leosCrossReference";
+    var widgetName = "leosCrossReferenceWidget";
 
     var pluginDefinition = {
         icons : 'leoscrossreference',
@@ -36,13 +36,27 @@ define(function leosCrossReferencePluginModule(require) {
             pluginTools.addDialog(dialogDefinition.dialogName, dialogDefinition.initializeDialog);
             
             // adds widget
-            editor.widgets.add(leosCrossReferenceWidget.name, leosCrossReferenceWidget.config);
+            editor.widgets.add(widgetName, {
+                inline: true,
+                requires: "leosWidgetPlugin",
+                allowedContent: "mref[id,data-akn-name],ref[id,data-akn-name,href]",
+                template: '<mref id="" data-akn-name="mref"></mref>',
+                dialog: "leosCrossReferenceDialog",
+
+                upcast: function upcast(element, data) {
+                    var refConfig = leosPluginUtils.getRefConfig(editor);
+                    if(!refConfig || !refConfig.internalRef) {
+                        return false;
+                    }
+                    return (element.attributes["data-akn-name"] === "mref");
+                },
+            });
             
             editor.ui.add('LeosCrossReference', CKEDITOR.UI_BUTTON, {
                 label : 'Internal-reference',
                 title : 'Internal reference',
                 toolbar : 'ref,20',
-                command : leosCrossReferenceWidget.name
+                command : widgetName
             });
             
             editor.on('selectionChange', _onSelectionChange);
@@ -51,10 +65,10 @@ define(function leosCrossReferencePluginModule(require) {
     };
     
     function _onSelectionChange(event) {
-        leosCommandStateHandler.changeCommandState(event, leosCrossReferenceWidget.name, null, true);
+        leosCommandStateHandler.changeCommandState(event, widgetName, null, true);
         var refConfig = leosPluginUtils.getRefConfig(event.editor);
         if(!refConfig || !refConfig.internalRef) {
-            event.editor.getCommand(leosCrossReferenceWidget.name).setState(CKEDITOR.TRISTATE_DISABLED);
+            event.editor.getCommand(widgetName).setState(CKEDITOR.TRISTATE_DISABLED);
         }
     }
 
