@@ -22,6 +22,7 @@ import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -78,13 +79,14 @@ import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
+import io.atlassian.fugue.Option;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
 
 import javax.inject.Provider;
 import java.nio.charset.StandardCharsets;
@@ -329,8 +331,23 @@ public class AnnexApiServiceImpl implements AnnexApiService {
         Annex version = annexService.findAnnexVersion(versionId);
         Annex annex = annexService.findAnnexByRef(documentRef);
         byte[] resultXmlContent = getContent(version);
-        Annex updatedAnnex = annexService.updateAnnex(annex, resultXmlContent, VersionType.MINOR,
+
+        Option<AnnexMetadata> metadataOption = version.getMetadata();
+        Validate.isTrue(metadataOption.isDefined(), ANNEX_METADATA_IS_REQUIRED);
+        AnnexMetadata metadata = metadataOption.get();
+        AnnexMetadata annexMetadata = metadata
+                .builder()
+                .withPurpose(metadata.getPurpose())
+                .withType(metadata.getType())
+                .withTitle(metadata.getTitle())
+                .withTemplate(metadata.getTemplate())
+                .withDocVersion(metadata.getDocVersion())
+                .withDocTemplate(metadata.getTemplate()) // set the original template of the version
+                .build();
+
+        Annex updatedAnnex = annexService.updateAnnex(annex,  resultXmlContent, annexMetadata, VersionType.MINOR,
                 messageHelper.getMessage("operation.restore.version", version.getVersionLabel()));
+        this.setStructureContext(version.getMetadata().getOrError(() -> ANNEX_METADATA_IS_REQUIRED).getTemplate());
         return this.documentViewService.updateDocumentView(updatedAnnex);
     }
 
