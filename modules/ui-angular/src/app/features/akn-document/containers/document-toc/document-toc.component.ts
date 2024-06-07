@@ -218,6 +218,13 @@ export class DocumentTocComponent
       .subscribe((c) => {
         this.rerender();
       });
+    this.documentService.refreshView$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((documentView) => {
+        if (documentView) {
+          this.tocService.reloadToc();
+        }
+      });
   }
   seeTocItemStyling() {
     return this.seeTrackChanges;
