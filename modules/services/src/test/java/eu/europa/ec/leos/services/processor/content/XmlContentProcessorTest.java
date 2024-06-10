@@ -9,6 +9,7 @@ import eu.europa.ec.leos.repository.store.ConfigurationRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
+import eu.europa.ec.leos.services.structure.StructureService;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
@@ -46,7 +47,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PREAMBLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.TITLE;
+import static org.hamcrest.Matchers.any;
 import static org.mockito.Mockito.when;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
 public abstract class XmlContentProcessorTest extends LeosTest {
     @InjectMocks
@@ -59,6 +62,8 @@ public abstract class XmlContentProcessorTest extends LeosTest {
     protected Provider<StructureContext> structureContextProvider;
     @Mock
     protected StructureContext structureContext;
+    @Mock
+    StructureService structureService;
     @Mock
     protected TemplateStructureService templateStructureService;
     @Mock
@@ -134,6 +139,8 @@ public abstract class XmlContentProcessorTest extends LeosTest {
         when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
         when(structureContext.getTocRules()).thenReturn(tocRules);
         when(structureContext.getRefConfigs()).thenReturn(Arrays.asList(refConfig));
+
+        when(structureService.getRefConfigs(argThat(any(String.class)))).thenReturn(Arrays.asList(refConfig));
 
         List<Entity> entities = new ArrayList<Entity>();
         entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));

@@ -27,6 +27,7 @@ import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.label.ref.Ref;
 import eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType;
+import eu.europa.ec.leos.services.structure.StructureService;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.EditableAttributeValue;
 import eu.europa.ec.leos.services.support.IdGenerator;
@@ -145,6 +146,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     protected CoEditionContext coEditionContext;
     @Autowired
     protected DocumentLanguageContext documentLanguageContext;
+    @Autowired
+    protected StructureService structureService;
 
     @Override
     public byte[] addTrackChangesAttributesForMovedElement(byte[] xmlContent, String elementId, SoftActionType direction, String trackUser, String softUser,
@@ -1251,24 +1254,24 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     private boolean updateReferences(Document document) {
         boolean updated = false;
         String sourceRef = getContentByTagName(document, LEOS_REF);
-        NodeList nodeList = XercesUtils.getElementsByName(document, MREF);
+        NodeList mrefList = XercesUtils.getElementsByName(document, MREF);
+        boolean isRefConfigEnabled = isRefConfigEnabled(document, mrefList);
 
         HashMap<String, String> parentStatementsOfReferences = new HashMap<>();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            Node child = nodeList.item(i);
-            List<Ref> refs = findReferences(child, sourceRef);
+        for (int i = 0; i < mrefList.getLength(); i++) {
+            Node mref = mrefList.item(i);
+            List<Ref> refs = findReferences(mref, sourceRef);
             if (!refs.isEmpty()) {
-
                 boolean capital = false;
-                String id = XercesUtils.getAttributeValue(child.getParentNode(), XMLID);
+                String id = XercesUtils.getAttributeValue(mref.getParentNode(), XMLID);
                 String completeStatement = "";
                 if (parentStatementsOfReferences.get(id) == null) {
-                    completeStatement = child.getParentNode().getTextContent();
+                    completeStatement = mref.getParentNode().getTextContent();
                     parentStatementsOfReferences.put(id, completeStatement);
                 } else {
                     completeStatement = parentStatementsOfReferences.get(id);
                 }
-                String pieceForCrossReference = child.getTextContent();
+                String pieceForCrossReference = mref.getTextContent();
                 int positionOfCrossReference = completeStatement.indexOf(pieceForCrossReference);
                 if (positionOfCrossReference <= 0) {
                     capital = true;
@@ -1286,18 +1289,18 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 completeStatement = StringUtils.replaceOnce(completeStatement, pieceForCrossReference, StringUtils.repeat("-", pieceForCrossReference.length()));
                 parentStatementsOfReferences.put(id, completeStatement);
 
-                if(isRefConfigEnabled()) {
-                    Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(child), document, capital);
+                if (isRefConfigEnabled) {
+                    Result<String> labelResult = referenceLabelService.generateLabel(refs, sourceRef, getParentId(mref), document, capital);
                     if (labelResult.isOk()) {
-                        String childXml = XercesUtils.getContentNodeAsXmlFragment(child);
+                        String childXml = XercesUtils.getContentNodeAsXmlFragment(mref);
                         String updatedMrefContent = labelResult.get();
                         if (!updatedMrefContent.replaceAll("\\s+", "").equals(childXml.replaceAll("\\s+", ""))) {
-                            child = XercesUtils.addContentToNode(child, updatedMrefContent);
+                            mref = XercesUtils.addContentToNode(mref, updatedMrefContent);
                             updated = true;
                         }
-                        XercesUtils.removeAttribute(child, LEOS_REF_BROKEN_ATTR);
+                        XercesUtils.removeAttribute(mref, LEOS_REF_BROKEN_ATTR);
                     } else {
-                        XercesUtils.addAttribute(child, LEOS_REF_BROKEN_ATTR, "true");
+                        XercesUtils.addAttribute(mref, LEOS_REF_BROKEN_ATTR, "true");
                         updated = true;
                     }
                 }
@@ -1306,17 +1309,18 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return updated;
     }
 
-    private boolean isRefConfigEnabled() {
-        List<RefConfig> refConfigs = structureContextProvider.get().getRefConfigs();
-        if(refConfigs == null || refConfigs.isEmpty()) {
-            return false;
+    public boolean isRefConfigEnabled(Document document, NodeList mrefList) {
+        RefConfig refConfig = null;
+        if (mrefList.getLength() > 0) {
+            String docTemplate = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathDocTemplate()).item(0).getTextContent();
+            List<RefConfig> refConfigs = structureService.getRefConfigs(docTemplate);
+            if ((refConfigs != null) && !refConfigs.isEmpty()) {
+                String language = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathDocLanguage()).item(0).getTextContent();
+                refConfig = refConfigs.stream().filter(value -> value.getLanguage().equalsIgnoreCase(language) ||
+                        value.getLanguage().equalsIgnoreCase("default")).findFirst().get();
+            }
         }
-        String language = documentLanguageContext.getDocumentLanguage();
-        RefConfig refConfig = refConfigs.stream().filter(value -> value.getLanguage().equalsIgnoreCase(language) || value.getLanguage().equalsIgnoreCase("default")).findFirst().get();
-        if(refConfig != null && refConfig.isInternalRef()) {
-            return true;
-        }
-        return false;
+        return ((refConfig != null) && refConfig.isInternalRef());
     }
 
     private void updateMetaReferences(Node node) {
