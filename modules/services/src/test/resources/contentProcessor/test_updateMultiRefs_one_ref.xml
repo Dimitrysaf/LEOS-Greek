@@ -1,14 +1,25 @@
-<root xmlns:leos="urn:eu:europa:ec:leos" xml:id="ElementId">
-    <meta>
-        <proprietary source="~_leos">
-            <leos:ref>bill_ckq9l0l140009jg019s8b4k2a</leos:ref>
-        </proprietary>
-    </meta>
-    <parent>
-        <p xml:id="p1">bla bla
-            <mref xml:id="mref1">
-                Article 1 <ref href="bill/ref1" xml:id="aid">(1)</ref>
-            </mref>
-        </p>
-    </parent>
-</root>
+<?xml version="1.0" encoding="UTF-8"?>
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
+    <bill name="REG">
+        <meta>
+            <identification source="~_COM">
+                <FRBRExpression>
+                    <FRBRlanguage language="en"/>
+                </FRBRExpression>
+            </identification>
+            <proprietary source="~_leos">
+                <leos:ref>bill_ckq9l0l140009jg019s8b4k2a</leos:ref>
+                <leos:docTemplate>BL-023</leos:docTemplate>
+            </proprietary>
+        </meta>
+        <body leos:origin="ec" xml:id="body">
+            <parent>
+                <p xml:id="p1">bla bla
+                    <mref xml:id="mref1">
+                        Article 1 <ref href="bill/ref1" xml:id="aid">(1)</ref>
+                    </mref>
+                </p>
+            </parent>
+        </body>
+    </bill>
+</akomaNtoso>

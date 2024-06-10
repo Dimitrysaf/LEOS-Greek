@@ -79,6 +79,10 @@ public class XPathCatalog {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docTemplate";
     }
 
+    public String getXPathDocLanguage() {
+        return "/akn:akomaNtoso//akn:meta/akn:identification/akn:FRBRExpression/akn:FRBRlanguage/@language";
+    }
+
     public String getXPathRelevantElements() {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:relevantElements";
     }
