@@ -116,20 +116,32 @@ define(function listItemNumberModule(require) {
         }
     ];
 
+    function getNumberingConfig(elementName) {
+        var tocItem = ckEditor.LEOS.tocItemsList.find(function (e) {
+            return e.aknTag === elementName
+        });
+        var numTypeName = tocItem.autoNumbering.langNumConfigs
+            .find(config => config.langGroup.toLowerCase() === ckEditor.LEOS.langGroup.toLowerCase())
+            ?.numberingTypes[0];
+        return numberingConfigs.find(function (e) {
+            return e.type === numTypeName
+        });
+    }
+
     function _getSequences(seqName) {
-        if (seqName && seqName === 'Paragraph') {
-            var paragraphTocItem = ckEditor.LEOS.tocItemsList.find(function(e){return e.aknTag === 'paragraph'});
-            var paraNumTypeName = paragraphTocItem.autoNumbering.langNumConfigs
-                .find(config => config.langGroup.toLowerCase() === ckEditor.LEOS.langGroup.toLowerCase())
-                ?.numberingTypes[0];
-            var paragraphNumType = numberingConfigs.find(function(e){return e.type === paraNumTypeName});
-            var paragraphSequence = sequenceMap.find(function(el){return el.type === paraNumTypeName});
-            paragraphSequence.format = 'x';
-            paragraphSequence.suffix = paragraphNumType.suffix;
-            return paragraphSequence;
-        }
-        else if (seqName) {
-            return defaultList.find(function(el){return el.name === seqName});
+        if (seqName) {
+            if (seqName === 'Paragraph') {
+                var numberingConfig = getNumberingConfig('paragraph');
+                var paragraphSequence = sequenceMap.find(function(el){return el.type === numberingConfig.type});
+                paragraphSequence.format = 'x';
+                paragraphSequence.suffix = numberingConfig.suffix;
+                return paragraphSequence;
+            } else if (seqName === leosPluginUtils.POINT) {
+                var numberingConfig = getNumberingConfig('point');
+                return sequenceMap.find(function(el){return el.type === numberingConfig.type});
+            } else {
+                return defaultList.find(function(el){return el.name === seqName});
+            }
         }
         else {//return all sequences
             return sequenceMap;
@@ -231,6 +243,9 @@ define(function listItemNumberModule(require) {
      * To identify the sequence first point in the list is used
      */
     function identifySequence(listItems, currentNestingLevel) {
+        if(listItems && listItems.length > 0 && _isPoint(listItems[0])) {
+            return _getSequences(leosPluginUtils.POINT);
+        }
         return getSequenceFromDefaultList(currentNestingLevel);
     }
 
@@ -300,10 +315,12 @@ define(function listItemNumberModule(require) {
             } else {
                 sequence = seqNum;
             }
-            (UTILS.getElementOrigin(orderedList) && UTILS.getElementOrigin(orderedList) === 'ec' &&
-              ckEditor.LEOS.instanceType === UTILS.COUNCIL_INSTANCE)
-                ? _doMandateNum(listItems, sequence)
-                : _doProposalNum(orderedList, listItems, sequence);
+            if(sequence) {
+                (UTILS.getElementOrigin(orderedList) && UTILS.getElementOrigin(orderedList) === 'ec' &&
+                    ckEditor.LEOS.instanceType === UTILS.COUNCIL_INSTANCE)
+                    ? _doMandateNum(listItems, sequence)
+                    : _doProposalNum(orderedList, listItems, sequence);
+            }
         }
     }
 
