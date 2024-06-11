@@ -1,7 +1,7 @@
 export interface Notification {
-  start: number;
-  end: number;
-  newsTimestamp: number;
+  start: string;
+  end: string;
+  newsTimestamp: string;
   title: string;
   body: string;
 }
