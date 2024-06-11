@@ -8,7 +8,6 @@ import {AppConfigService} from '@/core/services/app-config.service';
 import {Notification} from '../../models/notification.model';
 import {NotificationsService} from '../../services/notifications.service';
 import {NotificationUploadComponent} from '../notification-upload/notification-upload.component';
-import {convertToUnixTimestamp} from '../../utils/date-utils';
 
 @Component({
   selector: 'app-notification-card-container',
@@ -32,17 +31,9 @@ export class NotificationCardContainerComponent implements OnInit, OnDestroy {
     this.notificationService.notifications$
       .pipe(takeUntil(this.destroy$))
       .subscribe((notifications) => {
-        const currentTime = Math.floor(Date.now() / 1000); // Current Unix timestamp in seconds
-
-        // Filter notifications to show only the current ones
-        this.notifications = notifications.filter(notification => {
-          const startTime = convertToUnixTimestamp(notification.start);
-          const endTime = convertToUnixTimestamp(notification.end);
-          return startTime <= currentTime && currentTime < endTime;
-        });
-
-    this.notificationService.isShown$.subscribe((isShown) => {
-      this.isNotificationsShown = isShown;
+        this.notifications = notifications;
+        this.notificationService.isShown$.subscribe((isShown) => {
+          this.isNotificationsShown = isShown;
     });
     this.setPermissions();
   })

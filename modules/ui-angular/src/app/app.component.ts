@@ -20,8 +20,6 @@ import {Notification} from './shared/models/notification.model';
 import {CoEditionServiceWS} from './shared/services/coEdition.websocket.service';
 import {NotificationsService} from './shared/services/notifications.service';
 import {map} from "rxjs/operators";
-import { convertToUnixTimestamp } from './shared/utils/date-utils';
-
 
 @Component({
   selector: 'app-root',
@@ -157,10 +155,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.contentAvailable$ = of(this.notifications).pipe(
         map((notifications) =>
           notifications.some((notification) => {
-            const currentTime = Math.floor(Date.now() / 1000);
-            const startTime = convertToUnixTimestamp(notification.start);
-            const endTime = convertToUnixTimestamp(notification.end);
-            return startTime <= currentTime && currentTime < endTime;
+            return true;
           }),
         ),
       );
