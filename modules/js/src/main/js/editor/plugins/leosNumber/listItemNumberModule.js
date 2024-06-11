@@ -138,6 +138,16 @@ define(function listItemNumberModule(require) {
                 return paragraphSequence;
             } else if (seqName === leosPluginUtils.POINT) {
                 var numberingConfig = getNumberingConfig('point');
+                if(numberingConfig.levels && numberingConfig.levels.levels) {
+                    var sequences$ = [];
+                    numberingConfig.levels.levels.forEach(level => {
+                        var seq$ = sequenceMap.find(el => el.type === level.numberingType);
+                        if(seq$) {
+                            sequences$.push(seq$);
+                        }
+                    });
+                    return sequences$;
+                }
                 return sequenceMap.find(function(el){return el.type === numberingConfig.type});
             } else {
                 return defaultList.find(function(el){return el.name === seqName});
@@ -244,7 +254,11 @@ define(function listItemNumberModule(require) {
      */
     function identifySequence(listItems, currentNestingLevel) {
         if(listItems && listItems.length > 0 && _isPoint(listItems[0])) {
-            return _getSequences(leosPluginUtils.POINT);
+            var sequences$ = _getSequences(leosPluginUtils.POINT);
+            if(sequences$ && Array.isArray(sequences$)) {
+                return sequences$[currentNestingLevel - 1];
+            }
+            return sequences$;
         }
         return getSequenceFromDefaultList(currentNestingLevel);
     }
