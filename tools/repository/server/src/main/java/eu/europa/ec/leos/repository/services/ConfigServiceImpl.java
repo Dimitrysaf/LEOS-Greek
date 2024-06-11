@@ -1,23 +1,32 @@
 package eu.europa.ec.leos.repository.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.repository.entities.Config;
 import eu.europa.ec.leos.repository.entities.ConfigContent;
 import eu.europa.ec.leos.repository.entities.ConfigVersion;
+import eu.europa.ec.leos.repository.entities.Notification;
 import eu.europa.ec.leos.repository.exceptions.RepositoryException;
 import eu.europa.ec.leos.repository.model.LeosDocument;
 import eu.europa.ec.leos.repository.repositories.ConfigContentRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigRepository;
 import eu.europa.ec.leos.repository.repositories.ConfigVersionRepository;
 import eu.europa.ec.leos.repository.utils.ConversionUtils;
+import eu.europa.ec.leos.repository.utils.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 @Service
 public class ConfigServiceImpl implements ConfigService {
@@ -29,6 +38,9 @@ public class ConfigServiceImpl implements ConfigService {
     private ConfigVersionRepository configVersionRepository;
     @Autowired
     private ConfigContentRepository configContentRepository;
+    private Notification notification;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
         Optional<Config> hasDoc = configRepository.findConfigByName(name);
@@ -66,6 +78,11 @@ public class ConfigServiceImpl implements ConfigService {
 
     }
 
+    @Override
+    public LeosDocument findConfigByVersionId(String id) throws RepositoryException {
+        return null;
+    }
+
     public LeosDocument findConfigByVersionId(final BigDecimal id) throws RepositoryException {
         try {
             ConfigVersion version = this.configVersionRepository.findLastConfigVersionByVersionId(id);
@@ -96,6 +113,34 @@ public class ConfigServiceImpl implements ConfigService {
 
     public String fetchNotifications() {
         ConfigContent configContent = configContentRepository.findConfigContentByName("NOTIFICATIONS-HOMEPAGE.json");
-        return configContent.getContentString();
+        List<Notification> notifications = null;
+        try {
+            notifications = objectMapper.readValue(configContent.getContent(), new TypeReference<List<Notification>>() {});
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        long currentTime = System.currentTimeMillis() / 1000;
+
+        // Filter notifications based on current time
+        List<Notification> filteredNotifications = notifications.stream()
+                .filter(notification -> {
+                    try {
+                        long startTime = DateUtils.convertToUnixTimestamp(notification.getStart());
+                        long endTime = DateUtils.convertToUnixTimestamp(notification.getEnd());
+                        return startTime <= currentTime && currentTime < endTime;
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        return false;
+                    }
+                })
+                .collect(Collectors.toList());
+
+        // Convert filtered notifications back to JSON string
+        try {
+            return objectMapper.writeValueAsString(filteredNotifications);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
