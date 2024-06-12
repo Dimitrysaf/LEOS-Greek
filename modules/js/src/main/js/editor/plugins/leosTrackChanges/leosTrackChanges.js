@@ -438,7 +438,7 @@ define(function leosTrackChangesModule(require) {
 
         setOriginalNumber: function(element, previousNumber) {
             if (!element.getAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER)) {
-                if (!element.getAttribute(leosPluginUtils.ID)) {
+                if (element.hasAttribute(core.NEW)) {
                     element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, core.NEW);
                 } else {
                     element.setAttribute(this.DATA_AKN_TC_ORIGINAL_NUMBER, previousNumber ? previousNumber : core.UNNUMBERED);

@@ -352,6 +352,7 @@ define(function leosIdentityHandler(require) {
         if (idAttrValue == undefined || idAttrValue.trim().length == 0) {
             idAttrValue = generateId(idPrefix, 7);
             element.setAttribute("id", idAttrValue);
+            element.setAttribute("NEW", '');
         }
         return idAttrValue;
     }
