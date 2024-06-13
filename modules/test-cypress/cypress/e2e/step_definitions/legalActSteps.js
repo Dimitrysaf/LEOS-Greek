@@ -4,7 +4,7 @@ import legalActPage from "../pages/legalActPage";
 
 Then('user is on legal act page', () => {
     legalActPage.getCurrentPageName().should("have.text", "Legal Act");
-    cy.wait(5000);
+    cy.wait(7000);
 })
 
 Then('document has {int} trackchange {string} tags with {string} content', (count, type, content) => {

@@ -3,7 +3,7 @@ class annexPage extends headerPage {
     elements = {
         containerBlockNum: () => cy.get("container[name='headerOfAnnex'] block[name='num']"),
         prefaceContainerBlockHeading: () => cy.get("container[name='headerOfAnnex'] block[name='heading']"),
-        closeBtn: () => cy.contains('Close'),
+        closeBtn: () => cy.xpath("//button[text()='Close']"),
         level: () => cy.xpath("//level")
     }
 

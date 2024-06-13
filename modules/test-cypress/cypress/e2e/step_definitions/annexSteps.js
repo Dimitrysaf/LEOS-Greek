@@ -4,7 +4,7 @@ import annexPage from "../pages/annexPage";
 
 Then(`user is on annex page`, () => {
     annexPage.getCurrentPageName().should("have.text", "Annex");
-    cy.wait(2000);
+    cy.wait(5000);
 });
 
 Then(`annex title is {string}`, (title) => {
