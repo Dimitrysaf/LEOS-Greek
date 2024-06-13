@@ -231,29 +231,34 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                 }
                 CreateCollectionResult createCollectionResult;
                 try {
-                    String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
-                    String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
-                    LeosDocument savedDocument = findLeosDocument(translatedDocRef, Proposal.class);
-                    if (savedDocument == null) {
-                        createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, languageCode, true);
-                        if (createCollectionResult.isCollectionCreated()) {
-                            String pkgName = createCollectionResult.getPackageName();
-                            addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false);
+                    LeosDocument originalProposal = findLeosDocument(propDocument.getRef(), Proposal.class);
+                    if (originalProposal != null) {
+                        String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
+                        String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
+                        LeosDocument savedDocument = findLeosDocument(translatedDocRef, Proposal.class);
+                        if (savedDocument == null) {
+                            createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, languageCode, true);
+                            if (createCollectionResult.isCollectionCreated()) {
+                                String pkgName = createCollectionResult.getPackageName();
+                                addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false);
+                            }
+                        } else {
+                            if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), propDocument.getSource())) {
+                                return new Pair<>(messageHelper.getMessage("leoslight.document.duplicate"), HttpStatus.INTERNAL_SERVER_ERROR);
+                            } else {
+                                updateLeosDocument(savedDocument.getId(), Proposal.class, propDocument, propDocument.getMetadataDocument());
+                                propDocument.getChildDocuments().forEach(docVo -> {
+                                    String translatedChildDocRef = LanguageMapUtils.getTranslatedProposalReference(docVo.getRef(), languageCode);
+                                    LeosDocument childDocument = findLeosDocument(translatedChildDocRef, LeosCategoryClass.getClass(docVo.getCategory()));
+                                    if (!ByteChecksumComparator.checksumMatched(childDocument.getContent().get().getSource().getBytes(), docVo.getSource())) {
+                                        updateChildDocuments(translatedChildDocRef, docVo);
+                                    }
+                                });
+                                return new Pair<>(messageHelper.getMessage("leoslight.document.updated.major.version"), HttpStatus.OK);
+                            }
                         }
                     } else {
-                        if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), propDocument.getSource())) {
-                            return new Pair<>(messageHelper.getMessage("leoslight.document.duplicate"), HttpStatus.INTERNAL_SERVER_ERROR);
-                        } else {
-                            updateLeosDocument(savedDocument.getId(), Proposal.class, propDocument, propDocument.getMetadataDocument());
-                            propDocument.getChildDocuments().forEach(docVo -> {
-                                String translatedChildDocRef = LanguageMapUtils.getTranslatedProposalReference(docVo.getRef(), languageCode);
-                                LeosDocument childDocument = findLeosDocument(translatedChildDocRef, LeosCategoryClass.getClass(docVo.getCategory()));
-                                if (!ByteChecksumComparator.checksumMatched(childDocument.getContent().get().getSource().getBytes(), docVo.getSource())) {
-                                    updateChildDocuments(translatedChildDocRef, docVo);
-                                }
-                            });
-                            return new Pair<>(messageHelper.getMessage("leoslight.document.updated.major.version"), HttpStatus.OK);
-                        }
+                        return new Pair<>(messageHelper.getMessage("leoslight.original.document.not.found"), HttpStatus.NOT_FOUND);
                     }
                 } catch (CreateCollectionException e) {
                     LOG.error("Error Occurred while reading the Leg file: " + e.getMessage(), e);
@@ -272,7 +277,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                     LeosPackage leosPackage = findLeosPackageById(savedLegDocument.getPackageId());
                     try {
                         addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, leosPackage.getName(), true);
-                    } catch(Exception e) {
+                    } catch (Exception e) {
                         LOG.error("Error Occurred while adding the Leg file: " + e.getMessage(), e);
                         return new Pair<>("An error occurred adding the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
                     }
@@ -295,7 +300,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
             String pkgName, boolean updateDocs) throws Exception {
         List<String> containedDocs = new ArrayList<>();
         containedDocs.add(proposalRef + "_" + getNextVersionLabel(VersionType.MAJOR, propDocument.getMetadata().getDocVersion()));
-        if(updateDocs) {
+        if (updateDocs) {
             Proposal proposal = leosRepository.findDocumentByRef(proposalRef, Proposal.class);
             updateLeosDocument(proposal.getId(), Proposal.class, propDocument, propDocument.getMetadataDocument());
         }

@@ -160,7 +160,6 @@ public class LeosLightApiController {
         if(authClient == null && !authClient.isVerified()) {
             throw new NotFoundException(messageHelper.getMessage("leoslight.auth.client.not.found"));
         }
-
         return tokenService.getClientContextToken(clientId, user, role, systemName);
     }
 
@@ -172,7 +171,11 @@ public class LeosLightApiController {
             Pair<Object, Object> result = leosLightApiService.importProposal(file);
             if(result.right() == HttpStatus.OK) {
                 return new ResponseEntity<>(result.left(), HttpStatus.OK);
-            } else {
+            } else if(result.right() == HttpStatus.ACCEPTED) {
+                return new ResponseEntity<>(result.left(), HttpStatus.ACCEPTED);
+            } else if(result.right() == HttpStatus.NOT_FOUND) {
+                return new ResponseEntity<>(result.left(), HttpStatus.NOT_FOUND);
+            }else {
                 return new ResponseEntity<>(result.left(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (Exception ex) {
@@ -180,7 +183,6 @@ public class LeosLightApiController {
             return new ResponseEntity<>("An error occurred during collection creation.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
 
     @RequestMapping(value = "/editlight/test", method = RequestMethod.GET)
     public String test() {
