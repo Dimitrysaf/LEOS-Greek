@@ -4,15 +4,15 @@
       <div class="notification-card">
         <div class="notification-card-header">
           <span>{{
-            notification.newsTimestamp * 1000 | date : 'dd/MM/yyyy HH:mm'
+            notification.newsTimestamp
           }}</span>
         </div>
       </div>
       <div class="notification-card-body">
         <a style="font-weight: bolder">{{ notification.title }}</a>
-        <eui-label style="padding-right: 10%">{{
-          notification.body
-        }}</eui-label>
+        <eui-label style="padding-right: 10%">
+          <div [innerHTML]="notification.body"></div>
+        </eui-label>
       </div>
       <div style="border-top: 1px solid #d3d3d3"></div>
     </div>

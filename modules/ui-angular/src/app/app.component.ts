@@ -1,4 +1,4 @@
-import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import {Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
 import {
   getI18nState,
   getUserPreferences,
@@ -8,17 +8,18 @@ import {
   UserPreferences,
   UserState,
 } from '@eui/core';
-import { Store } from '@ngrx/store';
-import { TranslateService } from '@ngx-translate/core';
-import { map, Observable, of, Subscription } from 'rxjs';
+import {Store} from '@ngrx/store';
+import {TranslateService} from '@ngx-translate/core';
+import {Observable, of, Subscription} from 'rxjs';
 
-import { AppConfigService } from '@/core/services/app-config.service';
-import { AppLocalStorageService } from '@/core/services/app-local-storage.service';
+import {AppConfigService} from '@/core/services/app-config.service';
+import {AppLocalStorageService} from '@/core/services/app-local-storage.service';
 
-import { Profile } from './shared/models/leos.model';
-import { Notification } from './shared/models/notification.model';
-import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
-import { NotificationsService } from './shared/services/notifications.service';
+import {Profile} from '@/shared';
+import {Notification} from './shared/models/notification.model';
+import {CoEditionServiceWS} from './shared/services/coEdition.websocket.service';
+import {NotificationsService} from './shared/services/notifications.service';
+import {map} from "rxjs/operators";
 
 @Component({
   selector: 'app-root',
@@ -154,8 +155,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.contentAvailable$ = of(this.notifications).pipe(
         map((notifications) =>
           notifications.some((notification) => {
-            const currentTime = Math.floor(Date.now() / 1000);
-            return notification.end > currentTime;
+            return true;
           }),
         ),
       );
@@ -163,4 +163,5 @@ export class AppComponent implements OnInit, OnDestroy {
       this.contentAvailable$ = of(false);
     }
   }
+
 }
