@@ -52,6 +52,7 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.D
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_STAGE_META;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TEMPLATE;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_TYPE_META;
+import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.DOC_VERSION;
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.EXPLANATORY_TITLE_PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
@@ -193,6 +194,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                         DOC_STAGE_META,
                         DOC_TYPE_META,
                         DOC_LANGUAGE,
+                        DOC_VERSION,
                         DOC_SPECIFIC_TEMPLATE,
                         DOC_TEMPLATE,
                         DOC_EEA_RELEVANCE_COVER,
@@ -202,6 +204,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                         EXPLANATORY_TITLE_PREFACE
                 }, xmlNodeConfigProcessor.getConfig(document.getCategory()));
 
+                metadata.setDocVersion(metadataVOMap.get(DOC_VERSION));
                 metadata.setDocPurpose(metadataVOMap.get(DOC_PURPOSE_META));
                 metadata.setDocStage(metadataVOMap.get(DOC_STAGE_META));
                 metadata.setDocType(metadataVOMap.get(DOC_TYPE_META));

@@ -219,7 +219,7 @@ public class LeosDocument {
                     Date.from(documentMilestoneV.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
             this.setSource(content.getContent());
             this.setRef(documentMilestoneV.getRef());
-            this.setVersionId(documentMilestoneV.getMilestoneId());
+            this.setVersionId(documentMilestoneV.getDocumentId());
             this.setPackageId(documentMilestoneV.getPackageId().toString());
             this.setCategory(documentMilestoneV.getCategoryCode());
 

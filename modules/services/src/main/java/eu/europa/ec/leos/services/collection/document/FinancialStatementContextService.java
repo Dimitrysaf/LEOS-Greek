@@ -248,7 +248,7 @@ public class FinancialStatementContextService {
         String docLanguage = language != null ? language : financialStatementDocument.getLanguage();
         String ref;
         if(translated) {
-            ref = LanguageMapUtils.generateTranslatedProposalReference(financialStatementDocument.getRef(), docLanguage);
+            ref = LanguageMapUtils.getTranslatedProposalReference(financialStatementDocument.getRef(), docLanguage);
         } else {
             ref = financialStatementService.generateFinancialStatementReference(financialStatement.getContent().get().getSource().getBytes(), docLanguage);
         }

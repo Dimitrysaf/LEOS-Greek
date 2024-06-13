@@ -29,7 +29,7 @@ import java.util.Map;
 
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.createValueMap;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
-import static eu.europa.ec.leos.services.utils.LanguageMapUtils.generateTranslatedProposalReference;
+import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedProposalReference;
 
 @Component
 @Scope("prototype")
@@ -237,7 +237,7 @@ public class ExplanatoryContextService {
         String docLanguage = language != null ? language : explanatory.getMetadata().get().getLanguage();
         String ref;
         if(translated) {
-            ref = generateTranslatedProposalReference(explanatoryDocument.getRef(), docLanguage);
+            ref = getTranslatedProposalReference(explanatoryDocument.getRef(), docLanguage);
         } else {
             ref = explanatoryService.generateExplanatoryReference(explanatory.getContent().get().getSource().getBytes(), docLanguage);
         }

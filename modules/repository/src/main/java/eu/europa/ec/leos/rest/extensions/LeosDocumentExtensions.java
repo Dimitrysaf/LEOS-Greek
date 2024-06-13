@@ -316,7 +316,8 @@ public class LeosDocumentExtensions {
                 getJobDate(d),
                 getStatus(d),
                 getContainedDocuments(d),
-                d.getRef());
+                d.getRef(),
+                d.getPackageId());
     }
 
     private static ExportDocument toLeosExportDocument(eu.europa.ec.leos.rest.support.model.LeosDocument d, boolean fetchContent) {

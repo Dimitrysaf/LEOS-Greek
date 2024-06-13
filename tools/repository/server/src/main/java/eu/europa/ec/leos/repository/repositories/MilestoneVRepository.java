@@ -25,8 +25,8 @@ public interface MilestoneVRepository extends JpaRepository<MilestoneV, String> 
     @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.NAME = ?1", nativeQuery = true)
     List<MilestoneV> findMilestonesByName(String Name);
 
-    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.REF = ?1", nativeQuery = true)
-    Optional<MilestoneV> findMilestonesByRef(String ref);
+    @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.REF = ?1 ORDER BY AUDIT_C_DATE DESC", nativeQuery = true)
+    List<MilestoneV> findMilestonesByRef(String ref);
 
     @Query(value = "SELECT * FROM MILESTONE_V m WHERE m.MILESTONE_ID = ?1", nativeQuery = true)
     Optional<MilestoneV> findMilestonesById(BigDecimal id);

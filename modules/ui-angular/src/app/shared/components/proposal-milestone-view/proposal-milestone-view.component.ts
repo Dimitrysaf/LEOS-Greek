@@ -41,6 +41,7 @@ export type MilestoneDescriptor = Pick<Milestone,
   | 'legDocumentName'
   | 'proposalRef'
   | 'title'
+  | 'legFileId'
   | 'versionedReference'>;
 
 @Component({
@@ -181,6 +182,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
         .listMilestoneView(
           this.milestone.proposalRef,
           this.milestone.legDocumentName,
+          this.milestone.legFileId
         )
         .subscribe((response) => {
           this.handleMilestoneExplorerDocuments(response, hiddenCategories);

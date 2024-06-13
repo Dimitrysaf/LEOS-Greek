@@ -69,7 +69,8 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
 
     @Override
     public Optional<LeosDocument> findMilestoneByRef(final String ref) {
-        Optional<MilestoneV> doc = milestoneVRepository.findMilestonesByRef(ref);
+        List<MilestoneV> docs = milestoneVRepository.findMilestonesByRef(ref);
+        Optional<MilestoneV> doc = docs.stream().findFirst();
         return doc.map(milestoneV -> ConversionUtils.buildLegDocument(milestoneV, documentMilestoneListRepository, documentMilestoneRepository, true));
     }
 

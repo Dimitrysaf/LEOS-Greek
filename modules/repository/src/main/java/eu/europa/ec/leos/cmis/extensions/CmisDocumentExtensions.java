@@ -287,6 +287,7 @@ public class CmisDocumentExtensions {
                 getJobDate(d),
                 getStatus(d),
                 getContainedDocuments(d),
+                null,
                 null);
     }
 

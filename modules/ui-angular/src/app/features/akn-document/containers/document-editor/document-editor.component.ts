@@ -769,6 +769,7 @@ export class DocumentEditorComponent
       createdDate: version.updatedDate,
       versionedReference: version.versionedReference,
       legDocumentName: null,
+      legFileId: null,
       proposalRef: this.proposalRef,
       title: version.checkinCommentVO.title,
     };

@@ -19,6 +19,7 @@ public class MetadataVO {
     private String docStage;
     private String docType;
     private String docPurpose;
+    private String docVersion;
     private String packageTitle;
     private String internalRef;
     private SecurityLevel securityLevel = SecurityLevel.STANDARD;
@@ -66,6 +67,14 @@ public class MetadataVO {
 
     public void setDocPurpose(String docPurpose) {
         this.docPurpose = docPurpose;
+    }
+
+    public String getDocVersion() {
+        return docVersion;
+    }
+
+    public void setDocVersion(String docVersion) {
+        this.docVersion = docVersion;
     }
 
     public String getPackageTitle() {
