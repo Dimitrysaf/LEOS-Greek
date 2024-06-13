@@ -65,6 +65,14 @@ class legalActPage extends headerPage {
         return cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber + "]");
     }
 
+    getPointFromParagraphFromArticle(paragraphNumber, articleNumber, pointNumber) {
+        return cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber + "]//point[" + pointNumber + "]");
+    }
+
+    getNumContentFromPointFromParagraphFromArticle(pointNumber, paragraphNumber, articleNumber) {
+        return cy.xpath("//article[" + articleNumber + "]//paragraph[" + paragraphNumber + "]//point[" + pointNumber + "]//num");
+    }
+
     getParagraphContentFromArticle(paragraphNumber, articleNumber) {
         return this.getParagraphFromArticle(paragraphNumber, articleNumber).find('content aknp');
     }

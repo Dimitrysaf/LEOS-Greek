@@ -17,6 +17,10 @@ When('click close button of ck editor', () => {
     ckEditorWindow.clickCloseBtn();
 })
 
+When('click indent button of ck editor', () => {
+    ckEditorWindow.clickIndentBtn();
+})
+
 When('append {string} at offset {int} in numbered paragraph {int} of article when ck editor is open', function (newContent, offset, paragraphNumber) {
     ckEditorWindow.appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber);
 });

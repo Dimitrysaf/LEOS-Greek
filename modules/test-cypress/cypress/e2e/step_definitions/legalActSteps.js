@@ -38,6 +38,25 @@ Then('paragraph {int} of article {int} has below content', (paragraph, article, 
     });
 })
 
+Then('num of point {int} of paragraph {int} of article {int} has below content', (point, paragraph, article, datatable) => {
+    legalActPage.getNumContentFromPointFromParagraphFromArticle(point, paragraph, article).then((element) => {
+        element[0].childNodes.forEach((element, index) => {
+            if (element.nodeType === 1 && (datatable.raw().at(index).at(0).includes(",") || datatable.raw().at(index).at(0) !== "html")) {
+                const elementsArray = datatable.raw().at(index).at(0).split(",");
+                for (let elementIndex = 0; elementIndex < elementsArray.length; elementIndex++) {
+                    expect(element.localName).equal(elementsArray[elementIndex]);
+                    element = element.childNodes[0];
+                }
+                expect(element.textContent + "\"").equal(datatable.raw().at(index).at(1).substring(1));
+            }
+            if (element.nodeType === 1 && datatable.raw().at(index).at(0) === "html") {
+                const re = new RegExp(datatable.raw().at(index).at(1));
+                expect(true).equal(re.test(element.outerHTML));
+            }
+        })
+    });
+})
+
 When('mousehover and click on citation {int}', citationNumber => {
     legalActPage.mouseHoverAndClickOnCitation(citationNumber);
 })

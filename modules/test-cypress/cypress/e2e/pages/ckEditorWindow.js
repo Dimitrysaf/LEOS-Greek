@@ -6,6 +6,7 @@ class ckEditorWindow {
         saveBtn: () => cy.get('.cke_button__leosinlinesave'),
         undoBtn: () => cy.get('.cke_button__undo'),
         footNoteBtn: () => cy.get('.cke_button__authorialnotewidget'),
+        indentBtn: () => cy.get('.cke_button__indent'),
         internalReferenceBtn: () => cy.get('.cke_button__leoscrossreference')
     }
 
@@ -23,6 +24,11 @@ class ckEditorWindow {
 
     getCkEditableInlineElement() {
         return this.elements.ckEditableInline();
+    }
+
+    clickIndentBtn() {
+        this.elements.indentBtn().click();
+        cy.wait(2000);
     }
 
     clickSaveAndCloseBtn() {

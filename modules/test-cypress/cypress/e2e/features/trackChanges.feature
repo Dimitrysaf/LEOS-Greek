@@ -4,6 +4,41 @@
 @TrackChangesScenarios
 Feature: Track Changes Feature
 
+  @trackchanges_on_num_text @local
+  Scenario: Basic test to check num's track changes on newly added element
+    # Login
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    # Upload file for test
+    When click on upload button
+    Then active upload window label is "Upload a legislative document"
+    When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
+    Then active upload window label is "Document metadata"
+    And  document title input field is displayed
+    When click on create button in upload document page
+    Then user is on proposal viewer page
+    # Enter in Legal Act
+    When click on legal act link present in proposal viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is displayed
+    And  toc editing button is displayed and enabled
+    # Enable track changes
+    When enable track changes
+    # Open ckeditor
+    When mousehover and click on article 1
+    Then ck editor window is displayed
+    # Do changes in text
+    When move the cursor position to offset 38 in paragraph 1 of article 1 when ck editor is open
+    And  click enter from keyboard when ck editor is open
+    When append "New paragraph" at offset 3 in numbered paragraph 2 of article when ck editor is open
+    When move the cursor position to offset 3 in paragraph 2 of article 1 when ck editor is open
+    And  click indent button of ck editor
+    And  click save and close button of ck editor
+    # Check results
+    Then num of point 1 of paragraph 1 of article 1 has below content
+      | ins  | "(a)"                              |
+
   @add_trackchanges_text @local
   Scenario: Basic tests for add track changes text in an article in Legal Act
     # Login
