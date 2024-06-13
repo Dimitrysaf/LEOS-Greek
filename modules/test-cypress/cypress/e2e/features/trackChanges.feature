@@ -4,7 +4,7 @@
 @TrackChangesScenarios
 Feature: Track Changes Feature
 
-  @trackchanges_on_num_text @local @focus
+  @trackchanges_on_num_text @local
   Scenario: Basic test to check num's track changes on newly added element
     # Login
     Given navigate to edit drafting application with "User1"
@@ -97,7 +97,7 @@ Feature: Track Changes Feature
   # This test will cover: track changes scenarios 1 to 10
   Scenario: Track changes for rules in confluence
     # Login
-    Given navigate to edit drafting application with "User2"
+    Given navigate to edit drafting application with "User1"
     Then user is on home page
     # Upload file for test
     When click on upload button
@@ -223,7 +223,7 @@ Feature: Track Changes Feature
     #   | text | "graph with"        |
     #   | del  | " some more tex"    |
     #   | text | "t to test."        |
-    Given navigate to edit drafting application with "User1"
+    Given navigate to edit drafting application with "User2"
     Then user is on home page
     When click on view all acts button
     Then user is on repository browser page
