@@ -7,6 +7,7 @@ class navigationPane {
     
     clickEditBtn(){
         this.elements.editBtn().click();
+        cy.wait(500);
     }
 
     clickCancelBtn(){

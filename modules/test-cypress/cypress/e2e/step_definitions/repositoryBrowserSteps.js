@@ -16,6 +16,15 @@ When(`click on upload button`, () => {
 When(`open first proposal`, () => {
     repositoryBrowserPage.openFirstProposal();
 });
+
+When(`upload button is not present`, () => {
+    repositoryBrowserPage.elements.uploadBtn().should('not.exist');
+});
+
+When(`click on home button`, () => {
+    repositoryBrowserPage.clickHomeBtn();
+});
+
 // When('click proposal {int} in repository browser page', (proposalRank) => {
 //     cy.get('eui-card-header-title').eq(proposalRank-1).click();
 //     cy.wait(2000);

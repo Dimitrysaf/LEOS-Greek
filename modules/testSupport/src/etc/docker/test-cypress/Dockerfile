@@ -1,19 +1,17 @@
-
-#
 # This Dockerfile is used to create an image to test-cypress to be used in our runner in gitlab
 # The base used image is documented here: https://hub.docker.com/r/cypress/factory/
 # From this base image page we have links to updated version numbers of node and chrome
 #
 # To create the image itself those commands were used:
-# docker build -t code.europa.eu:4567/leos/core/image-for-tests:1.0.1 . (change version when create a new one)
+# docker build -t code.europa.eu:4567/leos/core/image-for-tests:1.0.2 . (change version when create a new one)
 # docker login code.europa.eu:4567 (with gitlab user and token created in gitlab profile)
-# docker push code.europa.eu:4567/leos/core/image-for-tests:1.0.1 (change version when create a new one)
+# docker push code.europa.eu:4567/leos/core/image-for-tests:1.0.2 (change version when create a new one)
 #
 # Container Registry page: https://code.europa.eu/leos/core/container_registry
 #
 
-ARG NODE_VERSION='20.12.2'
-ARG CHROME_VERSION='123.0.6312.122-1'
+ARG NODE_VERSION='20.14.0'
+ARG CHROME_VERSION='126.0.6478.55-1'
 
 FROM cypress/factory
 ENV JAVA_HOME=/opt/openlogic-openjdk-8u402-b06-linux-x64

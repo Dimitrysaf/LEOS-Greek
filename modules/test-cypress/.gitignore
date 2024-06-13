@@ -3,5 +3,7 @@
 /.project
 /.settings
 /node_modules
+/cypress/screenshots
 /cypress/report
 /cypress/videos
+/cypress/downloads
