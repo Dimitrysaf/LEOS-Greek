@@ -325,9 +325,9 @@ define(function annotateExtensionModule(require) {
                "document": `${annotateState.temporaryDataDocument}`
             }
         }
-        if (!annotateState.anotClient.endsWith("angular")) {
+        /*if (!annotateState.anotClient.endsWith("angular")) {
             innerHtmlJson["sidebarAppUrl"] = annotateState.anotHost + "/app.html";
-        }
+        }*/
 
         script.innerHTML = JSON.stringify(innerHtmlJson);
         if (addElement) {
