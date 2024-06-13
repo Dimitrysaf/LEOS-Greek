@@ -24,7 +24,9 @@ public final class RepositoryUtil {
     
     public static Map<String, ?> updateDocumentProperties(LeosMetadata metadata) {
         Map<String, Object> properties = new HashMap<>();
-        properties.putAll(LeosMetadataExtensions.toLeosRepositoryProperties(metadata));
+        if(metadata != null) {
+            properties.putAll(LeosMetadataExtensions.toLeosRepositoryProperties(metadata));
+        }
         properties.putAll(updateMilestoneCommentsProperties(Collections.emptyList()));
         return properties;
     }

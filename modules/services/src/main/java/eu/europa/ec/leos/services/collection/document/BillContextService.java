@@ -350,7 +350,7 @@ public class BillContextService {
         String docLanguage = language != null ? language : billDocument.getLanguage();
         String ref;
         if(translated) {
-            ref = LanguageMapUtils.generateTranslatedProposalReference(billDocument.getRef(), docLanguage);
+            ref = LanguageMapUtils.getTranslatedProposalReference(billDocument.getRef(), docLanguage);
         } else {
             ref = billService.generateBillReference(bill.getContent().get().getSource().getBytes(), docLanguage);
         }
@@ -550,7 +550,7 @@ public class BillContextService {
         String docLanguage = language != null ? language : annexDocument.getLanguage();
         String ref;
         if(translated) {
-            ref = LanguageMapUtils.generateTranslatedProposalReference(annexDocument.getRef(), docLanguage);
+            ref = LanguageMapUtils.getTranslatedProposalReference(annexDocument.getRef(), docLanguage);
         } else {
             ref = annexService.generateAnnexReference(annex.getContent().get().getSource().getBytes(), docLanguage);
         }

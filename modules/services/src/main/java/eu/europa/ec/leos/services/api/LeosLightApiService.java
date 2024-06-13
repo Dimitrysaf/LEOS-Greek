@@ -14,5 +14,5 @@ public interface LeosLightApiService {
 
     Pair<Boolean, File> exportDocument(ExportDocumentRequest request, String clientContextToken);
 
-    Pair<Object, Object> importProposal(MultipartFile file, String languageCode) throws IOException;
+    Pair<Object, Object> importProposal(MultipartFile file) throws IOException;
 }

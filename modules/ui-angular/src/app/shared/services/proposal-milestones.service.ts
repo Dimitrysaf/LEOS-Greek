@@ -45,11 +45,11 @@ export class ProposalMilestonesService {
       this.triggerRequestStoredDocumentAnnotationsBS.asObservable();
   }
 
-  listMilestoneView(proposalRef: string, legFileName: string) {
+  listMilestoneView(proposalRef: string, legFileName: string, legFileId: string) {
     return this.http.get<MilestoneViewResponse>(
       `${apiBaseUrl}/secured/list-milestones-view/${proposalRef}`,
       {
-        params: { legFileName },
+        params: { legFileName, legFileId },
       },
     );
   }

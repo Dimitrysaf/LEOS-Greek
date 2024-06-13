@@ -232,7 +232,7 @@ public class MemorandumContextService {
         String docLanguage = language != null ? language : memoDocument.getLanguage();
         String ref;
         if(translated) {
-            ref = LanguageMapUtils.generateTranslatedProposalReference(memoDocument.getRef(), docLanguage);
+            ref = LanguageMapUtils.getTranslatedProposalReference(memoDocument.getRef(), docLanguage);
         } else {
             ref = memorandumService.generateMemorandumReference(memorandum.getContent().get().getSource().getBytes(), docLanguage);
         }

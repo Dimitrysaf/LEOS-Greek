@@ -682,11 +682,13 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/list-milestones-view/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getListMilestoneDocumentViews(@PathVariable("documentRef") String documentRef,
-                                                                @RequestParam("legFileName") String legFileName) {
+                                                                @RequestParam("legFileName") String legFileName,
+                                                                @RequestParam("legFileId") String legFileId) {
         try {
             documentRef = encodeParam(documentRef);
             legFileName = encodeParam(legFileName);
-            MilestoneViewResponse milestonesView = apiService.listMilestoneDocuments(documentRef, legFileName);
+            legFileId = encodeParam(legFileId);
+            MilestoneViewResponse milestonesView = apiService.listMilestoneDocuments(documentRef, legFileName, legFileId);
             return new ResponseEntity<>(milestonesView, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting milestone documents views - " + e.getMessage());

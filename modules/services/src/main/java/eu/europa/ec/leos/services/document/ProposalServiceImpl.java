@@ -69,7 +69,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_STATUS;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLONED_TARGET_USER;
 import static eu.europa.ec.leos.services.support.XmlHelper.COVERPAGE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
-import static eu.europa.ec.leos.services.utils.LanguageMapUtils.generateTranslatedProposalReference;
+import static eu.europa.ec.leos.services.utils.LanguageMapUtils.getTranslatedProposalReference;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.getLeosDateFromString;
 
@@ -555,7 +555,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         documentLanguageContext.setDocumentLanguage(metadata.getLanguage());
         String ref;
         if(translated) {
-            ref = generateTranslatedProposalReference(proposalDocument.getRef(), metadata.getLanguage());
+            ref = getTranslatedProposalReference(proposalDocument.getRef(), metadata.getLanguage());
         } else {
             ref = generateProposalReference(metadata.getLanguage());
         }

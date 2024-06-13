@@ -32,7 +32,6 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.validation.ValidationService;
 import io.atlassian.fugue.Pair;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,11 +166,10 @@ public class LeosLightApiController {
 
     @RequestMapping(value = "/secured/editlight/importProposal", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> importProposal(@RequestParam("legFile") MultipartFile file, @RequestParam("translatedLang") String translatedLang) {
+    public ResponseEntity<Object> importProposal(@RequestParam("legFile") MultipartFile file) {
         try {
             validatePath(file.getOriginalFilename());
-            String languageCode = encodeParam(translatedLang);
-            Pair<Object, Object> result = leosLightApiService.importProposal(file, languageCode);
+            Pair<Object, Object> result = leosLightApiService.importProposal(file);
             if(result.right() == HttpStatus.OK) {
                 return new ResponseEntity<>(result.left(), HttpStatus.OK);
             } else {
