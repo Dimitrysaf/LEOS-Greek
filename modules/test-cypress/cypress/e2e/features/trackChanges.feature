@@ -4,20 +4,20 @@
 @TrackChangesScenarios
 Feature: Track Changes Feature
 
-  @trackchanges_on_num_text @local
+  @trackchanges_on_num_text @local @focus
   Scenario: Basic test to check num's track changes on newly added element
     # Login
     Given navigate to edit drafting application with "User1"
     Then user is on home page
     # Upload file for test
     When click on upload button
-    Then active upload window label is "Upload a legislative document"
+    Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
-    Then active upload window label is "Document metadata"
+    Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
     Then user is on proposal viewer page
-    # Enter in Legal Act
+    # Enter in Legal Act+
     When click on legal act link present in proposal viewer page
     Then user is on legal act page
     And  annotation side bar is present
@@ -29,14 +29,14 @@ Feature: Track Changes Feature
     When mousehover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
-    When move the cursor position to offset 38 in paragraph 1 of article 1 when ck editor is open
-    And  click enter from keyboard when ck editor is open
+    When move the cursor position to offset 38 in paragraph 1 of article in edition mode
+    And  click enter from keyboard in edition mode
     When append "New paragraph" at offset 3 in numbered paragraph 2 of article when ck editor is open
-    When move the cursor position to offset 3 in paragraph 2 of article 1 when ck editor is open
-    And  click indent button of ck editor
+    When move the cursor position to offset 3 in paragraph 2 of article in edition mode
+    And  click on increase indent icon present in ck editor panel
     And  click save and close button of ck editor
     # Check results
-    Then num of point 1 of paragraph 1 of article 1 has below content
+    Then num of point 1 of list 1 of paragraph 1 of article 1 has below content
       | ins  | "(a)"                              |
 
   @add_trackchanges_text @local
@@ -46,9 +46,9 @@ Feature: Track Changes Feature
     Then user is on home page
     # Upload file for test
     When click on upload button
-    Then active upload window label is "Upload a legislative document"
+    Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
-    Then active upload window label is "Document metadata"
+    Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
     Then user is on proposal viewer page
@@ -64,18 +64,18 @@ Feature: Track Changes Feature
     When mousehover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
-    When append "A" at offset 4 in numbered paragraph 1 of article when ck editor is open
-    When append "AB" at offset 4 of child 2 of numbered paragraph 1 of article when ck editor is open
-    When append "A" at offset 4 in numbered paragraph 2 of article when ck editor is open
-    When append "B" at offset 4 in numbered paragraph 2 of article when ck editor is open
-    When append "A" at offset 4 of child 2 of numbered paragraph 2 of article when ck editor is open
-    When append "B" at offset 0 of child 4 of numbered paragraph 2 of article when ck editor is open
+    When append "A" at offset 4 in numbered paragraph 1 of article in edition mode
+    When append "AB" at offset 4 of child 2 of numbered paragraph 1 of article in edition mode
+    When append "A" at offset 4 in numbered paragraph 2 of article in edition mode
+    When append "B" at offset 4 in numbered paragraph 2 of article in edition mode
+    When append "A" at offset 4 of child 2 of numbered paragraph 2 of article in edition mode
+    When append "B" at offset 0 of child 4 of numbered paragraph 2 of article in edition mode
     And  click save and close button of ck editor
     # Open ckeditor
     When mousehover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
-    When append "B" at offset 0 of child 4 of numbered paragraph 2 of article when ck editor is open
+    When append "B" at offset 0 of child 4 of numbered paragraph 2 of article in edition mode
     And  click save and close button of ck editor
     # Check results
     Then paragraph 1 of article 1 has below content
@@ -97,13 +97,13 @@ Feature: Track Changes Feature
   # This test will cover: track changes scenarios 1 to 10
   Scenario: Track changes for rules in confluence
     # Login
-    Given navigate to edit drafting application with "User1"
+    Given navigate to edit drafting application with "User2"
     Then user is on home page
     # Upload file for test
     When click on upload button
-    Then active upload window label is "Upload a legislative document"
+    Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
-    Then active upload window label is "Document metadata"
+    Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
     Then user is on proposal viewer page
@@ -119,20 +119,20 @@ Feature: Track Changes Feature
     When mousehover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
-    When append " querying" at offset 8 in numbered paragraph 1 of article when ck editor is open
-    When append "registered " at offset 12 of child 2 of numbered paragraph 1 of article when ck editor is open
-    When append " querying" at offset 6 in numbered paragraph 2 of article when ck editor is open
-    When append "registered " at offset 10 of child 2 of numbered paragraph 2 of article when ck editor is open
-    When append " querying" at offset 5 in numbered paragraph 3 of article when ck editor is open
-    When append "registered " at offset 10 of child 2 of numbered paragraph 3 of article when ck editor is open
-    When append " querying" at offset 6 in numbered paragraph 4 of article when ck editor is open
-    When append "registered " at offset 10 of child 2 of numbered paragraph 4 of article when ck editor is open
-    When append " querying" at offset 5 in numbered paragraph 5 of article when ck editor is open
-    When append "registered " at offset 10 of child 2 of numbered paragraph 5 of article when ck editor is open
-    When append " querying" at offset 5 in numbered paragraph 6 of article when ck editor is open
-    When append "registered " at offset 10 of child 2 of numbered paragraph 6 of article when ck editor is open
-    When append " querying" at offset 7 in numbered paragraph 7 of article when ck editor is open
-    When append "registered " at offset 10 of child 2 of numbered paragraph 7 of article when ck editor is open
+    When append " querying" at offset 8 in numbered paragraph 1 of article in edition mode
+    When append "registered " at offset 12 of child 2 of numbered paragraph 1 of article in edition mode
+    When append " querying" at offset 6 in numbered paragraph 2 of article in edition mode
+    When append "registered " at offset 10 of child 2 of numbered paragraph 2 of article in edition mode
+    When append " querying" at offset 5 in numbered paragraph 3 of article in edition mode
+    When append "registered " at offset 10 of child 2 of numbered paragraph 3 of article in edition mode
+    When append " querying" at offset 6 in numbered paragraph 4 of article in edition mode
+    When append "registered " at offset 10 of child 2 of numbered paragraph 4 of article in edition mode
+    When append " querying" at offset 5 in numbered paragraph 5 of article in edition mode
+    When append "registered " at offset 10 of child 2 of numbered paragraph 5 of article in edition mode
+    When append " querying" at offset 5 in numbered paragraph 6 of article in edition mode
+    When append "registered " at offset 10 of child 2 of numbered paragraph 6 of article in edition mode
+    When append " querying" at offset 7 in numbered paragraph 7 of article in edition mode
+    When append "registered " at offset 10 of child 2 of numbered paragraph 7 of article in edition mode
     And  click save and close button of ck editor
     # Check results
     Then paragraph 1 of article 1 has below content
@@ -175,24 +175,24 @@ Feature: Track Changes Feature
     When mousehover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
-    When press 11 times "del" at offset 0 of child 3 of numbered paragraph 1 of article when ck editor is open
-    When press 9 times "backspace" at offset 0 of child 2 of numbered paragraph 1 of article when ck editor is open
-    When press 9 times "del" at offset 0 of child 1 of numbered paragraph 2 of article when ck editor is open
-    When press 11 times "backspace" at offset 0 of child 3 of numbered paragraph 2 of article when ck editor is open
-    When press 3 times "backspace" at offset 6 of child 1 of numbered paragraph 3 of article when ck editor is open
-    When press 3 times "del" at offset 6 of child 3 of numbered paragraph 3 of article when ck editor is open
-    When press 3 times "backspace" at offset 3 of child 1 of numbered paragraph 4 of article when ck editor is open
-    When press 3 times "del" at offset 8 of child 3 of numbered paragraph 4 of article when ck editor is open
-    When press 8 times "backspace" at offset 15 of numbered paragraph 8 of article when ck editor is open
-    When press 4 times "del" at offset 21 of child 2 of numbered paragraph 8 of article when ck editor is open
-    When press 5 times "backspace" at offset 5 of child 2 of numbered paragraph 8 of article when ck editor is open
-    When press 6 times "del" at offset 10 of child 2 of numbered paragraph 8 of article when ck editor is open
-    When press 4 times "del" at offset 3 of child 0 of numbered paragraph 8 of article when ck editor is open
-    When press 4 times "backspace" at offset 4 of child 5 of numbered paragraph 8 of article when ck editor is open
-    When press 8 times "backspace" at offset 14 of numbered paragraph 9 of article when ck editor is open
-    When press 4 times "del" at offset 21 of child 2 of numbered paragraph 9 of article when ck editor is open
-    When press 8 times "backspace" at offset 14 of numbered paragraph 10 of article when ck editor is open
-    When press 4 times "del" at offset 21 of child 2 of numbered paragraph 10 of article when ck editor is open
+    When press 11 times "del" at offset 0 of child 3 of numbered paragraph 1 of article in edition mode
+    When press 9 times "backspace" at offset 0 of child 2 of numbered paragraph 1 of article in edition mode
+    When press 9 times "del" at offset 0 of child 1 of numbered paragraph 2 of article in edition mode
+    When press 11 times "backspace" at offset 0 of child 3 of numbered paragraph 2 of article in edition mode
+    When press 3 times "backspace" at offset 6 of child 1 of numbered paragraph 3 of article in edition mode
+    When press 3 times "del" at offset 6 of child 3 of numbered paragraph 3 of article in edition mode
+    When press 3 times "backspace" at offset 3 of child 1 of numbered paragraph 4 of article in edition mode
+    When press 3 times "del" at offset 8 of child 3 of numbered paragraph 4 of article in edition mode
+    When press 8 times "backspace" at offset 15 of numbered paragraph 8 of article in edition mode
+    When press 4 times "del" at offset 21 of child 2 of numbered paragraph 8 of article in edition mode
+    When press 5 times "backspace" at offset 5 of child 2 of numbered paragraph 8 of article in edition mode
+    When press 6 times "del" at offset 10 of child 2 of numbered paragraph 8 of article in edition mode
+    When press 4 times "del" at offset 3 of child 0 of numbered paragraph 8 of article in edition mode
+    When press 4 times "backspace" at offset 4 of child 5 of numbered paragraph 8 of article in edition mode
+    When press 8 times "backspace" at offset 14 of numbered paragraph 9 of article in edition mode
+    When press 4 times "del" at offset 21 of child 2 of numbered paragraph 9 of article in edition mode
+    When press 8 times "backspace" at offset 14 of numbered paragraph 10 of article in edition mode
+    When press 4 times "del" at offset 21 of child 2 of numbered paragraph 10 of article in edition mode
     And  click save and close button of ck editor
     # Check results
     # Ticket created to fix this issue:
@@ -223,7 +223,7 @@ Feature: Track Changes Feature
     #   | text | "graph with"        |
     #   | del  | " some more tex"    |
     #   | text | "t to test."        |
-    Given navigate to edit drafting application with "User2"
+    Given navigate to edit drafting application with "User1"
     Then user is on home page
     When click on view all acts button
     Then user is on repository browser page
@@ -240,21 +240,21 @@ Feature: Track Changes Feature
     When mousehover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
-    When press 9 times "backspace" at offset 0 of child 2 of numbered paragraph 5 of article when ck editor is open
-    When press 11 times "del" at offset 0 of child 3 of numbered paragraph 5 of article when ck editor is open
-    When press 15 times "backspace" at offset 3 of child 2 of numbered paragraph 6 of article when ck editor is open
-    When press 18 times "del" at offset 3 of child 4 of numbered paragraph 6 of article when ck editor is open
-    When press 3 times "backspace" at offset 6 of child 1 of numbered paragraph 7 of article when ck editor is open
-    When press 3 times "del" at offset 3 of child 3 of numbered paragraph 7 of article when ck editor is open
-    When press 5 times "backspace" at offset 5 of child 2 of numbered paragraph 9 of article when ck editor is open
-    When press 5 times "del" at offset 11 of child 3 of numbered paragraph 9 of article when ck editor is open
-    When press 3 times "del" at offset 3 of child 0 of numbered paragraph 9 of article when ck editor is open
-    When press 4 times "backspace" at offset 4 of child 7 of numbered paragraph 9 of article when ck editor is open
+    When press 9 times "backspace" at offset 0 of child 2 of numbered paragraph 5 of article in edition mode
+    When press 11 times "del" at offset 0 of child 3 of numbered paragraph 5 of article in edition mode
+    When press 15 times "backspace" at offset 3 of child 2 of numbered paragraph 6 of article in edition mode
+    When press 18 times "del" at offset 3 of child 4 of numbered paragraph 6 of article in edition mode
+    When press 3 times "backspace" at offset 6 of child 1 of numbered paragraph 7 of article in edition mode
+    When press 3 times "del" at offset 3 of child 3 of numbered paragraph 7 of article in edition mode
+    When press 5 times "backspace" at offset 5 of child 2 of numbered paragraph 9 of article in edition mode
+    When press 5 times "del" at offset 11 of child 3 of numbered paragraph 9 of article in edition mode
+    When press 3 times "del" at offset 3 of child 0 of numbered paragraph 9 of article in edition mode
+    When press 4 times "backspace" at offset 4 of child 7 of numbered paragraph 9 of article in edition mode
     # Ticket created to fix one issue:
     # https://code.europa.eu/leos/core/-/issues/1725
     # After this issue is fixed, change next 2 lines to appropiate values of offset and child, and create the checks for it:
-    # When press 16 times "backspace" at offset 4 of child 2 of numbered paragraph 10 of article when ck editor is open
-    # When press 10 times "del" at offset 14 of child 5 of numbered paragraph 10 of article when ck editor is open
+    # When press 16 times "backspace" at offset 4 of child 2 of numbered paragraph 10 of article in edition mode
+    # When press 10 times "del" at offset 14 of child 5 of numbered paragraph 10 of article in edition mode
     And click save and close button of ck editor
     # Check results
     Then paragraph 5 of article 1 has below content

@@ -1,6 +1,14 @@
 import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import ckEditorWindow from "../pages/ckEditorWindow";
 
+And('click delete button from keyboard in edition mode', () => {
+    ckEditorWindow.clickDeleteFromKeyboardWhenCKEditorOpen();
+})
+
+And('click enter from keyboard in edition mode', () => {
+    ckEditorWindow.clickEnterFromKeyboardWhenCKEditorOpen();
+})
+
 Then('ck editor window is displayed', () => {
     ckEditorWindow.getCkEditableInlineElement().should('exist');
 })
@@ -17,72 +25,222 @@ When('click close button of ck editor', () => {
     ckEditorWindow.clickCloseBtn();
 })
 
-When('click indent button of ck editor', () => {
-    ckEditorWindow.clickIndentBtn();
-})
-
 When('append {string} at offset {int} in numbered paragraph {int} of article when ck editor is open', function (newContent, offset, paragraphNumber) {
     ckEditorWindow.appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber);
 });
 
-When('append {string} at offset {int} of child {int} of numbered paragraph {int} of article when ck editor is open', function (newContent, offset, child, paragraphNumber) {
-    ckEditorWindow.appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber, child);
+When('click on paragraph mode icon present in ck editor panel', () => {
+    ckEditorWindow.clickParagraphModeIcon();
+})
+
+And('click on increase indent icon present in ck editor panel', () => {
+    ckEditorWindow.clickIncreaseIndentIcon();
+})
+
+And('click on decrease indent icon present in ck editor panel', () => {
+    ckEditorWindow.clickDecreaseIndentIcon();
+})
+
+And('click on soft enter icon present in ck editor panel', () => {
+    ckEditorWindow.clickSoftEnterIcon();
+})
+
+And('click on add subparagraph icon present in ck editor panel', () => {
+    ckEditorWindow.clickAddSubParagraphIcon();
+})
+
+Then('decrease indent icon is disabled in ck editor panel', () => {
+    ckEditorWindow.elements.decreaseIndentIcon().should('have.class', 'cke_button_disabled');
+})
+
+Then(`{int} plugins are available in ck editor window`, (count) => {
+    ckEditorWindow.elements.ckEditorBtns().should('have.length', 13);
 });
 
-When('press {string} at offset {int} in numbered paragraph {int} of article when ck editor is open', function (key, offset, paragraphNumber) {
+Then(`save button is disabled in ck editor`, () => {
+    ckEditorWindow.elements.saveBtn().invoke('attr', 'class').should('contain', 'disabled');
+});
+
+Then(`save close button is disabled in ck editor`, () => {
+    ckEditorWindow.elements.saveAndCloseBtn().invoke('attr', 'class').should('contain', 'disabled');
+});
+
+Then(`close button is enabled in ck editor`, () => {
+    ckEditorWindow.elements.closeBtn().should('not.be.disabled');
+});
+
+Then(`cut button is disabled in ck editor`, () => {
+    ckEditorWindow.elements.cutBtn().invoke('attr', 'class').should('contain', 'disabled');
+});
+
+Then(`copy button is disabled in ck editor`, () => {
+    ckEditorWindow.elements.copyBtn().invoke('attr', 'class').should('contain', 'disabled');
+});
+
+Then(`paste button is enabled in ck editor`, () => {
+    ckEditorWindow.elements.pasteBtn().should('not.be.disabled');
+});
+
+Then(`undo button is disabled in ck editor`, () => {
+    ckEditorWindow.elements.undoBtn().invoke('attr', 'class').should('contain', 'disabled');
+});
+
+Then(`redo button is disabled in ck editor`, () => {
+    ckEditorWindow.elements.redoBtn().invoke('attr', 'class').should('contain', 'disabled');
+});
+
+Then(`subscript button is enabled in ck editor`, () => {
+    ckEditorWindow.elements.subScriptBtn().should('not.be.disabled');
+});
+
+Then(`superscript button is enabled in ck editor`, () => {
+    ckEditorWindow.elements.superScriptBtn().should('not.be.disabled');
+});
+
+Then(`special character button is enabled in ck editor`, () => {
+    ckEditorWindow.elements.insertSpecialCharacterBtn().should('not.be.disabled');
+});
+
+Then(`show blocks button is enabled in ck editor`, () => {
+    ckEditorWindow.elements.showBlockBtn().should('not.be.disabled');
+});
+
+Then(`source button is enabled in ck editor`, () => {
+    ckEditorWindow.elements.sourceBtn().should('not.be.disabled');
+});
+
+Then(`increase indent icon is disabled in ck editor`, () => {
+    ckEditorWindow.elements.increaseIndentIcon().should('have.class', 'cke_button_disabled');
+});
+
+Then(`increase indent icon is displayed and enabled in ck editor panel`, () => {
+    ckEditorWindow.elements.increaseIndentIcon().should('be.visible');
+    ckEditorWindow.elements.increaseIndentIcon().should('not.be.disabled');
+});
+
+Then(`decrease indent icon is displayed and enabled in ck editor panel`, () => {
+    ckEditorWindow.elements.decreaseIndentIcon().should('be.visible');
+    ckEditorWindow.elements.decreaseIndentIcon().should('not.be.disabled');
+});
+
+When(`replace content {string} with the existing content in cover page long title`, (content) => {
+    ckEditorWindow.replaceContentInDocPurpose(content);
+});
+
+When('append {string} at offset {int} in numbered paragraph {int} of article in edition mode', function (newContent, offset, paragraphNumber) {
+    ckEditorWindow.appendContentInParagraphOfArticle(newContent, offset, paragraphNumber);
+});
+
+When('append {string} at offset {int} of child {int} of numbered paragraph {int} of article in edition mode', function (newContent, offset, child, paragraphNumber) {
+    ckEditorWindow.appendContentInParagraphOfArticle(newContent, offset, paragraphNumber, child);
+});
+
+When('press {string} at offset {int} in numbered paragraph {int} of article in edition mode', function (key, offset, paragraphNumber) {
     ckEditorWindow.deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber);
 });
 
-When('press {string} at offset {int} of child {int} of numbered paragraph {int} of article when ck editor is open', function (key, offset, child, paragraphNumber) {
+When('press {string} at offset {int} of child {int} of numbered paragraph {int} of article in edition mode', function (key, offset, child, paragraphNumber) {
     ckEditorWindow.deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber, child);
 });
 
-When('press {int} times {string} at offset {int} of numbered paragraph {int} of article when ck editor is open', function (times, key, offset, paragraphNumber) {
+When('press {int} times {string} at offset {int} of numbered paragraph {int} of article in edition mode', function (times, key, offset, paragraphNumber) {
     ckEditorWindow.deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber, null, times);
 });
 
-When('press {int} times {string} at offset {int} of child {int} of numbered paragraph {int} of article when ck editor is open', function (times, key, offset, child, paragraphNumber) {
+When('press {int} times {string} at offset {int} of child {int} of numbered paragraph {int} of article in edition mode', function (times, key, offset, child, paragraphNumber) {
     ckEditorWindow.deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber, child, times);
 });
 
-When('move the cursor position to offset {int} in paragraph {int} of article {int} when ck editor is open', function (offset, paragraphNumber, articleNumber) {
-    ckEditorWindow.moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber, articleNumber);
+When('move the cursor position to offset {int} in paragraph {int} of article in edition mode', function (offset, paragraphNumber) {
+    ckEditorWindow.moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber);
 });
 
-When('add {string} at offset {int} in citation {int} when ck editor is open', function (newContent, offset, citationNumber) {
-    ckEditorWindow.addContentInCitation(newContent, offset, citationNumber);
+When('add {string} at offset {int} in citation in edition mode', function (newContent, offset) {
+    ckEditorWindow.addContentInCitation(newContent, offset);
 });
 
-And('select content from offset {int} till offset {int} in citation {int} when ck editor is open', function (offsetStart, offsetEnd, citationNumber) {
-    ckEditorWindow.selectContentInCitation(offsetStart, offsetEnd, citationNumber);
+And('select content from offset {int} till offset {int} in citation in edition mode', function (offsetStart, offsetEnd) {
+    ckEditorWindow.selectContentInCitation(offsetStart, offsetEnd);
 });
 
-When('add {string} at offset {int} in recital {int} when ck editor is open', function (newContent, offset, recitalNumber) {
-    ckEditorWindow.addContentInRecital(newContent, offset, recitalNumber);
+When('add {string} at offset {int} in recital in edition mode', function (newContent, offset) {
+    ckEditorWindow.addContentInRecital(newContent, offset);
 });
 
-And('select content from offset {int} till offset {int} in recital {int} when ck editor is open', function (offsetStart, offsetEnd, recitalNumber) {
-    ckEditorWindow.selectContentInRecital(offsetStart, offsetEnd, recitalNumber);
+And('select content from offset {int} till offset {int} in recital in edition mode', function (offsetStart, offsetEnd) {
+    ckEditorWindow.selectContentInRecital(offsetStart, offsetEnd);
 });
 
-And('click delete button from keyboard when ck editor is open', () => {
-    ckEditorWindow.clickDeleteFromKeyboardWhenCKEditorOpen();
-})
-
-And('click enter from keyboard when ck editor is open', () => {
-    ckEditorWindow.clickEnterFromKeyboardWhenCKEditorOpen();
-})
-
-When('add {string} at current cursor position when ck editor is open', function (newContent) {
+When('add {string} at current cursor position in edition mode', function (newContent) {
     ckEditorWindow.addTextAtCurrentCursorPositionWhenCKEditorOpen(newContent);
 });
 
-When(`select content from offset {int} till offset {int} in numbered paragraph {int} of article when ck editor is open`, (offsetStart, offsetEnd, paragraphNumber) => {
+When(`select content from offset {int} till offset {int} in numbered paragraph {int} of article in edition mode`, (offsetStart, offsetEnd, paragraphNumber) => {
     ckEditorWindow.selectContentInNumberedParagraphOfArticle(offsetStart, offsetEnd, paragraphNumber);
 });
 
-Then(`numbered paragraph {int} of article contains {string} when ck editor is open`, (paragraphNumber, str) => {
+Then(`numbered paragraph {int} of article contains {string} in edition mode`, (paragraphNumber, str) => {
     ckEditorWindow.getNumberedParagraphElementOfArticle(paragraphNumber).invoke('text').then((text) => {
         expect(text.trim()).equal(str);
     });
+});
+
+When(`append {string} at p tag {int} of level in edition mode`, (text, pTagNumber) => {
+    ckEditorWindow.appendInCkEditorLevel(text,pTagNumber);
+});
+
+When(`select content from offset {int} to {int} of p tag {int} of level in edition mode`, (offsetStart, offsetEnd, pTagNumber) => {
+    ckEditorWindow.selectContentInLevel(offsetStart, offsetEnd, pTagNumber);
+});
+
+When(`add content {string} to li {int} with data-akn-element {string} of article in edition mode`, (newContent, li, dataAknElement) => {
+    ckEditorWindow.addContentInParagraphOfArticle(newContent, li, dataAknElement);
+});
+
+When(`add content {string} to li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (newContent, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) => {
+    ckEditorWindow.addContentInPointOfParagraphOfArticle(newContent, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement);
+});
+
+When(`add content {string} to li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) => {
+    ckEditorWindow.addContentInSecondLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3);
+});
+
+When(`add content {string} to li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) => {
+    ckEditorWindow.addContentInThirdLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4);
+});
+
+When(`add content {string} to li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5) => {
+    ckEditorWindow.addContentInFourthLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5);
+});
+
+When(`click at offset {int} of li {int} with data-akn-element {string} of article in edition mode`, (offset, paragraphLi, paragraphDataAknElement) => {
+    ckEditorWindow.clickAtSpecificOffsetInParagraphOfArticle(offset, paragraphLi, paragraphDataAknElement);
+});
+
+When(`click at offset {int} in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) => {
+    ckEditorWindow.moveCursorToSpecificOffsetInPointOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement);
+});
+
+When(`p tag {int} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains {string} in edition mode`, (pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, newContent) => {
+    ckEditorWindow.getElementPTagOfPointOfParagraphOfArticle(pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('text').should('contain', newContent);
+});
+
+When(`click at offset {int} of p tag {int} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (pointOffset, pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) => {
+    ckEditorWindow.moveCursorToSpecificOffsetInPTagOfPointOfParagraphOfArticle(pointOffset, pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement);
+});
+
+Then(`p tag {int} of li {int} with data-akn-element {string} of article contains {string} in edition mode`, (ptag, paragraphLi, paragraphDataAknElement, content) => {
+    ckEditorWindow.getElementPTagOfParagraphOfArticle(ptag, paragraphLi, paragraphDataAknElement).invoke('text').should('contain', content);
+});
+
+Then(`{string} attribute is not present in li {int} with data-akn-element {string} of article in edition mode`, (attribute, li, dataAknElement) => {
+    ckEditorWindow.getParagraphElementOfArticle(li, dataAknElement).should('not.have.attr', attribute);
+});
+
+When(`click on internal reference icon present in ck editor panel`, () => {
+    ckEditorWindow.clickInternalReferenceIcon();
+});
+
+When(`click at offset {int} of child {int} of citation in edition mode`, (offset, child) => {
+    ckEditorWindow.clickAtSpecificOffsetInChildOfCitation(offset, child);
 });

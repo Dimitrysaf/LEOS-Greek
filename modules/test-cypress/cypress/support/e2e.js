@@ -12,8 +12,6 @@
 // You can read more here:
 // https://on.cypress.io/configuration
 // ***********************************************************
-
-// Import commands.js using ES2015 syntax:
 import './commands';
 import "cypress-real-events";
 // import "cypress-cucumber-attach-screenshots-to-failed-steps";
@@ -24,6 +22,14 @@ Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
     return false;
+})
+
+beforeEach(() => {
+    const downloadsFolder = Cypress.config('downloadsFolder');
+    cy.task('deleteFolder', downloadsFolder);
+    cy.clearLocalStorage();
+    cy.clearAllSessionStorage();
+    cy.clearCookies();
 })
 
 // afterEach(() => {

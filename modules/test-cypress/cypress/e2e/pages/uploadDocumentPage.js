@@ -11,7 +11,11 @@ class uploadDocumentPage {
     }
 
     uploadFile(location){
-        this.elements.chooseFileInputBtn().invoke('show').selectFile("cypress/fixtures/legFiles/" + location);
+        this.elements.chooseFileInputBtn().invoke('show').selectFile(location);
+    }
+
+    enterProposalTitle(title) {
+        this.elements.documentTitle().clear().type(title);
     }
 }
 export default new uploadDocumentPage();

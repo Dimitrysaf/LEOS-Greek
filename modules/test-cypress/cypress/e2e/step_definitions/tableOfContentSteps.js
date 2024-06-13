@@ -1,0 +1,134 @@
+import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import tableOfContent from "../pages/tableOfContent";
+
+And('toc editing button is displayed and enabled', () => {
+    tableOfContent.elements.editBtn().should('be.visible');
+    tableOfContent.elements.editBtn().should('not.be.disabled');
+})
+
+When(`click on toc edit button`, () => {
+    tableOfContent.clickEditBtn();
+});
+
+Then(`cancel button in navigation pane is displayed and enabled`, () => {
+    tableOfContent.elements.cancelBtn().should('be.visible');
+    tableOfContent.elements.cancelBtn().should('not.be.disabled');
+});
+
+Then(`below element lists are displayed in Elements menu`, (datatable) => {
+    const actualelementList = [];
+    datatable.hashes().forEach((element) => {
+        actualelementList.push(element.ElementList);
+    });
+    tableOfContent.elements.menuOptions()
+        .then(($els) => {
+            return (
+                Cypress.$.makeArray($els)
+                    .map((el) => el.innerText)
+            )
+        })
+        .should('deep.equal', actualelementList)
+});
+
+When(`click on versions pane accordion`, () => {
+    tableOfContent.clickVersionsPaneButton();
+});
+
+Then(`compare versions button is displayed in versions pane section`, () => {
+    tableOfContent.elements.compareBtn().should('be.visible');
+});
+
+Then(`search button is displayed in versions pane section`, () => {
+    tableOfContent.elements.searchBtn().should('be.visible');
+});
+
+Then(`{string} subtitle is displayed under recent changes version card`, (subtitle) => {
+    tableOfContent.elements.recentChangesVersionCardSubTitle().should("have.text", subtitle);
+});
+
+Then(`last version card header title contains {string}`, (headerTitle) => {
+    tableOfContent.elements.lastVersionCardHeaderTitle().should("have.text", headerTitle);
+});
+
+When(`click on navigation pane accordion`, () => {
+    tableOfContent.clickNavigationPaneAccordian();
+});
+
+When(`only title element is present in navigation pane`, () => {
+    tableOfContent.elements.nestedTreeNode().should('have.length', 1);
+    tableOfContent.elements.nestedTreeNode().should("have.text", 'Title ');
+});
+
+When(`click on title link in navigation pane`, () => {
+    tableOfContent.clickFirstNestedTreeNode();
+});
+
+And(`last subversion of recent changes version card contains {string}`, (subversion) => {
+    tableOfContent.getLatestRecentVersionCardContent().should('have.text', subversion);
+});
+
+Then(`cancel button is displayed and enabled in navigation pane`, () => {
+    tableOfContent.elements.cancelBtn().should('be.visible');
+    tableOfContent.elements.cancelBtn().should('not.be.disabled');
+});
+
+When(`click on cancel button in navigation pane`, () => {
+    tableOfContent.clickCancelBtn();
+});
+
+When(`click on save button in navigation pane`, () => {
+    tableOfContent.clickSaveBtn();
+});
+
+When(`click on save and close button in navigation pane`, () => {
+    tableOfContent.clickSaveCloseBtn();
+});
+
+Then(`elements list is not displayed in navigation pane`, () => {
+    tableOfContent.elements.menuOptions().should('not.exist');
+});
+
+When(`mousehover on change type category`, () => {
+    tableOfContent.mouseHoverOnChangeTypeBtn();
+});
+
+When(`click on defintion option in change type category`, () => {
+    tableOfContent.clickDefinitionArticleTypeBtn();
+});
+
+When(`click on regular option in change type category`, () => {
+    tableOfContent.clickRegularArticleTypeBtn();
+});
+
+Then(`regular option is selected in change type category`, () => {
+    tableOfContent.elements.regularArticleTypeBtn().should('be.disabled');
+});
+
+Then(`defintion option is selected in change type category`, () => {
+    tableOfContent.elements.definitionArticleTypeBtn().should('be.disabled');
+});
+
+When(`click on three vertical dots for the element contains text {string} in toc`, (ngContent) => {
+    tableOfContent.clickThreeDotsOfTOCElement(ngContent);
+});
+
+When(`click on {string} link in navigation pane`, (link) => {
+    tableOfContent.clickLinkInNavigationPane(link);
+});
+
+When(`click on show more button in {string} eui-card`, (euiCardName) => {
+    tableOfContent.clickShowMoreBtn(euiCardName);
+});
+
+Then(`title of last {int} minor versions from recent changes eui-card contains {string}`, (minorVersionNumber, euiCardStr) => {
+      tableOfContent.elements.subVersionTitle().each(($ele, index) => {
+        if(index<minorVersionNumber){
+            expect($ele.text()).to.equal(euiCardStr);
+        }
+      })
+});
+
+When(`click on right angle icon of preamble link`, () => {
+    tableOfContent.clickRightAngleIconOfPreambleLink();
+});
+

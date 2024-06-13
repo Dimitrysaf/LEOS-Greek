@@ -7,6 +7,16 @@ class ribbonToolBar {
         seeUserGuidanceToggle: () => cy.xpath("//*[text()='See user guidance']//preceding-sibling::eui-slide-toggle//input"),
         enableTrackChangesToggle: () => cy.xpath("//*[text()='Enable track changes']//preceding-sibling::eui-slide-toggle//input"),
         seeTrackChangesToggle: () => cy.xpath("//*[text()='See track changes']//preceding-sibling::eui-slide-toggle//input"),
+        changeAnnexStructureBtn: () => cy.get('#STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID')
+        
+    }
+
+    clickChangeAnnexStructureBtn(){
+        this.elements.changeAnnexStructureBtn().click();
+    }
+
+    clickImportOjButton(){
+        this.elements.importFromOjBtn().click();
     }
     
 }
