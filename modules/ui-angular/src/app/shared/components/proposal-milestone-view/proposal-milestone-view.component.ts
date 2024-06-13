@@ -8,7 +8,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import {EuiDialogComponent} from '@eui/components/eui-dialog';
+import {EuiDialogComponent, EuiDialogService} from '@eui/components/eui-dialog';
 import {TranslateService} from '@ngx-translate/core';
 import {Subject} from 'rxjs';
 
@@ -24,6 +24,11 @@ import {
 import {AnnotateService} from '@/shared/services/annotate.service';
 import {DocumentService} from '@/shared/services/document.service';
 import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.service';
+import {UxAppShellService} from "@eui/core";
+import {ConfirmDeleteDialogComponent} from "@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component";
+import {
+  DocumentType,
+} from '@/shared';
 
 type MilestoneDocument = {
   ref: string;
@@ -32,6 +37,7 @@ type MilestoneDocument = {
   version: string;
   label: string;
   state: string;
+  selected: boolean;
   tocData: MilestoneTocItem[];
 };
 
@@ -55,6 +61,7 @@ export type MilestoneDescriptor = Pick<Milestone,
 })
 export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   @Input() milestone: MilestoneDescriptor;
+  @Input() parentLegDocumentName: string;
   @Input() parentClonedProposal: boolean;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
@@ -64,16 +71,17 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   documentPaneElement: ElementRef;
   @ViewChild('annotationsPane', {read: ElementRef})
   annotationsPaneElement: ElementRef;
+  @ViewChild('confirmationForDelete')
+  confirmDeleteAnnex: ConfirmDeleteDialogComponent;
   status: string;
   isOpened = false;
 
   documents: MilestoneDocument[] = [];
   containerId = 'view-container-id';
   activeTabIndex: number;
+  tmpSelectedTab: number;
   showPdfExport = false;
   contributionChanged = false;
-
-  readyToMergeMessage: string;
 
   isTocPaneCollapsed = false;
   isAnnotationsPaneCollapsed = false;
@@ -90,6 +98,8 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     public documentService: DocumentService,
     public milestonesService: ProposalMilestonesService,
     public translateService: TranslateService,
+    private appShell: UxAppShellService,
+    private dialogService: EuiDialogService,
   ) {
   }
 
@@ -98,13 +108,11 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       this.status = status;
     });
 
-    this.readyToMergeMessage = this.translateService.instant(
-      'page.workspace.proposal-item.ready-status',
-    );
+    let isReadyToMerge = 'Ready to merge' === this.status;
 
     this.milestonesService.requestStoredDocumentAnnotations$.subscribe((request) => this.requestStoredDocumentAnnotations(request))
 
-    if (this.status === this.readyToMergeMessage) {
+    if (isReadyToMerge) {
       this.loadContribution(this.hiddenCategories);
     } else {
       this.loadDocuments(this.hiddenCategories);
@@ -223,6 +231,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       label: this.createTabLabel(item),
       state: item.contentStatus,
       tocData: JSON.parse(item.tocData),
+      selected: false
     };
   }
 
@@ -258,9 +267,118 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   private setActiveTab(index: number) {
     const doc = this.documents[index];
+    this.documents.forEach(doc => {
+      doc.selected = false;
+    });
     if (doc) {
       this.documentService.setDocumentRefAndCategory(doc.ref, doc.type);
+      doc.selected = true;
     }
     this.activeTabIndex = index;
+  }
+
+  shouldDisplayButtons(): boolean {
+    const doc= this.documents[this.activeTabIndex];
+    return this.contributionChanged &&
+      !this.parentClonedProposal &&
+      (doc.state === 'Added' || doc.state === 'Deleted' || doc.state === 'Processed');
+  }
+
+  evaluateState(state: string): boolean {
+    if (state === 'Added') {
+      return true;
+    } else if (state === 'Deleted') {
+      return false;
+    }
+    return false;
+  }
+
+  handleAcceptReject(doc: MilestoneDocument, accept: boolean) {
+    this.tmpSelectedTab = this.activeTabIndex;
+    if (accept) {
+      if (!this.evaluateState(doc.state)) {
+        if (doc.type === 'STAT_FINANC_LEGIS') {
+          this.dialogService.openDialog({
+            title: this.translateService.instant(
+              'page.collection.drafts.financial-statement.delete.confirm-dialog.title',
+            ),
+            content: this.translateService.instant(
+              'page.collection.drafts.financial-statement.delete.confirm-dialog.body',
+            ),
+            acceptLabel: this.translateService.instant('global.actions.delete'),
+            accept: () => {
+              this.doAccept();
+            },
+          });
+        } else {
+          this.confirmDeleteAnnex.deleteDialog.openDialog();
+        }
+      } else {
+        this.doAccept();
+      }
+    } else {
+      this.milestonesService.handleReject(this.milestone.proposalRef, this.parentLegDocumentName, this.milestone.legDocumentName, this.evaluateState(doc.state), doc.ref).subscribe({
+        next: (milestoneViewResponse: MilestoneViewResponse) => {
+          this.handleMilestoneExplorerDocuments(milestoneViewResponse, this.hiddenCategories);
+          this.setActiveTab(this.tmpSelectedTab);
+          this.appShell.growl({
+            severity: 'success',
+            summary: this.translateService.instant('global.notifications.title.success'),
+            detail: this.translateService.instant(
+              'page.collection.milestone-view-dialog.handle-doc.processed',
+            ),
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+          });
+        },
+        error: (res) => {
+          this.appShell.growl({
+            severity: 'danger',
+            summary: this.translateService.instant(
+              'page.collection.milestone-view-dialog.handle-doc.error',
+            ),
+            detail: res,
+            life: 3000,
+            isGrowlSticky: false,
+            position: 'bottom-right',
+
+          });
+        }
+      });
+    }
+  }
+
+  doAccept() {
+    const doc:MilestoneDocument = this.documents[this.activeTabIndex];
+    this.milestonesService.handleAccept(this.milestone.proposalRef, this.milestone.legDocumentName, this.evaluateState(doc.state), doc.ref, doc.type).subscribe({
+      next: (milestoneViewResponse: MilestoneViewResponse) => {
+        this.handleMilestoneExplorerDocuments(milestoneViewResponse, this.hiddenCategories);
+        this.setActiveTab(this.tmpSelectedTab);
+        this.appShell.growl({
+          severity: 'success',
+          summary: this.translateService.instant('global.notifications.title.success'),
+          detail: this.translateService.instant(
+            'page.collection.milestone-view-dialog.handle-doc.processed',
+          ),
+          life: 3000,
+          isGrowlSticky: false,
+          position: 'bottom-right',
+        });
+      },
+      error: (res) => {
+        this.appShell.growl({
+          severity: 'danger',
+          summary: this.translateService.instant(
+            'page.collection.milestone-view-dialog.handle-doc.error',
+          ),
+          detail: res,
+          life: 3000,
+          isGrowlSticky: false,
+          position: 'bottom-right',
+
+        });
+      },
+    });
   }
 }

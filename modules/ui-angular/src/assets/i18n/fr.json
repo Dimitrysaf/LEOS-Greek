@@ -142,6 +142,8 @@
   "page.collection.milestone-view-dialog.export-button": "Exporter",
   "page.collection.milestone-view-dialog.accept-button": "Accepter",
   "page.collection.milestone-view-dialog.reject-button": "Rejeter",
+  "page.collection.milestone-view-dialog.handle-doc.processed": "Le document a été traité avec succès!",
+  "page.collection.milestone-view-dialog.handle-doc.error": "Erreur dans le traitement du document",
   "page.collection.milestones.add-dialog.title": "Ajouter un milestone",
   "page.collection.milestones.actions.view-milestone": "Afficher",
   "page.collection.milestones.actions.view-contribution": "Voir la contribution",

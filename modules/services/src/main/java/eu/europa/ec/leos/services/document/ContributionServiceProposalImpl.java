@@ -91,6 +91,9 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
 
     @Override
     public <T extends LeosDocument> T findVersionByVersionedReference(String versionedReference, Class<T> filterType) {
+        if (versionedReference.contains("_processed")) {
+            versionedReference = versionedReference.replace("_processed", "");
+        }
         return this.findVersionByVersionedReference(versionedReference, filterType, true);
     }
 

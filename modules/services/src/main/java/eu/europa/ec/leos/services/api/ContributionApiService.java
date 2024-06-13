@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
@@ -31,4 +32,8 @@ public interface ContributionApiService {
     void updateFeedbackAnnotations(String cloneProposalRef, String cloneLegFileName, String contributionsVersionRef) throws IOException;
 
     int countFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef);
+
+    void handleMilestoneAccept(String proposalRef, String legFileName, Boolean isAddedElseDeleted, String annexRef, LeosCategory category) throws IOException;
+
+    void handleMilestoneReject(String proposalRef, String legFileName, String annexRef, boolean isAdded);
 }

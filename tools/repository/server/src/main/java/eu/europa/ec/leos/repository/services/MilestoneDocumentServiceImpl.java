@@ -104,6 +104,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             docMilestone.setAuditLastMBy(userId);
             docMilestone.setAuditLastMDate(LocalDateTime.now());
             docMilestone = updateMilestoneComments(docMilestone, metadata);
+            docMilestone = updateMilestoneContainedDocuments(docMilestone, metadata, userId);
             docMilestone = documentMilestoneRepository.save(docMilestone);
             return ConversionUtils.buildLegDocument(docMilestone, documentMilestoneListRepository);
         } catch (Exception e) {
@@ -125,6 +126,7 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
             docMilestone.setAuditLastMDate(LocalDateTime.now());
             docMilestone.setContent(content);
             docMilestone = updateMilestoneComments(docMilestone, metadata);
+            docMilestone = updateMilestoneContainedDocuments(docMilestone, metadata, userId);
             docMilestone = documentMilestoneRepository.save(docMilestone);
             return ConversionUtils.buildLegDocument(docMilestone, documentMilestoneListRepository);
         } catch (Exception e) {
@@ -166,6 +168,32 @@ public class MilestoneDocumentServiceImpl implements MilestoneDocumentService {
         }
         if (metadata.get("jobId") != null) {
             docMilestone.setJobId((String) metadata.get("jobId"));
+        }
+        return docMilestone;
+    }
+
+    private DocumentMilestone updateMilestoneContainedDocuments(DocumentMilestone docMilestone, Map<String, ?> metadata, String updatedBy) throws RepositoryException {
+        if (metadata.get("containedDocuments") != null) {
+            try {
+                List<String> containedDocuments = (List<String>) metadata.get("containedDocuments");
+                List<DocumentMilestoneList> milestoneLists = documentMilestoneListRepository.findDocumentMilestoneListsByMilestoneId(docMilestone.getId());
+                for (String containedDoc : containedDocuments) {
+                    Optional<DocumentMilestoneList> milestoneListOpt =
+                            milestoneLists.stream().filter((m) -> m.getContainedDocuments().equals(containedDoc.replace(
+                            "_processed", ""))).findFirst();
+                    DocumentMilestoneList milestoneList = milestoneListOpt.orElse(new DocumentMilestoneList());
+                    milestoneList.setAuditCDate(LocalDateTime.now());
+                    milestoneList.setAuditCBy(updatedBy);
+                    milestoneList.setAuditLastMBy(updatedBy);
+                    milestoneList.setAuditLastMDate(LocalDateTime.now());
+                    milestoneList.setMilestone(docMilestone);
+                    milestoneList.setContainedDocuments(containedDoc);
+                    milestoneList = documentMilestoneListRepository.save(milestoneList);
+                }
+            } catch (ClassCastException e) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_CREATING, "Wrong value for parameter " +
+                        "'containedDocuments'");
+            }
         }
         return docMilestone;
     }

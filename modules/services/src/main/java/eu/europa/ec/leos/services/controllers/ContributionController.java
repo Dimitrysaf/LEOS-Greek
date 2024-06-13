@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.services.api.ApiService;
 import eu.europa.ec.leos.services.api.ContributionApiService;
@@ -158,6 +159,57 @@ public class ContributionController {
         } catch (Exception e) {
             LOG.error("Error occurred while counting feedbacks for - " + legFileName, e);
             return new ResponseEntity<>("Unexpected error occurred while counting feedbacks for ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/milestones/accept-doc/{proposalRef}/{annexRef}/{legFileName}", produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> milestoneAcceptAnnex(@PathVariable("proposalRef") String proposalRef,
+                                                       @PathVariable("annexRef") String annexRef,
+                                                       @PathVariable("legFileName") String legFileName,
+                                                       @RequestParam("isAdded") boolean isAdded,
+                                                       @RequestParam(value = "docCategory", required = false) String docCategory) {
+        try {
+            LeosCategory category = docCategory != null ? LeosCategory.valueOf(docCategory) : LeosCategory.ANNEX;
+            annexRef = encodeParam(annexRef);
+            proposalRef = encodeParam(proposalRef);
+            legFileName = encodeParam(legFileName);
+            contributionApiService.handleMilestoneAccept(
+                    proposalRef,
+                    legFileName,
+                    isAdded,
+                    annexRef,
+                    category);
+            return ResponseEntity.ok().body(apiService.listMilestoneDocuments(proposalRef, legFileName, null));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while handling annex on milestone - " + proposalRef, e);
+            return new ResponseEntity<>("Unexpected error occurred while handling annex on milestone", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/milestones/reject-doc/{proposalRef}/{docRef}/{milestoneLegFileName}", produces =
+            MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> milestoneRejectAnnex(@PathVariable("proposalRef") String proposalRef,
+                                                       @PathVariable("docRef") String docRef,
+                                                       @PathVariable("milestoneLegFileName") String milestoneLegFileName,
+                                                       @RequestParam("isAdded") boolean isAdded,
+                                                       @RequestParam(value="parentLegFileName", required = false) String parentLegFileName) {
+        try {
+            if (parentLegFileName != null) {
+                parentLegFileName = encodeParam(parentLegFileName);
+            }
+            docRef = encodeParam(docRef);
+            proposalRef = encodeParam(proposalRef);
+            milestoneLegFileName = encodeParam(milestoneLegFileName);
+            contributionApiService.handleMilestoneReject(proposalRef,
+                    isAdded ? milestoneLegFileName : parentLegFileName,
+                    docRef, isAdded);
+            return ResponseEntity.ok().body(apiService.listMilestoneDocuments(proposalRef, milestoneLegFileName, null));
+        } catch (Exception e) {
+            LOG.error("Unexpected error occurred while handling annex on milestone - " + proposalRef, e);
+            return new ResponseEntity<>("Unexpected error occurred while handling annex on milestone", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -44,6 +44,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   milestoneAnnotationWarningModal: MilestoneAnnotationWarningModalComponent;
   milestoneViewData: MilestoneDescriptor = null;
   parentClonedProposal;
+  parentLegDocumentName: string = null;
   dataSource: Milestone[] = [];
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
@@ -163,6 +164,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   onMilestoneViewDialogClosed() {
+    this.proposalDetailsService.setProposalRef(this.proposalRef,false)
     this.openMilestoneViewDialogVisible = false;
     this.milestoneViewData = null;
   }
@@ -220,16 +222,14 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateReadyToMergeStatus(milestone: Milestone): void {
+  updateReadyToMergeStatus(milestone: Milestone, parentLegDocumentName: string): void {
+    this.parentLegDocumentName = parentLegDocumentName;
     this.proposalMilestonesService.updateReadyToMergeStatus(milestone.status);
     this.openMilestoneViewDialog(milestone, this.proposal.cloneProposalMetadataVO?.clonedProposal);
   }
 
   isReadyToMerge(status: MilestoneStatus): boolean {
-    const readyToMergeTranslation = this.translateService.instant(
-      'page.workspace.proposal-item.ready-status',
-    );
-    return this.getStatus(status) === readyToMergeTranslation;
+    return 'Ready to merge' === this.getStatus(status);
   }
 
   private initMilestonesDataSource(

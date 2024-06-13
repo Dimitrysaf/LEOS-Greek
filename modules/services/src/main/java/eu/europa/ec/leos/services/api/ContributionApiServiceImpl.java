@@ -3,14 +3,26 @@ package eu.europa.ec.leos.services.api;
 import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
 import eu.europa.ec.leos.domain.common.Result;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.document.Annex;
+import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Explanatory;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
+import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
+import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ExplanatoryMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.domain.vo.DocumentVO;
+import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.notification.trackChanges.SendFeedbackNotification;
@@ -23,9 +35,15 @@ import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.clone.InternalRefMap;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
+import eu.europa.ec.leos.services.collection.document.BillContextService;
+import eu.europa.ec.leos.services.collection.document.ContextActionService;
+import eu.europa.ec.leos.services.collection.document.FinancialStatementContextService;
+import eu.europa.ec.leos.services.converter.ProposalConverterService;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
+import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ContributionService;
 import eu.europa.ec.leos.services.document.DocumentContentService;
+import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
@@ -36,14 +54,19 @@ import eu.europa.ec.leos.services.exception.SendNotificationException;
 import eu.europa.ec.leos.services.export.ExportLeos;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
+import eu.europa.ec.leos.services.milestone.MilestoneService;
+import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.response.MergeContributionResponse;
+import eu.europa.ec.leos.services.store.ArchiveService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
+import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -56,15 +79,24 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import eu.europa.ec.leos.services.notification.NotificationService;
 
 import javax.inject.Provider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @Service
@@ -74,29 +106,35 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private final CreateCollectionService createCollectionService;
     private final CloneContext cloneContext;
     private final ProposalService proposalService;
+    private final ProposalConverterService proposalConverterService;
+    private final Provider<BillContextService> billContextProvider;
+    private final Provider<FinancialStatementContextService> financialStatementContextProvider;
+    private final ArchiveService archiveService;
+    private final BillService billService;
+    private final FinancialStatementService financialStatementService;
     private final UserService userService;
     private final PackageService packageService;
     private final LegService legService;
     private final SecurityContext securityContext;
     private final ContributionService contributionService;
     private final NotificationService notificationService;
+    private final MilestoneService milestoneService;
     private final Properties applicationProperties;
     private final LeosRepository leosRepository;
     private final Provider<StructureContext> structureContextProvider;
-    private final Provider<StructureContext> structureContext;
     private final AttachmentProcessor attachmentProcessor;
     private final MergeContributionService mergeContributionService;
     private final XmlContentProcessor xmlContentProcessor;
     private final NumberService numberService;
     private final MessageHelper messageHelper;
     private final TrackChangesContext trackChangesContext;
+    private final CollectionUrlBuilder urlBuilder;
 
     private final DocumentContentService documentContentService;
     private final ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI;
     private final DocumentViewService<XmlDocument> documentViewService;
     private final RepositoryPropertiesMapper repositoryPropertiesMapper;
     private final DocumentLanguageContext documentLanguageContext;
-
 
     @Value("${leos.clone.originRef}")
     private String cloneOriginRef;
@@ -105,16 +143,15 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     public ContributionApiServiceImpl(CreateCollectionService createCollectionService,
                                       CloneContext cloneContext,
                                       ProposalService proposalService,
-                                      UserService userService,
+                                      Provider<FinancialStatementContextService> financialStatementContextProvider, FinancialStatementService financialStatementService, UserService userService,
                                       PackageService packageService,
                                       LegService legService,
                                       SecurityContext securityContext,
                                       ContributionService contributionService,
                                       NotificationService notificationService,
-                                      Properties applicationProperties,
+                                      MilestoneService milestoneService, Properties applicationProperties,
                                       LeosRepository leosRepository,
                                       Provider<StructureContext> structureContextProvider,
-                                      Provider<StructureContext> structureContext,
                                       AttachmentProcessor attachmentProcessor,
                                       MergeContributionService mergeContributionService,
                                       XmlContentProcessor xmlContentProcessor,
@@ -124,18 +161,24 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                                       ComparisonDelegateAPI<XmlDocument> comparisonDelegateAPI,
                                       DocumentViewService<XmlDocument> documentViewService,
                                       RepositoryPropertiesMapper repositoryPropertiesMapper,
-                                      DocumentLanguageContext documentLanguageContext) {
+                                      DocumentLanguageContext documentLanguageContext,
+                                      ProposalConverterService proposalConverterService,
+                                      BillService billService,
+                                      Provider<BillContextService> billContextProvider,
+                                      ArchiveService archiveService, CollectionUrlBuilder urlBuilder) {
         this.createCollectionService = createCollectionService;
         this.cloneContext = cloneContext;
         this.proposalService = proposalService;
+        this.financialStatementContextProvider = financialStatementContextProvider;
+        this.financialStatementService = financialStatementService;
         this.userService = userService;
         this.packageService = packageService;
         this.legService = legService;
         this.securityContext = securityContext;
         this.contributionService = contributionService;
+        this.milestoneService = milestoneService;
         this.leosRepository = leosRepository;
         this.structureContextProvider = structureContextProvider;
-        this.structureContext = structureContext;
         this.attachmentProcessor = attachmentProcessor;
         this.mergeContributionService = mergeContributionService;
         this.messageHelper = messageHelper;
@@ -149,6 +192,11 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         this.documentLanguageContext = documentLanguageContext;
         this.notificationService = notificationService;
         this.applicationProperties = applicationProperties;
+        this.proposalConverterService = proposalConverterService;
+        this.billService = billService;
+        this.billContextProvider = billContextProvider;
+        this.archiveService = archiveService;
+        this.urlBuilder = urlBuilder;
     }
 
     private XmlDocument findDocumentByRef(String docRef) throws NotFoundException {
@@ -177,11 +225,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 LOG.error("Error Occurred while cloning proposal from the Leg file: " + createCollectionResult.getError().getMessage());
             }
             LOG.info("Proposal id '{}' name '{}' sent for revision to user '{}' in {} milliseconds ({} sec)", proposal.getId(), leosPackage.getName(), user.getLogin(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             LOG.error("Error Occurred while cloning proposal from the Leg file: " + ex.getMessage(), ex);
-        }
-        finally {
+        } finally {
             userService.switchUserWithAuthorities(loggedInUser, loggedInUserAuthorities);
         }
         return createCollectionResult;
@@ -190,8 +236,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     private static void writeContentToFile(LegDocument legDocument, File content) {
         try (FileOutputStream fos = new FileOutputStream(content)) {
             fos.write(legDocument.getContent().get().getSource().getBytes());
-        }
-        catch (IOException ioe) {
+        } catch (IOException ioe) {
             LOG.error("Error Occurred while reading the Leg file: " + ioe.getMessage(), ioe);
         }
     }
@@ -259,7 +304,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             final LeosPackage leosPackage = this.packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
             final LegDocument legDocument = this.packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
             return this.legService.storeLegDocumentTemporary(legDocument);
-        } catch(Exception e) {
+        } catch (Exception e) {
             LOG.error("Error fetching temporary annotations ", e);
         }
         return null;
@@ -284,7 +329,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     public MergeContributionResponse mergeContribution(@NotNull String documentRef,
-                                    @NotNull ApplyContributionsRequest request) throws NotFoundException, IOException {
+                                                       @NotNull ApplyContributionsRequest request) throws NotFoundException, IOException {
         XmlDocument document = this.findDocumentByRef(documentRef);
         MergeContributionResponse mergeResult = new MergeContributionResponse(true, document.getContent().get().getSource().getBytes());
         Class docClass = LeosCategoryClass.getClass(document.getCategory());
@@ -303,7 +348,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         if (Boolean.FALSE.equals(mergeActions.isEmpty())) {
             trackChangesContext.setTrackChangesEnabled(!request.getMergeActions().get(0).getAction().equals(MergeActionVO.MergeAction.UNDO) && request.getMergeActions().get(0).isWithTrackChanges());
             structureContextProvider.get().useDocumentTemplate(document.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
-            List<TocItem> tocItemList = this.structureContext.get().getTocItems();
+            List<TocItem> tocItemList = this.structureContextProvider.get().getTocItems();
             byte[] xmlClonedContent = contribution.getXmlContent();
             List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
             mergeResult = mergeContributionService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
@@ -338,7 +383,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue()
         );
         this.leosRepository.updateDocument(contribution.getMetadata().get().getRef(), contribution.getId(), properties,
-                XmlDocument.class,false);
+                XmlDocument.class, false);
     }
 
     private List<InternalRefMap> getInternalRefMaps(ApplyContributionsRequest event, LeosDocument document, byte[] xmlClonedContent) {
@@ -363,7 +408,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         try {
             LOG.trace("Sending email feedback to all collaborators for proposalRef {}", proposalRef);
             SendFeedbackNotification sendFeedbackNotification = new SendFeedbackNotification();
-            String milestoneUrl = applicationProperties.getProperty("leos.mapping.url") + "/ui/collection/"+proposalRef + "?legFileName=" + legFileName;
+            String milestoneUrl = applicationProperties.getProperty("leos.mapping.url") + "/ui/collection/" + proposalRef + "?legFileName=" + legFileName;
             Proposal proposal = leosRepository.findDocumentByRef(proposalRef, Proposal.class);
             XmlDocument document = this.findDocumentByRef(documentRef);
             sendFeedbackNotification.setRecipients(buildCollaboratorList(proposal));
@@ -401,5 +446,240 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     @Override
     public int countFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef) {
         return legService.countFeedbacksToBeSentOnContribution(documentRef, proposalRef, legFileName);
+    }
+    
+    private void populateTrackChangesContext(Proposal proposal) {
+        this.trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
+    }
+
+    private MetadataVO createMetadataVO(Proposal proposal) {
+        ProposalMetadata metadata = proposal.getMetadata().getOrError(() -> "Proposal metadata is not available!");
+        return new MetadataVO(metadata.getStage(), metadata.getType(), metadata.getPurpose(), metadata.getTemplate(), metadata.getLanguage(), metadata.getEeaRelevance());
+    }
+
+    private DocumentVO getCoverPageVO(DocumentVO proposalVO, String proposalRef) {
+        DocumentVO coverPageVO = new DocumentVO(proposalVO.getId(),
+                proposalVO.getMetadata().getLanguage() != null ? proposalVO.getMetadata().getLanguage() : "EN",
+                LeosCategory.COVERPAGE,
+                proposalVO.getUpdatedBy(),
+                proposalVO.getUpdatedOn(), proposalVO.isTrackChangesEnabled());
+        coverPageVO.getMetadata().setInternalRef(proposalRef);
+        coverPageVO.setSource(documentContentService.getCoverPageContent(proposalVO.getSource()));
+        return coverPageVO;
+    }
+
+    private DocumentVO getExplanatroyVO(Explanatory explanatory) {
+        DocumentVO explanatoryVO = new DocumentVO(explanatory.getId(),
+                explanatory.getMetadata().exists(e -> e.getLanguage() != null) ? explanatory.getMetadata().get().getLanguage() : "EN",
+                LeosCategory.COUNCIL_EXPLANATORY,
+                explanatory.getLastModifiedBy(),
+                Date.from(explanatory.getLastModificationInstant()), explanatory.isTrackChangesEnabled());
+
+        if (explanatory.getMetadata().isDefined()) {
+            ExplanatoryMetadata metadata = explanatory.getMetadata().get();
+            explanatoryVO.setTitle(metadata.getTitle());
+        }
+
+        return explanatoryVO;
+    }
+
+    private DocumentVO getMemorandumVO(Memorandum memorandum) {
+        return new DocumentVO(memorandum.getId(),
+                memorandum.getMetadata().exists(m -> m.getLanguage() != null) ? memorandum.getMetadata().get().getLanguage() : "EN",
+                LeosCategory.MEMORANDUM,
+                memorandum.getLastModifiedBy(),
+                Date.from(memorandum.getLastModificationInstant()), memorandum.isTrackChangesEnabled());
+    }
+
+    private DocumentVO getLegalTextVO(Bill bill) {
+        return new DocumentVO(bill.getId(),
+                bill.getMetadata().exists(m -> m.getLanguage() != null) ? bill.getMetadata().get().getLanguage() : "EN",
+                LeosCategory.BILL,
+                bill.getLastModifiedBy(),
+                Date.from(bill.getLastModificationInstant()), bill.isTrackChangesEnabled());
+    }
+
+    private DocumentVO getFinancialStatementVO(FinancialStatement fs) {
+        return new DocumentVO(fs.getId(),
+                fs.getMetadata().exists(m -> m.getLanguage() != null) ? fs.getMetadata().get().getLanguage() : "EN",
+                STAT_FINANC_LEGIS,
+                fs.getLastModifiedBy(),
+                Date.from(fs.getLastModificationInstant()), fs.isTrackChangesEnabled());
+    }
+
+    private DocumentVO createAnnexVO(Annex annex) {
+        DocumentVO annexVO =
+                new DocumentVO(annex.getId(),
+                        annex.getMetadata().exists(m -> m.getLanguage() != null) ? annex.getMetadata().get().getLanguage() : "EN",
+                        LeosCategory.ANNEX,
+                        annex.getLastModifiedBy(),
+                        Date.from(annex.getLastModificationInstant()), annex.isTrackChangesEnabled());
+
+        if (annex.getMetadata().isDefined()) {
+            AnnexMetadata metadata = annex.getMetadata().get();
+            annexVO.setDocNumber(metadata.getIndex());
+            annexVO.setTitle(metadata.getTitle());
+            annexVO.getMetadata().setNumber(metadata.getNumber());
+            annexVO.setRef(annex.getMetadata().get().getRef());
+        }
+
+        return annexVO;
+    }
+
+    private DocumentVO createFinancialStatementVO(FinancialStatement financialStatement) {
+        DocumentVO financialDocumentVO =
+                new DocumentVO(financialStatement.getId(),
+                        financialStatement.getMetadata().exists(m -> m.getLanguage() != null) ? financialStatement.getMetadata().get().getLanguage() : "EN",
+                        LeosCategory.STAT_FINANC_LEGIS,
+                        financialStatement.getLastModifiedBy(),
+                        Date.from(financialStatement.getLastModificationInstant()), financialStatement.isTrackChangesEnabled());
+
+        if (financialStatement.getMetadata().isDefined()) {
+            FinancialStatementMetadata metadata = financialStatement.getMetadata().get();
+            financialDocumentVO.setTitle(metadata.getTitle());
+            financialDocumentVO.setRef(financialStatement.getMetadata().get().getRef());
+        }
+        return financialDocumentVO;
+    }
+
+    public File createFileFromXmlSource(byte[] xmlSource, String docName) throws IOException {
+        File file = new File(docName);
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(xmlSource);
+            fos.flush();
+        } catch (IOException e) {
+            throw new IOException("Failed to create file from xmlSource", e);
+        }
+        return file;
+    }
+
+    @Override
+    public void handleMilestoneReject(String proposalRef, String legFileName, String docRef, boolean isAdded) {
+        LeosPackage leosClonedPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosClonedPackage.getPath(), legFileName,
+                LegDocument.class);
+        if (!isAdded) {
+            Proposal clonedProposal = proposalService.findProposalByRef(proposalRef);
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(clonedProposal.getClonedFrom(), Proposal.class);
+            legDocument = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName,
+                    LegDocument.class);
+        }
+        final String docName = docRef;
+        List<String> updatedDocuments = new ArrayList<>();
+        legDocument.getContainedDocuments().forEach(fileName -> {
+            int separatorIndex = fileName.indexOf("-");
+            int versionIndex = separatorIndex != -1 ? fileName.substring(separatorIndex).lastIndexOf("_") + separatorIndex : fileName.lastIndexOf("_");
+            String name = "", version = "";
+            if (versionIndex != -1) {
+                name = fileName.substring(0, versionIndex);
+                version = fileName.substring(versionIndex);
+            } else {
+                name = fileName;
+            }
+            if (name.equalsIgnoreCase(docName)) {
+                updatedDocuments.add(name.concat("_processed").concat(version));
+            } else {
+                updatedDocuments.add(fileName);
+            }
+        });
+        milestoneService.updateMilestone(legDocument.getMilestoneRef(), legDocument.getId(), updatedDocuments);
+    }
+
+    @Override
+    public void handleMilestoneAccept(String proposalRef, String legFileName, Boolean isAdded, String docRef, LeosCategory category) throws IOException {
+        LeosPackage leosClonedPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosClonedPackage.getPath(), legFileName,
+                LegDocument.class);
+        Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().
+                getSource().getBytes());
+        String docName = docRef;
+        if (docName.indexOf(XML_DOC_EXT) == -1) {
+            docName = docName.concat(XML_DOC_EXT);
+        }
+        File docFile = null;
+        if (isAdded) {
+            byte[] xmlSource = (byte[]) legContent.get(docName);
+            try {
+                docFile = createFileFromXmlSource(xmlSource, docName);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (category.equals(LeosCategory.ANNEX)) {
+            Bill clonedBill = billService.findBillByPackagePath(leosClonedPackage.getPath());
+            Bill bill = billService.findBillByRef(clonedBill.getClonedFrom());
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(clonedBill.getClonedFrom(), Bill.class);
+            Proposal proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
+            if (isAdded) {
+                DocumentVO annexVO = proposalConverterService.createDocument(docName, docFile, true);
+                annexVO.getMetadata().setIndex(null);
+                BillMetadata metadata = bill.getMetadata().getOrError(() -> "Bill metadata is required!");
+                BillContextService billContext = billContextProvider.get();
+                billContext.usePackage(leosPackage);
+                billContext.useActionMessage(ContextActionService.ANNEX_BLOCK_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+                billContext.useAnnexDocument(annexVO);
+                billContext.usePurpose(metadata.getPurpose());
+                billContext.createRefForAnnex(metadata);
+                annexVO.getMetadata().setIndex(Integer.toString(((AnnexMetadata) annexVO.getMetadataDocument()).getIndex()));
+                CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
+                idsAndUrlsHolder.setBillId(metadata.getRef());
+                idsAndUrlsHolder.setBillUrl(urlBuilder.buildBillViewUrl(metadata.getRef()));
+                billContext.useIdsAndUrlsHolder(idsAndUrlsHolder);
+                billContext.executeImportContributionAnnex();
+            } else {
+                Annex annex = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), docName, Annex.class);
+                DocumentVO annexVO = createAnnexVO(annex);
+                BillContextService billContext = billContextProvider.get();
+                billContext.useAnnexwithRef(docRef);
+                billContext.usePackage(leosPackage);
+                billContext.useAnnex(annex.getId());
+                billContext.useActionMessage(ContextActionService.ANNEX_METADATA_UPDATED, messageHelper.getMessage("collection.block.annex.metadata.updated"));
+                billContext.useActionMessage(ContextActionService.ANNEX_DELETED, messageHelper.getMessage("collection.block.annex.removed"));
+
+                try {
+                    archiveService.archiveDocument(annexVO, Annex.class, leosPackage.getPath());
+                } catch (Exception e) {
+                    LOG.error("Error while using archive service {}", e.getMessage());
+                }
+                billContext.executeRemoveBillAnnex();
+            }
+            documentViewService.contextExecuteUpdateProposalAsync(proposal);
+        } else if (category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
+            Proposal clonedProposal = this.proposalService.findProposalByPackagePath(leosClonedPackage.getPath());
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(clonedProposal.getClonedFrom(), Proposal.class);
+            Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
+            if (isAdded) {
+                DocumentVO financialStatementVO = proposalConverterService.createDocument(docName, docFile, true);
+                FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
+                MetadataVO metadata = financialStatementVO.getMetadata();
+                financialStatementContext.useDocument(financialStatementVO);
+                financialStatementContext.usePackage(leosPackage);
+                String template = metadata.getTemplate();
+                financialStatementContext.useTemplate(template);
+                financialStatementContext.usePurpose(proposal.getMetadata().get().getPurpose());
+                financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + template));
+                financialStatementContext.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
+                financialStatementContext.useType(proposal.getMetadata().get().getType());
+                String actionMessage = messageHelper.getMessage("collection.block.financial.statement.added");
+                financialStatementContext.useActionMessage(ContextActionService.STAT_FINANC_LEGIS_ADDED, actionMessage);
+                financialStatementContext.useCollaborators(proposal.getCollaborators());
+                financialStatementContext.useCloneProposal(proposal.isClonedProposal());
+                financialStatementContext.useOriginRef(proposal.getOriginRef());
+                financialStatementContext.useLanguage(metadata.getLanguage());
+                financialStatementContext.useTranslated(false);
+                FinancialStatement financialStatement = financialStatementContext.executeImportFinancialStatement();
+                proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), STAT_FINANC_LEGIS);
+            } else {
+                List<FinancialStatement> financialStatementList = financialStatementService.findFinancialStatementByPackagePath(leosPackage.getPath());
+                if (!financialStatementList.isEmpty()) {
+                    FinancialStatement financialStatement = financialStatementList.get(0);
+                    DocumentVO fsVO = createFinancialStatementVO(financialStatement);
+                    archiveService.archiveDocument(fsVO, FinancialStatement.class, leosPackage.getPath());
+                    proposal = proposalService.removeComponentRef(proposal, financialStatement.getName());
+                }
+            }
+            documentViewService.contextExecuteUpdateProposalAsync(proposal);
+        }
+
     }
 }

@@ -195,7 +195,8 @@ define(function SoftActionsExtensionModule(require) {
     }
     
     function _displaySoftMoveLabels(connector, target, otherTargets) {
-        if (connector.isTrackChangesShowed()) {
+        var isTrackChangesShowed = !!connector.isTrackChangesShowed ? connector.isTrackChangesShowed() : false;
+        if (isTrackChangesShowed) {
             if (target != null) {
                 _showSoftMoveLabels(target);
                 _displaySoftMoveLabelForDirection("TO", target);

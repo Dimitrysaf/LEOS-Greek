@@ -232,6 +232,7 @@ public class AnnexContextService {
                 .builder()
                 .withPurpose(purpose)
                 .withEeaRelevance(eeaRelevance)
+                .withType(type)
                 .withLanguage(language)
                 .build();
         if (cloneProposal) {

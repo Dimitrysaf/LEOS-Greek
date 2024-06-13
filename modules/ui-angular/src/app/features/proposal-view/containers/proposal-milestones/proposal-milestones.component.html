@@ -174,7 +174,7 @@
                 <li euiListItem>
                   <button
                     euiListItem
-                    (click)="updateReadyToMergeStatus(clonedMilestone)"
+                    (click)="updateReadyToMergeStatus(clonedMilestone, row.legDocumentName)"
                   >
                     {{
                       'page.collection.milestones.actions.view-contribution'
@@ -208,6 +208,7 @@
 <app-proposal-milestone-view
   #milestoneViewDialog
   [milestone]="milestoneViewData"
+  [parentLegDocumentName]="parentLegDocumentName"
   [parentClonedProposal]="parentClonedProposal"
   (closed)="onMilestoneViewDialogClosed()"
   *ngIf="openMilestoneViewDialogVisible && milestoneViewData"

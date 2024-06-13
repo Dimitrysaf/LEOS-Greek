@@ -130,9 +130,11 @@ export class DocumentAnnotationsComponent
         this.annotate.setAnnotationMode(mode);
       },
     );
-    this.documentService.setRefreshAnnotateCall(
-      () => this.annotate.refresh(),
-    );
+    if (this.documentService.setRefreshAnnotateCall) {
+      this.documentService.setRefreshAnnotateCall(
+        () => this.annotate.refresh(),
+      );
+    }
   }
 
   ngOnDestroy() {

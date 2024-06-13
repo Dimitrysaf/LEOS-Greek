@@ -11,6 +11,20 @@ export const setDynamicStyle = (
   return style;
 };
 
+export const setDynamicInlineStyle = (
+  document: Document,
+  cssContent: string,
+  styleId: string,
+): HTMLStyleElement => {
+  const head = document.getElementsByTagName('head')[0];
+  const style = document.createElement('style');
+  style.id = styleId;
+  style.innerHTML = cssContent;
+  head.appendChild(style);
+
+  return style;
+};
+
 export const swapElements = (oldElem: HTMLElement, newElem: HTMLElement) => {
   oldElem.parentNode.insertBefore(newElem, oldElem);
   oldElem.remove();
