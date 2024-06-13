@@ -12,7 +12,7 @@ class annexPage extends headerPage {
     }
 
     clickCloseBtn() {
-        this.elements.closeBtn().realHover().click('topLeft', { force: true });
+        this.elements.closeBtn().realHover().click('center', { force: true });
         cy.wait(500);
     }
 

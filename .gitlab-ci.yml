@@ -75,7 +75,7 @@ cypress-test-for-local:
 
 cypress-test-for-non-local:
   image:
-    name: code.europa.eu:4567/leos/core/image-for-tests:1.0.1
+    name: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
   stage: test
   resource_group: cypress
   rules:

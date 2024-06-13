@@ -2,8 +2,8 @@ const cucumber = require('cypress-cucumber-preprocessor').default;
 const decompress = require('decompress');
 const { defineConfig } = require("cypress");
 const unzip = ({ path, file }) => decompress(path + '/' + file, path);
-var path = require('path');
-var fs = require('fs');
+const path = require('path');
+const fs = require('fs');
 
 module.exports = {
   unzip,
@@ -17,7 +17,7 @@ module.exports = defineConfig({
   numTestsKeptInMemory: 1,
   video: false,
   e2e: {
-    setupNodeEvents(on, config) {
+    setupNodeEvents(on) {
       // implement node event listeners here
       on("before:browser:launch", (browser, launchOptions) => {
         if (["chrome", "edge"].includes(browser.name)) {
@@ -52,13 +52,13 @@ module.exports = defineConfig({
       });
       on('task', {
         getFiles: ({ downloadspath, extension }) => {
-          var files = fs.readdirSync(downloadspath);
-          var result = [];
+          const files = fs.readdirSync(downloadspath);
+          const result = [];
           files.forEach(
               function (file) {
-                var newbase = path.join(downloadspath, file);
+                const newbase = path.join(downloadspath, file);
                 if (!fs.statSync(newbase).isDirectory()) {
-                  if (file.substr(-1 * (extension.length + 1)) == '.' + extension) {
+                  if (file.substr(-1 * (extension.length + 1)) === '.' + extension) {
                     result.push(file);
                   }
                 }
