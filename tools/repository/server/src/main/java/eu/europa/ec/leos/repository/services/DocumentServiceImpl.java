@@ -221,7 +221,7 @@ public class DocumentServiceImpl implements DocumentService {
             case "LEG":
             case "EXPORT":
                 Optional<LeosDocument> leosDoc = milestoneDocumentService.findMilestoneById(versionId);
-                Document legDoc = documentRepository.findDocumentByRef(leosDoc.get().getRef()).orElseThrow(() ->
+                Document legDoc = documentRepository.findDocumentById(leosDoc.get().getDocumentId()).orElseThrow(() ->
                         new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
                 return milestoneDocumentService.updateMilestone(legDoc, contentBytes, metadata, userId);
 

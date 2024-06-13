@@ -30,4 +30,7 @@ public interface DocumentRepository extends JpaRepository<Document, BigDecimal> 
 
     @Query(value = "SELECT * FROM DOCUMENT d WHERE d.ID IN (SELECT v.DOCUMENT_ID FROM DOCUMENT_VERSION v WHERE v.ID= ?1 AND v.IS_LATEST_VERSION = 1);", nativeQuery = true)
     Optional<Document> findDocumentByDocumentId(BigDecimal documentId);
+
+    Optional<Document> findDocumentById(BigDecimal documentId);
+
 }

@@ -17,8 +17,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import eu.europa.ec.leos.repository.entities.DocumentContent;
 import eu.europa.ec.leos.repository.entities.DocumentVersion;
-import eu.europa.ec.leos.repository.repositories.DocumentMilestoneRepository;
-import eu.europa.ec.leos.repository.utils.PropertiesMetadata;
 import eu.europa.ec.leos.repository.common.VersionType;
 import eu.europa.ec.leos.repository.entities.Config;
 import eu.europa.ec.leos.repository.entities.ConfigContent;
@@ -66,6 +64,8 @@ public class LeosDocument {
     private String packageId;
 
     private String category;
+
+    private BigDecimal documentId;
 
     private Map<String, Object> metadata = new HashMap<>();
 
@@ -185,6 +185,7 @@ public class LeosDocument {
             this.setVersionId(documentMilestoneV.getMilestoneId());
             this.setPackageId(documentMilestoneV.getPackageId().toString());
             this.setCategory(documentMilestoneV.getCategoryCode());
+            this.setDocumentId(documentMilestoneV.getDocumentId());
 
             this.setLatestVersion(true);
 
@@ -219,9 +220,10 @@ public class LeosDocument {
                     Date.from(documentMilestoneV.getAuditLastMDate().atZone(ZoneId.systemDefault()).toInstant()) : null);
             this.setSource(content.getContent());
             this.setRef(documentMilestoneV.getRef());
-            this.setVersionId(documentMilestoneV.getDocumentId());
+            this.setVersionId(documentMilestoneV.getMilestoneId());
             this.setPackageId(documentMilestoneV.getPackageId().toString());
             this.setCategory(documentMilestoneV.getCategoryCode());
+            this.setDocumentId(documentMilestoneV.getDocumentId());
 
             this.setLatestVersion(true);
 
@@ -438,6 +440,14 @@ public class LeosDocument {
 
     public String getName() {
         return name;
+    }
+
+    public BigDecimal getDocumentId() {
+        return documentId;
+    }
+
+    public void setDocumentId(BigDecimal documentId) {
+        this.documentId = documentId;
     }
 
 }
