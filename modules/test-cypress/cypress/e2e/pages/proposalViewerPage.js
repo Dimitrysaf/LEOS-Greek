@@ -62,11 +62,11 @@ class proposalViewerPage extends headerPage{
     }
 
     clickActionsMenuOfAnnex(annexNumber){
-        this.elements.annexCount().eq(annexNumber-1).find("button[aria-label='Annex Actions']").realHover().click();
+        this.elements.annexCount().eq(annexNumber-1).find("button[aria-label='Annex Actions']").trigger('mouseover').click();
     }
 
     clickChangeTitleBtn(){
-        this.elements.changeTitleBtn().realHover().click();
+        this.elements.changeTitleBtn().trigger('mouseover').click();
     }
 
     getTitleElementOfAnnex(annexNumber){
@@ -74,7 +74,7 @@ class proposalViewerPage extends headerPage{
     }
     
     clickDeleteBtnFromActionMenu(){
-        this.elements.deleteBtnFromActionMenu().click();
+        this.elements.deleteBtnFromActionMenu().trigger('mouseover').click();
     }
 
     clickMilestonesTab(){

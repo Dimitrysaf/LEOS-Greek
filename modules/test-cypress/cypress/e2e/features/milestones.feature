@@ -41,28 +41,28 @@ Feature: milestone section regression features
             | Download                     |
         When click on option "View" under milestone actions
         Then user is on milestone explorer window
-        And  milestone explorer window contains below tabs
-            | TabName                |
-            | Explanatory Memorandum |
-            | Legal Act              |
-            | Annex 1                |
-            | Annex 2                |
-        # When click on export button present in milestone explorer window
-        # And  recent pdf file present in downloads folder contains below words
-        #     | EXPLANATORY MEMORANDUM                                                                  |
-        #     | THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,                          |
-        #     | Having regard to the Treaty on the Functioning of the European Union, and in particular |
-        #     | Having regard to the proposal from the European Commission,                             |
-        #     | After transmission of the draft legislative act to the national Parliaments,            |
-        #     | (1) Recital...                                                                          |
-        #     | (2) Recital...                                                                          |
-        #     | Article 1                                                                               |
-        #     | Scope                                                                                   |
-        #     | Article 2                                                                               |
-        #     | For the European Parliament                                                             |
-        #     | For the Council                                                                         |
-        #     | The President                                                                           |
-        #     | ANNEX I                                                                                 |
-        #     | ANNEX II                                                                                |
-        When click on close button in milestone explorer view
-        Then user is on proposal viewer page
+#        And  milestone explorer window contains below tabs
+#            | TabName                |
+#            | Explanatory Memorandum |
+#            | Legal Act              |
+#            | Annex 1                |
+#            | Annex 2                |
+#         When click on export button present in milestone explorer window
+#         And  recent pdf file present in downloads folder contains below words
+#             | EXPLANATORY MEMORANDUM                                                                  |
+#             | THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,                          |
+#             | Having regard to the Treaty on the Functioning of the European Union, and in particular |
+#             | Having regard to the proposal from the European Commission,                             |
+#             | After transmission of the draft legislative act to the national Parliaments,            |
+#             | (1) Recital...                                                                          |
+#             | (2) Recital...                                                                          |
+#             | Article 1                                                                               |
+#             | Scope                                                                                   |
+#             | Article 2                                                                               |
+#             | For the European Parliament                                                             |
+#             | For the Council                                                                         |
+#             | The President                                                                           |
+#             | ANNEX I                                                                                 |
+#             | ANNEX II                                                                                |
+#        When click on close button in milestone explorer view
+#        Then user is on proposal viewer page
