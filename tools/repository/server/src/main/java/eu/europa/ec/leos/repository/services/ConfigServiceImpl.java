@@ -78,11 +78,6 @@ public class ConfigServiceImpl implements ConfigService {
 
     }
 
-    @Override
-    public LeosDocument findConfigByVersionId(String id) throws RepositoryException {
-        return null;
-    }
-
     public LeosDocument findConfigByVersionId(final BigDecimal id) throws RepositoryException {
         try {
             ConfigVersion version = this.configVersionRepository.findLastConfigVersionByVersionId(id);
