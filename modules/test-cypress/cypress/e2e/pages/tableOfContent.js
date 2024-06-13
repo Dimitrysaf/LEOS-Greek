@@ -72,7 +72,7 @@ class tableOfContent {
     }
 
     clickThreeDotsOfTOCElement(ngContent){
-        this.elements.matTree().contains(ngContent).parent().find('button').click();
+        this.elements.matTree().contains(ngContent).parent().find('button .eui-icon-more-vertical').realHover().click();
     }
 
     clickShowMoreBtn(euiCardName){

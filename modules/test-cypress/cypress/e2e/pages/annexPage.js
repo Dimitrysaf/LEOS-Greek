@@ -3,7 +3,7 @@ class annexPage extends headerPage {
     elements = {
         containerBlockNum: () => cy.get("container[name='headerOfAnnex'] block[name='num']"),
         prefaceContainerBlockHeading: () => cy.get("container[name='headerOfAnnex'] block[name='heading']"),
-        closeBtn: () => cy.get("button").contains('Close'),
+        closeBtn: () => cy.contains('Close'),
         level: () => cy.xpath("//level")
     }
 
@@ -12,7 +12,7 @@ class annexPage extends headerPage {
     }
 
     clickCloseBtn() {
-        this.elements.closeBtn().realHover().click('center', { force: true });
+        this.elements.closeBtn().click();
         cy.wait(500);
     }
 
