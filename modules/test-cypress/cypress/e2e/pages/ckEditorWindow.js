@@ -28,7 +28,6 @@ class ckEditorWindow {
 
     clickIndentBtn() {
         this.elements.indentBtn().click();
-        cy.wait(2000);
     }
 
     clickSaveAndCloseBtn() {
