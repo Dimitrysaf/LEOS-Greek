@@ -26,9 +26,6 @@ import {DocumentService} from '@/shared/services/document.service';
 import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.service';
 import {UxAppShellService} from "@eui/core";
 import {ConfirmDeleteDialogComponent} from "@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component";
-import {
-  DocumentType,
-} from '@/shared';
 
 type MilestoneDocument = {
   ref: string;
@@ -215,7 +212,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.showPdfExport = response.pdfRenditionsPresent;
     this.contributionChanged = response.contributionChanged;
     this.documents = response.documents
-      .filter((x) => !hiddenCategories.includes(x.leosCategory))
+      .filter((x) => !hiddenCategories.includes(x.leosCategory) && (!this.parentClonedProposal || x.contentStatus !== 'Deleted'))
       .sort(this.tabOrderComparator)
       .map((x) => this.viewToDoc(x));
     this.setActiveTab(0);
