@@ -41,12 +41,12 @@ Feature: milestone section regression features
             | Download                     |
         When click on option "View" under milestone actions
         Then user is on milestone explorer window
-#        And  milestone explorer window contains below tabs
-#            | TabName                |
-#            | Explanatory Memorandum |
-#            | Legal Act              |
-#            | Annex 1                |
-#            | Annex 2                |
+        And  milestone explorer window contains below tabs
+            | TabName                |
+            | Explanatory Memorandum |
+            | Legal Act              |
+            | Annex 1                |
+            | Annex 2                |
 #         When click on export button present in milestone explorer window
 #         And  recent pdf file present in downloads folder contains below words
 #             | EXPLANATORY MEMORANDUM                                                                  |
@@ -64,5 +64,5 @@ Feature: milestone section regression features
 #             | The President                                                                           |
 #             | ANNEX I                                                                                 |
 #             | ANNEX II                                                                                |
-#        When click on close button in milestone explorer view
-#        Then user is on proposal viewer page
+        When click on close button in milestone explorer view
+        Then user is on proposal viewer page
