@@ -776,6 +776,9 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private List<FinancialStatement> getFinancialStatements(LeosPackage leosPackage) {
+        if (leosPackage == null) {
+            return new ArrayList<FinancialStatement>();
+        }
         return packageService.findDocumentsByPackagePath(leosPackage.getPath(), FinancialStatement.class, false);
     }
 
@@ -1076,11 +1079,11 @@ public abstract class ApiServiceImpl implements ApiService {
         Map<String, Integer> annexKeyOriginalMap = new HashMap<>();
         Map<String, Object> pdfRenditions = MilestoneHelper.filterAndSortFiles(unzippedFiles, PDF);
         List<MilestoneDocumentView> listDocuments = new ArrayList<>();
-        HashMap<String, Boolean> annexesComparison = new HashMap();
         String proposalRef = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        LeosPackage originalLeosPackage = packageService.findPackageByDocumentRef(proposal.getClonedFrom(), Proposal.class);
+        LeosPackage originalLeosPackage = proposal.isClonedProposal() ? packageService.findPackageByDocumentRef(proposal.getClonedFrom(), Proposal.class) :
+                null;
         Map<String, Object> contributionFiles = MilestoneHelper.getMilestoneFiles(legFileTemp, legDocument);
         Boolean isContributionChanged = false;
         LegDocument originalLegDocument = null;
@@ -1153,8 +1156,7 @@ public abstract class ApiServiceImpl implements ApiService {
                                 if (clonedFS.isPresent() && clonedFS.get().contains("_processed")) {
                                     milestoneView.setContentStatus("Processed");
                                 }
-                                boolean accepted =
-                                        !getFinancialStatements(originalLeosPackage).isEmpty();
+                                boolean accepted = !getFinancialStatements(originalLeosPackage).isEmpty();
                                 if (accepted) {
                                     milestoneView.setContentStatus("Processed");
                                 }
