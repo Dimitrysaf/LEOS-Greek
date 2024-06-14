@@ -572,3 +572,24 @@ body {
     background-color: rgb(166 166 166 / 0%) !important;
   }
 }
+
+%tabStyles {
+  border-radius: 2px !important;
+  border-right: 1px dotted grey !important;
+  margin-right: 2px !important;
+}
+
+.eui-tabs .eui-tab-item.eui-tab-item--primary {
+  margin-right: 20px !important;
+  @extend %tabStyles;
+}
+
+.eui-tabs .eui-tab-item--active {
+  font-weight: bold !important;
+  color: black !important;
+  border-bottom-color: darkblue !important;
+}
+
+.eui-tabs .eui-tab-item--secondary {
+  @extend %tabStyles;
+}
