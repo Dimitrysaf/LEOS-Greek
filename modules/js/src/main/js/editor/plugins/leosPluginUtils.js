@@ -41,6 +41,7 @@ define(function leosPluginUtilsModule(require) {
     var INDENT_LEVEL_ATTR = "--indent-level"
     var INLINE_NUM_ATTR = "--inline-num"
     var ORDER_LIST_ELEMENT = "ol";
+    var LIST_ELEMENT= "li";
     var HTML_POINT = "li";
     var HTML_SUB_POINT = "p";
     var SPAN = "span";
@@ -1536,6 +1537,7 @@ define(function leosPluginUtilsModule(require) {
         PARAGRAPH: PARAGRAPH,
         LEVEL: LEVEL,
         ORDER_LIST_ELEMENT: ORDER_LIST_ELEMENT,
+        LIST_ELEMENT: LIST_ELEMENT,
         DATA_AKN_NAME: DATA_AKN_NAME,
         DATA_AKN_ELEMENT: DATA_AKN_ELEMENT,
         DATA_AKN_ID: DATA_AKN_ID,

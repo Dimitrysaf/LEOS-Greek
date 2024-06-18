@@ -23,6 +23,7 @@ define(function elementEditorModule(require) {
     var UTILS = require("core/leosUtils");
 
     var dialogDefinition = require("./leosEmptyElementDialog");
+    var leosOneParaArticleDialog = require("./leosOneParaArticleDialog");
     var pluginTools = require("../plugins/pluginTools");
     var leosPluginUtils = require("../plugins/leosPluginUtils");
 
@@ -291,7 +292,7 @@ define(function elementEditorModule(require) {
     function _canBeSaved(connector, elementId, event) {
         var editor = event.editor;
         _removeZeroWidthSpaces(elementId);
-        return !_isEmptyElement(elementId, editor);
+        return !_isArticleWithOneNumberedParagraph(elementId, editor) && !_isEmptyElement(elementId, editor);
     }
 
     function _removeZeroWidthSpaces(elementId) {
@@ -489,6 +490,23 @@ define(function elementEditorModule(require) {
             .replace(/&#160;/g, WHITE_SPACE)
             .replace(/&amp;#xa0;/g, WHITE_SPACE);
 //            .replace(/\u00A0/g, ' ');
+    }
+
+    function _isArticleWithOneNumberedParagraph(elementId, editor) {
+        var element$ = $("#" + elementId);
+        if(element$.attr(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.ARTICLE) {
+            var orderedList$ = element$.children(leosPluginUtils.ORDER_LIST_ELEMENT);
+            if(orderedList$.length === 1) {
+                var listItem$ = orderedList$.children(leosPluginUtils.LIST_ELEMENT);
+                if(listItem$.length === 1 && listItem$.attr(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH && listItem$.attr(leosPluginUtils.DATA_AKN_NUM)) {
+                    pluginTools.addDialog(leosOneParaArticleDialog.dialogName, leosOneParaArticleDialog.initializeDialog);
+                    var dialogCommand = editor.addCommand(leosOneParaArticleDialog.dialogName, new CKEDITOR.dialogCommand(leosOneParaArticleDialog.dialogName));
+                    dialogCommand.exec();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     function _isEmptyContentInElement(elementId) {
