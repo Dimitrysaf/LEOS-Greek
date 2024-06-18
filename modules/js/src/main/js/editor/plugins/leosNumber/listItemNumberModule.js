@@ -116,45 +116,34 @@ define(function listItemNumberModule(require) {
         }
     ];
 
-    function getNumberingConfig(elementName) {
+    function getNumberingTypeByLang(elementName) {
         var tocItem = ckEditor.LEOS.tocItemsList.find(function (e) {
             return e.aknTag === elementName
         });
-        var numTypeName = tocItem.autoNumbering.langNumConfigs
+        return tocItem.autoNumbering.langNumConfigs
             .find(config => config.langGroup.toLowerCase() === ckEditor.LEOS.langGroup.toLowerCase())
             ?.numberingTypes[0];
-        return numberingConfigs.find(function (e) {
-            return e.type === numTypeName
-        });
     }
 
     function _getSequences(seqName) {
-        if (seqName) {
-            if (seqName === 'Paragraph') {
-                var numberingConfig = getNumberingConfig('paragraph');
-                var paragraphSequence = sequenceMap.find(function(el){return el.type === numberingConfig.type});
+        if(!seqName || seqName === '') {
+            return sequenceMap; // return all sequences
+        }
+        if(seqName === 'Paragraph') {
+            var numTypeName = getNumberingTypeByLang('paragraph');
+            var numberingConfig = numberingConfigs.find(function (e) {
+                return e.type === numTypeName
+            });
+            var paragraphSequence = sequenceMap.find(function(el){
+                return el.type === numberingConfig.type
+            });
+            if(paragraphSequence) {
                 paragraphSequence.format = 'x';
                 paragraphSequence.suffix = numberingConfig.suffix;
-                return paragraphSequence;
-            } else if (seqName === leosPluginUtils.POINT) {
-                var numberingConfig = getNumberingConfig('point');
-                if(numberingConfig.levels && numberingConfig.levels.levels) {
-                    var sequences$ = [];
-                    numberingConfig.levels.levels.forEach(level => {
-                        var seq$ = sequenceMap.find(el => el.type === level.numberingType);
-                        if(seq$) {
-                            sequences$.push(seq$);
-                        }
-                    });
-                    return sequences$;
-                }
-                return sequenceMap.find(function(el){return el.type === numberingConfig.type});
-            } else {
-                return defaultList.find(function(el){return el.name === seqName});
             }
-        }
-        else {//return all sequences
-            return sequenceMap;
+            return paragraphSequence;
+        } else {
+            return defaultList.find(function(el){return el.name === seqName});
         }
     }
 
@@ -253,13 +242,6 @@ define(function listItemNumberModule(require) {
      * To identify the sequence first point in the list is used
      */
     function identifySequence(listItems, currentNestingLevel) {
-        if(listItems && listItems.length > 0 && _isPoint(listItems[0])) {
-            var sequences$ = _getSequences(leosPluginUtils.POINT);
-            if(sequences$ && Array.isArray(sequences$)) {
-                return sequences$[currentNestingLevel - 1];
-            }
-            return sequences$;
-        }
         return getSequenceFromDefaultList(currentNestingLevel);
     }
 
@@ -325,7 +307,14 @@ define(function listItemNumberModule(require) {
             var listItems = _removeCrossHeadingsFromListItems(orderedList.children);
             var sequence = '';
             if (typeof seqNum === 'undefined' || !seqNum) {
-                sequence = identifySequence(listItems, currentNestingLevel);
+                if(listItems && listItems.length > 0 && _isPoint(listItems[0])) {
+                    var numType = getNumberingTypeByLang(leosPluginUtils.POINT);
+                    if(numType && numType !== 'NONE') {
+                        sequence = identifySequence(listItems, currentNestingLevel);
+                    }
+                } else {
+                    sequence = identifySequence(listItems, currentNestingLevel);
+                }
             } else {
                 sequence = seqNum;
             }
