@@ -1,16 +1,16 @@
 [
   {
-    "start": "1710353684",
-    "end": "1710958484",
-    "newsTimestamp": "1710526484",
+    "start": "21/11/2023 11:20",
+    "end": "25/11/2023 17:20",
+    "newsTimestamp": "22/11/2023 13:00",
     "title": "FRONTEND FRONTEND",
-    "body": "Lorem Ipsum lorem.... <a href=\"link\">"
+    "body": "Lorem Ipsum lorem.... <a href=\"http://www.example.com\">Google</a>"
   },
   {
-    "start": "1710353684",
-    "end": "1710958484",
-    "newsTimestamp": "1710526484",
+    "start": "21/11/2023 11:20",
+    "end": "25/11/2026 17:20",
+    "newsTimestamp": "22/11/2023 13:00",
     "title": "ANGULAR ANGULAR",
-    "body": "Lorem Ipsum lorem.... <a href=\"link\">"
+    "body": "Lorem Ipsum lorem.... <a href=\"http://www.example.com\">Example</a>"
   }
 ]
