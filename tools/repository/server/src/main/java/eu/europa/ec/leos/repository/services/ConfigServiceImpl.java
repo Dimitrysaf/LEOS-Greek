@@ -121,8 +121,11 @@ public class ConfigServiceImpl implements ConfigService {
         List<Notification> filteredNotifications = notifications.stream()
                 .filter(notification -> {
                     try {
-                        long startTime = DateUtils.convertToUnixTimestamp(notification.getStart());
-                        long endTime = DateUtils.convertToUnixTimestamp(notification.getEnd());
+                        String defaultStartDate = "01/01/1900 00:00";
+                        String startDate = notification.getStart() != null ? notification.getStart() : defaultStartDate;
+                        String endDate = notification.getEnd() != null ? notification.getEnd() : defaultStartDate;
+                        long startTime = DateUtils.convertToUnixTimestamp(startDate);
+                        long endTime = DateUtils.convertToUnixTimestamp(endDate);
                         return startTime <= currentTime && currentTime < endTime;
                     } catch (ParseException e) {
                         e.printStackTrace();
