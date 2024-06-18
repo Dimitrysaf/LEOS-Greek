@@ -250,8 +250,11 @@ define(function actionManagerExtensionModule(require) {
             let $element = $(element);
             $element.addClass("leos-editable-content");
 
-            var elementHeigh = element.clientHeight;
-            var remainingSpace = _getRemainingSpace($element, elementHeigh, showActionsList);
+            var elementHeight = element.clientHeight;
+            if(elementHeight === 0){
+                elementHeight = $('#'+$element[0].id)[0].clientHeight;
+            }
+            var remainingSpace = _getRemainingSpace($element, elementHeight, showActionsList);
             var top = (remainingSpace / 3.33);
 
             let tocItemElement = tocItemsList.find(function(e){return e.aknTag.toLowerCase() === element.tagName.toLowerCase()});
@@ -266,11 +269,14 @@ define(function actionManagerExtensionModule(require) {
             } else {
               left_position = $element[0].offsetLeft + element.offsetWidth + 10;
             }
-
+            var elementOffsetTop = $element[0].offsetTop;
+            if(elementOffsetTop === 0){
+                elementOffsetTop = $('#'+$element[0].id)[0].offsetTop;
+            }
             $actions.css({
-              top: $element[0].offsetTop - top,
+              top: elementOffsetTop - top,
               left: left_position,
-              height: elementHeigh + remainingSpace,
+              height: elementHeight + remainingSpace,
               zIndex: zIndex++, //last inserted has the precedence
             });
 
