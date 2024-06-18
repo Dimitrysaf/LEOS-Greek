@@ -304,7 +304,7 @@ define(function annotateExtensionModule(require) {
             "displayMetadataCondition": {"ISCReference": "Consultation Reference", "responseVersion": "Response Version", "responseId": "Consulted Unit"},
             "oauthClientId": `${annotateState.oauthClientId}`,
             "assetRoot": `${annotateState.anotClient}`,
-            "sidebarAppUrl": `${annotateState.anotClient}/index.html`,
+            "sidebarAppUrl": `${annotateState.anotClient}/app.html`,
             "services": [{
                 "authority": `${annotateState.authority}`,
                 "apiUrl": `${annotateState.anotHost}/api/`,
@@ -325,9 +325,6 @@ define(function annotateExtensionModule(require) {
                "document": `${annotateState.temporaryDataDocument}`
             }
         }
-        /*if (!annotateState.anotClient.endsWith("angular")) {
-            innerHtmlJson["sidebarAppUrl"] = annotateState.anotHost + "/app.html";
-        }*/
 
         script.innerHTML = JSON.stringify(innerHtmlJson);
         if (addElement) {
