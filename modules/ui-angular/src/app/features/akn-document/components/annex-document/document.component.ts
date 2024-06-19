@@ -208,6 +208,7 @@ export class DocumentComponent
               });
               this.documentService.reloadView();
               this.tableOfContentService.reload();
+              this.ckeditorService.refreshStateSoftActionsConnector();
             } else {
               const ckeditorsOpen = this.document.querySelectorAll('.cke_editable');
               if (!ckeditorsOpen || ckeditorsOpen.length === 0) {

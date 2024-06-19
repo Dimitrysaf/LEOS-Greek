@@ -1,5 +1,7 @@
 package eu.europa.ec.leos.model.xml;
 
+import java.util.Objects;
+
 public class Element {
 
 	private String elementId;
@@ -24,4 +26,19 @@ public class Element {
 		return elementFragment;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Element element = (Element) o;
+		return Objects.equals(elementId, element.elementId) && Objects.equals(elementTagName, element.elementTagName);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hashCode(elementId);
+		result = 31 * result + Objects.hashCode(elementTagName);
+		return result;
+	}
 }

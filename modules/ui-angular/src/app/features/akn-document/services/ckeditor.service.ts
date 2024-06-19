@@ -159,7 +159,9 @@ export class CKEditorService {
     this.datePickerConnector?.$triggerStateChange();
     this.checkBoxesConnector?.$triggerStateChange();
   }
-
+  refreshStateSoftActionsConnector(){
+    this.softActionsConnector?.$triggerStateChange();
+  }
   refreshStateSpecificConnectors() {
     this.refToLinkConnector?.$triggerStateChange();
     this.mathJaxConnector?.$triggerStateChange();

@@ -44,7 +44,9 @@ public class CoEditionContext {
     }
 
     public void addUpdatedElement(String elementId, String elementTagName, String elementFragment) {
-        this.getUpdatedElements().add(new Element(elementId, elementTagName, elementFragment));
+        Element newElement = new Element(elementId, elementTagName, elementFragment);
+        updatedElements.remove(newElement);
+        updatedElements.add(newElement);
     }
 
     public List<Element> getUpdatedElements() {
