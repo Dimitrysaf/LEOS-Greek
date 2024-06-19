@@ -159,7 +159,7 @@
   "page.collection.milestones.send-copy-for-contribution-send-revision-message-success": "Contribution sent and notification sent to Lead DG",
   "page.collection.milestones.send-copy-for-contribution-send-revision-message-error": "Failed sending contribution",
   "page.collection.milestones.load-milestones.error": "Failed loading milestones.",
-  "page.collection.milestones.check-for-milestone-status-change.success": "Milestones: Contribution from Legal Service has been updated",
+  "page.collection.milestones.check-for-milestone-status-change.success": "Milestones: Milestone status has been updated",
   "page.collection.milestones.component.tooltip": "This contribution contains added or deleted documents.<br/>Please check them in the Milestone explorer<br/>to process them",
   "page.collection.milestones.table.title": "Title",
   "page.collection.milestones.table.date": "Date",
