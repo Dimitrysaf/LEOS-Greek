@@ -260,14 +260,23 @@ define(function actionManagerExtensionModule(require) {
             let tocItemElement = tocItemsList.find(function(e){return e.aknTag.toLowerCase() === element.tagName.toLowerCase()});
             var left_position;
 
+            var offsetLeft = $element[0].offsetLeft;
+            if(offsetLeft === 0){
+                offsetLeft = $('#'+$element[0].id)[0].offsetLeft;
+            }
+
             if (
               tocItemElement &&
               tocItemElement.actionsPosition &&
               "LEFT" === tocItemElement.actionsPosition
             ) {
-              left_position = $element[0].offsetLeft - 30;
+              left_position = offsetLeft - 30;
             } else {
-              left_position = $element[0].offsetLeft + element.offsetWidth + 10;
+                var offsetWidth = element.offsetWidth;
+                if(offsetWidth === 0){
+                    offsetWidth = $('#'+$element[0].id)[0].offsetWidth;
+                }
+                left_position = offsetLeft + offsetWidth + 10;
             }
             var elementOffsetTop = $element[0].offsetTop;
             if(elementOffsetTop === 0){
@@ -279,7 +288,6 @@ define(function actionManagerExtensionModule(require) {
               height: elementHeight + remainingSpace,
               zIndex: zIndex++, //last inserted has the precedence
             });
-
 
         }
 
