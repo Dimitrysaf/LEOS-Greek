@@ -23,7 +23,9 @@ class ckEditorWindow {
         softEnterIcon: () => cy.get('.cke_button__leoshierarchicalelementshiftenterhandler'),
         addSubParagraphIcon: () => cy.get('.cke_button__leoshierarchicalelementsubparagraphafterlastpoint'),
         ckEditorBtns: () => cy.get('a.cke_button'),
-        docpurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']")
+        docpurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
+        ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
+        ckEditorDialogOkBtn: () => cy.get('.cke_dialog_ui_button_ok')
     }
 
     replaceContentInDocPurpose(content) {
@@ -44,6 +46,14 @@ class ckEditorWindow {
 
     getCkEditableInlineElement() {
         return this.elements.ckEditableInline();
+    }
+
+    getCkEditorDialogHtml() {
+        return this.elements.ckEditorDialogHtml();
+    }
+
+    clickCkEditorDialogOkBtn() {
+        this.elements.ckEditorDialogOkBtn().click();
     }
 
     clickSaveAndCloseBtn() {

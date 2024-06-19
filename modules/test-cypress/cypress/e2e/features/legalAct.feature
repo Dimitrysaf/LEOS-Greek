@@ -81,6 +81,47 @@ Feature: Legal Act Page Regression Features
         When click on close button present in legal act page
         Then user is on proposal viewer page
 
+    @articleWithSingleNumberedParagraph @local
+    Scenario: Article with single paragraph cannot be numbered
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on upload button
+        Then active upload window label contains "Upload a legislative document"
+        When upload a leg file from a relative location "PROP_ACT-3210011215583606762-EN.leg"
+        Then active upload window label contains "Document metadata"
+        And  document title input field is displayed
+        When click on create button in upload document page
+        Then user is on proposal viewer page
+        When click on legal act link present in proposal viewer page
+        Then user is on legal act page
+        And  annotation side bar is present
+        And  ribbon toolbar is displayed
+        When mousehover and click on article 1
+        Then ck editor window is displayed
+        When append " New Text " at offset 7 in numbered paragraph 1 of article when ck editor is open
+        Then numbered paragraph 1 of article contains "Text... New Text" in edition mode
+        When click save and close button of ck editor
+        Then drafting rule violations dialog box displayed with message "Articles with a single paragraph cannot be numbered."
+        Then click dialog ok button
+        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
+        And  click enter from keyboard in edition mode
+        Then numbered paragraph 1 of article contains "Text..." in edition mode
+        And  numbered paragraph 2 of article contains "New Text" in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        When mousehover and click on article 1
+        Then ck editor window is displayed
+        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
+        And  click delete button from keyboard in edition mode
+        Then numbered paragraph 1 of article contains "Text... New Text" in edition mode
+        When click save and close button of ck editor
+        Then drafting rule violations dialog box displayed with message "Articles with a single paragraph cannot be numbered."
+        Then click dialog ok button
+        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
+        And  click enter from keyboard in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+
     @articleEditing @local
     Scenario: Addition of text and removal of text from article
         Given navigate to edit drafting application with "User1"
@@ -160,7 +201,10 @@ Feature: Legal Act Page Regression Features
         #######################START /leos/core/issues/864 : List( Legal act )- Soft enter button is creating an issue when used after Wrapper subparagraph############################################
         When mousehover and click on article 6
         Then ck editor window is displayed
-        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
+        And  click enter from keyboard in edition mode
+        When append " New Text " at offset 0 in numbered paragraph 2 of article when ck editor is open
+        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click enter from keyboard in edition mode
         And  add content "Point a" to li 2 with data-akn-element "paragraph" of article in edition mode
         And  click on increase indent icon present in ck editor panel
@@ -536,7 +580,10 @@ Feature: Legal Act Page Regression Features
         Then "Recital (1)" is added as internal reference 1 of point 8 of list 1 of paragraph 1 of article 4
         When mousehover and click on article 8
         Then ck editor window is displayed
-        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
+        And  click enter from keyboard in edition mode
+        When append " New Text " at offset 0 in numbered paragraph 2 of article when ck editor is open
+        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click on internal reference icon present in ck editor panel
         Then title of cke dialog box is "Internal reference"
         When click on "Article 11 - Monitoring and reporting 1.Member ..." link in enacting terms on the left side of internal reference window

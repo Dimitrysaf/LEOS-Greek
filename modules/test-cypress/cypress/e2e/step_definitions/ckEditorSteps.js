@@ -244,3 +244,11 @@ When(`click on internal reference icon present in ck editor panel`, () => {
 When(`click at offset {int} of child {int} of citation in edition mode`, (offset, child) => {
     ckEditorWindow.clickAtSpecificOffsetInChildOfCitation(offset, child);
 });
+
+Then('drafting rule violations dialog box displayed with message {string}', (msg) => {
+    ckEditorWindow.getCkEditorDialogHtml().invoke('text').then(text => expect(text.trim()).equal(msg));
+});
+
+Then('click dialog ok button', () => {
+    ckEditorWindow.clickCkEditorDialogOkBtn();
+});
