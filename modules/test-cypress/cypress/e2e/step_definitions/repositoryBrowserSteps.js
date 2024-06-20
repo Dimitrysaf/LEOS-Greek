@@ -17,16 +17,16 @@ When(`open first proposal`, () => {
     repositoryBrowserPage.openFirstProposal();
 });
 
+When('click on proposal {int}', (proposalIndex) => {
+    repositoryBrowserPage.clickOnNthProposal(proposalIndex);
+});
+
 When(`upload button is not present`, () => {
     repositoryBrowserPage.elements.uploadBtn().should('not.exist');
 });
 
 When(`click on home button`, () => {
     repositoryBrowserPage.clickHomeBtn();
-});
-
-When('click on proposal {int}', (proposalIndex) => {
-    repositoryBrowserPage.clickOnNthProposal(proposalIndex);
 });
 
 Then('name of proposal {int} contains {string}', (proposalIndex, name) => {

@@ -24,7 +24,7 @@ class repositoryBrowserPage extends headerPage {
 
     clickOnNthProposal(proposalIndex) {
         this.elements.proposalLink().each(($ele, index) => {
-            if (index == proposalIndex) {
+            if (index == proposalIndex-1) {
                 cy.wrap($ele).click();
                 cy.wait(500);
             }

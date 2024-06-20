@@ -277,3 +277,19 @@ Then('drafting rule violations dialog box displayed with message {string}', (msg
 Then('click dialog ok button', () => {
     ckEditorWindow.clickCkEditorDialogOkBtn();
 });
+
+Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, numValue) => {
+    ckEditorWindow.getFirstLevelPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'data-akn-num').should('contain', numValue);
+});
+
+Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, numValue) => {
+    ckEditorWindow.getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3).invoke('attr', 'data-akn-num').should('contain', numValue);
+});
+
+Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, numValue) => {
+    ckEditorWindow.getThirdLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4).invoke('attr', 'data-akn-num').should('contain', numValue);
+});
+
+Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5, numValue) => {
+    ckEditorWindow.getFourthLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5).invoke('attr', 'data-akn-num').should('contain', numValue);
+});

@@ -9,7 +9,7 @@ Feature: Annex Page Regression Features
         Then user is on home page
 
     @annexOperations @local
-    Scenario: create, delete of annexes and edit of text inside annnex
+    Scenario: create, delete of annexes and edit of text inside annex
         When click on create proposal button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
@@ -48,7 +48,7 @@ Feature: Annex Page Regression Features
         Then total number of annexes present in proposal viewer page is 3
         When click on action icon of annex 1
         And  click on change title button
-        Then "Edit title" dialog input box window is displayed
+        Then "Edit title" dialog box window is displayed
         And  input value of dialog box window is "Annex"
         When provide input "Annex 1" dialog box window
         Then input value of dialog box window is "Annex 1"
@@ -56,14 +56,14 @@ Feature: Annex Page Regression Features
         Then title of annex 1 contains "Annex 1"
         When click on action icon of annex 2
         And  click on change title button
-        Then "Edit title" dialog input box window is displayed
+        Then "Edit title" dialog box window is displayed
         And  input value of dialog box window is "Annex"
         When provide input "Annex 2" dialog box window
         And  click on save button in dialog input box window
         Then title of annex 2 contains "Annex 2"
         When click on action icon of annex 3
         And  click on change title button
-        Then "Edit title" dialog input box window is displayed
+        Then "Edit title" dialog box window is displayed
         And  input value of dialog box window is "Annex"
         When provide input "Annex 3" dialog box window
         When click on save button in dialog input box window
@@ -101,7 +101,7 @@ Feature: Annex Page Regression Features
         And  click save and close button of ck editor
         Then ck editor window is not displayed
         And  level 1 contains "New Addition"
-        When mousehover and click on level 1
+        When mouseover and click on level 1
         Then ck editor window is displayed
         ##########LEOS-6034 - START###################
         When select content from offset 7 to 19 of p tag 1 of level in edition mode
@@ -109,7 +109,7 @@ Feature: Annex Page Regression Features
         ##########LEOS-6034 - END###################
         And  click save and close button of ck editor
         Then ck editor window is not displayed
-        And  level 1 doesnot contain "New Addition"
+        And  level 1 doesn't contain "New Addition"
         When click on delete icon of level 3
         Then "Delete Element: confirmation" dialog confirm box window is displayed
         When click on ok button in dialog box window
@@ -118,7 +118,7 @@ Feature: Annex Page Regression Features
         When click on change annex structure in ribbon toolbar
         Then "Switch Annex Structure" dialog confirm box window is displayed
         When click on confirm button in dialog box window
-        When mousehover and click on article 1
+        When mouseover and click on article 1
         Then ck editor window is displayed
         When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
         And  click on paragraph mode icon present in ck editor panel
@@ -145,7 +145,7 @@ Feature: Annex Page Regression Features
         When click on action icon of annex 1
         And  click on delete button in action menu
         Then "Annex deletion confirm" dialog confirm box window is displayed
-        When click on delete button in dialog box window
+        When click on danger button in dialog box window
         Then total number of annexes present in proposal viewer page is 2
         And  title of annex 1 contains "Annex 2"
         And  title of annex 2 contains "Annex 3"
