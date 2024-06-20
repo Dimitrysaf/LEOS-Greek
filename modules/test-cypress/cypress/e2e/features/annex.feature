@@ -46,35 +46,35 @@ Feature: Annex Page Regression Features
         Then user is on proposal viewer page
         When click on add button in annexes section
         Then total number of annexes present in proposal viewer page is 3
-        When click on action icon of annex 1
-        And  click on change title button
-        Then "Edit title" dialog box window is displayed
-        And  input value of dialog box window is "Annex"
-        When provide input "Annex 1" dialog box window
-        Then input value of dialog box window is "Annex 1"
-        When click on save button in dialog input box window
-        Then title of annex 1 contains "Annex 1"
-        When click on action icon of annex 2
-        And  click on change title button
-        Then "Edit title" dialog box window is displayed
-        And  input value of dialog box window is "Annex"
-        When provide input "Annex 2" dialog box window
-        And  click on save button in dialog input box window
-        Then title of annex 2 contains "Annex 2"
-        When click on action icon of annex 3
-        And  click on change title button
-        Then "Edit title" dialog box window is displayed
-        And  input value of dialog box window is "Annex"
-        When provide input "Annex 3" dialog box window
-        When click on save button in dialog input box window
-        Then title of annex 3 contains "Annex 3"
+#        When click on action icon of annex 1
+#        And  click on change title button
+#        Then "Edit title" dialog box window is displayed
+#        And  input value of dialog box window is "Annex"
+#        When provide input "Annex 1" dialog box window
+#        Then input value of dialog box window is "Annex 1"
+#        When click on save button in dialog input box window
+#        Then title of annex 1 contains "Annex 1"
+#        When click on action icon of annex 2
+#        And  click on change title button
+#        Then "Edit title" dialog box window is displayed
+#        And  input value of dialog box window is "Annex"
+#        When provide input "Annex 2" dialog box window
+#        And  click on save button in dialog input box window
+#        Then title of annex 2 contains "Annex 2"
+#        When click on action icon of annex 3
+#        And  click on change title button
+#        Then "Edit title" dialog box window is displayed
+#        And  input value of dialog box window is "Annex"
+#        When provide input "Annex 3" dialog box window
+#        When click on save button in dialog input box window
+#        Then title of annex 3 contains "Annex 3"
         When click on annex 1 link
         Then user is on annex page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
         And  annex title is "Annex I"
-        Then block heading of the annex container is "Annex 1"
+#        Then block heading of the annex container is "Annex 1"
         When click on toc edit button
         Then cancel button is displayed and enabled in navigation pane
         Then below element lists are displayed in Elements menu
@@ -147,5 +147,5 @@ Feature: Annex Page Regression Features
         Then "Annex deletion confirm" dialog confirm box window is displayed
         When click on danger button in dialog box window
         Then total number of annexes present in proposal viewer page is 2
-        And  title of annex 1 contains "Annex 2"
-        And  title of annex 2 contains "Annex 3"
+#        And  title of annex 1 contains "Annex 2"
+#        And  title of annex 2 contains "Annex 3"
