@@ -161,6 +161,88 @@ Feature: Legal Act Page Regression Features
         And  content of paragraph 1 of article 4 contains "New Text"
         And  paragraph 1 of article 4 doesnot contain "Directive"
 
+    @indentLevelsInRegularArticle @local
+    Scenario: test indent levels inside regular article
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on upload button
+        Then active upload window label contains "Upload a legislative document"
+        When upload a leg file from a relative location "PROP_ACT_1383684831844402901.leg"
+        Then active upload window label contains "Document metadata"
+        And  document title input field is displayed
+        When click on create button in upload document page
+        Then user is on proposal viewer page
+        When click on legal act link present in proposal viewer page
+        Then user is on legal act page
+        And  annotation side bar is present
+        And  ribbon toolbar is displayed
+        And  toc editing button is displayed and enabled
+        When mousehover and click on article 1
+        Then ck editor window is displayed
+        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
+        And  click enter from keyboard in edition mode
+        When append " New Text " at offset 0 in numbered paragraph 2 of article when ck editor is open
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        When click on paragraph mode icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        When add content "Indent Level 1" to li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(a)"
+        And  click enter from keyboard in edition mode
+        When add content "Indent Level 2" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(i)"
+        And  click enter from keyboard in edition mode
+        When add content "Indent Level 3" to li 2 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(1)"
+        And  click enter from keyboard in edition mode
+        When add content "Indent Level 4" to li 2 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "-"
+        Then increase indent icon is disabled in ck editor
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+
+    @indentLevelsInDefinitionArticle @local
+    Scenario: test indent levels inside definition article
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on upload button
+        Then active upload window label contains "Upload a legislative document"
+        When upload a leg file from a relative location "PROP_ACT_1383684831844402901.leg"
+        Then active upload window label contains "Document metadata"
+        And  document title input field is displayed
+        When click on create button in upload document page
+        Then user is on proposal viewer page
+        When click on legal act link present in proposal viewer page
+        Then user is on legal act page
+        And  annotation side bar is present
+        And  ribbon toolbar is displayed
+        And  toc editing button is displayed and enabled
+        When mousehover and click on article 2
+        Then ck editor window is displayed
+        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
+        And  click enter from keyboard in edition mode
+        When append " New Text " at offset 0 in numbered paragraph 2 of article when ck editor is open
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        When click on paragraph mode icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        When add content "Indent Level 1" to li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(1)"
+        And  click enter from keyboard in edition mode
+        When add content "Indent Level 2" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(a)"
+        And  click enter from keyboard in edition mode
+        When add content "Indent Level 3" to li 2 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(i)"
+        Then increase indent icon is disabled in ck editor
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+
     @indentOutdent @paragraphMode @local
     Scenario: test indent and outdent scenario inside article
         Given navigate to edit drafting application with "User1"
