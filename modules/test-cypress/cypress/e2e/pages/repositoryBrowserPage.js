@@ -2,7 +2,8 @@ import headerPage from './headerPage';
 
 class repositoryBrowserPage extends headerPage {
     elements = {
-        proposalTable: () => cy.get('app-proposal-item a'),//cy.get('eui-card-header-title')
+        proposalTable: () => cy.get('app-proposal-item'),
+        proposalLink: () => this.elements.proposalTable().find('a'),
         createProposalBtn: () => cy.contains('Create Proposal'),
         uploadBtn: () => cy.contains('Upload'),
         searchFilterInputBtn: () => cy.get("input[placeholder='Search for a proposal']"),
@@ -17,15 +18,15 @@ class repositoryBrowserPage extends headerPage {
     }
 
     openFirstProposal() {
-        this.elements.proposalTable().first().click();
+        this.elements.proposalLink().first().click();
         cy.wait(1000);
     }
 
     clickOnNthProposal(proposalIndex) {
-        this.elements.proposalList().each(($ele, index) => {
+        this.elements.proposalLink().each(($ele, index) => {
             if (index == proposalIndex) {
                 cy.wrap($ele).click();
-                cy.wait(1000);
+                cy.wait(500);
             }
         })
     }
@@ -37,6 +38,14 @@ class repositoryBrowserPage extends headerPage {
 
     enterSearchText(keyword) {
         this.elements.searchFilterInputBtn().invoke('show').type(keyword);
+    }
+
+    getRightContentOfProposal(proposalIndex) {
+        return this.elements.proposalTable().eq(proposalIndex-1).find('eui-card-header-right-content');
+    }
+
+    getNameOfProposal(proposalIndex) {
+        return this.elements.proposalTable().eq(proposalIndex-1).find('eui-card-header-title');
     }
 }
 export default new repositoryBrowserPage();

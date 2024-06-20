@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { And } from "cypress-cucumber-preprocessor/steps";
 import repositoryBrowserPage from "../pages/repositoryBrowserPage";
 import proposalViewerPage from "../pages/proposalViewerPage";
 import dialogBoxPage from "../pages/dialogBoxPage";
@@ -10,7 +10,7 @@ And(`delete all the proposals containing keyword {string}`, (keyword) => {
             proposalViewerPage.getCurrentPageName().should("have.text", "Proposal View");
             proposalViewerPage.clickOnActionButton();
             proposalViewerPage.clickOnDeleteButton();
-            dialogBoxPage.clickOnDangerButton();
+            dialogBoxPage.clickDangerButton();
             repositoryBrowserPage.getCurrentPageName().should("have.text", "Workspace");
             repositoryBrowserPage.enterSearchText(keyword);
         }

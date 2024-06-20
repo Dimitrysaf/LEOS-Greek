@@ -26,9 +26,9 @@ Feature: milestone section regression features
         Then add milestone window is displayed
         When click on milestone type dropdown
         Then "For Interservice Consultation" option is selected by default
-        Then milestone title textbox is disabled
+        Then milestone title textBox is disabled
         When click on option "Other" from milestone type dropdown
-        And  type "Commission proposal" in milestone title textbox
+        And  type "Commission proposal" in milestone title textBox
         When click on create milestone button
         Then successful message contains "Milestone created"
         And  "Commission proposal" is showing under title column of row 1 of milestones table

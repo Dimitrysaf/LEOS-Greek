@@ -5,8 +5,9 @@ class tableOfContent {
         saveCloseBtn: () => cy.get("button img[src='assets/images/toc-save-close.png']"),
         cancelBtn: () => cy.get('.eui-icon-times'),
         menuOptions: () => cy.get('div.eui-list-item__container span'),
-        versionsPaneAccordian: () => cy.get('eui-page-column-body eui-fieldset').eq(1).find('.eui-fieldset__header button'),
-        navigationPaneAccordian: () => cy.get('eui-page-column-body eui-fieldset').first().find('.eui-fieldset__header button'),
+        versionsPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').eq(1).find('.eui-fieldset__header button'),
+        navigationPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').first().find('.eui-fieldset__header button'),
+        navigationPaneExpanded: () => cy.get("button[aria-label='Collapse Navigation Pane']"),
         compareBtn: () => cy.get("button[title='Compare versions']"),
         searchBtn: () => cy.get("button[title='Show search bar']"),
         recentChangesVersionCardContent: () => cy.get('app-versions-pane-group eui-card').first().find('eui-card-content'),
@@ -17,8 +18,8 @@ class tableOfContent {
         definitionArticleTypeBtn: () => cy.get('button#ARTICLE_TYPE_DEFINITION'),
         regularArticleTypeBtn: () => cy.get('button#ARTICLE_TYPE_REGULAR'),
         matTree: () => cy.get('mat-tree.mat-tree'),
-        versionaPaneCard: () => cy.get('.version-panes.eui-card'),
-        cardTitle: () => this.elements.versionaPaneCard().find('eui-card-header-title'),
+        versionPaneCard: () => cy.get('.version-panes.eui-card'),
+        cardTitle: () => this.elements.versionPaneCard().find('eui-card-header-title'),
         recentChangesCard: () => this.elements.cardTitle().contains('Recent changes').closest('eui-card.version-panes'),
         cardContentOfRecentChanges: () => this.elements.recentChangesCard().find('eui-card-content'),
         subVersionTitle: () => this.elements.cardContentOfRecentChanges().find('div.subversion .title'),
@@ -44,11 +45,11 @@ class tableOfContent {
     }
 
     clickVersionsPaneButton(){
-        this.elements.versionsPaneAccordian().click();
+        this.elements.versionsPaneAccordion().click();
     }
 
     clickNavigationPaneAccordian(){
-        this.elements.navigationPaneAccordian().click();
+        this.elements.navigationPaneAccordion().click();
     }
 
     clickFirstNestedTreeNode(){
@@ -86,7 +87,5 @@ class tableOfContent {
     clickRightAngleIconOfPreambleLink(){
         this.elements.preambleLink().find('eui-icon.eui-icon-angle-right').click();
     }
-
-    //getCardContentOfRecentChangesCard
 }
 export default new tableOfContent();

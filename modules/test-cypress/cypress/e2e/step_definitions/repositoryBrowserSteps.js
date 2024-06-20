@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import repositoryBrowserPage from "../pages/repositoryBrowserPage";
 
 Then('user is on repository browser page', () => {
@@ -25,12 +25,14 @@ When(`click on home button`, () => {
     repositoryBrowserPage.clickHomeBtn();
 });
 
-// When('click proposal {int} in repository browser page', (proposalRank) => {
-//     cy.get('eui-card-header-title').eq(proposalRank-1).click();
-//     cy.wait(2000);
-// })
+When('click on proposal {int}', (proposalIndex) => {
+    repositoryBrowserPage.clickOnNthProposal(proposalIndex);
+});
 
-// When('click on workspace button from breadcrumb item', () => {
-//     cy.get('eui-breadcrumb eui-breadcrumb-item:nth-child(2) button').click();
-//     cy.wait(1000);
-// })
+Then('name of proposal {int} contains {string}', (proposalIndex, name) => {
+    repositoryBrowserPage.getNameOfProposal(proposalIndex).should('include.text', name);
+});
+
+Then('contribution status of proposal {int} contains {string}', (proposalIndex, status) => {
+    repositoryBrowserPage.getRightContentOfProposal(proposalIndex).should('include.text', status)
+});

@@ -1,14 +1,25 @@
 class ribbonToolBar {
     elements = {
-        saveBtn: () => cy.contains('Save'),
+        ribbonToolBarContainer: () => cy.get('app-ribbon-toolbar-container'),
+        saveBtn: () => this.elements.ribbonToolBarContainer().contains('Save'),
+        exportsBtn: () => this.elements.ribbonToolBarContainer().contains('Exports'),
+        searchBtn: () => this.elements.ribbonToolBarContainer().contains('Search'),
+        displaySection: () => cy.get('#DISPLAY_SECTION_ID'),
+        seeUserGuidanceInput: () => this.elements.displaySection().find('app-ribbon-toolbar-checkbox').find('input'),
+        seeUserGuidanceToggleBtn: () => this.elements.displaySection().find('app-ribbon-toolbar-checkbox').find('span.mat-slide-toggle-bar'),
+        seeTrackChangesSection: () => cy.get('#SEE-TRACK_CHANGES-ID'),
+        enableTrackChangesInput: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('input'),
+        // enableTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('span.mat-slide-toggle-bar'),
+        seeTrackChangesInput: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('input'),
+        // seeTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('span.mat-slide-toggle-bar'),
+        trackChangesEnableToggle: () => cy.get("#SEE-TRACK_CHANGES-ID").find("input").first(),
+        zoomValue: () => cy.get('span.zoom-value'),
         importFromOjBtn: () => cy.contains('Import from OJ '),
-        exportsBtn: () => cy.contains('Exports'),
-        searchBtn: () => cy.contains('Search'),
-        seeUserGuidanceToggle: () => cy.xpath("//*[text()='See user guidance']//preceding-sibling::eui-slide-toggle//input"),
-        enableTrackChangesToggle: () => cy.xpath("//*[text()='Enable track changes']//preceding-sibling::eui-slide-toggle//input"),
-        seeTrackChangesToggle: () => cy.xpath("//*[text()='See track changes']//preceding-sibling::eui-slide-toggle//input"),
         changeAnnexStructureBtn: () => cy.get('#STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID')
-        
+    }
+
+    clickEnableTrackChangesToggleBtn() {
+        this.elements.trackChangesEnableToggle().realClick();
     }
 
     clickChangeAnnexStructureBtn(){
@@ -18,6 +29,11 @@ class ribbonToolBar {
     clickImportOjButton(){
         this.elements.importFromOjBtn().click();
     }
-    
+
+    clickSeeUserGuidanceToggleBtn(){
+        this.elements.seeUserGuidanceInput().invoke('show').click({force:true});
+        cy.wait(2000);
+    }
+
 }
 export default new ribbonToolBar();

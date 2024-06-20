@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import homePage from "../pages/homePage";
 
 Then('user is on home page', () => {
@@ -8,4 +8,3 @@ Then('user is on home page', () => {
 When('click on view all acts button', () => {
     homePage.clickViewAllActs();
 })
-

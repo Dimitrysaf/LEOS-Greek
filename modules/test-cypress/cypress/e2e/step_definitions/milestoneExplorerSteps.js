@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import dialogBoxPage from "../pages/dialogBoxPage";
 import milestoneExplorer from "../pages/milestoneExplorer";
 
@@ -12,8 +12,8 @@ When(`click on close button in milestone explorer view`, () => {
 
 Then(`milestone explorer window contains below tabs`, (datatable) => {
     const givenTabNameList = [];
-    datatable.hashes().forEach((milsestoneTabList) => {
-        givenTabNameList.push(milsestoneTabList.TabName);
+    datatable.hashes().forEach((milestoneTabList) => {
+        givenTabNameList.push(milestoneTabList.TabName);
     });
     milestoneExplorer.elements.tabItemLabel()
         .then(($els) => {

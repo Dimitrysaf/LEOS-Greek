@@ -20,8 +20,7 @@ Feature: Legal Act Page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        # And  annotation side bar is minimized
-        When mousehover and click on citation 1
+        When mouseover and click on citation 1
         Then ck editor window is displayed
         When select content from offset 7 till offset 14 in citation in edition mode
         And  click delete button from keyboard in edition mode
@@ -29,12 +28,12 @@ Feature: Legal Act Page Regression Features
         And  click save and close button of ck editor
         Then ck editor window is not displayed
         And  citation 1 contains "New Text"
-        And  citation 1 doesnot contain "regard"
-        When mousehover and click on citation 2
+        And  citation 1 doesn't contain "regard"
+        When mouseover and click on citation 2
         Then ck editor window is displayed
         When click close button of ck editor
         Then ck editor window is not displayed
-        When mousehover and click on recital 2
+        When mouseover and click on recital 2
         Then ck editor window is displayed
         When add " New Text " at offset 7 in recital in edition mode
         And  select content from offset 0 till offset 7 in recital in edition mode
@@ -42,7 +41,7 @@ Feature: Legal Act Page Regression Features
         And  click save and close button of ck editor
         Then ck editor window is not displayed
         And  recital 2 contains "New Text"
-        And  recital 2 doesnot contain "Recital"
+        And  recital 2 doesn't contain "Recital"
         When click on close button present in legal act page
         Then user is on proposal viewer page
         When click on close button on proposal viewer page
@@ -64,7 +63,7 @@ Feature: Legal Act Page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        When mousehover and click on article 1
+        When mouseover and click on article 1
         Then ck editor window is displayed
         Then numbered paragraph 1 of article contains "Text..." in edition mode
         When append " New Text " at offset 7 in numbered paragraph 1 of article in edition mode
@@ -151,7 +150,7 @@ Feature: Legal Act Page Regression Features
             | Article     |
         When click on cancel button in navigation pane
         Then toc editing button is displayed and enabled
-        When mousehover and click on article 4
+        When mouseover and click on article 4
         Then ck editor window is displayed
         When select content from offset 65 till offset 75 in numbered paragraph 1 of article in edition mode
         And  click delete button from keyboard in edition mode
@@ -159,7 +158,7 @@ Feature: Legal Act Page Regression Features
         When click save and close button of ck editor
         Then ck editor window is not displayed
         And  content of paragraph 1 of article 4 contains "New Text"
-        And  paragraph 1 of article 4 doesnot contain "Directive"
+        And  paragraph 1 of article 4 doesn't contain "Directive"
 
     @indentLevelsInRegularArticle @local
     Scenario: test indent levels inside regular article
@@ -244,7 +243,7 @@ Feature: Legal Act Page Regression Features
         Then ck editor window is not displayed
 
     @indentOutdent @paragraphMode @local
-    Scenario: test indent and outdent scenario inside article
+    Scenario: test indent and out-dent scenario inside article
         Given navigate to edit drafting application with "User1"
         Then user is on home page
         When click on upload button
@@ -259,7 +258,7 @@ Feature: Legal Act Page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        When mousehover and click on article 1
+        When mouseover and click on article 1
         Then ck editor window is displayed
         When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
         When click on paragraph mode icon present in ck editor panel
@@ -281,7 +280,7 @@ Feature: Legal Act Page Regression Features
         And  content of paragraph 2 of article 1 contains "It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated"
         And  content of paragraph 3 of article 1 contains "Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc"
         #######################START /leos/core/issues/864 : List( Legal act )- Soft enter button is creating an issue when used after Wrapper subparagraph############################################
-        When mousehover and click on article 6
+        When mouseover and click on article 6
         Then ck editor window is displayed
         When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click enter from keyboard in edition mode
@@ -615,7 +614,7 @@ Feature: Legal Act Page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        When mousehover and click on citation 2
+        When mouseover and click on citation 2
         Then ck editor window is displayed
         When click at offset 59 of child 0 of citation in edition mode
         And  click on internal reference icon present in ck editor panel
@@ -625,7 +624,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "Article 3(3), point (b)" is added as internal reference 1 of citation 2
-        When mousehover and click on recital 1
+        When mouseover and click on recital 1
         Then ck editor window is displayed
         When click on internal reference icon present in ck editor panel
         Then title of cke dialog box is "Internal reference"
@@ -633,7 +632,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "Article 11" is added as internal reference 1 of recital 1
-        When mousehover and click on recital 2
+        When mouseover and click on recital 2
         Then ck editor window is displayed
         When click on internal reference icon present in ck editor panel
         Then title of cke dialog box is "Internal reference"
@@ -642,7 +641,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "Article 9(1), point (b)" is added as internal reference 1 of recital 2
-        When mousehover and click on article 4
+        When mouseover and click on article 4
         Then ck editor window is displayed
         When click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
         When click on internal reference icon present in ck editor panel
@@ -651,7 +650,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "second citation" is added as internal reference 1 of point 1 of list 1 of paragraph 1 of article 4
-        When mousehover and click on article 4
+        When mouseover and click on article 4
         Then ck editor window is displayed
         When click at offset 0 in li 8 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
         And  click on internal reference icon present in ck editor panel
@@ -660,7 +659,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "Recital (1)" is added as internal reference 1 of point 8 of list 1 of paragraph 1 of article 4
-        When mousehover and click on article 8
+        When mouseover and click on article 8
         Then ck editor window is displayed
         When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click enter from keyboard in edition mode

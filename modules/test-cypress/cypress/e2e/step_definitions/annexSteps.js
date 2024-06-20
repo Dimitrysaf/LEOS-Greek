@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "cypress-cucumber-preprocessor/steps";
 require('@cypress/xpath');
 import annexPage from "../pages/annexPage";
 
@@ -19,7 +19,7 @@ When(`click on close button present in annex page`, () => {
     annexPage.clickCloseBtn();
 });
 
-When('mousehover and click on level {int}', levelNumber => {
+When('mouseover and click on level {int}', levelNumber => {
     annexPage.mouseHoverAndClickOnLevel(levelNumber);
 })
 
@@ -43,6 +43,6 @@ When(`click on delete icon of level {int}`, (levelNumber) => {
     annexPage.clickDeleteIconOfLevel(levelNumber);
 });
 
-Then(`level {int} doesnot contain {string}`, (levelNumber, text) => {
+Then(`level {int} doesn't contain {string}`, (levelNumber, text) => {
     annexPage.getContentOfAnnex(levelNumber).invoke('text').should('not.contain', text);
 });

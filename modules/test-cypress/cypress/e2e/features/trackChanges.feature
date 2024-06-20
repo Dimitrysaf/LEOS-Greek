@@ -4,7 +4,7 @@
 @TrackChangesScenarios
 Feature: Track Changes Feature
 
-  @trackchanges_on_num_text @local
+  @trackChanges_on_num_text @local
   Scenario: Basic test to check num's track changes on newly added element
     # Login
     Given navigate to edit drafting application with "User1"
@@ -26,7 +26,7 @@ Feature: Track Changes Feature
     # Enable track changes
     When enable track changes
     # Open ckeditor
-    When mousehover and click on article 1
+    When mouseover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
     When move the cursor position to offset 38 in paragraph 1 of article in edition mode
@@ -39,7 +39,7 @@ Feature: Track Changes Feature
     Then num of point 1 of list 1 of paragraph 1 of article 1 has below content
       | ins  | "(a)"                              |
 
-  @add_trackchanges_text @local
+  @add_trackChanges_text @local
   Scenario: Basic tests for add track changes text in an article in Legal Act
     # Login
     Given navigate to edit drafting application with "User1"
@@ -61,7 +61,7 @@ Feature: Track Changes Feature
     # Enable track changes
     When enable track changes
     # Open ckeditor
-    When mousehover and click on article 1
+    When mouseover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
     When append "A" at offset 4 in numbered paragraph 1 of article in edition mode
@@ -72,7 +72,7 @@ Feature: Track Changes Feature
     When append "B" at offset 0 of child 4 of numbered paragraph 2 of article in edition mode
     And  click save and close button of ck editor
     # Open ckeditor
-    When mousehover and click on article 1
+    When mouseover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
     When append "B" at offset 0 of child 4 of numbered paragraph 2 of article in edition mode
@@ -116,7 +116,7 @@ Feature: Track Changes Feature
     # Enable track changes
     When enable track changes
     # Open ckeditor
-    When mousehover and click on article 1
+    When mouseover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
     When append " querying" at offset 8 in numbered paragraph 1 of article in edition mode
@@ -172,7 +172,7 @@ Feature: Track Changes Feature
       | ins  | "registered " |
       | text | "paragraph."  |
     # Open ckeditor
-    When mousehover and click on article 1
+    When mouseover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
     When press 11 times "del" at offset 0 of child 3 of numbered paragraph 1 of article in edition mode
@@ -237,7 +237,7 @@ Feature: Track Changes Feature
     And  ribbon toolbar is displayed
     And  toc editing button is displayed and enabled
     # Open ckeditor
-    When mousehover and click on article 1
+    When mouseover and click on article 1
     Then ck editor window is displayed
     # Do changes in text
     When press 9 times "backspace" at offset 0 of child 2 of numbered paragraph 5 of article in edition mode

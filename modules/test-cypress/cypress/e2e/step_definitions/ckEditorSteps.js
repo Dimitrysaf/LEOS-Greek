@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import ckEditorWindow from "../pages/ckEditorWindow";
 
 And('click delete button from keyboard in edition mode', () => {
@@ -54,7 +54,7 @@ Then('decrease indent icon is disabled in ck editor panel', () => {
 })
 
 Then(`{int} plugins are available in ck editor window`, (count) => {
-    ckEditorWindow.elements.ckEditorBtns().should('have.length', 13);
+    ckEditorWindow.elements.ckEditorBtn().should('have.length', count);
 });
 
 Then(`save button is disabled in ck editor`, () => {
@@ -201,32 +201,16 @@ When(`add content {string} to li {int} with data-akn-element {string} of li {int
     ckEditorWindow.addContentInPointOfParagraphOfArticle(newContent, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement);
 });
 
-Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, numValue) => {
-    ckEditorWindow.getFirstLevelPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'data-akn-num').should('contain', numValue);
-});
-
 When(`add content {string} to li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) => {
     ckEditorWindow.addContentInSecondLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3);
-});
-
-Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, numValue) => {
-    ckEditorWindow.getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3).invoke('attr', 'data-akn-num').should('contain', numValue);
 });
 
 When(`add content {string} to li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) => {
     ckEditorWindow.addContentInThirdLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4);
 });
 
-Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, numValue) => {
-    ckEditorWindow.getThirdLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4).invoke('attr', 'data-akn-num').should('contain', numValue);
-});
-
 When(`add content {string} to li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode`, (newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5) => {
     ckEditorWindow.addContentInFourthLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5);
-});
-
-Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5, numValue) => {
-    ckEditorWindow.getFourthLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5).invoke('attr', 'data-akn-num').should('contain', numValue);
 });
 
 When(`click at offset {int} of li {int} with data-akn-element {string} of article in edition mode`, (offset, paragraphLi, paragraphDataAknElement) => {
@@ -260,6 +244,31 @@ When(`click on internal reference icon present in ck editor panel`, () => {
 When(`click at offset {int} of child {int} of citation in edition mode`, (offset, child) => {
     ckEditorWindow.clickAtSpecificOffsetInChildOfCitation(offset, child);
 });
+
+Then(`internal reference icon is not present in ck editor panel`, function () {
+    ckEditorWindow.elements.internalReferenceIcon().should('not.exist');
+});
+
+When('move the cursor position to offset {int} in pTag {int} of level in edition mode', (offset, pTagNumber) => {
+    ckEditorWindow.moveCursorToSpecificOffsetInLevel(offset, pTagNumber);
+});
+
+Then('pTag {int} of level contains {string} in edition mode', (pTagNumber, text) =>{
+    ckEditorWindow.getElementPTagOfLevel(pTagNumber).should('include.text', text);
+});
+
+When('append {string} to p tag {int} with data akn element subparagraph of level in edition mode', (content, pTagNumber) =>{
+    ckEditorWindow.addContentInSubParagraphOfLevel(content, pTagNumber);
+});
+
+When('click at offset {int} in pTag {int} with data-akn-element {string} of li with data-akn-element {string} of ol with data-akn-element {string} in edition mode',  (offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3) => {
+    ckEditorWindow.clickAtSpecificOffsetInSubparagraphOfLevel(offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3);
+});
+
+Then('header of level in financial statement is not editable in ck editor text box', () => {
+    ckEditorWindow.getHeadingOfLevel().invoke('attr', 'contenteditable').should('eq', 'false');
+});
+
 
 Then('drafting rule violations dialog box displayed with message {string}', (msg) => {
     ckEditorWindow.getCkEditorDialogHtml().invoke('text').then(text => expect(text.trim()).equal(msg));

@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { And, Then } from "cypress-cucumber-preprocessor/steps";
 import messageGrowl from "../pages/messageGrowl";
 import dialogBoxPage from "../pages/dialogBoxPage";
 

@@ -1,5 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
-require('@cypress/xpath');
+import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import dialogBoxPage from "../pages/dialogBoxPage";
 
 Then(`{string} dialog confirm box window is displayed`, (headerValue) => {
@@ -18,6 +17,10 @@ When(`click on delete button in dialog box window`, () => {
     dialogBoxPage.clickDeleteBtn();
 });
 
+When(`click on danger button in dialog box window`, () => {
+    dialogBoxPage.clickDangerButton();
+});
+
 Then(`dialog box body contains {string}`, (text) => {
     dialogBoxPage.elements.dialogBody().should('include.text', text);
 });
@@ -26,7 +29,7 @@ When(`click on close button in dialog confirm box window`, () => {
     dialogBoxPage.clickAcceptBtn();
 });
 
-Then(`{string} dialog input box window is displayed`, (name) => {
+Then(`{string} dialog box window is displayed`, (name) => {
     dialogBoxPage.elements.headerTitle().should('be.visible');
     dialogBoxPage.elements.headerTitle().should('have.text', name);
 });

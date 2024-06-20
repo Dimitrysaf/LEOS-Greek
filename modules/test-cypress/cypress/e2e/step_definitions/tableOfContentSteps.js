@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import tableOfContent from "../pages/tableOfContent";
 
 And('toc editing button is displayed and enabled', () => {
@@ -16,9 +16,9 @@ Then(`cancel button in navigation pane is displayed and enabled`, () => {
 });
 
 Then(`below element lists are displayed in Elements menu`, (datatable) => {
-    const actualelementList = [];
+    const actualElementList = [];
     datatable.hashes().forEach((element) => {
-        actualelementList.push(element.ElementList);
+        actualElementList.push(element.ElementList);
     });
     tableOfContent.elements.menuOptions()
         .then(($els) => {
@@ -27,7 +27,7 @@ Then(`below element lists are displayed in Elements menu`, (datatable) => {
                     .map((el) => el.innerText)
             )
         })
-        .should('deep.equal', actualelementList)
+        .should('deep.equal', actualElementList)
 });
 
 When(`click on versions pane accordion`, () => {
@@ -88,11 +88,11 @@ Then(`elements list is not displayed in navigation pane`, () => {
     tableOfContent.elements.menuOptions().should('not.exist');
 });
 
-When(`mousehover on change type category`, () => {
+When(`mouseover on change type category`, () => {
     tableOfContent.mouseHoverOnChangeTypeBtn();
 });
 
-When(`click on defintion option in change type category`, () => {
+When(`click on definition option in change type category`, () => {
     tableOfContent.clickDefinitionArticleTypeBtn();
 });
 
@@ -104,7 +104,7 @@ Then(`regular option is selected in change type category`, () => {
     tableOfContent.elements.regularArticleTypeBtn().should('be.disabled');
 });
 
-Then(`defintion option is selected in change type category`, () => {
+Then(`definition option is selected in change type category`, () => {
     tableOfContent.elements.definitionArticleTypeBtn().should('be.disabled');
 });
 
@@ -132,3 +132,6 @@ When(`click on right angle icon of preamble link`, () => {
     tableOfContent.clickRightAngleIconOfPreambleLink();
 });
 
+Then('navigation pane is expanded', function () {
+    tableOfContent.elements.navigationPaneExpanded().should('be.visible');
+});

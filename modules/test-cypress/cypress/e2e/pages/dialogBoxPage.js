@@ -9,13 +9,14 @@ class dialogBoxPage {
         input: () => cy.get('input.eui-input-text')
     }
     
-    clickOnDangerButton(){
+    clickDangerButton(){
         this.elements.deleteBtn().click();
         cy.wait(2000);
     }
 
     clickDeleteBtn(){
-        this.elements.deleteBtn().click();
+        this.elements.acceptBtn().click();
+        cy.wait(1000);
     }
 
     clickAcceptBtn(){

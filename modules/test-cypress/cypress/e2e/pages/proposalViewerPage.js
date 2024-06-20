@@ -11,21 +11,26 @@ class proposalViewerPage extends headerPage{
         legalActLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Legal Act'),
         coverPageLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Cover Page'),
         expMemoLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Explanatory Memorandum'),
+        financialStatementLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Financial Statement'),
         annexesSection: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Annexes'),
         // AddBtnfinancialStatement: () => cy.xpath("//div/*[text()='Financial Statement']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Add ']"),
         // financialStatementLink: () => cy.xpath("//a/*[text()='Financial Statement']"),
         // deleteBtnfinancialStatement: () => cy.xpath("//a/*[text()='Financial Statement']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Delete ']"),
-        // activeTab: () => cy.get('div.eui-tab-item--active'),
-        // draftsTab: () => cy.get('div.eui-tabs__items-wrapper .eui-tab-item').contains('Drafts'),
-        milestoneTab: () => cy.get('div.eui-tabs__items-wrapper .eui-tab-item').contains('Milestones'),
-        // collaboratorsTab: () => cy.get('div.eui-tabs__items-wrapper .eui-tab-item').contains('Collaborators'),
-        // proposalDetailsTab: () => cy.get('div.eui-tabs__items-wrapper .eui-tab-item').contains('Details'),
+        activeTab: () => cy.get('div.eui-tab-item--active'),
+        tabItem: () => cy.get('div.eui-tabs__items-wrapper .eui-tab-item'),
+        draftsTab: () => this.elements.tabItem().contains('Drafts'),
+        milestoneTab: () => this.elements.tabItem().contains('Milestones'),
+        // collaboratorsTab: () => this.elements.tabItem().contains('Collaborators'),
+        // proposalDetailsTab: () => this.elements.tabItem().contains('Details'),
         AddBtnAnnex: () => cy.xpath("//div/*[text()='Annexes']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Add ']"),
+        addFinancialStatementBtn: () => cy.xpath("//div/*[text()='Financial Statement']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Add ']"),
+        deleteFinancialStatementBtn: () => cy.xpath("//*[text()='Financial Statement']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Delete ']"),
         // reOrderBtnAnnex: () => cy.xpath("//div/*[text()='Annexes']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Reorder ']"),
         noAnnexPresent: () => cy.contains("There is no annex to this document"),
         annexCount: () => cy.get('eui-card .eui-card-content table tbody tr'),
         changeTitleBtn: () => cy.xpath("//button[text()='Change title']"),
-        deleteBtnFromActionMenu: () => cy.xpath("//button[text()='Delete']")
+        deleteBtnFromActionMenu: () => cy.xpath("//button[text()='Delete']"),
+        chipContentContainer: () => cy.get('div.eui-chip__content-container')
     }
 
     clickCloseBtn(){
@@ -66,7 +71,7 @@ class proposalViewerPage extends headerPage{
     }
 
     clickChangeTitleBtn(){
-        this.elements.changeTitleBtn().scrollIntoView().click();
+        this.elements.changeTitleBtn().click();
     }
 
     getTitleElementOfAnnex(annexNumber){
@@ -79,6 +84,34 @@ class proposalViewerPage extends headerPage{
 
     clickMilestonesTab(){
         this.elements.milestoneTab().click();
+    }
+
+    clickDraftsTab(){
+        this.elements.draftsTab().click();
+    }
+
+    clickExpMemoLink() {
+        this.elements.expMemoLink().click();
+    }
+
+    clickAddFinancialStatementBtn() {
+        this.elements.addFinancialStatementBtn().click();
+    }
+
+    clickDeleteFinancialStatementBtn() {
+        this.elements.deleteFinancialStatementBtn().click();
+    }
+
+    clickFinancialStatementLink() {
+        this.elements.financialStatementLink().click();
+    }
+
+    checkLabel(label) {
+        return cy.contains(label);
+    }
+
+    getChipContentContainerElement(chipContentContainerNumber) {
+        return this.elements.chipContentContainer().eq(chipContentContainerNumber-1);
     }
 }
 export default new proposalViewerPage();

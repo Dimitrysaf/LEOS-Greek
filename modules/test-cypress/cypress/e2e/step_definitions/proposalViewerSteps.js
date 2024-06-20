@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import proposalViewerPage from "../pages/proposalViewerPage";
 
 Then('user is on proposal viewer page', () => {
@@ -80,4 +80,48 @@ And(`click on download button`, () => {
 
 When(`click on milestones tab in proposal view page`, () => {
     proposalViewerPage.clickMilestonesTab();
+});
+
+When(`click on explanatory memorandum link present in proposal viewer page`, function () {
+    proposalViewerPage.clickExpMemoLink();
+});
+
+When(`click on add button in financial statement section`, function () {
+    proposalViewerPage.clickAddFinancialStatementBtn();
+});
+
+Then(`delete button of financial statement is displayed`, function () {
+    proposalViewerPage.elements.deleteFinancialStatementBtn().should('be.visible');
+});
+
+Then(`add button is displayed under financial statement section`, function () {
+    proposalViewerPage.elements.addFinancialStatementBtn().should('be.visible');
+});
+
+When(`click on delete button of financial statement`, function () {
+    proposalViewerPage.clickDeleteFinancialStatementBtn();
+});
+
+When(`click on financial statement link present in proposal viewer page`, function () {
+    proposalViewerPage.clickFinancialStatementLink();
+});
+
+Then(`label {string} is displayed in proposal viewer page`, function (label) {
+    proposalViewerPage.checkLabel(label).should('be.visible');
+});
+
+Then(`chip content container {int} of proposal header contains {string}`, function (chipContentContainerNumber, headerValue) {
+    proposalViewerPage.getChipContentContainerElement(chipContentContainerNumber).should('have.text', headerValue);
+});
+
+Then(`proposal header doesn't contains chip content container`, function () {
+    proposalViewerPage.elements.chipContentContainer().should('not.exist');
+});
+
+When(`click on drafts tab in proposal view page`, function () {
+    proposalViewerPage.clickDraftsTab();
+});
+
+Then(`active tab name is {string}`, function (tabName) {
+    proposalViewerPage.elements.activeTab().should('have.text', tabName);
 });

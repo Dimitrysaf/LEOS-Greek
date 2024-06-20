@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import internalReferenceWindow from "../pages/internalReferenceWindow";
 
 Then(`title of cke dialog box is {string}`, (title) => {
