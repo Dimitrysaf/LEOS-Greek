@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import milestoneTab from "../pages/milestoneTab";
 import dialogBoxPage from "../pages/dialogBoxPage";
 
@@ -18,7 +18,7 @@ And(`{string} option is selected by default`, (option) => {
     milestoneTab.elements.milestoneTypeDropDown().should('have.value', option);
 });
 
-And(`milestone title textbox is disabled`, () => {
+And(`milestone title textBox is disabled`, () => {
     milestoneTab.elements.milestoneTitleTextBox().should('be.disabled');
 });
 
@@ -26,11 +26,11 @@ When(`click on option {string} from milestone type dropdown`, (option) => {
     milestoneTab.selectByVisibleText(option);
 });
 
-Then(`milestone title textbox is enabled`, () => {
+Then(`milestone title textBox is enabled`, () => {
     milestoneTab.elements.milestoneTitleTextBox().should('not.be.disabled');
 });
 
-When(`type {string} in milestone title textbox`, (title) => {
+When(`type {string} in milestone title textBox`, (title) => {
     milestoneTab.typeMilestoneTitle(title);
 });
 
@@ -67,4 +67,20 @@ Then(`below options are displayed under milestone actions`, (datatable) => {
 
 When(`click on option {string} under milestone actions`, (option) => {
     milestoneTab.clickMilestoneActionMenu(option);
+});
+
+Then(`send for contribution button is displayed but disabled`, function () {
+    milestoneTab.elements.sendForContributionBtn().should('be.visible').should('be.disabled');
+});
+
+Then(`send for contribution button is displayed and enabled`, function () {
+    milestoneTab.elements.sendForContributionBtn().should('be.visible').should('not.be.disabled');
+});
+
+When(`click on send for contribution button`, function () {
+    milestoneTab.clickSendForContributionBtn();
+});
+
+When(`click on row {int} from the user list`, (index) => {
+    milestoneTab.clickUser(index);
 });

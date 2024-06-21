@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import navigationPane from "../pages/navigationPane";
 
 And('toc editing button is displayed and enabled', () => {
@@ -16,9 +16,9 @@ Then(`cancel button in navigation pane is displayed and enabled`, () => {
 });
 
 Then(`below element lists are displayed in Elements menu`, (datatable) => {
-    const actualelementList = [];
+    const actualElementList = [];
     datatable.hashes().forEach((element) => {
-        actualelementList.push(element.ElementList);
+        actualElementList.push(element.ElementList);
     });
     navigationPane.elements.menuOptions()
         .then(($els) => {
@@ -28,7 +28,7 @@ Then(`below element lists are displayed in Elements menu`, (datatable) => {
                     .map((el) => el.innerText)
             )
         })
-        .should('deep.equal', actualelementList)
+        .should('deep.equal', actualElementList)
 });
 
 When(`click on cancel button present in navigation pane`, () => {

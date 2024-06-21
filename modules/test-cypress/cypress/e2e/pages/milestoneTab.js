@@ -6,16 +6,18 @@ class milestoneTab extends headerPage {
         milestoneTitleTextBox: () => cy.get('#milestonesTitle'),
         createMilestoneBtn: () => cy.get('button.eui-button--primary').contains('Create Milestone'),
         milestoneTableBody: () => cy.get('app-proposal-milestones table tbody'),
-        milestoneActionMenuOptions: () => cy.get('div [matmenucontent] li button')
+        milestoneActionMenuOptions: () => cy.get('div [matmenucontent] li button'),
+        sendForContributionBtn: () => cy.contains('Send for contribution'),
+        userList: () => cy.get("div[role='listbox'] mat-option")
     }
 
     clickAddBtn(){
         this.elements.addBtn().click();
     }
 
-    clickMilestoneTypeDropdown(){
+/*    clickMilestoneTypeDropdown(){
         this.elements.milestoneTypeDropDown().click();
-    }
+    }*/
 
     selectByVisibleText(option){
         this.elements.milestoneTypeDropDown().trigger('click').select(option);
@@ -39,6 +41,14 @@ class milestoneTab extends headerPage {
 
     clickMilestoneActionMenu(option){
         this.elements.milestoneActionMenuOptions().contains(option).click();
+    }
+
+    clickSendForContributionBtn() {
+        this.elements.sendForContributionBtn().click();
+    }
+
+    clickUser(index) {
+        this.elements.userList().eq(index-1).click();
     }
 }
 export default new milestoneTab();

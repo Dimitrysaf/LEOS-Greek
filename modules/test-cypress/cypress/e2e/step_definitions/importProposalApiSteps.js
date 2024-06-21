@@ -1,7 +1,7 @@
 import {Given, Then } from "cypress-cucumber-preprocessor/steps";
 import FormData from 'form-data';
 
-Given('Send a POST request to import proposal with the following data', () => {
+Given('Send a POST request to import proposal', () => {
     let url, bearerToken;
     if(Cypress.env('CE_ENV').includes('@local')) {
         url = Cypress.env('localImportProposalApiUrl');

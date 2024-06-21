@@ -20,8 +20,7 @@ Feature: Legal Act Page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        # And  annotation side bar is minimized
-        When mousehover and click on citation 1
+        When mouseover and click on citation 1
         Then ck editor window is displayed
         When select content from offset 7 till offset 14 in citation in edition mode
         And  click delete button from keyboard in edition mode
@@ -29,12 +28,12 @@ Feature: Legal Act Page Regression Features
         And  click save and close button of ck editor
         Then ck editor window is not displayed
         And  citation 1 contains "New Text"
-        And  citation 1 doesnot contain "regard"
-        When mousehover and click on citation 2
+        And  citation 1 doesn't contain "regard"
+        When mouseover and click on citation 2
         Then ck editor window is displayed
         When click close button of ck editor
         Then ck editor window is not displayed
-        When mousehover and click on recital 2
+        When mouseover and click on recital 2
         Then ck editor window is displayed
         When add " New Text " at offset 7 in recital in edition mode
         And  select content from offset 0 till offset 7 in recital in edition mode
@@ -42,7 +41,7 @@ Feature: Legal Act Page Regression Features
         And  click save and close button of ck editor
         Then ck editor window is not displayed
         And  recital 2 contains "New Text"
-        And  recital 2 doesnot contain "Recital"
+        And  recital 2 doesn't contain "Recital"
         When click on close button present in legal act page
         Then user is on proposal viewer page
         When click on close button on proposal viewer page
@@ -64,7 +63,7 @@ Feature: Legal Act Page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        When mousehover and click on article 1
+        When mouseover and click on article 1
         Then ck editor window is displayed
         Then numbered paragraph 1 of article contains "Text..." in edition mode
         When append " New Text " at offset 7 in numbered paragraph 1 of article in edition mode
@@ -96,7 +95,7 @@ Feature: Legal Act Page Regression Features
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
-        When mousehover and click on article 1
+        When mouseover and click on article 1
         Then ck editor window is displayed
         When append " New Text " at offset 7 in numbered paragraph 1 of article when ck editor is open
         Then numbered paragraph 1 of article contains "Text... New Text" in edition mode
@@ -109,7 +108,7 @@ Feature: Legal Act Page Regression Features
         And  numbered paragraph 2 of article contains "New Text" in edition mode
         When click save and close button of ck editor
         Then ck editor window is not displayed
-        When mousehover and click on article 1
+        When mouseover and click on article 1
         Then ck editor window is displayed
         When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click delete button from keyboard in edition mode
@@ -151,7 +150,7 @@ Feature: Legal Act Page Regression Features
             | Article     |
         When click on cancel button in navigation pane
         Then toc editing button is displayed and enabled
-        When mousehover and click on article 4
+        When mouseover and click on article 4
         Then ck editor window is displayed
         When select content from offset 65 till offset 75 in numbered paragraph 1 of article in edition mode
         And  click delete button from keyboard in edition mode
@@ -159,92 +158,10 @@ Feature: Legal Act Page Regression Features
         When click save and close button of ck editor
         Then ck editor window is not displayed
         And  content of paragraph 1 of article 4 contains "New Text"
-        And  paragraph 1 of article 4 doesnot contain "Directive"
-
-    @indentLevelsInRegularArticle @local
-    Scenario: test indent levels inside regular article
-        Given navigate to edit drafting application with "User1"
-        Then user is on home page
-        When click on upload button
-        Then active upload window label contains "Upload a legislative document"
-        When upload a leg file from a relative location "PROP_ACT_1383684831844402901.leg"
-        Then active upload window label contains "Document metadata"
-        And  document title input field is displayed
-        When click on create button in upload document page
-        Then user is on proposal viewer page
-        When click on legal act link present in proposal viewer page
-        Then user is on legal act page
-        And  annotation side bar is present
-        And  ribbon toolbar is displayed
-        And  toc editing button is displayed and enabled
-        When mousehover and click on article 1
-        Then ck editor window is displayed
-        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
-        And  click enter from keyboard in edition mode
-        When append " New Text " at offset 0 in numbered paragraph 2 of article when ck editor is open
-        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-        When click on paragraph mode icon present in ck editor panel
-        And  click enter from keyboard in edition mode
-        When add content "Indent Level 1" to li 2 with data-akn-element "paragraph" of article in edition mode
-        And  click on increase indent icon present in ck editor panel
-        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(a)"
-        And  click enter from keyboard in edition mode
-        When add content "Indent Level 2" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-        And  click on increase indent icon present in ck editor panel
-        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(i)"
-        And  click enter from keyboard in edition mode
-        When add content "Indent Level 3" to li 2 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-        And  click on increase indent icon present in ck editor panel
-        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(1)"
-        And  click enter from keyboard in edition mode
-        When add content "Indent Level 4" to li 2 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-        And  click on increase indent icon present in ck editor panel
-        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "-"
-        Then increase indent icon is disabled in ck editor
-        When click save and close button of ck editor
-        Then ck editor window is not displayed
-
-    @indentLevelsInDefinitionArticle @local
-    Scenario: test indent levels inside definition article
-        Given navigate to edit drafting application with "User1"
-        Then user is on home page
-        When click on upload button
-        Then active upload window label contains "Upload a legislative document"
-        When upload a leg file from a relative location "PROP_ACT_1383684831844402901.leg"
-        Then active upload window label contains "Document metadata"
-        And  document title input field is displayed
-        When click on create button in upload document page
-        Then user is on proposal viewer page
-        When click on legal act link present in proposal viewer page
-        Then user is on legal act page
-        And  annotation side bar is present
-        And  ribbon toolbar is displayed
-        And  toc editing button is displayed and enabled
-        When mousehover and click on article 2
-        Then ck editor window is displayed
-        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
-        And  click enter from keyboard in edition mode
-        When append " New Text " at offset 0 in numbered paragraph 2 of article when ck editor is open
-        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-        When click on paragraph mode icon present in ck editor panel
-        And  click enter from keyboard in edition mode
-        When add content "Indent Level 1" to li 2 with data-akn-element "paragraph" of article in edition mode
-        And  click on increase indent icon present in ck editor panel
-        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(1)"
-        And  click enter from keyboard in edition mode
-        When add content "Indent Level 2" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-        And  click on increase indent icon present in ck editor panel
-        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(a)"
-        And  click enter from keyboard in edition mode
-        When add content "Indent Level 3" to li 2 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-        And  click on increase indent icon present in ck editor panel
-        Then element li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode has num value "(i)"
-        Then increase indent icon is disabled in ck editor
-        When click save and close button of ck editor
-        Then ck editor window is not displayed
+        And  paragraph 1 of article 4 doesn't contain "Directive"
 
     @indentOutdent @paragraphMode @local
-    Scenario: test indent and outdent scenario inside article
+    Scenario: test indent and out-dent scenario inside article
         Given navigate to edit drafting application with "User1"
         Then user is on home page
         When click on upload button
@@ -259,7 +176,7 @@ Feature: Legal Act Page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        When mousehover and click on article 1
+        When mouseover and click on article 1
         Then ck editor window is displayed
         When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
         When click on paragraph mode icon present in ck editor panel
@@ -281,7 +198,7 @@ Feature: Legal Act Page Regression Features
         And  content of paragraph 2 of article 1 contains "It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated"
         And  content of paragraph 3 of article 1 contains "Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc"
         #######################START /leos/core/issues/864 : List( Legal act )- Soft enter button is creating an issue when used after Wrapper subparagraph############################################
-        When mousehover and click on article 6
+        When mouseover and click on article 6
         Then ck editor window is displayed
         When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click enter from keyboard in edition mode
@@ -355,172 +272,178 @@ Feature: Legal Act Page Regression Features
 #        And  paragraph 1 of article 1 doesnot contain num tag
 #        And  paragraph 2 of article 1 doesnot contain num tag
 
-#    @definitionArticle @local
-#    Scenario: definition article should have max 3 levels of depth
-#        Given navigate to edit drafting application with "User1"
-#        Then user is on home page
-#        When click on create proposal button
-#        Then user is on create new legislative document window
-#        When click on template "SJ-023" in create new legislative document window
-#        When click on next button in create document page
-#        And  provide document title "Automation Testing Definition Article" in create document page
-#        And  click on create button
-#        Then user is on proposal viewer page
-#        And  title of the proposal contains "Automation Testing Definition Article" keyword
-#        When click on legal act link present in proposal viewer page
-#        Then user is on legal act page
-#        And  annotation side bar is present
-#        When click on insert after icon of article 1
-#        Then heading of article 2 contains "Article heading..."
-#        When mousehover and click on article 1
-#        Then ck editor window is displayed
-#        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-#        When click enter from keyboard in edition mode
-#        And  add content "point a" to li 2 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  click enter from keyboard in edition mode
-#        And  add content "point b" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add content "point i" to li 3 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  click enter from keyboard in edition mode
-#        And  add content "point ii" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add content "point 1" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  click enter from keyboard in edition mode
-#        And  add content "point 2" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add content "point -" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        Then increase indent icon is disabled in ck editor
-#        When click enter from keyboard in edition mode
-#        And  add content "point --" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click save and close button of ck editor
-#        Then ck editor window is not displayed
-#        And  num tag of paragraph 1 of article 1 contains "1."
-#        And  content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
-#        And  num tag of point 1 of list 1 of paragraph 1 of article 1 contains "(a)"
-#        And  content of point 1 of list 1 of paragraph 1 of article 1 contains "point a"
-#        And  num tag of point 2 of list 1 of paragraph 1 of article 1 contains "(b)"
-#        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point b"
-#        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "(i)"
-#        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point i"
-#        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "(ii)"
-#        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point ii"
-#        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "(1)"
-#        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point 1"
-#        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "(2)"
-#        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point 2"
-#        And  num tag of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "-"
-#        And  content of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point -"
-#        And  num tag of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "-"
-#        And  content of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 1 contains "point --"
-#        When click on toc edit button
-#        And  click on three vertical dots for the element contains text "Article 1" in toc
-#        And  mousehover on change type category
-#        Then regular option is selected in change type category
-#        When  click on defintion option in change type category
-#        Then "Conversion not allowed!" dialog confirm box window is displayed
-#        And  dialog box body contains "Not allowed to convert article to DEFINITION, because the current depth of 4 is exceeding the maximum allowed depth level of 3."
-#        When click on close button in dialog confirm box window
-#        And  click on cancel button in navigation pane
-#        Then toc editing button is displayed and enabled
-#        When mousehover and click on article 2
-#        Then ck editor window is displayed
-#        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-#        When click enter from keyboard in edition mode
-#        And  add content "point a" to li 2 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  click enter from keyboard in edition mode
-#        And  add content "point b" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add content "point i" to li 3 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  click enter from keyboard in edition mode
-#        And  add content "point ii" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add content "point 1" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  click enter from keyboard in edition mode
-#        And  add content "point 2" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        Then increase indent icon is displayed and enabled in ck editor panel
-#        And  decrease indent icon is displayed and enabled in ck editor panel
-#        When click save and close button of ck editor
-#        Then ck editor window is not displayed
-#        When click on toc edit button
-#        And  click on three vertical dots for the element contains text "Article 2" in toc
-#        And  mousehover on change type category
-#        Then regular option is selected in change type category
-#        When click on defintion option in change type category
-#        And  click on save and close button in navigation pane
-#        Then toc editing button is displayed and enabled
-#        And  heading of article 2 contains "Definitions"
-#        And  num tag of paragraph 1 of article 2 contains "1."
-#        And  content of subparagraph 1 of list 1 of paragraph 1 of article 2 contains "Text..."
-#        And  num tag of point 1 of list 1 of paragraph 1 of article 2 contains "(1)"
-#        And  content of point 1 of list 1 of paragraph 1 of article 2 contains "point a"
-#        And  num tag of point 2 of list 1 of paragraph 1 of article 2 contains "(2)"
-#        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point b"
-#        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "(a)"
-#        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point i"
-#        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "(b)"
-#        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point ii"
-#        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "(i)"
-#        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point 1"
-#        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "(ii)"
-#        And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point 2"
-#        When mousehover and click on article 3
-#        Then ck editor window is displayed
-#        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  increase indent icon is disabled in ck editor
-#        And  decrease indent icon is disabled in ck editor panel
-#        When click enter from keyboard in edition mode
-#        And  add content "paragraph 2" to li 2 with data-akn-element "paragraph" of article in edition mode
-#        Then decrease indent icon is disabled in ck editor panel
-#        When click enter from keyboard in edition mode
-#        And  add content "point 1" to li 3 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  click enter from keyboard in edition mode
-#        And  add content "point 2" to li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add content "point a" to li 3 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  click enter from keyboard in edition mode
-#        And  add content "point b" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
-#        And  click enter from keyboard in edition mode
-#        And  add content "point i" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        Then increase indent icon is disabled in ck editor
-#        When click enter from keyboard in edition mode
-#        And  add content "point ii" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
-#        And  click save and close button of ck editor
-#        Then ck editor window is not displayed
-#        And  article 3 doesnot contain indent tag
-#        When click on toc edit button
-#        And  click on three vertical dots for the element contains text "Article 3" in toc
-#        And  mousehover on change type category
-#        Then defintion option is selected in change type category
-#        When click on regular option in change type category
-#        And  click on save and close button in navigation pane
-#        Then toc editing button is displayed and enabled
-#        And  article 3 doesnot contain indent tag
-#        #issues/1816 And  heading of article 3 contains "Article heading..."
-#        And  paragraph 1 of article 3 doesnot contain num tag
-#        And  content of paragraph 1 of article 3 contains "Text..."
-#        And  content of subparagraph 1 of list 1 of paragraph 2 of article 3 contains "paragraph 2"
-#        And  num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(1)"
-#        And  content of point 1 of list 1 of paragraph 2 of article 3 contains "point 1"
-#        And  num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
-#        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point 2"
-#        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(a)"
-#        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point a"
-#        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(b)"
-#        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point b"
-#        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(i)"
-#        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point i"
-#        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(ii)"
-#        And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point ii"
+    @definitionArticle @local
+    Scenario: definition article should have max 3 levels of depth
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on create proposal button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation Testing Definition Article" in create document page
+        And  click on create button
+        Then user is on proposal viewer page
+        And  title of the proposal contains "Automation Testing Definition Article" keyword
+        When click on legal act link present in proposal viewer page
+        Then user is on legal act page
+        And  annotation side bar is present
+        When click on insert after icon of article 1
+        Then heading of article 2 contains "Article heading..."
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        When click enter from keyboard in edition mode
+        And  add content "paragraph2" to li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click enter from keyboard in edition mode
+        And  add content "point a" to li 3 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add content "point b" to li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click enter from keyboard in edition mode
+        And  add content "point i" to li 3 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add content "point ii" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click enter from keyboard in edition mode
+        And  add content "point 1" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add content "point 2" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click enter from keyboard in edition mode
+        And  add content "point -" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        Then increase indent icon is disabled in ck editor
+        When click enter from keyboard in edition mode
+        And  add content "point --" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  num tag of paragraph 1 of article 1 contains "1."
+        And  content of paragraph 1 of article 1 contains "Text..."
+        And  num tag of paragraph 2 of article 1 contains "2."
+        And  content of subparagraph 1 of list 1 of paragraph 2 of article 1 contains "paragraph2"
+        And  num tag of point 1 of list 1 of paragraph 2 of article 1 contains "(a)"
+        And  content of point 1 of list 1 of paragraph 2 of article 1 contains "point a"
+        And  num tag of point 2 of list 1 of paragraph 2 of article 1 contains "(b)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point b"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(i)"
+        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point i"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(ii)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point ii"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(1)"
+        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 1"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "(2)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point 2"
+        And  num tag of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "-"
+        And  content of indent 1 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point -"
+        And  num tag of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "-"
+        And  content of indent 2 of list 1 of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 1 contains "point --"
+        When click on toc edit button
+        And  click on three vertical dots for the element contains text "Article 1" in toc
+        And  mouseover on change type category
+        Then regular option is selected in change type category
+        When  click on definition option in change type category
+        Then "Conversion not allowed!" dialog confirm box window is displayed
+        And  dialog box body contains "Not allowed to convert article to DEFINITION, because the current depth of 4 is exceeding the maximum allowed depth level of 3."
+        When click on close button in dialog confirm box window
+        And  click on cancel button in navigation pane
+        Then toc editing button is displayed and enabled
+        When mouseover and click on article 2
+        Then ck editor window is displayed
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click on paragraph mode icon present in ck editor panel
+        When click enter from keyboard in edition mode
+        And  add content "point a" to li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add content "point b" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click enter from keyboard in edition mode
+        And  add content "point i" to li 3 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add content "point ii" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click enter from keyboard in edition mode
+        And  add content "point 1" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add content "point 2" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        Then increase indent icon is displayed and enabled in ck editor panel
+        And  decrease indent icon is displayed and enabled in ck editor panel
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        When click on toc edit button
+        And  click on three vertical dots for the element contains text "Article 2" in toc
+        And  mouseover on change type category
+        Then regular option is selected in change type category
+        When click on definition option in change type category
+        And  click on save and close button in navigation pane
+        Then toc editing button is displayed and enabled
+        And  heading of article 2 contains "Definitions"
+        #And  num tag of paragraph 1 of article 2 contains "1."
+        And  paragraph 1 of article 2 doesn't contain num tag
+        And  content of subparagraph 1 of list 1 of paragraph 1 of article 2 contains "Text..."
+        And  num tag of point 1 of list 1 of paragraph 1 of article 2 contains "(1)"
+        And  content of point 1 of list 1 of paragraph 1 of article 2 contains "point a"
+        And  num tag of point 2 of list 1 of paragraph 1 of article 2 contains "(2)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point b"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "(a)"
+        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point i"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "(b)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point ii"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "(i)"
+        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point 1"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "(ii)"
+        And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 1 of article 2 contains "point 2"
+        When mouseover and click on article 3
+        Then ck editor window is displayed
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        Then increase indent icon is disabled in ck editor
+        And  decrease indent icon is disabled in ck editor panel
+        When click enter from keyboard in edition mode
+        And  add content "paragraph 2" to li 2 with data-akn-element "paragraph" of article in edition mode
+        Then decrease indent icon is disabled in ck editor panel
+        When click enter from keyboard in edition mode
+        And  add content "point 1" to li 3 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add content "point 2" to li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click enter from keyboard in edition mode
+        And  add content "point a" to li 3 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add content "point b" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click enter from keyboard in edition mode
+        And  add content "point i" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        Then increase indent icon is disabled in ck editor
+        When click enter from keyboard in edition mode
+        And  add content "point ii" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  article 3 doesn't contain indent tag
+        When click on toc edit button
+        And  click on three vertical dots for the element contains text "Article 3" in toc
+        And  mouseover on change type category
+        Then definition option is selected in change type category
+        When click on regular option in change type category
+        And  click on save and close button in navigation pane
+        Then toc editing button is displayed and enabled
+        And  article 3 doesn't contain indent tag
+        #issues/1816 And  heading of article 3 contains "Article heading..."
+        And  paragraph 1 of article 3 doesn't contain num tag
+        And  content of paragraph 1 of article 3 contains "Text..."
+        And  content of subparagraph 1 of list 1 of paragraph 2 of article 3 contains "paragraph 2"
+        And  num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(1)"
+        And  content of point 1 of list 1 of paragraph 2 of article 3 contains "point 1"
+        And  num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point 2"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(a)"
+        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point a"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(b)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point b"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(i)"
+        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point i"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(ii)"
+        And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point ii"
 
     @importOfficeJournal @local
     Scenario: import from office journal
@@ -615,7 +538,7 @@ Feature: Legal Act Page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        When mousehover and click on citation 2
+        When mouseover and click on citation 2
         Then ck editor window is displayed
         When click at offset 59 of child 0 of citation in edition mode
         And  click on internal reference icon present in ck editor panel
@@ -625,7 +548,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "Article 3(3), point (b)" is added as internal reference 1 of citation 2
-        When mousehover and click on recital 1
+        When mouseover and click on recital 1
         Then ck editor window is displayed
         When click on internal reference icon present in ck editor panel
         Then title of cke dialog box is "Internal reference"
@@ -633,7 +556,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "Article 11" is added as internal reference 1 of recital 1
-        When mousehover and click on recital 2
+        When mouseover and click on recital 2
         Then ck editor window is displayed
         When click on internal reference icon present in ck editor panel
         Then title of cke dialog box is "Internal reference"
@@ -642,7 +565,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "Article 9(1), point (b)" is added as internal reference 1 of recital 2
-        When mousehover and click on article 4
+        When mouseover and click on article 4
         Then ck editor window is displayed
         When click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
         When click on internal reference icon present in ck editor panel
@@ -651,7 +574,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "second citation" is added as internal reference 1 of point 1 of list 1 of paragraph 1 of article 4
-        When mousehover and click on article 4
+        When mouseover and click on article 4
         Then ck editor window is displayed
         When click at offset 0 in li 8 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
         And  click on internal reference icon present in ck editor panel
@@ -660,7 +583,7 @@ Feature: Legal Act Page Regression Features
         And  click on ok button in internal reference window
         And  click save and close button of ck editor
         Then "Recital (1)" is added as internal reference 1 of point 8 of list 1 of paragraph 1 of article 4
-        When mousehover and click on article 8
+        When mouseover and click on article 8
         Then ck editor window is displayed
         When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click enter from keyboard in edition mode

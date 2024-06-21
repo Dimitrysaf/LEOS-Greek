@@ -1,5 +1,76 @@
 #Author: Satyabrata Das
 #Keywords Summary : Testing different functionalities in financial statement page in drafting instance
 
-@FinancialStatementPageScenarios
-Feature: financial statement page Regression Features
+@financialStatementPageScenarios
+Feature: financial statement page regression features
+
+  Background:
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+
+  @addAndDeleteFinancialStatement @local
+  Scenario: add section for financial statement document on Proposal Screen
+    When click on create proposal button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing FS" in create document page
+    And  click on create button
+    Then user is on proposal viewer page
+    And  title of the proposal contains "Automation Testing FS" keyword
+    When click on add button in annexes section
+    Then total number of annexes present in proposal viewer page is 1
+    When click on add button in financial statement section
+    Then delete button of financial statement is displayed
+    When click on milestones tab in proposal view page
+    And  click on add button in milestones tab
+    Then add milestone window is displayed
+    When click on create milestone button
+    Then successful message contains "Milestone created"
+    And  "For Interservice Consultation" is showing under title column of row 1 of milestones table
+    And  "File ready" is showing under status column of row 1 of milestones table
+    When click on three dots under actions column of row 1 of milestones table
+    When click on option "View" under milestone actions
+    Then user is on milestone explorer window
+    And  milestone explorer window contains below tabs
+      | TabName                |
+      | Explanatory Memorandum |
+      | Legal Act              |
+      | Annex 1                |
+      | Financial Statement    |
+    When click on close button in milestone explorer view
+    Then user is on proposal viewer page
+    When click on drafts tab in proposal view page
+    Then active tab name is "Drafts"
+    When click on financial statement link present in proposal viewer page
+    Then user is on financial statement page
+    And  doctype is "LEGISLATIVE FINANCIAL STATEMENT"
+    And  annotation side bar is present
+    And  content of level 2 contains "[...]" in financial statement page
+    When mouseover and click on level 2 in financial statement page
+    Then ck editor window is displayed
+    And  pTag 1 of level contains "[...]" in edition mode
+    And  internal reference icon is not present in ck editor panel
+    When select content from offset 0 to 5 of p tag 1 of level in edition mode
+    And  click delete button from keyboard in edition mode
+    And  append "text" at p tag 1 of level in edition mode
+    And  click save and close button of ck editor
+    Then content of level 2 contains "text" in financial statement page
+    When click on edit icon of level 2 in financial statement page
+    Then ck editor window is displayed
+    And  header of level in financial statement is not editable in ck editor text box
+    When click at offset 4 in pTag 1 with data-akn-element "subparagraph" of li with data-akn-element "level" of ol with data-akn-element "level" in edition mode
+    When click enter from keyboard in edition mode
+    And  append "Text..." to p tag 2 with data akn element subparagraph of level in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  content of subparagraph 1 of level 2 contains "text" in financial statement page
+    And  content of subparagraph 2 of level 2 contains "Text..." in financial statement page
+    When click on close button on financial statement page
+    Then user is on proposal viewer page
+    When click on delete button of financial statement
+    Then "Financial Statement deletion: confirmation" dialog box window is displayed
+    And  dialog box body contains "Are you sure you want to delete the financial statement"
+    When click on delete button in dialog box window
+    Then add button is displayed under financial statement section
+    And  label "There is no financial statement in this document" is displayed in proposal viewer page

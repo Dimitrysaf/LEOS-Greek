@@ -3,7 +3,6 @@ class legalActPage extends headerPage {
     elements = {
         closeBtn: () => cy.contains('Close'),
         ribbonToolBar: () => cy.get('app-ribbon-toolbar-container'),
-        trackChangesEnableToggle: () => cy.get("#SEE-TRACK_CHANGES-ID").find("input").first(),
         bill: () => cy.get('bill'),
         preface: () => this.elements.bill().find('preface'),
         longTitle: () => this.elements.preface().find('longtitle'),
@@ -14,10 +13,6 @@ class legalActPage extends headerPage {
 
     clickCloseBtn() {
         this.elements.closeBtn().click();
-    }
-
-    clickEnableTrackchangesToggleBtn() {
-        this.elements.trackChangesEnableToggle().realClick();
     }
 
     getAllParagraphFromArticle(articleNumber) {

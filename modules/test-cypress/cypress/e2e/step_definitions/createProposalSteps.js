@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 require('@cypress/xpath');
 import createProposalPage from "../pages/createProposalPage";
 

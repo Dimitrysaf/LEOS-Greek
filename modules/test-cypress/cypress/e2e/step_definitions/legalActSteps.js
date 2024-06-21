@@ -7,12 +7,12 @@ Then('user is on legal act page', () => {
     cy.wait(7000);
 })
 
-Then('document has {int} trackchange {string} tags with {string} content', (count, type, content) => {
+Then('document has {int} trackChange {string} tags with {string} content', (count, type, content) => {
     legalActPage.getCurrentPageName().get(type).should("have.length", count);
     legalActPage.getCurrentPageName().get(type).should("have.text", content);
 })
 
-Then('document has {int} trackchange {string} tags with below content', (count, type, datatable) => {
+Then('document has {int} trackChange {string} tags with below content', (count, type, datatable) => {
     legalActPage.getCurrentPageName().get(type).should("have.length", count);
     legalActPage.getCurrentPageName().get(type).each((element, index) => {
         expect(element[0].textContent).equal(datatable.raw().at(index).toString());
@@ -57,15 +57,15 @@ Then('num of point {int} of list {int} of paragraph {int} of article {int} has b
     });
 })
 
-When('mousehover and click on citation {int}', citationNumber => {
+When('mouseover and click on citation {int}', citationNumber => {
     legalActPage.mouseHoverAndClickOnCitation(citationNumber);
 })
 
-When('mousehover and click on recital {int}', recitalNumber => {
+When('mouseover and click on recital {int}', recitalNumber => {
     legalActPage.mouseHoverAndClickOnRecital(recitalNumber);
 })
 
-When('mousehover and click on article {int}', articleNumber => {
+When('mouseover and click on article {int}', articleNumber => {
     legalActPage.mouseHoverAndClickOnArticle(articleNumber);
 })
 
@@ -89,7 +89,7 @@ And('citation {int} contains {string}', (citationNumber,text) => {
     legalActPage.getCitation(citationNumber).contains(text);
 })
 
-And('citation {int} doesnot contain {string}', (citationNumber,text) => {
+And("citation {int} doesn't contain {string}", (citationNumber,text) => {
     legalActPage.getCitation(citationNumber).should('not.include.text', text)
 })
 
@@ -97,7 +97,7 @@ And('recital {int} contains {string}', (recitalNumber,text) => {
     legalActPage.getRecital(recitalNumber).contains(text);
 })
 
-And('recital {int} doesnot contain {string}', (recitalNumber,text) => {
+And("recital {int} doesn't contain {string}", (recitalNumber,text) => {
     legalActPage.getRecital(recitalNumber).should('not.include.text', text)
 })
 
@@ -105,17 +105,13 @@ Then(`content of paragraph {int} of article {int} contains {string}`, (paragraph
     legalActPage.getContentOfParagraphFromArticle(paragraphNumber,articleNumber).should('include.text', text);
 });
 
-Then(`paragraph {int} of article {int} doesnot contain {string}`, (paragraphNumber, articleNumber, text) => {
+Then(`paragraph {int} of article {int} doesn't contain {string}`, (paragraphNumber, articleNumber, text) => {
     legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).should('not.include.text', text);
 });
 
-Then(`preface long title docpurpose contains {string}`, (title) => {
+Then(`preface long title docPurpose contains {string}`, (title) => {
     legalActPage.elements.docPurpose().should('include.text',title);
 });
-
-When('enable track changes', () => {
-    legalActPage.clickEnableTrackchangesToggleBtn();
-})
 
 When(`click on insert after icon of article {int}`, (articleNumber) => {
     legalActPage.clickInsertAfterIconOfArticle(articleNumber);
@@ -125,11 +121,11 @@ Then(`heading of article {int} contains {string}`, (articleNumber, heading) => {
     legalActPage.getHeadingFromArticle(articleNumber).should('have.text',heading);
 });
 
-Then(`paragraph {int} of article {int} doesnot contain num tag`, (paragraphNumber, articleNumber) => {
+Then(`paragraph {int} of article {int} doesn't contain num tag`, (paragraphNumber, articleNumber) => {
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).should('not.exist');
 });
 
-Then(`article {int} doesnot contain indent tag`, (articleNumber) => {
+Then(`article {int} doesn't contain indent tag`, (articleNumber) => {
     legalActPage.getIndentTagFromArticle(articleNumber).should('not.exist');
 });
 
@@ -205,20 +201,20 @@ When(`click on edit icon of citation {int}`, (citationNumber) => {
     legalActPage.clickEditIconOfCitation(citationNumber);
 });
 
-Then(`{string} is added as internal reference {int} of citation {int}`, (text, mreferenceNumber, citationNumber) => {
-    legalActPage.getMRefTextFromCitation(mreferenceNumber,citationNumber).should('have.text', text);
+Then(`{string} is added as internal reference {int} of citation {int}`, (text, mReferenceNumber, citationNumber) => {
+    legalActPage.getMRefTextFromCitation(mReferenceNumber,citationNumber).should('have.text', text);
 });
 
-Then(`{string} is added as internal reference {int} of recital {int}`, (text, mreferenceNumber, recitalNumber) => {
-    legalActPage.getMRefTextFromRecital(mreferenceNumber,recitalNumber).should('have.text', text);
+Then(`{string} is added as internal reference {int} of recital {int}`, (text, mReferenceNumber, recitalNumber) => {
+    legalActPage.getMRefTextFromRecital(mReferenceNumber,recitalNumber).should('have.text', text);
 });
 
-Then(`{string} is added as internal reference {int} of point {int} of list {int} of paragraph {int} of article {int}`, (text, mreferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber) => {
-    legalActPage.getMRefTextFromPointOfParagraphOfArticle(mreferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber).should('have.text', text);
+Then(`{string} is added as internal reference {int} of point {int} of list {int} of paragraph {int} of article {int}`, (text, mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber) => {
+    legalActPage.getMRefTextFromPointOfParagraphOfArticle(mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber).should('have.text', text);
 });
 
-Then(`{string} is added as internal reference {int} of paragraph {int} of article {int}`, (text, mreferenceNumber, paragraphNumber, articleNumber) => {
-    legalActPage.getMRefTextFromParagraphOfArticle(mreferenceNumber, paragraphNumber, articleNumber).should('have.text', text);
+Then(`{string} is added as internal reference {int} of paragraph {int} of article {int}`, (text, mReferenceNumber, paragraphNumber, articleNumber) => {
+    legalActPage.getMRefTextFromParagraphOfArticle(mReferenceNumber, paragraphNumber, articleNumber).should('have.text', text);
 });
 
 Then(`citation {int} is displayed`, (citationNumber) => {
@@ -241,18 +237,18 @@ Then(`point {int} of list {int} of paragraph {int} of article {int} is displayed
     legalActPage.getPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).should('be.visible');
 });
 
-When(`click on internal reference link {int} of citation {int}`, (mreferenceNumber, citationNumber) => {
-    legalActPage.clickRefOfMRefOfCitation(mreferenceNumber, citationNumber);
+When(`click on internal reference link {int} of citation {int}`, (mReferenceNumber, citationNumber) => {
+    legalActPage.clickRefOfMRefOfCitation(mReferenceNumber, citationNumber);
 });
 
-When(`click on internal reference link {int} of recital {int}`, (mreferenceNumber, recitalNumber) => {
-    legalActPage.clickRefOfMRefOfRecital(mreferenceNumber, recitalNumber);
+When(`click on internal reference link {int} of recital {int}`, (mReferenceNumber, recitalNumber) => {
+    legalActPage.clickRefOfMRefOfRecital(mReferenceNumber, recitalNumber);
 });
 
-When(`click on internal reference link {int} of paragraph {int} of article {int}`, (mreferenceNumber, paragraphNumber, articleNumber) => {
-    legalActPage.clickRefOfMRefOfParagraphOfArticle(mreferenceNumber, paragraphNumber, articleNumber);
+When(`click on internal reference link {int} of paragraph {int} of article {int}`, (mReferenceNumber, paragraphNumber, articleNumber) => {
+    legalActPage.clickRefOfMRefOfParagraphOfArticle(mReferenceNumber, paragraphNumber, articleNumber);
 });
 
-When(`click on internal reference link {int} of point {int} of list {int} of paragraph {int} of article {int}`, (mreferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber) => {
-    legalActPage.clickRefOfMRefOfPointOfParagraphOfArticle(mreferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber);
+When(`click on internal reference link {int} of point {int} of list {int} of paragraph {int} of article {int}`, (mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber) => {
+    legalActPage.clickRefOfMRefOfPointOfParagraphOfArticle(mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber);
 });

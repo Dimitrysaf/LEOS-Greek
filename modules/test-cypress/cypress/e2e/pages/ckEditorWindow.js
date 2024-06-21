@@ -14,23 +14,21 @@ class ckEditorWindow {
         insertSpecialCharacterBtn: () => cy.get('.cke_button__specialchar'),
         showBlockBtn: () => cy.get('.cke_button__leosshowblocks'),
         sourceBtn: () => cy.get('.cke_button__sourcedialog'),
-        footNoteBtn: () => cy.get('.cke_button__authorialnotewidget'),
-        internalReferenceBtn: () => cy.get('.cke_button__leoscrossreference'),
         internalReferenceIcon: () => cy.get('a.cke_button__leoscrossreference'),
         paragraphModeIcon: () => cy.get('a.cke_button__aknnumberedparagraph'),
         increaseIndentIcon: () => cy.get('.cke_button__indent'),
         decreaseIndentIcon: () => cy.get('.cke_button__outdent'),
         softEnterIcon: () => cy.get('.cke_button__leoshierarchicalelementshiftenterhandler'),
         addSubParagraphIcon: () => cy.get('.cke_button__leoshierarchicalelementsubparagraphafterlastpoint'),
-        ckEditorBtns: () => cy.get('a.cke_button'),
-        docpurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
+        ckEditorBtn: () => cy.get('a.cke_button'),
+        docPurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
         ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
         ckEditorDialogOkBtn: () => cy.get('.cke_dialog_ui_button_ok')
     }
 
     replaceContentInDocPurpose(content) {
-        this.elements.docpurpose().type('{selectall}{del}');
-        this.elements.docpurpose().type(content);
+        this.elements.docPurpose().type('{selectall}{del}');
+        this.elements.docPurpose().type(content);
     }
     addTextAtCurrentCursorPositionWhenCKEditorOpen(newContent) {
         this.elements.ckEditableInline().type('{insert}' + newContent);
@@ -65,9 +63,9 @@ class ckEditorWindow {
         this.elements.closeBtn().click();
     }
 
-    clickSaveBtn() {
+    /*clickSaveBtn() {
         this.elements.saveBtn().click();
-    }
+    }*/
 
     clickParagraphModeIcon() {
         this.elements.paragraphModeIcon().click().click();
@@ -161,12 +159,14 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1).type(newContent);
     }
 
+
+
     getThirdLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) {
        return  this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement4 + "']").eq(li4 - 1).find("ol li[data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1);
     }
 
     addContentInThirdLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) {
-        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement4 + "']").eq(li4 - 1).find("ol li[data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1).type(newContent);
+        this.getThirdLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4).type(newContent);
     }
 
     getFourthLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5) {
@@ -174,7 +174,7 @@ class ckEditorWindow {
     }
 
     addContentInFourthLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5) {
-        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement5 + "']").eq(li5 - 1).find("ol li[data-akn-element='" + dataAknElement4 + "']").eq(li4 - 1).find("ol li[data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1).type(newContent);
+        this.getFourthLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5).type(newContent);
     }
 
     deleteContentInNumberedParagraphOfArticle(key, offset, paragraphNumber, child, times) {
@@ -203,6 +203,26 @@ class ckEditorWindow {
 
     selectContentInLevel(offsetStart, offsetEnd, pTagNumber) {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.selectContent(offsetStart, offsetEnd, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
+    }
+
+    moveCursorToSpecificOffsetInLevel(offset, pTagNumber) {
+        this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offset, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
+    }
+
+    getElementPTagOfLevel(pTagNumber) {
+        return this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1);
+    }
+
+    addContentInSubParagraphOfLevel(content, pTagNumber) {
+        this.elements.ckEditableInline().find("ol[data-akn-element='level']").find("li[data-akn-element='level']").find("p[data-akn-element='subparagraph']").eq(pTagNumber - 1).type(content);
+    }
+
+    clickAtSpecificOffsetInSubparagraphOfLevel(offSet, pTagNumber, dataAknElement1, dataAknElement2, dataAknElement3) {
+        this.elements.ckEditableInline().find("ol[data-akn-element="+dataAknElement3+"]").find("li[data-akn-element='"+dataAknElement2+"']").find("p[data-akn-element='"+dataAknElement1+"']").eq(pTagNumber - 1).invoke('attr', 'data-akn-mp-id').then(data_akn_mp_id => this.moveCursor(offSet, "[data-akn-mp-id='" + data_akn_mp_id + "']"));
+    }
+
+    getHeadingOfLevel() {
+        return this.elements.ckEditableInline().find("ol[data-akn-element='level']").find("li[data-akn-element='level']").find('h2 strong');
     }
 
     selectContent(offsetStart, offsetEnd, element) {

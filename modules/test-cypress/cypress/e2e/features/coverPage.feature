@@ -23,7 +23,7 @@ Feature: cover page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        And  preface long title docpurpose contains "Automation Cover Page Testing"
+        And  preface long title docPurpose contains "Automation Cover Page Testing"
         When click on versions pane accordion
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section
@@ -40,7 +40,7 @@ Feature: cover page Regression Features
         When click on navigation pane accordion
         And  only title element is present in navigation pane
         When click on title link in navigation pane
-        Then long title docpurpose of cover page is "Automation Cover Page Testing"
+        Then long title docPurpose of cover page is "Automation Cover Page Testing"
         When click on long title of doc purpose
         Then ck editor window is displayed
         And  13 plugins are available in ck editor window
@@ -59,7 +59,7 @@ Feature: cover page Regression Features
         And  source button is enabled in ck editor
         When replace content "Automation Testing Cover Page" with the existing content in cover page long title 
         And  click save and close button of ck editor
-        Then long title docpurpose of cover page is "Automation Testing Cover Page"
+        Then long title docPurpose of cover page is "Automation Testing Cover Page"
         When click on versions pane accordion
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section
@@ -73,7 +73,7 @@ Feature: cover page Regression Features
         And  annotation side bar is present
         And  ribbon toolbar is displayed
         And  toc editing button is displayed and enabled
-        And  preface long title docpurpose contains "Automation Testing Cover Page"
+        And  preface long title docPurpose contains "Automation Testing Cover Page"
         When click on versions pane accordion
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section

@@ -1,4 +1,4 @@
-import { Before, Given, When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import uploadDocumentPage from "../pages/uploadDocumentPage";
 
 Then(`active upload window label contains {string}`, (label) => {
