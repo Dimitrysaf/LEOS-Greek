@@ -123,6 +123,10 @@ Then(`decrease indent icon is displayed and enabled in ck editor panel`, () => {
     ckEditorWindow.elements.decreaseIndentIcon().should('not.be.disabled');
 });
 
+Then('paragraph {int} of article has attribute {string}', (paragraph, attributeName) => {
+    ckEditorWindow.getNumberedParagraphElementOfArticle(paragraph).should('have.attr', attributeName);
+})
+
 When(`replace content {string} with the existing content in cover page long title`, (content) => {
     ckEditorWindow.replaceContentInDocPurpose(content);
 });

@@ -32,12 +32,18 @@ Feature: Track Changes Feature
     When move the cursor position to offset 38 in paragraph 1 of article in edition mode
     And  click enter from keyboard in edition mode
     When append "New paragraph" at offset 3 in numbered paragraph 2 of article when ck editor is open
+    # Check result
+    Then paragraph 2 of article has attribute "new"
+    # Indent
     When move the cursor position to offset 3 in paragraph 2 of article in edition mode
     And  click on increase indent icon present in ck editor panel
+    # Save and close
     And  click save and close button of ck editor
     # Check results
     Then num of point 1 of list 1 of paragraph 1 of article 1 has below content
       | ins  | "(a)"                              |
+    Then point 1 of list 1 of paragraph 1 of article 1 has below content
+      | ins  | "New paragraph"                    |
 
   @add_trackChanges_text @local
   Scenario: Basic tests for add track changes text in an article in Legal Act
