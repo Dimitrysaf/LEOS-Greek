@@ -19,41 +19,38 @@ Then('document has {int} trackChange {string} tags with below content', (count, 
     });
 })
 
+function checkContentResult(element, datatable) {
+    element[0].childNodes.forEach((element, index) => {
+        if (element.nodeType === 1 && (datatable.raw().at(index).at(0).includes(",") || datatable.raw().at(index).at(0) !== "html")) {
+            const elementsArray = datatable.raw().at(index).at(0).split(",");
+            for (let elementIndex = 0; elementIndex < elementsArray.length; elementIndex++) {
+                expect(element.localName).equal(elementsArray[elementIndex]);
+                element = element.childNodes[0];
+            }
+            expect(element.textContent + "\"").equal(datatable.raw().at(index).at(1).substring(1));
+        }
+        if (element.nodeType === 1 && datatable.raw().at(index).at(0) === "html") {
+            const re = new RegExp(datatable.raw().at(index).at(1));
+            expect(true).equal(re.test(element.outerHTML));
+        }
+    })
+}
+
 Then('paragraph {int} of article {int} has below content', (paragraph, article, datatable) => {
     legalActPage.getContentOfParagraphFromArticle(paragraph, article).then((element) => {
-        element[0].childNodes.forEach((element, index) => {
-            if (element.nodeType === 1 && (datatable.raw().at(index).at(0).includes(",") || datatable.raw().at(index).at(0) !== "html")) {
-                const elementsArray = datatable.raw().at(index).at(0).split(",");
-                for (let elementIndex = 0; elementIndex < elementsArray.length; elementIndex++) {
-                    expect(element.localName).equal(elementsArray[elementIndex]);
-                    element = element.childNodes[0];
-                }
-                expect(element.textContent + "\"").equal(datatable.raw().at(index).at(1).substring(1));
-            }
-            if (element.nodeType === 1 && datatable.raw().at(index).at(0) === "html") {
-                const re = new RegExp(datatable.raw().at(index).at(1));
-                expect(true).equal(re.test(element.outerHTML));
-            }
-        })
+        checkContentResult(element, datatable);
     });
 })
 
 Then('num of point {int} of list {int} of paragraph {int} of article {int} has below content', (point, list, paragraph, article, datatable) => {
     legalActPage.getNumTagOfPointOfParagraphFromArticle(point, list, paragraph, article).then((element) => {
-        element[0].childNodes.forEach((element, index) => {
-            if (element.nodeType === 1 && (datatable.raw().at(index).at(0).includes(",") || datatable.raw().at(index).at(0) !== "html")) {
-                const elementsArray = datatable.raw().at(index).at(0).split(",");
-                for (let elementIndex = 0; elementIndex < elementsArray.length; elementIndex++) {
-                    expect(element.localName).equal(elementsArray[elementIndex]);
-                    element = element.childNodes[0];
-                }
-                expect(element.textContent + "\"").equal(datatable.raw().at(index).at(1).substring(1));
-            }
-            if (element.nodeType === 1 && datatable.raw().at(index).at(0) === "html") {
-                const re = new RegExp(datatable.raw().at(index).at(1));
-                expect(true).equal(re.test(element.outerHTML));
-            }
-        })
+        checkContentResult(element, datatable);
+    });
+})
+
+Then('point {int} of list {int} of paragraph {int} of article {int} has below content', (point, list, paragraph, article, datatable) => {
+    legalActPage.getContentOfPointOfParagraphFromArticle(point, list, paragraph, article).then((element) => {
+        checkContentResult(element, datatable);
     });
 })
 
