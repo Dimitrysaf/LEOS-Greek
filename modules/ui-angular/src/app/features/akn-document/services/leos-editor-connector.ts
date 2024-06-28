@@ -78,7 +78,6 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   private isElementSaved = false;
   private isSaveAndClose = false;
   private elementToEditAfterClose: Element;
-
   constructor(
     state: LeosEditorConnectorInitialState,
     private options: LeosEditorConnectorOptions,
@@ -365,7 +364,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     taskId: string,
   ) {
     this.elementToEditAfterClose = response.elementToEditAfterClose;
-    if (this.elementToEditAfterClose && this.elementToEditAfterClose !== null) {
+    if ((this.elementToEditAfterClose && this.elementToEditAfterClose !== null)) {
       this.closeElement();
     }
     this.updateTitleWithResponse(response);

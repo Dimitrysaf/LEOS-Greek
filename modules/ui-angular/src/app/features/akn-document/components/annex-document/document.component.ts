@@ -377,11 +377,13 @@ export class DocumentComponent
   }) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(this.xml, 'text/html');
-      const docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
+    const docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
     const xmlElement = doc.getElementById(data.elementId);
-      const authorialNotesXmlWithId = xmlElement.querySelectorAll("authorialNote[id]");
-    const authorialNotesFragmentWithId = docFragment.querySelectorAll("authorialNote[id]");
-    return authorialNotesXmlWithId.length !== authorialNotesFragmentWithId.length;
+    const authorialNotesXmlWithId = xmlElement?.querySelectorAll("authorialNote[id]");
+    const authorialNotesFragmentWithId = docFragment?.querySelectorAll("authorialNote[id]");
+    return !!authorialNotesXmlWithId
+        && !!authorialNotesFragmentWithId
+        && authorialNotesXmlWithId.length !== authorialNotesFragmentWithId.length;
   }
 
   private isSplitParagraphs(data: {
@@ -402,12 +404,12 @@ export class DocumentComponent
   }) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(this.xml, 'text/html');
-      const docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
-    const xmlElement = doc.getElementById(data.elementId);
-      const xmlElementDepth = xmlElement.getAttribute("leos:depth");
-    const fragmentElement = docFragment.getElementById(data.elementId);
-      const fragmentElementDepth = fragmentElement.getAttribute("leos:depth");
-    return xmlElementDepth && fragmentElementDepth && (xmlElementDepth !== fragmentElementDepth);
+    const docFragment = parser.parseFromString(this.cleanForView(data.elementFragment), 'text/html');
+    const xmlElement = doc?.getElementById(data.elementId);
+    const xmlElementDepth = xmlElement?.getAttribute("leos:depth");
+    const fragmentElement = docFragment?.getElementById(data.elementId);
+    const fragmentElementDepth = fragmentElement?.getAttribute("leos:depth");
+    return !!xmlElementDepth && !!fragmentElementDepth && (xmlElementDepth !== fragmentElementDepth);
   }
 
   private updateElementInXml(data: {
@@ -442,10 +444,13 @@ export class DocumentComponent
 
   private handleInternalReferences(elementId: string) {
     const htmlElement = this.document.getElementById(elementId);
-    Array.from(htmlElement.getElementsByTagName('ref')).forEach(function(internalReference) {
-      const href = internalReference.getAttribute('href'); const refId = href.substring(href.indexOf('/') + 1);
-      internalReference.setAttribute('onclick','LEOS.scrollTo(\'' + refId + '\');');
-    });
+    if(!!htmlElement) {
+      Array.from(htmlElement.getElementsByTagName('ref')).forEach( (internalReference) => {
+        const href = internalReference.getAttribute('href');
+        const refId = href.substring(href.indexOf('/') + 1);
+        internalReference.setAttribute('onclick', 'LEOS.scrollTo(\'' + refId + '\');');
+      });
+    }
   }
 
   private getElementContent(data: { elementId: string; elementType: string }): {

@@ -32,6 +32,11 @@ public class CoEditionContext {
             User user = securityContext.getUser();
             addUpdatedElement(updatedElement.getElementId(), updatedElement.getElementTagName(),
                     updatedElement.getElementFragment());
+
+            if(updatedElement.getElementsMoved()!=null){
+                updatedElement.getElementsMoved()
+                        .forEach(e -> addUpdatedElement(e.getElementId(),e.getElementTagName(), e.getElementFragment()));
+            }
             simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + documentRef,
                     new UpdateCoEditionResponse(user, presenterIdFinal, documentRefFinal, InfoType.DOCUMENT_UPDATED,
                             getUpdatedElements()));

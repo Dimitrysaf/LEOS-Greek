@@ -76,10 +76,13 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
+import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
 import eu.europa.ec.leos.services.user.UserService;
+import eu.europa.ec.leos.util.LeosDomainUtil;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Pair;
@@ -88,7 +91,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.inject.Provider;
 import java.io.ByteArrayInputStream;
@@ -96,6 +102,7 @@ import java.nio.charset.StandardCharsets;
 import java.rmi.UnexpectedException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -605,8 +612,48 @@ public class BillApiServiceImpl implements BillApiService {
         if (splittedContent == null) {
             splittedContentIsEmpty = true;
         }
+        
+
+
+        List<Element> result = getMovedFromElements(updatedBill, newContent);
+
         documentViewService.updateProposalAsync(bill);
-        return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty);
+        return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty, result);
+    }
+
+    private List<Element> getMovedFromElements(Bill updatedBill, String newContent) {
+        List<Element> result = new ArrayList<>();
+        List<String> idsToSearch = new ArrayList<>();
+        String newContentId = null;
+        //Get id moved from for new short xml fragment (newContent)
+        Document newContentDocument = XercesUtils.createXercesDocument(LeosDomainUtil.wrapXmlFragment(newContent).getBytes(StandardCharsets.UTF_8));
+        NodeList elementsByXPath = XercesUtils.getElementsByXPath(newContentDocument, String.format("//*[@%s]", XmlHelper.LEOS_SOFT_MOVE_FROM));
+        for (int countElements = 0; countElements < elementsByXPath.getLength(); countElements++) {
+            Node element = elementsByXPath.item(countElements);
+            newContentId = (newContentId == null) ? element.getParentNode().getAttributes().getNamedItem("xml:id").getNodeValue() : newContentId;
+            NamedNodeMap attributes = element.getAttributes();
+            String idXml = attributes.getNamedItem("xml:id").getNodeValue();
+            idsToSearch.add(idXml);
+        }
+
+        Document billDocument = XercesUtils.createXercesDocument(LeosDomainUtil.wrapXmlFragment(updatedBill.getContent().get().getSource().toString())
+                .getBytes(StandardCharsets.UTF_8));
+        NodeList billElementsByXPath = XercesUtils.getElementsByXPath(billDocument, String.format("//*[@%s]", XmlHelper.LEOS_SOFT_MOVE_TO));
+        for (int countElements = 0; countElements < billElementsByXPath.getLength(); countElements++) {
+            Node element = billElementsByXPath.item(countElements);
+            NamedNodeMap attributes = element.getAttributes();
+            String movedToAttr = attributes.getNamedItem(XmlHelper.LEOS_SOFT_MOVE_TO).getNodeValue();
+            Node parentNode = element.getParentNode();
+            String parentId = parentNode.getAttributes().getNamedItem("xml:id").getNodeValue();
+            if(newContentId != parentId // verify not to be moved in the same parent
+                    && idsToSearch.contains(movedToAttr)){
+                String parentName = parentNode.getNodeName();
+                String parentFragment = XercesUtils.nodeToString(parentNode);
+                result.add(new Element(parentId, parentName, parentFragment));
+            }
+        }
+
+        return result;
     }
 
     @Override
