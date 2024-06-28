@@ -16,6 +16,9 @@ package eu.europa.ec.leos.services.dto.response;
 
 import eu.europa.ec.leos.model.xml.Element;
 
+import java.util.Collections;
+import java.util.List;
+
 public class SaveElementResponse {
 
     private final String elementId;
@@ -24,12 +27,14 @@ public class SaveElementResponse {
     private final Element elementToEditAfterClose;
     private final Boolean splittedContentIsEmpty;
 
+    private final List<Element> elementsMoved;
     public SaveElementResponse(String elementId, String elementTagName, String elementFragment) {
         this.elementId = elementId;
         this.elementTagName = elementTagName;
         this.elementFragment = elementFragment;
         this.elementToEditAfterClose = null;
         this.splittedContentIsEmpty = null;
+        this.elementsMoved = null;
     }
 
     public SaveElementResponse(String elementId, String elementTagName, String elementFragment, Element elementToEditAfterClose,
@@ -39,8 +44,17 @@ public class SaveElementResponse {
         this.elementFragment = elementFragment;
         this.elementToEditAfterClose = elementToEditAfterClose;
         this.splittedContentIsEmpty = splittedContentIsEmpty;
+        this.elementsMoved = null;
     }
-
+    public SaveElementResponse(String elementId, String elementTagName, String elementFragment, Element elementToEditAfterClose,
+                               Boolean splittedContentIsEmpty, List<Element> elementsMoved) {
+        this.elementId = elementId;
+        this.elementTagName = elementTagName;
+        this.elementFragment = elementFragment;
+        this.elementToEditAfterClose = elementToEditAfterClose;
+        this.splittedContentIsEmpty = splittedContentIsEmpty;
+        this.elementsMoved = Collections.unmodifiableList(elementsMoved);
+    }
     public String getElementId() {
         return elementId;
     }
@@ -60,4 +74,6 @@ public class SaveElementResponse {
     public Boolean getSplittedContentIsEmpty() {
         return splittedContentIsEmpty;
     }
+
+    public List<Element> getElementsMoved() {  return elementsMoved; }
 }
