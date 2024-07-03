@@ -19,7 +19,7 @@ echo "---------------------Repository-------------------------------------------
 cd ./tools/repository
 
 echo "---------------------Repository COMPILING...----------------------------------"
-call mvn clean install -DskipTests
+call mvn clean install
 echo "---------------------Repository COMPILED.-------------------------------------"
 
 cd ./web
