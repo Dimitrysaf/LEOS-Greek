@@ -11,7 +11,7 @@ class ribbonToolBar {
         enableTrackChangesInput: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('input'),
         enableTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('.eui-slide-toggle__container'),
         seeTrackChangesInput: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('input'),
-        // seeTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('span.mat-slide-toggle-bar'),
+        seeTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('.eui-slide-toggle__container'),
         //trackChangesEnableToggle: () => cy.get("#SEE-TRACK_CHANGES-ID").find("input").first(),
         zoomValue: () => cy.get('span.zoom-value'),
         importFromOjBtn: () => cy.contains('Import from OJ '),

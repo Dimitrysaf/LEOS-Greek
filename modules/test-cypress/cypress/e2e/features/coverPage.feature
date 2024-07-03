@@ -27,6 +27,7 @@ Feature: cover page Regression Features
         When click on versions pane accordion
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section
+        And  navigation pane is minimized
         And  "No changes after last version" subtitle is displayed under recent changes version card
         And  last version card header title contains "Version 0.1.0 - Document created"
         When click on close button present in legal act page
@@ -35,6 +36,7 @@ Feature: cover page Regression Features
         Then user is on cover page
         And  annotation side bar is present
         When click on versions pane accordion
+        Then navigation pane is minimized
         And  "No changes after last version" subtitle is displayed under recent changes version card
         And  last version card header title contains "Version 0.1.0 - Document created"
         When click on navigation pane accordion
@@ -63,6 +65,7 @@ Feature: cover page Regression Features
         When click on versions pane accordion
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section
+        And  navigation pane is minimized
         And  last subversion of recent changes version card contains "0.1.1Document title updated"
         And  last version card header title contains "Version 0.1.0 - Document created"
         When click on close button present in cover page
@@ -77,5 +80,6 @@ Feature: cover page Regression Features
         When click on versions pane accordion
         Then compare versions button is displayed in versions pane section
         And  search button is displayed in versions pane section
+        And  navigation pane is minimized
         And  last subversion of recent changes version card contains "0.1.1Document title updated"
         And  last version card header title contains "Version 0.1.0 - Document created"

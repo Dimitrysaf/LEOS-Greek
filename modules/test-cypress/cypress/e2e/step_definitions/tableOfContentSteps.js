@@ -135,3 +135,7 @@ When(`click on right angle icon of preamble link`, () => {
 Then('navigation pane is expanded', function () {
     tableOfContent.elements.navigationPaneExpanded().should('be.visible');
 });
+
+Then(/^navigation pane is minimized$/, function () {
+    tableOfContent.elements.navigationPaneMinimized().should('be.visible');
+});

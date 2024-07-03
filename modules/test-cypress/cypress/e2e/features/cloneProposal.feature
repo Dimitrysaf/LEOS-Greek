@@ -62,3 +62,19 @@ Feature: clone proposal regression features
     And  chip content container 2 of proposal header contains "LEOS"
     And  total number of annexes present in proposal viewer page is 1
     And  delete button of financial statement is displayed
+    When click on legal act link present in proposal viewer page
+    Then user is on legal act page
+    And  annotation side bar is present
+    And  ribbon toolbar is displayed
+    And  enable track changes toggle bar is on in ribbon toolbar
+    And  enable track changes is disabled
+    And  see track changes toggle bar is on in ribbon toolbar
+    And  see track changes is enabled
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    And  enable track changes is disabled
+    And  see track changes is disabled
+    When click close button of ck editor
+    Then ck editor window is not displayed
+    And  enable track changes is disabled
+    And  see track changes is enabled
