@@ -992,7 +992,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
     }
 
     private void doXmlPostProcessingCommon(Node node) {
-        injectTagIdsInNode(node, IdGenerator.DEFAULT_PREFIX);
+        injectTagIdsInNode(node);
         modifyAuthorialNoteMarkers(node, 1);
         updateReferences(node.getOwnerDocument());
         convertAlineasToSubparagraphs(node.getOwnerDocument());
@@ -1021,7 +1021,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
 
         // Inject Ids
         Stopwatch stopwatch = Stopwatch.createStarted();
-        injectTagIdsInNode(document.getDocumentElement(), IdGenerator.DEFAULT_PREFIX);
+        injectTagIdsInNode(document.getDocumentElement());
         long injectIdTime = stopwatch.elapsed(TimeUnit.MILLISECONDS);
 
         // modify Authnote markers
@@ -1203,31 +1203,24 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private void injectTagIdsInNode(Node node, String idPrefix) {
+    private void injectTagIdsInNode(Node node) {
         String tagName = node.getNodeName();
         if (skipNodeAndChildren(tagName)) {// skipping node processing along with children
             return;
         }
 
-        String idAttrValue = null;
         if (!skipNodeOnly(tagName)) {// do not update id for this tag
-            idAttrValue = updateNodeWithId(node, idPrefix);
+            String idAttrValue = getAttributeValue(node, XMLID);
+            if (idAttrValue == null || idAttrValue.isEmpty()) {
+                idAttrValue = IdGenerator.generateId();
+                XercesUtils.addAttribute(node, XMLID, idAttrValue);
+            }
         }
 
-        idPrefix = determinePrefixForChildren(tagName, idAttrValue, idPrefix);
         List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
-            injectTagIdsInNode(children.get(i), idPrefix);
+            injectTagIdsInNode(children.get(i));
         }
-    }
-
-    private String updateNodeWithId(Node node, String idPrefix) {
-        String idAttrValue = getAttributeValue(node, XMLID);
-        if (idAttrValue == null || idAttrValue.isEmpty()) {
-            idAttrValue = IdGenerator.generateId(idPrefix, 7);
-            XercesUtils.addAttribute(node, XMLID, idAttrValue);
-        }
-        return idAttrValue;
     }
 
     private void modifyAuthorialNoteMarkers(Node node, int markerNumber) {
@@ -1467,7 +1460,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         if(StringUtils.equals(userLogin, oldLogin)){
             return getDocumentWithReplacedNewElement(document, node, eltContent, result, escapeXml10(normalizeNewText(origText, newText)));
         }
-        String prefixId = getPrefixId(node.getParentNode());
+        String prefixId = IdGenerator.getPrefixId(XercesUtils.getId(node.getParentNode()));
         String uid = "";
         String title = "";
         if(userLogin != null && userName!= null) {
@@ -1541,17 +1534,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return createdNode;
     }
 
-    private static String getPrefixId(Node node) {
-        String nodeId = XercesUtils.getId(node);
-        String prefixId = "akn";
-        if (StringUtils.isNotEmpty(nodeId)) {
-            int indexOfUnderline = nodeId.lastIndexOf("_");
-            int indexForSearch = indexOfUnderline > 0 ? indexOfUnderline : nodeId.length() - 1;
-            prefixId = nodeId.substring(0, indexForSearch) ;
-        }
-        return prefixId;
-    }
-
     private String generateTrackChangesText(String origText, String newText, Node node) {
         String userLogin = null;
         String userName = null;
@@ -1561,7 +1543,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             userName = user.getName();
         }
 
-        String prefixId = getPrefixId(node);
+        String prefixId = IdGenerator.getPrefixId(XercesUtils.getId(node));
         String uid = "";
         String title = "";
         if(userLogin != null && userName!= null) {
@@ -1785,8 +1767,8 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Document document = createXercesDocument(xmlContent.getBytes(StandardCharsets.UTF_8));
         Node node = document.getFirstChild();
         node = setAttributeForDefinitionArticle(node);
-        String idPrefix = "imp_" + XercesUtils.getId(node);
-        String newIdAttrValue = IdGenerator.generateId(idPrefix, 7);
+        String idPrefix = "imp" + IdGenerator.PREFIX_DELIMITER + XercesUtils.getId(node);
+        String newIdAttrValue = IdGenerator.generateId(idPrefix);
         addAttribute(node, XMLID, newIdAttrValue);
         String updatedElement = nodeToString(node);
         updatedElement = removeSelfClosingElements(updatedElement);
@@ -2733,26 +2715,36 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         //overriding of the ID if there is a case
         Document document = createXercesDocument(xmlContent, namespaceEnabled);
         Set idsSet = new HashSet();
-        removeDuplicateIdsFromDocument(document.getDocumentElement(), IdGenerator.DEFAULT_PREFIX, idsSet);
+        removeDuplicateIdsFromDocument(document.getDocumentElement(), idsSet);
         idsSet.clear();
         return nodeToByteArray(document);
     }
 
-    private void removeDuplicateIdsFromDocument(Node node, String idPrefix, Set idsSet) {
+    private void removeDuplicateIdsFromDocument(Node node, Set idsSet) {
         String tagName = node.getNodeName();
         if (skipNodeAndChildren(tagName)) {// skipping node processing along with children
             return;
         }
 
-        String idAttrValue = null;
         if (!skipNodeOnly(tagName)) {// do not update id for this tag
-            idAttrValue = updateNodeWithIdIfDuplicate(node, idPrefix, idsSet);
+            String idAttrValue = getAttributeValue(node, XMLID);
+            if (idAttrValue == null || idAttrValue.isEmpty() || idsSet.contains(idAttrValue)) {
+                for (int i = 0; i < 3 && idsSet.contains(idAttrValue) ; i++) {
+                    //eliminate the risk for infinite loop.  :D
+                    idAttrValue = IdGenerator.generateId();
+                }
+                if(idsSet.contains(idAttrValue)){
+                    LOG.error("After 3 loops, the id '{}' is the same", idAttrValue);
+                    throw new IllegalStateException("Duplicate id attribute generated three times! Try again!");
+                }
+                XercesUtils.addAttribute(node, XMLID, idAttrValue);
+            }
+            idsSet.add(idAttrValue);
         }
 
-        idPrefix = determinePrefixForChildren(tagName, idAttrValue, idPrefix);
         List<Node> children = getChildren(node);
         for (int i = 0; i < children.size(); i++) {
-            removeDuplicateIdsFromDocument(children.get(i), idPrefix, idsSet);
+            removeDuplicateIdsFromDocument(children.get(i), idsSet);
         }
     }
 
@@ -2767,20 +2759,4 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         }
     }
 
-    private String updateNodeWithIdIfDuplicate(Node node, String idPrefix, Set idsSet) {
-        String idAttrValue = getAttributeValue(node, XMLID);
-        if (idAttrValue == null || idAttrValue.isEmpty() || idsSet.contains(idAttrValue)) {
-            for (int i = 0; i < 3 && idsSet.contains(idAttrValue) ; i++) {
-                //eliminate the risk for infinite loop.  :D
-                idAttrValue = IdGenerator.generateId(idPrefix, 7);
-            }
-            if(idsSet.contains(idAttrValue)){
-                LOG.error("After 3 loops, the id '{}' is the same", idAttrValue);
-                throw new IllegalStateException("Duplicate id attribute generated three times! Try again!");
-            }
-            XercesUtils.addAttribute(node, XMLID, idAttrValue);
-        }
-        idsSet.add(idAttrValue);
-        return idAttrValue;
-    }
 }

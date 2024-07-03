@@ -10,6 +10,9 @@
     <!-- Secured Leos API services -->
     <sec:http pattern="${leos.api.filter.processor.url}" entry-point-ref="restAuthenticationEntryPoint" create-session="stateless">
         <sec:csrf disabled="true"/>
+        <sec:headers>
+                <sec:content-security-policy policy-directives="default-src 'none'"/>
+        </sec:headers>
         <sec:cors configuration-source-ref="corsSource"/>
         <sec:custom-filter after="PRE_AUTH_FILTER" ref="leosApiAuthenticationFilter"/>
     </sec:http>

@@ -14,7 +14,6 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
-import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 
@@ -28,6 +27,7 @@ import { ProposalService } from '@/shared/services/proposal.service';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
 
 import { ProposalCreateTemplateSelectorComponent } from '../proposal-create-template-selector/proposal-create-template-selector.component';
+import { EuiWizardStep } from '@eui/components/eui-wizard';
 
 @Component({
   selector: 'app-proposal-create-draft',
@@ -168,7 +168,7 @@ export class ProposalCreateDraftComponent implements OnInit, OnDestroy {
     this.currentStepIndex = event.index;
   }
 
-  onSelectStep(event: UxWizardStep) {
+  onSelectStep(event: EuiWizardStep) {
     this.stepSelected = event;
   }
 

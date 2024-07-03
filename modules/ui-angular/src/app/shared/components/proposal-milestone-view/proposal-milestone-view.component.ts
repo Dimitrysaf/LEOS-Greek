@@ -24,8 +24,8 @@ import {
 import {AnnotateService} from '@/shared/services/annotate.service';
 import {DocumentService} from '@/shared/services/document.service';
 import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.service';
-import {UxAppShellService} from "@eui/core";
 import {ConfirmDeleteDialogComponent} from "@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component";
+import {EuiGrowlService} from "@eui/core";
 
 type MilestoneDocument = {
   ref: string;
@@ -33,8 +33,8 @@ type MilestoneDocument = {
   xml: string;
   version: string;
   label: string;
-  state: string;
   selected: boolean;
+  state: string;
   tocData: MilestoneTocItem[];
 };
 
@@ -58,8 +58,8 @@ export type MilestoneDescriptor = Pick<Milestone,
 })
 export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   @Input() milestone: MilestoneDescriptor;
-  @Input() parentLegDocumentName: string;
   @Input() parentClonedProposal: boolean;
+  @Input() parentLegDocumentName: string;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
 
@@ -80,6 +80,8 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   showPdfExport = false;
   contributionChanged = false;
 
+  readyToMergeMessage: string;
+
   isTocPaneCollapsed = false;
   isAnnotationsPaneCollapsed = false;
 
@@ -95,7 +97,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     public documentService: DocumentService,
     public milestonesService: ProposalMilestonesService,
     public translateService: TranslateService,
-    private appShell: UxAppShellService,
+    private appShell: EuiGrowlService,
     private dialogService: EuiDialogService,
   ) {
   }
@@ -105,9 +107,14 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       this.status = status;
     });
 
+    /*this.readyToMergeMessage = this.translateService.instant(
+      'page.workspace.proposal-item.ready-status',
+    );*/
     let isReadyToMerge = 'Ready to merge' === this.status;
 
-    this.milestonesService.requestStoredDocumentAnnotations$.subscribe((request) => this.requestStoredDocumentAnnotations(request))
+    this.milestonesService.requestStoredDocumentAnnotations$.subscribe(
+      (request) => this.requestStoredDocumentAnnotations(request),
+    );
 
     if (isReadyToMerge) {
       this.loadContribution(this.hiddenCategories);
@@ -163,7 +170,12 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   requestStoredDocumentAnnotations(request: string) {
     if (request && this.isOpened) {
       const doc = this.documents[this.activeTabIndex];
-      this.milestonesService.sendRequestStoredDocumentAnnotations(this.milestone.proposalRef, this.milestone.legDocumentName, doc.ref, true);
+      this.milestonesService.sendRequestStoredDocumentAnnotations(
+        this.milestone.proposalRef,
+        this.milestone.legDocumentName,
+        doc.ref,
+        true,
+      );
     } else {
       this.milestonesService.sendEmptyStoredDocumentAnnotations();
     }
@@ -187,7 +199,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
         .listMilestoneView(
           this.milestone.proposalRef,
           this.milestone.legDocumentName,
-          this.milestone.legFileId
+          this.milestone.legFileId,
         )
         .subscribe((response) => {
           this.handleMilestoneExplorerDocuments(response, hiddenCategories);
@@ -219,7 +231,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   }
 
   private viewToDoc(item: MilestoneViewItem): MilestoneDocument {
-
     return {
       ref: item.contentFileName,
       type: item.leosCategory,
@@ -228,7 +239,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       label: this.createTabLabel(item),
       state: item.contentStatus,
       tocData: JSON.parse(item.tocData),
-      selected: false
+      selected: false,
     };
   }
 
@@ -263,10 +274,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   }
 
   private setActiveTab(index: number) {
-    const doc = this.documents[index];
     this.documents.forEach(doc => {
       doc.selected = false;
     });
+    const doc = this.documents[index];
     if (doc) {
       this.documentService.setDocumentRefAndCategory(doc.ref, doc.type);
       doc.selected = true;

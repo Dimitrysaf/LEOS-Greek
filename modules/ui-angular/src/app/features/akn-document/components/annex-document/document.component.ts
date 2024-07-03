@@ -24,6 +24,8 @@ import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 import { ZoombarService } from '@/shared/services/zoombar.service';
+import { DomSanitizer } from '@angular/platform-browser';
+import { SecurityContext } from '@angular/core';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
 import {Milestone} from "@/features/proposal-view/models/milestone.model";
@@ -71,6 +73,7 @@ export class DocumentComponent
     private zoombarService: ZoombarService,
     private changeDetectorRef: ChangeDetectorRef,
     private milestoneService: ProposalMilestonesService,
+    private domSanitizer: DomSanitizer
   ) {
     this.isCNInstance = this.environmentService.isCouncil();
 
@@ -304,7 +307,7 @@ export class DocumentComponent
 
       akomantosoEl.querySelectorAll('docPurpose').forEach((el) => {
         if (el.textContent) {
-          el.innerHTML = decodeURI(el.textContent);
+          el.innerHTML = this.domSanitizer.sanitize(SecurityContext.HTML, el.textContent) || '';
         }
       });
     }

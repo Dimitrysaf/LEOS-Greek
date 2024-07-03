@@ -224,7 +224,7 @@ public class LeosXercesUtils {
             return;
         }
         String nodeId = XercesUtils.getId(node);
-        if(nodeId != null && nodeId.startsWith("deleted_")){
+        if(nodeId != null && nodeId.startsWith("deleted" + IdGenerator.PREFIX_DELIMITER)){
             XercesUtils.deleteElement(node);
         }else if(node.hasChildNodes()){
             List<Node> children = XercesUtils.getNodesAsList(node.getChildNodes());

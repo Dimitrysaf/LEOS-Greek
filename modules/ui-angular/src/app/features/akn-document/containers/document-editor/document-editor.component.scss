@@ -7,6 +7,10 @@
     padding: 0.2rem;
   }
 
+  .eui-breadcrumb-item > * > span {
+    font-weight: bold;
+  }
+
   //akomaNtoso doc[name="STAT_FINANC_LEGIS" i] {
   //  margin-left: 330px;
   //}
@@ -19,6 +23,10 @@
     min-width: 200px;
   }
 
+  .eui-fieldset__header {
+    margin: 0px;
+  }
+
   .toc-pane,
   .annotations-pane {
     flex-grow: 0;
@@ -27,6 +35,7 @@
 
   .eui-page-column__header {
     padding: 0;
+    min-height: 0px;
   }
 
   .eui-page-column__body {
@@ -53,7 +62,6 @@
     margin: 0;
   }
 
-
   .eui-page-column__header-right-content {
     align-items: center;
     cursor: pointer;
@@ -69,7 +77,8 @@
   }
 
   .eui-page-column__header-left-content-label {
-    font-size: var(--eui-base-font-size-s);
+    font-size: var(--eui-base-font-size-s) !important;
+    font-weight: bolder !important;
   }
 
   .eui-common-header__label-text {
@@ -79,6 +88,10 @@
   .eui-fieldset__header {
     border-bottom: none;
     text-transform: capitalize;
+  }
+
+  .cdk-drag.eui-list-item.eui-list-item--primary.ng-star-inserted > * {
+    display: flex;
   }
 
   .eui-fieldset__header-right-content {
@@ -198,7 +211,8 @@ app-document {
   left: 0;
   margin-left: 1rem;
   opacity: 1;
-  padding: 0.3rem;
+  padding: 0.2rem;
+  padding-left: 0.3rem;
   position: absolute;
   top: 1%;
   z-index: 1;
@@ -212,7 +226,7 @@ app-document {
   li,
   .toc-item,
   .drag-preview {
-    border: solid var(--eui-base-color-primary);
+    border: solid var(--eui-base-color-primary-100);
     border-radius: 1rem;
     border-width: 2px;
     font-size: 12px;

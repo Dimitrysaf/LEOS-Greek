@@ -8,7 +8,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UxAppShellService } from '@eui/core';
+import { EuiAppShellService, EuiGrowlService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { catchError, Observable, throwError } from 'rxjs';
 
@@ -24,7 +24,8 @@ export const IS_ERROR_INTERCEPTION_ENABLED = new HttpContextToken(
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(
-    private uxAppShellService: UxAppShellService,
+    private euiAppShellService: EuiAppShellService,
+    private euiGrowl: EuiGrowlService,
     private router: Router,
     private translate: TranslateService,
   ) {}
@@ -70,8 +71,8 @@ export class ErrorInterceptor implements HttpInterceptor {
     this.translate
       .get('global.notifications.title.error')
       .subscribe((title) => {
-        this.uxAppShellService.isBlockDocumentActive = false;
-        this.uxAppShellService.growl({
+        this.euiAppShellService.isBlockDocumentActive = false;
+        this.euiGrowl.growl({
           severity: 'danger',
           summary: title,
           detail: message,

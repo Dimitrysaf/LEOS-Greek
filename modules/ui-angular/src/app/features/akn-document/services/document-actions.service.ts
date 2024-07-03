@@ -9,7 +9,6 @@ import {
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
-import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, combineLatest, map, Observable, take } from 'rxjs';
 
@@ -83,6 +82,7 @@ import {
   IRibbonToolbarType,
 } from '../models/document-actions.model';
 import { ViewVersionService } from './view-version.service';
+import { DropdownModel } from '@/shared/dropdown.model';
 
 const LIST_OF_DISABLE_BUTTONS = [SEARCH_ACTION_ID, RELOAD_SECTION_ID];
 
@@ -142,9 +142,8 @@ export abstract class DocumentActionsService {
       this.appConfigService.config,
       this.documentService.documentConfig$,
       this.documentService.permissions$,
-      this.documentService.isEditorOpen$,
       this.pageModeService.pageMode$,
-    ]).subscribe(([appConfig, config, permissions, _, pageMode]) => {
+    ]).subscribe(([appConfig, config, permissions, pageMode]) => {
       this.profile = appConfig.profile;
       this.documentConfig = config;
       this.pageMode = pageMode;
@@ -297,7 +296,7 @@ export abstract class DocumentActionsService {
           euiStyle: 'secondary',
           euiSize: 's',
           label: 'Save',
-          svgIconClas: 'save',
+          icon: 'save',
           svgType: 'default',
           type: IRibbonToolbarType.BUTTON,
         },
@@ -323,7 +322,7 @@ export abstract class DocumentActionsService {
           ),
           euiSize: 's',
           euiStyle: 'secondary',
-          iconClass: 'eui-icon-book-o',
+          icon: 'book',
           actionFn: () => this.importService.openImportOJDialog(),
         },
       ],
@@ -347,14 +346,14 @@ export abstract class DocumentActionsService {
           ),
           euiSize: 's',
           euiStyle: 'secondary',
-          iconClass: 'eui-icon-more-vertical',
+          icon: 'eui-ellipsis-vertical',
           items: [...exportOptions],
         },
       ],
     };
   }
 
-  private buildExportDropdownOptions(): EuiDropdownButtonMenuItem[] {
+  private buildExportDropdownOptions(): DropdownModel[] {
     const versionExport =
       !this.isMandateMemorandum() &&
       !this.isMandateExplanatory() &&
@@ -374,18 +373,18 @@ export abstract class DocumentActionsService {
     ].filter(Boolean);
   }
 
-  private buildExportVersionItem(): EuiDropdownButtonMenuItem {
+  private buildExportVersionItem(): DropdownModel {
     return {
       id: EXPORT_DROPDOWN_EXPORT_VERSION_ID,
       label: this.translateService.instant(
         'page.editor.actions-dropdown.export',
       ),
-      iconClass: 'eui-icon-ecl-download',
+      icon: 'eui-ecl-download',
       command: () => this.documentService.download(),
     };
   }
 
-  private buildExportCleanVersionButtonItem(): EuiDropdownButtonMenuItem {
+  private buildExportCleanVersionButtonItem(): DropdownModel {
     return {
       id: EXPORT_DROPDOWN_EXPORT_CLEAN_VERSION_ID,
       label: this.translateService.instant(
@@ -397,13 +396,13 @@ export abstract class DocumentActionsService {
     };
   }
 
-  private buildExportVersionWithAnnotationsItem(): EuiDropdownButtonMenuItem {
+  private buildExportVersionWithAnnotationsItem(): DropdownModel {
     return {
       id: EXPORT_DROPDOWN_EXPORT_VERSION_WITH_ANNOTATIONS_ID,
       label: this.translateService.instant(
         'page.editor.actions-dropdown.export-with-annotations',
       ),
-      iconClass: 'eui-icon-ecl-download',
+      icon: 'eui-ecl-download',
       command: () => this.documentService.download(true),
     };
   }
@@ -423,7 +422,7 @@ export abstract class DocumentActionsService {
           ),
           euiStyle: 'secondary',
           euiSize: 's',
-          iconClass: 'eui-icon-search-m',
+          icon: 'search',
           disabled: this.isEditorOpen,
           // todo move search on it's own service ... requirs refactoring fro @kostas_kontos
           actionFn: () => this.documentService.toggleSearchPane(),
@@ -441,7 +440,7 @@ export abstract class DocumentActionsService {
       ),
       order: 5,
       resizeOrder: 2,
-      svgIconClas: 'eye',
+      icon: 'eye',
       svgType: 'default',
       children: [
         {
@@ -535,7 +534,7 @@ export abstract class DocumentActionsService {
       label: this.translateService.instant('global.actions.edit'),
       order: 6,
       resizeOrder: 3,
-      svgIconClas: 'pencil',
+      icon: 'pencil',
       svgType: 'sharp',
       children: [],
     };
@@ -561,7 +560,7 @@ export abstract class DocumentActionsService {
       ),
       euiStyle: 'secondary',
       euiSize: 's',
-      svgIconClas: 'construct',
+      icon: 'construct',
       svgType: 'outline',
       actionFn: () => this.confirmAnnexStructureChange(),
     };
@@ -576,7 +575,7 @@ export abstract class DocumentActionsService {
       children: this.buildCompareSectionItems(),
       label: this.versionCompareService.versionsComparisonForViewHeaderTitle$,
       svgType: 'sharp',
-      svgIconClas: 'documents',
+      icon: 'documents',
       closable: true,
       closableBtnStyle: 'primary',
       closeFn: () => this.versionCompareService.closeVersionComparisonView(),
@@ -594,7 +593,7 @@ export abstract class DocumentActionsService {
       label: this.viewVersionService.versionViewLabel$,
       children: [...this.buildViewVersionSectionItems()],
       svgType: 'sharp',
-      svgIconClas: 'documents',
+      icon: 'documents',
       resizeOrder: 2,
       order: 6,
       closable: true,
@@ -613,7 +612,7 @@ export abstract class DocumentActionsService {
           {
             type: IRibbonToolbarType.BUTTON,
             id: COMPARE_PREV_CHANGE_ACTION_ID,
-            iconClass: 'eui-icon-sort-asc',
+            icon: 'arrow-up',
             euiSize: 's',
             euiStyle: 'primary',
             basicButton: true,
@@ -626,7 +625,7 @@ export abstract class DocumentActionsService {
           {
             type: IRibbonToolbarType.BUTTON,
             id: COMPARE_NEXT_CHANGE_ACTION_ID,
-            iconClass: 'eui-icon-sort-desc',
+            icon: 'arrow-down',
             euiSize: 's',
             euiStyle: 'primary',
             basicButton: true,
@@ -654,7 +653,7 @@ export abstract class DocumentActionsService {
         euiSize: 's',
         euiStyle: 'secondary',
         label: 'Export',
-        iconClass: 'eui-icon-more-vertical',
+        icon: 'eui-ellipsis-vertical',
         disabled: this.versionCompareService.versionCompareIds$.pipe(
           map((versions) => versions.length <= 1),
         ),
@@ -663,7 +662,7 @@ export abstract class DocumentActionsService {
     ];
   }
 
-  private buildCompareSectionExportOptions(): EuiDropdownButtonMenuItem[] {
+  private buildCompareSectionExportOptions(): DropdownModel[] {
     return [
       {
         id: COMPARE_EXPORT_DROPDOWN_EXPORT_PDF,
@@ -692,7 +691,7 @@ export abstract class DocumentActionsService {
         value: this.syncScrollService.isSyncScrollEnabled$,
         actionFn: () => this.viewVersionService.toggleSyncScroll(),
         cssClasses:
-          'eui-u-flex eui-u-flex-column eui-u-flex-justify-content-center',
+          'eui-u-flex eui-u-flex-align-items-start eui-u-flex-column eui-u-flex-justify-content-center',
       },
     ];
   }
@@ -707,7 +706,7 @@ export abstract class DocumentActionsService {
       sectionContainerCssClasses: 'overlay-merge-contribution',
       cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
       children: [...this.buildMergeContributionsSectionItems()],
-      svgIconClas: 'git-merge',
+      icon: 'git-merge',
       svgType: 'sharp',
       closable: true,
       closableBtnStyle: 'secondary',
@@ -727,7 +726,7 @@ export abstract class DocumentActionsService {
           {
             type: IRibbonToolbarType.BUTTON,
             id: MERGE_CONTRIBUTION_PREV_CHANGE_ID,
-            iconClass: 'eui-icon-sort-asc',
+            icon: 'eui-sort-asc',
             euiSize: 's',
             euiStyle: 'secondary',
             basicButton: true,
@@ -741,7 +740,7 @@ export abstract class DocumentActionsService {
           {
             type: IRibbonToolbarType.BUTTON,
             id: MERGE_CONTRIBUTION_NEXT_CHANGE_ID,
-            iconClass: 'eui-icon-sort-desc',
+            icon: 'eui-sort-desc',
             euiSize: 's',
             euiStyle: 'secondary',
             basicButton: true,
@@ -764,7 +763,7 @@ export abstract class DocumentActionsService {
         value: this.syncScrollService.isSyncScrollEnabled$,
         actionFn: () => this.mergeContributionService.toggleSyncScroll(),
         cssClasses:
-          'eui-u-flex eui-u-flex-column eui-u-flex-justify-content-center',
+          'eui-u-flex eui-u-flex-align-items-start eui-u-flex-column eui-u-flex-justify-content-center',
       },
       {
         type: IRibbonToolbarType.DROPDOWN,
@@ -774,7 +773,7 @@ export abstract class DocumentActionsService {
         description: this.translateService.instant(
           'page.editor.contribution.actions-button.tooltip',
         ),
-        iconClass: 'eui-icon-more-vertical',
+        icon: 'eui-more-vertical',
         items: this.buildMergeContributionApplyDropdownOptions(),
         cssClasses: 'eui-button--basic eui-button--icon-only',
       },
@@ -803,7 +802,7 @@ export abstract class DocumentActionsService {
     ];
   }
 
-  private buildMergeContributionApplyDropdownOptions(): EuiDropdownButtonMenuItem[] {
+  private buildMergeContributionApplyDropdownOptions(): DropdownModel[] {
     return [
       {
         id: MERGE_CONTRIBUTION_APPLY_CHANGES_ID,

@@ -408,7 +408,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         Node numNode = null;
         if (StringUtils.isNotEmpty(tocVo.getNumber())) {
             String newId = tocVo.getElementNumberId() != null ? tocVo.getElementNumberId()
-                    : IdGenerator.generateId(NUM.substring(0, 3), 7);
+                    : IdGenerator.generateId();
             if (newId.startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX) && (tocVo.getNumSoftActionAttr() == null
                     || !tocVo.getNumSoftActionAttr().equals(SoftActionType.DELETE)
                     || !getTagValueFromTocItemVo(tocVo).equals(PARAGRAPH))) {
@@ -549,7 +549,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     }
 
     private Node wrapWithList(Node node, TableOfContentItemVO tocVo, User user) {
-        Node listNode = createElement(node.getOwnerDocument(), LIST, IdGenerator.generateId(LIST.substring(0, 3), 7), EMPTY_STRING);
+        Node listNode = createElement(node.getOwnerDocument(), LIST, IdGenerator.generateId(), EMPTY_STRING);
         SoftActionType softActionType = isParentListSoftMoved(tocVo) ? tocVo.getSoftActionAttr() : SoftActionType.ADD;
         updateSoftInfo(listNode, softActionType, Boolean.TRUE, user, CN, null, null, getOriginOfDocument(listNode));
         XercesUtils.insertOrUpdateAttributeValue(listNode, LEOS_ORIGIN_ATTR, CN);
@@ -596,7 +596,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
     }
 
     private Node wrapWithSubparagraph(Node node, TableOfContentItemVO tocVo, User user) {
-        Node subparagraphNode = createElement(node.getOwnerDocument(), SUBPARAGRAPH, IdGenerator.generateId(SUBPARAGRAPH.substring(0, 3), 7), EMPTY_STRING);
+        Node subparagraphNode = createElement(node.getOwnerDocument(), SUBPARAGRAPH, IdGenerator.generateId(), EMPTY_STRING);
         updateSoftInfo(subparagraphNode, tocVo.getSoftActionAttr(), tocVo.isSoftActionRoot(), user, tocVo.getOriginAttr(), getMoveId(tocVo), null, getOriginOfDocument(subparagraphNode));
         XercesUtils.insertOrUpdateAttributeValue(subparagraphNode, LEOS_ORIGIN_ATTR, tocVo.getOriginAttr());
         List<Node> listNode = new ArrayList<>();
@@ -820,7 +820,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                 tocVo, getOriginOfDocument(node));
 
         /*
-         * As the method updateSoftInfo removes all "deleted_" from the ids for undeleted nodes,
+         * As the method updateSoftInfo removes all "deleted" from the ids for undeleted nodes,
          * we need set it again for num when the article was numbered and changed to unnumbered,
          * as the num in this case was deleted by the situation of this change
          */
@@ -1274,7 +1274,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
                 String idChild = XercesUtils.getAttributeValue(child, XMLID);
                 String originChild = XercesUtils.getAttributeValue(child, LEOS_ORIGIN_ATTR);
 
-                //If CN and deleted_splitted elements, keep the content and delete childs
+                //If CN and deletedXsplittedX elements, keep the content and delete childs
                 if(originChild != null && idChild != null && originChild.equals(CN) && idChild.startsWith(SOFT_DELETE_PLACEHOLDER_ID_PREFIX + SOFT_SPLITTED_PLACEHOLDER_ID_PREFIX)) {
                     Node content = XercesUtils.getFirstChild(child, CONTENT);
                     textContent += " " + content.getTextContent();

@@ -150,7 +150,7 @@ public class BillProcessorImpl implements BillProcessor {
 
     private static String insertListIdAttr(String template, List<TocItem> items) {
         StringBuilder builder = XmlHelper.insertOrUpdateAttributeValue(new StringBuilder(template), LEOS_HTML_OL_ID_ATTR, ID_PLACEHOLDER);
-        template = replaceAll(builder.toString(), ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId("akn_" + StructureConfigUtils.getTocItemByNameOrThrow(items, ARTICLE).getAknTag().value(), 7));
+        template = replaceAll(builder.toString(), ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId());
         return template;
     }
 

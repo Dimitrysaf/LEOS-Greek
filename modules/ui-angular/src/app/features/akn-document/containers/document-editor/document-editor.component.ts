@@ -17,7 +17,7 @@ import {
   EuiDialogService,
 } from '@eui/components/eui-dialog';
 import { EuiBreadcrumbService } from '@eui/components/layout';
-import { uniqueId, UxAppShellService } from '@eui/core';
+import { EuiGrowlService, uniqueId } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { cloneDeep } from 'lodash-es';
 import {
@@ -189,7 +189,7 @@ export class DocumentEditorComponent
     private config: AppConfigService,
     private coEditionWSService: CoEditionServiceWS,
     private dialogService: EuiDialogService,
-    private appShellService: UxAppShellService,
+    private appShellService: EuiGrowlService,
     public breadcrumbService: EuiBreadcrumbService,
     public environmentService: EnvironmentService,
     private loadingService: LoadingService,

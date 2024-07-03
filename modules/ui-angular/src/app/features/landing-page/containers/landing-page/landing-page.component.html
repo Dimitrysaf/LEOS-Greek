@@ -1,17 +1,17 @@
 <eui-page>
-  <eui-page-content class="p-0">
+  <eui-page-content style="padding: 0px">
     <!-- Results column -->
     <!-- Hero Banner and Buttons-->
     <div class="body-container">
       <div class="hero-image">
         <div class="content-container">
           <div class="label-container">
-            <eui-label class="hero-text eui-u-font-3xl">{{
+            <eui-label class="eui-u-font-3xl hero-text">{{
               'page.home.hero.label' | translate
             }}</eui-label>
           </div>
           <!-- Hero buttons -->
-          <div class="button-container eui-u-mt-s">
+          <div class="button-container eui-u-mt-m">
             <button
               euiButton
               euiPrimary
@@ -19,7 +19,7 @@
               *ngIf="canUpload && !environmentService.isCouncil()"
             >
               {{ 'page.workspace.upload.button.text' | translate }}
-              <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
+              <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
             </button>
             <button
               euiButton
@@ -28,7 +28,7 @@
               *ngIf="environmentService.isCouncil()"
             >
               {{ 'page.workspace.upload-cn.button.text' | translate }}
-              <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
+              <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
             </button>
             <button
               euiButton
@@ -37,7 +37,7 @@
               *ngIf="environmentService.isCouncil()"
             >
               {{ 'page.home.create-your-draft' | translate }}
-              <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
+              <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
             </button>
             <button
               euiButton
@@ -46,7 +46,7 @@
               *ngIf="!environmentService.isCouncil()"
             >
               {{ 'page.workspace.create-button' | translate }}
-              <span euiIcon iconClass="eui-icon eui-icon-angle-right"></span>
+              <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
             </button>
           </div>
         </div>
@@ -67,14 +67,14 @@
       <div class="cards-containers">
         <app-proposal-home-card
           class="card-container"
-          iconClass="eui-icon eui-icon-pulse"
+          icon="pulse:sharp"
           labelKey="page.home.my-latest-activity"
           [packages]="latestPackages$ | async"
         ></app-proposal-home-card>
 
         <app-proposal-home-card
           class="card-container"
-          iconClass="eui-icon eui-icon-bookmark"
+          icon="eui-bookmark"
           labelKey="page.home.my-favourites"
           [packages]="favouritesPackages$ | async"
         ></app-proposal-home-card>

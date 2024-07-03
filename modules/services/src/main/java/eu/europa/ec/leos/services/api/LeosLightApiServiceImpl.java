@@ -60,6 +60,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -71,6 +72,7 @@ import java.util.Properties;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentMetadata;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosMetaData;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service
@@ -206,8 +208,9 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
     @Override
     public Pair<Object, Object> importProposal(MultipartFile file) throws IOException {
-        String originalFilename = FilenameUtils.normalize(file.getOriginalFilename());
-        File content = new File(originalFilename);
+        validateBasePath(FilenameUtils.normalize(file.getOriginalFilename()), "./");
+        String originalFilename = file.getOriginalFilename();
+        File content = new File(file.getOriginalFilename());
         byte[] fileContent = file.getBytes();
         try (FileOutputStream fos = new FileOutputStream(content)) {
             fos.write(file.getBytes());
@@ -453,9 +456,16 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         File file = null;
         OutputStream outputStream = null;
         try {
+            final String basePath = System.getProperty("java.io.tmpdir");
+            // Ensure docRef is a safe filename (e.g., no path traversal)
+            docRef = docRef.replaceAll("[^a-zA-Z0-9-_\\.]", "_");
+
             file = File.createTempFile(docRef, ".xml");
-            Path path = Paths.get(file.getAbsolutePath()).normalize();
-            path = Files.move(path, path.resolveSibling(docRef + ".xml").normalize(), REPLACE_EXISTING);
+            // Determine final destination path
+            Path path = Paths.get(basePath, docRef + ".xml").normalize();
+
+            //path = Files.move(path, path.resolveSibling(docRef + ".xml").normalize(), REPLACE_EXISTING);
+            Files.move(file.toPath(), path, StandardCopyOption.REPLACE_EXISTING);
             file = path.toFile();
             outputStream = new FileOutputStream(file);
             outputStream.write(docContent);

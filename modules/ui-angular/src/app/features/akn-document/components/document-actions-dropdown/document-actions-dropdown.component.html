@@ -8,11 +8,10 @@
       (click)="onMenuIconClick()"
     >
       <span euiLabel translate="page.editor.actions-dropdown.label"></span>
-      <span
-        euiIcon
-        iconClass="eui-icon eui-icon-more-vertical"
+      <eui-icon-svg
+        icon="eui-ellipsis-vertical"
         aria-label=" "
-      ></span>
+      ></eui-icon-svg>
     </button>
     <eui-dropdown-content>
       <ul euiList class="eui-list--with-line-separators">
@@ -94,14 +93,14 @@
           *ngIf="toggleUserGuidanceVisible"
         >
           <button euiListItem>
-            <eui-icon
-              euiSizeS
-              [iconClass]="
+            <eui-icon-svg
+              size="s"
+              [icon]="
                 (doc.userGuidanceVisible$ | async)
-                  ? 'eui-icon-checkbox'
-                  : 'eui-icon-checkbox-outline'
+                  ? 'eui-checkbox'
+                  : 'eui-checkbox-outline'
               "
-            ></eui-icon>
+            ></eui-icon-svg>
             {{ 'page.editor.actions-dropdown.see-user-guidance' | translate }}
           </button>
         </li>
@@ -112,28 +111,28 @@
           *ngIf="seeNavigationPanelVisible"
         >
           <button euiListItem>
-            <eui-icon
-              euiSizeS
-              [iconClass]="
+            <eui-icon-svg
+              size="s"
+              [icon]="
                 (doc.navigationSidebarCollapsed$ | async)
-                  ? 'eui-icon-checkbox-outline'
-                  : 'eui-icon-checkbox'
+                  ? 'eui-checkbox-outline'
+                  : 'eui-checkbox'
               "
-            ></eui-icon>
+            ></eui-icon-svg>
             {{ 'page.editor.actions-dropdown.see-navigation' | translate }}
           </button>
         </li>
         <!-- Enable track changes -->
         <li euiListItem (click)="toggleTrackChangesEnabled()">
           <button euiListItem [disabled]="!canActivateTrackChanges">
-            <eui-icon
-              euiSizeS
-              [iconClass]="
+            <eui-icon-svg
+              size="s"
+              [icon]="
                 isTrackChangesEnabled
-                  ? 'eui-icon-checkbox'
-                  : 'eui-icon-checkbox-outline'
+                  ? 'eui-checkbox'
+                  : 'eui-checkbox-outline'
               "
-            ></eui-icon>
+            ></eui-icon-svg>
             {{
               'page.editor.actions-dropdown.enable-track-changes' | translate
             }}
@@ -142,14 +141,14 @@
         <!-- See track changes -->
         <li euiListItem (click)="toggleSeeTrackChanges()">
           <button euiListItem>
-            <eui-icon
-              euiSizeS
-              [iconClass]="
+            <eui-icon-svg
+              size="s"
+              [icon]="
                 seeTrackChanges
-                  ? 'eui-icon-checkbox'
-                  : 'eui-icon-checkbox-outline'
+                  ? 'eui-checkbox'
+                  : 'eui-checkbox-outline'
               "
-            ></eui-icon>
+            ></eui-icon-svg>
             {{ 'page.editor.actions-dropdown.see-track-changes' | translate }}
           </button>
         </li>

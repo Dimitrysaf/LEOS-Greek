@@ -3,7 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { EuiDialogService } from '@eui/components/eui-dialog';
-import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { TranslateService } from '@ngx-translate/core';
 
 import { AppConfigService } from '@/core/services/app-config.service';

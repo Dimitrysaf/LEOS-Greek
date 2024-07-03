@@ -6,6 +6,11 @@
   margin-top: -32px;
 }
 
+.search-total-results {
+  display: flex;
+  justify-content: space-between;
+}
+
 @media (max-width: 642px) {
   .total-results-sort {
     gap: 10px;

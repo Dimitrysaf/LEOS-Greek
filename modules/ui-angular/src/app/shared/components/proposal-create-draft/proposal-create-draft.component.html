@@ -1,34 +1,30 @@
-<ux-wizard-steps
+<eui-wizard
         *ngIf="!fromProposal"
         (selectStep)="onSelectStepRemoteNav($event)"
         [activeStepIndex]="currentStepIndex"
         [isNavigationAllowed]="isNavigationAllowed"
 >
-    <ux-wizard-step
+    <eui-wizard-step
             label="Template selection"
             [isCompleted]="!!selectedTemplate"
     >
-        <uxWizardStepContent>
             <app-proposal-create-template-selector
                 #templateSelector
                 (selectTemplate)="handleSelectTemplate($event)"
                 (selectLanguage)="handleSelectLanguage($event)"
                 translationKey="draft"
             ></app-proposal-create-template-selector>
-        </uxWizardStepContent>
-    </ux-wizard-step>
-    <ux-wizard-step
+    </eui-wizard-step>
+    <eui-wizard-step
             label="{{ 'page.workspace.create-form.draft.label' | translate }}"
             [isCompleted]="createForm.valid && isStepOneCompleted"
     >
-        <uxWizardStepContent>
             <app-proposal-create-form
                     [createForm]="createForm"
                     translationKey="draft"
             ></app-proposal-create-form>
-        </uxWizardStepContent>
-    </ux-wizard-step>
-</ux-wizard-steps>
+    </eui-wizard-step>
+</eui-wizard>
 <ng-container *ngIf="fromProposal">
     <app-proposal-create-template-selector
         #templateSelector
@@ -48,7 +44,7 @@
             [disabled]="currentStepIndex === 1 || !isNavigationAllowed"
             (click)="onNavigation(-1)"
     >
-        <span class="eui-icon eui-icon-chevron-left"></span>
+        <eui-icon-svg icon="eui-chevron-back"></eui-icon-svg>
         <span euiLabel>
           {{ 'global.actions.previous' | translate }}
         </span>

@@ -31,6 +31,10 @@ input {
   padding: 20px 10px;
 }
 
+.eui-card {
+  border: none;
+}
+
 :host ::ng-deep {
   .cdk-drop-list {
     z-index: 999999;

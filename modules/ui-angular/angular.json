@@ -57,7 +57,7 @@
             ],
             "styles": [
               "node_modules/@eui/styles/dist/styles/eui.css",
-              "node_modules/@eui/styles/dist/styles/eui-legacy.css",
+              "node_modules/@eui/styles/dist/styles/eui-utilities.css",
               "src/styles.scss"
             ],
             "stylePreprocessorOptions": {

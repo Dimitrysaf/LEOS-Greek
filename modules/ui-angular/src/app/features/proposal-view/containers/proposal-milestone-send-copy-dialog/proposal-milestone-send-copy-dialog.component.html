@@ -4,30 +4,27 @@
     'page.collection.milestones.send-copy-for-contribution-dialog.title'
       | translate
   "
-  isDraggable
-  isClosedOnClickOutside
   [isHandleCloseOnDismiss]="true"
   [isHandleCloseOnEscape]="true"
   [isHandleCloseOnClose]="true"
   (clickOutside)="close()"
   (dismiss)="close()"
   (escape)="close()"
-  (close)="close()"
+  (dialogClose)="close()"
 >
   <!-- Body -->
   <div [formGroup]="targetUserForm">
-    <div euiInputGroup class="row justify-content-center">
+    <div euiInputGroup class="row eui-u-flex-justify-content-center">
       <div class="col-md-3">
         <label euiLabel for="targetUser">
           {{
-            'page.collection.milestones.send-copy-for-contribution-dialog.target-user'
-              | translate
+          'page.collection.milestones.send-copy-for-contribution-dialog.target-user'
+            | translate
           }}</label
         >
       </div>
       <div class="col-md-9">
         <eui-autocomplete
-          [panelWidth]="'auto'"
           [autocompleteData]="userAutocompleteData"
           name="targetUser"
           id="targetUser"
@@ -38,7 +35,7 @@
       </div>
     </div>
   </div>
-  <div euiInputGroup class="row justify-content-center">
+  <div euiInputGroup class="row eui-u-flex-justify-content-center">
     <div class="col-md-3"></div>
     <div class="col-md-9">
       <div
@@ -53,7 +50,7 @@
 
   <!-- Footer -->
   <eui-dialog-footer>
-    <div class="d-flex flex-row justify-content-end">
+    <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-justify-content-end">
       <button
         type="button"
         class="eui-u-mr-xs"
@@ -71,8 +68,8 @@
         (click)="handleSendMilestoneCopyForContribution()"
       >
         {{
-          'page.collection.milestones.send-copy-for-contribution-dialog.footer.send-for-contribution'
-            | translate
+        'page.collection.milestones.send-copy-for-contribution-dialog.footer.send-for-contribution'
+          | translate
         }}
       </button>
     </div>

@@ -3,7 +3,6 @@ import { FormBuilder } from '@angular/forms';
 import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { EuiDialogService } from '@eui/components/eui-dialog';
-import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { TranslateService } from '@ngx-translate/core';
 
 import { AppConfigService } from '@/core/services/app-config.service';
@@ -32,7 +31,7 @@ import {
   EXPORT_SECTION_DROPDOWN_ID,
   EXPORT_SECTION_ID,
   STRUCTURE_RENUMBER_DOCUMENT_ID,
-  STRUCTURE_SECTION_ID
+  STRUCTURE_SECTION_ID,
 } from '@/shared/constants/document-actions.constants';
 import {
   DocumentService,
@@ -42,6 +41,7 @@ import { EnvironmentService } from '@/shared/services/enviroment.service';
 import { LeosLightService } from '@/shared/services/leos-light.service';
 
 import { ViewVersionService } from './view-version.service';
+import { DropdownModel } from '@/shared/dropdown.model';
 
 @Injectable()
 export class DocumentActionsMandateService extends DocumentActionsService {
@@ -204,12 +204,12 @@ export class DocumentActionsMandateService extends DocumentActionsService {
       euiSize: 's',
       euiStyle: 'secondary',
       svgType: 'sharp',
-      svgIconClas: 'arrow-down',
+      icon: 'arrow-down',
       actionFn: () => this.onApplyContinuousNumberingSelect(),
     };
   }
 
-  private buildCleanExportButtonItem(): EuiDropdownButtonMenuItem {
+  private buildCleanExportButtonItem(): DropdownModel {
     return {
       id: EXPORT_DROPDOWN_EXPORT_CLEAN_VERSION_ID,
       label: this.translateService.instant(
@@ -221,7 +221,7 @@ export class DocumentActionsMandateService extends DocumentActionsService {
     };
   }
 
-  private buildExportToDocuwriteButtonItem(): EuiDropdownButtonMenuItem {
+  private buildExportToDocuwriteButtonItem(): DropdownModel {
     return {
       id: COMPARE_EXPORT_DROPDOWN_EXPORT_DOCUWRITE,
       label: this.translateService.instant(
@@ -231,14 +231,14 @@ export class DocumentActionsMandateService extends DocumentActionsService {
     };
   }
 
-  private buildExportToEConsiliumButtonItem(): EuiDropdownButtonMenuItem {
+  private buildExportToEConsiliumButtonItem(): DropdownModel {
     let exportOptions: DownloadEConsiliumOptions = null;
     return {
       id: EXPORT_DROPDOWN_EXPORT_TO_ECONSILIUM_ID,
       label: this.translateService.instant(
         'page.editor.actions-dropdown.export-econsilium',
       ),
-      iconClass: 'eui-icon-ecl-file',
+      icon: 'eui-ecl-file',
       command: () => {
         const econsiliumDialog = this.dialogService.openDialog({
           dialogId: 'export-econsilium',

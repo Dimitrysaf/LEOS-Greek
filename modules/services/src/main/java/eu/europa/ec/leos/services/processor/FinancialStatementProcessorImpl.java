@@ -115,7 +115,7 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
     }
 
     private String convertToSubparagraph(Element contentElement, String template) {
-        String wrappedContent = new StringBuilder("<" + SUBPARAGRAPH.toLowerCase() + " xml:id=\"transformed_" + contentElement.getElementId() + "\" " +
+        String wrappedContent = new StringBuilder("<" + SUBPARAGRAPH.toLowerCase() + " xml:id=\"" + XmlHelper.SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX + contentElement.getElementId() + "\" " +
                 LEOS_EDITABLE_ATTR+"=\"true\">").append(contentElement.getElementFragment().replaceAll("leos:editable=\"true\"", "")).
                 append("</" + SUBPARAGRAPH.toLowerCase() + ">").append(template).toString();
         return wrappedContent;

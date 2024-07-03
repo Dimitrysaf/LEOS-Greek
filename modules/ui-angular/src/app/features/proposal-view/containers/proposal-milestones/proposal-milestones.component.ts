@@ -1,6 +1,5 @@
 import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {EuiDialogService} from "@eui/components/eui-dialog";
-import {UxAppShellService} from '@eui/core';
+import {EuiGrowlService} from '@eui/core';
 import {TranslateService} from '@ngx-translate/core';
 import {Subject, takeUntil} from 'rxjs';
 
@@ -17,6 +16,7 @@ import {
 import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.service';
 
 import {ProposalMilestoneSendCopyDialogComponent} from '../proposal-milestone-send-copy-dialog/proposal-milestone-send-copy-dialog.component';
+import { EuiDialogService } from '@eui/components/eui-dialog';
 
 const MILESTONE_RELOAD_INTERVAL = 10000;
 
@@ -49,6 +49,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
   inputMilestoneViewed = false;
+  translated = false;
 
   private milestonesCheckTimer: ReturnType<typeof setTimeout>;
   private milestonesStatus = {
@@ -61,7 +62,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   constructor(
     protected proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
-    private uxAppService: UxAppShellService,
+    private euiGrowlService: EuiGrowlService,
     private proposalMilestonesService: ProposalMilestonesService,
     private appConfigService: AppConfigService,
     protected dialogService: EuiDialogService,
@@ -107,7 +108,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
           });
         },
         error: (error) => {
-          this.uxAppService.growl({
+          this.euiGrowlService.growl({
             severity: 'danger',
             summary: this.translateService.instant(
               'page.collection.milestones.load-milestones.error',
@@ -123,6 +124,8 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     this.proposalDetailsService.permissions$
       .pipe(takeUntil(this.destroy$))
       .subscribe((perms) => (this.permissions = perms));
+
+    this.translated = this.proposalDetailsService.getTranslated();
   }
 
   ngOnDestroy(): void {
@@ -164,7 +167,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   onMilestoneViewDialogClosed() {
-    this.proposalDetailsService.setProposalRef(this.proposalRef,false)
+    this.proposalDetailsService.setProposalRef(this.proposalRef,false);
     this.openMilestoneViewDialogVisible = false;
     this.milestoneViewData = null;
   }
@@ -229,6 +232,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   isReadyToMerge(status: MilestoneStatus): boolean {
+    /*const readyToMergeTranslation = this.translateService.instant(
+      'page.workspace.proposal-item.ready-status',
+    );
+    return this.getStatus(status) === readyToMergeTranslation;*/
     return 'Ready to merge' === this.getStatus(status);
   }
 
@@ -259,7 +266,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
 
     const assumeMilestoneTurnedReady = lessInPreparation && notMoreErrors;
     if (assumeMilestoneTurnedReady && showGrowl) {
-      this.uxAppService.growl({
+      this.euiGrowlService.growl({
         severity: 'success',
         summary: this.translateService.instant(
           'global.notifications.title.success',

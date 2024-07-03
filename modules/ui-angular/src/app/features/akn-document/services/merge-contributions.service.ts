@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import {DomSanitizer} from "@angular/platform-browser";
 import {EuiDialogConfig, EuiDialogService} from "@eui/components/eui-dialog";
-import { UxAppShellService } from '@eui/core';
+import { EuiAppShellService, EuiGrowlService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import {BehaviorSubject, filter, map, Observable, Subject, tap} from 'rxjs';
 
@@ -94,13 +94,13 @@ export class MergeContributionsService {
     private http: HttpClient,
     private pageModeService: PageModeService,
     private translate: TranslateService,
-    private appShell: UxAppShellService,
+    private appShell: EuiGrowlService,
     private documentService: DocumentService,
     private syncScrollService: SyncDocumentScrollService,
     private dialogService: EuiDialogService,
-    private appShellService: UxAppShellService,
     private zoombarService: ZoombarService,
     private translateService: TranslateService,
+    private growlService: EuiGrowlService,
     protected domSanitizer: DomSanitizer,
     @Inject(DOCUMENT) private document: Document,
   ) {
@@ -280,7 +280,6 @@ export class MergeContributionsService {
         block: 'nearest',
       });
       this.contributionIndex++;
-      console.log(this.contributionIndex);
     }
     this.checkHandleNavCompareBtnDisabled();
   }
@@ -294,7 +293,6 @@ export class MergeContributionsService {
           block: 'nearest',
         });
         this.contributionIndex--;
-        console.log(this.contributionIndex);
       }
     }
     this.checkHandleNavCompareBtnDisabled();
@@ -441,7 +439,7 @@ export class MergeContributionsService {
       .markContributionAsProcessed(this.contribution)
       .subscribe({
         next: (res) => {
-          this.appShellService.growl({
+          this.growlService.growl({
             severity: 'success',
             summary: this.translate.instant(
               'global.notifications.title.success',
@@ -463,7 +461,7 @@ export class MergeContributionsService {
           );
         },
         error: (res) => {
-          this.appShellService.growl({
+          this.growlService.growl({
             severity: 'danger',
             summary: this.translate.instant(
               'page.editor.contribution.mark-as-processed-message-error',

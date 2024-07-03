@@ -5,8 +5,8 @@ class proposalViewerPage extends headerPage{
         proposalTitle: () => cy.get('app-proposal-header h1'),
         //favouriteIconBtn: () => cy.get('eui-icon.eui-icon--size-l'),
         actionBtn: () => cy.get('app-proposal-actions-dropdown button'),
-        downloadBtn:() => cy.get('.eui-dropdown-content button').contains('Download'),
-        deleteBtn: () => cy.get('button.eui-list-item--danger'),
+        downloadBtn:() => cy.get('.eui-dropdown-item__content-text').contains('Download'),
+        deleteBtn: () => cy.get('button.eui-u-color-danger-100'),
         closeBtn: () => cy.contains("Close"),
         legalActLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Legal Act'),
         coverPageLink: () => cy.get('.eui-tab-content-wrapper eui-card').contains('Cover Page'),
@@ -67,7 +67,7 @@ class proposalViewerPage extends headerPage{
     }
 
     clickActionsMenuOfAnnex(annexNumber){
-        this.elements.annexCount().eq(annexNumber-1).find("button[aria-label='Annex Actions']").find(".eui-icon-more-vertical").scrollIntoView().click();
+        this.elements.annexCount().eq(annexNumber-1).find("button[aria-label='Annex Actions']").find("*[icon='eui-ellipsis-vertical']").scrollIntoView().click();
     }
 
     clickChangeTitleBtn(){

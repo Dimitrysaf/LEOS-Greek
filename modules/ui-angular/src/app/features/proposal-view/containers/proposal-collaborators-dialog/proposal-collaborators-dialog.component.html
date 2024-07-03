@@ -5,8 +5,6 @@
 <eui-dialog
   #addCollaboratorsModal
   [title]="'page.collection.collaborators.dialog.header' | translate"
-  isDraggable
-  isClosedOnClickOutside
   [isHandleCloseOnDismiss]="true"
   [isHandleCloseOnEscape]="true"
   [isHandleCloseOnClose]="true"
@@ -16,7 +14,7 @@
   (close)="closeDialog()"
 >
   <!-- Body -->
-  <div euiInputGroup class="row justify-content-center">
+  <div euiInputGroup class="row eui-u-flex-justify-content-center">
     <div class="col-md-3">
       <label euiLabel for="quantity">
         {{ 'page.collection.collaborators.dialog.quantity' | translate }}</label
@@ -36,7 +34,8 @@
       />
       <eui-feedback-message euiDanger [hidden]="isQuantityValid">
         {{ 'page.collection.collaborators.dialog.max-quantity' | translate }}
-        {{ MAX_QUANTITY_USER }}</eui-feedback-message
+        {{ MAX_QUANTITY_USER }}
+      </eui-feedback-message
       >
     </div>
   </div>
@@ -47,13 +46,12 @@
         class="eui-u-p-xs"
         [ngClass]="{ 'eui-u-bg-color-danger-5': item.errors }"
       >
-        <div [formGroupName]="i" class="row align-items-center">
+        <div [formGroupName]="i" class="row eui-u-flex-align-items-center">
           <div class="col-md-5">
             <label euiLabel for="item">{{
-              'page.collection.collaborators.dialog.form.name' | translate
-            }}</label>
+                'page.collection.collaborators.dialog.form.name' | translate
+              }}</label>
             <eui-autocomplete
-              [panelWidth]="'auto'"
               [autocompleteData]="userAutocompleteData"
               name="item"
               id="item"
@@ -63,8 +61,8 @@
           </div>
           <div class="col-md-3">
             <label euiLabel for="entity">{{
-              'page.collection.collaborators.dialog.form.entity' | translate
-            }}</label>
+                'page.collection.collaborators.dialog.form.entity' | translate
+              }}</label>
             <input
               euiInputText
               name="entity"
@@ -75,8 +73,8 @@
           </div>
           <div class="col-md-3">
             <label euiLabel for="role">{{
-              'page.collection.collaborators.dialog.form.role' | translate
-            }}</label>
+                'page.collection.collaborators.dialog.form.role' | translate
+              }}</label>
             <select
               euiSelect
               id="role"
@@ -98,12 +96,8 @@
             </select>
           </div>
           <div class="col-md-1 eui-u-mt-l">
-            <span
-              euiIcon
-              euiDanger
-              (click)="removeCollaborator(i)"
-              class="eui-icon eui-icon-close-m"
-            ></span>
+            <eui-icon-svg set="eui" icon="eui-close" fillColor="danger-100"
+                          (click)="removeCollaborator(i)"></eui-icon-svg>
           </div>
         </div>
         <div class="row" *ngIf="item.errors">
@@ -126,7 +120,7 @@
 
   <!-- Footer -->
   <eui-dialog-footer>
-    <div class="d-flex flex-row justify-content-end">
+    <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-justify-content-end">
       <button
         type="button"
         class="eui-u-mr-xs"

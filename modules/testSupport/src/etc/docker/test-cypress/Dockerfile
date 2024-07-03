@@ -13,7 +13,7 @@
 ARG NODE_VERSION='20.14.0'
 ARG CHROME_VERSION='126.0.6478.55-1'
 
-FROM cypress/factory
+FROM cypress/factory:latest
 ENV JAVA_HOME=/opt/openlogic-openjdk-8u402-b06-linux-x64
 ENV M2_HOME=/opt/apache-maven-3.9.6
 ENV PATH=${PATH}:/opt/openlogic-openjdk-8u402-b06-linux-x64/bin:/opt/apache-maven-3.9.6/bin

@@ -1,14 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xmlns:xml="http://www.w3.org/XML/1998/namespace">
 	<bill name="DIR">
 		<meta>
-			<identification source="~_COM">
+			<identification source="~COM">
 				<FRBRWork>
 					<FRBRthis value=""/>
 					<FRBRuri value=""/>
 					<FRBRdate date="2999-01-01" name=""/>
 					<FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:fileCUID value="yyyyyyy"/>
+                        <akn4eu:docCUID value="xxxxxx"/>
+                    </preservation>
 					<FRBRcountry value="EU"/>
                     <FRBRprescriptive value="true"/>
                 </FRBRWork>
@@ -25,40 +29,39 @@
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
 					<preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                		<akn4eu:akn4euVersion value="4.0.0.0"/>
+                		<akn4eu:akn4euVersion value="4.1.0.0"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
                 	</preservation>
                 </FRBRManifestation>
             </identification>
-            <references source="~_COM">
-                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
-                <TLCReference name="docType" href="http://publications.europa.eu/resource/authority/resource-type/DIR"  showAs="Directive"/>
-                <TLCReference name="contentSubject" href="http://eurovoc.europa.eu/5456" showAs="Legal basis"/>
-                <TLCReference name="language" href="http://publications.europa.eu/resource/authority/language/ENG" showAs="en"/>
-                <TLCReference name="procedureReference" href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" showAs="YYYY/NNNN (AAA)" shortForm="YYYY/NNN/AAA"/>
-                <TLCReference name="identifier" href="http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER" showAs="AAA(YYYY) NNN" shortForm="AAA/YYYY/NNN"/>
-                <TLCConcept href="http://publications.europa.eu/resource/subdivision-content/ART_DEF" showAs="Article on definitions"/>
+            <references source="~COM">
+                <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
+                <TLCOrganization xml:id="CONSIL"  href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union"/>
+                <TLCOrganization xml:id="EP"  href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament"/>
+                <TLCOrganization xml:id="COM"  href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCRole xml:id="PRESID"  href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President"/>
+                <TLCReference xml:id="DIR" name="docType" href="http://publications.europa.eu/resource/authority/resource-type/DIR"  showAs="Directive"/>
+                <TLCReference xml:id="legalBasis"  href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis"/>
+                <TLCReference xml:id="language"  href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>                
+                <TLCConcept xml:id="ART_DEF"  href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions"/>
             </references>
-            <proprietary source="~_leos">
-                <leos:templateVersion>3.1.0</leos:templateVersion>
+            <proprietary source="~COM">
+                <leos:templateVersion>4.1.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
 				<leos:template>SJ-024</leos:template>
 				<leos:docTemplate>BL-024</leos:docTemplate>
             </proprietary>
         </meta>
         <preface>
-            <container name="procedureIdentifier">
+            <container name="procedureIdentifier" class="template" >
                 <p>
-                    <docketNumber refersTo="~_procedure_YYYY_NNN"/>
+                    <docketNumber class="template" />
                 </p>
-            </container>
+            </container>  
             <longTitle>
                 <p>
                     <docStage>Proposal for a</docStage>
-                    <docType refersTo="~_DIR">DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
+                    <docType refersTo="~DIR">DIRECTIVE OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
                     <docPurpose>on ...</docPurpose>
                 </p>
             </longTitle>
@@ -68,7 +71,7 @@
                 <p>THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</p>
             </formula>
             <citations leos:editable="false">
-                <citation refersTo="~_legalBasis" leos:editable="true">
+                <citation refersTo="~legalBasis" leos:editable="true">
                     <p>Having regard to the Treaty on the Functioning of the European Union, and in particular Article [...] thereof,</p>
                 </citation>
                 <citation leos:editable="true">
@@ -116,8 +119,14 @@
                         <p>Text...</p>
                     </content>
                 </paragraph>
+				<paragraph>
+                    <num>2.</num>
+                    <content>
+                        <p>Text...</p>
+                    </content>
+                </paragraph>
             </article>
-            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~_ART_DEF">
+            <article leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~ART_DEF">
                 <num leos:editable="false">Article 2</num>
                 <heading>Definitions</heading>
                 <paragraph>
@@ -162,27 +171,27 @@
             </article>
             <!-- /Model A-->
             <!-- Model B -->
-            <!-- <article xml:id="_art_n2" leos:editable="true" leos:alternative="true" leos:optionlist="listOption1">
-                <num xml:id="_art_n2_tMMjfH" leos:editable="false">Article #</num>
-                <heading xml:id="_art_n2_xM2j7b">Transposition</heading>
-                <paragraph xml:id="_art_n2__para_1">
-                    <num xml:id="_art_n2_i28JyH">1.</num>
-                    <subparagraph xml:id="_art_n2__para_1__subpara_1">
-                        <content xml:id="_art_n2_U4XrFV">
-                            <p xml:id="_art_n2_iBvBjx">Member States shall adopt and publish, by [...]  ** Field Guidance** [The time limit for transposition will be as short as possible and, generally, will not exceed two years] -->
+            <!-- <article leos:editable="true" leos:alternative="true" leos:optionlist="listOption1">
+                <num leos:editable="false">Article #</num>
+                <heading>Transposition</heading>
+                <paragraph>
+                    <num>1.</num>
+                    <subparagraph>
+                        <content>
+                            <p>Member States shall adopt and publish, by [...]  ** Field Guidance** [The time limit for transposition will be as short as possible and, generally, will not exceed two years] -->
                             <!--   at the latest, the laws, regulations and administrative provisions necessary to comply with this Directive.
                                 They shall forthwith communicate to the Commission the text of those provisions.
                             </p>
                         </content>
                     </subparagraph>
-                    <subparagraph xml:id="_art_n2__para_1__subpara_2">
-                        <content xml:id="_art_n2_dvPwbu">
-                            <p xml:id="_art_n2_tAP1Yk">They shall apply those provisions from [...].</p>
+                    <subparagraph>
+                        <content>
+                            <p>They shall apply those provisions from [...].</p>
                         </content>
                     </subparagraph>
-                    <subparagraph xml:id="_art_n2__para_1__subpara_3">
-                        <content xml:id="_art_n2_7WZHhd">
-                            <p xml:id="_art_n2_WSB7fW">When Member States adopt those provisions, they shall contain a
+                    <subparagraph>
+                        <content>
+                            <p>When Member States adopt those provisions, they shall contain a
                                 reference to this Directive or be accompanied by such a reference on the occasion of
                                 their official publication. Member States shall determine how such reference is to be
                                 made.
@@ -190,10 +199,10 @@
                         </content>
                     </subparagraph>
                 </paragraph>
-                <paragraph xml:id="_art_n2__para_2">
-                    <num xml:id="_art_n2_qw6cvY">2.</num>
-                    <content xml:id="_art_n2_bTghug">
-                        <p xml:id="_art_n2_msixSB">Member States shall communicate to the Commission the text of the main
+                <paragraph>
+                    <num>2.</num>
+                    <content>
+                        <p>Member States shall communicate to the Commission the text of the main
                             provisions of national law which they adopt in the field covered by this Directive.
                         </p>
                     </content>
@@ -220,25 +229,25 @@
 	                    <p>This Directive is addressed to the Member States.</p>
 	                </content>
                 </paragraph>
-                <!-- <paragraph xml:id="_art_n4__para_1">
-	                <content xml:id="_art_n5_kfM6hD">
-	                    <p xml:id="_art_n5_yZp7Mq">This Directive is addressed to the Member States in accordance with the Treaties.</p>
+                <!-- <paragraph>
+	                <content>
+	                    <p>This Directive is addressed to the Member States in accordance with the Treaties.</p>
 	                </content>
                 </paragraph> -->
             </article>
            
         </body>
         <conclusions>
-            <p>Done at <location refersTo="~_BEL_BRU">Brussels</location>, <date date="9999-01-01"/></p>
+            <p>Done at <location refersTo="~BEL_BRU">Brussels</location>, <date class="template" date="2999-01-01"/></p>
             <block name="signatory">
                 <signature>
-                    <organization refersTo="~_EP">For the European Parliament</organization>
-                    <role refersTo="~_PRESID">The President</role>
+                    <organization refersTo="~EP">For the European Parliament</organization>
+                    <role refersTo="~PRESID">The President</role>
                     <person refersTo="">[...]</person>
                 </signature>
                 <signature>
-                    <organization refersTo="~_CONSIL">For the Council</organization>
-                    <role refersTo="~_PRESID">The President</role>
+                    <organization refersTo="~CONSIL">For the Council</organization>
+                    <role refersTo="~PRESID">The President</role>
                     <person refersTo="">[...]</person>
                 </signature>
             </block>

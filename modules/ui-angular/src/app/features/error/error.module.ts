@@ -6,6 +6,7 @@ import { SharedModule } from '@/shared/shared.module';
 import { ForbiddenComponent } from './components/forbidden/forbidden.component';
 import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 import { UnathorizedComponent } from './components/unathorized/unathorized.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,6 @@ import { UnathorizedComponent } from './components/unathorized/unathorized.compo
     ForbiddenComponent,
     PageNotFoundComponent,
   ],
-  imports: [CommonModule, SharedModule],
+  imports: [CommonModule, SharedModule, RouterModule],
 })
 export class ErrorModule {}

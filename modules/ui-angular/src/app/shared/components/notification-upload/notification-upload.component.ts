@@ -6,7 +6,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
 import { EuiFileUploadComponent } from '@eui/components/eui-file-upload';
 import { TranslateService } from '@ngx-translate/core';

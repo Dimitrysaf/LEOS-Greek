@@ -35,6 +35,7 @@ import {
   DEFAULT_SORT_ORDER,
   ProposalFilter,
 } from '../../models';
+import { SharedModule } from '@/shared/shared.module';
 
 type ProposalsState = {
   filters: ProposalFilter;

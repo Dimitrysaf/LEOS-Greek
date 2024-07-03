@@ -698,7 +698,7 @@ public class XmlContentProcessorHelper {
         }
         if (tagName.equals(ARTICLE)) {
             XercesUtils.insertAttributeIfNotPresent(node, LEOS_HTML_OL_ID_ATTR,
-                    IdGenerator.generateId("akn_" + StructureConfigUtils.getTocItemByNameOrThrow(tocItems, ARTICLE).getAknTag().value(), 7));
+                    IdGenerator.generateId());
         }
     }
 }

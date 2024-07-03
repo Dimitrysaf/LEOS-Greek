@@ -3,7 +3,7 @@ import headerPage from './headerPage';
 class financialStatementPage extends headerPage{
     elements = {
         closeBtn: () => cy.xpath("//button[text()='Close']"),
-        doctype: () => cy.get("doctype[refersto='~_STAT_FINANC_LEGIS']")
+        doctype: () => cy.get("doctype[refersto='~STAT_FINANC_LEGIS']")
     }
 
     clickCloseBtn(){
@@ -11,7 +11,7 @@ class financialStatementPage extends headerPage{
     }
 
     mouseHoverAndClickOnLevel(levelNumber){
-        cy.xpath("//mainbody//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
+        cy.xpath("//mainbody//level[" + levelNumber + "]").invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
     }
 
     getLevel(levelNumber){

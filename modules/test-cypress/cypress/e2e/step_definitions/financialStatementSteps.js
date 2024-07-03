@@ -3,7 +3,7 @@ import financialStatementPage from "../pages/financialStatementPage";
 
 Then('user is on financial statement page', () => {
     financialStatementPage.getCurrentPageName().should("have.text", "Financial Statement");
-    cy.wait(2000);
+    cy.wait(5000);
 });
 
 When('click on close button on financial statement page', () => {

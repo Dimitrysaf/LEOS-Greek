@@ -108,10 +108,10 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
         Map<String, XmlNodeConfig> annexConfigMap = new HashMap<>();
         final Map<String, XmlNodeConfig> metadataConfig = populateMetadataConfigMap();
 
-        metadataConfig.put(ANNEX_INDEX_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexIndex", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__annexIndex", "leos:annexIndex"), new XmlNodeConfig.Attribute("source", "~leos", "proprietary"))));
-        metadataConfig.put(ANNEX_NUMBER_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexNumber", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__annexNumber", "leos:annexNumber"), new XmlNodeConfig.Attribute("source", "~leos", "proprietary"))));
-        metadataConfig.put(ANNEX_TITLE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexTitle", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__annexTitle", "leos:annexTitle"), new XmlNodeConfig.Attribute("source", "~leos", "proprietary"))));
-        metadataConfig.put(ANNEX_CLONED_REF_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:clonedRef", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__clonedRef", "leos:clonedRef"), new XmlNodeConfig.Attribute("source", "~leos", "proprietary"))));
+        metadataConfig.put(ANNEX_INDEX_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexIndex", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__annexIndex", "leos:annexIndex"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
+        metadataConfig.put(ANNEX_NUMBER_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexNumber", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__annexNumber", "leos:annexNumber"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
+        metadataConfig.put(ANNEX_TITLE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:annexTitle", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__annexTitle", "leos:annexTitle"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
+        metadataConfig.put(ANNEX_CLONED_REF_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:clonedRef", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__clonedRef", "leos:clonedRef"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
         annexConfigMap.putAll(metadataConfig);
 
         final Map<String, XmlNodeConfig> prefaceConfig = new HashMap<>(2);
@@ -145,9 +145,9 @@ public class XmlNodeConfigProcessorImpl implements XmlNodeConfigProcessor {
 
     private static Map<String, XmlNodeConfig> populateMetadataConfigMap() {
         final Map<String, XmlNodeConfig> metadataConfig = new HashMap<>(9);
-        metadataConfig.put(DOC_STAGE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docStage", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__docstage", "leos:docStage"), new XmlNodeConfig.Attribute("source", "~leos", "proprietary"))));
-        metadataConfig.put(DOC_TYPE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docType", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__doctype", "leos:docType"), new XmlNodeConfig.Attribute("source", "~leos", "proprietary"))));
-        metadataConfig.put(DOC_PURPOSE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docPurpose", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__docpurpose", "leos:docPurpose"), new XmlNodeConfig.Attribute("source", "~leos", "proprietary"))));
+        metadataConfig.put(DOC_STAGE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docStage", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__docstage", "leos:docStage"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
+        metadataConfig.put(DOC_TYPE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docType", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__doctype", "leos:docType"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
+        metadataConfig.put(DOC_PURPOSE_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:docPurpose", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary__docpurpose", "leos:docPurpose"), new XmlNodeConfig.Attribute("source", "~COM", "proprietary"))));
         metadataConfig.put(DOC_REF_META, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:ref", true, Collections.emptyList()));
         metadataConfig.put(DOC_OBJECT_ID, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:objectId", true, Collections.emptyList()));
         metadataConfig.put(DOC_TEMPLATE, new XmlNodeConfig("/akn:akomaNtoso//akn:meta/akn:proprietary/leos:template", true, Arrays.asList(new XmlNodeConfig.Attribute("xml:id", "_proprietary_template", "leos:template"))));

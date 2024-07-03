@@ -29,8 +29,8 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
   protected isRecent = false;
   protected isMilestone = false;
   protected isCreation = false;
-  protected title: Observable<string>;
-  protected subtitle: Observable<string>;
+  protected title$: Observable<string>;
+  protected subtitle$: Observable<string>;
   protected description: string;
   protected showMore = false;
   protected showMoreLabel: string;
@@ -272,8 +272,8 @@ export class VersionsPaneGroupComponent implements OnInit, OnChanges {
       this.hasMore = this.totalSubVersions > 1;
     }
 
-    this.title = this.getTitle();
-    this.subtitle = this.getSubtitle();
+    this.title$ = this.getTitle();
+    this.subtitle$ = this.getSubtitle();
     const currentVersions = this.versionCompareService.getVersionCompareIds();
     if (
       this.isRecent &&

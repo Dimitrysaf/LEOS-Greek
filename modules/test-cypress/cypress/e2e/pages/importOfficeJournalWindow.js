@@ -6,7 +6,7 @@ class importOfficeJournalWindow {
         yearDropdown: () => cy.get('select#year'),
         nr: () => cy.get('input#number'),
         searchBtn: () => cy.get("button[type='submit']"),
-        exclamationMark: () => cy.get('.eui-icon--danger'),
+        exclamationMark: () => cy.get("*[icon='eui-alert-circle']"),
         importContent: () => cy.get('#akomaNtoso'),
         bill: () => this.elements.importContent().find('bill'),
         preamble: () => this.elements.bill().find('preamble'),
@@ -53,6 +53,7 @@ class importOfficeJournalWindow {
 
     clickImportBtn(){
         this.elements.importBtn().click();
+        cy.wait(5000);
     }
 
     clickSelectAllRecitalsBtn(){

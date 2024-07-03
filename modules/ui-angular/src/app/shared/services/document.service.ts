@@ -1,7 +1,7 @@
 import { DOCUMENT } from '@angular/common';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { UxAppShellService } from '@eui/core';
+import { EuiGrowlService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
 import {
@@ -232,7 +232,7 @@ export class DocumentService {
     private http: HttpClient,
     @Inject(DOCUMENT) private document: Document,
     private appConfig: AppConfigService,
-    private appShell: UxAppShellService,
+    private growlService: EuiGrowlService,
     private translate: TranslateService,
     private coEditionService: CoEditionServiceWS,
     private loadingService: LoadingService,
@@ -459,7 +459,7 @@ export class DocumentService {
       )
       .subscribe({
         next: () => {
-          this.appShell.growl({
+          this.growlService.growl({
             severity: 'success',
             detail: this.translate.instant(
               'page.editor.export-econsilium-success',
@@ -467,7 +467,7 @@ export class DocumentService {
           });
         },
         error: () => {
-          this.appShell.growl({
+          this.growlService.growl({
             severity: 'danger',
             detail: this.translate.instant(
               'page.editor.export-econsilium-error',
@@ -1249,6 +1249,10 @@ export class DocumentService {
     return null;
   }
 
+  toggleUserGuidanceOff() {
+    this.userGuidanceVisibleBS.next(false);
+  }
+
   private setSearchResultsCounter(count: number) {
     this.searchResultsCounterBS.next(count);
   }
@@ -1479,7 +1483,7 @@ export class DocumentService {
       this.translate
         .get('page.editor.export-version-email-sent', { fileType, userEmail })
         .subscribe((message) => {
-          this.appShell.growl({
+          this.growlService.growl({
             severity: 'info',
             detail: message,
           });

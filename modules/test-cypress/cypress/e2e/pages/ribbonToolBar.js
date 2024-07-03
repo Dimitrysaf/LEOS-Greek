@@ -9,17 +9,17 @@ class ribbonToolBar {
         seeUserGuidanceToggleBtn: () => this.elements.displaySection().find('app-ribbon-toolbar-checkbox').find('span.mat-slide-toggle-bar'),
         seeTrackChangesSection: () => cy.get('#SEE-TRACK_CHANGES-ID'),
         enableTrackChangesInput: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('input'),
-        // enableTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('span.mat-slide-toggle-bar'),
+        enableTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('.eui-slide-toggle__container'),
         seeTrackChangesInput: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('input'),
         // seeTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('span.mat-slide-toggle-bar'),
-        trackChangesEnableToggle: () => cy.get("#SEE-TRACK_CHANGES-ID").find("input").first(),
+        //trackChangesEnableToggle: () => cy.get("#SEE-TRACK_CHANGES-ID").find("input").first(),
         zoomValue: () => cy.get('span.zoom-value'),
         importFromOjBtn: () => cy.contains('Import from OJ '),
         changeAnnexStructureBtn: () => cy.get('#STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID')
     }
 
     clickEnableTrackChangesToggleBtn() {
-        this.elements.trackChangesEnableToggle().realClick();
+        this.elements.enableTrackChangesToggleBtn().realClick();
     }
 
     clickChangeAnnexStructureBtn(){

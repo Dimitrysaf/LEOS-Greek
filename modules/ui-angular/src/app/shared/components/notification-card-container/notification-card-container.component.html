@@ -1,6 +1,5 @@
 <div
-  interactiveScrollbars
-  class="notification-container"
+  class="notification-container eui-u-shadow-8"
   *ngIf="isNotificationsShown"
   appHideOnClickOutside
   [ignoreClickOn]="['.eui-dialog-container', '.eui-icon-times']"
@@ -11,7 +10,7 @@
       <div>
         <span style="font-weight: bolder">{{
           'page.home.notifications.notification' | translate
-        }}</span>
+          }}</span>
       </div>
       <div class="right-side-header">
         <button
@@ -23,11 +22,11 @@
         >
           <span style="font-weight: bolder">{{
             'page.workspace.upload.button.text' | translate
-          }}</span>
+            }}</span>
         </button>
         <a style="font-weight: bolder" (click)="toggleNotificationVisibility()"
-          ><span style="font-weight: bolder">{{
-            'global.actions.hide' | translate
+        ><span style="font-weight: bolder">{{
+          'global.actions.hide' | translate
           }}</span></a
         >
         <span class="eui-icon eui-icon-angle-right"></span>

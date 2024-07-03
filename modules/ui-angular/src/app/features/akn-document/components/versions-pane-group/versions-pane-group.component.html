@@ -1,10 +1,10 @@
 <eui-card class="version-panes" euiNoShadow *ngIf="!isFilteredOut">
   <eui-card-header>
-    <eui-card-header-title>{{ title | async }}</eui-card-header-title>
+    <eui-card-header-title>{{ title$ | async }}</eui-card-header-title>
     <eui-card-header-subtitle *ngIf="description">
       {{ description }}
     </eui-card-header-subtitle>
-    <eui-card-header-subtitle>{{ subtitle | async }}</eui-card-header-subtitle>
+    <eui-card-header-subtitle class="eui-u-font-light eui-u-font-s">{{ subtitle$ | async }}</eui-card-header-subtitle>
     <eui-card-header-right-content>
       <eui-chip euiSizeS euiPrimary *ngIf="isMilestone">
         <span
@@ -22,7 +22,10 @@
         [version]="majorVersion"
         [isMilestone]="isMilestone"
         (exploreMilestone)="exploreMilestone.emit($event)"
-        *ngIf="!isRecent && (versionCompareService.compareModeEnabled$ | async) === false"
+        *ngIf="
+          !isRecent &&
+          (versionCompareService.compareModeEnabled$ | async) === false
+        "
       ></app-version-actions-dropdown>
       <input
         id="select-{{ majorVersion.documentId }}"
@@ -51,7 +54,7 @@
       >
         <div>{{ formatVersionNumber(version) }}</div>
         <div class="title">{{ formatTitle(version) }}</div>
-        <div>
+        <div class="">
           <app-version-actions-dropdown
             [version]="version"
             *ngIf="
@@ -83,15 +86,7 @@
       (click)="toggleShowMore()"
     >
       <eui-icon-svg
-        *ngIf="showMore"
-        icon="chevron-up"
-        set="sharp"
-        size="s"
-        fillColor="primary-100"
-      ></eui-icon-svg>
-      <eui-icon-svg
-        *ngIf="!showMore"
-        icon="chevron-down"
+        [icon]="showMore ? 'chevron-up' : 'chevron-down'"
         set="sharp"
         size="s"
         fillColor="primary-100"

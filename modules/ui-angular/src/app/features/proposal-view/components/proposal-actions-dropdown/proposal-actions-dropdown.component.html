@@ -8,64 +8,53 @@
       [disabled]="this.proposalState === 'active'"
     >
       <span euiLabel>Actions</span>
-      <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+      <eui-icon-svg icon="eui-ellipsis-vertical"></eui-icon-svg>
     </button>
     <eui-dropdown-content>
-      <ul euiList>
-        <ng-container *ngIf="permissions?.includes('CAN_DOWNLOAD_PROPOSAL')">
-          <li euiListItem (click)="handleDownload()">
-            <button euiListItem>
-              {{ 'page.collection.actions-dropdown.download' | translate }}
-            </button>
-          </li>
-        </ng-container>
-        <ng-container *appShowOnInstance="['ec', 'os']">
-          <li euiListItem (click)="handleExportAsPDF()">
-            <button euiListItem>
-              {{ 'page.collection.actions-dropdown.export.pdf' | translate }}
-            </button>
-          </li>
-          <li euiListItem (click)="handleExportAsLW()" *ngIf="canExportLW">
-            <button euiListItem>
-              {{ 'page.collection.actions-dropdown.export.lw' | translate }}
-            </button>
-          </li>
-          <li euiListItem (click)="handleValidation()" *ngIf="canValidate">
-            <button euiListItem>
-              {{ 'page.collection.actions-dropdown.validate' | translate }}
-            </button>
-          </li>
-        </ng-container>
-        <li euiListItem (click)="handleShare()">
-          <a euiListItem target="_blank" [href]="getStringifiedMailTo()">{{
-            'page.collection.actions-dropdown.share' | translate
-          }}</a>
-        </li>
-        <ng-container *ngIf="permissions.includes('CAN_DELETE')">
-          <li euiListItem (click)="handleConfirmationDelete()">
-            <button euiListItem euiDanger>
-              {{ 'global.actions.delete' | translate }}
-            </button>
-            <app-confirm-delete-dialog
-              #proposalDeleteConf
-              [title]="
+      <ng-container *ngIf="permissions?.includes('CAN_DOWNLOAD_PROPOSAL')">
+        <button euiDropdownItem (click)="handleDownload()">
+          {{ 'page.collection.actions-dropdown.download' | translate }}
+        </button>
+      </ng-container>
+      <ng-container *appShowOnInstance="['ec', 'os']">
+        <button euiDropdownItem (click)="handleExportAsPDF()">
+          {{ 'page.collection.actions-dropdown.export.pdf' | translate }}
+        </button>
+        <button euiDropdownItem (click)="handleExportAsLW()" *ngIf="canExportLW">
+          {{ 'page.collection.actions-dropdown.export.lw' | translate }}
+        </button>
+        <button euiDropdownItem (click)="handleValidation()" *ngIf="canValidate">
+          {{ 'page.collection.actions-dropdown.validate' | translate }}
+        </button>
+      </ng-container>
+      <a euiDropdownItem target="_blank" [href]="getStringifiedMailTo()">{{
+          'page.collection.actions-dropdown.share' | translate
+        }}</a>
+      <ng-container>
+        <button euiDropdownItem *ngIf="permissions.includes('CAN_DELETE') && !translated" (click)="handleConfirmationDelete()"
+                class=eui-u-color-danger-100>
+          {{ 'global.actions.delete' | translate }}
+        </button>
+        <app-confirm-delete-dialog
+          #proposalDeleteConf
+          [title]="
                 'page.collection.proposal-header.actions.delete-dialog.title'
                   | translate
               "
-              [description]="
+          [description]="
                 'page.collection.proposal-header.actions.delete-dialog.desc'
                   | translate
               "
-              (confirmDeletion)="handleDelete()"
-            ></app-confirm-delete-dialog>
+          (confirmDeletion)="handleDelete()"
+        ></app-confirm-delete-dialog>
 
-            <app-confirm-dialog
-              #proposalDeleteCannotConf
-              [title]="
+        <app-confirm-dialog
+          #proposalDeleteCannotConf
+          [title]="
                 'page.collection.proposal-header.actions.delete-dialog.title'
                   | translate
               "
-              [description]="
+          [description]="
                 'page.collection.proposal-header.actions.delete-dialog-cannot.desc'
                   | translate
                     : {
@@ -73,11 +62,9 @@
                           this.proposalDetailsService.clonedProposalCount
                       }
               "
-              (confirmDeletion)="handleDelete()"
-            ></app-confirm-dialog>
-          </li>
-        </ng-container>
-      </ul>
+          (confirmDeletion)="handleDelete()"
+        ></app-confirm-dialog>
+      </ng-container>
     </eui-dropdown-content>
   </eui-dropdown>
 </div>

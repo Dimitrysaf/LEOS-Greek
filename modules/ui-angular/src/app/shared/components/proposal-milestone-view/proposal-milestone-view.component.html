@@ -26,7 +26,7 @@
     ></div>
 
     <div class="eui-u-p-absolute export-accept-reject-div">
-      <div *ngIf="shouldDisplayButtons()" class="accept-reject-div"style="margin-right: 50px;">
+      <div *ngIf="shouldDisplayButtons()" class="accept-reject-div" style="margin-right: 50px;">
         <button euiButton euiSizeS euiPrimary
                 [euiDisabled]="documents[this.activeTabIndex].state === 'Processed'"
                 class="accept-reject-button"
@@ -49,7 +49,6 @@
       </div>
     </div>
 
-
     <!-- Tabs -->
     <eui-tabs (tabSelect)="onTabSelected($event)">
       <eui-tab *ngFor="let doc of documents; let tabIndex = index"
@@ -59,7 +58,7 @@
                [euiWarning]="doc.selected === false && doc.state === 'Modified' && !this.parentClonedProposal"
                [euiDanger]="doc.selected === false && doc.state === 'Deleted' && !this.parentClonedProposal"
                [euiPrimary]="doc.selected === true"
-                   >
+          >
         <eui-tab-label>{{ doc.label }}
           <small class="eui-u-font-regular"> [{{ doc.version }}] </small>
         </eui-tab-label>
@@ -74,7 +73,7 @@
                   [label]="'page.editor.toc-pane.label' | translate"
                   isCollapsible
                   (collapsed)="onToggleTocPaneCollapsed()"
-                  interactiveScrollbars
+
                   style="flex-basis: 400px"
                 >
                   <eui-page-column-body>
@@ -92,10 +91,9 @@
                 <eui-page-column
                   #documentPane
                   class="eui-u-p-none eui-page-column--no-scrollbars document-pane"
-                  [interactiveScrollbars]="false"
                 >
                   <eui-page-column-body
-                    class="eui-u-flex eui-u-flex-column align-items-center flex-grow-1"
+                    class="eui-u-flex eui-u-flex-column eui-u-flex-align-items-center eui-u-flex-grow"
                   >
                     <app-akn-document
                       [containerId]="containerId + '_' + doc.ref"
@@ -119,10 +117,10 @@
                   [label]="'page.editor.annotations-pane.label' | translate"
                   isCollapsible
                   (collapsed)="onToggleAnnotationsPaneCollapsed()"
-                  interactiveScrollbars
+
                   style="flex-basis: 580px"
                 >
-                  <eui-page-column-body class="flex-grow-1">
+                  <eui-page-column-body class="eui-u-flex-grow">
                     <app-document-annotations
                       [documentId]="doc.ref"
                       [containerId]="containerId + '_' + doc.ref"
@@ -169,4 +167,3 @@
   [description]="'page.collection.drafts.annex.delete-dialog.desc' | translate"
   (confirmDeletion)="this.doAccept()"
 ></app-confirm-delete-dialog>
-

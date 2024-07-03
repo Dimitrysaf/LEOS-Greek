@@ -15,11 +15,13 @@
     'prev-change-style': styleMode === StyleMode.PrevChangeStyle
   }"
 >
-  <span
+  <eui-icon-svg
     euiIcon
-    *ngIf="item.iconClass"
-    [iconClass]="'eui-icon ' + item.iconClass"
-  ></span>
+    *ngIf="item.icon"
+    [icon]=" item.icon"
+    set="outline"
+    size="s"
+  ></eui-icon-svg>
   <eui-icon-svg
     *ngIf="item.svgIconClas"
     [set]="item.svgType"

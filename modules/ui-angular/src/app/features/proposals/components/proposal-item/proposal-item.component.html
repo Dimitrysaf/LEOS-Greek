@@ -6,17 +6,17 @@
     <eui-card-header-title class="align-self-start eui-u-color-primary-100">
       <a
         [routerLink]="['/collection', proposal.ref]"
-        [innerHTML]="title"
-      ></a>
+        [innerHTML]="title">
+      </a>
     </eui-card-header-title>
     <eui-card-header-subtitle>
       {{
         'page.workspace.proposal-item.updated-by'
           | translate
-            : {
-                updatedOn: proposal.updatedOn | date : 'dd/MM/yyyy h:mm',
-                updatedBy: proposal.updatedBy
-              }
+          : {
+            updatedOn: proposal.updatedOn | date : 'dd/MM/yyyy h:mm',
+            updatedBy: proposal.updatedBy
+          }
       }}
     </eui-card-header-subtitle>
     <eui-card-header-right-content

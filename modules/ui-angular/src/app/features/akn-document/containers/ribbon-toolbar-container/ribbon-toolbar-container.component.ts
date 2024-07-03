@@ -91,7 +91,6 @@ export class RibbonToolbarContainerComponent
 
   async ngAfterViewInit() {
     const container = document.querySelector('.ribbon-toolbar-container');
-    console.log('view container ,', container);
     this.initializeSections();
     this.toolbarPrevWidth = container.clientWidth; // Initial width in order to trigger the handling
     this.observer.observe(container);
@@ -105,7 +104,6 @@ export class RibbonToolbarContainerComponent
       this.resizeSectionsMap.set(sec.id, false);
     });
     this.sections = sections;
-    console.log('sections map is now:', this.resizeSectionsMap);
   }
 
   toggleToolbar() {
@@ -279,7 +277,6 @@ export class RibbonToolbarContainerComponent
     const element = document.getElementById(elementId);
 
     if (!element) {
-      console.log('Element not found with id', elementId);
       return false;
     }
 

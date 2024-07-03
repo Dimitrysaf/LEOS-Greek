@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { UxAppShellService } from '@eui/core';
+import { EuiAppShellService } from '@eui/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -16,9 +16,9 @@ export class LoadingService {
     ongoing: boolean;
   }>({ taskName: null, key: null, ongoing: false });
 
-  constructor(private uxAppService: UxAppShellService) {
+  constructor(private euiAppShellService: EuiAppShellService) {
     this.loadingBS.asObservable().subscribe((val) => {
-      this.uxAppService.isBlockDocumentActive = val;
+      this.euiAppShellService.isBlockDocumentActive = val;
     });
     this.task$ = this.taskBS.asObservable();
   }

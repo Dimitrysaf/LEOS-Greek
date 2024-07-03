@@ -42,11 +42,11 @@ Feature: milestone section regression features
         When click on option "View" under milestone actions
         Then user is on milestone explorer window
         And  milestone explorer window contains below tabs
-            | TabName                |
-            | Explanatory Memorandum |
-            | Legal Act              |
-            | Annex 1                |
-            | Annex 2                |
+            | TabName                         |
+            | Explanatory Memorandum  [1.0.0] |
+            | Legal Act  [1.0.0]              |
+            | Annex 1  [1.0.0]                |
+            | Annex 2  [1.0.0]                |
 #         When click on export button present in milestone explorer window
 #         And  recent pdf file present in downloads folder contains below words
 #             | EXPLANATORY MEMORANDUM                                                                  |

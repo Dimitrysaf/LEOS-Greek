@@ -1,9 +1,9 @@
 class tableOfContent {
     elements = {
-        editBtn: () => cy.get('.eui-icon-edit'),
+        editBtn: () => cy.get("*[icon='eui-ecl-edit']"),
         saveBtn: () => cy.get("button img[src='assets/images/toc-save.png']"),
         saveCloseBtn: () => cy.get("button img[src='assets/images/toc-save-close.png']"),
-        cancelBtn: () => cy.get('.eui-icon-times'),
+        cancelBtn: () => cy.get("*[icon='eui-close']"),
         menuOptions: () => cy.get('div.eui-list-item__container span'),
         versionsPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').eq(1).find('.eui-fieldset__header button'),
         navigationPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').first().find('.eui-fieldset__header button'),
@@ -73,7 +73,7 @@ class tableOfContent {
     }
 
     clickThreeDotsOfTOCElement(ngContent){
-        this.elements.matTree().contains(ngContent).parent().find('button .eui-icon-more-vertical').realHover().click();
+        this.elements.matTree().contains(ngContent).parent().find("button *[icon='eui-ellipsis-vertical']").realHover().click();
     }
 
     clickShowMoreBtn(euiCardName){
@@ -85,7 +85,7 @@ class tableOfContent {
     }
 
     clickRightAngleIconOfPreambleLink(){
-        this.elements.preambleLink().find('eui-icon.eui-icon-angle-right').click();
+        this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-forward']").click();
     }
 }
 export default new tableOfContent();

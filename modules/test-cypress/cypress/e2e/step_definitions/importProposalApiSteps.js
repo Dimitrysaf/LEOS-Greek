@@ -11,11 +11,11 @@ Given('Send a POST request to import proposal', () => {
         url = Cypress.env('devImportProposalApiUrl');
         bearerToken = Cypress.env('bearerTokenRemoteUser1');
     }
-    cy.fixture('/legFiles/PROP_ACT-clxacyrh50004ik5811kwzdqv-es.leg', 'binary')
+    cy.fixture('/legFiles/PROP_ACT-clxkd3t4k000uok58ltymp0m5-es.leg', 'binary')
         .then(Cypress.Blob.binaryStringToBlob)
         .then((fileContent) => {
             const formData = new FormData();
-            formData.append('legFile', fileContent, '/legFiles/PROP_ACT-clxacyrh50004ik5811kwzdqv-es.leg');
+            formData.append('legFile', fileContent, '/legFiles/PROP_ACT-clxkd3t4k000uok58ltymp0m5-es.leg');
 
             cy.request({
                 method: 'POST',

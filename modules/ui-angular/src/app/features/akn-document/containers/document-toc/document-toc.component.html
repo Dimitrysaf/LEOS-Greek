@@ -34,12 +34,11 @@
             [class]="{ 'selected-node': selectedNode?.id === node.id }"
             (click)="handleNodeSelect(node)"
           >
-            <eui-icon
-              euiSizeS
-              iconClass="eui-icon-angle-right"
+            <eui-icon-svg
+              size="s"
+              icon="eui-chevron-forward"
               class="eui-u-visibility-hidden"
-            ></eui-icon>
-
+            ></eui-icon-svg>
             <div
               [id]="'node-label-' + node.id"
               [class]="'label' + ' ' + getNodeStyling(node)"
@@ -77,19 +76,18 @@
             class="mat-tree-node"
             [class]="{ 'selected-node': selectedNode?.id === node.id }"
           >
-            <eui-icon
-              euiSizeS
+            <eui-icon-svg
+              size="s"
               *ngIf="!treeControl.isExpanded(node)"
-              iconClass="eui-icon-angle-right"
+              icon="eui-chevron-forward"
               (click)="nodeExpanded(node)"
-            ></eui-icon>
-            <eui-icon
-              euiSizeS
+            ></eui-icon-svg>
+            <eui-icon-svg
+              size="s"
               *ngIf="treeControl.isExpanded(node)"
-              iconClass="eui-icon eui-icon-angle-down"
+              icon="eui-chevron-down"
               (click)="nodeCollapsed(node)"
-            ></eui-icon>
-
+            ></eui-icon-svg>
             <div
               [id]="'node-label-' + node.id"
               [class]="'label-extended' + ' ' + getNodeStyling(node)"
@@ -114,7 +112,7 @@
 
     <!-- selected element show -->
   </div>
-  <div class="d-flex flex-column p-2 eui-u-font-s" *ngIf="isEditMode">
+  <div class="eui-u-display-flex eui-u-flex-column eui-u-p-xs eui-u-font-s" *ngIf="isEditMode">
     <span
       euiLabel
       [euiDanger]="!isDropValid"

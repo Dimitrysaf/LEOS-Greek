@@ -39,7 +39,7 @@ public class IndentXmlHelper {
         if (item.getElementNumberId() != null) {
             numTagStr.append(" " + XMLID + "=\"" + item.getElementNumberId() + "\"");
         } else {
-            numTagStr.append(" " + XMLID + "=\"" + IdGenerator.generateId(NUM.substring(0, 3), 7) + "\"");
+            numTagStr.append(" " + XMLID + "=\"" + IdGenerator.generateId() + "\"");
         }
 
         numTagStr.append(">");
@@ -65,7 +65,7 @@ public class IndentXmlHelper {
         if (item.getId() != null) {
             startTagStr.append(" " + XMLID + "=\"" + item.getId() + "\"");
         } else {
-            startTagStr.append(" " + XMLID + "=\"" + IdGenerator.generateId(tagName.substring(0, 3), 7) + "\"");
+            startTagStr.append(" " + XMLID + "=\"" + IdGenerator.generateId() + "\"");
         }
 
         startTagStr.append(">");

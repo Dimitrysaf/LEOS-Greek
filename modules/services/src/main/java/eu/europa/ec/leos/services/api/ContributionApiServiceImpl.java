@@ -97,6 +97,7 @@ import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
+import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @Service
@@ -215,8 +216,12 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         CreateCollectionResult createCollectionResult = null;
         Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         try {
-            validatePath(legDocumentName);
-            File content = new File(FilenameUtils.normalize(legDocumentName));
+            validateBasePath(FilenameUtils.normalize(legDocumentName), "./");
+            // Validate and normalize the upload directory path
+            if (legDocumentName == null || legDocumentName.contains("..")) {
+                throw new IllegalArgumentException("Invalid upload directory path: " + legDocumentName);
+            }
+            File content = new File(legDocumentName);
             writeContentToFile(legDocument, content);
             userService.switchUser(user.getLogin());
             createCollectionResult = createCollectionService.cloneCollection(content, cloneOriginRef, user.getLogin(),

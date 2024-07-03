@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -17,7 +18,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
-import { UxAppShellService } from '@eui/core';
+import { EuiAppShellService, EuiGrowlService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, Subject } from 'rxjs';
 
@@ -62,6 +63,8 @@ export class ImportFromJournalComponent
   allRecitalsSelected = false;
   searching = false;
   importing = false;
+  defaultType: DocType;
+  defaultYear: number;
 
   private destroy$ = new Subject<void>();
   private activeSearchData?: { year: number; number: number; type: DocType };
@@ -71,12 +74,20 @@ export class ImportFromJournalComponent
     private formBuilder: FormBuilder,
     private documentService: DocumentService,
     private importService: ImportService,
-    private uxAppShellService: UxAppShellService,
+    private euiAppShellService: EuiAppShellService,
+    private euiGrowlService: EuiGrowlService,
     private translateService: TranslateService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
     this.searchForm = this.createFormGroup();
+    this.defaultType = this.types[0];
+    this.defaultYear = this.years[0];
+    this.searchForm.patchValue({
+      type: this.defaultType,
+      year: this.defaultYear,
+    });
   }
 
   ngAfterViewInit(): void {
@@ -112,6 +123,8 @@ export class ImportFromJournalComponent
     };
     if (this.searchForm.valid) {
       this.searching = true;
+      const startTime = Date.now();
+
       this.importService.searchForImport(params).subscribe({
         next: (html) => {
           this.activeSearchData = html ? searchData : null;
@@ -123,7 +136,13 @@ export class ImportFromJournalComponent
           console.warn('stub:', 'importService.onSearchSubmit error', err); // FIXME
         },
         complete: () => {
-          this.searching = false;
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(1000 - elapsedTime, 0);
+
+          setTimeout(() => {
+            this.searching = false;
+            this.cdr.detectChanges();
+          }, remainingTime);
         },
       });
     } else {
@@ -168,7 +187,12 @@ export class ImportFromJournalComponent
 
   private setDocHtml(html: string) {
     this.docContainer.nativeElement.innerHTML = html;
-    this.docLoaded = true;
+
+    if (this.docContainer.nativeElement.innerHTML === "") {
+      this.docLoaded = false;
+    } else {
+      this.docLoaded = true;
+    }
     // add eui checkbox styles to restore visibility
     this.docContainer.nativeElement
       .querySelectorAll(`input[type="checkbox"][data-element-type="import"]`)
@@ -179,8 +203,8 @@ export class ImportFromJournalComponent
     const message = this.translateService.instant(
       'dialog.import-from-journal.notifications.no-results',
     );
-    this.uxAppShellService.isBlockDocumentActive = false;
-    this.uxAppShellService.growl({
+    this.euiAppShellService.isBlockDocumentActive = false;
+    this.euiGrowlService.growl({
       severity: 'warning',
       detail: message,
       life: 4000,
@@ -199,8 +223,8 @@ export class ImportFromJournalComponent
         ? 'dialog.import-from-journal.notifications.inserted-articles'
         : 'dialog.import-from-journal.notifications.inserted';
     const message = this.translateService.instant(key);
-    this.uxAppShellService.isBlockDocumentActive = false;
-    this.uxAppShellService.growl({
+    this.euiAppShellService.isBlockDocumentActive = false;
+    this.euiGrowlService.growl({
       severity: 'success',
       // summary: title,
       detail: message,

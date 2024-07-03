@@ -7,8 +7,8 @@ class legalActPage extends headerPage {
         preface: () => this.elements.bill().find('preface'),
         longTitle: () => this.elements.preface().find('longtitle'),
         docPurpose: () => this.elements.longTitle().find('docpurpose'),
-        recitalFromImportOj: () => cy.get("recital[id^='_imp_']"),
-        articleFromImportOj: () => cy.get("article[id^='_imp_']")
+        recitalFromImportOj: () => cy.get("recital[id^='imp_']"),
+        articleFromImportOj: () => cy.get("article[id^='imp_']")
     }
 
     clickCloseBtn() {

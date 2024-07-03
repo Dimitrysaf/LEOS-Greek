@@ -33,11 +33,10 @@
 
     <properties>
         <sonar.sources>src/app</sonar.sources>
-        <yarn.version>v1.22.19</yarn.version>
         <nodejs.version>v18.18.2</nodejs.version>
         <mvn.frontend.plugin.version>1.11.2</mvn.frontend.plugin.version>
         <mvn.frontend.plugin.execution.phase>generate-resources</mvn.frontend.plugin.execution.phase>
-        <yarn.build.command>build-prod-skip-test</yarn.build.command>
+        <npm.build.command>run build-prod-skip-test</npm.build.command>
         <skipTests>true</skipTests>
         <!-- _CSDR=K1:V1,K2:V2
            We initialize them with `:` (noop key-value pair) so that profiles can
@@ -76,43 +75,42 @@
                 <executions>
                     <!-- Install node and npm -->
                     <execution>
-                        <id>install node and yarn</id>
+                        <id>install node and npm</id>
                         <goals>
-                            <goal>install-node-and-yarn</goal>
+                            <goal>install-node-and-npm</goal>
                         </goals>
                         <phase>${mvn.frontend.plugin.execution.phase}</phase>
                         <configuration>
                             <nodeVersion>${nodejs.version}</nodeVersion>
-                            <yarnVersion>${yarn.version}</yarnVersion>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>yarn install</id>
+                        <id>npm install</id>
                         <goals>
-                            <goal>yarn</goal>
+                            <goal>npm</goal>
                         </goals>
                         <phase>${mvn.frontend.plugin.execution.phase}</phase>
                         <configuration>
-                            <arguments>install</arguments>
+                            <arguments>install --legacy-peer-deps</arguments>
                         </configuration>
                     </execution>
                     <!-- code validation -->
                     <execution>
-                        <id>yarn lint</id>
+                        <id>npm lint</id>
                         <goals>
-                            <goal>yarn</goal>
+                            <goal>npm</goal>
                         </goals>
                         <phase>${mvn.frontend.plugin.execution.phase}</phase>
                         <configuration>
-                            <arguments>lint</arguments>
+                            <arguments>run lint</arguments>
                             <skip>${skipTests}</skip>
                         </configuration>
                     </execution>
                     <!-- build app -->
                     <execution>
-                        <id>yarn build</id>
+                        <id>npm build</id>
                         <goals>
-                            <goal>yarn</goal>
+                            <goal>npm</goal>
                         </goals>
                         <phase>${mvn.frontend.plugin.execution.phase}</phase>
                         <configuration>
@@ -124,7 +122,7 @@
                                 <NG_APP_LEOS_VERSION_BUILD_DATE>${leos.build.date}</NG_APP_LEOS_VERSION_BUILD_DATE>
                                 <NG_APP_LEOS_BUILD_TIMESTAMP>${leos.build.timestamp}</NG_APP_LEOS_BUILD_TIMESTAMP>
                             </environmentVariables>
-                            <arguments>${yarn.build.command}</arguments>
+                            <arguments>${npm.build.command}</arguments>
                         </configuration>
                     </execution>
                 </executions>

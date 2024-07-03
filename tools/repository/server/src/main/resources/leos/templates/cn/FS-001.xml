@@ -1,13 +1,17 @@
-<!--legislative_financial_statement-->
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <doc name="STAT_FINANC_LEGIS">
         <meta>
-            <identification source="~_PUBL">
+            <identification source="~PUBL">
                 <FRBRWork>
                     <FRBRthis value=""/>
                     <FRBRuri value=""/>
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:akn4euVersion value="4.1.0.0"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                    </preservation>
                     <FRBRcountry value="EU"/>
                     <FRBRprescriptive value="false"/>
                 </FRBRWork>
@@ -24,18 +28,20 @@
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
                     <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                        <akn4eu:akn4euVersion value="4.x.y.0"/>
+                        <akn4eu:akn4euVersion value="4.1.0.0"/>
+						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
                     </preservation>
                 </FRBRManifestation>
             </identification>
-            <references source="~_PUBL">
-                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
-                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/PUBL" showAs="Publications Office"/>
-                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement"/>
-                <!--  draft  -->
+            <references source="~PUBL">
+                <TLCReference xml:id="language"  href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
+                <TLCOrganization xml:id="PUBL" href="http://publications.europa.eu/resource/authority/corporate-body/PUBL" showAs="Publications Office"/>
+                <TLCReference xml:id="STAT_FINANC_LEGIS" href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement"/>
+                <TLCConcept xml:id="INP" href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" />
+				<!--  draft  -->
             </references>
-            <proprietary source="~leos">
-                <leos:templateVersion>3.0.0</leos:templateVersion>
+            <proprietary source="~COM">
+                <leos:templateVersion>4.1.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
                 <leos:docTemplate>FS-001</leos:docTemplate>
                 <leos:docType>LEGISLATIVE FINANCIAL STATEMENT</leos:docType>
@@ -44,7 +50,7 @@
         <preface>
             <longTitle>
                 <p>
-                    <docType refersTo="~_STAT_FINANC_LEGIS">LEGISLATIVE FINANCIAL STATEMENT</docType>
+                    <docType refersTo="~STAT_FINANC_LEGIS">LEGISLATIVE FINANCIAL STATEMENT</docType>
                 </p>
             </longTitle>
         </preface>
@@ -3493,7 +3499,7 @@
                     <i>Third-party contributions</i>
                 </heading>                
                 <list leos:editable="false" class="~CHECK">
-				 <subparagraph leos:editable="false" refersTo="~_INP">
+				 <subparagraph leos:editable="false" refersTo="~INP">
                         <content>
                             <p leos:editable="false">The proposal/initiative:</p>
                         </content>

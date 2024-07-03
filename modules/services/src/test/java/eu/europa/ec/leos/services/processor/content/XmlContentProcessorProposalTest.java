@@ -679,7 +679,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         Node node = document.getFirstChild();
         String id = getId(node);
         assertNotNull(id);
-        assertTrue(id.startsWith("_imp_"));
+        assertTrue(id.startsWith("imp_"));
         assertFalse(id.contains("null"));
     }
 
@@ -694,7 +694,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         Node node = document.getFirstChild();
         String id = getId(node);
         assertNotNull(id);
-        assertTrue(id.startsWith("_imp_"));
+        assertTrue(id.startsWith("imp_"));
         assertFalse(id.contains("null"));
     }
 

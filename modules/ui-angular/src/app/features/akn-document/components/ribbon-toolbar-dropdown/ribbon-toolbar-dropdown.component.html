@@ -1,23 +1,23 @@
-<eui-dropdown-button-menu
-  [menuItems]="item.items"
-  [euiTooltip]="item.description"
-  [id]="item.id"
-  [euiDisabled]="isItemDisabled"
->
-  <button
-    euiButton
-    euiResponsive
-    [euiVariant]="item.euiStyle"
-    [euiSizeVariant]="item.euiSize"
-    [ngClass]="item.cssClasses"
-    class="eui-u-mr-s eui-u-mb-s"
-    [euiDisabled]="isItemDisabled"
-  >
-    <span euiLabel *ngIf="!isOverflow">{{ itemLabelValue }}</span>
-    <span
-      euiIcon
-      *ngIf="item.iconClass"
-      [iconClass]="'eui-icon ' + item.iconClass"
-    ></span>
-  </button>
-</eui-dropdown-button-menu>
+<eui-dropdown>
+    <button
+            euiButton
+            euiResponsive
+            [euiVariant]="item.euiStyle"
+            [euiSizeVariant]="item.euiSize"
+            [ngClass]="item.cssClasses"
+            class="eui-u-mr-s eui-u-mb-s"
+            [euiDisabled]="isItemDisabled"
+    >
+        <span euiLabel *ngIf="!isOverflow">{{ itemLabelValue }}</span>
+        <eui-icon-svg
+                euiIcon
+                *ngIf="item.icon"
+                [icon]="item.icon"
+        ></eui-icon-svg>
+    </button>
+    <eui-dropdown-content>
+        <button euiDropdownItem *ngFor="let item of dropdownItems" (click)="item.command()" [disabled]="item.disabled">
+            <eui-icon-svg *ngIf="item.icon" [icon]="item.icon" size="s" class="eui-u-mr-s"></eui-icon-svg>
+            <span euiLabel>{{item.label}}</span></button>
+    </eui-dropdown-content>
+</eui-dropdown>

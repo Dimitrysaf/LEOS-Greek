@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { EuiDialogComponent } from '@eui/components/eui-dialog';
-import { UxAppShellService } from '@eui/core';
+import { EuiAppShellService, EuiGrowlService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs';
 
@@ -59,7 +59,8 @@ export class ImportFromJournalDialogComponent implements OnInit {
     private leos: LeosLegacyService,
     private documentService: DocumentService,
     private tableOfContentService: TableOfContentService,
-    private uxAppShellService: UxAppShellService,
+    private euiGrowService: EuiGrowlService,
+    private euiAppShellService: EuiAppShellService,
     private translateService: TranslateService,
   ) {
     this.searchForm = this.createFormGroup();
@@ -190,8 +191,8 @@ export class ImportFromJournalDialogComponent implements OnInit {
     const message = this.translateService.instant(
       'dialog.import-from-journal.notifications.no-results',
     );
-    this.uxAppShellService.isBlockDocumentActive = false;
-    this.uxAppShellService.growl({
+    this.euiAppShellService.isBlockDocumentActive = false;
+    this.euiGrowService.growl({
       severity: 'warning',
       detail: message,
       life: 4000,
@@ -210,8 +211,8 @@ export class ImportFromJournalDialogComponent implements OnInit {
         ? 'dialog.import-from-journal.notifications.inserted-articles'
         : 'dialog.import-from-journal.notifications.inserted';
     const message = this.translateService.instant(key);
-    this.uxAppShellService.isBlockDocumentActive = false;
-    this.uxAppShellService.growl({
+    this.euiAppShellService.isBlockDocumentActive = false;
+    this.euiGrowService.growl({
       severity: 'success',
       // summary: title,
       detail: message,

@@ -35,6 +35,7 @@
     flex-direction: row;
     gap: 1rem;
     margin: 0.3rem;
+    margin-top: 30px;
     min-width: 20rem;
   }
 
@@ -71,5 +72,9 @@
 
   .mat-nested-tree-node:last-child ul {
     margin-left: -41px;
+  }
+
+  .node-li{
+    height: 30px;
   }
 }

@@ -1,13 +1,6 @@
-import {
-  Component,
-  EventEmitter,
-  OnDestroy,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
-import { EuiDialogComponent } from '@eui/components/eui-dialog/eui-dialog.component';
-import { Subject } from 'rxjs';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewChild } from "@angular/core";
+import { EuiDialogComponent } from "@eui/components/eui-dialog";
+import { Subject } from "rxjs";
 
 @Component({
   selector: 'app-milestone-annotation-warning-modal',

@@ -5,6 +5,10 @@
   .eui-page-column__body--interactive-scrollbars:hover {
     z-index: 0;
   }
+
+  .eui-breadcrumb-item > * > span {
+    font-weight: bold;
+  }
 }
 
 .proposals-container {

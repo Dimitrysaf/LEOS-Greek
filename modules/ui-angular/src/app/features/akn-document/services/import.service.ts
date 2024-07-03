@@ -2,7 +2,6 @@ import { DOCUMENT } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
-import { UxAppShellService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
 import { apiBaseUrl } from 'src/config';
 
@@ -11,6 +10,7 @@ import { ImportManager } from '@/features/akn-document/components/import-from-jo
 import { DocType } from '@/features/akn-document/models/import.model';
 import { LeosLegacyService } from '@/features/leos-legacy/services/leos-legacy.service';
 import { DocumentService } from '@/shared/services/document.service';
+import { EuiAppShellService, EuiGrowlService } from '@eui/core';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,8 @@ export class ImportService {
     private http: HttpClient,
     private documentService: DocumentService,
     private translateService: TranslateService,
-    private uxAppShellService: UxAppShellService,
+    private appShellService: EuiAppShellService,
+    private growlService: EuiGrowlService,
     private leos: LeosLegacyService,
     private dialogService: EuiDialogService,
   ) {}
@@ -118,8 +119,8 @@ export class ImportService {
         ? 'dialog.import-from-journal.notifications.inserted-articles'
         : 'dialog.import-from-journal.notifications.inserted';
     const message = this.translateService.instant(key);
-    this.uxAppShellService.isBlockDocumentActive = false;
-    this.uxAppShellService.growl({
+    this.appShellService.isBlockDocumentActive = false;
+    this.growlService.growl({
       severity: 'success',
       // summary: title,
       detail: message,

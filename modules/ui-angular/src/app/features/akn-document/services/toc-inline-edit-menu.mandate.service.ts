@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { EuiDialogService } from '@eui/components/eui-dialog';
-import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
@@ -29,7 +28,7 @@ import {
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { TableOfContentEditService } from '@/features/akn-document/services/table-of-content-edit.service';
 import { ValidateTocService } from '@/features/akn-document/services/validate-node-drop.service';
-import {DocumentConfig, NumberingConfig, NumberingType} from '@/shared';
+import { DocumentConfig, NumberingConfig, NumberingType } from '@/shared';
 import {
   ARTICLE,
   BLOCK,
@@ -46,12 +45,15 @@ import { DocumentService } from '@/shared/services/document.service';
 import {
   findNodeById,
   getItemIndentLevel,
-  getNumberingConfig, getNumberingTypeByLanguage,
+  getNumberingConfig,
+  getNumberingTypeByLanguage,
   getTocItemByNumberingType,
   updateDepthOfTocItems,
 } from '@/shared/utils/toc.utils';
 
 import { TocInlineEditMenuService } from './toc-inline-edit-menu.service';
+import { EuiDropdownComponent } from '@eui/components/eui-dropdown';
+import { DropdownModel } from '@/shared/dropdown.model';
 
 @Injectable()
 export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
@@ -85,8 +87,8 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
 
   protected buildTypeSpecificItems(
     node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem[] {
-    const items: EuiDropdownButtonMenuItem[] = [];
+  ): DropdownModel[] {
+    const items: DropdownModel[] = [];
     switch (node.tocItem.aknTag) {
       case CROSSHEADING:
         items.push(this.buildCrossHeadingItem(node));
@@ -103,15 +105,13 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
         items.push(this.buildIndentItem(node));
         break;
       case ARTICLE:
-        items.push(this.buildArticleItem(node));
+        // items.push(this.buildArticleItem(node));
         break;
     }
     return items;
   }
 
-  private buildCrossHeadingItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildCrossHeadingItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: CROSSHEADING_CHANGE_TYPE_ACTION_ID,
       label: this.translateService.instant(
@@ -143,9 +143,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     };
   }
 
-  private buildDivisionItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildDivisionItem(node: TableOfContentItemVO): DropdownModel {
     this.active_division_style = node.autoNumOverwritten ? null : node.style;
     this.possibleDivisionType = this.getDivisionTypesToEnable(
       this.getPreviousDivisionType(node),
@@ -190,9 +188,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     };
   }
 
-  private buildPointItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildPointItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: POINT_CHANGE_TYPE_ACTION_ID,
       label: this.translateService.instant(
@@ -222,9 +218,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     };
   }
 
-  private buildIndentItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildIndentItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: INDENT_CHANGE_TYPE_ACTION_ID,
       label: this.translateService.instant(
@@ -258,7 +252,10 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     const selectedNode = this.getTargetNode();
     const toc = this.tocService.getCurrentToc();
     const tocItems = this.tocService.getCurrentTocItems();
-    const oldValue = getNumberingTypeByLanguage(selectedNode.tocItem, this.documentConfig.langGroup);
+    const oldValue = getNumberingTypeByLanguage(
+      selectedNode.tocItem,
+      this.documentConfig.langGroup,
+    );
     this.active_block_style = value;
     //save snapshot of old tree
     this.tocEditService.handleNodeChanges(toc, true);
@@ -270,7 +267,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
       tocItems,
       value,
       selectedNode.tocItem.aknTag,
-      this.documentConfig.langGroup
+      this.documentConfig.langGroup,
     );
     selectedNode.tocItem = newTocItem;
     selectedNode.number = numberConfig.sequence;
@@ -294,12 +291,20 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     const selectedNode = this.getTargetNode();
     const tocItems = this.tocService.getCurrentTocItems();
     const toc = this.tocService.getCurrentToc();
-    const oldValue = getNumberingTypeByLanguage(selectedNode.tocItem, this.documentConfig.langGroup);
+    const oldValue = getNumberingTypeByLanguage(
+      selectedNode.tocItem,
+      this.documentConfig.langGroup,
+    );
     this.active_point_style = value;
 
     //save snapshot of old tree
     this.tocEditService.handleNodeChanges(toc, true);
-    const newTocItem = getTocItemByNumberingType(tocItems, value, INDENT, this.documentConfig.langGroup);
+    const newTocItem = getTocItemByNumberingType(
+      tocItems,
+      value,
+      INDENT,
+      this.documentConfig.langGroup,
+    );
     const parentNode = findNodeById(toc, selectedNode.parentItem);
     this.propagateListType(
       toc,
@@ -336,7 +341,10 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
   ) {
     const toc = this.tocService.getCurrentToc();
     let sequence = '#';
-    const numType = getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup);
+    const numType = getNumberingTypeByLanguage(
+      tocItem,
+      this.documentConfig.langGroup,
+    );
     const config = getNumberingConfig(numberingConfigs, numType);
     if (list && list.length > 0 && config && !config.numbered) {
       const firstChild = list.at(0);

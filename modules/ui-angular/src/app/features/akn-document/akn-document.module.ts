@@ -26,13 +26,11 @@ import { CN } from '@/shared/constants';
 import { SharedModule } from '@/shared/shared.module';
 
 import { AknRouteReUseStrategy } from './akn-route-strategy';
-import { ActionsToolbarComponent } from './components/actions-toolbar/actions-toolbar.component';
 import { DocumentComponent } from './components/annex-document/document.component';
 import { DocumentActionsDropdownComponent } from './components/document-actions-dropdown/document-actions-dropdown.component';
 import { DocumentSearchComponent } from './components/document-search/document-search.component';
 import { ImportFromJournalComponent } from './components/import-from-journal/import-from-journal.component';
 import { ImportFromJournalDialogComponent } from './components/import-from-journal-dialog/import-from-journal-dialog.component';
-import { NodeTocActionsComponent } from './components/node-toc-actions/node-toc-actions.component';
 import { RibbonToolbarBaseComponent } from './components/ribbon-toolbar-base/ribbon-toolbar-base.component';
 import { RibbonToolbarButtonComponent } from './components/ribbon-toolbar-button/ribbon-toolbar-button.component';
 import { RibbonToolbarCheckboxComponent } from './components/ribbon-toolbar-checkbox/ribbon-toolbar-checkbox.component';
@@ -64,7 +62,6 @@ export const DOCUMENT_ACTIONS_SERVICE =
 @NgModule({
   declarations: [
     DocumentComponent,
-    ActionsToolbarComponent,
     DocumentSearchComponent,
     VersionActionsDropdownComponent,
     VersionsPaneComponent,
@@ -76,7 +73,6 @@ export const DOCUMENT_ACTIONS_SERVICE =
     TocActionsButtonsComponent,
     TocEditorComponent,
     DocumentTocComponent,
-    NodeTocActionsComponent,
     SaveVersionDialogComponent,
     RevisionPaneComponent,
     RevisionPaneGroupComponent,

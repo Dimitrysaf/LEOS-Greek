@@ -1,32 +1,28 @@
-<ux-wizard-steps
+<eui-wizard
   (selectStep)="onSelectStepRemoteNav($event)"
   [activeStepIndex]="currentStepIndex"
   [isNavigationAllowed]="isNavigationAllowed"
 >
-  <ux-wizard-step
+  <eui-wizard-step
     label="Template selection"
     [isCompleted]="!!(selectedTemplate && selectedLanguage)"
   >
-    <uxWizardStepContent>
       <app-proposal-create-template-selector
         #templateSelector
         (navigationClick)="onNavigation(+1)"
         (selectTemplate)="handleSelectTemplate($event)"
         (selectLanguage)="handleSelectLanguage($event)"
       ></app-proposal-create-template-selector>
-    </uxWizardStepContent>
-  </ux-wizard-step>
-  <ux-wizard-step
+  </eui-wizard-step>
+  <eui-wizard-step
     label="Document metadata"
     [isCompleted]="createForm.valid && isStepOneCompleted"
   >
-    <uxWizardStepContent>
       <app-proposal-create-form
         [createForm]="createForm"
       ></app-proposal-create-form>
-    </uxWizardStepContent>
-  </ux-wizard-step>
-</ux-wizard-steps>
+  </eui-wizard-step>
+</eui-wizard>
 <div class="app-dialog-footer-content">
   <button euiButton (click)="closeDialog()">
     {{ 'global.actions.cancel' | translate }}
@@ -37,7 +33,7 @@
     [disabled]="currentStepIndex === 1 || !isNavigationAllowed"
     (click)="onNavigation(-1)"
   >
-    <span class="eui-icon eui-icon-chevron-left"></span>
+    <eui-icon-svg icon="eui-chevron-back"></eui-icon-svg>
     <span euiLabel>
       {{ 'global.actions.previous' | translate }}
     </span>

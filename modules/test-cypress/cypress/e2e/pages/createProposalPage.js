@@ -9,7 +9,7 @@ class createProposalPage {
     }
 
     clickTemplateByName(templateName) {
-        return cy.xpath("//span[contains(text(),'" + templateName + "')]").click();
+        return cy.xpath("//label[contains(text(),'" + templateName + "')]").click();
     }
 
     clickNextBtn() {

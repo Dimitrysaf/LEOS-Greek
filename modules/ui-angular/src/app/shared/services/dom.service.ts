@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 
 import { getCacheBusterArg } from '@/shared/utils/url';
 
-import { createPromise, setDynamicStyle, setDynamicInlineStyle } from '../utils';
+import { createPromise, setDynamicInlineStyle, setDynamicStyle } from '../utils';
 
 @Injectable({
   providedIn: 'root',
@@ -84,7 +84,6 @@ export class DomService {
     style.dataset.count = String(newCount);
     return newCount;
   }
-
 
   private increaseInlineCount(style: HTMLStyleElement) {
     const oldCount = Number(style.dataset.count) || 0;
