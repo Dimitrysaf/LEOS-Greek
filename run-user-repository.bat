@@ -19,7 +19,7 @@ echo "---------------------USER REPOSITORY--------------------------------------
 cd ./tools/user-repo
 
 echo "---------------------USER REPOSITORY COMPILING...----------------------------------"
-call mvn clean install
+call mvn clean install -DskipTests
 echo "---------------------USER REPOSITORY COMPILED.-------------------------------------"
 
 cd ./web
