@@ -1,7 +1,7 @@
 <div id="toolbar-container-id" class="ribbon-toolbar-container">
   <div
     id="toolbar-content-id"
-    class="ribbon-toolbar-content eui-u-shadow-3 m-2"
+    class="ribbon-toolbar-content eui-u-shadow-3"
     *ngIf="(actionItems$ | async)?.length > 0"
     [@toggleToolbarAnimation]="isToolbarOpen ? 'open' : 'closed'"
   >
@@ -67,6 +67,7 @@
       set="sharp"
       size="xs"
       icon="chevron-up"
+      style="margin-bottom: 12px;"
     ></eui-icon-svg>
   </button>
 </div>

@@ -167,6 +167,7 @@ public class DocumentServiceImpl implements DocumentService {
                 }
             }
             doc.setCategoryId(docCat);
+            doc.setCategoryCode(docCat.getCategoryCode());
             if (metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()) != null) {
                 doc.setOriginRef((String) metadata.get(PropertiesMetadata.ORIGIN_REF.getLeosName()));
             }

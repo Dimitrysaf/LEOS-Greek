@@ -1,23 +1,30 @@
-<eui-dropdown-button-menu
-  #dropdownComponentRef
-  [menuItems]="menuItems"
-  *ngIf="isEditMode && node.tocItem.draggable && !node.tocItem.root"
->
-  <button
-    euiButton
-    euiRounded
-    euiIconButton
-    euiBasicButton
-    euiSecondary
-    euiSizeS
-    (click)="onMenuIconClick()"
-  >
-    <span euiSizeS euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
-  </button>
-</eui-dropdown-button-menu>
+<app-dynamic-dropdown-hover [items]="menuItems" *ngIf="isEditMode && node.tocItem.draggable && !node.tocItem.root">
+    <button
+            euiButton
+            euiRounded
+            euiIconButton
+            euiBasicButton
+            euiSecondary
+            euiSizeS
+            (click)="onMenuIconClick()"
+    >
+        <eui-icon-svg size="s" icon="eui-ellipsis-vertical"></eui-icon-svg>
+    </button>
+</app-dynamic-dropdown-hover>
+<!--<eui-dropdown-->
+<!--    #dropdownComponentRef-->
+<!--    *ngIf="isEditMode && node.tocItem.draggable && !node.tocItem.root"-->
+<!--&gt;-->
+<!--    <eui-dropdown-content>-->
+<!--        <button euiDropdownItem *ngFor="let item of menuItems" (click)="item.command()" [disabled]="item.disabled">-->
+<!--            <span euiLabel>{{item.label}}</span>-->
+<!--            <eui-icon-svg [icon]="item.icon" *ngIf="item.icon" size="s"></eui-icon-svg>-->
+<!--        </button>-->
+<!--    </eui-dropdown-content>-->
+<!--</eui-dropdown>-->
 
 <app-confirm-delete-dialog
-  #deleteTocConfirmation
-  [title]="'toc.edit.window.item.selected.delete-dialog.title' | translate"
-  [description]="'toc.edit.window.item.selected.delete-dialog.desc' | translate"
+    #deleteTocConfirmation
+    [title]="'toc.edit.window.item.selected.delete-dialog.title' | translate"
+    [description]="'toc.edit.window.item.selected.delete-dialog.desc' | translate"
 ></app-confirm-delete-dialog>

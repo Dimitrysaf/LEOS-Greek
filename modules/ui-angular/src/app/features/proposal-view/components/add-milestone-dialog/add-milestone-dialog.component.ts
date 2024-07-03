@@ -1,10 +1,12 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
   Output,
+  Renderer2,
   ViewChild,
 } from '@angular/core';
 import {
@@ -38,13 +40,15 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
   form: FormGroup;
   types: any[];
 
-  private defaultType;
+  defaultType;
   private destroy$: Subject<any> = new Subject();
 
   constructor(
     private fb: FormBuilder,
     private proposalDetailsService: ProposalDetailsService,
     private translateService: TranslateService,
+    private renderer: Renderer2,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -53,7 +57,28 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
       : this.getTypeOptions();
     this.defaultType = this.types[0];
     this.buildForm();
+    this.form.patchValue({
+      milestonesType: this.defaultType.value,
+      milestonesTitle: this.defaultType.label,
+    });
     this.handleChanges();
+  }
+
+  ngAfterViewInit() {
+   setTimeout(() => {
+     const targetElement = document.querySelector('.eui-dialog-container');
+     if (targetElement) {
+       const grandParentElement = targetElement.parentElement;
+       if (grandParentElement) {
+         this.renderer.addClass(
+           grandParentElement,
+           'cdk-overlay-panel-milestone',
+         );
+       }
+     }
+     this.resetInitials();
+     this.cdr.detectChanges();
+   }, 0);
   }
 
   ngOnDestroy(): void {
@@ -145,13 +170,13 @@ export class AddMilestoneDialogComponent implements OnInit, OnDestroy {
       .get('milestonesType')
       .valueChanges.pipe(takeUntil(this.destroy$))
       .subscribe((selectedValue) => {
+        const option = this.types.find((o) => o.label === selectedValue);
         const milestonesTitle = this.form.get('milestonesTitle');
-        if (selectedValue === OTHER_VALUE) {
+        if (option && option.value === OTHER_VALUE) {
           milestonesTitle.setValue('');
           milestonesTitle.enable();
           milestonesTitle.setValidators([Validators.required]);
-        } else {
-          const option = this.types.find((o) => o.value === selectedValue);
+        } else if (option) {
           milestonesTitle.setValue(option.label);
           milestonesTitle.disable();
           milestonesTitle.clearValidators();

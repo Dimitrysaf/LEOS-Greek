@@ -1,4 +1,4 @@
-import {Component, HostBinding, OnDestroy, OnInit} from '@angular/core';
+import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import {
   getI18nState,
   getUserPreferences,
@@ -6,20 +6,28 @@ import {
   I18nState,
   UpdateUserPreferencesAction,
   UserPreferences,
+  UserService,
   UserState,
 } from '@eui/core';
-import {Store} from '@ngrx/store';
-import {TranslateService} from '@ngx-translate/core';
-import {Observable, of, Subscription} from 'rxjs';
+import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
+import {
+  map,
+  Observable,
+  of,
+  Subject,
+  Subscription,
+  take,
+  takeUntil,
+} from 'rxjs';
 
-import {AppConfigService} from '@/core/services/app-config.service';
-import {AppLocalStorageService} from '@/core/services/app-local-storage.service';
+import { AppConfigService } from '@/core/services/app-config.service';
+import { AppLocalStorageService } from '@/core/services/app-local-storage.service';
 
-import {Profile} from '@/shared';
-import {Notification} from './shared/models/notification.model';
-import {CoEditionServiceWS} from './shared/services/coEdition.websocket.service';
-import {NotificationsService} from './shared/services/notifications.service';
-import {map} from "rxjs/operators";
+import { Profile } from './shared/models/leos.model';
+import { Notification } from './shared/models/notification.model';
+import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
+import { NotificationsService } from './shared/services/notifications.service';
 
 @Component({
   selector: 'app-root',
@@ -41,12 +49,10 @@ export class AppComponent implements OnInit, OnDestroy {
   // Observe state changes
   userState: Observable<UserState>;
   // an array to keep all subscriptions and easily unsubscribe
-  subs: Subscription[] = [];
   i18nState: Observable<I18nState>;
   userPreferencesState: Observable<UserPreferences>;
   profile: Profile;
   isNotificationsShown$: Observable<boolean>;
-  contentAvailable$: Observable<boolean>;
   listSupportButtons = [
     { id: 1, label: 'app.support.contact-us' },
     { id: 2, label: 'app.support.learn' },
@@ -56,6 +62,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
   notifications: Notification[];
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private store: Store<any>,
     private config: AppConfigService,
@@ -63,45 +71,42 @@ export class AppComponent implements OnInit, OnDestroy {
     private webSocket: CoEditionServiceWS,
     private storage: AppLocalStorageService,
     private notificationsService: NotificationsService,
+    private userService: UserService,
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
     this.i18nState = this.store.select(getI18nState);
     this.userPreferencesState = this.store.select(getUserPreferences);
     this.userState = this.store.select(getUserState);
-    this.subs.push(
-      this.userState.subscribe((user: UserState) => {
+    this.userState
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((user: UserState) => {
         this.userInfos = { ...user };
-      }),
-    );
+      });
     this.webSocket.connect();
   }
 
   ngOnInit() {
-    const lang = this.storage.get('lang');
-    this.checkIfContentAvailable();
+    const lang = this.storage.get('lang') ?? 'en';
     this.store.dispatch(new UpdateUserPreferencesAction({ lang }));
-    this.subs.push(
-      this.config.config.subscribe((config) => {
-        this.headerTitleHtml = config.headerTitle;
-        this.profile = config.profile;
-      }),
-    );
 
-    this.subs.push(
-      this.notificationsService
-        .fetchNotifications()
-        .subscribe((notifications) => {
-          this.notifications = notifications;
-          this.checkIfContentAvailable();
-        }),
-    );
+    this.config.config.pipe(takeUntil(this.destroy$)).subscribe((config) => {
+      this.headerTitleHtml = config.headerTitle;
+      this.profile = config.profile;
+    });
 
-    this.subs.push(
-      this.i18nState.subscribe((state) => {
-        this.translateService.use(state.activeLang);
-        this.storage.set('lang', state.activeLang);
-      }),
-    );
+    this.notificationsService.notifications$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((notifs) => {
+        this.notifications = notifs;
+      });
+
+    this.notificationsService.fetchNotifications().pipe(take(1)).subscribe();
+
+    this.i18nState.pipe(takeUntil(this.destroy$)).subscribe((state) => {
+      const activeLang = state.activeLang ?? 'en';
+      this.translateService.use(activeLang);
+      this.storage.set('lang', activeLang);
+    });
   }
 
   get showLoggedUser() {
@@ -111,7 +116,8 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.webSocket.removeSession();
     this.webSocket.disconnect();
-    this.subs.forEach((s: Subscription) => s.unsubscribe());
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onListItemClicked(item) {
@@ -149,19 +155,4 @@ export class AppComponent implements OnInit, OnDestroy {
       this.notificationsService.toggleNotifications();
     }, 10);
   }
-
-  checkIfContentAvailable(): void {
-    if (this.notifications) {
-      this.contentAvailable$ = of(this.notifications).pipe(
-        map((notifications) =>
-          notifications.some((notification) => {
-            return true;
-          }),
-        ),
-      );
-    } else {
-      this.contentAvailable$ = of(false);
-    }
-  }
-
 }

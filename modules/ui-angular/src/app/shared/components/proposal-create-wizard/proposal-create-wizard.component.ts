@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -7,7 +7,6 @@ import {
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DIALOG_COMPONENT_CONFIG } from '@eui/components/eui-dialog';
-import { UxWizardStep } from '@eui/components/legacy/ux-wizard-step';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 
@@ -19,6 +18,7 @@ import {
 import { ProposalService } from '@/shared/services/proposal.service';
 import { createPromise } from '@/shared/utils';
 import { noWhitespaceValidator } from '@/shared/utils/validators';
+import { EuiWizardStep } from '@eui/components/eui-wizard';
 
 @Component({
   selector: 'app-proposal-create-wizard',
@@ -44,6 +44,8 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     private proposalService: ProposalService,
     private router: Router,
     private translateService: TranslateService,
+    private renderer: Renderer2,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnDestroy(): void {
@@ -53,6 +55,22 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initCreateForm();
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const targetElement = document.querySelector('.eui-dialog-container');
+      if (targetElement) {
+        const grandParentElement = targetElement.parentElement;
+        if (grandParentElement) {
+          this.renderer.addClass(
+            grandParentElement,
+            'cdk-overlay-panel-upload',
+          );
+        }
+      }
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   handleSelectTemplate(template: CatalogItem | null) {
@@ -112,7 +130,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     this.currentStepIndex = event.index;
   }
 
-  onSelectStep(event: UxWizardStep) {
+  onSelectStep(event: EuiWizardStep) {
     this.stepSelected = event;
   }
 

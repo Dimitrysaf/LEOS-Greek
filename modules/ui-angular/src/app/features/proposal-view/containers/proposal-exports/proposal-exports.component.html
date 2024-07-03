@@ -20,14 +20,14 @@
   </ng-template>
   <ng-template let-row euiTemplate="body">
     <tr>
-      <td class="d-flex flex-column">
+      <td class="eui-u-display-flex eui-u-flex-column">
         <span euiLabel>{{ row.comments[0] }}</span>
-        <span euiSublabel class="mt-2 ml-2" euiLabel>{{
-          row.comments[1]
-        }}</span>
-        <span euiSublabel class="mt-2 ml-4" euiLabel>{{
-          row.comments[2]
-        }}</span>
+        <span euiSublabel class="eui-u-mt-xs eui-u-ml-xs" euiLabel>{{
+            row.comments[1]
+          }}</span>
+        <span euiSublabel class="eui-u-mt-xs eui-u-ml-l" euiLabel>{{
+            row.comments[2]
+          }}</span>
       </td>
       <td>{{ row.date | date : 'dd/MM/yyyy HH:mm' }}</td>
       <td>{{ row.status }}</td>
@@ -42,46 +42,44 @@
             euiTooltip="Menu"
             [attr.aria-label]="'Menu'"
           >
-            <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+            <eui-icon-svg icon="eui-ellipsis-vertical"></eui-icon-svg>
           </button>
           <eui-dropdown-content>
-            <div euiList>
-              <ng-container>
-                <button
-                  euiListItem
-                  class="p-2"
-                  (click)="openEditExportDialog(row)"
-                >
-                  {{ 'page.collection.exports.table.actions.edit' | translate }}
-                </button>
-              </ng-container>
+            <ng-container>
               <button
-                euiListItem
-                class="p-2"
-                (click)="handleNotifyExport(row.id)"
+                euiDropdownItem
+                class="eui-u-p-xs"
+                (click)="openEditExportDialog(row)"
               >
-                {{
-                  'page.collection.exports.table.actions.re-export' | translate
-                }}
+                {{ 'page.collection.exports.table.actions.edit' | translate }}
               </button>
-              <button
-                euiListItem
-                class="p-2"
-                (click)="handlePreviewExport(row.id)"
-              >
-                {{
-                  'page.collection.exports.table.actions.preview' | translate
-                }}
-              </button>
-              <button
-                euiListItem
-                euiDanger
-                class="p-2"
-                (click)="handleDeleteExport(row)"
-              >
-                {{ 'global.actions.delete' | translate }}
-              </button>
-            </div>
+            </ng-container>
+            <button
+              euiDropdownItem
+              class="eui-u-p-xs"
+              (click)="handleNotifyExport(row.id)"
+            >
+              {{
+                'page.collection.exports.table.actions.re-export' | translate
+              }}
+            </button>
+            <button
+              euiDropdownItem
+              class="eui-u-p-xs"
+              (click)="handlePreviewExport(row.id)"
+            >
+              {{
+                'page.collection.exports.table.actions.preview' | translate
+              }}
+            </button>
+            <button
+              euiDropdownItem
+              euiDanger
+              class="eui-u-p-xs"
+              (click)="handleDeleteExport(row)"
+            >
+              {{ 'global.actions.delete' | translate }}
+            </button>
           </eui-dropdown-content>
         </eui-dropdown>
       </td>
@@ -108,11 +106,11 @@
   #editTitleExport
   [title]="'page.collection.exports.table.dialog.edit-title.title' | translate"
 >
-  <div euiInputGroup class="flex-row align-items-center">
+  <div euiInputGroup class="eui-u-flex-row eui-u-flex-align-items-center">
     <label class="label">
       {{ 'page.collection.drafts.annex.title-dialog.label' | translate }}</label
     >
-    <input euiInputText [(ngModel)]="titleToEdit" />
+    <input euiInputText [(ngModel)]="titleToEdit"/>
   </div>
   <eui-dialog-footer>
     <div class="app-dialog-footer-content">
@@ -126,8 +124,8 @@
         (click)="handleTitleChange()"
       >
         <span>{{
-          'page.collection.drafts.annex.title-dialog.save' | translate
-        }}</span>
+            'page.collection.drafts.annex.title-dialog.save' | translate
+          }}</span>
       </button>
     </div>
   </eui-dialog-footer>

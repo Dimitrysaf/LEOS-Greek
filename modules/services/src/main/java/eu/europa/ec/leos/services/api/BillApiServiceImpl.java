@@ -109,11 +109,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class BillApiServiceImpl implements BillApiService {
+public abstract class BillApiServiceImpl implements BillApiService {
 
     private static final String BILL_METADATA_IS_REQUIRED = "Bill metadata is required!";
     private static final String PROPOSAL = "Proposal_";
     private static final String OPERATION_CHECKIN_MINOR = "operation.checkin.minor";
+
     @Autowired
     BillService billService;
     @Autowired
@@ -612,7 +613,7 @@ public class BillApiServiceImpl implements BillApiService {
         if (splittedContent == null) {
             splittedContentIsEmpty = true;
         }
-        
+
 
 
         List<Element> result = getMovedFromElements(updatedBill, newContent);

@@ -67,12 +67,16 @@ eui-icon-svg > svg > use {
   white-space: normal !important;
 }
 
+.eui-dropdown-item__content-text {
+  font-style: normal;
+}
+
 .eui-page-column--no-scrollbars > .eui-page-column__body {
   overflow: unset;
   padding: 0;
 }
 
-.eui-page-column--right-column .eui-page-column__header-toggle .eui-icon {
+.eui-page-column--right-column .eui-page-column__header-toggle .eui-icon-svg {
   transform: rotate(180deg);
 }
 
@@ -112,9 +116,9 @@ eui-icon-svg > svg > use {
 }
 
 .cke_reset_all
-  .cke_dialog_ui_checkbox
-  .cke_dialog_ui_checkbox_input
-  + label::after {
+.cke_dialog_ui_checkbox
+.cke_dialog_ui_checkbox_input
++ label::after {
   font-size: 1.3rem;
 }
 
@@ -167,6 +171,14 @@ eui-icon-svg > svg > use {
   background-color: #feca1d;
 }
 
+.cdk-overlay-panel-upload {
+  width: 42% !important;
+}
+
+.cdk-overlay-panel-milestone {
+  width: 41% !important;
+}
+
 .focused-search-result {
   background-color: #7ed3f8 !important;
 }
@@ -180,7 +192,7 @@ eui-icon-svg > svg > use {
 }
 
 article.leos-content-soft-new[leos\:softaction='add']
-  num:not([leos\:origin='ec']) {
+num:not([leos\:origin='ec']) {
   font-weight: bold;
 }
 
@@ -322,7 +334,7 @@ a.cke_dialog_tab {
 
 :root {
   --eui-base-font-family: 'Open Sans', system-ui, -apple-system,
-    blinkmacsystemfont, 'Segoe UI', roboto, ubuntu, 'Helvetica Neue', sans-serif;
+  blinkmacsystemfont, 'Segoe UI', roboto, ubuntu, 'Helvetica Neue', sans-serif;
 }
 
 body {
@@ -564,6 +576,7 @@ body {
 .contribution-view-merge-pane .contribution-wrapper-after-merge:not([leos\:selectedAction]) {
   background-color: rgb(166 166 166 / 80%) !important;
   border: #8c8c8c thin solid;
+
   [leos\:mergeAction]:not([leos\:selectedAction]),
   [leos\:mergeaction]:not([leos\:selectedaction]),
   ins,
@@ -571,6 +584,18 @@ body {
   num {
     background-color: rgb(166 166 166 / 0%) !important;
   }
+}
+
+
+a, a:not([href]):not([tabindex]):not(eui-breadcrumb-item a) {
+  color: var(--eui-base-color-link);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a:hover,
+a:not([href]):not([tabindex]):not(eui-breadcrumb-item a):hover {
+  text-decoration: underline;
 }
 
 %tabStyles {

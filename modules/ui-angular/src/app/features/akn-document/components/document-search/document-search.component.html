@@ -30,10 +30,10 @@
           {{ 'page.editor.search.results.separator' | translate }}
           {{ doc.searchResultsCounter$ | async }}</span
         >
-        <eui-icon
-          iconClass="eui-icon-search-m"
+        <eui-icon-svg
+          icon="eui-search"
           *ngIf="(doc.searchResultsCounter$ | async) === 0 && !isSearchActive()"
-        ></eui-icon>
+        ></eui-icon-svg>
         <span
           euiLabel
           *ngIf="(doc.searchResultsCounter$ | async) === 0 && isSearchActive()"
@@ -50,12 +50,11 @@
       euiSecondary
       (click)="doc.searchNext()"
     >
-      <span
-        euiIcon
-        iconClass="eui-icon eui-icon-angle-down"
+      <eui-icon-svg
+        icon="eui-chevron-down"
         [title]="'page.editor.search.next-button.tooltip' | translate"
         [attr.aria-label]="'page.editor.search.next-button.tooltip' | translate"
-      ></span>
+      ></eui-icon-svg>
     </button>
 
     <button
@@ -65,12 +64,11 @@
       euiSecondary
       (click)="doc.searchPrevious()"
     >
-      <span
-        euiIcon
-        iconClass="eui-icon eui-icon-angle-up"
+      <eui-icon-svg
+        icon="eui-chevron-up"
         [title]="'page.editor.search.prev-button.tooltip' | translate"
         [attr.aria-label]="'page.editor.search.prev-button.tooltip' | translate"
-      ></span>
+      ></eui-icon-svg>
     </button>
 
     <div class="checkbox-input-group">
@@ -94,14 +92,13 @@
       euiSecondary
       (click)="toggleReplace()"
     >
-      <span
-        euiIcon
-        iconClass="eui-icon eui-icon-swap-horizontal"
+      <eui-icon-svg
+        icon="eui-swap-horizontal"
         [title]="'page.editor.search.replaceToggle-button.tooltip' | translate"
         [attr.aria-label]="
           'page.editor.search.replaceToggle-button.tooltip' | translate
         "
-      ></span>
+      ></eui-icon-svg>
     </button>
 
     <button euiSizeS euiButton euiOutline euiPrimary>
@@ -133,7 +130,7 @@
         />
 
         <div class="eui-input-group-addon-item">
-          <eui-icon iconClass="eui-icon-swap-horizontal"></eui-icon>
+          <eui-icon-svg icon="eui-swap-horizontal"></eui-icon-svg>
         </div>
       </div>
     </div>

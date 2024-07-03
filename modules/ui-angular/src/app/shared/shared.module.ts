@@ -1,9 +1,7 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { MatTreeModule } from '@angular/material/tree';
 import { EuiAllModule } from '@eui/components';
-import { UxAllModule } from '@eui/components/legacy';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgForTrackByPropertyModule } from 'ng-for-track-by-property';
 
@@ -34,18 +32,28 @@ import { UserHasPermissionDirective } from './directives/userHasPermission.direc
 import { EscapeHtmlPipe } from './pipes/escape-html.pipe';
 import { HtmlToPlaintextPipe } from './pipes/html-to-plaintext.pipe';
 import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { EuiDropdownModule } from '@eui/components/eui-dropdown';
+import { DynamicDropdownHoverComponent } from '@/shared/components/dynamic-dropdown-hover/dynamic-dropdown-hover.component';
+import { DynamicDropdownClickComponent } from '@/shared/components/dynamic-dropdown-click/dynamic-dropdown-click.component';
+import { MoveToLeftSideToolbarDirective } from './directives/MoveToLeftSideToolbar.directive';
 
 @NgModule({
   imports: [
-    UxAllModule,
     EuiAllModule,
+    EuiDropdownModule,
     NgForTrackByPropertyModule,
     TranslateModule,
+    ReactiveFormsModule,
     FormsModule,
     DragDropModule,
     MatTreeModule,
+    CommonModule,
   ],
   declarations: [
+    DynamicDropdownClickComponent,
+    DynamicDropdownHoverComponent,
     ProposalCreateWizardComponent,
     ProposalUploadWizardComponent,
     AknDocumentComponent,
@@ -53,6 +61,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ShowOnInstanceDirective,
     UserHasPermissionDirective,
     HideOnClickOutsideDirective,
+    MoveToLeftSideToolbarDirective,
     ProposalCreateDraftComponent,
     ProposalCreateFormComponent,
     ProposalCreateTemplateSelectorComponent,
@@ -73,7 +82,6 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     NotificationUploadComponent,
   ],
   exports: [
-    UxAllModule,
     EuiAllModule,
     NgForTrackByPropertyModule,
     TranslateModule,
@@ -85,6 +93,7 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     ShowOnInstanceDirective,
     UserHasPermissionDirective,
     HideOnClickOutsideDirective,
+    MoveToLeftSideToolbarDirective,
     ProposalCreateTemplateSelectorComponent,
     ConfirmDeleteDialogComponent,
     ConfirmDialogComponent,
@@ -100,7 +109,8 @@ import { UnescapeHtmlPipe } from './pipes/unescape-html.pipe';
     NotificationCardContainerComponent,
     NotificationCardComponent,
     NotificationUploadComponent,
+    DynamicDropdownHoverComponent,
   ],
-  providers: [ProposalService],
+  providers: [ProposalService, CommonModule],
 })
 export class SharedModule {}

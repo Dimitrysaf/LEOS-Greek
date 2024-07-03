@@ -182,16 +182,22 @@ public class MergeContributionService {
         // Process undo merging actions
         for (MergeActionVO mergeActionVO : sortedUndoEvents ) {
             impactedElements = new ArrayList<String>();
-            xmlContent = undoTrackChangesFromContribution(
-                    mergeActionVO.getContributionVO(),
-                    xmlContent,
-                    mergeActionVO.getElementId(),
-                    mergeActionVO.getElementState(),
-                    intRefMap);
-            // Removes "mergeAction" attribute on contribution elements where merging has been undone
-            removeActionOnImpactedElement(contributionDocument, mergeActionVO.getElementId());
+            String currentMergeAction = xmlContentProcessor.getElementAttributeValueByNameAndId(mergeActionVO.getContributionVO().getXmlContent(),
+                    LEOS_MERGE_ACTION_ATTR, mergeActionVO.getElementTagName(), mergeActionVO.getElementId());
+            if (currentMergeAction != null) {
+                if (!currentMergeAction.equals(MergeActionVO.MergeAction.PROCESSED.name())) {
+                    xmlContent = undoTrackChangesFromContribution(
+                            mergeActionVO.getContributionVO(),
+                            xmlContent,
+                            mergeActionVO.getElementId(),
+                            mergeActionVO.getElementState(),
+                            intRefMap);
+                }
+                // Removes "mergeAction" attribute on contribution elements where merging has been undone
+                removeActionOnImpactedElement(contributionDocument, mergeActionVO.getElementId());
+            }
         }
-
+        
         // Update contribution xml in DB
         if (!request.getMergeActions().isEmpty()) {
             contributionXmlContent = nodeToByteArray(contributionDocument);

@@ -160,24 +160,39 @@ public class PackageServiceImpl implements PackageService {
         try {
             Optional<Package> pkg = packageRepository.findPackageByName(packageName);
             if (pkg.isPresent()) {
-                // Remove all docs inside package
-                List<LeosDocument> docs = documentService.findAllDocumentsByPackageId(pkg.get().getId().toString());
-                for (LeosDocument d : docs) {
-                    try {
-                        documentService.deleteDocumentByRef(d.getRef());
-                    } catch (RepositoryException e) {
-                        throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_DELETING, "Error while deleting a document with" +
-                                " id : " + d.getVersionId());
-                    }
+                List<LinkedPackage> linkedPackages = linkedPackagedRepository.findByPkgId(pkg.get().getId());
+                if(!linkedPackages.isEmpty()) {
+                    linkedPackages.forEach(linkedPackage -> {
+                        Optional<Package> translatedPkg = packageRepository.findById(linkedPackage.getLinkedPackageId());
+                        try {
+                            deleteDocsAndCollaborators(translatedPkg);
+                        } catch (RepositoryException e) {
+                            LOG.error("Unexpected error occurred while deleting documents and collaborator of linked package");
+                        }
+                        translatedPkg.ifPresent(packageRepository::delete);
+                    });
                 }
-                // Remove all links to collaborators
-                collaboratorsService.removeCollaborators(pkg.get());
+                deleteDocsAndCollaborators(pkg);
             }
-
             pkg.ifPresent(packageRepository::delete);
-        } catch (NumberFormatException e) {
+        } catch (RepositoryException e) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Package.class.getName());
         }
+    }
+
+    private void deleteDocsAndCollaborators(Optional<Package> pkg) throws RepositoryException {
+        // Remove all docs inside package
+        List<LeosDocument> docs = documentService.findAllDocumentsByPackageId(pkg.get().getId().toString());
+        for (LeosDocument d : docs) {
+            try {
+                documentService.deleteDocumentByRef(d.getRef());
+            } catch (RepositoryException e) {
+                throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_DELETING, "Error while deleting a document with" +
+                        " id : " + d.getVersionId());
+            }
+        }
+        // Remove all links to collaborators
+        collaboratorsService.removeCollaborators(pkg.get());
     }
 
     public List<LeosDocument> findDocumentsByPackageName(String packageName, final Set<String> categories,

@@ -28,8 +28,9 @@
 <eui-card class="eui-u-mt-s eui-u-mb-l" *ngIf="memorandum">
     <eui-card-header>
         <eui-card-header-title>
-            <div class="d-flex flex-row">
-                <app-co-edition-info [isNotTocNodeLevel]="true"
+            <div class="eui-u-display-flex eui-u-flex-row">
+                <app-co-edition-info
+                [isNotTocNodeLevel]="true"
                         *ngIf="coEditionMap"
                         [documentCoEditions]="
             coEditionMap[memorandum?.metadata.internalRef] ?? null
@@ -114,8 +115,9 @@
                 'page.collection.drafts.explanatory.table.title' | translate
               "
                         >
-                            <div class="d-flex flex-row">
-                                <app-co-edition-info [isNotTocNodeLevel]="true"
+                            <div class="eui-u-display-flex eui-u-flex-row">
+                                <app-co-edition-info
+                                        [isNotTocNodeLevel]="true"
                                         *ngIf="coEditionMap"
                                         [documentCoEditions]="
                     coEditionMap[row?.metadata.internalRef] ?? null
@@ -173,8 +175,8 @@
                       | translate
                   "
                                 >
-                  <span euiIcon iconClass="eui-icon eui-icon-more-vertical">
-                  </span>
+                  <eui-icon-svg icon="eui-ellipsis-vertical">
+                  </eui-icon-svg>
                                 </button>
                                 <eui-dropdown-content>
                                     <div euiList>
@@ -214,8 +216,9 @@
 >
     <eui-card-header>
         <eui-card-header-title>
-            <div class="d-flex flex-row">
-                <app-co-edition-info [isNotTocNodeLevel]="true"
+            <div class="eui-u-display-flex eui-u-flex-row">
+                <app-co-edition-info
+                        [isNotTocNodeLevel]="true"
                         *ngIf="coEditionMap"
                         [documentCoEditions]="
             coEditionMap[document.metadata.internalRef] ?? null
@@ -241,12 +244,12 @@
         <!-- FINANCIAL STATEMENT SECTION   -->
         <ng-container *appShowOnInstance="['ec', 'os']">
             <div
-                    class="eui-u-flex pb-3"
+                    class="eui-u-flex eui-u-pb-m"
                     style="border-bottom: 1px solid var(--eui-base-color-grey-15)"
                     *ngIf="!documentCard.euiCollapsed"
             >
-                <div class="flex-grow-1">
-                    <div class="d-flex flex-row">
+                <div class="eui-u-flex-grow">
+                    <div class="eui-u-display-flex eui-u-flex-row">
                         <div *ngIf="!financialStatement">
                             <strong>{{
                                 'page.collection.drafts.financial-statement.title' | translate
@@ -315,8 +318,8 @@
         </ng-container>
         <!-- ANNEX SECTION   -->
         <ng-container *ngIf="!documentCard.euiCollapsed">
-            <div class="eui-u-flex pt-3">
-                <div class="flex-grow-1">
+            <div class="eui-u-flex eui-u-pt-m">
+                <div class="eui-u-flex-grow">
                     <div>
                         <strong>{{
                             'page.collection.drafts.annex.table.title' | translate
@@ -392,8 +395,9 @@
                 'page.collection.drafts.annex.table.tr.title' | translate
               "
                         >
-                            <div class="d-flex flex-row eui-u-flex-align-items-center">
-                                <app-co-edition-info [isNotTocNodeLevel]="true"
+                            <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
+                                <app-co-edition-info
+                                        [isNotTocNodeLevel]="true"
                                         *ngIf="coEditionMap"
                                         [documentCoEditions]="
                     coEditionMap[row.metadata.internalRef] ?? null
@@ -449,10 +453,9 @@
                         | translate
                     "
                                     >
-                    <span
-                            euiIcon
-                            iconClass="eui-icon eui-icon-more-vertical"
-                    ></span>
+                    <eui-icon-svg
+                            icon="eui-ellipsis-vertical"
+                    ></eui-icon-svg>
                                     </button>
                                     <eui-dropdown-content>
                                         <div euiList>
@@ -519,7 +522,7 @@
     [dismissLabel]="'global.actions.cancel' | translate"
     (accept)="handleSave()"
 >
-    <div euiInputGroup class="flex-row align-items-center">
+    <div euiInputGroup class="eui-u-flex-row eui-u-flex-align-items-center">
         <label class="label">
             {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
         >
@@ -535,7 +538,7 @@
     [dismissLabel]="'global.actions.cancel' | translate"
     (accept)="handleExplanatoryTitleSave()"
 >
-    <div euiInputGroup class="flex-row align-items-center">
+    <div euiInputGroup class="eui-u-flex-row eui-u-flex-align-items-center">
         <label euiLabel class="label" for="explanatoryTitle">
             {{ 'page.collection.drafts.title-dialog.label' | translate }}</label
         >
@@ -560,7 +563,7 @@
                     *ngFor="let annex of annexes; let i = index"
                     cdkDrag
             >
-                <span class="eui-icon eui-icon-bars"></span>
+                <eui-icon-svg icon="eui-ecl-hamburger"></eui-icon-svg>
                 <div [attr.data-index]="i">
                     {{
                     annex.title ||

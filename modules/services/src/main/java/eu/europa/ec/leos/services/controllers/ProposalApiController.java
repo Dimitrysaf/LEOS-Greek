@@ -52,6 +52,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
+import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
 
 @RestController
@@ -254,8 +255,14 @@ public class ProposalApiController {
     public ResponseEntity<Object> uploadProposal(@RequestParam("legFile") MultipartFile legFile) {
         CreateCollectionResult createCollectionResult;
         try {
-            validatePath(legFile.getName());
-            File content = new File(FilenameUtils.normalize(legFile.getName()));
+            String legFileName = legFile.getName();
+            validateBasePath(FilenameUtils.normalize(legFileName), "./");
+
+            // Validate and normalize the upload directory path
+            if (legFileName == null || legFileName.contains("..")) {
+                throw new IllegalArgumentException("Invalid upload directory path: " + legFileName);
+            }
+            File content = new File(legFileName);
             try (FileOutputStream fos = new FileOutputStream(content)) {
                 fos.write(legFile.getBytes());
             } catch (IOException ioe) {
@@ -273,8 +280,8 @@ public class ProposalApiController {
     @RequestMapping(value = "/validateLegFile", method = RequestMethod.POST)
     @ResponseBody
     public ResponseEntity<LegFileValidation> validateLegFile(@RequestParam("legFile") MultipartFile legFile) {
-        validatePath(legFile.getName());
-        File content = new File(FilenameUtils.normalize(legFile.getName()));
+        validateBasePath(FilenameUtils.normalize(legFile.getName()), "./");
+        File content = new File(legFile.getName());
         try (FileOutputStream fos = new FileOutputStream(content)) {
             fos.write(legFile.getBytes());
         } catch (IOException ioe) {

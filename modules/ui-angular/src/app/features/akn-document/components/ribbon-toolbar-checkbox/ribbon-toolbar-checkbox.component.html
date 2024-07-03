@@ -3,22 +3,23 @@
   *ngIf="!item.isSlider"
   [id]="item.id"
   [ngClass]="item.cssClasses"
-  class="eui-u-flex eui-u-flex-row p-0 flex-nowrap justify-content-between"
+  class="eui-u-flex eui-u-flex-row eui-u-p-none flex-nowrap eui-u-flex-justify-content-between"
 >
   <label euiLabel euiSize2XS>{{ itemLabelValue }}</label>
+  <!--[euiVariant]="item.euiStyle"
+    [euiSizeVariant]="item.euiSize"
+    [disabled]="item.disabled"
+    -->
   <input
     type="checkbox"
     euiInputCheckBox
     [checked]="checkboxValue"
-    [euiVariant]="item.euiStyle"
-    [euiSizeVariant]="item.euiSize"
     (change)="onChange()"
-    [disabled]="item.disabled"
   />
 </div>
 <div
   *ngIf="item.isSlider"
-  class="eui-u-flex eui-u-flex-row p-0 flex-nowrap"
+  class="eui-u-flex eui-u-flex-row eui-u-p-none flex-nowrap"
   [ngClass]="item.cssClasses"
 >
   <eui-slide-toggle
@@ -26,7 +27,7 @@
     euiSizeS
     [disabled]="isItemDisabled"
     [isChecked]="checkboxValue"
-    (changed)="onChange()"
+    (slideToggleChange)="onChange()"
     [ngClass]="{
       'align-self-start': !environmentService.isCouncil()
     }"

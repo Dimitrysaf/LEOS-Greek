@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.compare;
 
 import eu.europa.ec.leos.services.compare.vo.Element;
+import eu.europa.ec.leos.services.support.IdGenerator;
 
 public interface ContentComparatorService {
 
@@ -60,6 +61,6 @@ public interface ContentComparatorService {
     default boolean isIntermediateElementRemovedInNewContent(ContentComparatorContext context) {
         return (context.getIntermediateElement() != null && !context.getNewContentElements().containsKey(context.getIntermediateElement().getTagId()) &&
                 (!context.getOldContentElements().containsKey(context.getIntermediateElement().getTagId()) ||
-                        context.getNewContentElements().containsKey("deleted_" + context.getIntermediateElement().getTagId())));
+                        context.getNewContentElements().containsKey("deleted" + IdGenerator.PREFIX_DELIMITER + context.getIntermediateElement().getTagId())));
     }
 }

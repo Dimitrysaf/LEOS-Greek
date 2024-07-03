@@ -1,9 +1,9 @@
-<ux-wizard-steps
+<eui-wizard
         (selectStep)="onSelectStepRemoteNav($event)"
         [activeStepIndex]="currentStepIndex"
         [isNavigationAllowed]="isNavigationAllowed"
 >
-    <ux-wizard-step
+    <eui-wizard-step
             [label]="
         (environmentService.isCouncil()
           ? 'page.workspace.upload-cn.label'
@@ -11,17 +11,19 @@
         ) | translate
       "
             [isCompleted]="step1Complete"
+            class="eui-u-font-l eui-u-color-grey-90"
+            style="margin: 1rem;"
     >
-        <uxWizardStepContent>
             <form [formGroup]="uploadForm" enctype="multipart/form-data">
-                <span>{{ 'page.workspace.upload-cn.button.label' | translate }}</span>
+                <span class="eui-u-font-m"
+                >{{ 'page.workspace.upload-cn.button.label' | translate }}</span>
                 <eui-file-upload
                     #uploadFile
                     formControlName="legFile"
                     [progress]="progress"
                     [isMultiple]="false"
                     [accept]="'.leg'"
-                    (drop)="onDrop()"
+                    (fileDrop)="onDrop()"
                     [hasResetButton]="false"
                 ></eui-file-upload>
             </form>
@@ -54,9 +56,8 @@
                     </div>
                 </eui-card-content>
             </eui-card>
-        </uxWizardStepContent>
-    </ux-wizard-step>
-    <ux-wizard-step
+    </eui-wizard-step>
+    <eui-wizard-step
             [label]="
         (environmentService.isCouncil()
           ? 'page.workspace.create-form.draft.label'
@@ -64,9 +65,8 @@
         ) | translate
       "
             [isCompleted]="uploadForm.valid"
+            style="padding-top: 0px !important"
     >
-        <uxWizardStepContent
-        >
             <app-proposal-create-form
                     [createForm]="uploadForm"
                     [translationKey]="
@@ -74,9 +74,8 @@
           "
             ></app-proposal-create-form
             >
-        </uxWizardStepContent>
-    </ux-wizard-step>
-</ux-wizard-steps>
+    </eui-wizard-step>
+</eui-wizard>
 
 <div class="app-dialog-footer-content">
     <button euiButton (click)="closeDialog()">
@@ -88,7 +87,7 @@
             [disabled]="currentStepIndex === 1 || !isNavigationAllowed"
             (click)="onNavigation(-1)"
     >
-        <span class="eui-icon eui-icon-chevron-left"></span>
+        <eui-icon-svg icon="eui-chevron-back"></eui-icon-svg>
         <span euiLabel>
           {{ 'global.actions.previous' | translate }}
         </span>

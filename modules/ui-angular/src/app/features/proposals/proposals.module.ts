@@ -9,6 +9,7 @@ import {
 } from './components';
 import { ProposalsComponent } from './containers';
 import { ProposalsRoutingModule } from './proposals-routing.module';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,11 @@ import { ProposalsRoutingModule } from './proposals-routing.module';
     ProposalsListComponent,
     ProposalItemComponent,
   ],
-  imports: [SharedModule, ReactiveFormsModule, ProposalsRoutingModule],
+  imports: [
+    SharedModule,
+    ReactiveFormsModule,
+    ProposalsRoutingModule,
+    CommonModule,
+  ],
 })
 export class ProposalsModule {}

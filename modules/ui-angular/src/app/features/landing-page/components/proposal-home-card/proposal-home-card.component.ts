@@ -47,8 +47,8 @@ type ProposalsState = {
   templateUrl: './proposal-home-card.component.html',
   styleUrls: ['./proposal-home-card.component.scss'],
 })
-export class ProposalHomeCardComponent implements OnInit, OnDestroy, OnChanges {
-  @Input() iconClass: string;
+export class ProposalHomeCardComponent implements OnInit {
+  @Input() icon: string;
   @Input() labelKey: string;
   @Input() proposals: Document[];
   @Input() packages: Package[] = [];
@@ -195,7 +195,7 @@ export class ProposalHomeCardComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get shouldShowIcon(): boolean {
-    return !!this.iconClass;
+    return !!this.icon;
   }
 
   protected readonly DEFAULT_SORT_ORDER = DEFAULT_SORT_ORDER;

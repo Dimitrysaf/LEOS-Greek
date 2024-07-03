@@ -1,9 +1,9 @@
-<div class="d-flex flex-column">
-  <div class="eui-u-flex eui-u-flex-row eui-u-width-20 align-self-end">
+<div class="eui-u-display-flex eui-u-flex-column eui-u-flex-align-items-end">
+  <div class="eui-u-flex eui-u-flex-row eui-u-width-20">
     <div euiInputGroup class="eui-u-mr-s">
       <div class="eui-input-group-addon">
         <div class="eui-input-group-addon-item">
-          <eui-icon iconClass="eui-icon-search"></eui-icon>
+          <eui-icon-svg icon="eui-search"></eui-icon-svg>
         </div>
         <eui-table-filter
           #filter
@@ -23,7 +23,7 @@
     #collaborators
     euiTable
     euiTableResponsive
-    class="w-100"
+    class="eui-u-width-100"
     [rows]="dataSource"
     [filter]="filter"
   >
@@ -79,21 +79,20 @@
               </div>
               <div class="col-sm-2">
                 <div class="eui-u-mr-s" (click)="exitEditMode()">
-                  <eui-icon
-                    euiPrimary
-                    euiSizeL
-                    iconClass="eui-icon-ecl-close-filled"
-                  ></eui-icon>
+                  <eui-icon-svg
+                    size="l"
+                    icon="eui-ecl-close-filled"
+                  ></eui-icon-svg>
                 </div>
               </div>
             </div>
           </ng-container>
           <ng-template #tdRole>
             <span>{{
-              'page.collection.collaborators.role.' +
+                'page.collection.collaborators.role.' +
                 (row.role === 'OWNER' ? 'author' : row.role.toLowerCase())
-                | translate
-            }}</span>
+                  | translate
+              }}</span>
           </ng-template>
         </td>
         <td>
@@ -119,30 +118,28 @@
                   | translate
               "
             >
-              <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+              <eui-icon-svg icon="eui-ellipsis-vertical"></eui-icon-svg>
             </button>
             <eui-dropdown-content>
-              <div euiList>
-                <button
-                  euiListItem
-                  class="eui-u-p-s"
-                  (click)="editCollaborator(row.login, row.entity, row.role)"
-                >
-                  {{
-                    'page.collection.collaborators.table.actions.edit-role'
-                      | translate
-                  }}
-                </button>
-                <button
-                  euiListItem
-                  class="eui-u-p-s"
-                  euiDanger
-                  (click)="handleConfirmDeletion(row)"
-                  *ngIf="dataSource.length > 1"
-                >
-                  {{ 'global.actions.delete' | translate }}
-                </button>
-              </div>
+              <button
+                euiDropdownItem
+                class="eui-u-p-s"
+                (click)="editCollaborator(row.login, row.entity, row.role)"
+              >
+                {{
+                  'page.collection.collaborators.table.actions.edit-role'
+                    | translate
+                }}
+              </button>
+              <button
+                euiDropdownItem
+                class="eui-u-p-s"
+                euiDanger
+                (click)="handleConfirmDeletion(row)"
+                *ngIf="dataSource.length > 1"
+              >
+                {{ 'global.actions.delete' | translate }}
+              </button>
             </eui-dropdown-content>
           </eui-dropdown>
         </td>

@@ -1,5 +1,5 @@
 .zoom-scrollbar-container {
-  height: 100%;
+  height: 91%;
   width: 90px;
   display: flex;
   flex-direction: column;
@@ -97,13 +97,13 @@
 
 .eui-icon-minus {
   cursor: pointer;
-  font-size: 10px;
+  padding-bottom: 10px;
   pointer-events: auto;
 }
 
 .eui-icon-add {
   cursor: pointer;
-  font-size: 13px;
+  padding-top: 10px;
   pointer-events: auto;
 }
 

@@ -1,5 +1,4 @@
 import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
-import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 
 import { RibbonToolbarBaseComponent } from '@/features/akn-document/components/ribbon-toolbar-base/ribbon-toolbar-base.component';
 
@@ -38,7 +37,7 @@ export class RibbonToolbarSectionComponent
   }
 
   mapEuiDropdownMenuItemToRibbonToolbarItems(
-    items: EuiDropdownButtonMenuItem[],
+    items = [],
   ): IRibbonToolbarItem[] {
     this.didDropdownRenderedAsRibbonItems = true;
     return items.map(

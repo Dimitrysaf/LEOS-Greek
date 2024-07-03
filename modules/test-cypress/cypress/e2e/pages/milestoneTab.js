@@ -6,9 +6,9 @@ class milestoneTab extends headerPage {
         milestoneTitleTextBox: () => cy.get('#milestonesTitle'),
         createMilestoneBtn: () => cy.get('button.eui-button--primary').contains('Create Milestone'),
         milestoneTableBody: () => cy.get('app-proposal-milestones table tbody'),
-        milestoneActionMenuOptions: () => cy.get('div [matmenucontent] li button'),
+        milestoneActionMenuOptions: () => cy.get('div.eui-dropdown__panel eui-dropdown-content button'),
         sendForContributionBtn: () => cy.contains('Send for contribution'),
-        userList: () => cy.get("div[role='listbox'] mat-option")
+        userList: () => cy.get("div[role='listbox'] eui-autocomplete-option")
     }
 
     clickAddBtn(){
@@ -36,7 +36,7 @@ class milestoneTab extends headerPage {
     }
 
     clickThreeDotsFromActionMenu(rowNumber,columnNumber){
-        this.getCellFromMilestoneTableBody(rowNumber,columnNumber).find('button .eui-icon-more-vertical').click();
+        this.getCellFromMilestoneTableBody(rowNumber,columnNumber).find("button *[icon='eui-ellipsis-vertical']").click();
     }
 
     clickMilestoneActionMenu(option){

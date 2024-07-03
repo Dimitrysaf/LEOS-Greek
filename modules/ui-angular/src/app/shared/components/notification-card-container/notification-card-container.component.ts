@@ -1,13 +1,13 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {EuiDialogConfig, EuiDialogService} from '@eui/components/eui-dialog';
-import {TranslateService} from '@ngx-translate/core';
-import {Subject, takeUntil} from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
 
-import {AppConfigService} from '@/core/services/app-config.service';
+import { AppConfigService } from '@/core/services/app-config.service';
 
-import {Notification} from '../../models/notification.model';
-import {NotificationsService} from '../../services/notifications.service';
-import {NotificationUploadComponent} from '../notification-upload/notification-upload.component';
+import { Notification } from '../../models/notification.model';
+import { NotificationsService } from '../../services/notifications.service';
+import { NotificationUploadComponent } from '../notification-upload/notification-upload.component';
 
 @Component({
   selector: 'app-notification-card-container',
@@ -32,11 +32,12 @@ export class NotificationCardContainerComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe((notifications) => {
         this.notifications = notifications;
+
         this.notificationService.isShown$.subscribe((isShown) => {
           this.isNotificationsShown = isShown;
-    });
-    this.setPermissions();
-  })
+        });
+        this.setPermissions();
+      });
   }
 
   ngOnDestroy(): void {

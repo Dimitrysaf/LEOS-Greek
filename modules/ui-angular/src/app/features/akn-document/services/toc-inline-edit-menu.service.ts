@@ -1,10 +1,9 @@
 import {Injectable, OnDestroy} from '@angular/core';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
-import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { getI18nState } from '@eui/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import {cloneDeep, keys} from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import {BehaviorSubject, combineLatest, filter, Observable, Subject, take, takeUntil} from 'rxjs';
 
 import {
@@ -28,7 +27,7 @@ import {
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { TableOfContentEditService } from '@/features/akn-document/services/table-of-content-edit.service';
 import { ValidateTocService } from '@/features/akn-document/services/validate-node-drop.service';
-import {DocumentConfig, NumberingType} from '@/shared';
+import { DocumentConfig, NumberingType } from '@/shared';
 import { CoEditionDetectedDialogComponent } from '@/shared/components/co-edition-detected-dialog/co-edition-detected-dialog.component';
 import {
   BULLET_NUM,
@@ -46,29 +45,33 @@ import {
   checkDeleteOnLastItemInList,
   checkIfConfirmDeletion,
   convertArticle,
-  findNodeById, getNumberingTypeByLanguage,
+  findNodeById,
+  getNumberingTypeByLanguage,
   isDeletableItem,
   isDeletedItem,
   isMoveToItem,
   isUndeletableItem,
 } from '@/shared/utils/toc.utils';
+import { DropdownModel } from '@/shared/dropdown.model';
 import {CoEditionVO} from "@/shared/models/coEditionVO.model";
 
 @Injectable()
-export abstract class TocInlineEditMenuService  implements OnDestroy{
-  public items$: Observable<EuiDropdownButtonMenuItem[]>;
+export abstract class TocInlineEditMenuService implements OnDestroy {
+  public items$: Observable<DropdownModel[]>;
   public documentConfig: DocumentConfig;
   public selectedNodeToMove: TableOfContentItemVO;
   private destroy$ = new Subject<void>();
+
   private heading: string;
   private previousHeading: string;
   private previousType: string;
   private isReadyToMove = false;
 
-  private itemsBS = new BehaviorSubject<EuiDropdownButtonMenuItem[]>([]);
+  private itemsBS = new BehaviorSubject<DropdownModel[]>([]);
   private targetNodeBS = new BehaviorSubject<TableOfContentItemVO>(null);
   private documentConfigBS = new BehaviorSubject<DocumentConfig>(null);
   private coEditionForDocumentId: Record<string, CoEditionVO[]>;
+
   protected constructor(
     protected store: Store<any>,
     protected dialogService: EuiDialogService,
@@ -91,17 +94,18 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
       });
 
     this.items$ = this.itemsBS.asObservable();
-
     this.coEditionService.getDocCoEditionInfo()
       .pipe(takeUntil(this.destroy$))
       .subscribe((coEdits: Record<string, CoEditionVO[]>) => {
         this.coEditionForDocumentId = coEdits;
       });
   }
+
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
   public setDocumentConfig(documentConfig: DocumentConfig) {
     this.documentConfigBS.next(documentConfig);
   }
@@ -115,7 +119,10 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
   }
 
   public getDisplayableTocItem(tocItem: TocItem): string {
-    if (getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup) === BULLET_NUM) {
+    if (
+      getNumberingTypeByLanguage(tocItem, this.documentConfig.langGroup) ===
+      BULLET_NUM
+    ) {
       return this.translateService.instant('toc.item.type.bullet');
     }
     if (tocItem.aknTag === MAIN_BODY) {
@@ -131,21 +138,19 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
 
   protected abstract buildTypeSpecificItems(
     type: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem[];
+  ): DropdownModel[];
 
-  protected setIsGoingToMove(
-    isReady: boolean,
-    selectedNode: TableOfContentItemVO,
-  ) {
-    if (this.isReadyToMove !== isReady) {
-      this.isReadyToMove = isReady;
-      this.selectedNodeToMove = selectedNode;
-    }
-  }
+   protected setIsGoingToMove(
+     isReady: boolean,
+     selectedNode: TableOfContentItemVO,
+   ) {
+     if (this.isReadyToMove !== isReady) {
+       this.isReadyToMove = isReady;
+       this.selectedNodeToMove = selectedNode;
+     }
+   }
 
-  protected buildArticleItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  protected buildArticleItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: ARTICLE_TYPE_CHANGE_ACTION_ID,
       label: this.translateService.instant(
@@ -172,23 +177,50 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     };
   }
 
-  private flatten(tableOfContentItemVO : TableOfContentItemVO[]): TableOfContentItemVO[] {
-    return tableOfContentItemVO.flatMap(tableOfContentItemVO => [tableOfContentItemVO, ...(tableOfContentItemVO.childItems ? this.flatten(tableOfContentItemVO.childItems) : [])]);
+  private flatten(
+    tableOfContentItemVO: TableOfContentItemVO[],
+  ): TableOfContentItemVO[] {
+    return tableOfContentItemVO.flatMap((tableOfContentItemVO) => [
+      tableOfContentItemVO,
+      ...(tableOfContentItemVO.childItems
+        ? this.flatten(tableOfContentItemVO.childItems)
+        : []),
+    ]);
   }
 
-  protected buildChapterItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  protected buildChapterItem(node: TableOfContentItemVO): DropdownModel {
     const initialToc = this.tocService.returnInitialToc();
-    const initialTocChapterVos = initialToc != null ? this.flatten(initialToc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems)
-      .filter(obj => obj.tocItem.aknTag === node.tocItem.aknTag) : null;
+    const initialTocChapterVos =
+      initialToc != null
+        ? this.flatten(
+            initialToc.filter(
+              (obj) =>
+                obj.tocItem.aknTag === 'BODY' ||
+                obj.tocItem.aknTag === MAIN_BODY,
+            )[0].childItems,
+          ).filter((obj) => obj.tocItem.aknTag === node.tocItem.aknTag)
+        : null;
     const toc = this.tocService.getCurrentToc();
-    const chapterTocVos = this.flatten(toc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems)
-      .filter(obj => obj.tocItem.aknTag === node.tocItem.aknTag);
-    const itemWithNumType = chapterTocVos != null ? chapterTocVos.find(value => value.numberingType != null) : null;
-    const numType = itemWithNumType != null ? itemWithNumType.numberingType : null;
-    const initialItemWithNumType = initialTocChapterVos != null ? initialTocChapterVos.find(value => value.numberingType != null) : null;
-    const initialNumType = initialItemWithNumType != null ? initialItemWithNumType.numberingType : null;
+    const chapterTocVos = this.flatten(
+      toc.filter(
+        (obj) =>
+          obj.tocItem.aknTag === 'BODY' || obj.tocItem.aknTag === MAIN_BODY,
+      )[0].childItems,
+    ).filter((obj) => obj.tocItem.aknTag === node.tocItem.aknTag);
+    const itemWithNumType =
+      chapterTocVos != null
+        ? chapterTocVos.find((value) => value.numberingType != null)
+        : null;
+    const numType =
+      itemWithNumType != null ? itemWithNumType.numberingType : null;
+    const initialItemWithNumType =
+      initialTocChapterVos != null
+        ? initialTocChapterVos.find((value) => value.numberingType != null)
+        : null;
+    const initialNumType =
+      initialItemWithNumType != null
+        ? initialItemWithNumType.numberingType
+        : null;
     node.numberingType = numType;
     return {
       id: CHAPTER_NUMBER_CHANGE_ID,
@@ -201,31 +233,138 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
           label: this.translateService.instant(
             'toc.edit.window.item.regular.chapter.num.roman',
           ),
-          disabled: node.tocItem.aknTag === 'CHAPTER' && node.numberingType === 'ROMAN_UPPER',
-          command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', initialNumType, toc, chapterTocVos, initialTocChapterVos),
+          disabled:
+            node.tocItem.aknTag === 'CHAPTER' &&
+            node.numberingType === 'ROMAN_UPPER',
+          command: () =>
+            this.handleHighSubdivChangeNumbering(
+              'ROMAN_UPPER',
+              initialNumType,
+              toc,
+              chapterTocVos,
+              initialTocChapterVos,
+            ),
         },
         {
           id: CHAPTER_NUMBER_ARABIC,
           label: this.translateService.instant(
             'toc.edit.window.item.regular.chapter.num.arabic',
           ),
-          disabled: node.tocItem.aknTag === 'CHAPTER' && node.numberingType === 'HIGHER_ELEMENT_NUM',
-          command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', initialNumType, toc, chapterTocVos, initialTocChapterVos),
+          disabled:
+            node.tocItem.aknTag === 'CHAPTER' &&
+            node.numberingType === 'HIGHER_ELEMENT_NUM',
+          command: () =>
+            this.handleHighSubdivChangeNumbering(
+              'HIGHER_ELEMENT_NUM',
+              initialNumType,
+              toc,
+              chapterTocVos,
+              initialTocChapterVos,
+            ),
         },
       ],
     };
   }
+  // protected buildChapterItem(
+  //   node: TableOfContentItemVO,
+  // ): EuiDropdownButtonMenuItem {
+  //   const toc = this.tocService.getCurrentToc();
+  //   const chapterTocVos =  this.flatten(toc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems)
+  //     .filter(obj => obj.tocItem.aknTag === node.tocItem.aknTag);
+
+  //   if(chapterTocVos.length > 0 ) {
+  //     switch (chapterTocVos[0].number) {
+  //       case 'I':
+  //         node.tocItem.numberingType = 'ROMAN_UPPER';
+  //         break;
+  //       case '1':
+  //         node.tocItem.numberingType = 'HIGHER_ELEMENT_NUM';
+  //         break;
+  //       default:
+  //         break;
+  //     }
+  //   }
+  //   return {
+  //     id: CHAPTER_NUMBER_CHANGE_ID,
+  //     label: this.translateService.instant(
+  //       'toc.edit.window.item.list.type.change.numbering',
+  //     ),
+  //     children: [
+  //       {
+  //         id: CHAPTER_NUMBER_ROMAN,
+  //         label: this.translateService.instant(
+  //           'toc.edit.window.item.regular.chapter.num.roman',
+  //         ),
+  //         disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'ROMAN_UPPER',
+  //         command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', toc, chapterTocVos),
+  //       },
+  //       {
+  //         id: CHAPTER_NUMBER_ARABIC,
+  //         label: this.translateService.instant(
+  //           'toc.edit.window.item.regular.chapter.num.arabic',
+  //         ),
+  //         disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'HIGHER_ELEMENT_NUM',
+  //         command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', toc, chapterTocVos),
+  //       },
+  //     ],
+  //   };
+  // }
+
+  //  protected buildChapterItem(
+  //    node: TableOfContentItemVO,
+  //  ): IDropdownItem {
+  //    const toc = this.tocService.getCurrentToc();
+  //    const chapterTocVos =  this.flatten(toc.filter(obj => obj.tocItem.aknTag === "BODY" || obj.tocItem.aknTag === MAIN_BODY)[0].childItems)
+  //      .filter(obj => obj.tocItem.aknTag === node.tocItem.aknTag);
+
+  //    if(chapterTocVos.length > 0 ) {
+  //      switch (chapterTocVos[0].number) {
+  //        case 'I':
+  //          node.tocItem.numberingType = 'ROMAN_UPPER';
+  //          break;
+  //        case '1':
+  //          node.tocItem.numberingType = 'HIGHER_ELEMENT_NUM';
+  //          break;
+  //        default:
+  //          break;
+  //      }
+  //    }
+  //    return {
+  //      id: CHAPTER_NUMBER_CHANGE_ID,
+  //      label: this.translateService.instant(
+  //        'toc.edit.window.item.list.type.change.numbering',
+  //      ),
+  //      children: [
+  //        {
+  //          id: CHAPTER_NUMBER_ROMAN,
+  //          label: this.translateService.instant(
+  //            'toc.edit.window.item.regular.chapter.num.roman',
+  //          ),
+  //          disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'ROMAN_UPPER',
+  //          command: () => this.handleHighSubdivChangeNumbering('ROMAN_UPPER', toc, chapterTocVos),
+  //        },
+  //        {
+  //          id: CHAPTER_NUMBER_ARABIC,
+  //          label: this.translateService.instant(
+  //            'toc.edit.window.item.regular.chapter.num.arabic',
+  //          ),
+  //          disabled: node.tocItem.aknTag === 'CHAPTER' && node.tocItem.numberingType === 'HIGHER_ELEMENT_NUM',
+  //          command: () => this.handleHighSubdivChangeNumbering('HIGHER_ELEMENT_NUM', toc, chapterTocVos),
+  //        },
+  //      ],
+  //    };
+  //  }
 
   protected updateDropdownItems(selectedNode: TableOfContentItemVO) {
-    if (!this.isReadyToMove) {
-      this.itemsBS.next([
-        ...this.buildCommonItems(selectedNode),
-        ...this.buildTypeSpecificItems(selectedNode),
-      ]);
-      this.isDeletedOrMoved(selectedNode);
-    } else {
-      this.itemsBS.next([...this.buildMoveItems(selectedNode)]);
-    }
+     if (!this.isReadyToMove) {
+       this.itemsBS.next([
+         ...this.buildCommonItems(selectedNode),
+         ...this.buildTypeSpecificItems(selectedNode),
+       ]);
+       this.isDeletedOrMoved(selectedNode);
+     } else {
+       this.itemsBS.next([...this.buildMoveItems(selectedNode)]);
+     }
   }
 
   protected handleArticleTypeChange(newType: string) {
@@ -283,7 +422,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
       selectedNode,
       oldValue.toUpperCase(),
       newType.toUpperCase(),
-      this.documentConfig.langGroup
+      this.documentConfig.langGroup,
     );
     if (
       this.previousType &&
@@ -315,13 +454,20 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     this.tocEditService.handleNodeChanges(toc);
   }
 
-  protected handleHighSubdivChangeNumbering(numberingType: NumberingType, initialNumType: NumberingType, toc: TableOfContentItemVO[],
-                                            tocVOs: TableOfContentItemVO[], initialTocChapterVos: TableOfContentItemVO[]) {
+  protected handleHighSubdivChangeNumbering(
+    numberingType: NumberingType,
+    initialNumType: NumberingType,
+    toc: TableOfContentItemVO[],
+    tocVOs: TableOfContentItemVO[],
+    initialTocChapterVos: TableOfContentItemVO[],
+  ) {
     this.tocEditService.handleNodeChanges(toc, true);
-    for(const tocVO of tocVOs) {
+    for (const tocVO of tocVOs) {
       if (initialNumType === numberingType) {
-        const sameIdChapterVO = initialTocChapterVos.find(item => item.id === tocVO.id);
-        if(sameIdChapterVO != null) {
+        const sameIdChapterVO = initialTocChapterVos.find(
+          (item) => item.id === tocVO.id,
+        );
+        if (sameIdChapterVO != null) {
           tocVO.number = sameIdChapterVO.number;
         }
       } else {
@@ -333,9 +479,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     this.tocEditService.handleNodeChanges(toc);
   }
 
-  private buildCommonItems(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem[] {
+  private buildCommonItems(node: TableOfContentItemVO): DropdownModel[] {
     return [
       this.buildItemNameItem(node),
       this.buildMoveItem(node),
@@ -343,9 +487,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     ];
   }
 
-  private buildItemNameItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildItemNameItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: ITEM_NAME_ACTION_ID,
       label: this.getDisplayableTocItem(node.tocItem),
@@ -353,9 +495,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     };
   }
 
-  private buildDeleteItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildDeleteItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: DELETE_ACTION_ID,
       label: this.getDeleteButtonLabel(node),
@@ -367,25 +507,10 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
   private isDeleteButtonDisabled(node: TableOfContentItemVO) {
     const toc = this.tocService.getCurrentToc();
     const deletedItem = isDeletedItem(node) || isMoveToItem(node);
-    let isDeleteDisabled = (
+    return (
       node.tocItem.deletable &&
       (deletedItem ? isUndeletableItem(toc, node) : isDeletableItem(toc, node))
     );
-    isDeleteDisabled &&= !this.isNodeCoEdited(node);
-    return  isDeleteDisabled ;
-  }
-  private isNodeCoEdited(node: TableOfContentItemVO){
-    let result = keys(this.coEditionForDocumentId).includes(node.id);
-    if(!result){
-      result =  keys(this.coEditionForDocumentId).some(
-        (key) =>
-          !document.querySelector(`[data-id="${key}"]`)
-          && !!document.querySelector(`#${node.id}`)
-          && Array.from(document.querySelector(`#${node.id}`).children)
-            .some((child) => child.matches(`#${key}`) )
-      );
-    }
-    return result;
   }
 
   private getDeleteButtonLabel(node: TableOfContentItemVO) {
@@ -409,7 +534,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
         this.tocEditService.undeleteItem(newTree, item);
       } else {
         if (this.coEditionService.checkForCoEdition('EDIT_TOC')) {
-          // co edition dialog
+           //co edition dialog
           this.dialogService.openDialog({
             title: this.translateService.instant(
               'page.editor.co-edition-detected.title',
@@ -494,7 +619,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
       nodeTargetParent,
       position,
     );
-    this.setIsGoingToMove(false, null);
+    //this.setIsGoingToMove(false, null);
   }
 
   private validateAndMove(
@@ -524,9 +649,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     );
   }
 
-  private buildMoveItem(
-    selectedNode: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildMoveItem(selectedNode: TableOfContentItemVO): DropdownModel {
     return {
       id: MOVE_ACTION_ID,
       label: this.translateService.instant('page.editor.toc.move-actions.move'),
@@ -534,18 +657,16 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     };
   }
 
-  private buildMoveItems(selectedNode: TableOfContentItemVO) {
-    return [
-      this.isReadyToMove && this.buildMovePlaceBeforeItem(selectedNode),
-      this.isReadyToMove && this.buildMoveAsChildrenItem(selectedNode),
-      this.isReadyToMove && this.buildMovePlaceAfterItem(selectedNode),
-      this.isReadyToMove && this.buildCancelItem(selectedNode),
-    ];
-  }
+   private buildMoveItems(selectedNode: TableOfContentItemVO) {
+     return [
+       this.isReadyToMove && this.buildMovePlaceBeforeItem(selectedNode),
+       this.isReadyToMove && this.buildMoveAsChildrenItem(selectedNode),
+       this.isReadyToMove && this.buildMovePlaceAfterItem(selectedNode),
+       this.isReadyToMove && this.buildCancelItem(selectedNode),
+     ];
+   }
 
-  private buildMovePlaceBeforeItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildMovePlaceBeforeItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: PLACE_BEFORE_ACTION_ID,
       label: this.translateService.instant(
@@ -555,9 +676,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     };
   }
 
-  private buildMovePlaceAfterItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildMovePlaceAfterItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: PLACE_AFTER_ACTION_ID,
       label: this.translateService.instant(
@@ -567,9 +686,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     };
   }
 
-  private buildMoveAsChildrenItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildMoveAsChildrenItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: PLACE_AS_CHILDREN_ACTION_ID,
       label: this.translateService.instant(
@@ -579,9 +696,7 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
     };
   }
 
-  private buildCancelItem(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem {
+  private buildCancelItem(node: TableOfContentItemVO): DropdownModel {
     return {
       id: CANCEL_MOVE_ID,
       label: this.translateService.instant('Cancel'),
@@ -590,16 +705,16 @@ export abstract class TocInlineEditMenuService  implements OnDestroy{
   }
 
   private onCancelMove() {
-    this.setIsGoingToMove(false, null);
+   // this.setIsGoingToMove(false, null);
   }
 
   private isDeletedOrMoved(selectedNode: TableOfContentItemVO) {
-    if (this.isMovedNode(selectedNode) || isDeletedItem(selectedNode)) {
-      const value = this.itemsBS.value.filter(
-        (item) => item.id !== MOVE_ACTION_ID,
-      );
-      this.itemsBS.next(value);
-    }
+     if (this.isMovedNode(selectedNode) || isDeletedItem(selectedNode)) {
+       const value = this.itemsBS.value.filter(
+         (item) => item.id !== MOVE_ACTION_ID,
+       );
+       this.itemsBS.next(value);
+     }
   }
 
   private isMovedNode(node: TableOfContentItemVO) {

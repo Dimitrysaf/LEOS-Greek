@@ -41,7 +41,7 @@ public class SearchEngineImpl implements SearchEngine {
     private static final String DELETE_TAG = "del";
     private static final String AUTHORIAL_NOTE = "authorialNote";
     private static final String META = "meta";
-    private static final String DELETED_START_ID_VALUE = "deleted";
+    private static final String DELETED_START_ID_VALUE = "deleted" + IdGenerator.PREFIX_DELIMITER;
     private static List<String> tagsToExclude = Arrays.asList(META, AUTHORIAL_NOTE, DELETE_TAG);
     private static List<String> tagsToExcludeHighlight = Arrays.asList(META, AUTHORIAL_NOTE);
     private static List<String> tagsTrackChanges = Arrays.asList(DELETE_TAG);
@@ -552,13 +552,7 @@ public class SearchEngineImpl implements SearchEngine {
             userLogin = user.getLogin();
             userName = user.getName();
         }
-        String parentId = XercesUtils.getId(node.getParentNode());
-        String prefixId = "akn";
-        if (StringUtils.isNotEmpty(parentId)) {
-            int indexOfUnderline = parentId.lastIndexOf("_");
-            int indexForSearch = indexOfUnderline > 0 ? indexOfUnderline : parentId.length() - 1;
-            prefixId = parentId.substring(0, indexForSearch) ;
-        }
+        String prefixId = IdGenerator.getPrefixId(XercesUtils.getId(node.getParentNode()));
 
 // del element
         org.w3c.dom.Element deleteNode =XercesUtils.createElement(document, DELETE_TAG, IdGenerator.generateId(prefixId) ,  deletedContent);

@@ -23,13 +23,21 @@ class ckEditorWindow {
         ckEditorBtn: () => cy.get('a.cke_button'),
         docPurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
         ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
-        ckEditorDialogOkBtn: () => cy.get('.cke_dialog_ui_button_ok')
+        ckEditorDialogOkBtn: () => cy.get('.cke_dialog_ui_button_ok'),
     }
 
     replaceContentInDocPurpose(content) {
         this.elements.docPurpose().type('{selectall}{del}');
         this.elements.docPurpose().type(content);
     }
+    getCkEditorDialogHtml() {
+        return this.elements.ckEditorDialogHtml();
+    }
+
+    clickCkEditorDialogOkBtn() {
+        this.elements.ckEditorDialogOkBtn().click();
+    }
+
     addTextAtCurrentCursorPositionWhenCKEditorOpen(newContent) {
         this.elements.ckEditableInline().type('{insert}' + newContent);
     }
@@ -44,14 +52,6 @@ class ckEditorWindow {
 
     getCkEditableInlineElement() {
         return this.elements.ckEditableInline();
-    }
-
-    getCkEditorDialogHtml() {
-        return this.elements.ckEditorDialogHtml();
-    }
-
-    clickCkEditorDialogOkBtn() {
-        this.elements.ckEditorDialogOkBtn().click();
     }
 
     clickSaveAndCloseBtn() {
@@ -143,23 +143,13 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement + "']").eq(li - 1).type(newContent);
     }
 
-    getFirstLevelPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + pointDataAknElement + "']").eq(pointLi - 1);
-    }
-
     addContentInPointOfParagraphOfArticle(newContent, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + pointDataAknElement + "']").eq(pointLi - 1).type(newContent);
-    }
-
-    getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) {
-        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1);
     }
 
     addContentInSecondLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1).type(newContent);
     }
-
-
 
     getThirdLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) {
        return  this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement4 + "']").eq(li4 - 1).find("ol li[data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1);
@@ -167,10 +157,6 @@ class ckEditorWindow {
 
     addContentInThirdLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4) {
         this.getThirdLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4).type(newContent);
-    }
-
-    getFourthLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5) {
-        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement5 + "']").eq(li5 - 1).find("ol li[data-akn-element='" + dataAknElement4 + "']").eq(li4 - 1).find("ol li[data-akn-element='" + dataAknElement3 + "']").eq(li3 - 1).find("ol li[data-akn-element='" + dataAknElement2 + "']").eq(li2 - 1).find("ol li[data-akn-element='" + dataAknElement1 + "']").eq(li1 - 1);
     }
 
     addContentInFourthLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5) {

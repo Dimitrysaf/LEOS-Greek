@@ -40,7 +40,7 @@
           euiBasicButton
           euiPrimary
         >
-          <span euiIcon iconClass="eui-icon-angle-right"></span>
+          <eui-icon-svg icon="eui-chevron-forward"></eui-icon-svg>
         </button>
         <button
           *ngIf="row.opened"
@@ -51,7 +51,7 @@
           euiBasicButton
           euiPrimary
         >
-          <span euiIcon iconClass="eui-icon-angle-down"></span>
+          <eui-icon-svg icon="eui-chevron-down"></eui-icon-svg>
         </button>
       </td>
       <td
@@ -85,50 +85,43 @@
       >
         <eui-dropdown>
           <button euiButton euiBasicButton="true">
-            <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+            <eui-icon-svg icon="eui-ellipsis-vertical"></eui-icon-svg>
           </button>
           <eui-dropdown-content>
-            <ul euiList>
-              <li euiListItem>
-                <button euiListItem (click)="openMilestoneViewDialog(row, proposal.cloneProposalMetadataVO?.clonedProposal)">
-                  {{
-                    'page.collection.milestones.actions.view-milestone'
-                      | translate
-                  }}
-                </button>
-              </li>
-              <ng-container *appShowOnInstance="['ec', 'os']">
-                <li euiListItem>
-                  <button
-                    euiListItem
-                    (click)="openMilestoneSendCopyForContributionDialog(row)"
-                    *ngIf="!proposal.cloneProposalMetadataVO?.clonedProposal"
-                  >
-                    {{
-                      'page.collection.milestones.actions.send-copy-for-contribution'
-                        | translate
-                    }}
-                  </button>
-                  <button
-                    euiListItem
-                    (click)="openAnnotationWarningModal(row)"
-                    [disabled]="row.status !== milestoneStatus.Ready"
-                    *ngIf="proposal.cloneProposalMetadataVO?.clonedProposal"
-                  >
-                    {{
-                      'page.collection.milestones.actions.send-revision-for-merge'
-                        | translate
-                    }}
-                  </button>
-                </li>
-              </ng-container>
-              <li euiListItem>
-                <button euiListItem
-                        (click)="onDownloadMilestone(row)">
-                  {{ 'page.collection.actions-dropdown.download' | translate }}
-                </button>
-              </li>
-            </ul>
+            <button euiDropdownItem
+                    (click)="openMilestoneViewDialog(row, proposal.cloneProposalMetadataVO?.clonedProposal)">
+              {{
+                'page.collection.milestones.actions.view-milestone'
+                  | translate
+              }}
+            </button>
+            <ng-container *appShowOnInstance="['ec', 'os']">
+              <button
+                euiDropdownItem
+                (click)="openMilestoneSendCopyForContributionDialog(row)"
+                *ngIf="!proposal.cloneProposalMetadataVO?.clonedProposal && !translated"
+              >
+                {{
+                  'page.collection.milestones.actions.send-copy-for-contribution'
+                    | translate
+                }}
+              </button>
+              <button
+                euiDropdownItem
+                (click)="openAnnotationWarningModal(row)"
+                [disabled]="row.status !== milestoneStatus.Ready"
+                *ngIf="proposal.cloneProposalMetadataVO?.clonedProposal"
+              >
+                {{
+                  'page.collection.milestones.actions.send-revision-for-merge'
+                    | translate
+                }}
+              </button>
+            </ng-container>
+            <button euiDropdownItem
+                    (click)="onDownloadMilestone(row)">
+              {{ 'page.collection.actions-dropdown.download' | translate }}
+            </button>
           </eui-dropdown-content>
         </eui-dropdown>
       </td>
@@ -143,8 +136,9 @@
           "
         >
           <div class="icon-container">
-          <eui-icon *ngIf="clonedMilestone.contributionChanged" euiPrimary iconClass="eui-icon-info-circle eui-icon-1x"></eui-icon>
-          <span class="tooltip" [innerHTML]="'page.collection.milestones.component.tooltip' | translate"></span>
+            <eui-icon *ngIf="clonedMilestone.contributionChanged" euiPrimary
+                      iconClass="eui-icon-info-circle eui-icon-1x"></eui-icon>
+            <span class="tooltip" [innerHTML]="'page.collection.milestones.component.tooltip' | translate"></span>
           </div>
           {{ clonedMilestone.title }}
         </td>
@@ -167,7 +161,7 @@
             *ngIf="isReadyToMerge(clonedMilestone.status) && viewContribution"
           >
             <button euiButton euiBasicButton="true">
-              <span euiIcon iconClass="eui-icon eui-icon-more-vertical"></span>
+              <eui-icon-svg icon="eui-ellipsis-vertical"></eui-icon-svg>
             </button>
             <eui-dropdown-content>
               <ul euiList>

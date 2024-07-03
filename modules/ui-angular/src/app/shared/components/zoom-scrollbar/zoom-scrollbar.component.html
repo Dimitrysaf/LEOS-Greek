@@ -15,8 +15,8 @@
       style="height: 96px; width: 17px"
     />
     <div class="zoom-symbols">
-      <span class="eui-icon eui-icon-add" (click)="zoomIn()"></span>
-      <span class="eui-icon eui-icon-minus" (click)="zoomOut()"></span>
+      <eui-icon-svg class="eui-icon-add" icon="eui-add" size="xs" (click)="zoomIn()"></eui-icon-svg>
+      <eui-icon-svg class="eui-icon-minus" icon="eui-remove" size="xs" (click)="zoomOut()"></eui-icon-svg>
     </div>
   </div>
   <div>{{ 'page.editor.zoom' | translate }}</div>

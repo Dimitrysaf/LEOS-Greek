@@ -1,18 +1,16 @@
 <header>
-  <div style="display: flex">
+  <div class="eui-u-flex eui-u-flex-justify-content-between" style="align-items: flex-start !important;">
     <h1
-      class="flex-grow-1 eui-u-font-2xl eui-u-mr-2xs"
-      style="padding-right: 15px"
+      class="eui-u-flex-grow eui-u-font-2xl"
+      style="padding-right: 15px; margin: 0px"
       [innerHTML]="title"
     ></h1>
-    <div style="display: flex; align-content: center; align-items: flex-start">
-      <eui-icon
+    <div style="display: flex; align-content: center; align-items: center;">
+      <eui-icon-svg
         (click)="toggleFavourite()"
         style="cursor: pointer"
-        class="eui-icon"
-        [ngClass]="isFavourite ? 'eui-icon-bookmark' : 'eui-icon-bookmark-o'"
-        euiSizeL
-      ></eui-icon>
+        [icon]="isFavourite ? 'eui-bookmark' : 'eui-bookmark-outline'"
+      ></eui-icon-svg>
       <app-proposal-actions-dropdown
         [proposalState]="this.proposalState"
         [permissions]="permissions"

@@ -24,7 +24,7 @@
               formControlName="searchTerm"
             />
             <button euiButton euiSecondary euiIconButton>
-              <span euiIcon iconClass="eui-icon eui-icon-search"></span>
+              <eui-icon-svg icon="eui-search"></eui-icon-svg>
             </button>
           </div>
         </div>
@@ -38,7 +38,7 @@
         class="filters-checkboxes-section eui-u-shadow-z-depth-0 eui-u-pb-xs"
         *ngFor="let filter of filterGroups"
       >
-        <h5 class="eui-u-pv-xs eui-u-font-m eui-u-font-bold">
+        <h5 class="eui-u-m-2xs eui-u-pv-2xs eui-u-font-m eui-u-font-bold">
           {{ filter.title }}
         </h5>
         <div
@@ -53,7 +53,7 @@
             [formControlName]="filterOption.fieldName"
           />
           <label
-            class="eui-u-mv-none align-items-start"
+            class="eui-u-pr-m eui-u-mv-none align-items-start"
             [for]="filterOption.id"
             [euiTooltip]="filterOption.tooltip"
             [position]="

@@ -1,13 +1,13 @@
 <ng-container class="mr-2">
-  <div class="d-flex flex-wrap" *ngIf="isEditMode">
+  <div class="eui-u-display-flex eui-u-flex-wrap" *ngIf="isEditMode">
     <button
       euiButton
       euiBasicButton
       euiSizeS
-      class="p-0"
+      class="eui-u-p-none"
       (click)="onExpandAll()"
     >
-      <span
+      <eui-icon-svg
         *ngIf="isEditMode"
         [euiTooltip]="
           (isCollapseToc
@@ -16,8 +16,9 @@
           ) | translate
         "
         [position]="'right'"
-        class="eui-icon eui-icon-sitemap"
-      ></span>
+        size="s"
+        icon="eui-sitemap"
+      ></eui-icon-svg>
     </button>
     <!-- Undo -->
     <span
@@ -27,14 +28,14 @@
       <button
         euiButton
         euiBasicButton
-        class="p-0"
+        class="eui-u-p-none"
         euiSizeS
         [euiTooltip]="'global.actions.undo' | translate"
         [disabled]="isUndoDisabled"
         (click)="onUndo()"
       >
-        <div class="d-flex flex-row">
-          <eui-icon euiSizeS iconClass="eui-icon-undo"></eui-icon>
+        <div class="eui-u-display-flex eui-u-flex-row">
+          <eui-icon-svg size="s" icon="eui-undo"></eui-icon-svg>
         </div>
       </button>
     </span>
@@ -46,7 +47,7 @@
       <button
         euiButton
         euiBasicButton
-        class="p-0"
+        class="eui-u-p-none"
         euiSizeS
         [euiTooltip]="'global.actions.save' | translate"
         [disabled]="isSaveDisabled"
@@ -63,7 +64,7 @@
       <button
         euiButton
         euiBasicButton
-        class="p-0"
+        class="eui-u-p-none"
         euiSizeS
         [euiTooltip]="'global.actions.save-close' | translate"
         [disabled]="isSaveDisabled"
@@ -78,10 +79,10 @@
       euiSizeS
       [euiTooltip]="'global.actions.cancel' | translate"
       euiBasicButton
-      class="p-0"
+      class="eui-u-p-none"
       (click)="onCancel()"
     >
-      <span class="eui-icon eui-icon-times"></span>
+      <eui-icon-svg icon="eui-close"></eui-icon-svg>
     </button>
   </div>
 </ng-container>

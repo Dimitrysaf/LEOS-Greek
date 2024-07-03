@@ -47,10 +47,8 @@
       <!-- Number -->
       <div euiInputGroup class="eui-u-width-auto">
         <label euiLabel euiRequired for="number">
-          <eui-icon
-            euiDanger
-            euiSizeS
-            class="eui-icon eui-icon-exclamation-circle"
+          <eui-icon-svg
+            icon="eui-alert-circle"
             [euiTooltip]="
               'dialog.import-from-journal.search.number-errorTooltip'
                 | translate
@@ -60,7 +58,7 @@
               searchForm.controls.number.touched &&
               searchForm.controls.number.invalid
             "
-          ></eui-icon>
+          ></eui-icon-svg>
           {{ 'dialog.import-from-journal.search.number' | translate }}
         </label>
         <input
@@ -74,19 +72,18 @@
       <!-- Search Button -->
       <div
         euiInputGroup
-        class="eui-u-width-auto eui-u-flex-row align-items-center"
+        class="eui-u-width-auto eui-u-flex-row eui-u-flex-align-items-center"
       >
         <button euiButton euiPrimary type="submit" [isLoading]="searching">
           {{ 'dialog.import-from-journal.search.search-button' | translate }}
         </button>
-        <span
-          euiIcon
+        <eui-icon-svg
           euiInfo
-          class="eui-icon eui-icon-info-circle eui-u-ml-m"
+          icon="eui-icon-info-circle-thin"
           [euiTooltip]="
             'dialog.import-from-journal.search.info-tooltip' | translate
           "
-        ></span>
+        ></eui-icon-svg>
       </div>
     </form>
     <div translate="dialog.import-from-journal.prompt"></div>
@@ -97,7 +94,7 @@
   <eui-dialog-footer>
     <div class="eui-u-flex eui-u-flex-wrap app-u-gap-s">
       <div
-        class="eui-u-flex eui-u-flex-start eui-u-flex-wrap eui-u-width-auto app-u-gap-s"
+        class="eui-u-flex eui-u-flex-justify-content-start eui-u-flex-wrap eui-u-width-auto app-u-gap-s"
       >
         <button
           euiButton
@@ -106,15 +103,14 @@
           [disabled]="!docLoaded"
           (click)="toggleSelectAllRecitals()"
         >
-          <span
-            euiIcon
-            [iconClass]="
+          <eui-icon-svg
+            [icon]="
               allRecitalsSelected
                 ? 'eui-icon-checkbox'
                 : 'eui-icon-checkbox-outline'
             "
             [euiPrimary]="allRecitalsSelected"
-          ></span>
+          ></eui-icon-svg>
           <span
             euiLabel
             translate="dialog.import-from-journal.footer.selectAllRecitals-button"
@@ -127,15 +123,14 @@
           [disabled]="!docLoaded"
           (click)="toggleSelectAllArticles()"
         >
-          <span
-            euiIcon
-            [iconClass]="
+          <eui-icon-svg
+            [icon]="
               allArticlesSelected
                 ? 'eui-icon-checkbox'
                 : 'eui-icon-checkbox-outline'
             "
             [euiPrimary]="allArticlesSelected"
-          ></span>
+          ></eui-icon-svg>
           <span
             euiLabel
             translate="dialog.import-from-journal.footer.selectAllArticles-button"
@@ -143,7 +138,7 @@
         </button>
       </div>
       <div
-        class="eui-u-flex eui-u-flex-end eui-u-flex-wrap eui-u-width-auto eui-u-ml-auto app-u-gap-s"
+        class="eui-u-flex eui-u-flex-justify-content-end eui-u-flex-wrap eui-u-width-auto eui-u-ml-auto app-u-gap-s"
       >
         <div *ngIf="importManager?.count$ | async">
           {{

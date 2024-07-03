@@ -1,64 +1,69 @@
-<eui-app [userInfos]="userInfos?.fullName" isSidebarOpen="true">
+<eui-app>
   <eui-app-toolbar>
     <eui-toolbar>
-      <eui-toolbar-items style="margin-left: 0">
-        <eui-toolbar-logo
-          *ngIf="!headerLogoImgUrl"
-          [homeUrl]="headerLogoUrl"
-        ></eui-toolbar-logo>
-        <a [href]="headerLogoUrl" *ngIf="headerLogoImgUrl"
-          ><img
-            class="eui-toolbar-logo eui-toolbar-logo--custom"
-            [alt]="
-              'app.header.logo-alt'
-                | translate : { title: headerTitleHtml | htmlToPlaintext }
-            "
-            [src]="headerLogoImgUrl"
-        /></a>
-        <div class="eui-toolbar-app" [innerHTML]="headerTitleHtml"></div>
-        <a euiButton euiPrimary [href]="headerLogoUrl">
-          {{ 'app.breadcrumb.home' | translate }}
-        </a>
-        <eui-dropdown>
-          <button euiButton euiPrimary>
+      <eui-toolbar-logo
+        *ngIf="!headerLogoImgUrl"
+        [homeUrl]="headerLogoUrl"
+      ></eui-toolbar-logo>
+      <eui-toolbar-app [innerHTML]="headerTitleHtml"></eui-toolbar-app>
+      <a [href]="headerLogoUrl" *ngIf="headerLogoImgUrl"
+      ><img
+        class="eui-toolbar-logo eui-toolbar-logo--custom"
+        [alt]="
+            'app.header.logo-alt'
+              | translate : { title: headerTitleHtml | htmlToPlaintext }
+          "
+        [src]="headerLogoImgUrl"
+      /></a>
+      <div class="eui-toolbar-app" [innerHTML]="headerTitleHtml"></div>
+
+      <eui-toolbar-items [euiPositionRight]="false">
+        <eui-toolbar-item>
+          <a euiButton euiPrimary [href]="headerLogoUrl" [appMoveToLeftSideToolbar]="'eui-toolbar__left'">
+            {{ 'app.breadcrumb.home' | translate }}
+          </a>
+        </eui-toolbar-item>
+        <eui-toolbar-item>
+          <eui-dropdown [appMoveToLeftSideToolbar]="'eui-toolbar__left'">
+            <button euiButton euiPrimary>
             <span euiLabel>{{
-              'page.workspace.filter.filters.roles.support' | translate
-            }}</span>
-            <span class="eui-icon eui-icon-angle-down"></span>
-          </button>
-          <eui-dropdown-content class="eui-b-p-l">
-            <ul euiList>
+                'page.workspace.filter.filters.roles.support' | translate
+              }}</span>
+              <eui-icon-svg icon="eui-chevron-down"></eui-icon-svg>
+            </button>
+            <eui-dropdown-content class="eui-b-p-l">
               <li
-                euiListItem
+                euiDropdownItem
                 *ngFor="let item of listSupportButtons"
                 (click)="onListItemClicked(item)"
               >
                 <a *ngIf="item?.id <= 2">{{ item.label | translate }}</a>
                 <a style="font-weight: bolder" *ngIf="item?.id > 2">{{
-                  item.label | translate
-                }}</a>
+                    item.label | translate
+                  }}</a>
               </li>
-            </ul>
-          </eui-dropdown-content>
-        </eui-dropdown>
+            </eui-dropdown-content>
+          </eui-dropdown>
+        </eui-toolbar-item>
+        <eui-toolbar-item>
+          <eui-user-profile *ngIf="showLoggedUser"></eui-user-profile>
+        </eui-toolbar-item>
+        <eui-toolbar-item>
+          <button
+            (click)="toggleNotifications($event)"
+            class="eui-icon-button"
+            aria-label="Notifications"
+          >
+            <eui-icon-svg icon="eui-notifications" fillColor="white" size="l">
+              <eui-badge
+                euiDanger
+              >{{ notifications?.length }}
+              </eui-badge>
+            </eui-icon-svg>
+          </button>
+        </eui-toolbar-item>
       </eui-toolbar-items>
-      <eui-toolbar-items euiPositionRight>
-        <eui-toolbar-item-user-profile
-          *ngIf="showLoggedUser"
-        ></eui-toolbar-item-user-profile>
-        <button
-          (click)="toggleNotifications($event)" 
-          class="eui-icon-button"
-          aria-label="Notifications"
-        >
-          <eui-icon iconClass="eui-icon-bell">
-            <eui-badge
-              *ngIf="contentAvailable$ | async"
-              style="background-color: red"
-            ></eui-badge>
-          </eui-icon>
-        </button>
-      </eui-toolbar-items>
+
     </eui-toolbar>
     <app-notification-card-container></app-notification-card-container>
   </eui-app-toolbar>
@@ -67,7 +72,7 @@
       <a
         href="https://webgate.ec.europa.eu/fpfis/wikis/display/DIGITB2Support/EdiT"
         target="_target"
-        ><span>Help </span></a
+      ><span>Help </span></a
       >
       | Privacy Statement | Developed by DIGIT.A3 | Version:
       {{ 'NG_APP_LEOS_VERSION' | env }} | Revision:

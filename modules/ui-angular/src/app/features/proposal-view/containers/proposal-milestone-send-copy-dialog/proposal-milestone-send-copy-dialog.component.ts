@@ -1,21 +1,23 @@
 import {
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
   OnDestroy,
   OnInit,
   Output,
+  Renderer2,
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { EuiAutoCompleteItem } from '@eui/components/eui-autocomplete';
-import { EuiDialogComponent } from '@eui/components/eui-dialog/eui-dialog.component';
 import { Subject, takeUntil } from 'rxjs';
 
 import { Collaborator, User } from '@/shared';
 import { MilestoneDescriptor } from '@/shared/components/proposal-milestone-view/proposal-milestone-view.component';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
 
 @Component({
   selector: 'app-proposal-milestone-send-copy-dialog',
@@ -39,6 +41,8 @@ export class ProposalMilestoneSendCopyDialogComponent
   constructor(
     private fb: FormBuilder,
     private detailsService: ProposalDetailsService,
+    private cdr: ChangeDetectorRef,
+    private renderer: Renderer2,
   ) {}
 
   ngOnDestroy(): void {
@@ -57,6 +61,22 @@ export class ProposalMilestoneSendCopyDialogComponent
     this.detailsService.collaborators$
       .pipe(takeUntil(this.destroy$))
       .subscribe((collaborators) => (this.collaborators = collaborators));
+  }
+
+  ngAfterViewInit() {
+    setTimeout(() => {
+      const targetElement = document.querySelector('.eui-dialog-container');
+      if (targetElement) {
+        const grandParentElement = targetElement.parentElement;
+        if (grandParentElement) {
+          this.renderer.addClass(
+            grandParentElement,
+            'cdk-overlay-panel-upload',
+          );
+        }
+      }
+      this.cdr.detectChanges();
+    }, 0);
   }
 
   open() {

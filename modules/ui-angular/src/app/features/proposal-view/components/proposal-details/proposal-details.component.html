@@ -1,4 +1,4 @@
-<div class="row mt-4">
+<div class="row eui-u-mt-l">
   <div class="col-md-6">
     <div class="row">
       <div class="col-sm-1 label-column"></div>
@@ -39,7 +39,7 @@
     </div>
     <div class="row">
       <div class="col-sm-1 label-column"></div>
-      <div class="col-sm-3">
+      <div class="col-sm-3 eui-u-flex eui-u-flex-align-items-center">
         <input
           name="checkbox-en"
           euiInputCheckBox
@@ -47,8 +47,9 @@
           [(ngModel)]="eeaRelevance"
           (ngModelChange)="handleEEAChange($event)"
         />
+        <label>{{ 'page.workspace.create-form.document.eea-relevance' | translate }}</label>
       </div>
       <div class="col-sm-8"></div>
     </div>
   </div>
-</div>
+</div>  

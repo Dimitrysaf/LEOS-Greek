@@ -1,4 +1,4 @@
-<eui-page-breadcrumb euiNoContentPadding class="p-0">
+<eui-page-breadcrumb euiNoContentPadding class="eui-u-p-none">
   <eui-breadcrumb>
     <eui-breadcrumb-item
       *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
@@ -140,7 +140,7 @@
         </eui-tab-content>
       </eui-tab>
       <!-- translated lang tabs -->
-      <eui-tab *ngFor="let doc of translatedDocs" euiSecondary>
+      <eui-tab *ngFor="let doc of translatedDocs" euiSecondary>>
         <eui-tab-label>{{doc.language}}</eui-tab-label>
         <eui-tab-content>
           <eui-tabs class="eui-u-display-block eui-u-mt-l" #tabs>

@@ -1,10 +1,8 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { EuiDropdownButtonMenuComponent } from '@eui/components/eui-dropdown-button-menu';
+import { Component, Input, OnInit } from '@angular/core';
 
 import { RibbonToolbarBaseComponent } from '@/features/akn-document/components/ribbon-toolbar-base/ribbon-toolbar-base.component';
-import {
-  IRibbonToolbarDropdown,
-} from '@/features/akn-document/models/document-actions.model';
+import { IRibbonToolbarDropdown } from '@/features/akn-document/models/document-actions.model';
+import { DropdownModel } from '@/shared/dropdown.model';
 
 @Component({
   selector: 'app-ribbon-toolbar-dropdown',
@@ -16,6 +14,7 @@ export class RibbonToolbarDropdownComponent
   implements OnInit
 {
   @Input() isOverflow = false;
+  dropdownItems: DropdownModel[] = [];
 
   constructor() {
     super();
@@ -23,5 +22,6 @@ export class RibbonToolbarDropdownComponent
 
   ngOnInit(): void {
     super.ngOnInit();
+    this.dropdownItems = this.item.items;
   }
 }

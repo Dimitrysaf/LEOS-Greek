@@ -28,6 +28,7 @@ import org.springframework.web.util.UriUtils;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
@@ -183,10 +184,10 @@ public class XmlHelper {
     public static final String LEOS_ID_TO_BE_REMOVED = "leos:id-to-be-removed";
     public static final String LEOS_ID_TO_BE_RESTORED = "leos:id-to-be-restored";
     public static final String LEOS_SOFT_TRANS_FROM = "leos:softtrans_from";
-    public static final String SOFT_MOVE_PLACEHOLDER_ID_PREFIX = "moved_";
-    public static final String SOFT_DELETE_PLACEHOLDER_ID_PREFIX = "deleted_";
-    public static final String SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX = "transformed_";
-    public static final String SOFT_SPLITTED_PLACEHOLDER_ID_PREFIX = "splitted_";
+    public static final String SOFT_MOVE_PLACEHOLDER_ID_PREFIX = "moved" + IdGenerator.PREFIX_DELIMITER;
+    public static final String SOFT_DELETE_PLACEHOLDER_ID_PREFIX = "deleted" + IdGenerator.PREFIX_DELIMITER;
+    public static final String SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX = "transformed" + IdGenerator.PREFIX_DELIMITER;
+    public static final String SOFT_SPLITTED_PLACEHOLDER_ID_PREFIX = "splitted" + IdGenerator.PREFIX_DELIMITER;
     public static final String TOGGLED_TO_NUM = "toggled_to_num";
     public static final String BACK_TO_NUM_FROM_SOFT_DELETED = "back_to_num_from_soft_deleted";
     public static final String STATUS_IGNORED_ATTR = "status";
@@ -325,7 +326,7 @@ public class XmlHelper {
     }
 
     public static String getTemplate(String tagName) {
-        return "<" + tagName + " xml:id=\"" + IdGenerator.generateId(tagName.substring(0, 3), 7) + "\"></" + tagName + ">";
+        return "<" + tagName + " xml:id=\"" + IdGenerator.generateId() + "\"></" + tagName + ">";
     }
 
     public static String getTemplate(TocItem tocItem, MessageHelper messageHelper) {
@@ -360,7 +361,7 @@ public class XmlHelper {
     }
     
     private static String replaceContent(TocItem tocItem, Map<String, Map<String, String>> templateItems, StringBuilder template) {
-    	   replaceAll(template, ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId("akn_" + tocItem.getAknTag().value(), 7));
+    	   replaceAll(template, ID_PLACEHOLDER_ESCAPED, IdGenerator.generateId());
 
         replaceTemplateItems(template, NUM, tocItem.getItemNumber(), templateItems.get(NUM));
         replaceTemplateItems(template, HEADING, tocItem.getItemHeading(), templateItems.get(HEADING));
@@ -787,6 +788,24 @@ public class XmlHelper {
         if (path != null && path.contains("../")) {
             path = encodeParam(path);
             throw new SecurityException("you are not allowed to write in the path:" + path);
+        }
+    }
+
+    public static void validateBasePath(String path, String basePath) {
+        try {
+            if (path != null && path.contains("../")) {
+                path = encodeParam(path);
+                throw new SecurityException("Invalid path manipulation detected:" + path);
+            }
+            File baseDir = new File(basePath);
+            File targetDir = new File(path);
+
+            // Ensure the target directory is within the base directory
+            if (!targetDir.getCanonicalPath().startsWith(baseDir.getCanonicalPath())) {
+                throw new SecurityException("Invalid path manipulation detected: " + path);
+            }
+        } catch(Exception e) {
+            throw new SecurityException("File path IO exception: " + path);
         }
     }
 }

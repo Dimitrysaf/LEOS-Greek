@@ -9,18 +9,23 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
-import { UxLink } from '@eui/base';
-import { UxTreeComponent } from '@eui/components/legacy/ux-tree';
 import { Subject, takeUntil } from 'rxjs';
 import { appConfig } from 'src/config';
 
 import { CatalogItem } from '@/shared';
 import { ProposalService } from '@/shared/services/proposal.service';
+import {
+  EuiTreeComponent,
+  TreeDataModel,
+  TreeItemModel,
+  TreeNode,
+} from '@eui/components/eui-tree';
+import { EuiTreeSelectionChanges } from '@eui/components/eui-tree/eui-tree.model';
 
 const defaultLanguage =
   appConfig.global.i18n.i18nService.defaultLanguage.toUpperCase();
-const iconClassCategory = 'eui-icon eui-icon-folder';
-const iconClassTemplate = 'eui-icon eui-icon-file';
+const iconClassCategory = 'folder:sharp';
+const iconClassTemplate = 'document:sharp';
 
 @Component({
   selector: 'app-proposal-create-template-selector',
@@ -35,15 +40,15 @@ export class ProposalCreateTemplateSelectorComponent
   @Output() navigationClick = new EventEmitter<void>();
   @Output() selectTemplate = new EventEmitter<CatalogItem | null>();
   @Output() selectLanguage = new EventEmitter<string>();
-  @ViewChild('treeComponent') treeComponent: UxTreeComponent;
+  @ViewChild('treeComponent') treeComponent: EuiTreeComponent;
   event: Event;
   filterText: string;
   isExpanded: boolean;
-  treeNodes: UxLink[] = [];
+  treeNodes: TreeDataModel = null;
   selectedLanguage: string;
   languages: Array<{ code: string; label: string }>;
   doubleClickTimer: any;
-  filteredNodes: UxLink[] = [];
+  filteredNodes: TreeDataModel = null;
 
   private destroy$ = new Subject<void>();
   private templates: Map<string, CatalogItem> = new Map();
@@ -73,14 +78,14 @@ export class ProposalCreateTemplateSelectorComponent
     this.isExpanded = true;
     this.selectedLanguage = '';
     this.languages = [];
-    this.treeComponent.onExpandAll(this.event);
-    this.treeComponent.resetSelection();
+    this.treeComponent.expandAll();
+    //this.treeComponent.resetSelection();
     this.cd.detectChanges();
   }
 
   onDocumentTypeFilter(documentType: string) {
-    this.filteredNodes = this.filterNodesByDocumentType(
-      this.treeNodes,
+    this.treeNodes = this.filterNodesByDocumentType(
+      this.filteredNodes,
       documentType,
     );
   }
@@ -93,33 +98,39 @@ export class ProposalCreateTemplateSelectorComponent
   toggleExpanded(expand = !this.isExpanded) {
     this.isExpanded = expand;
     if (this.isExpanded) {
-      this.treeComponent.onExpandAll(this.event);
+      this.treeComponent.expandAll();
     } else {
-      this.treeComponent.onCollapseAll(this.event);
+      this.treeComponent.collapseAll();
     }
   }
 
-  simulateDoubleClick(node: UxLink): void {
-    const delay = 300; // Adjust the delay (in milliseconds) as needed
+  // simulateDoubleClick(node: TreeNode): void {
+  //   const delay = 300; // Adjust the delay (in milliseconds) as needed
+  //
+  //   if (this.doubleClickTimer) {
+  //     clearTimeout(this.doubleClickTimer);
+  //     this.doubleClickTimer = null;
+  //     // this.onNodeClick(node, true); // Handle the double click
+  //   } else {
+  //     this.doubleClickTimer = setTimeout(() => {
+  //       this.doubleClickTimer = null;
+  //       // this.onNodeClick(node); // Handle the single click
+  //     }, delay);
+  //   }
+  // }
 
-    if (this.doubleClickTimer) {
-      clearTimeout(this.doubleClickTimer);
-      this.doubleClickTimer = null;
-      this.onNodeClick(node, true); // Handle the double click
-    } else {
-      this.doubleClickTimer = setTimeout(() => {
-        this.doubleClickTimer = null;
-        this.onNodeClick(node); // Handle the single click
-      }, delay);
-    }
-  }
-
-  onNodeClick(node: UxLink, isDoubleClicked = false) {
-    if (this.templates.has(node.id)) {
-      this.setTemplate(this.templates.get(node.id));
-      if (isDoubleClicked) {
-        this.navigationClick.emit();
-      }
+  onNodeClick(event: EuiTreeSelectionChanges) {
+    const selectedNode = event.selection[0];
+    if (
+      selectedNode &&
+      this.templates.has(selectedNode.node.treeContentBlock.id)
+    ) {
+      this.setTemplate(
+        this.templates.get(selectedNode.node.treeContentBlock.id),
+      );
+      // if (isDoubleClicked) {
+      //   this.navigationClick.emit();
+      // }
     } else {
       this.unsetTemplate();
     }
@@ -144,10 +155,10 @@ export class ProposalCreateTemplateSelectorComponent
 
   private catalogToTreeNodes(catalogItems: CatalogItem[]) {
     catalogItems = catalogItems.filter((c) => !c.hidden);
-    return catalogItems.map((item) => this.catalogItemToUxLink(item));
+    return catalogItems.map((item) => this.catalogItemToTreeItem(item));
   }
 
-  private catalogItemToUxLink(item: CatalogItem): UxLink {
+  private catalogItemToTreeItem(item: CatalogItem): TreeItemModel {
     const { id, names, type, enabled, items, hidden } = item;
     const label = this.proposalService.getTranslation(names);
     const iconClass =
@@ -157,34 +168,32 @@ export class ProposalCreateTemplateSelectorComponent
       type === 'CATEGORY' && !hidden && enabled
         ? items
             .filter((child) => !child.hidden)
-            .map((child) => this.catalogItemToUxLink(child))
+            .map((child) => this.catalogItemToTreeItem(child))
         : [];
     const isEmptyCategory = type === 'CATEGORY' && !children.length;
     const isTemplate = type !== 'CATEGORY';
-    return new UxLink({
-      id,
-      label,
-      iconClass,
-      disabled,
-      expanded: this.isExpanded,
-      children,
-      ...(isEmptyCategory
-        ? {
-            // add a dummy child to force the toggle button to be displayed
-            // then hide it using css, while keeping the indentation
-            children: [new UxLink({ disabled: true, visible: false })],
-            tooltipLabel: 'empty-category',
-          }
-        : {}),
-      ...(isTemplate
-        ? {
-            // add a dummy child to force the toggle button to be displayed
-            // then hide it using css, while keeping the indentation
-            children: [new UxLink({ disabled: true, visible: false })],
-            tooltipLabel: 'template',
-          }
-        : {}),
-    });
+
+    const node: TreeNode = {
+      isExpanded: this.isExpanded,
+      selectable: isTemplate,
+      treeContentBlock: {
+        id,
+        label,
+        disabled,
+        iconSvgName: iconClass,
+        tooltipLabel: isEmptyCategory
+          ? 'empty-category'
+          : isTemplate
+          ? 'template'
+          : '', // Adjust tooltipLabel based on conditions
+        // Add other properties as needed
+      },
+    };
+
+    return {
+      node,
+      children: isEmptyCategory ? undefined : children,
+    };
   }
 
   private setInitialState() {
@@ -227,33 +236,32 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   private filterNodesByDocumentType(
-    nodes: UxLink[] | undefined,
+    nodes: TreeDataModel | undefined,
     documentType: string,
-  ): UxLink[] {
+  ): TreeDataModel {
     if (!nodes) {
       return [];
     }
 
-    const documentTypeLower = documentType.toLowerCase();
+    const documentTypeLower = documentType?.toLowerCase() ?? '';
 
-    return nodes.reduce((acc: UxLink[], node: UxLink) => {
-      const label = node.label?.toLowerCase();
+    return nodes.reduce((acc: TreeDataModel, treeItem: TreeItemModel) => {
+      const label = treeItem.node.treeContentBlock.label.toLowerCase();
 
       if (label && label.includes(documentTypeLower)) {
-        return [...acc, node];
+        return [...acc, treeItem];
       }
 
       const filteredChildren = this.filterNodesByDocumentType(
-        node.children,
+        treeItem.children,
         documentType,
       );
       if (filteredChildren.length > 0) {
-        const newNode: UxLink = {
-          ...node,
+        const newTreeItem: TreeItemModel = {
+          node: treeItem.node,
           children: filteredChildren,
-          hasChildren: true,
         };
-        return [...acc, newNode];
+        return [...acc, newTreeItem];
       }
       return acc;
     }, []);

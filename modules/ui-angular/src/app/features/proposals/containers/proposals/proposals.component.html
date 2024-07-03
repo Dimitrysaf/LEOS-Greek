@@ -1,5 +1,5 @@
 <eui-page>
-  <eui-page-breadcrumb euiNoContentPadding class="p-0">
+  <eui-page-breadcrumb euiNoContentPadding class="eui-u-p-none">
     <eui-breadcrumb>
       <eui-breadcrumb-item
         *ngFor="let item of breadcrumbService.breadcrumbs$ | async"
@@ -11,12 +11,10 @@
     </eui-breadcrumb>
   </eui-page-breadcrumb>
 
-  <eui-page-content class="p-0">
-    <eui-page-columns class="p-0">
+  <eui-page-content class="eui-u-p-none">
+    <eui-page-columns class="eui-u-p-none">
       <!-- Filters column -->
       <eui-page-column
-        class="pb-10"
-        interactiveScrollbars
         [hasHeaderBodyShrinkable]="true"
         [isCollapsible]="true"
         [isCollapsed]="isFilterCollapsed"
@@ -36,7 +34,7 @@
             </span>
           </button>
         </eui-page-column-header-right-content>
-        <eui-page-column-body class="p-0">
+        <eui-page-column-body class="eui-u-p-none">
           <app-proposals-filters
             #filters
             class="col-md-3 eui-u-p-none"
@@ -46,7 +44,7 @@
 
       <!-- Results column -->
       <eui-page-column>
-        <eui-page-column-body class="p-0 w-100">
+        <eui-page-column-body class="eui-u-p-none eui-u-width-100">
           <!-- "Create" actions -->
           <div class="eui-u-flex eui-u-flex-justify-content-end app-u-gap-m">
             <button
@@ -87,13 +85,13 @@
           </div>
 
           <!-- Results list -->
-          <div class="eui-u-ph-m eui-u-pb-2xl w-100">
+          <div class="eui-u-ph-m eui-u-pb-2xl eui-u-width-100">
             <div [class.eui-u-display-hidden]="(proposals$ | async) === null">
               <div
-                class="total-results-sort eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center eui-u-pt-l"
+                class="eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center eui-u-pt-l"
               >
                 <div class="totalResults">
-                  <h4 class="eui-u-font-bold">
+                  <h4 class="eui-u-font-bold" style="margin: 0px">
                     {{ 'page.workspace.results.title' | translate }}
                   </h4>
                   <div>
@@ -106,13 +104,9 @@
                     <span euiLabel>{{
                       'page.workspace.results.sort' | translate
                     }}</span>
-                    <span
-                      euiIcon
-                      iconClass="eui-icon"
-                      [ngClass]="[
-                        sortOrder ? 'eui-icon-arrow-down' : 'eui-icon-arrow-up'
-                      ]"
-                    ></span>
+                    <eui-icon-svg
+                      [icon]="sortOrder ? 'eui-arrow-down' : 'eui-arrow-up'"
+                    ></eui-icon-svg>
                   </button>
                 </div>
               </div>
@@ -122,7 +116,6 @@
               ></app-proposals-list>
               <eui-paginator
                 #paginatorComponent
-                class="eui-u-pv-2xs"
                 [pageSize]="limit$ | async"
                 [length]="totalResults$ | async"
                 (pageChange)="handlePagerChange($event)"

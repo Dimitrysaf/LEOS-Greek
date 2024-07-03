@@ -45,12 +45,10 @@ Feature: Track Changes Feature
     Then point 1 of list 1 of paragraph 1 of article 1 has below content
       | ins  | "New paragraph"                    |
 
-  @add_trackChanges_text @local
+  @addTrackChangesText @local
   Scenario: Basic tests for add track changes text in an article in Legal Act
-    # Login
     Given navigate to edit drafting application with "User1"
     Then user is on home page
-    # Upload file for test
     When click on upload button
     Then active upload window label contains "Upload a legislative document"
     When upload a leg file from a relative location "PROP_ACT-ExamplesForChangeParagraphMode.leg"
@@ -58,18 +56,14 @@ Feature: Track Changes Feature
     And  document title input field is displayed
     When click on create button in upload document page
     Then user is on proposal viewer page
-    # Enter in Legal Act
     When click on legal act link present in proposal viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is displayed
     And  toc editing button is displayed and enabled
-    # Enable track changes
     When enable track changes
-    # Open ckeditor
     When mouseover and click on article 1
     Then ck editor window is displayed
-    # Do changes in text
     When append "A" at offset 4 in numbered paragraph 1 of article in edition mode
     When append "AB" at offset 4 of child 2 of numbered paragraph 1 of article in edition mode
     When append "A" at offset 4 in numbered paragraph 2 of article in edition mode
@@ -77,13 +71,10 @@ Feature: Track Changes Feature
     When append "A" at offset 4 of child 2 of numbered paragraph 2 of article in edition mode
     When append "B" at offset 0 of child 4 of numbered paragraph 2 of article in edition mode
     And  click save and close button of ck editor
-    # Open ckeditor
     When mouseover and click on article 1
     Then ck editor window is displayed
-    # Do changes in text
     When append "B" at offset 0 of child 4 of numbered paragraph 2 of article in edition mode
     And  click save and close button of ck editor
-    # Check results
     Then paragraph 1 of article 1 has below content
       | text | "Numb"                           |
       | ins  | "A"                              |
@@ -98,7 +89,7 @@ Feature: Track Changes Feature
       | ins  | "B"                  |
       | text | "umbered paragraph." |
 
-  @trackchanges_from_rules @local
+  @trackChangesFromRules @local
   # Page with information: https://citnet.tech.ec.europa.eu/CITnet/confluence/pages/viewpage.action?spaceKey=LEOS&title=Leos+-+Track+changes
   # This test will cover: track changes scenarios 1 to 10
   Scenario: Track changes for rules in confluence

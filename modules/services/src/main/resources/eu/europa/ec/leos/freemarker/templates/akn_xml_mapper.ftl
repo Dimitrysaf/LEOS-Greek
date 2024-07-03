@@ -124,7 +124,7 @@ Cross Reference handler
             <#local noteMarker=authNote.@marker[0]!'*'>
             <#local noteText=authNote.@@text?trim>
             <#local noteId=authNote["@xml:id"][0]!''>
-            <#if (!noteId?contains("deleted_"))>
+            <#if (!noteId?contains("deletedX"))>
                 <#if (noteId?length gt 0)>
                     <span id="endNote_${noteId}" class="leos-authnote" onClick="LEOS.scrollTo('${noteId}')">
                     <marker id="marker_${noteId}">${noteMarker}</marker>

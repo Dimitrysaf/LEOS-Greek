@@ -9,7 +9,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import {EuiTabComponent, EuiTabsComponent} from '@eui/components/eui-tabs';
 import { EuiBreadcrumbService } from '@eui/components/layout';
-import { UxAppShellService } from '@eui/core';
 import { Document } from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
@@ -17,6 +16,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { DocumentService } from '@/shared/services/document.service';
 
 import { ProposalDetailsService } from '../../services/proposal-details.service';
+import { EuiAppShellService } from '@eui/core';
 
 @Component({
   selector: 'app-proposal-view',
@@ -47,7 +47,7 @@ export class ProposalViewComponent
   public activeTabIndex = 0;
 
   constructor(
-    public asService: UxAppShellService,
+    public asService: EuiAppShellService,
     private route: ActivatedRoute,
     private router: Router,
     private proposalDetailsService: ProposalDetailsService,
@@ -103,10 +103,12 @@ export class ProposalViewComponent
     if (this.translatedDocs?.length > 0) {
       if (this.proposalRef === this.proposal.ref) {
         this.activeTabIndex = 0;
+        this.proposalDetailsService.setTranslasted(false);
       } else {
         this.translatedDocs.forEach((doc, index) => {
           if (this.proposalRef === doc.ref) {
             this.activeTabIndex = index + 1;
+            this.proposalDetailsService.setTranslasted(true);
           }
         });
       }

@@ -170,7 +170,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
     }
 
     private Node buildElement(Node node, String tagName, TableOfContentItemVO tocVo) {
-        String newId = tocVo.getId() != null ? tocVo.getId() : IdGenerator.generateId(tagName.substring(0, 3), 7);
+        String newId = tocVo.getId() != null ? tocVo.getId() : IdGenerator.generateId();
         Node elementNode = createElement(node.getOwnerDocument(), tagName, newId, EMPTY_STRING);
         XercesUtils.insertOrUpdateAttributeValue(elementNode, LEOS_ORIGIN_ATTR, tocVo.getOriginAttr());
         return elementNode;

@@ -33,11 +33,11 @@ Feature: financial statement page regression features
     When click on option "View" under milestone actions
     Then user is on milestone explorer window
     And  milestone explorer window contains below tabs
-      | TabName                |
-      | Explanatory Memorandum |
-      | Legal Act              |
-      | Annex 1                |
-      | Financial Statement    |
+      | TabName                         |
+      | Explanatory Memorandum  [1.0.0] |
+      | Legal Act  [1.0.0]              |
+      | Annex 1  [1.0.0]                |
+      | Financial Statement  [1.0.0]    |
     When click on close button in milestone explorer view
     Then user is on proposal viewer page
     When click on drafts tab in proposal view page

@@ -3,14 +3,21 @@
     opacity: 0.7;
   }
 
-  .ux-tree__node[title='empty-category'] .ux-tree__node-toggle-icon,
-  .ux-tree__node[title='template'] .ux-tree__node-toggle-icon {
+  .eui-tree-node[title='empty-category'] button[cdktreenodetoggle],
+  .eui-tree-node[title='template'] button[cdktreenodetoggle] {
     // hide empty category or extra template toggle icon, while keeping indentation
     visibility: hidden;
   }
 
-  .ux-tree--hidelines li.ux-tree__node--expandable::before {
-    // fix hidelines for all nodes
+  .eui-tree.eui-tree--show-lines.eui-tree--with-children div.eui-li-rep.eui-tree-node.eui-tree-node--with-child:before {
+    display: none;
+  }
+
+  .eui-tree.eui-tree--show-lines.eui-tree--with-children div.eui-ul-rep:before {
+    display: none;
+  }
+
+  .eui-tree.eui-tree--show-lines.eui-tree--with-children div.eui-li-rep.eui-tree-node:not(.eui-tree-node--with-child):before {
     display: none;
   }
 
@@ -33,7 +40,7 @@
     background: none;
   }
 
-  .eui-input-group-addon-item .eui-icon {
+  .eui-input-group-addon-item .eui-icon-svg {
     color: var(--eui-base-color-grey-35);
   }
 

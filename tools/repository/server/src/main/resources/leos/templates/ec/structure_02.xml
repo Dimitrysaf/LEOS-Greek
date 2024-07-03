@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
 <structure xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xmlns="http://eu.europa.ec.digit.leos.pilot/schema/"
            xsi:schemaLocation="http://eu.europa.ec.digit.leos.pilot/schema/ structure_1.xsd">
@@ -73,7 +73,7 @@
             <expandedByDefault>true</expandedByDefault>
             <sameParentAsChild>false</sameParentAsChild>
             <editable>false</editable>
-            <template><![CDATA[<part xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></part>]]></template>
+            <template><![CDATA[<part><num>${num}</num><heading>${heading}</heading></part>]]></template>
         </tocItem>
 
         <tocItem>
@@ -106,7 +106,7 @@
             <sameParentAsChild>false</sameParentAsChild>
             <editable>false</editable>
             <template>
-                <![CDATA[<title xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></title>]]></template>
+                <![CDATA[<title><num>${num}</num><heading>${heading}</heading></title>]]></template>
         </tocItem>
 
         <tocItem>
@@ -140,7 +140,7 @@
             <sameParentAsChild>false</sameParentAsChild>
             <editable>false</editable>
             <template>
-                <![CDATA[<chapter xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
+                <![CDATA[<chapter><num>${num}</num><heading>${heading}</heading></chapter>]]></template>
         </tocItem>
 
         <tocItem>
@@ -173,7 +173,7 @@
             <sameParentAsChild>false</sameParentAsChild>
             <editable>false</editable>
             <template>
-                <![CDATA[<section xml:id="_${id}"><num>${num}</num><heading>${heading}</heading></section>]]></template>
+                <![CDATA[<section><num>${num}</num><heading>${heading}</heading></section>]]></template>
         </tocItem>
 
         <tocItem>

@@ -1,4 +1,4 @@
-import { When, Then } from "cypress-cucumber-preprocessor/steps";
+import {When, Then} from "cypress-cucumber-preprocessor/steps";
 import ribbonToolbar from "../pages/ribbonToolBar";
 import legalActPage from "../pages/legalActPage";
 
@@ -27,20 +27,19 @@ Then(`zoom percentage level is showing {string} in ribbon toolbar`, function (zo
 });
 
 Then(`see user guidance toggle bar is off in ribbon toolbar`, function () {
-    ribbonToolbar.elements.seeUserGuidanceInput().invoke('show').invoke('attr', 'aria-checked').should('eq', 'false');
-    //ribbonToolbar.elements.seeUserGuidanceInput().invoke('show').its('aria-checked').should('eq', "false");
+    ribbonToolbar.elements.seeUserGuidanceInput().invoke('show').should('not.be.checked');
 });
 
 Then(`see user guidance toggle bar is on in ribbon toolbar`, function () {
-    ribbonToolbar.elements.seeUserGuidanceInput().invoke('show').invoke('attr', 'aria-checked').should('eq', 'true');
+    ribbonToolbar.elements.seeUserGuidanceInput().invoke('show').should('be.checked');
 });
 
 Then(`enable track changes toggle bar is off in ribbon toolbar`, function () {
-    ribbonToolbar.elements.enableTrackChangesInput().invoke('show').invoke('attr', 'aria-checked').should('eq', 'false');
+    ribbonToolbar.elements.enableTrackChangesInput().invoke('show').should('not.be.checked');
 });
 
 Then(`see track changes toggle bar is on in ribbon toolbar`, function () {
-    ribbonToolbar.elements.seeTrackChangesInput().invoke('show').invoke('attr', 'aria-checked').should('eq', 'true');
+    ribbonToolbar.elements.seeTrackChangesInput().should('have.attr', 'checked', 'checked');
 });
 
 When(`click on see user guidance toggle bar`, function () {

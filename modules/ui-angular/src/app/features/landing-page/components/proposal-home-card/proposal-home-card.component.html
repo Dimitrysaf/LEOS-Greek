@@ -2,11 +2,11 @@
   <eui-card
     euiCollapsible="true"
     euiCollapsed="false"
-    class="card-container eui-u-shadow-2"
+    class="eui-u-shadow-1 eui-u-shadow-z-depth-1 card-container"
   >
     <eui-card-header>
       <eui-card-header-title class="label-icon-container">
-        <span [class]="iconClass"></span>
+        <eui-icon-svg [icon]="icon"></eui-icon-svg>
         <span>{{ labelKey | translate }}</span>
       </eui-card-header-title>
       <eui-card-header-right-content> </eui-card-header-right-content>
@@ -34,11 +34,11 @@
 <ng-container *ngIf="!shouldShowIcon">
   <eui-card class="card-container eui-u-shadow-1">
     <eui-card-header>
-      <eui-card-header-title class="label-icon-container">
+      <eui-card-header-title>
         <div
-          class="total-results-sort eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center"
+          class="search-total-results eui-u-flex eui-u-flex-justify-content-between eui-u-flex-align-items-center"
         >
-          <div class="totalResults">
+          <div>
             <div>
               {{ totalResults$ | async }}
               {{ 'page.home.results.found' | translate }}
@@ -48,20 +48,12 @@
             <span>{{ 'page.home.sort-by' | translate }} </span>
             <button euiButton>
               <span euiLabel>{{ 'page.home.sort.date' | translate }}</span>
-              <span
-                euiIcon
-                euiIconButton
-                iconClass="eui-icon-caret-down"
-              ></span>
+              <eui-icon-svg icon="eui-caret-down"></eui-icon-svg>
             </button>
             <button euiButton (click)="toggleSortOrder()">
-              <span
-                euiIcon
-                iconClass="eui-icon"
-                [ngClass]="[
-                  sortOrder ? 'eui-icon-arrow-down' : 'eui-icon-arrow-up'
-                ]"
-              ></span>
+              <eui-icon-svg
+                [icon]="sortOrder ? 'eui-arrow-down' : 'eui-arrow-up'"
+              ></eui-icon-svg>
             </button>
           </div>
         </div>
@@ -92,7 +84,6 @@
     #paginatorComponent
     [pageSize]="limit$ | async"
     [length]="totalResults$ | async"
-    class="eui-u-pv-2xs pagination"
     (pageChange)="handlePagerChange($event)"
   ></eui-paginator>
 </ng-container>

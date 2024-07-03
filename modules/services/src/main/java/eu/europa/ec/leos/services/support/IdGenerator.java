@@ -13,47 +13,51 @@
  */
 package eu.europa.ec.leos.services.support;
 
-import org.apache.commons.lang3.RandomStringUtils;
+import java.security.SecureRandom;
+import java.util.Random;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class IdGenerator {
-      
-     public static final int DEFAULT_POSTFIX_LEN=7;
-     public static final String DEFAULT_PREFIX="akn";
-     
-      public static String generateId(int length){
-          return RandomStringUtils.randomAlphanumeric(length);
-      }
-      
-      /** 
-       * Generates an id in format (generated id=prefix + (7 Chars long String))
-       * @param prefix String to prefix with Random id
-       * @return ( generated id=prefix + (7 Chars long String)) 
-       */
-      public static String generateId(String prefix){
-          int postfixLength=DEFAULT_POSTFIX_LEN;
-          return generateId(prefix, postfixLength);
-          
-      }
 
-      /** 
-       * Generates an id in format (generated id=prefix + ( String of length postfixLength)
-       * @param prefix String to prefix with Random id
-       * @param postfixLength length of String to be appended
-       * @return ( generatedId= prefix + (Random String of length postfixLength)) 
-       */
-      public static String generateId(String prefix, int postfixLength){
-          StringBuffer sb =new StringBuffer();
+    private static final String DEFAULT_PREFIX = "ec";
+    private static final int DEFAULT_POSTFIX_LENGTH = 15;
+    private static final Random RANDOM = new SecureRandom();
+    private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz01234567890";
+    public static final String PREFIX_DELIMITER = "_";
 
-          if(prefix == null || !prefix.startsWith("_")){
-              sb.append("_");
-          }
+    /**
+     * Generates an id in format (generated id = DEFAULT_PREFIX + (DEFAULT_POSTFIX_LENGTH chars long String)
+     * @return (generated id = DEFAULT_PREFIX + (DEFAULT_POSTFIX_LENGTH chars long String)
+     */
+    public static String generateId() {
+        return DEFAULT_PREFIX + generateRandomString(DEFAULT_POSTFIX_LENGTH);
+    }
 
-          if(prefix!=null){
-              sb.append(prefix).append("_");
-              postfixLength--;
-          }
+    /**
+     * Generates an id in format (generated id = prefix + PREFIX_DELIMITER + DEFAULT_PREFIX + (DEFAULT_POSTFIX_LENGTH chars long String))
+     * @param prefix String to prefix with Random id
+     * @return (generated id = prefix + PREFIX_DELIMITER + DEFAULT_PREFIX + (DEFAULT_POSTFIX_LENGTH chars long String))
+     */
+    public static String generateId(String prefix) {
+        return (StringUtils.isNotEmpty(prefix) ? prefix + PREFIX_DELIMITER : "") + generateId();
+    }
 
-          return sb.append(RandomStringUtils.randomAlphanumeric(postfixLength)).toString();
-      }
-      
+    private static String generateRandomString(int length) {
+        StringBuffer buffer = new StringBuffer(length);
+        for (int i = 0; i < length; i++) {
+            buffer.append(ALPHABET.charAt(RANDOM.nextInt(ALPHABET.length())));
+        }
+        return buffer.toString();
+    }
+
+    public static String getPrefixId(String id) {
+        String prefixId = "";
+        if (StringUtils.isNotEmpty(id)) {
+            int indexOfPrefixDelimiter = id.lastIndexOf(PREFIX_DELIMITER);
+            prefixId = indexOfPrefixDelimiter > 0 ? id.substring(0, indexOfPrefixDelimiter) : "";
+        }
+        return prefixId;
+    }
+
 }

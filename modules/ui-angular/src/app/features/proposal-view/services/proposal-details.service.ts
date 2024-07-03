@@ -1,7 +1,7 @@
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { UxAppShellService } from '@eui/core';
+import { EuiGrowlService } from '@eui/core';
 import {
   Collaborator,
   CollaboratorRequest,
@@ -59,13 +59,14 @@ export class ProposalDetailsService implements OnDestroy {
     switchMap((name) => this.searchUsers(name)),
   );
   private destroy$ = new Subject<void>();
+  private translated : boolean = false;
 
   constructor(
     private appConfig: AppConfigService,
     private http: HttpClient,
     private router: Router,
     private loadingService: LoadingService,
-    private uxAppService: UxAppShellService,
+    private growlService: EuiGrowlService,
     private translateService: TranslateService,
   ) {
     this.userInputFieldChange$ = this.userInputFieldChangeBS.asObservable();
@@ -113,6 +114,14 @@ export class ProposalDetailsService implements OnDestroy {
     return this.proposalRefBS.getValue()[0];
   }
 
+  setTranslasted(translated: boolean) {
+    this.translated = translated;
+  }
+
+  getTranslated(): boolean {
+    return this.translated;
+  }
+
   createAnnex() {
     this.loadingService.setLoading(true);
     this.http
@@ -151,7 +160,7 @@ export class ProposalDetailsService implements OnDestroy {
         next: (res) => this.setProposalRef(this.proposalRef),
         error: (res) => {
           this.loadingService.setLoading(false);
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'danger',
             summary: this.translateService.instant(
               'page.collection.drafts.annex.deletion.error',
@@ -220,7 +229,7 @@ export class ProposalDetailsService implements OnDestroy {
             this.translateService
               .get('page.editor.export-email-sent', { fileType, userEmail })
               .subscribe((message) => {
-                this.uxAppService.growl({
+                this.growlService.growl({
                   severity: 'info',
                   summary: message,
                   life: 3000,
@@ -232,7 +241,7 @@ export class ProposalDetailsService implements OnDestroy {
         },
         error: (err) => {
           // TODO : handle errors
-          this.uxAppService.growlError(err.error);
+          this.growlService.growlError(err.error);
         },
       });
   }
@@ -243,7 +252,7 @@ export class ProposalDetailsService implements OnDestroy {
       this.translateService
         .get('page.editor.validate-email-sent', { userEmail })
         .subscribe((message) => {
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'info',
             summary: message,
             life: 5000,
@@ -259,7 +268,7 @@ export class ProposalDetailsService implements OnDestroy {
       )
       .subscribe({
         error: (err) => {
-          this.uxAppService.growlError(err.error);
+          this.growlService.growlError(err.error);
         }
       });
   }
@@ -344,7 +353,7 @@ export class ProposalDetailsService implements OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'success',
             summary: this.translateService.instant(
               'global.notifications.title.success',
@@ -358,7 +367,7 @@ export class ProposalDetailsService implements OnDestroy {
         },
         error: (res) => {
           this.loadingService.setLoading(false);
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'danger',
             summary: this.translateService.instant(
               'page.collection.milestones.create-milestone-dialog.error',
@@ -385,7 +394,7 @@ export class ProposalDetailsService implements OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'success',
             summary: this.translateService.instant(
               'global.notifications.title.success',
@@ -401,7 +410,7 @@ export class ProposalDetailsService implements OnDestroy {
         },
         error: (res) => {
           this.loadingService.setLoading(false);
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'danger',
             summary: this.translateService.instant(
               'page.collection.milestones.send-copy-for-contribution-dialog.contribution-error',
@@ -425,7 +434,7 @@ export class ProposalDetailsService implements OnDestroy {
       )
       .subscribe({
         next: (res) => {
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'success',
             summary: this.translateService.instant(
               'global.notifications.title.success',
@@ -440,7 +449,7 @@ export class ProposalDetailsService implements OnDestroy {
           this.loadProposalMilestones();
         },
         error: (res) => {
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'danger',
             summary: this.translateService.instant(
               'page.collection.milestones.send-copy-for-contribution-send-revision-message-error',
@@ -560,7 +569,7 @@ export class ProposalDetailsService implements OnDestroy {
         next: (res) => this.setProposalRef(this.proposalRef),
         error: (res) => {
           this.loadingService.setLoading(false);
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'danger',
             summary: this.translateService.instant(
               'page.collection.drafts.financial-statement.delete.error',
@@ -585,7 +594,7 @@ export class ProposalDetailsService implements OnDestroy {
         next: (res) => this.setProposalRef(this.proposalRef),
         error: (res) => {
           this.loadingService.setLoading(false);
-          this.uxAppService.growl({
+          this.growlService.growl({
             severity: 'danger',
             summary: this.translateService.instant(
               'page.collection.drafts.financial-statement.create.error',

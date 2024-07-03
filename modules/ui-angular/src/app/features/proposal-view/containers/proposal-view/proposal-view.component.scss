@@ -1,2 +1,5 @@
-
-
+:host ::ng-deep {
+  .eui-breadcrumb-item > * > span {
+    font-weight: bold;
+  }
+}

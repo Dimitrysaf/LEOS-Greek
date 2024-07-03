@@ -1,4 +1,4 @@
-import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
+import { DropdownModel } from '@/shared/dropdown.model';
 import { Observable } from 'rxjs';
 
 export enum IRibbonToolbarType {
@@ -35,10 +35,10 @@ export type SvgType = 'outline' | 'sharp' | 'default';
 
 export interface IBaseRibbonToolbarItem {
   id: string;
-  iconClass?: string; // used for eui icons
+  icon?: string; // used for eui icons
   svgIconClas?: string;
   svgType?: SvgType;
-  disabled?: boolean | Observable<boolean>;
+  disabled?: boolean | Observable<boolean> ;
   actionFn?: (...args) => void; // callable action
   cssClasses?: string; // used for adding different styles to the item
   label?: Observable<string> | string; //no need for every section to have a name
@@ -75,7 +75,7 @@ export interface IRibbonToolbarButton extends IBaseRibbonToolbarItem {
 
 export interface IRibbonToolbarDropdown extends IBaseRibbonToolbarItem {
   type: IRibbonToolbarType.DROPDOWN;
-  items: EuiDropdownButtonMenuItem[];
+  items: DropdownModel[];
 }
 
 export interface IRibbonToolbarCheckbox extends IBaseRibbonToolbarItem {

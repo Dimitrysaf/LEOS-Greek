@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
 import { EuiDialogService } from '@eui/components/eui-dialog';
-import { EuiDropdownButtonMenuItem } from '@eui/components/eui-dropdown-button-menu';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 
 import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
 import { TableOfContentEditService } from '@/features/akn-document/services/table-of-content-edit.service';
 import { ValidateTocService } from '@/features/akn-document/services/validate-node-drop.service';
-import {ARTICLE, CHAPTER, PART} from '@/shared/constants';
+import { ARTICLE, CHAPTER, PART } from '@/shared/constants';
 import { TableOfContentItemVO } from '@/shared/models/toc.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 
 import { TocInlineEditMenuService } from './toc-inline-edit-menu.service';
-import {DocumentConfig} from "@/shared";
+import { DocumentConfig } from '@/shared';
+import { DropdownModel } from '@/shared/dropdown.model';
 
 @Injectable()
 export class TocInlineEditMenuProposalService extends TocInlineEditMenuService {
@@ -39,10 +39,8 @@ export class TocInlineEditMenuProposalService extends TocInlineEditMenuService {
     );
   }
 
-  buildTypeSpecificItems(
-    node: TableOfContentItemVO,
-  ): EuiDropdownButtonMenuItem[] {
-    const items: EuiDropdownButtonMenuItem[] = [];
+  buildTypeSpecificItems(node: TableOfContentItemVO): DropdownModel[] {
+    const items: DropdownModel[] = [];
     switch (node.tocItem.aknTag) {
       case ARTICLE:
         items.push(this.buildArticleItem(node));

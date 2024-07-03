@@ -1,67 +1,89 @@
 <div class="eui-u-flex-column">
-  <p>
-    {{
-      'page.workspace.create-selector.' + translationKey + '.title' | translate
-    }}
-  </p>
+    <p>
+        {{
+        'page.workspace.create-selector.' + translationKey + '.title' | translate
+        }}
+    </p>
 
-  <div class="eui-u-flex eui-u-mt-m">
-    <div class="flex-grow-1 eui-u-mr-l">
-      <div class="eui-input-group-addon">
-        <div class="eui-input-group-addon-item">
-          <span euiIcon iconClass="eui-icon-search"></span>
+    <div class="eui-u-flex eui-u-mt-m">
+        <div class="eui-u-flex-grow eui-u-mr-l">
+            <div class="eui-input-group-addon">
+                <div class="eui-input-group-addon-item">
+                    <eui-icon-svg icon="eui-search"></eui-icon-svg>
+                </div>
+                <input
+                        euiInputText
+                        euiClearable
+                        [(ngModel)]="filterText"
+                        (ngModelChange)="onDocumentTypeFilter($event)"
+                        placeholder="Search by document type"
+                        aria-label="Search by document type"
+                />
+            </div>
         </div>
-        <input
-          euiInputText
-          euiClearable
-          [(ngModel)]="filterText"
-          (ngModelChange)="onDocumentTypeFilter($event)"
-          placeholder="Search by document type"
-          aria-label="Search by document type"
-        />
-      </div>
+
+        <div class="eui-u-mr-l" style="width: 244px">
+            <select
+                    euiSelect
+                    name="language"
+                    [(ngModel)]="selectedLanguage"
+                    (ngModelChange)="onLanguageChanged($event)"
+                    title="Document language"
+                    aria-label="Document language"
+            >
+                <option *ngFor="let lang of languages" [value]="lang.code">
+                    {{ lang.label }}
+                </option>
+            </select>
+        </div>
+
+        <button
+                euiButton
+                euiIconButton
+                [title]="isExpanded ? 'Collapse All' : 'Expand All'"
+                (click)="toggleExpanded()"
+                [attr.aria-label]="isExpanded ? 'Collapse All' : 'Expand All'"
+        >
+            <eui-icon-svg
+                    [icon]="isExpanded ? 'contract' : 'expand'"
+                    set="outline"
+                    size="l"
+            ></eui-icon-svg>
+        </button>
     </div>
 
-    <div class="eui-u-mr-l" style="width: 244px">
-      <select
-        euiSelect
-        name="language"
-        [(ngModel)]="selectedLanguage"
-        (ngModelChange)="onLanguageChanged($event)"
-        title="Document language"
-        aria-label="Document language"
-      >
-        <option *ngFor="let lang of languages" [value]="lang.code">
-          {{ lang.label }}
-        </option>
-      </select>
-    </div>
-
-    <button
-      euiButton
-      euiIconButton
-      [title]="isExpanded ? 'Collapse All' : 'Expand All'"
-      (click)="toggleExpanded()"
-      [attr.aria-label]="isExpanded ? 'Collapse All' : 'Expand All'"
+    <eui-tree
+            isSingleSelect
+            (selectionChange)="onNodeClick($event)"
+            [nodeTemplateRef]="nodeTemplateCustom2"
+            [nodes]="treeNodes"
+            #treeComponent
     >
-      <eui-icon-svg *ngIf="isExpanded" icon="contract"></eui-icon-svg>
-      <eui-icon-svg *ngIf="!isExpanded" icon="expand"></eui-icon-svg>
-    </button>
-  </div>
-
-  <div class="tree-wrapper eui-u-mt-l">
-    <ux-tree
-      #treeComponent
-      [nodes]="filteredNodes"
-      isHideLines="true"
-      isClickTogglingNode="true"
-      isClickSelectingNode="true"
-      isShowActiveNode="true"
-      expandedIconClass="eui-icon eui-icon-angle-down eui-u-color-grey-100"
-      collapsedIconClass="eui-icon eui-icon-angle-right eui-u-color-grey-100"
-      [isExpanded]="isExpanded"
-      (nodeClick)="simulateDoubleClick($event)"
-    >
-    </ux-tree>
-  </div>
+    </eui-tree>
 </div>
+
+
+<ng-template let-node #nodeTemplateCustom2 let-onSelect="onSelect" let-id2="id" let-children>
+    <div (click)="onSelect({ target: { checked: !node.isSelected } })"
+         class="eui-tree-node-wrapper__container-middle">
+        <eui-icon-svg euiIconSvg [icon]="node?.treeContentBlock?.iconSvgName"></eui-icon-svg>
+        <label
+                euiLabel
+                [euiDisabled]="node?.treeContentBlock?.disabled"
+                class="eui-u-text-truncate eui-u-p-2xs eui-u-color-grey-75"
+                [class.eui-label--selected]="node?.isSelected"
+                [class.eui-u-cursor-pointer]="node?.selectable">
+            {{ node?.treeContentBlock?.label }}
+        </label>
+    </div>
+
+    <div (click)="onSelect({ target: { checked: !node.isSelected } })"
+         *ngIf="node?.treeContentBlock?.rightContent" class="eui-tree-node-wrapper__container-right">
+        <!--badges area-->
+        <ng-container *ngFor="let badge of node.treeContentBlock.rightContent?.badges">
+            <eui-badge euiSizeM euiOutline [euiVariant]="badge.typeClass || 'secondary'" class="eui-u-ml-xs">
+                <span euiLabel>{{ badge.label }}</span>
+            </eui-badge>
+        </ng-container>
+    </div>
+</ng-template>

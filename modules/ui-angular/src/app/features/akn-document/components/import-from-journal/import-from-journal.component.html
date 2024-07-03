@@ -14,8 +14,8 @@
         for="type"
         translate="dialog.import-from-journal.search.type"
       ></label>
-      <select euiSelect formControlName="type" name="type" id="type">
-        <option [value]="type" *ngFor="let type of types">{{ type }}</option>
+      <select euiSelect formControlName="type" name="type" id="type" required>
+        <option *ngFor="let type of types">{{ type }}</option>
       </select>
     </div>
     <!-- Year -->
@@ -32,17 +32,18 @@
         formControlName="year"
         name="year"
         id="year"
+        required
       >
-        <option [value]="year" *ngFor="let year of years">{{ year }}</option>
+        <option *ngFor="let year of years">{{ year }}</option>
       </select>
     </div>
     <!-- Number -->
     <div euiInputGroup class="eui-u-width-auto">
       <label euiLabel euiRequired for="number">
-        <eui-icon
+        <eui-icon-svg
           euiDanger
-          euiSizeS
-          class="eui-icon eui-icon-exclamation-circle"
+          size="s"
+          icon="eui-alert-circle"
           [euiTooltip]="
             'dialog.import-from-journal.search.number-errorTooltip' | translate
           "
@@ -51,7 +52,7 @@
             searchForm.controls.number.touched &&
             searchForm.controls.number.invalid
           "
-        ></eui-icon>
+        ></eui-icon-svg>
         {{ 'dialog.import-from-journal.search.number' | translate }}
       </label>
       <input
@@ -65,19 +66,22 @@
     <!-- Search Button -->
     <div
       euiInputGroup
-      class="eui-u-width-auto eui-u-flex-row align-items-center"
+      class="eui-u-width-auto eui-u-flex-row eui-u-flex-align-items-center"
     >
-      <button euiButton euiPrimary type="submit" [isLoading]="searching">
-        {{ 'dialog.import-from-journal.search.search-button' | translate }}
+      <button euiButton euiPrimary type="submit">
+        <eui-icon-svg *ngIf="searching" isLoading></eui-icon-svg>
+        <span>
+          {{ 'dialog.import-from-journal.search.search-button' | translate }}
+        </span>
       </button>
-      <span
-        euiIcon
+      <eui-icon-svg
         euiInfo
-        class="eui-icon eui-icon-info-circle eui-u-ml-m"
+        icon="eui-ecl-information"
+        class="eui-u-ml-m"
         [euiTooltip]="
           'dialog.import-from-journal.search.info-tooltip' | translate
         "
-      ></span>
+      ></eui-icon-svg>
     </div>
   </form>
   <div translate="dialog.import-from-journal.prompt"></div>
@@ -87,7 +91,7 @@
 <!-- Footer -->
 <div class="eui-u-flex eui-u-flex-wrap app-u-gap-s">
   <div
-    class="eui-u-flex eui-u-flex-start eui-u-flex-wrap eui-u-width-auto app-u-gap-s"
+    class="eui-u-flex eui-u-flex-justify-content-start eui-u-flex-wrap eui-u-width-auto app-u-gap-s"
   >
     <button
       euiButton
@@ -96,15 +100,10 @@
       [disabled]="!docLoaded"
       (click)="toggleSelectAllRecitals()"
     >
-      <span
-        euiIcon
-        [iconClass]="
-          allRecitalsSelected
-            ? 'eui-icon-checkbox'
-            : 'eui-icon-checkbox-outline'
-        "
+      <eui-icon-svg
+        [icon]="allRecitalsSelected ? 'eui-checkbox' : 'eui-checkbox-outline'"
         [euiPrimary]="allRecitalsSelected"
-      ></span>
+      ></eui-icon-svg>
       <span
         euiLabel
         translate="dialog.import-from-journal.footer.selectAllRecitals-button"
@@ -117,15 +116,10 @@
       [disabled]="!docLoaded"
       (click)="toggleSelectAllArticles()"
     >
-      <span
-        euiIcon
-        [iconClass]="
-          allArticlesSelected
-            ? 'eui-icon-checkbox'
-            : 'eui-icon-checkbox-outline'
-        "
+      <eui-icon-svg
+        [icon]="allArticlesSelected ? 'eui-checkbox' : 'eui-checkbox-outline'"
         [euiPrimary]="allArticlesSelected"
-      ></span>
+      ></eui-icon-svg>
       <span
         euiLabel
         translate="dialog.import-from-journal.footer.selectAllArticles-button"

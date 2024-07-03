@@ -5567,7 +5567,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                 <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement" xml:id="_STAT_FINANC_LEGIS"/>
                 <!--  draft  -->
             </references>
-            <proprietary source="~leos">
+            <proprietary source="~COM">
                 <leos:templateVersion>3.0.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
                 <leos:docTemplate>FS-001</leos:docTemplate>

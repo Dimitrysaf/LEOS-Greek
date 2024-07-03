@@ -16,17 +16,16 @@
     "
     >
         <button *ngIf="item.closable"
-                euiIconButton
                 euiSizeS
                 euiBasicButton
                 euiRounded
                 euiButton
                 [euiVariant]="item.closableBtnStyle"
                 (click)="item.closeFn()" class="section-close-icon">
-          <span
-                  class="eui-icon eui-icon-times-circle"
-                  euiIcon
-          ></span>
+          <eui-icon-svg
+                  icon="eui-ecl-close-filled"
+                  set="eui"
+          ></eui-icon-svg>
         </button>
 
         <ng-template *ngTemplateOutlet="sectionItems; context: { items: item.children }"></ng-template>
@@ -39,20 +38,20 @@
     >
         <eui-dropdown class="eui-u-mb-s">
             <button euiButton euiSecondary euiIconButton euiSizeS>
-        <span
-                euiIcon
-                *ngIf="item.iconClass"
-                iconClass="eui-icon eui-icon-more-vertical"
-        ></span>
+        <eui-icon-svg
+                *ngIf="item.icon"
+                icon="eui-ellipsis-vertical"
+                set="eui"
+        ></eui-icon-svg>
                 <eui-icon-svg
-                        *ngIf="item.svgIconClas"
+                        *ngIf="item.icon"
                         [euiTooltip]="itemLabelValue"
                         [set]="item.svgType"
-                        [icon]="item.svgIconClas"
+                        [icon]="item.icon"
                 ></eui-icon-svg>
             </button>
             <eui-dropdown-content>
-                <div class="m-2">
+                <div class="eui-u-m-xs">
                     <ng-template *ngTemplateOutlet="sectionItems; context: { items: item.children }"></ng-template>
                 </div>
             </eui-dropdown-content>
@@ -65,6 +64,7 @@
             euiSizeS
             class="align-self-center text-center"
             style="max-width: 250px"
+            class="align-self-center eui-u-text-center"
     >
         {{ itemLabelValue }}
     </div>

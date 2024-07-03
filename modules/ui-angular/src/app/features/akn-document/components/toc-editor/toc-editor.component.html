@@ -1,21 +1,21 @@
 <eui-card euiNoContentPadding>
   <eui-card-content>
-    <div class="d-flex flex-column">
+    <div class="eui-u-display-flex eui-u-flex-column">
       <h5 class="card-header-title">
         <b>{{ 'page.editor.toc.selected-element.title' | translate }}</b>
       </h5>
       <!-- Division-->
       <h5
-        class="mr-3 toc-editor-label"
+        class="eui-u-mr-m toc-editor-label"
         *ngIf="isDivision(this.selectedNode.tocItem)"
       >
         {{ 'toc.edit.window.item.list.type' | translate }}
       </h5>
       <div
-        class="d-flex flex-wrap m-4 justify-content-start align-items-center eui-u-font-s"
+        class="eui-u-display-flex eui-u-flex-wrap eui-u-m-l eui-u-flex-justify-content-start eui-u-flex-align-items-center eui-u-font-s"
         *ngIf="isDivision(selectedNode.tocItem)"
       >
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             euiInputRadio
             class="toc-editor-input"
@@ -30,7 +30,7 @@
             'toc.division.number.caption.type_1' | translate
           }}</label>
         </div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             euiInputRadio
             class="toc-editor-input"
@@ -45,7 +45,7 @@
             'toc.division.number.caption.type_2' | translate
           }}</label>
         </div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             euiInputRadio
             class="toc-editor-input"
@@ -60,7 +60,7 @@
             'toc.division.number.caption.type_3' | translate
           }}</label>
         </div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             id="division_type_4"
             name="division_type"
@@ -77,13 +77,13 @@
         </div>
       </div>
       <!-- Number + Type -->
-      <div class="d-flex">
+      <div class="eui-u-display-flex">
         <!-- Type -->
         <div
           *ngIf="showTypeField(this.selectedNode.tocItem)"
           style="margin-right: 5px"
         >
-          <label euiLabel class="toc-editor-label font-weight-bold" for="">{{
+          <label euiLabel class="toc-editor-label eui-u-font-bold" for="">{{
             'page.editor.toc.selected-element.type' | translate
           }}</label
           ><input
@@ -101,7 +101,7 @@
           style="margin-left: 3px"
           [hidden]="!isItemNumberVisible(this.selectedNode.tocItem)"
         >
-          <label class="font-weight-bold toc-editor-label" euiLabel for="">{{
+          <label class="eui-u-font-bold toc-editor-label" euiLabel for="">{{
             'page.editor.toc.selected-element.number' | translate
           }}</label
           ><input
@@ -128,7 +128,7 @@
       >
         <label
           euiLabel
-          class="toc-editor-label font-weight-bold"
+          class="toc-editor-label eui-u-font-bold"
           for="heading"
           >{{ 'page.editor.toc.selected-element.heading' | translate }}</label
         >
@@ -149,18 +149,18 @@
       </div>
       <!-- Article Change Type-->
       <div
-        class="d-flex flex-row mt-2 justify-content-start"
+        class="eui-u-display-flex eui-u-flex-row eui-u-mt-xs eui-u-flex-justify-content-start"
         *ngIf="isArticle(selectedNode.tocItem)"
       >
-        <h5 class="mr-3 toc-editor-label">
+        <h5 class="eui-u-mr-m toc-editor-label">
           {{ 'toc.edit.window.item.list.type' | translate }}
         </h5>
       </div>
       <div
-        class="d-flex flex-wrap mt-2 justify-content-start"
+        class="eui-u-display-flex eui-u-flex-wrap eui-u-mt-xs eui-u-flex-justify-content-start"
         *ngIf="isArticle(selectedNode.tocItem)"
       >
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             name="article_type"
             id="article_type_reg"
@@ -174,7 +174,7 @@
             'toc.edit.window.item.regular.article.type' | translate
           }}</label>
         </div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             name="article_type"
             id="article_type_def"
@@ -191,18 +191,18 @@
       </div>
       <!-- Paragraph Numbering -->
       <div
-        class="d-flex flex-wrap mt-2 justify-content-start"
+        class="eui-u-display-flex eui-u-flex-wrap eui-u-mt-xs eui-u-flex-justify-content-start"
         *ngIf="showNumParagraphToggle(selectedNode)"
       >
-        <h5 class="mr-3 toc-editor-label">
+        <h5 class="eui-u-mr-m toc-editor-label">
           {{ 'toc.edit.window.item.paragraph-numbering' | translate }}
         </h5>
       </div>
       <div
-        class="d-flex flex-wrap mt-2 justify-content-start"
+        class="eui-u-display-flex eui-u-flex-wrap eui-u-mt-xs eui-u-flex-justify-content-start"
         *ngIf="showNumParagraphToggle(selectedNode)"
       >
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             name="paragraph_type"
             id="paragraph_type_numbered"
@@ -219,7 +219,7 @@
             >{{ 'toc.edit.window.item.list.type.numbered' | translate }}</label
           >
         </div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             name="paragraph_type"
             id="paragraph_type_unnumbered"
@@ -264,18 +264,18 @@
         </div>
       </div>
       <div
-        class="d-flex flex-wrap mt-2 justify-content-start"
+        class="eui-u-display-flex eui-u-flex-wrap eui-u-mt-xs eui-u-flex-justify-content-start"
         *ngIf="isCrossHeading(selectedNode.tocItem)"
       >
-        <h5 class="mr-3 toc-editor-label">
+        <h5 class="eui-u-mr-m toc-editor-label">
           {{ 'toc.edit.window.item.list.type' | translate }}
         </h5>
       </div>
       <div
-        class="d-flex flex-wrap mt-2 justify-content-start"
+        class="eui-u-display-flex eui-u-flex-wrap eui-u-mt-xs eui-u-flex-justify-content-start"
         *ngIf="isCrossHeading(selectedNode.tocItem)"
       >
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             name="block_type"
             id="block_type_none"
@@ -289,7 +289,7 @@
             'toc.edit.window.item.list.type.none' | translate
           }}</label>
         </div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             name="block_type"
             id="block_type_bullet"
@@ -306,7 +306,7 @@
             [innerHTML]="'toc.edit.window.item.list.type.bullet' | translate"
           ></label>
         </div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             name="block_type"
             id="block_type_n"
@@ -323,10 +323,10 @@
       </div>
       <!-- Point a-->
       <div
-        class="d-flex flex-wrap mt-2 justify-content-start"
+        class="eui-u-display-flex eui-u-flex-wrap eui-u-mt-xs eui-u-flex-justify-content-start"
         *ngIf="isIndentList(selectedNode.tocItem)"
       >
-        <div class="d-flex flex-row align-items-center justify-content-evenly">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center eui-u-flex-justify-content-evenly">
           <input
             [disabled]="isIndentListRadioButtonGroupEnabled"
             id="point_a_b"
@@ -341,7 +341,7 @@
             'toc.item.type.bullet' | translate
           }}</label>
         </div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             [disabled]="isIndentListRadioButtonGroupEnabled"
             name="point_a"
@@ -356,7 +356,7 @@
             'toc.item.type.indent' | translate
           }}</label>
         </div>
-        <div class="d-flex flex-row align-items-center">
+        <div class="eui-u-display-flex eui-u-flex-row eui-u-flex-align-items-center">
           <input
             [disabled]="isIndentListRadioButtonGroupEnabled"
             name="point_a"
@@ -378,7 +378,7 @@
         euiSize2XS
         [euiDanger]="deleteType === 'delete'"
         [euiSecondary]="deleteType === 'undelete'"
-        class="eui-u-mv-l align-self-end mt-1"
+        class="eui-u-mv-l align-self-end eui-u-mt-2xs"
         (click)="onTocRemove(this.selectedNode)"
         [disabled]="!isDeleteButtonEnabled"
       >

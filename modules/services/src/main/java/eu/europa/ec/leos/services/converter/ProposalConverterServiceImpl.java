@@ -56,7 +56,7 @@ import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.D
 import static eu.europa.ec.leos.services.processor.node.XmlNodeConfigProcessor.EXPLANATORY_TITLE_PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.PROPOSAL_FILE;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
-import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
+import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
 
 public abstract class ProposalConverterServiceImpl implements ProposalConverterService {
 
@@ -105,7 +105,8 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         proposal.clean();
         proposal.setCategory(LeosCategory.PROPOSAL);
         // unzip file
-        Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, "/unzip/");
+        String unzipPath = "/unzip/";
+        Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, unzipPath);
         try {
             String proposalFileKey = unzippedFiles.keySet().stream().filter(x -> x.startsWith(PROPOSAL_FILE)).findFirst().orElse("");
             if (unzippedFiles.containsKey(proposalFileKey)) {
@@ -146,7 +147,7 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         } catch (Exception e) {
             LOG.error("Error generating the map of the document: {}", e);
         } finally {
-            deleteFiles(file, unzippedFiles);
+            deleteFiles(file, unzippedFiles, unzipPath);
         }
         return proposal;
     }
@@ -235,11 +236,11 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
 
     /**
      * Will delete form the temporary folder the files uploaded and the unzipped files + parent folder.
-     *
-     * @param mainFile
+     *  @param mainFile
      * @param unzippedFiles
+     * @param unzipPath
      */
-    private void deleteFiles(File mainFile, Map<String, Object> unzippedFiles) {
+    private void deleteFiles(File mainFile, Map<String, Object> unzippedFiles, String unzipPath) {
         if (!mainFile.delete()) {
             LOG.info("File not deleted {}", mainFile.getPath());
         }
@@ -257,8 +258,9 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
         try {
             // we must clean also the folder.
             for (String parent : parentFolders) {
-                validatePath(parent);
-                FileUtils.deleteDirectory(new File(FilenameUtils.normalize(parent)));
+                final String basePath = System.getProperty("java.io.tmpdir") + unzipPath;
+                validateBasePath(FilenameUtils.normalize(parent), basePath);
+                FileUtils.deleteDirectory(new File(parent));
             }
         } catch (IOException e) {
             LOG.error("Error deleting the folder {}", e);

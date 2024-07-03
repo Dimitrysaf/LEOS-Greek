@@ -33,6 +33,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
   proposalDeleteCannotConf: ConfirmDialogComponent;
   canExportLW = false;
   canValidate = false;
+  translated = false;
 
   private destroy$: Subject<any> = new Subject();
 
@@ -44,6 +45,7 @@ export class ProposalActionsDropdownComponent implements OnDestroy {
       this.canExportLW = permissions.includes('CAN_EXPORT_LW');
       this.canValidate = permissions.includes('CAN_VALIDATE');
     });
+    this.translated = proposalDetailsService.getTranslated();
   }
 
   ngOnDestroy(): void {

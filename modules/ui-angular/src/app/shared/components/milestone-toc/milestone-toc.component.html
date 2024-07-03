@@ -19,17 +19,17 @@
   >
     <li class="">
       <div class="mat-tree-node mr-2" (click)="hanldeNodeSelect(node)">
-        <eui-icon
-          euiSizeM
+        <eui-icon-svg
+          size="m"
           matTreeNodeToggle
           *ngIf="!treeControl.isExpanded(node)"
-          iconClass="eui-icon-angle-right"
-        ></eui-icon>
-        <eui-icon
+          icon="eui-chevron-forward"
+        ></eui-icon-svg>
+        <eui-icon-svg
           matTreeNodeToggle
           *ngIf="treeControl.isExpanded(node)"
-          iconClass="eui-icon eui-icon-angle-down"
-        ></eui-icon>
+          icon="eui-chevron-down"
+        ></eui-icon-svg>
         <span class="label-extended" (click)="hanldeNodeSelect(node)">{{
           node.name
         }}</span>

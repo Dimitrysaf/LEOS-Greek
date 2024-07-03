@@ -7,7 +7,6 @@ import org.jaxen.dom.DOMXPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.xml.SimpleNamespaceContext;
-import org.springframework.web.util.UriUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,23 +28,50 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.regex.Pattern;
 
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_URI;
-import static eu.europa.ec.leos.services.support.XmlHelper.*;
+import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
+import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_END_TAG;
+import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_TAG;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_NEW_CLASS;
+import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT_REMOVED_CLASS;
+import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
+import static eu.europa.ec.leos.services.support.XmlHelper.EMPTY_STRING;
+import static eu.europa.ec.leos.services.support.XmlHelper.ID;
+import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.INLINE;
+import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
+import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
+import static eu.europa.ec.leos.services.support.XmlHelper.OPEN_END_TAG;
+import static eu.europa.ec.leos.services.support.XmlHelper.OPEN_TAG;
+import static eu.europa.ec.leos.services.support.XmlHelper.PARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
+import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_ACTIONS_PREFIXES;
+import static eu.europa.ec.leos.services.support.XmlHelper.STYLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
+import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
+import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
+import static eu.europa.ec.leos.services.support.XmlHelper.convertStringDateToCalendar;
+import static eu.europa.ec.leos.services.support.XmlHelper.findString;
+import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
+import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
+import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
 
 public class XercesUtils {
 
@@ -300,16 +326,17 @@ public class XercesUtils {
         return getElementsByXPath(node, xPath, true);
     }
 
-    public static NodeList getElementsByXPath(Node node, String xPath, boolean namespaceEnabled) {
+    public static NodeList getElementsByXPath(Node node, String xPathExpression, boolean namespaceEnabled) {
         try {
+            xPathExpression = XPathSanitizer.sanitizeXPath(xPathExpression);
             XPath xPathParser = XPathFactory.newInstance().newXPath();
             if (namespaceEnabled) {
                 xPathParser.setNamespaceContext(getSimpleNamespaceContext());
             }
-            NodeList nodes = (NodeList) xPathParser.evaluate(xPath, node, XPathConstants.NODESET);
+            NodeList nodes = (NodeList) xPathParser.evaluate(xPathExpression, node, XPathConstants.NODESET);
             return nodes;
         } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException("Cannot find xpath " + xPath);
+            throw new IllegalArgumentException("Cannot find xpath " + xPathExpression);
         }
     }
 
@@ -1282,4 +1309,28 @@ public class XercesUtils {
         return false;
     }
 
+    static class XPathSanitizer {
+
+        // Define a pattern for allowed characters in
+        // The following provided is not compiling but gives an hint
+        //private static final Pattern VALID_XPATH_PATTERN = Pattern.compile("\"^(/|(\\.\\./)|(\\./)|\\.\\.//)?([a-zA-Z_][a-zA-Z0-9_\\-]*|\\\\*)(/([a-zA-Z_][a-zA-Z0-9_\\-]*|\\\\*))*((\\\\[@?[a-zA-Z_][a-zA-Z0-9_\\-]*\\\\s*(=|!=|<|>|<=|>=|\\\\s*contains\\\\(|\\\\s*starts-with\\\\()\\\\s*('[^']*'|\\\"[^\\\"]*\\\")\\\\s*\\\\])|\\\\s*::\\\\s*[a-zA-Z_][a-zA-Z0-9_\\-]*\\\\s*)*)*$\"");
+
+        //TODO The current pattern is mundane and needs to be replaced by a more restrictive one since any string is accpted
+        private static String XPATH_PATTERN_STRING = "^(/|(\\.\\./)|(\\./)|\\.\\.//)?.*";
+        private static final Pattern VALID_XPATH_PATTERN = Pattern.compile(XPATH_PATTERN_STRING);
+
+        public static String sanitizeXPath(String xPath) throws IllegalArgumentException {
+            if (xPath == null) {
+                throw new IllegalArgumentException("XPath cannot be null");
+            }
+
+            // Validate against the allowed pattern
+            if (!VALID_XPATH_PATTERN.matcher(xPath).matches()) {
+                throw new IllegalArgumentException("XPath contains invalid characters "+xPath);
+            }
+
+            return xPath;
+        }
+
+    }
 }

@@ -1,19 +1,17 @@
+import { Collaborator, User, CollaboratorRequest } from '@/shared';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
   FormGroup,
-  ValidationErrors,
+  FormBuilder,
   Validators,
+  FormArray,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { EuiAutoCompleteItem } from '@eui/components/eui-autocomplete';
-import { EuiDialogComponent } from '@eui/components/eui-dialog/eui-dialog.component';
-import { debounceTime, skip, Subject, take, takeUntil } from 'rxjs';
-
-import { Collaborator, CollaboratorRequest, User } from '@/shared';
-
+import { EuiDialogComponent } from '@eui/components/eui-dialog';
+import { Subject, takeUntil, debounceTime, skip, take } from 'rxjs';
 import { ProposalDetailsService } from '../../services/proposal-details.service';
 
 const INITIAL_QUANTITY = 1;
@@ -128,10 +126,10 @@ export class ProposalCollaboratorsDialogComponent implements OnInit, OnDestroy {
 
   handleNameSelect(event, i: number) {
     this.collaboratorsFormList.controls[i].patchValue({
-      name: event.label,
-      entity: event.defaultEntity.organizationName,
+      name: event[0].label,
+      entity: event[0].defaultEntity?.organizationName,
       role: 'OWNER',
-      login: event.login,
+      login: event[0].login,
     });
   }
 
