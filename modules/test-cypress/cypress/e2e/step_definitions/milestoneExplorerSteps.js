@@ -25,8 +25,13 @@ Then(`milestone explorer window contains below tabs`, (datatable) => {
         .should('deep.equal', givenTabNameList);
 });
 
+/*
 When(`click on export button present in milestone explorer window`, () => {
     if (Cypress.env('CE_ENV').includes("@nonlocal")) {
         milestoneExplorer.clickExportBtn();
     }
+});*/
+
+When(/^export button is displayed in milestone explorer window$/, function () {
+    milestoneExplorer.elements.exportBtn().should('be.visible');
 });

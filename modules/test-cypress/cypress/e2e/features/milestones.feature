@@ -27,6 +27,14 @@ Feature: milestone section regression features
         When click on milestone type dropdown
         Then "For Interservice Consultation" option is selected by default
         Then milestone title textBox is disabled
+        When click on option "For Decision" from milestone type dropdown
+        Then milestone title textBox is disabled
+        And  content of milestone title textbox is "For Decision"
+        When click on milestone type dropdown
+        When click on option "Revision after Interservice Consultation" from milestone type dropdown
+        Then milestone title textBox is disabled
+        And  content of milestone title textbox is "Revision after Interservice Consultation"
+        When click on milestone type dropdown
         When click on option "Other" from milestone type dropdown
         And  type "Commission proposal" in milestone title textBox
         When click on create milestone button
@@ -47,6 +55,40 @@ Feature: milestone section regression features
             | Legal Act  [1.0.0]              |
             | Annex 1  [1.0.0]                |
             | Annex 2  [1.0.0]                |
+        When click on close button in milestone explorer view
+        Then user is on proposal viewer page
+
+    @exportBtnInMilestoneExplorer @nonlocal
+    Scenario: navigate to legal act page
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on create proposal button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation testing article ck editor scenario" in create document page
+        And  click on create button
+        Then user is on proposal viewer page
+        When click on milestones tab in proposal view page
+        And  click on add button in milestones tab
+        Then add milestone window is displayed
+        When click on milestone type dropdown
+        Then "For Interservice Consultation" option is selected by default
+        When click on option "Other" from milestone type dropdown
+        And  type "Commission proposal" in milestone title textBox
+        When click on create milestone button
+        Then successful message contains "Milestone created"
+        And  "Commission proposal" is showing under title column of row 1 of milestones table
+        And  "In Preparation" is showing under status column of row 1 of milestones table
+        When click on three dots under actions column of row 1 of milestones table
+        And  click on option "View" under milestone actions
+        Then user is on milestone explorer window
+        And  milestone explorer window contains below tabs
+            | TabName                         |
+            | Cover Page [1.0.0]              |
+            | Explanatory Memorandum  [1.0.0] |
+            | Legal Act  [1.0.0]              |
+        When export button is displayed in milestone explorer window
 #         When click on export button present in milestone explorer window
 #         And  recent pdf file present in downloads folder contains below words
 #             | EXPLANATORY MEMORANDUM                                                                  |

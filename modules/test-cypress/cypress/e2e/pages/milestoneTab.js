@@ -15,10 +15,6 @@ class milestoneTab extends headerPage {
         this.elements.addBtn().click();
     }
 
-/*    clickMilestoneTypeDropdown(){
-        this.elements.milestoneTypeDropDown().click();
-    }*/
-
     selectByVisibleText(option){
         this.elements.milestoneTypeDropDown().trigger('click').select(option);
     }

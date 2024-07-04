@@ -1,6 +1,5 @@
 import {When, Then} from "cypress-cucumber-preprocessor/steps";
 import ribbonToolbar from "../pages/ribbonToolBar";
-import legalActPage from "../pages/legalActPage";
 
 When(`click on change annex structure in ribbon toolbar`, () => {
     ribbonToolbar.clickChangeAnnexStructureBtn();
@@ -49,3 +48,19 @@ When(`click on see user guidance toggle bar`, function () {
 When('enable track changes', () => {
     ribbonToolbar.clickEnableTrackChangesToggleBtn();
 })
+
+And(/^enable track changes toggle bar is on in ribbon toolbar$/, function () {
+    ribbonToolbar.elements.enableTrackChangesInput().should('have.attr', 'checked', 'checked');
+});
+
+Then(/^enable track changes is disabled$/, function () {
+    ribbonToolbar.elements.enableTrackChangesToggleBtn().should('have.class', 'eui-slide-toggle__container--disabled');
+});
+
+Then(/^see track changes is enabled$/, function () {
+    ribbonToolbar.elements.seeTrackChangesToggleBtn().should('not.have.class', 'eui-slide-toggle__container--disabled');
+});
+
+Then(/^see track changes is disabled$/, function () {
+    ribbonToolbar.elements.seeTrackChangesToggleBtn().should('have.class', 'eui-slide-toggle__container--disabled');
+});

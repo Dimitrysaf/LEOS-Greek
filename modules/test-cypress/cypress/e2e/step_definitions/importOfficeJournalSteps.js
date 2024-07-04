@@ -96,3 +96,18 @@ Then(`number of recitals selected is {int}`, (recitalNumber) => {
 Then(`number of articles selected is {int}`, (articleNumber) => {
     importOfficeJournalWindow.elements.checkedArticles().should('have.length', articleNumber);
 });
+
+Then(/^select all recitals button is disabled$/, function () {
+    importOfficeJournalWindow.elements.selectAllRecitalsBtn().should('be.disabled');
+});
+
+Then(/^select all articles button is disabled$/, function () {
+    importOfficeJournalWindow.elements.selectAllArticlesBtn().should('be.disabled');
+});
+
+Then(/^select all recitals button is enabled$/, function () {
+    importOfficeJournalWindow.elements.selectAllRecitalsBtn().should('not.be.disabled');
+});
+Then(/^select all articles button is enabled$/, function () {
+    importOfficeJournalWindow.elements.selectAllArticlesBtn().should('not.be.disabled');
+});
