@@ -123,8 +123,9 @@ public class StructureConfigUtils {
                     if (!subElementNumberingConfigs.getSubElementNumberingConfigs().isEmpty()) {
                         for (SubElementNumberingConfig subElementNumberingConfig : subElementNumberingConfigs.getSubElementNumberingConfigs()) {
                             if (subElementNumberingConfig.getSubElement().value().equals(tagName)) {
-                                NumberingConfig numberingConfig = getNumberingConfig(numberingConfigs,
-                                        subElementNumberingConfig.getLangNumConfigs().get(0).getNumberingTypes().get(0));
+                                String group = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), language);
+                                LangNumConfig langNumConfig = subElementNumberingConfig.getLangNumConfigs().stream().filter(numConfig -> numConfig.getLangGroup().equalsIgnoreCase(group)).findFirst().get();
+                                NumberingConfig numberingConfig = getNumberingConfig(numberingConfigs, langNumConfig.getNumberingTypes().get(0));
                                 foundNumberingConfigs.put(tocItemType, numberingConfig != null ? numberingConfig.getLevels().getLevels() : null);
                             }
                         }

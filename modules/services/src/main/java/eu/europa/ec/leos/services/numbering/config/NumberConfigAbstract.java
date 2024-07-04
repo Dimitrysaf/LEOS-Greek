@@ -42,8 +42,38 @@ public abstract class NumberConfigAbstract implements NumberConfig {
             alphaNumber = ((char) (charPosition + 97)) + alphaNumber;
             intValue = (intValue-1) / 26;
         }
-        // "a"-"z" chars are located in the 97-122 indexes of the ASCII table, so shift all 96 positions.
         return alphaNumber;
+    }
+
+    protected String getCyrillicAlphaNumber(int intValue) {
+        if (intValue == 0) {
+            return "";
+        }
+        intValue = Math.abs(intValue);
+        String cyrillicAlphaNumber = "";
+        while (intValue != 0) {
+            int charPosition = (intValue-1) % 32;
+            cyrillicAlphaNumber = ((char) (charPosition + 1072)) + cyrillicAlphaNumber;
+            intValue = (intValue-1) / 32;
+        }
+        return cyrillicAlphaNumber;
+    }
+
+    protected String getGreekAlphaNumber(int intValue) {
+        if (intValue == 0) {
+            return "";
+        }
+        intValue = Math.abs(intValue);
+        String greekAlphaNumber = "";
+        while (intValue != 0) {
+            int charPosition = ((intValue-1) % 24) + 945;
+            if(charPosition >= 962) {
+                charPosition = charPosition + 1;
+            }
+            greekAlphaNumber = ((char) charPosition) + greekAlphaNumber;
+            intValue = (intValue-1) / 24;
+        }
+        return greekAlphaNumber;
     }
 
     @Override
