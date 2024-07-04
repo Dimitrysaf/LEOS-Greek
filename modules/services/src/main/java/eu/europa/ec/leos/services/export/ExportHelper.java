@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.Explanatory;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,8 @@ public class ExportHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ExportServiceImpl.class);
 
     private final Configuration freemarkerConfiguration;
+
+    private static final String MAIN_DOCUMENT_FILE_NAME = "main";
 
     @Value("${leos.freemarker.ftl.export.legiswrite.pdf}")
     private String exportTemplateLW_pdf;
@@ -168,4 +171,16 @@ public class ExportHelper {
                 throw new IllegalStateException("Not possible!!!");
         }
     }
+
+    public String getCiudFromMainWithLang(LegPackage legPackage) {
+        String cuid = "";
+        for (int ind = 0; ind < legPackage.getContainedFiles().size() && StringUtils.isEmpty(cuid); ind++) {
+            String document = legPackage.getContainedFiles().get(ind);
+            if (document.startsWith(MAIN_DOCUMENT_FILE_NAME) && document.lastIndexOf("_") != -1) {
+                cuid = document.substring(document.indexOf("-") + 1, document.lastIndexOf("_"));
+            }
+        }
+        return cuid;
+    }
+
 }

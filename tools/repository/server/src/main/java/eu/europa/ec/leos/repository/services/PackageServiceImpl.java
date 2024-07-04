@@ -185,7 +185,13 @@ public class PackageServiceImpl implements PackageService {
         List<LeosDocument> docs = documentService.findAllDocumentsByPackageId(pkg.get().getId().toString());
         for (LeosDocument d : docs) {
             try {
-                documentService.deleteDocumentByRef(d.getRef());
+                // Milestones cannot be deleted by ref, as they have multiple records with same ref
+                // In deletion by ref we have a find by ref that expects a unique record
+                if (d.getMilestoneId() != null) {
+                    documentService.deleteDocumentById(d.getDocumentId());
+                } else {
+                    documentService.deleteDocumentByRef(d.getRef());
+                }
             } catch (RepositoryException e) {
                 throw new RepositoryException(RepositoryException.RepositoryExceptionCode.ERROR_WHILE_DELETING, "Error while deleting a document with" +
                         " id : " + d.getVersionId());

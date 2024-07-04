@@ -53,7 +53,7 @@
                 <leos:docStage xml:id="proprietary__docstage">Proposal for a</leos:docStage>
                 <leos:ref>proposal_ckn9771lt000xwn568iknj68b</leos:ref>
                 <leos:clonedProposals>
-                    <leos:milestoneRef name="leg_ckn979flq0017wn56ctye7scp.leg">
+                    <leos:milestoneRef docVersion="1.0.0" name="leg_ckn979flq0017wn56ctye7scp.leg">
                         <clonedProposalRef ref="proposal_ckn979vhj001awn561vl9dzcs">
                             <targetUser>gautare</targetUser>
                             <creationDate>Thu Apr 08 20:14:49 CEST 2021</creationDate>

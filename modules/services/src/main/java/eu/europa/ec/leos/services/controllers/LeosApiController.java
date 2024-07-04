@@ -23,6 +23,7 @@ import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.model.event.MilestoneUpdatedEvent;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.AuthClient;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -45,6 +46,7 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.WorkspaceService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XercesUtils;
+import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.vo.token.JsonTokenReponse;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -58,6 +60,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -78,6 +82,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -111,6 +116,7 @@ public class LeosApiController {
     private final Properties applicationProperties;
     private final ExportPackageService exportPackageService;
     private final ApiService apiService;
+    private final UserService userService;
 
     private final ConfigService configService;
     private final SecurityContext securityContext;
@@ -132,7 +138,7 @@ public class LeosApiController {
                              EventBus leosApplicationEventBus, ExportService exportService,
                              CreateCollectionService createCollectionService, Properties applicationProperties,
                              ExportPackageService exportPackageService, ApiService apiService, ConfigService configService,
-                             SecurityContext securityContext) {
+                             SecurityContext securityContext, UserService userService) {
         this.legService = legService;
         this.workspaceService = workspaceService;
         this.tokenService = tokenService;
@@ -146,6 +152,7 @@ public class LeosApiController {
         this.apiService = apiService;
         this.configService = configService;
         this.securityContext = securityContext;
+        this.userService = userService;
     }
 
     @RequestMapping(value = "/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -449,13 +456,16 @@ public class LeosApiController {
                                                        @RequestParam("connectedEntity") String connectedEntity,
                                                        @RequestParam("iscRef") String iscRef) {
         CreateCollectionResult createCollectionResult;
+        User user = userService.getUser(targetUser);
+        String loggedInUser = securityContext.getUser().getLogin();
+        Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
         try {
             targetUser = encodeParam(targetUser);
             connectedEntity = encodeParam(connectedEntity);
             iscRef = encodeParam(iscRef);
             validatePath(legFile.getOriginalFilename());
             File content = new File(FilenameUtils.normalize(legFile.getOriginalFilename()));
-
+            userService.switchUser(user.getLogin());
             try (FileOutputStream fos = new FileOutputStream(content)) {
                 fos.write(legFile.getBytes());
             } catch (IOException ioe) {
@@ -468,6 +478,8 @@ public class LeosApiController {
         } catch (Exception ex) {
             LOG.error("Error Occurred while cloning proposal from the Leg file: " + ex.getMessage(), ex);
             return new ResponseEntity<>("An error occurred during proposal cloning.", HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            userService.switchUserWithAuthorities(loggedInUser, loggedInUserAuthorities);
         }
     }
 
@@ -714,11 +726,13 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/list-milestones-view/pdf-export/{documentRef}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Object> getMilestoneExportPDF(@PathVariable("documentRef") String documentRef,
-                                                        @RequestParam("legFileName") String legFileName) {
+                                                        @RequestParam("legFileName") String legFileName,
+                                                        @RequestParam("legFileId") String legFileId) {
         try {
             documentRef = encodeParam(documentRef);
             legFileName = encodeParam(legFileName);
-            MilestonePDFDownloadResponse response = apiService.downloadMilestonePDF(documentRef, legFileName);
+            legFileId = encodeParam(legFileId);
+            MilestonePDFDownloadResponse response = apiService.downloadMilestonePDF(documentRef, legFileName, legFileId);
             // create the HttpHeaders object and set the Content-Type header
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);

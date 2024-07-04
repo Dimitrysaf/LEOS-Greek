@@ -893,7 +893,8 @@ public abstract class ApiServiceImpl implements ApiService {
 
     private MilestonesVO getMilestonesVO(LegDocument legDocument, String proposalId, String proposalRef) {
         Proposal proposal = proposalService.findProposalByRef(proposalRef);
-        List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName());
+        String docVersion = userHelper.getPropVersion(legDocument);
+        List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName(), docVersion);
         MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
                 Date.from(legDocument.getCreationInstant()),
                 Date.from(legDocument.getLastModificationInstant()),
@@ -1259,10 +1260,15 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     @Override
-    public MilestonePDFDownloadResponse downloadMilestonePDF(String proposalRef, String legFileName) throws IOException {
+    public MilestonePDFDownloadResponse downloadMilestonePDF(String proposalRef, String legFileName, String legFileId) throws IOException {
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        LegDocument legDocument = getLegDocument(legFileName, leosPackage, null);
+        LegDocument legDocument;
+        if (proposal.isClonedProposal()) {
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
+            legDocument = getLegDocument(legFileName, leosPackage, null);
+        } else {
+            legDocument = legService.findLegDocumentById(legFileId);
+        }
         return doDownloadMilestonePDF(legDocument);
     }
 

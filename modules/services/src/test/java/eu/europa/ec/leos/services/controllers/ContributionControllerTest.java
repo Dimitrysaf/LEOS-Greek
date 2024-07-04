@@ -38,10 +38,7 @@ public class ContributionControllerTest {
     private static final LeosCategoryClass TEST_CLASS = LeosCategoryClass.ANNEX;
     private static final String USER_LOGIN = "demo";
     private static final String DOCUMENT_LEG_NAME = "document_test";
-
-
-    @Mock
-    private UserService userService;
+    private static final String LEG_FILE_ID = "1";
 
     @Mock
     private ContributionApiService contributionApiService;
@@ -61,12 +58,12 @@ public class ContributionControllerTest {
         cloneRequest.setLegDocumentName(DOCUMENT_LEG_NAME);
 
         CreateCollectionResult expectedResult = new CreateCollectionResult();
-        when(contributionApiService.createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName()))
+        when(contributionApiService.createCloneProposal(cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName(), LEG_FILE_ID))
                 .thenReturn(expectedResult);
 
-        ResponseEntity<Object> response = contributionController.createCloneProposal(PROPOSAL_REF, cloneRequest);
+        ResponseEntity<Object> response = contributionController.createCloneProposal(LEG_FILE_ID, cloneRequest);
 
-        verify(contributionApiService, times(1)).createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
+        verify(contributionApiService, times(1)).createCloneProposal(cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName(), LEG_FILE_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedResult, response.getBody());
@@ -79,12 +76,12 @@ public class ContributionControllerTest {
         cloneRequest.setLegDocumentName(DOCUMENT_LEG_NAME);
 
         Exception exception = new RuntimeException("Test exception");
-        when(contributionApiService.createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName()))
+        when(contributionApiService.createCloneProposal(cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName(), LEG_FILE_ID))
                 .thenThrow(exception);
 
-        ResponseEntity<Object> response = contributionController.createCloneProposal(PROPOSAL_REF, cloneRequest);
+        ResponseEntity<Object> response = contributionController.createCloneProposal(LEG_FILE_ID, cloneRequest);
 
-        verify(contributionApiService, times(1)).createCloneProposal(PROPOSAL_REF, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
+        verify(contributionApiService, times(1)).createCloneProposal(cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName(), LEG_FILE_ID);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
         assertEquals(exception.getMessage(), response.getBody());

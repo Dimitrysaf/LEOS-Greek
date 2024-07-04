@@ -157,8 +157,12 @@ public class PostProcessingProposalServiceImpl extends PostProcessingDocumentSer
                 Proposal originalProposal = proposalService.findProposal(documentVO.getId());
                 byte[] xmlContent = originalProposal.getContent().getOrThrow(() ->
                         new IllegalArgumentException("Proposal not found")).getSource().getBytes();
+                String docVersion = "";
+                if (documentVO != null && documentVO.getMetadata() != null && documentVO.getMetadata().getDocVersion() != null) {
+                    docVersion = documentVO.getMetadata().getDocVersion();
+                }
                 byte[] updatedProposalContent = preserveClonedDocumentProperties(xmlContent,
-                        idsAndUrlsHolder.getProposalId(), cloneProposalMetadataVO);
+                        idsAndUrlsHolder.getProposalId(), cloneProposalMetadataVO, docVersion);
                 documentVO.setSource(updatedProposalContent);
                 //update original proposal with cloned metadata properties
                 proposalService.updateProposal(originalProposal.getId(), updatedProposalContent);

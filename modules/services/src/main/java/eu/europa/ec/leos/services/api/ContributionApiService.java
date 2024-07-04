@@ -13,7 +13,7 @@ import java.util.List;
 
 public interface ContributionApiService {
 
-    CreateCollectionResult createCloneProposal(String proposalRef, String userLogin, String legDocumentName);
+    CreateCollectionResult createCloneProposal(String userLogin, String legDocumentName, String legFileId);
 
     Result<?> updateClonedProposalRevisionStatus(String proposalRef, String legFilename);
 

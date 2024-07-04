@@ -121,7 +121,8 @@ abstract class ExportServiceImpl implements ExportService {
         try (ByteArrayOutputStream contentFileContent = exportHelper.createContentFile(exportOptions, legPackage.getExportResource())) {
             Map<String, Object> contentToZip = new HashMap<>();
             contentToZip.put("content.xml", contentFileContent);
-            contentToZip.put(legPackage.getFile().getName(), legPackage.getFile());
+            String propActFileName = "PROP_ACT-" + exportHelper.getCiudFromMainWithLang(legPackage) + ".leg";
+            contentToZip.put(propActFileName, legPackage.getFile());
             return ZipPackageUtil.zipFiles(jobFileName, contentToZip, "");
         }
     }

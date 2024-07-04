@@ -67,6 +67,8 @@ public class LeosDocument {
 
     private BigDecimal documentId;
 
+    private BigDecimal milestoneId;
+
     private Map<String, Object> metadata = new HashMap<>();
 
     public LeosDocument() {}
@@ -186,6 +188,7 @@ public class LeosDocument {
             this.setPackageId(documentMilestoneV.getPackageId().toString());
             this.setCategory(documentMilestoneV.getCategoryCode());
             this.setDocumentId(documentMilestoneV.getDocumentId());
+            this.setMilestoneId(documentMilestoneV.getMilestoneId());
 
             this.setLatestVersion(true);
 
@@ -224,6 +227,7 @@ public class LeosDocument {
             this.setPackageId(documentMilestoneV.getPackageId().toString());
             this.setCategory(documentMilestoneV.getCategoryCode());
             this.setDocumentId(documentMilestoneV.getDocumentId());
+            this.setMilestoneId(documentMilestoneV.getMilestoneId());
 
             this.setLatestVersion(true);
 
@@ -448,6 +452,14 @@ public class LeosDocument {
 
     public void setDocumentId(BigDecimal documentId) {
         this.documentId = documentId;
+    }
+
+    public BigDecimal getMilestoneId() {
+        return milestoneId;
+    }
+
+    public void setMilestoneId(BigDecimal milestoneId) {
+        this.milestoneId = milestoneId;
     }
 
 }

@@ -38,9 +38,11 @@ public interface DocumentService {
 
     LeosDocument archiveDocument(final String ref, String userId) throws Exception;
 
-    void deleteDocumentById(BigDecimal id) throws RepositoryException;
+    void deleteDocumentByVersionId(BigDecimal id) throws RepositoryException;
 
     void deleteDocumentByRef(String ref) throws RepositoryException;
+
+    void deleteDocumentById(BigDecimal id) throws RepositoryException;
 
     LeosDocument findDocumentById(final BigDecimal id, String category, final boolean latest) throws RepositoryException;
 

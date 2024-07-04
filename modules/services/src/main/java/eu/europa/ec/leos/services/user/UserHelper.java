@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.user;
 
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.model.user.Collaborator;
@@ -20,6 +21,7 @@ import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.security.SecurityContext;
 import org.apache.commons.lang3.RandomUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +42,8 @@ public class UserHelper {
     private SecurityContext securityContext;
 
     private static final String DOMAIN_SEPARATOR="/";
+
+    private static final String MAIN_DOCUMENT_FILE_NAME = "main";
 
     public User getUser(String login) {
         //Remove auth domain from CMIS. admin/XXX ecas/YYYY
@@ -98,4 +102,16 @@ public class UserHelper {
             return defaultEntity.getName();
         }
     }
+
+    public String getPropVersion(LegDocument legDocument) {
+        String version = "";
+        for (int ind = 0; ind < legDocument.getContainedDocuments().size() && StringUtils.isEmpty(version); ind++) {
+            String document = legDocument.getContainedDocuments().get(ind);
+            if (document.startsWith(MAIN_DOCUMENT_FILE_NAME) && document.lastIndexOf("_") != -1) {
+                version = document.substring(document.lastIndexOf("_") + 1);
+            }
+        }
+        return version;
+    }
+
 }

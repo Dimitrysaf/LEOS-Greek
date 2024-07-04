@@ -94,11 +94,11 @@ public class XPathCatalogTest extends LeosTest {
     }
 
     @Test
-    public void test_getXPathCPMilestoneRefByNameAttr_should_return_true() {
+    public void test_getXPathCPMilestoneRefByNameAndVersionAttr_should_return_true() {
         byte[] xmlContent = TestUtils.getFileContent(ORIGINAL_PROPOSAL_DOCUMENT, "proposal_original.xml");
         String legFileName = "leg_ckn979flq0017wn56ctye7scp.leg";
         //When
-        boolean result = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathCPMilestoneRefByNameAttr(legFileName), true);
+        boolean result = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathCPMilestoneRefByNameAndVersionAttr(legFileName, "1.0.0"), true);
         //Then
         assertTrue(result);
     }

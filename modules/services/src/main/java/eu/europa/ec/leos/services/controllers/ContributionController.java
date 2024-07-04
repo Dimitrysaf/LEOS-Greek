@@ -39,12 +39,12 @@ public class ContributionController {
     @Autowired
     ApiService apiService;
 
-    @PostMapping(value = "/create-clone-proposal/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/create-clone-proposal/{legFileId}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> createCloneProposal(@PathVariable("proposalRef") String proposalRef, @RequestBody CloneProposalRequest cloneRequest) {
-        proposalRef = encodeParam(proposalRef);
+    public ResponseEntity<Object> createCloneProposal(@PathVariable("legFileId") String legFileId, @RequestBody CloneProposalRequest cloneRequest) {
+        legFileId = encodeParam(legFileId);
         try {
-            CreateCollectionResult response = contributionApiService.createCloneProposal(proposalRef, cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName());
+            CreateCollectionResult response = contributionApiService.createCloneProposal(cloneRequest.getUserLogin(), cloneRequest.getLegDocumentName(), legFileId);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while requesting for clone proposal", e);
