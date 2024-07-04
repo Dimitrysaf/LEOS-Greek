@@ -141,8 +141,8 @@
         </preamble>
 
         <body leos:origin="ec" xml:id="body">
-            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-06-17T11:36:02.846+02:00" leos:softmove_to="art_1" leos:softuser="demo jane(Ext)" xml:id="moved_art_1">
-                <num leos:editable="false" leos:origin="ec" xml:id="moved_art_1__num">Article 1</num>
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-06-17T11:36:02.846+02:00" leos:softmove_to="art_1" leos:softuser="demo jane(Ext)" xml:id="movedXart_1">
+                <num leos:editable="false" leos:origin="ec" xml:id="movedXart_1__num">Article 1</num>
             </article>
             <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_2">
                 <num leos:editable="false" leos:origin="ec" xml:id="art_2__num">Article 2#</num>
@@ -154,7 +154,7 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-06-17T11:36:02.877+02:00" leos:softmove_from="moved_art_1" leos:softuser="demo jane(Ext)" xml:id="art_1">
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-06-17T11:36:02.877+02:00" leos:softmove_from="movedXart_1" leos:softuser="demo jane(Ext)" xml:id="art_1">
                 <num leos:editable="false" leos:origin="cn" xml:id="art_1__num">Article #</num>
                 <heading leos:origin="ec" xml:id="art_1__heading">Scope</heading>
                 <paragraph leos:depth="1" leos:origin="ec" xml:id="art_1__para_1">

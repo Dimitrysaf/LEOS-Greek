@@ -93,8 +93,8 @@ define(function leosPluginUtilsModule(require) {
     var DATA_AKN_NUM_SOFTACTION = "data-akn-num-attr-softaction";
     var DEL = "del";
     var MOVETO = "move_to";
-    var DELETED = "deleted_";
-    var MOVED = "moved_";
+    var DELETED = "deletedX";
+    var MOVED = "movedX";
 
     var REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX = /\u200B/g;
 

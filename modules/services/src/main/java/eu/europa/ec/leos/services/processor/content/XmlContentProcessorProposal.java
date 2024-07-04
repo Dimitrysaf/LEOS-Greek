@@ -108,6 +108,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_DELETE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
+import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_TEMP_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPOINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
@@ -520,8 +521,8 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         for (int nodeIdx = 0; nodeIdx < softMovedNodes.getLength(); nodeIdx++) {
             Node node = softMovedNodes.item(nodeIdx);
             String idAttrVal = XercesUtils.getAttributeValue(node, XMLID);
-            if (idAttrVal != null && idAttrVal.indexOf("temp_") != -1) {
-                String updatedIdAttrVal = idAttrVal.replace("temp_", EMPTY_STRING);
+            if (idAttrVal != null && idAttrVal.indexOf(SOFT_TEMP_PLACEHOLDER_ID_PREFIX) != -1) {
+                String updatedIdAttrVal = idAttrVal.replace(SOFT_TEMP_PLACEHOLDER_ID_PREFIX, EMPTY_STRING);
                 String xPath = "//*[@xml:id = '" + updatedIdAttrVal + "']";
                 NodeList sourceNodes = XercesUtils.getElementsByXPath(fragment, xPath);
                 if (sourceNodes != null && sourceNodes.getLength() > 0) { //If moved within article
@@ -700,13 +701,13 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     }
 
     private void removeTempIdAttributeIfExists(Node node) {
-        String xPath = "//*[starts-with(@xml:id,'temp_')]";
+        String xPath = "//*[starts-with(@xml:id,'" + SOFT_TEMP_PLACEHOLDER_ID_PREFIX + "')]";
         NodeList nodes = XercesUtils.getElementsByXPath(node, xPath);
         for (int idx = 0; idx < nodes.getLength(); idx++) {
             Node tempIdNode = nodes.item(idx);
             String tempIdNodeVal = XercesUtils.getAttributeValue(tempIdNode, XMLID);
-            if (tempIdNodeVal != null && tempIdNodeVal.indexOf("temp_") != -1) {
-                String updatedIdAttrVal = tempIdNodeVal.replace("temp_", EMPTY_STRING);
+            if (tempIdNodeVal != null && tempIdNodeVal.indexOf(SOFT_TEMP_PLACEHOLDER_ID_PREFIX) != -1) {
+                String updatedIdAttrVal = tempIdNodeVal.replace(SOFT_TEMP_PLACEHOLDER_ID_PREFIX, EMPTY_STRING);
                 XercesUtils.addAttribute(tempIdNode, XMLID, updatedIdAttrVal);
                 coEditionContext.addUpdatedElement(tempIdNodeVal, tempIdNode.getNodeName(), nodeToString(tempIdNode));
             }

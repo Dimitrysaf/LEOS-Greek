@@ -155,17 +155,17 @@
                          leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z"
                          leos:softmove_label="MOVED to Recital (6)" leos:softmove_to="rec__tE15Ak"
                          leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00"
-                         leos:uid="gautare" xml:id="moved_rec__tE15Ak">
+                         leos:uid="gautare" xml:id="movedXrec__tE15Ak">
                     <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00"
-                         xml:id="moved_recs_blWVY5">(1)
+                         xml:id="movedXrecs_blWVY5">(1)
                     </num>
-                    <p leos:origin="ec" xml:id="moved_recs_iqjGkS">TheÂ Union's international trade is subject toÂ both
+                    <p leos:origin="ec" xml:id="movedXrecs_iqjGkS">TheÂ Union's international trade is subject toÂ both
                         customs legislation andÂ Union non-customs legislation. The latter is applicable to specific
                         goods in policy areas such as health and safety, the environment, agriculture, fisheries,
                         cultural heritage and market surveillance. One of the main tasks assigned to customs authorities
                         in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
-                        <authorialNote leos:origin="ec" marker="2" placement="bottom" xml:id="moved_recs_je6fAW">
-                            <p leos:origin="ec" xml:id="moved_recs_qfdztM">Regulation (EU) No 952/2013 of the European
+                        <authorialNote leos:origin="ec" marker="2" placement="bottom" xml:id="movedXrecs_je6fAW">
+                            <p leos:origin="ec" xml:id="movedXrecs_qfdztM">Regulation (EU) No 952/2013 of the European
                                 Parliament and of the Council of 9 October 2013 laying down the Union Customs Code (OJ L
                                 269, 10.10.2013, p. 1).
                             </p>
@@ -311,7 +311,7 @@
                 </recital>
                 <recital leos:action="insert" leos:editable="true" leos:origin="ec" leos:softaction="move_from"
                          leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z"
-                         leos:softmove_from="moved_rec__tE15Ak" leos:softmove_label="MOVED from Recital (1)"
+                         leos:softmove_from="movedXrec__tE15Ak" leos:softmove_label="MOVED from Recital (1)"
                          leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00"
                          leos:uid="nystepa" xml:id="rec__tE15Ak">
                     <num leos:action="insert" leos:origin="ls"

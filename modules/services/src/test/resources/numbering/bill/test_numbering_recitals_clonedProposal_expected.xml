@@ -4,8 +4,8 @@
             <num leos:origin="ls" xml:id="rec_0_num">(1)</num>
             <p>Recital...(1)</p>
         </recital>
-        <recital leos:editable="true" leos:origin="ec" leos:softaction="move_from" xml:id="moved_from_rec_8">
-            <num leos:origin="ls" xml:id="moved_from_rec_8_num">(2)</num>
+        <recital leos:editable="true" leos:origin="ec" leos:softaction="move_from" xml:id="movedXfrom_rec_8">
+            <num leos:origin="ls" xml:id="movedXfrom_rec_8_num">(2)</num>
             <p>Recital...(2)</p>
         </recital>
         <recital leos:editable="true" leos:origin="ec" xml:id="rec_3">
@@ -29,7 +29,7 @@
             <p xml:id="rec_7__p">Recital...(7)</p>
         </recital>
         <recital leos:editable="true" leos:origin="ec" leos:softaction="move_to" xml:id="art_8_moved">
-            <num xml:id="art_8_moved_num">(8#)</num>
+            <num xml:id="art_8_movedXnum">(8#)</num>
             <p>do not change.  is move_to, Will remain (8#)</p>
         </recital>
         <recital leos:editable="true" leos:origin="ec" xml:id="rec_9">

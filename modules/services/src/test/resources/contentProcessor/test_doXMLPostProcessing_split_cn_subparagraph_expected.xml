@@ -5,7 +5,7 @@
         <paragraph leos:origin="ec" leos:softuser="demo" xml:id="art_1__para_1">
             <num leos:origin="ec" xml:id="art_1__para_1__num">1.</num>
             <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2019-01-29T11:36:13.035+01:00"
-                          leos:softuser="demo" xml:id="transformed_art_1__para_1">
+                          leos:softuser="demo" xml:id="transformedXart_1__para_1">
                 <content xml:id="art_1_lP7CeV">
                     <p xml:id="art_1_wyGWnb">Text...</p>
                 </content>
@@ -38,9 +38,9 @@
                 </content>
             </subparagraph>
             <subparagraph leos:origin="cn" leos:softaction="splitted" leos:softdate="2022-06-17T09:30:29.193+02:00"
-                          leos:softuser="demo(DIGIT)" xml:id="splitted_art_1_PXd1Bx">
-                <content xml:id="splitted_art_1_JlttGn">
-                    <p xml:id="splitted_art_1_pIRiM5">volatility adjustments, and any maturity mismatch (E*).</p>
+                          leos:softuser="demo(DIGIT)" xml:id="splittedXart_1_PXd1Bx">
+                <content xml:id="splittedXart_1_JlttGn">
+                    <p xml:id="splittedXart_1_pIRiM5">volatility adjustments, and any maturity mismatch (E*).</p>
                 </content>
             </subparagraph>
         </paragraph>

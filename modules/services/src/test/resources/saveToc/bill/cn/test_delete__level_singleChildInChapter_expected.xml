@@ -23,18 +23,18 @@
                     <level leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec"
                            leos:softaction="del" leos:softactionroot="true"
                            leos:softdate="2022-06-17T11:53:24.345+02:00" leos:softuser="jane(DIGIT)"
-                           xml:id="deleted__akn_level_YuxqgR">
-                        <num leos:origin="ec" xml:id="deleted__akn_UV2COX">3.</num>
-                        <content leos:origin="ec" xml:id="deleted__akn_87yRCv">
-                            <p leos:origin="ec" xml:id="deleted__akn_TFvxRk">Text...</p>
+                           xml:id="deletedX_akn_level_YuxqgR">
+                        <num leos:origin="ec" xml:id="deletedX_akn_UV2COX">3.</num>
+                        <content leos:origin="ec" xml:id="deletedX_akn_87yRCv">
+                            <p leos:origin="ec" xml:id="deletedX_akn_TFvxRk">Text...</p>
                         </content>
                     </level>
                 </section>
             </chapter>
 
             <paragraph leos:depth="3" leos:origin="ec" xml:id="akn_paragraph_6y0dox">
-                <content leos:origin="ec" xml:id="deleted__akn_reG1Sr">
-                    <p leos:origin="ec" xml:id="deleted__akn_OWRyQx">
+                <content leos:origin="ec" xml:id="deletedX_akn_reG1Sr">
+                    <p leos:origin="ec" xml:id="deletedX_akn_OWRyQx">
                         Text...
                     </p>
                 </content>

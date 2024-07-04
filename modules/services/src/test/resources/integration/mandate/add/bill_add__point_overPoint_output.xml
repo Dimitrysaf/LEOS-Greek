@@ -137,7 +137,7 @@
                         <point leos:origin="ec" xml:id="art_1_06zx3M">
                             <num leos:origin="ec" xml:id="art_1_uUP9rw">(a)</num>
                             
-                            <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T11:24:49.582+02:00" leos:softuser="jane" xml:id="lis_PoRtdp"><subparagraph leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2019-05-08T11:24:56.887+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="transformed_art_1_06zx3M">
+                            <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T11:24:49.582+02:00" leos:softuser="jane" xml:id="lis_PoRtdp"><subparagraph leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2019-05-08T11:24:56.887+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="transformedXart_1_06zx3M">
                                 <content leos:origin="ec" xml:id="art_1_CXRzLe">
                                     <p leos:origin="ec" xml:id="art_1_KiKmdt">point a</p>
                                 </content>

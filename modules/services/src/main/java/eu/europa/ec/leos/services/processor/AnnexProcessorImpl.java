@@ -102,20 +102,17 @@ class AnnexProcessorImpl implements AnnexProcessor {
         switch (tagName) {
             case LEVEL:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, LEVEL), StructureConfigUtils.HASH_NUM_VALUE, messageHelper);
-                template = addDocTypeToTemplateXmlId(template);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = xmlContentProcessor.insertDepthAttribute(updatedContent, tagName, elementId);
                 updatedContent = numberService.renumberLevel(updatedContent);
                 break;
             case ARTICLE:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, ARTICLE), StructureConfigUtils.HASH_NUM_VALUE, "Article heading...", messageHelper);
-                template = addDocTypeToTemplateXmlId(template);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = numberService.renumberArticles(updatedContent);
                 break;
             case PARAGRAPH:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, tagName), messageHelper);
-                template = addDocTypeToTemplateXmlId(template);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
                 break;
             case SUBPARAGRAPH:
@@ -126,7 +123,6 @@ class AnnexProcessorImpl implements AnnexProcessor {
                     updatedContent = insertAnnexBlock(document, parentElement.getElementId(), parentElement.getElementTagName(), before);
                 } else if (!Arrays.asList(PARAGRAPH).contains(parentElement.getElementTagName())) {
                     template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
-                    template = addDocTypeToTemplateXmlId(template);
                     updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
                 } else {
                     throw new UnsupportedOperationException("Unsupported operation for tag: " + tagName);
@@ -135,7 +131,6 @@ class AnnexProcessorImpl implements AnnexProcessor {
             case POINT:
             case INDENT:
                 template = XmlHelper.getTemplate(StructureConfigUtils.getTocItemByNameOrThrow(items, tagName), StructureConfigUtils.HASH_NUM_VALUE, messageHelper);
-                template = addDocTypeToTemplateXmlId(template);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(document), template, tagName, elementId, before, document.isTrackChangesEnabled());
                 updatedContent = xmlContentProcessor.insertAffectedAttributeIntoParentElements(updatedContent, elementId);
                 updatedContent = numberService.renumberLevel(updatedContent);
@@ -207,10 +202,6 @@ class AnnexProcessorImpl implements AnnexProcessor {
 
         updatedContent = xmlContentProcessor.doXMLPostProcessing(updatedContent);
         return updatedContent;
-    }
-
-    private String addDocTypeToTemplateXmlId(String template) {
-        return XmlHelper.addDocTypeToXmlId(template, XmlHelper.ANNEX);
     }
 
     private boolean isFirstSubParagraph(Annex annex, String elementId, String tagName, String subParElementId) {

@@ -150,220 +150,220 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" xml:id="_imp_art_d1e29365_3NDITK">
-                <num xml:id="_imp_art_d1e29365_3NDITK_dM1BBU">Article 4</num>
-                <heading xml:id="_imp_art_d1e29365_3NDITK_Is5G3d">Cap on the own funds requirement for a net position</heading>
-                <paragraph xml:id="_imp_art_d1e29365_3NDITK_yNAs1H">
-                    <content xml:id="_imp_art_d1e29365_3NDITK_6fK3rW">
-                        <p xml:id="_imp_art_d1e29365_3NDITK_eJ1etJ">The institution may cap the own funds requirement for specific risk of a net position in a debt instrument at the maximum possible default-risk related loss. For a short position, that limit may be calculated as a change in value due to the instrument or, where relevant, the underlying names immediately becoming default risk-free.</p>
+            <article leos:deletable="true" leos:editable="true" xml:id="impXart_d1e29365_3NDITK">
+                <num xml:id="impXart_d1e29365_3NDITK_dM1BBU">Article 4</num>
+                <heading xml:id="impXart_d1e29365_3NDITK_Is5G3d">Cap on the own funds requirement for a net position</heading>
+                <paragraph xml:id="impXart_d1e29365_3NDITK_yNAs1H">
+                    <content xml:id="impXart_d1e29365_3NDITK_6fK3rW">
+                        <p xml:id="impXart_d1e29365_3NDITK_eJ1etJ">The institution may cap the own funds requirement for specific risk of a net position in a debt instrument at the maximum possible default-risk related loss. For a short position, that limit may be calculated as a change in value due to the instrument or, where relevant, the underlying names immediately becoming default risk-free.</p>
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" xml:id="_imp_art_d1e29372_idXU3e">
-                <num xml:id="_imp_art_d1e29372_idXU3e_OOVcob">Article 5</num>
-                <heading xml:id="_imp_art_d1e29372_idXU3e_bzAb1F">Own funds requirement for non-securitisation debt instruments</heading>
-                <paragraph xml:id="_imp_art_d1e29372_idXU3e_OHX86K">
-                    <num xml:id="_imp_art_d1e29372_idXU3e_WEL4wM">1.</num>
-                    <subparagraph xml:id="_imp_art_d1e29372_idXU3e_RULWpW">
-                        <content xml:id="_imp_art_d1e29372_idXU3e_7ztIn9">
-                            <p xml:id="_imp_art_d1e29372_idXU3e_hUorjj">The institution shall assign its net positions in the trading book in instruments that are not securitisation positions as calculated in accordance with Article 327 to the appropriate categories in Table 1 on the basis of their issuer or obligor, external or internal credit assessment, and residual maturity, and then multiply them by the weightings shown in that table. It shall sum its weighted positions resulting from the application of this Article regardless of whether they are long or short in order to calculate its own funds requirement against specific risk.</p>
+            <article leos:deletable="true" leos:editable="true" xml:id="impXart_d1e29372_idXU3e">
+                <num xml:id="impXart_d1e29372_idXU3e_OOVcob">Article 5</num>
+                <heading xml:id="impXart_d1e29372_idXU3e_bzAb1F">Own funds requirement for non-securitisation debt instruments</heading>
+                <paragraph xml:id="impXart_d1e29372_idXU3e_OHX86K">
+                    <num xml:id="impXart_d1e29372_idXU3e_WEL4wM">1.</num>
+                    <subparagraph xml:id="impXart_d1e29372_idXU3e_RULWpW">
+                        <content xml:id="impXart_d1e29372_idXU3e_7ztIn9">
+                            <p xml:id="impXart_d1e29372_idXU3e_hUorjj">The institution shall assign its net positions in the trading book in instruments that are not securitisation positions as calculated in accordance with Article 327 to the appropriate categories in Table 1 on the basis of their issuer or obligor, external or internal credit assessment, and residual maturity, and then multiply them by the weightings shown in that table. It shall sum its weighted positions resulting from the application of this Article regardless of whether they are long or short in order to calculate its own funds requirement against specific risk.</p>
                         </content>
                     </subparagraph>
-                    <subparagraph xml:id="_imp_art_d1e29372_idXU3e_uGIn7a">
-                        <content xml:id="_imp_art_d1e29372_idXU3e_Q4E041">
-                            <table class="TBL" xml:id="_imp_art_d1e29372_idXU3e_5DB9q1">
-                                <caption xml:id="_imp_art_d1e29372_idXU3e_YwR2tq">Table 1</caption>
-                                <tr xml:id="_imp_art_d1e29372_idXU3e_devpgd">
-                                    <th xml:id="_imp_art_d1e29372_idXU3e_hjtQgL">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_SJUU09">Categories</p>
+                    <subparagraph xml:id="impXart_d1e29372_idXU3e_uGIn7a">
+                        <content xml:id="impXart_d1e29372_idXU3e_Q4E041">
+                            <table class="TBL" xml:id="impXart_d1e29372_idXU3e_5DB9q1">
+                                <caption xml:id="impXart_d1e29372_idXU3e_YwR2tq">Table 1</caption>
+                                <tr xml:id="impXart_d1e29372_idXU3e_devpgd">
+                                    <th xml:id="impXart_d1e29372_idXU3e_hjtQgL">
+                                        <p xml:id="impXart_d1e29372_idXU3e_SJUU09">Categories</p>
                                     </th>
-                                    <th xml:id="_imp_art_d1e29372_idXU3e_jR4Prj">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_STRk3W">Specific risk own funds requirement</p>
+                                    <th xml:id="impXart_d1e29372_idXU3e_jR4Prj">
+                                        <p xml:id="impXart_d1e29372_idXU3e_STRk3W">Specific risk own funds requirement</p>
                                     </th>
                                 </tr>
-                                <tr xml:id="_imp_art_d1e29372_idXU3e_POKBMG">
-                                    <td xml:id="_imp_art_d1e29372_idXU3e_puu61U">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_BSeRIA">Debt securities which would receive a 0 % risk weight under the Standardised Approach for credit risk.</p>
+                                <tr xml:id="impXart_d1e29372_idXU3e_POKBMG">
+                                    <td xml:id="impXart_d1e29372_idXU3e_puu61U">
+                                        <p xml:id="impXart_d1e29372_idXU3e_BSeRIA">Debt securities which would receive a 0 % risk weight under the Standardised Approach for credit risk.</p>
                                     </td>
-                                    <td xml:id="_imp_art_d1e29372_idXU3e_gXV7kd">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_bhUqWh">0 %</p>
-                                    </td>
-                                </tr>
-                                <tr xml:id="_imp_art_d1e29372_idXU3e_854h6H">
-                                    <td xml:id="_imp_art_d1e29372_idXU3e_eJjw4T">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_SsZSGQ">Debt securities which would receive a 20 % or 50 % risk weight under the Standardised Approach for credit risk and other qualifying items as defined in paragraph 4.</p>
-                                    </td>
-                                    <td xml:id="_imp_art_d1e29372_idXU3e_JeVBCF">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_o6JNVw">0,25 % (residual term to final maturity six months or less)</p>
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_KKfbFo">1,00 % (residual term to final maturity greater than six months and up to and including 24 months)</p>
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_Um53e9">1,60 % (residual term to maturity exceeding 24 months)</p>
+                                    <td xml:id="impXart_d1e29372_idXU3e_gXV7kd">
+                                        <p xml:id="impXart_d1e29372_idXU3e_bhUqWh">0 %</p>
                                     </td>
                                 </tr>
-                                <tr xml:id="_imp_art_d1e29372_idXU3e_yCv87K">
-                                    <td xml:id="_imp_art_d1e29372_idXU3e_Jeb2yH">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_KeflVR">Debt securities which would receive a 100 % risk weight under the Standardised Approach for credit risk.</p>
+                                <tr xml:id="impXart_d1e29372_idXU3e_854h6H">
+                                    <td xml:id="impXart_d1e29372_idXU3e_eJjw4T">
+                                        <p xml:id="impXart_d1e29372_idXU3e_SsZSGQ">Debt securities which would receive a 20 % or 50 % risk weight under the Standardised Approach for credit risk and other qualifying items as defined in paragraph 4.</p>
                                     </td>
-                                    <td xml:id="_imp_art_d1e29372_idXU3e_Atux9N">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_tjCj4b">8,00 %</p>
+                                    <td xml:id="impXart_d1e29372_idXU3e_JeVBCF">
+                                        <p xml:id="impXart_d1e29372_idXU3e_o6JNVw">0,25 % (residual term to final maturity six months or less)</p>
+                                        <p xml:id="impXart_d1e29372_idXU3e_KKfbFo">1,00 % (residual term to final maturity greater than six months and up to and including 24 months)</p>
+                                        <p xml:id="impXart_d1e29372_idXU3e_Um53e9">1,60 % (residual term to maturity exceeding 24 months)</p>
                                     </td>
                                 </tr>
-                                <tr xml:id="_imp_art_d1e29372_idXU3e_YlPkzp">
-                                    <td xml:id="_imp_art_d1e29372_idXU3e_HEOhmO">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_QrYDse">Debt which would receive a 150 % risk weight under the Standardised Approach for credit risk.</p>
+                                <tr xml:id="impXart_d1e29372_idXU3e_yCv87K">
+                                    <td xml:id="impXart_d1e29372_idXU3e_Jeb2yH">
+                                        <p xml:id="impXart_d1e29372_idXU3e_KeflVR">Debt securities which would receive a 100 % risk weight under the Standardised Approach for credit risk.</p>
                                     </td>
-                                    <td xml:id="_imp_art_d1e29372_idXU3e_yQqnFd">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_8MTAta">12,00 %</p>
+                                    <td xml:id="impXart_d1e29372_idXU3e_Atux9N">
+                                        <p xml:id="impXart_d1e29372_idXU3e_tjCj4b">8,00 %</p>
+                                    </td>
+                                </tr>
+                                <tr xml:id="impXart_d1e29372_idXU3e_YlPkzp">
+                                    <td xml:id="impXart_d1e29372_idXU3e_HEOhmO">
+                                        <p xml:id="impXart_d1e29372_idXU3e_QrYDse">Debt which would receive a 150 % risk weight under the Standardised Approach for credit risk.</p>
+                                    </td>
+                                    <td xml:id="impXart_d1e29372_idXU3e_yQqnFd">
+                                        <p xml:id="impXart_d1e29372_idXU3e_8MTAta">12,00 %</p>
                                     </td>
                                 </tr>
                             </table>
                         </content>
                     </subparagraph>
                 </paragraph>
-                <paragraph xml:id="_imp_art_d1e29372_idXU3e_UvM8Z8">
-                    <num xml:id="_imp_art_d1e29372_idXU3e_HKY3kc">2.</num>
-                    <content xml:id="_imp_art_d1e29372_idXU3e_rKRYzm">
-                        <p xml:id="_imp_art_d1e29372_idXU3e_vxRUwC">For institutions which apply the IRB Approach to the exposure class of which the issuer of the debt instrument forms part, to qualify for a risk weight under the Standardised Approach for credit risk as referred to in paragraph 1, the issuer of the exposure shall have an internal rating with a PD equivalent to or lower than that associated with the appropriate credit quality step under the Standardised Approach.</p>
+                <paragraph xml:id="impXart_d1e29372_idXU3e_UvM8Z8">
+                    <num xml:id="impXart_d1e29372_idXU3e_HKY3kc">2.</num>
+                    <content xml:id="impXart_d1e29372_idXU3e_rKRYzm">
+                        <p xml:id="impXart_d1e29372_idXU3e_vxRUwC">For institutions which apply the IRB Approach to the exposure class of which the issuer of the debt instrument forms part, to qualify for a risk weight under the Standardised Approach for credit risk as referred to in paragraph 1, the issuer of the exposure shall have an internal rating with a PD equivalent to or lower than that associated with the appropriate credit quality step under the Standardised Approach.</p>
                     </content>
                 </paragraph>
-                <paragraph xml:id="_imp_art_d1e29372_idXU3e_5qpEmx">
-                    <num xml:id="_imp_art_d1e29372_idXU3e_7N5eTi">3.</num>
-                    <content xml:id="_imp_art_d1e29372_idXU3e_5nBTFE">
-                        <p xml:id="_imp_art_d1e29372_idXU3e_5dGxVy">Institutions may calculate the specific risk requirements for any bonds that qualify for a 10 % risk weight in accordance with the treatment set out in Article 129(4), (5) and (6) as half of the applicable specific risk own funds requirement for the second category in Table 1.</p>
+                <paragraph xml:id="impXart_d1e29372_idXU3e_5qpEmx">
+                    <num xml:id="impXart_d1e29372_idXU3e_7N5eTi">3.</num>
+                    <content xml:id="impXart_d1e29372_idXU3e_5nBTFE">
+                        <p xml:id="impXart_d1e29372_idXU3e_5dGxVy">Institutions may calculate the specific risk requirements for any bonds that qualify for a 10 % risk weight in accordance with the treatment set out in Article 129(4), (5) and (6) as half of the applicable specific risk own funds requirement for the second category in Table 1.</p>
                     </content>
                 </paragraph>
-                <paragraph xml:id="_imp_art_d1e29372_idXU3e_0uCXWD">
-                    <num leos:origin="ec" xml:id="_imp_art_d1e29372_idXU3e_354g1r">4.</num>
-                    <list xml:id="_imp_art_d1e29372_idXU3e_JEwiRR">
-                        <subparagraph refersTo="~_INP" xml:id="_imp_art_d1e29372_idXU3e_hocfUx">
-                            <content xml:id="_imp_art_d1e29372_idXU3e_r8jeTq">
-                                <p xml:id="_imp_art_d1e29372_idXU3e_pL8TQv">Other qualifying items are:</p>
+                <paragraph xml:id="impXart_d1e29372_idXU3e_0uCXWD">
+                    <num leos:origin="ec" xml:id="impXart_d1e29372_idXU3e_354g1r">4.</num>
+                    <list xml:id="impXart_d1e29372_idXU3e_JEwiRR">
+                        <subparagraph refersTo="~_INP" xml:id="impXart_d1e29372_idXU3e_hocfUx">
+                            <content xml:id="impXart_d1e29372_idXU3e_r8jeTq">
+                                <p xml:id="impXart_d1e29372_idXU3e_pL8TQv">Other qualifying items are:</p>
                             </content>
                         </subparagraph>
-                        <point xml:id="_imp_art_d1e29372_idXU3e_ReJuUZ">
-                            <num xml:id="_imp_art_d1e29372_idXU3e_NXPitm">(a)</num>
-                            <list xml:id="_imp_art_d1e29372_idXU3e_aVnR6Y">
-                                <subparagraph refersTo="~_INP" xml:id="_imp_art_d1e29372_idXU3e_WaJFXP">
-                                    <content xml:id="_imp_art_d1e29372_idXU3e_JCVuS9">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_teYfE3">long and short positions in assets for which a credit assessment by a nominated ECAI is not available and which meet all of the following conditions:</p>
+                        <point xml:id="impXart_d1e29372_idXU3e_ReJuUZ">
+                            <num xml:id="impXart_d1e29372_idXU3e_NXPitm">(a)</num>
+                            <list xml:id="impXart_d1e29372_idXU3e_aVnR6Y">
+                                <subparagraph refersTo="~_INP" xml:id="impXart_d1e29372_idXU3e_WaJFXP">
+                                    <content xml:id="impXart_d1e29372_idXU3e_JCVuS9">
+                                        <p xml:id="impXart_d1e29372_idXU3e_teYfE3">long and short positions in assets for which a credit assessment by a nominated ECAI is not available and which meet all of the following conditions:</p>
                                     </content>
                                 </subparagraph>
-                                <point xml:id="_imp_art_d1e29372_idXU3e_OsgMty">
-                                    <num xml:id="_imp_art_d1e29372_idXU3e_dVV6Cs">(i)</num>
-                                    <content xml:id="_imp_art_d1e29372_idXU3e_NPiiQN">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_yDsU0Q">they are considered by the institution concerned to be sufficiently liquid;</p>
+                                <point xml:id="impXart_d1e29372_idXU3e_OsgMty">
+                                    <num xml:id="impXart_d1e29372_idXU3e_dVV6Cs">(i)</num>
+                                    <content xml:id="impXart_d1e29372_idXU3e_NPiiQN">
+                                        <p xml:id="impXart_d1e29372_idXU3e_yDsU0Q">they are considered by the institution concerned to be sufficiently liquid;</p>
                                     </content>
                                 </point>
-                                <point xml:id="_imp_art_d1e29372_idXU3e_dgcVU9">
-                                    <num xml:id="_imp_art_d1e29372_idXU3e_tsWaK4">(ii)</num>
-                                    <content xml:id="_imp_art_d1e29372_idXU3e_59kR5r">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_eYStA3">their investment quality is, according to the institution's own discretion, at least equivalent to that of the assets referred to under Table 1 second row;</p>
+                                <point xml:id="impXart_d1e29372_idXU3e_dgcVU9">
+                                    <num xml:id="impXart_d1e29372_idXU3e_tsWaK4">(ii)</num>
+                                    <content xml:id="impXart_d1e29372_idXU3e_59kR5r">
+                                        <p xml:id="impXart_d1e29372_idXU3e_eYStA3">their investment quality is, according to the institution's own discretion, at least equivalent to that of the assets referred to under Table 1 second row;</p>
                                     </content>
                                 </point>
-                                <point xml:id="_imp_art_d1e29372_idXU3e_U3JgJf">
-                                    <num xml:id="_imp_art_d1e29372_idXU3e_W8LAOa">(iii)</num>
-                                    <content xml:id="_imp_art_d1e29372_idXU3e_w2465s">
-                                        <p xml:id="_imp_art_d1e29372_idXU3e_xL59ro">they are listed on at least one regulated market in a Member State or on a stock exchange in a third country provided that the exchange is recognised by the competent authorities of the relevant Member State;</p>
+                                <point xml:id="impXart_d1e29372_idXU3e_U3JgJf">
+                                    <num xml:id="impXart_d1e29372_idXU3e_W8LAOa">(iii)</num>
+                                    <content xml:id="impXart_d1e29372_idXU3e_w2465s">
+                                        <p xml:id="impXart_d1e29372_idXU3e_xL59ro">they are listed on at least one regulated market in a Member State or on a stock exchange in a third country provided that the exchange is recognised by the competent authorities of the relevant Member State;</p>
                                     </content>
                                 </point>
                             </list>
                         </point>
-                        <point xml:id="_imp_art_d1e29372_idXU3e_2ojWQZ">
-                            <num xml:id="_imp_art_d1e29372_idXU3e_r3JoFA">(b)</num>
-                            <content xml:id="_imp_art_d1e29372_idXU3e_PA9VsP">
-                                <p xml:id="_imp_art_d1e29372_idXU3e_7bHjOA">long and short positions in assets issued by institutions subject to the own funds requirements set out in this Regulation which are considered by the institution concerned to be sufficiently liquid and whose investment quality is, according to the institution's own discretion, at least equivalent to that of the assets referred to under Table 1 second row;</p>
+                        <point xml:id="impXart_d1e29372_idXU3e_2ojWQZ">
+                            <num xml:id="impXart_d1e29372_idXU3e_r3JoFA">(b)</num>
+                            <content xml:id="impXart_d1e29372_idXU3e_PA9VsP">
+                                <p xml:id="impXart_d1e29372_idXU3e_7bHjOA">long and short positions in assets issued by institutions subject to the own funds requirements set out in this Regulation which are considered by the institution concerned to be sufficiently liquid and whose investment quality is, according to the institution's own discretion, at least equivalent to that of the assets referred to under Table 1 second row;</p>
                             </content>
                         </point>
-                        <point xml:id="_imp_art_d1e29372_idXU3e_aBT7DN">
-                            <num xml:id="_imp_art_d1e29372_idXU3e_t4HQnU">(c)</num>
-                            <content xml:id="_imp_art_d1e29372_idXU3e_EQdeLh">
-                                <p xml:id="_imp_art_d1e29372_idXU3e_heBa9g">securities issued by institutions that are deemed to be of equivalent, or higher, credit quality than those associated with credit quality step 2 under the Standardised Approach for credit risk of exposures to institutions and that are subject to supervisory and regulatory arrangements comparable to those under this Regulation and Directive 2013/36/EU.</p>
+                        <point xml:id="impXart_d1e29372_idXU3e_aBT7DN">
+                            <num xml:id="impXart_d1e29372_idXU3e_t4HQnU">(c)</num>
+                            <content xml:id="impXart_d1e29372_idXU3e_EQdeLh">
+                                <p xml:id="impXart_d1e29372_idXU3e_heBa9g">securities issued by institutions that are deemed to be of equivalent, or higher, credit quality than those associated with credit quality step 2 under the Standardised Approach for credit risk of exposures to institutions and that are subject to supervisory and regulatory arrangements comparable to those under this Regulation and Directive 2013/36/EU.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="_imp_art_d1e29372_idXU3e_GMUfIW">
-                            <content xml:id="_imp_art_d1e29372_idXU3e_mtj4zW">
-                                <p xml:id="_imp_art_d1e29372_idXU3e_frMfE4">Institutions that make use of point (a) or (b) shall have a documented methodology in place to assess whether assets meet the requirements in those points and shall notify this methodology to the competent authorities.</p>
+                        <subparagraph refersTo="~_WRP" xml:id="impXart_d1e29372_idXU3e_GMUfIW">
+                            <content xml:id="impXart_d1e29372_idXU3e_mtj4zW">
+                                <p xml:id="impXart_d1e29372_idXU3e_frMfE4">Institutions that make use of point (a) or (b) shall have a documented methodology in place to assess whether assets meet the requirements in those points and shall notify this methodology to the competent authorities.</p>
                             </content>
                         </subparagraph>
                     </list>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" xml:id="_imp_art_d1e29483_POeDCh">
-                <num xml:id="_imp_art_d1e29483_POeDCh_ZGVwps">Article 6</num>
-                <heading xml:id="_imp_art_d1e29483_POeDCh_qsI9UI">Own funds requirement for securitisation instruments</heading>
-                <paragraph xml:id="_imp_art_d1e29483_POeDCh_noDDUq">
-                    <num xml:id="_imp_art_d1e29483_POeDCh_SpjC8I">1.</num>
-                    <list xml:id="_imp_art_d1e29483_POeDCh_P88D3V">
-                        <subparagraph refersTo="~_INP" xml:id="_imp_art_d1e29483_POeDCh_ms5Mam">
-                            <content xml:id="_imp_art_d1e29483_POeDCh_7fOP7u">
-                                <p xml:id="_imp_art_d1e29483_POeDCh_XeHDui">For instruments in the trading book that are securitisation positions, the institution shall weight with the following its net positions as calculated in accordance with Article 327(1):</p>
+            <article leos:deletable="true" leos:editable="true" xml:id="impXart_d1e29483_POeDCh">
+                <num xml:id="impXart_d1e29483_POeDCh_ZGVwps">Article 6</num>
+                <heading xml:id="impXart_d1e29483_POeDCh_qsI9UI">Own funds requirement for securitisation instruments</heading>
+                <paragraph xml:id="impXart_d1e29483_POeDCh_noDDUq">
+                    <num xml:id="impXart_d1e29483_POeDCh_SpjC8I">1.</num>
+                    <list xml:id="impXart_d1e29483_POeDCh_P88D3V">
+                        <subparagraph refersTo="~_INP" xml:id="impXart_d1e29483_POeDCh_ms5Mam">
+                            <content xml:id="impXart_d1e29483_POeDCh_7fOP7u">
+                                <p xml:id="impXart_d1e29483_POeDCh_XeHDui">For instruments in the trading book that are securitisation positions, the institution shall weight with the following its net positions as calculated in accordance with Article 327(1):</p>
                             </content>
                         </subparagraph>
-                        <point xml:id="_imp_art_d1e29483_POeDCh_D7NSuq">
-                            <num xml:id="_imp_art_d1e29483_POeDCh_X4KvWt">(a)</num>
-                            <content xml:id="_imp_art_d1e29483_POeDCh_RZzuym">
-                                <p xml:id="_imp_art_d1e29483_POeDCh_G1xXFW">for securitisation positions that would be subject to the Standardised Approach for credit risk in the same institution's non-trading book, 8 % of the risk weight under the Standardised Approach as set out in Title II, Chapter 5, Section 3;</p>
+                        <point xml:id="impXart_d1e29483_POeDCh_D7NSuq">
+                            <num xml:id="impXart_d1e29483_POeDCh_X4KvWt">(a)</num>
+                            <content xml:id="impXart_d1e29483_POeDCh_RZzuym">
+                                <p xml:id="impXart_d1e29483_POeDCh_G1xXFW">for securitisation positions that would be subject to the Standardised Approach for credit risk in the same institution's non-trading book, 8 % of the risk weight under the Standardised Approach as set out in Title II, Chapter 5, Section 3;</p>
                             </content>
                         </point>
-                        <point xml:id="_imp_art_d1e29483_POeDCh_s8q0vj">
-                            <num xml:id="_imp_art_d1e29483_POeDCh_e9gW1l">(b)</num>
-                            <content xml:id="_imp_art_d1e29483_POeDCh_fdUYPM">
-                                <p xml:id="_imp_art_d1e29483_POeDCh_bJVBPS">for securitisation positions that would be subject to the Internal Ratings Based Approach in the same institution's non-trading book, 8 % of the risk weight under the Internal Ratings Based Approach as set out in Title II, Chapter 5, Section 3.</p>
+                        <point xml:id="impXart_d1e29483_POeDCh_s8q0vj">
+                            <num xml:id="impXart_d1e29483_POeDCh_e9gW1l">(b)</num>
+                            <content xml:id="impXart_d1e29483_POeDCh_fdUYPM">
+                                <p xml:id="impXart_d1e29483_POeDCh_bJVBPS">for securitisation positions that would be subject to the Internal Ratings Based Approach in the same institution's non-trading book, 8 % of the risk weight under the Internal Ratings Based Approach as set out in Title II, Chapter 5, Section 3.</p>
                             </content>
                         </point>
                     </list>
                 </paragraph>
-                <paragraph xml:id="_imp_art_d1e29483_POeDCh_GNr9pZ">
-                    <num xml:id="_imp_art_d1e29483_POeDCh_NIaOR6">2.</num>
-                    <subparagraph xml:id="_imp_art_d1e29483_POeDCh_UcvU3B">
-                        <content xml:id="_imp_art_d1e29483_POeDCh_TYCEHu">
-                            <p xml:id="_imp_art_d1e29483_POeDCh_F5f24o">The Supervisory Formula Method set out in Article 262 may be used where the institution can produce estimates of PD, and where applicable exposure value and LGD as inputs into the Supervisory Formula Method in accordance with the requirements for the estimation of those parameters under the Internal Ratings Based Approach in accordance with Title II, Chapter 3.</p>
+                <paragraph xml:id="impXart_d1e29483_POeDCh_GNr9pZ">
+                    <num xml:id="impXart_d1e29483_POeDCh_NIaOR6">2.</num>
+                    <subparagraph xml:id="impXart_d1e29483_POeDCh_UcvU3B">
+                        <content xml:id="impXart_d1e29483_POeDCh_TYCEHu">
+                            <p xml:id="impXart_d1e29483_POeDCh_F5f24o">The Supervisory Formula Method set out in Article 262 may be used where the institution can produce estimates of PD, and where applicable exposure value and LGD as inputs into the Supervisory Formula Method in accordance with the requirements for the estimation of those parameters under the Internal Ratings Based Approach in accordance with Title II, Chapter 3.</p>
                         </content>
                     </subparagraph>
-                    <subparagraph xml:id="_imp_art_d1e29483_POeDCh_GqJykU">
-                        <content xml:id="_imp_art_d1e29483_POeDCh_NcCk0Z">
-                            <p xml:id="_imp_art_d1e29483_POeDCh_PCAoZq">An institution other than an originator institution that could apply it for the same securitisation position in its non-trading book may only use that method subject to permission by the competent authorities, which shall be granted where the institution fulfils the condition in the first subparagraph.</p>
+                    <subparagraph xml:id="impXart_d1e29483_POeDCh_GqJykU">
+                        <content xml:id="impXart_d1e29483_POeDCh_NcCk0Z">
+                            <p xml:id="impXart_d1e29483_POeDCh_PCAoZq">An institution other than an originator institution that could apply it for the same securitisation position in its non-trading book may only use that method subject to permission by the competent authorities, which shall be granted where the institution fulfils the condition in the first subparagraph.</p>
                         </content>
                     </subparagraph>
-                    <subparagraph xml:id="_imp_art_d1e29483_POeDCh_k0Gdxz">
-                        <content xml:id="_imp_art_d1e29483_POeDCh_jhsrQH">
-                            <p xml:id="_imp_art_d1e29483_POeDCh_GPz9Ct">Estimates of PD and LGD as inputs to the Supervisory Formula Method may alternatively also be determined based on estimates that are derived from an IRC approach of an institution that has been granted permission to use an internal model for specific risk of debt instruments. The latter alternative may be used only subject to permission by the competent authorities, which shall be granted if those estimates meet the quantitative requirements for the Internal Ratings Based Approach set out in Title II, Chapter 3.</p>
+                    <subparagraph xml:id="impXart_d1e29483_POeDCh_k0Gdxz">
+                        <content xml:id="impXart_d1e29483_POeDCh_jhsrQH">
+                            <p xml:id="impXart_d1e29483_POeDCh_GPz9Ct">Estimates of PD and LGD as inputs to the Supervisory Formula Method may alternatively also be determined based on estimates that are derived from an IRC approach of an institution that has been granted permission to use an internal model for specific risk of debt instruments. The latter alternative may be used only subject to permission by the competent authorities, which shall be granted if those estimates meet the quantitative requirements for the Internal Ratings Based Approach set out in Title II, Chapter 3.</p>
                         </content>
                     </subparagraph>
-                    <subparagraph xml:id="_imp_art_d1e29483_POeDCh_Vr3cAW">
-                        <content xml:id="_imp_art_d1e29483_POeDCh_yjbklM">
-                            <p xml:id="_imp_art_d1e29483_POeDCh_665ZYp">In accordance with Article 16 of Regulation (EU) No 1093/2010, EBA shall issue guidelines on the use of estimates of PD and LGD as inputs when those estimates are based on an IRC approach.</p>
-                        </content>
-                    </subparagraph>
-                </paragraph>
-                <paragraph xml:id="_imp_art_d1e29483_POeDCh_FjVIUl">
-                    <num xml:id="_imp_art_d1e29483_POeDCh_btpWm3">3.</num>
-                    <subparagraph xml:id="_imp_art_d1e29483_POeDCh_80bExg">
-                        <content xml:id="_imp_art_d1e29483_POeDCh_m1xjTu">
-                            <p xml:id="_imp_art_d1e29483_POeDCh_sZp5P1">For securitisation positions that are subject to an additional risk weight in accordance with Article 407, 8 % of the total risk weight shall be applied.</p>
-                        </content>
-                    </subparagraph>
-                    <subparagraph xml:id="_imp_art_d1e29483_POeDCh_WjG4UB">
-                        <content xml:id="_imp_art_d1e29483_POeDCh_nmaKcf">
-                            <p xml:id="_imp_art_d1e29483_POeDCh_VCSj77">Except for securitisation positions treated in accordance with Article 338(4), the institution shall sum its weighted positions resulting from the application of this Article (regardless of whether they are long or short) in order to calculate its own funds requirement against specific risk.</p>
+                    <subparagraph xml:id="impXart_d1e29483_POeDCh_Vr3cAW">
+                        <content xml:id="impXart_d1e29483_POeDCh_yjbklM">
+                            <p xml:id="impXart_d1e29483_POeDCh_665ZYp">In accordance with Article 16 of Regulation (EU) No 1093/2010, EBA shall issue guidelines on the use of estimates of PD and LGD as inputs when those estimates are based on an IRC approach.</p>
                         </content>
                     </subparagraph>
                 </paragraph>
-                <paragraph xml:id="_imp_art_d1e29483_POeDCh_qeWbOY">
-                    <num xml:id="_imp_art_d1e29483_POeDCh_dpfFE9">4.</num>
-                    <content xml:id="_imp_art_d1e29483_POeDCh_7GTeRX">
-                        <p xml:id="_imp_art_d1e29483_POeDCh_x7uPnt">By way of derogation from the second subparagraph of paragraph 3, for a transitional period ending 31 December 2014, the institution shall sum separately its weighted net long positions and its weighted net short positions. The larger of those sums shall constitute the specific risk own funds requirement. The institution shall, however, quarterly report to the competent authority of the home Member State the total sum of its weighted net long and net short positions, broken down by types of underlying assets.</p>
+                <paragraph xml:id="impXart_d1e29483_POeDCh_FjVIUl">
+                    <num xml:id="impXart_d1e29483_POeDCh_btpWm3">3.</num>
+                    <subparagraph xml:id="impXart_d1e29483_POeDCh_80bExg">
+                        <content xml:id="impXart_d1e29483_POeDCh_m1xjTu">
+                            <p xml:id="impXart_d1e29483_POeDCh_sZp5P1">For securitisation positions that are subject to an additional risk weight in accordance with Article 407, 8 % of the total risk weight shall be applied.</p>
+                        </content>
+                    </subparagraph>
+                    <subparagraph xml:id="impXart_d1e29483_POeDCh_WjG4UB">
+                        <content xml:id="impXart_d1e29483_POeDCh_nmaKcf">
+                            <p xml:id="impXart_d1e29483_POeDCh_VCSj77">Except for securitisation positions treated in accordance with Article 338(4), the institution shall sum its weighted positions resulting from the application of this Article (regardless of whether they are long or short) in order to calculate its own funds requirement against specific risk.</p>
+                        </content>
+                    </subparagraph>
+                </paragraph>
+                <paragraph xml:id="impXart_d1e29483_POeDCh_qeWbOY">
+                    <num xml:id="impXart_d1e29483_POeDCh_dpfFE9">4.</num>
+                    <content xml:id="impXart_d1e29483_POeDCh_7GTeRX">
+                        <p xml:id="impXart_d1e29483_POeDCh_x7uPnt">By way of derogation from the second subparagraph of paragraph 3, for a transitional period ending 31 December 2014, the institution shall sum separately its weighted net long positions and its weighted net short positions. The larger of those sums shall constitute the specific risk own funds requirement. The institution shall, however, quarterly report to the competent authority of the home Member State the total sum of its weighted net long and net short positions, broken down by types of underlying assets.</p>
                     </content>
                 </paragraph>
-                <paragraph xml:id="_imp_art_d1e29483_POeDCh_gGtkNy">
-                    <num xml:id="_imp_art_d1e29483_POeDCh_tW0b2B">5.</num>
-                    <subparagraph xml:id="_imp_art_d1e29483_POeDCh_L0npPM">
-                        <content xml:id="_imp_art_d1e29483_POeDCh_XHZjeI">
-                            <p xml:id="_imp_art_d1e29483_POeDCh_bO8nVH">Where an originator institution of a traditional securitisation does not meet the conditions for significant risk transfer in Article 243, it shall include in the calculation of the own funds requirement under this Article the securitised exposures instead of its securitisation positions from this securitisation.</p>
+                <paragraph xml:id="impXart_d1e29483_POeDCh_gGtkNy">
+                    <num xml:id="impXart_d1e29483_POeDCh_tW0b2B">5.</num>
+                    <subparagraph xml:id="impXart_d1e29483_POeDCh_L0npPM">
+                        <content xml:id="impXart_d1e29483_POeDCh_XHZjeI">
+                            <p xml:id="impXart_d1e29483_POeDCh_bO8nVH">Where an originator institution of a traditional securitisation does not meet the conditions for significant risk transfer in Article 243, it shall include in the calculation of the own funds requirement under this Article the securitised exposures instead of its securitisation positions from this securitisation.</p>
                         </content>
                     </subparagraph>
-                    <subparagraph xml:id="_imp_art_d1e29483_POeDCh_UgIYWe">
-                        <content xml:id="_imp_art_d1e29483_POeDCh_ihXwn9">
-                            <p xml:id="_imp_art_d1e29483_POeDCh_o9atA6">Where an originator institution of a synthetic securitisation does not meet the conditions for significant risk transfer in Article 244, it shall include in the calculation of the own funds requirement under this Article the securitised exposures from this securitisation, but not any credit protection obtained for the securitised portfolio.</p>
+                    <subparagraph xml:id="impXart_d1e29483_POeDCh_UgIYWe">
+                        <content xml:id="impXart_d1e29483_POeDCh_ihXwn9">
+                            <p xml:id="impXart_d1e29483_POeDCh_o9atA6">Where an originator institution of a synthetic securitisation does not meet the conditions for significant risk transfer in Article 244, it shall include in the calculation of the own funds requirement under this Article the securitised exposures from this securitisation, but not any credit protection obtained for the securitised portfolio.</p>
                         </content>
                     </subparagraph>
                 </paragraph>

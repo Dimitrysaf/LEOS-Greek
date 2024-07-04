@@ -13,10 +13,10 @@
                                 <p leos:origin="ec" xml:id="_art_2_x9yg5u">Article 2</p>
                             </content>
                         </subparagraph>
-                        <point leos:affected="true" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-08-12T14:10:07.797+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted__art_2_SFQ4X0">
-                            <num leos:origin="ec" xml:id="deleted__art_2_caR83y">(a)</num>
-                            <content xml:id="deleted__art_2_1QV5j4">
-                                <p xml:id="deleted__art_2_1UCWq2">Point a</p>
+                        <point leos:affected="true" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-08-12T14:10:07.797+02:00" leos:softuser=" jane(DIGIT)" xml:id="deletedX_art_2_SFQ4X0">
+                            <num leos:origin="ec" xml:id="deletedX_art_2_caR83y">(a)</num>
+                            <content xml:id="deletedX_art_2_1QV5j4">
+                                <p xml:id="deletedX_art_2_1UCWq2">Point a</p>
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="_art_2_XZ1wQb">

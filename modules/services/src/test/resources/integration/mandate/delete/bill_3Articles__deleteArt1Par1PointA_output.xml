@@ -134,10 +134,10 @@
                             <p leos:origin="ec" xml:id="art_1__para_1__content__p">art1-par1 (sub) </p>
                         </content>
                     </subparagraph>
-                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2019-04-30T19:55:11.447+02:00" leos:softuser="jane" xml:id="deleted_art_1_06zx3M">
-                            <num leos:origin="ec" xml:id="deleted_art_1_uUP9rw">(a)</num>
-                            <content leos:origin="ec" xml:id="deleted_art_1_CXRzLe">
-                                <p leos:origin="ec" xml:id="deleted_art_1_KiKmdt">point a</p>
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2019-04-30T19:55:11.447+02:00" leos:softuser="jane" xml:id="deletedXart_1_06zx3M">
+                            <num leos:origin="ec" xml:id="deletedXart_1_uUP9rw">(a)</num>
+                            <content leos:origin="ec" xml:id="deletedXart_1_CXRzLe">
+                                <p leos:origin="ec" xml:id="deletedXart_1_KiKmdt">point a</p>
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="art_1_wLjAPO">

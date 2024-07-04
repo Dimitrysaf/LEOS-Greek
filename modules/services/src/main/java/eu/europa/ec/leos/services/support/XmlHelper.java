@@ -188,6 +188,7 @@ public class XmlHelper {
     public static final String SOFT_DELETE_PLACEHOLDER_ID_PREFIX = "deleted" + IdGenerator.PREFIX_DELIMITER;
     public static final String SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX = "transformed" + IdGenerator.PREFIX_DELIMITER;
     public static final String SOFT_SPLITTED_PLACEHOLDER_ID_PREFIX = "splitted" + IdGenerator.PREFIX_DELIMITER;
+    public static final String SOFT_TEMP_PLACEHOLDER_ID_PREFIX = "temp" + IdGenerator.PREFIX_DELIMITER;
     public static final String TOGGLED_TO_NUM = "toggled_to_num";
     public static final String BACK_TO_NUM_FROM_SOFT_DELETED = "back_to_num_from_soft_deleted";
     public static final String STATUS_IGNORED_ATTR = "status";
@@ -728,12 +729,6 @@ public class XmlHelper {
         return new StringBuilder(origText.startsWith(WHITESPACE) ? WHITESPACE : EMPTY_STRING)
                 .append(org.apache.commons.lang3.StringUtils.normalizeSpace(newText))
                 .append(origText.endsWith(WHITESPACE) ? WHITESPACE : EMPTY_STRING).toString();
-    }
-
-    public static String addDocTypeToXmlId(String template, String docType) {
-        final String regex = String.format("%s=\"", XMLID);
-        final String replaceWith = String.format("%s=\"_%s", XMLID, docType.toLowerCase());
-        return template.replaceAll(regex, replaceWith);
     }
 
     public static Integer getAttributeValueAsInteger(String content, String attrName) {

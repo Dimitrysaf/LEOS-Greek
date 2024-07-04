@@ -13,12 +13,12 @@
                         </subparagraph>
                         <point class="leos-double-compare-removed" leos:affected="true" leos:deletable="false" leos:editable="false" leos:origin="ec"
                                leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-08-08T14:49:17.168+02:00" leos:softuser=" jane(DIGIT)"
-                               xml:id="deleted__art_2_SFQ4X0">
+                               xml:id="deletedX_art_2_SFQ4X0">
                             <num class="leos-double-compare-removed" leos:deletable="false" leos:editable="false" leos:origin="ec"
-                                 xml:id="deleted__art_2_caR83y">(a)
+                                 xml:id="deletedX_art_2_caR83y">(a)
                             </num>
-                            <content class="leos-double-compare-removed" leos:deletable="false" leos:editable="false" xml:id="deleted__art_2_1QV5j4">
-                                <p class="leos-double-compare-removed" leos:deletable="false" leos:editable="false" xml:id="deleted__art_2_1UCWq2">Point a
+                            <content class="leos-double-compare-removed" leos:deletable="false" leos:editable="false" xml:id="deletedX_art_2_1QV5j4">
+                                <p class="leos-double-compare-removed" leos:deletable="false" leos:editable="false" xml:id="deletedX_art_2_1UCWq2">Point a
                                     <span class="leos-double-compare-removed">of Article 2</span>
                                 </p>
                             </content>

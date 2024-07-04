@@ -101,11 +101,11 @@
                 <p leos:origin="ec" xml:id="preamble__formula_1__p">THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</p>
             </formula>
             <citations leos:editable="false" leos:origin="ec" xml:id="cits">
-                <citation leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T04:09:09.000Z" leos:softmove_label="MOVED to fifth citation" leos:softmove_to="cit_1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.562+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="moved_cit_1">
-                    <p leos:origin="ec" xml:id="moved_cit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in particular Articles 33, 114 and 207 thereof,</p>
+                <citation leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T04:09:09.000Z" leos:softmove_label="MOVED to fifth citation" leos:softmove_to="cit_1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.562+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="movedXcit_1">
+                    <p leos:origin="ec" xml:id="movedXcit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in particular Articles 33, 114 and 207 thereof,</p>
                 </citation>
-                <citation leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T05:09:24.000Z" leos:softmove_label="MOVED to third citation" leos:softmove_to="cit_2" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.568+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="moved_cit_2">
-                    <p leos:origin="ec" xml:id="moved_cit_2__p">Having regard to the proposal from the European Commission,</p>
+                <citation leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T05:09:24.000Z" leos:softmove_label="MOVED to third citation" leos:softmove_to="cit_2" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.568+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="movedXcit_2">
+                    <p leos:origin="ec" xml:id="movedXcit_2__p">Having regard to the proposal from the European Commission,</p>
                 </citation>
                 <citation leos:editable="true" leos:origin="ec" refersTo="~legalBasis" xml:id="cit_3">
                     <p leos:origin="ec" xml:id="cit_3__p">After transmission of the draft legislative act to the national parliaments,</p>
@@ -117,13 +117,13 @@
                         </authorialNote>
                         ,</p>
                 </citation>
-                <citation leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T05:09:24.000Z" leos:softmove_from="moved_cit_2" leos:softmove_label="MOVED from first citation" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.609+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="cit_2">
+                <citation leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T05:09:24.000Z" leos:softmove_from="movedXcit_2" leos:softmove_label="MOVED from first citation" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.609+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="cit_2">
                     <p leos:origin="ec" xml:id="cit_2__p">Having regard to the proposal from the European Commission,</p>
                 </citation>
                 <citation leos:editable="true" leos:origin="ec" refersTo="~legalBasis" xml:id="cit_6">
                     <p leos:origin="ec" xml:id="cit_6__p">Acting in accordance with the ordinary legislative procedure,</p>
                 </citation>
-                <citation leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T04:09:09.000Z" leos:softmove_from="moved_cit_1" leos:softmove_label="MOVED from first citation" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.615+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="cit_1">
+                <citation leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T04:09:09.000Z" leos:softmove_from="movedXcit_1" leos:softmove_label="MOVED from first citation" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.615+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="cit_1">
                     <p leos:origin="ec" xml:id="cit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in particular Articles 33, 114 and 207 thereof,</p>
                 </citation>
             </citations>
@@ -131,11 +131,11 @@
                 <intro leos:origin="ec" xml:id="recitalsIntro">
                     <p leos:origin="ec" xml:id="recs_intro">Whereas:</p>
                 </intro>
-                <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_label="MOVED to Recital (6)" leos:softmove_to="rec__tE15Ak" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" leos:uid="gautare" xml:id="moved_rec__tE15Ak">
-                    <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" xml:id="moved_recs_blWVY5">(1)</num>
-                    <p leos:origin="ec" xml:id="moved_recs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
-                        <authorialNote leos:origin="ec" marker="2" placement="bottom" xml:id="moved_recs_je6fAW">
-                            <p leos:origin="ec" xml:id="moved_recs_qfdztM">Regulation (EU) No 952/2013 of the European Parliament and of the Council of 9 October 2013 laying down the Union Customs Code (OJ L 269, 10.10.2013, p. 1).</p>
+                <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_label="MOVED to Recital (6)" leos:softmove_to="rec__tE15Ak" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" leos:uid="gautare" xml:id="movedXrec__tE15Ak">
+                    <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" xml:id="movedXrecs_blWVY5">(1)</num>
+                    <p leos:origin="ec" xml:id="movedXrecs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
+                        <authorialNote leos:origin="ec" marker="2" placement="bottom" xml:id="movedXrecs_je6fAW">
+                            <p leos:origin="ec" xml:id="movedXrecs_qfdztM">Regulation (EU) No 952/2013 of the European Parliament and of the Council of 9 October 2013 laying down the Union Customs Code (OJ L 269, 10.10.2013, p. 1).</p>
                         </authorialNote>
                         is to ensure the security and safety of the Union and its residents, and the protection of the environment, where appropriate, in close cooperation with other authorities. The authorities responsible for Union non-customs regulatory formalities (â€˜partner competent authoritiesâ€™) and customs authorities often work in silos, creating complex and burdensome reporting obligations for traders and inefficient goods clearance processes conducive to error and fraud. To address the fragmented interoperability between customs and partner competent authorities in the management of goods clearance processes and to coordinate action in this area, the Commission and the Member States have taken a number of commitments over the years to develop single window initiatives for the clearance of goods.</p>
                 </recital>
@@ -162,11 +162,11 @@
                         </authorialNote>
                         and invited the Commission to present a proposal for the revision of Decision No 70/2008/EC.Â </p>
                 </recital>
-                <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T07:11:20.000Z" leos:softmove_label="MOVED to Recital (3)" leos:softmove_to="rec__Epl5Gg" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.58+01:00" leos:uid="gautare" xml:id="moved_rec__Epl5Gg">
-                    <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.58+01:00" xml:id="moved_recs_dSF8Mk">(3)</num>
-                    <p leos:origin="ec" xml:id="moved_recs_ihv95P">On 1 October 2015, the Council adopted Decision (EU) 2015/1947
-                        <authorialNote leos:origin="ec" marker="7" placement="bottom" xml:id="moved_recs_hTuPlb">
-                            <p leos:origin="ec" xml:id="moved_recs_GEZWun">Council Decision (EU) 2015/1947 of 1 October 2015 on the conclusion, on behalf of the European Union, of the Protocol Amending the Marrakesh Agreement establishing the World Trade Organisation (OJ L 284, 30.10.2015, p. 1).</p>
+                <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T07:11:20.000Z" leos:softmove_label="MOVED to Recital (3)" leos:softmove_to="rec__Epl5Gg" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.58+01:00" leos:uid="gautare" xml:id="movedXrec__Epl5Gg">
+                    <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.58+01:00" xml:id="movedXrecs_dSF8Mk">(3)</num>
+                    <p leos:origin="ec" xml:id="movedXrecs_ihv95P">On 1 October 2015, the Council adopted Decision (EU) 2015/1947
+                        <authorialNote leos:origin="ec" marker="7" placement="bottom" xml:id="movedXrecs_hTuPlb">
+                            <p leos:origin="ec" xml:id="movedXrecs_GEZWun">Council Decision (EU) 2015/1947 of 1 October 2015 on the conclusion, on behalf of the European Union, of the Protocol Amending the Marrakesh Agreement establishing the World Trade Organisation (OJ L 284, 30.10.2015, p. 1).</p>
                         </authorialNote>
                         approving, on behalf of the Union, the Agreement on Trade Facilitation, whichÂ entered into force on 22 February 2017. ThatÂ agreement represents the most extensive effort at trade facilitation and customs reform under the World Trade Organisation. It contains provisions that aim to significantly improve goods clearance and the effective cooperation between customs and other regulatory authorities on trade facilitation and customs compliance issues. In accordance with Article 10(4) of the agreement, members are to endeavour to establish or maintain a single window, enabling traders to submit documentation and/or data requirements for the import, export or transit of goods through a single entry point to the participating authorities or agencies. Â Â </p>
                 </recital>
@@ -177,7 +177,7 @@
                     </num>
                     <p leos:origin="ec" xml:id="recs_H00esS">Trade facilitation, and safety and security, concern all authorities involved in the goods clearance process across Union borders. The rapid rise in international trade has increased the need for better cooperation and coordination among those authorities. The ongoing process of digitalisation allows this situation to be addressed more efficiently by connecting the systems of customs and partner competent authorities and enabling a systematic automated exchange of information between them. As such, the current framework of regulatory compliance is insufficient to support an effective interaction between customs and partner competent authorities, whose systems and procedures are characterised by fragmentation and redundancy. A fully coordinated and efficient goods clearance process requires a streamlined Union regulatory environment for international trade that delivers long-term benefits to the Union and its residents in all policy areas.</p>
                 </recital>
-                <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T07:11:20.000Z" leos:softmove_from="moved_rec__Epl5Gg" leos:softmove_label="MOVED from Recital (3)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.62+01:00" leos:uid="gautare" xml:id="rec__Epl5Gg">
+                <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T07:11:20.000Z" leos:softmove_from="movedXrec__Epl5Gg" leos:softmove_label="MOVED from Recital (3)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.62+01:00" leos:uid="gautare" xml:id="rec__Epl5Gg">
                     <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.62+01:00" leos:uid="gautare" xml:id="recs_dSF8Mk">(3)</num>
                     <p leos:origin="ec" xml:id="recs_ihv95P">On 1 October 2015, the Council adopted Decision (EU) 2015/1947
                         <authorialNote leos:origin="ec" marker="8" placement="bottom" xml:id="recs_hTuPlb">
@@ -211,7 +211,7 @@
                         </authorialNote>
                         . To implement the EUÂ Single Window Environment for Customs, it is necessary to establish, on the basis of the pilot project, a certificates exchange system, the EUÂ Customs Single Window Certificates Exchange System (EU CSW-CERTEX), that interconnects national single window environments for customs and Union non-customs systems managing specific non-customs formalities. It is also necessary to harmonise national single window environments for customs, integrate those environments into the EU Single Window Environment for Customs, and establish a set of rules on digital administrative cooperation within the EU Single Window Environment for Customs.</p>
                 </recital>
-                <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_from="moved_rec__tE15Ak" leos:softmove_label="MOVED from Recital (1)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.626+01:00" leos:uid="gautare" xml:id="rec__tE15Ak">
+                <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_from="movedXrec__tE15Ak" leos:softmove_label="MOVED from Recital (1)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.626+01:00" leos:uid="gautare" xml:id="rec__tE15Ak">
                     <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.626+01:00" leos:uid="gautare" xml:id="recs_blWVY5">(6)</num>
                     <p leos:origin="ec" xml:id="recs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
                         <authorialNote leos:origin="ec" marker="12" placement="bottom" xml:id="recs_je6fAW">
@@ -299,9 +299,9 @@
                     <num leos:origin="ec" xml:id="recs_bpAAK9">(24)</num>
                     <p leos:origin="ec" xml:id="recs_meFGCQ">The development of the EU Single Window Environment for Customs entails various implementation costs. It is important to allocate those costsÂ between the Commission and the Member States in the most appropriate wayÂ depending on the type of services provided. The Commission should incur costs related to the development, maintenance and operation of the central component of the EU Single Window Environment for Customs, EU CSW-CERTEX, and its interfaces with Union non-customs systems. The Member States should incur costs related to their role in ensuring interfaces with EU CSW-CERTEX and developing, maintaining and operating the national single window environments for customs.</p>
                 </recital>
-                <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T09:15:23.000Z" leos:softmove_label="MOVED to Recital (29)" leos:softmove_to="rec__qn3ea3" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.586+01:00" leos:uid="gautare" xml:id="moved_rec__qn3ea3">
-                    <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.586+01:00" xml:id="moved_recs_em2cQJ">(25)</num>
-                    <p leos:origin="ec" xml:id="moved_recs_o0TGRb">Detailed planning is required to progressively integrate various Union non-customs formalities from diverse policy areas intoÂ EU CSW-CERTEX. To that end, the Commission should prepareÂ a work programme to incorporateÂ those formalities into EU CSW-CERTEX and to develop connections between the Union non-customs systems processing those formalities and EU CSW-CERTEX. The main objective of the work programme should be to support the operational requirementsÂ and implementation timeline of these activities. The work programme should be reviewed regularly to assess overall progress in applying the provisions of this Regulation.</p>
+                <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T09:15:23.000Z" leos:softmove_label="MOVED to Recital (29)" leos:softmove_to="rec__qn3ea3" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.586+01:00" leos:uid="gautare" xml:id="movedXrec__qn3ea3">
+                    <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.586+01:00" xml:id="movedXrecs_em2cQJ">(25)</num>
+                    <p leos:origin="ec" xml:id="movedXrecs_o0TGRb">Detailed planning is required to progressively integrate various Union non-customs formalities from diverse policy areas intoÂ EU CSW-CERTEX. To that end, the Commission should prepareÂ a work programme to incorporateÂ those formalities into EU CSW-CERTEX and to develop connections between the Union non-customs systems processing those formalities and EU CSW-CERTEX. The main objective of the work programme should be to support the operational requirementsÂ and implementation timeline of these activities. The work programme should be reviewed regularly to assess overall progress in applying the provisions of this Regulation.</p>
                 </recital>
                 <recital leos:editable="true" leos:origin="ec" xml:id="rec__elFUtj">
                     <num leos:origin="ec" xml:id="recs_vil1vj">
@@ -339,7 +339,7 @@
                     </num>
                     <p leos:origin="ec" xml:id="recs_7XdW8w">Regulation (EU) No 952/2013 should be amended so as to integrate the EU Single Window Environment for Customs into the concept of customs legislation, and to better integrateÂ customs and Union non-customs procedures by enabling them to run simultaneously. Firstly, since this Regulation puts in place a mechanism for customs authorities to enforce regulatory formalities affecting the goods clearance process, it is necessary to include it and its supplementing and implementing provisions in the definition of customs legislation set out in point 2 ofÂ Article 5 of Regulation (EU) No 952/2013. This approach is in line with Article 3 of Regulation (EU) No 952/2013, which entrusts customs authorities with the task of ensuringÂ the security and safety of the Union and its residents in close cooperation with other authorities where appropriate, while facilitating trade. Secondly, Article 163(1) of Regulation (EU) No 952/2013 stipulates that the supporting documents required to apply the provisions governing the relevant customs procedure are to be in the declarant's possession and at the disposal of the customs authorities at the time when the customs declaration is lodged. Since customs authorities will be able to obtain through EU CSW-CERTEX the necessary data associated with Union non-customs formalities, this obligation should be deemed to be fulfilled, and Article 163(1) of Regulation (EU) No 952/2013Â should therefore be amended accordingly.</p>
                 </recital>
-                <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T09:15:23.000Z" leos:softmove_from="moved_rec__qn3ea3" leos:softmove_label="MOVED from Recital (25)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.631+01:00" leos:uid="gautare" xml:id="rec__qn3ea3">
+                <recital leos:action="insert" leos:depth="1" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T09:15:23.000Z" leos:softmove_from="movedXrec__qn3ea3" leos:softmove_label="MOVED from Recital (25)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.631+01:00" leos:uid="gautare" xml:id="rec__qn3ea3">
                     <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.631+01:00" leos:uid="gautare" xml:id="recs_em2cQJ">(29)</num>
                     <p leos:origin="ec" xml:id="recs_o0TGRb">Detailed planning is required to progressively integrate various Union non-customs formalities from diverse policy areas intoÂ EU CSW-CERTEX. To that end, the Commission should prepareÂ a work programme to incorporateÂ those formalities into EU CSW-CERTEX and to develop connections between the Union non-customs systems processing those formalities and EU CSW-CERTEX. The main objective of the work programme should be to support the operational requirementsÂ and implementation timeline of these activities. The work programme should be reviewed regularly to assess overall progress in applying the provisions of this Regulation.</p>
                 </recital>
@@ -366,8 +366,8 @@
                 <heading leos:origin="ec" leos:softdate="2024-03-08T12:35:21+01:00" leos:softuser="REVTI Gautam(undefined)" xml:id="akn_u9YZEG">General provisions
                     <ins leos:title="REVTI Gautam : 2024-03-08T12:35:21+01:00" leos:uid="gautare" xml:id="_akn_5SzWct">gj</ins>
                 </heading>
-                <article leos:action="delete" leos:deletable="false" leos:editable="false" leos:initial-num="Article 1" leos:listIdAttr="_akn_article_23tzlr" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_label="MOVED to Article 7" leos:softmove_to="art_1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.591+01:00" leos:uid="gautare" xml:id="moved_art_1">
-                    <num leos:editable="false" leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.591+01:00" xml:id="moved_art_1__num">Article 1</num>
+                <article leos:action="delete" leos:deletable="false" leos:editable="false" leos:initial-num="Article 1" leos:listIdAttr="_akn_article_23tzlr" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_label="MOVED to Article 7" leos:softmove_to="art_1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.591+01:00" leos:uid="gautare" xml:id="movedXart_1">
+                    <num leos:editable="false" leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.591+01:00" xml:id="movedXart_1__num">Article 1</num>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:initial-num="Article 2" leos:listIdAttr="_akn_article_HanTR9" leos:origin="ec" xml:id="akn_art_xX8jV5">
                     <num leos:editable="false" leos:origin="ec" xml:id="akn_art_xX8jV5_7CQ3Z9">
@@ -559,7 +559,7 @@
                                     <p leos:origin="ec" xml:id="akn_art_phTLdP_6nHpXT">authorised staff of customs authorities, partner competent authorities, consignment verification authorities or any other relevant authority or authorised body whose personal information is contained in any documents referred to in points (a) and (b);</p>
                                 </content>
                             </point>
-                            <point leos:action="delete" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T13:55:51+00:00" leos:softmove_label="MOVED to Article 5(4), point (c)" leos:softmove_to="akn_art_phTLdP_iLri4i" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.596+01:00" leos:uid="dasatya" xml:id="moved_akn_art_phTLdP_iLri4i">
+                            <point leos:action="delete" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T13:55:51+00:00" leos:softmove_label="MOVED to Article 5(4), point (c)" leos:softmove_to="akn_art_phTLdP_iLri4i" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.596+01:00" leos:uid="dasatya" xml:id="movedXakn_art_phTLdP_iLri4i">
                                 <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.596+01:00" xml:id="akn_art_phTLdP_B5q9f5">(d)</num>
                                 <content leos:origin="ec" xml:id="akn_art_phTLdP_5jAAsC">
                                     <p leos:origin="ec" xml:id="akn_art_phTLdP_pIo8G7">Commission staff and third party providers acting on behalf of Commission that perform EU CSW-CERTEX-related operations and maintenance activities.</p>
@@ -590,7 +590,7 @@
                                     <p leos:origin="ec" xml:id="akn_art_phTLdP_eSbJFT">name and signature of the authorised staff referred to in paragraph 2, points (c) and (d).</p>
                                 </content>
                             </point>
-                            <point leos:action="insert" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T13:55:57+00:00" leos:softmove_from="moved_akn_art_phTLdP_iLri4i" leos:softmove_label="MOVED from Article 5(3), point (d)" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.636+01:00" leos:uid="dasatya" xml:id="akn_art_phTLdP_iLri4i">
+                            <point leos:action="insert" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T13:55:57+00:00" leos:softmove_from="movedXakn_art_phTLdP_iLri4i" leos:softmove_label="MOVED from Article 5(3), point (d)" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.636+01:00" leos:uid="dasatya" xml:id="akn_art_phTLdP_iLri4i">
                                 <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.636+01:00" leos:uid="dasatya" xml:id="akn_art_phTLdP_B5q9f5">
                                     <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T13:55:57+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_pbcNeW">(c)</ins>
                                 </num>
@@ -659,7 +659,7 @@
                                     <p leos:origin="ec" xml:id="akn_art_jSKkaB_9TAnyL">work together to process the request(s) made by the data subject(s) in a timely manner;</p>
                                 </content>
                             </point>
-                            <point leos:action="delete" leos:editable="false" leos:mergeAction="ACCEPT_TC" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T14:56:16.148+01:00" leos:softmove_label="MOVED to Article 9(2), point (d)" leos:softmove_to="akn_art_jSKkaB_LCbrrd" leos:softuser="DAS Satyabrata(AGRI)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.602+01:00" leos:uid="dasatya" xml:id="moved_akn_art_jSKkaB_LCbrrd">
+                            <point leos:action="delete" leos:editable="false" leos:mergeAction="ACCEPT_TC" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T14:56:16.148+01:00" leos:softmove_label="MOVED to Article 9(2), point (d)" leos:softmove_to="akn_art_jSKkaB_LCbrrd" leos:softuser="DAS Satyabrata(AGRI)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.602+01:00" leos:uid="dasatya" xml:id="movedXakn_art_jSKkaB_LCbrrd">
                                 <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.602+01:00" xml:id="akn_art_jSKkaB_OuBKd6">(b)</num>
                                 <content leos:origin="ec" xml:id="akn_art_jSKkaB_WD2gcv">
                                     <p leos:origin="ec" xml:id="akn_art_jSKkaB_EHe9BM">assist each other in matters involving the identification and handling of any data breach related to joint processing;</p>
@@ -687,7 +687,7 @@
                     </paragraph>
                 </article>
             </chapter>
-            <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_23tzlr" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_from="moved_art_1" leos:softmove_label="MOVED from Article 1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" xml:id="art_1">
+            <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_23tzlr" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_from="movedXart_1" leos:softmove_label="MOVED from Article 1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" xml:id="art_1">
                 <num leos:action="insert" leos:editable="false" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" leos:uid="gautare" xml:id="art_1__num">Article 7</num>
                 <heading leos:origin="ec" xml:id="art_1__heading">Subject matter</heading>
                 <paragraph leos:origin="ec" leos:softdate="2024-03-08T13:57:23+00:00" leos:softuser="DAS Satyabrata(undefined)" leos:tc-original-number="UNNUMBERED" xml:id="art_1_61PenZ">
@@ -780,7 +780,7 @@
                                     <p leos:origin="ec" xml:id="akn_art_dMHd93_Hl4uaa">provide a single communication channel for economic operators to fulfil the relevant customs formalities and Union non-customs formalitiesÂ subject to additional digital cooperation in accordance with Article 12.</p>
                                 </content>
                             </point>
-                            <point leos:action="insert" leos:mergeAction="ACCEPT_TC" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T13:56:15+00:00" leos:softmove_from="moved_akn_art_jSKkaB_LCbrrd" leos:softmove_label="MOVED from Article 6(3), point (b)" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.648+01:00" leos:uid="dasatya" xml:id="akn_art_jSKkaB_LCbrrd">
+                            <point leos:action="insert" leos:mergeAction="ACCEPT_TC" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T13:56:15+00:00" leos:softmove_from="movedXakn_art_jSKkaB_LCbrrd" leos:softmove_label="MOVED from Article 6(3), point (b)" leos:softuser="DAS Satyabrata(undefined)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.648+01:00" leos:uid="dasatya" xml:id="akn_art_jSKkaB_LCbrrd">
                                 <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.648+01:00" leos:uid="dasatya" xml:id="akn_art_jSKkaB_OuBKd6">
                                     <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dMHd93_AZXEPF">(d)</ins>
                                 </num>
@@ -837,75 +837,75 @@
                         <del leos:title="DAS Satyabrata : 2024-03-08T13:58:05+00:00" leos:uid="dasatya" xml:id="_akn_4AVoWY">RELATED TO UNION</del>
                         NON-CUSTOMS FORMALITIES
                     </heading>
-                    <article leos:action="delete" leos:deletable="false" leos:editable="false" leos:initial-num="Article 10" leos:listIdAttr="_akn_article_Nzqxfs" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2024-03-08T14:55:23.371+01:00" leos:softuser="DAS Satyabrata(AGRI)" leos:title="DAS Satyabrata : 2024-03-08T14:55:23.372+01:00" leos:uid="dasatya" xml:id="deleted_akn_art_q7XGxr">
-                        <num leos:editable="false" leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_ilVeFO">Article 10</num>
-                        <heading leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_L2iO0x">Information exchange processed through EU CSW-CERTEX</heading>
-                        <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.372+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_t7zhJW">
-                            <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_sd2xlH">1.</num>
-                            <list leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_JOEMzG">
-                                <subparagraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="deleted_akn_art_q7XGxr_bIuYAK">
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_E176AP">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_uwVnDm">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall enable information to be exchanged between the national single window environments for customs and the relevant Union non-customs systems for the following purposes:</p>
+                    <article leos:action="delete" leos:deletable="false" leos:editable="false" leos:initial-num="Article 10" leos:listIdAttr="_akn_article_Nzqxfs" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2024-03-08T14:55:23.371+01:00" leos:softuser="DAS Satyabrata(AGRI)" leos:title="DAS Satyabrata : 2024-03-08T14:55:23.372+01:00" leos:uid="dasatya" xml:id="deletedXakn_art_q7XGxr">
+                        <num leos:editable="false" leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_ilVeFO">Article 10</num>
+                        <heading leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_L2iO0x">Information exchange processed through EU CSW-CERTEX</heading>
+                        <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.372+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_t7zhJW">
+                            <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_sd2xlH">1.</num>
+                            <list leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_JOEMzG">
+                                <subparagraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="deletedXakn_art_q7XGxr_bIuYAK">
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_E176AP">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_uwVnDm">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall enable information to be exchanged between the national single window environments for customs and the relevant Union non-customs systems for the following purposes:</p>
                                     </content>
                                 </subparagraph>
-                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_UGnu09">
-                                    <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_SfavcV">(a)</num>
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_18gO5j">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_G9Wxer">making available the relevant data to customs authorities to perform the necessary automated verification of those formalities in accordance with Regulation (EU) No 952/2013;</p>
+                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_UGnu09">
+                                    <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_SfavcV">(a)</num>
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_18gO5j">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_G9Wxer">making available the relevant data to customs authorities to perform the necessary automated verification of those formalities in accordance with Regulation (EU) No 952/2013;</p>
                                     </content>
                                 </point>
-                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_DQjHEU">
-                                    <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_9uYdAj">(b)</num>
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_Rfgg9r">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_PTWRam">making available the relevant data to partner competent authorities to perform the quantity management of authorised goods in Union non-customs systems based on the goods declared to customs authorities and released by those authorities;</p>
+                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_DQjHEU">
+                                    <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_9uYdAj">(b)</num>
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_Rfgg9r">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_PTWRam">making available the relevant data to partner competent authorities to perform the quantity management of authorised goods in Union non-customs systems based on the goods declared to customs authorities and released by those authorities;</p>
                                     </content>
                                 </point>
-                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.374+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_AxsRv9">
-                                    <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_4yG69e">(c)</num>
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_wtbz1C">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_KeaH4r">facilitating the integration of procedures between customs and partner competent authorities for a fully automated goods clearance process and coordination of controls in accordance with ArticleÂ 47(1) of Regulation (EU) No 952/2013;</p>
+                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.374+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_AxsRv9">
+                                    <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_4yG69e">(c)</num>
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_wtbz1C">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_KeaH4r">facilitating the integration of procedures between customs and partner competent authorities for a fully automated goods clearance process and coordination of controls in accordance with ArticleÂ 47(1) of Regulation (EU) No 952/2013;</p>
                                     </content>
                                 </point>
-                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.374+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_Nm6oFM">
-                                    <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_dywvdH">(d)</num>
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_ZarR0w">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_Am0rFg">allowing any other automated data transfer between customs and the relevant partner competent authorities required by Union legislation referred to in the Annex.</p>
+                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.374+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_Nm6oFM">
+                                    <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_dywvdH">(d)</num>
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_ZarR0w">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_Am0rFg">allowing any other automated data transfer between customs and the relevant partner competent authorities required by Union legislation referred to in the Annex.</p>
                                     </content>
                                 </point>
                             </list>
                         </paragraph>
-                        <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.374+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_7GzwUc">
-                            <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_UAgiy6">2.</num>
-                            <list leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_PgDoT7">
-                                <subparagraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="deleted_akn_art_q7XGxr_RUwVxP">
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_jL3AuW">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_GAUZf1">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall provide for the following:</p>
+                        <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.374+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_7GzwUc">
+                            <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_UAgiy6">2.</num>
+                            <list leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_PgDoT7">
+                                <subparagraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="deletedXakn_art_q7XGxr_RUwVxP">
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_jL3AuW">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_GAUZf1">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall provide for the following:</p>
                                     </content>
                                 </subparagraph>
-                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_myMswf">
-                                    <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_sxCGiB">(a)</num>
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_YgspvT">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_GjIwo1">aligning customs and non-customs terminology where possible, and identifying the customs procedures for which the supporting documents can be used based on the administrative decisions of the partner competent authority indicated in the supporting documents;</p>
+                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_myMswf">
+                                    <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_sxCGiB">(a)</num>
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_YgspvT">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_GjIwo1">aligning customs and non-customs terminology where possible, and identifying the customs procedures for which the supporting documents can be used based on the administrative decisions of the partner competent authority indicated in the supporting documents;</p>
                                     </content>
                                 </point>
-                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_tDF4RY">
-                                    <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_uBM98w">(b)</num>
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_1S5MPC">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_2xa7GE">converting the format of data required to fulfil the relevant Union non-customs formalities into data compatible with the customs declarationÂ and vice versa without changing their content.</p>
+                                <point leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_tDF4RY">
+                                    <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_uBM98w">(b)</num>
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_1S5MPC">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_2xa7GE">converting the format of data required to fulfil the relevant Union non-customs formalities into data compatible with the customs declarationÂ and vice versa without changing their content.</p>
                                     </content>
                                 </point>
                             </list>
                         </paragraph>
-                        <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.376+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_Qe9qGQ">
-                            <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_APtk7M">3.</num>
-                            <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_xDKCYG">
-                                <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_d33CUm">The Commission is empowered to adopt delegated acts in accordance with Article 21Â specifying the data elementsÂ to be exchanged through EU CSW-CERTEX in accordance with paragraph 1 of this Article.</p>
+                        <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.376+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_Qe9qGQ">
+                            <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_APtk7M">3.</num>
+                            <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_xDKCYG">
+                                <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_d33CUm">The Commission is empowered to adopt delegated acts in accordance with Article 21Â specifying the data elementsÂ to be exchanged through EU CSW-CERTEX in accordance with paragraph 1 of this Article.</p>
                             </content>
                         </paragraph>
-                        <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.376+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deleted_akn_art_q7XGxr_R8ee99">
-                            <num leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_tzgNfc">4.</num>
-                            <content leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_AUT4Qx">
-                                <p leos:origin="ec" xml:id="deleted_akn_art_q7XGxr_3MlhVZ">The Commission shall, by means of implementing acts, adopt specific rules for the information exchange referred to in paragraphs 1 and 2, including, where appropriate, any specific rules to ensure the protection of personal data. Those implementing acts shall be adopted in accordance with the advisory procedure referred to in Article 22(2).</p>
+                        <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.376+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_R8ee99">
+                            <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_tzgNfc">4.</num>
+                            <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_AUT4Qx">
+                                <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_3MlhVZ">The Commission shall, by means of implementing acts, adopt specific rules for the information exchange referred to in paragraphs 1 and 2, including, where appropriate, any specific rules to ensure the protection of personal data. Those implementing acts shall be adopted in accordance with the advisory procedure referred to in Article 22(2).</p>
                             </content>
                         </paragraph>
                     </article>
@@ -977,7 +977,7 @@
                                 <point leos:origin="ec" xml:id="akn_art_kCjLvC_5HYy1n">
                                     <num leos:origin="ec" xml:id="akn_art_kCjLvC_rnCADB">(a)</num>
                                     <list xml:id="_akn_art_kCjLvC_fmTVS6">
-                                        <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-03-08T15:05:03.483+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="transformed_akn_art_kCjLvC_5HYy1n">
+                                        <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-03-08T15:05:03.483+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="transformedXakn_art_kCjLvC_5HYy1n">
                                             <content leos:origin="ec" xml:id="akn_art_kCjLvC_NDOT4Y">
                                                 <p leos:origin="ec" xml:id="akn_art_kCjLvC_frDQl5">there is an overlap between several data required for the application for supporting documents and the customs declaration;</p>
                                             </content>

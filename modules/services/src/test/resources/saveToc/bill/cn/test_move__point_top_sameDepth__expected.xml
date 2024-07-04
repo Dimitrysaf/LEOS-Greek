@@ -12,7 +12,7 @@
                         </content>
                     </subparagraph>
                     <list leos:list-type="point_num" leos:origin="ec" xml:id="list">
-                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-06-17T11:38:00.036+02:00" leos:softmove_from="moved_point_b" leos:softuser="demo jane(Ext)" xml:id="point_b">
+                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-06-17T11:38:00.036+02:00" leos:softmove_from="movedXpoint_b" leos:softuser="demo jane(Ext)" xml:id="point_b">
                             <num leos:origin="cn" xml:id="point_b_num">#</num>
                             <content leos:origin="ec" xml:id="point_b_content">
                                 <p leos:origin="ec" xml:id="point_b_p">Point (b)</p>
@@ -24,10 +24,10 @@
                                 <p leos:origin="ec" xml:id="point_a_p">Point (a)</p>
                             </content>
                         </point>
-                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-06-17T11:38:00.036+02:00" leos:softmove_to="point_b" leos:softuser="demo jane(Ext)" xml:id="moved_point_b">
-                            <num leos:origin="ec" xml:id="moved_point_b_num">(b)</num>
-                            <content leos:origin="ec" xml:id="moved_point_b_content">
-                                <p leos:origin="ec" xml:id="moved_point_b_p">Point (b)</p>
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-06-17T11:38:00.036+02:00" leos:softmove_to="point_b" leos:softuser="demo jane(Ext)" xml:id="movedXpoint_b">
+                            <num leos:origin="ec" xml:id="movedXpoint_b_num">(b)</num>
+                            <content leos:origin="ec" xml:id="movedXpoint_b_content">
+                                <p leos:origin="ec" xml:id="movedXpoint_b_p">Point (b)</p>
                             </content>
                         </point>
                     </list>

@@ -586,7 +586,7 @@ define(function leosTrackChangesModule(require) {
                 core.removeSoftAttributes(element);
                 element.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
                 if (!element.getAttribute(leosPluginUtils.ID)) {
-                    element.setAttribute(leosPluginUtils.ID, "_temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                    element.setAttribute(leosPluginUtils.ID, "XtempXtcX" + Date.now().toString(36) + Math.random().toString(36).substring(2));
                 }
             } else if (element.getAttribute(core.DATA_AKN_ACTION_NUMBER)) {
                 for (var elementSibling of element.getParent().$.children) {
@@ -596,7 +596,7 @@ define(function leosTrackChangesModule(require) {
                         core.removeSoftAttributes(elementSibling);
                         elementSibling.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
                         if (!elementSibling.getAttribute(leosPluginUtils.ID)) {
-                            elementSibling.setAttribute(leosPluginUtils.ID, "_temp_tc_" + Date.now().toString(36) + Math.random().toString(36).substring(2));
+                            elementSibling.setAttribute(leosPluginUtils.ID, "XtempXtcX" + Date.now().toString(36) + Math.random().toString(36).substring(2));
                         }
                     }
                 }
@@ -747,7 +747,7 @@ define(function leosTrackChangesModule(require) {
                 core.removeTrackChangesAttributesForNumbering(nodeInSameEditorSession);
                 core.removeSoftAttributes(nodeInSameEditorSession);
                 nodeInSameEditorSession.removeAttribute("data-akn-attr-softmove_to");
-                nodeInSameEditorSession.setAttribute("id", nodeInSameEditorSession.getAttribute("id").replace("moved_", ""));
+                nodeInSameEditorSession.setAttribute("id", nodeInSameEditorSession.getAttribute("id").replace("movedX", ""));
                 toBeProcessedInBackend = false;
             }
             return toBeProcessedInBackend;

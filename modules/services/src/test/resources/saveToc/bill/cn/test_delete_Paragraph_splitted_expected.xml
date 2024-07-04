@@ -11,16 +11,16 @@
                     </heading>
                     <paragraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
                                leos:softactionroot="true" leos:softdate="2022-09-20T11:47:39.408+02:00"
-                               leos:softuser="S Leo(CNECT)" xml:id="deleted_akn_art_ubc2NQ_Zur2uo">
-                        <num leos:origin="ec" xml:id="deleted_akn_art_ubc2NQ_uoY0vh">1.</num>
-                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-09-20T11:46:08.000+02:00" leos:softuser="S Leo(CNECT)" xml:id="deleted_deleted_akn_art_ubc2NQ_Zur2uo">
-                            <content xml:id="deleted_akn_art_ubc2NQ_kK4yzk">
-                                <p xml:id="deleted_akn_art_ubc2NQ_Dq8ODX">The Commission, in collaboration with the Member States, shall develop,</p>
+                               leos:softuser="S Leo(CNECT)" xml:id="deletedXakn_art_ubc2NQ_Zur2uo">
+                        <num leos:origin="ec" xml:id="deletedXakn_art_ubc2NQ_uoY0vh">1.</num>
+                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-09-20T11:46:08.000+02:00" leos:softuser="S Leo(CNECT)" xml:id="deletedXdeletedXakn_art_ubc2NQ_Zur2uo">
+                            <content xml:id="deletedXakn_art_ubc2NQ_kK4yzk">
+                                <p xml:id="deletedXakn_art_ubc2NQ_Dq8ODX">The Commission, in collaboration with the Member States, shall develop,</p>
                             </content>
                         </subparagraph>
-                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="cn" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-09-20T11:46:08.000+02:00" leos:softuser="S Leo(CNECT)" xml:id="deleted_splitted__akn_art_ubc2NQ_V7XtGu">
-                            <content xml:id="deleted_splitted__akn_art_ubc2NQ_eV3qEl">
-                                <p xml:id="deleted_splitted__akn_art_ubc2NQ_AXqe4i">integrate and operate EU CSW-CERTEX.</p>
+                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="cn" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-09-20T11:46:08.000+02:00" leos:softuser="S Leo(CNECT)" xml:id="deletedXsplittedX__akn_art_ubc2NQ_V7XtGu">
+                            <content xml:id="deletedXsplittedX__akn_art_ubc2NQ_eV3qEl">
+                                <p xml:id="deletedXsplittedX__akn_art_ubc2NQ_AXqe4i">integrate and operate EU CSW-CERTEX.</p>
                             </content>
                         </subparagraph>
                     </paragraph>

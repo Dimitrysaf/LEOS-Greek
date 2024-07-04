@@ -1,6 +1,6 @@
 <article xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" leos:origin="ec"
          leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-09-21T14:35:58.619+02:00"
-         leos:softmove_from="moved___akn_article_XiUbXW" leos:softmove_label="MOVED from Article 2"
+         leos:softmove_from="movedX__akn_article_XiUbXW" leos:softmove_label="MOVED from Article 2"
          leos:softuser="DOE Jane(DGT)" xml:id="__akn_article_XiUbXW">
     <num leos:editable="false" leos:origin="ls" xml:id="__akn_article_XiUbXW_AxA7bt">Article 3</num>
     <heading leos:origin="ec" xml:id="__akn_article_XiUbXW_559BlA">Article heading...</heading>
@@ -20,7 +20,7 @@
             </point>
             <point leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true"
                    leos:softdate="2022-09-21T14:47:56.768+02:00" leos:softmove_to="__akn_article_XiUbXW_qUcDga"
-            leos:softuser="DOE Jane(DGT)" xml:id="moved___akn_article_XiUbXW_qUcDga">
+            leos:softuser="DOE Jane(DGT)" xml:id="movedX__akn_article_XiUbXW_qUcDga">
                 <num leos:origin="ec" xml:id="__akn_article_XiUbXW_CEPhFu">(b)</num>
                 <content leos:origin="ec" xml:id="__akn_article_XiUbXW_eNJKLe">
                     <p leos:origin="ec" xml:id="__akn_article_XiUbXW_bWAioz">34t34tergergergerg</p>
@@ -36,8 +36,8 @@
                 </content>
             </point>
             <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
-                   leos:softdate="2022-09-21T14:43:15+02:00" leos:softmove_from="moved___akn_article_XiUbXW_qUcDga"
-                   leos:softuser="DOE Jane(DGT)" xml:id="temp___akn_article_XiUbXW_qUcDga">
+                   leos:softdate="2022-09-21T14:43:15+02:00" leos:softmove_from="movedX__akn_article_XiUbXW_qUcDga"
+                   leos:softuser="DOE Jane(DGT)" xml:id="tempX__akn_article_XiUbXW_qUcDga">
                 <num leos:origin="ls" xml:id="__akn_article_XiUbXW_CEPhFu">
                     <del leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(d)</del>
                     <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">(c)</ins>

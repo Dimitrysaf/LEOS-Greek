@@ -47,7 +47,7 @@
                                     <p leos:origin="cn" xml:id="akn_wDz9Ym">Point (i)</p>
                                 </content>
                             </point>
-                            <point leos:origin="cn" leos:softaction="trans" xml:id="transformed_akn_GN6fhA">
+                            <point leos:origin="cn" leos:softaction="trans" xml:id="transformedXakn_GN6fhA">
                                 <num leos:origin="cn" xml:id="akn_y0LsW5">#</num>
                                 <list leos:origin="cn" xml:id="lis_5I28Ka">
                                     <subparagraph leos:origin="cn" refersTo="~_INP" xml:id="akn_GN6fhA">

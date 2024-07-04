@@ -16,10 +16,10 @@
                         <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to"
                                leos:softactionroot="true" leos:softdate="2022-06-10T17:22:01.834+02:00"
                                leos:softmove_label="MOVED to Article 3, first paragraph, point (-a)"
-                               leos:softmove_to="_art_1_9Xrkmo" leos:softuser="jane(DIGIT)" xml:id="moved__art_1_9Xrkmo">
-                            <num leos:origin="ec" xml:id="moved__art_1_YEYSDb">(a)</num>
-                            <content leos:origin="ec" xml:id="moved__art_1_6vBqoh">
-                                <p leos:origin="ec" xml:id="moved__art_1_jQm45I">Point a of Article 1</p>
+                               leos:softmove_to="_art_1_9Xrkmo" leos:softuser="jane(DIGIT)" xml:id="movedX_art_1_9Xrkmo">
+                            <num leos:origin="ec" xml:id="movedX_art_1_YEYSDb">(a)</num>
+                            <content leos:origin="ec" xml:id="movedX_art_1_6vBqoh">
+                                <p leos:origin="ec" xml:id="movedX_art_1_jQm45I">Point a of Article 1</p>
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_d5lxNW">
@@ -95,7 +95,7 @@
                     </subparagraph>
                     <list leos:origin="ec" xml:id="_art_2_dETnG9">
                         <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
-                               leos:softdate="2022-06-10T17:22:01.837+02:00" leos:softmove_from="moved__art_1_9Xrkmo"
+                               leos:softdate="2022-06-10T17:22:01.837+02:00" leos:softmove_from="movedX_art_1_9Xrkmo"
                                leos:softmove_label="MOVED from Article 1(1), point (a)" leos:softuser="jane(DIGIT)"
                                xml:id="_art_1_9Xrkmo">
                             <num leos:origin="cn" xml:id="_art_1_YEYSDb">(-a)</num>

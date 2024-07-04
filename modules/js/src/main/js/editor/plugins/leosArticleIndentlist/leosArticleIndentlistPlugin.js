@@ -412,7 +412,7 @@ define(function leosArticleIndentListPluginModule(require) {
         var newLiArray = [];
         if(child.getChildCount() > 1 && parentLiElement.getParent().getParent().is(leosPluginUtils.ARTICLE) && (parentLiElement.$.attributes.getNamedItem(leosPluginUtils.DATA_AKN_NUM) === null
             || parentLiElement.$.attributes.getNamedItem(leosPluginUtils.DATA_AKN_NUM) === undefined
-            || (!!parentLiElement.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && parentLiElement.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).includes("deleted_")))) {
+            || (!!parentLiElement.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && parentLiElement.getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).includes("deletedX")))) {
             newLiArray = [child];
             // Move list children into new lists with one item per list
             //  to avoid multi-subparagraphs inside paragraphs when outdenting

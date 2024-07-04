@@ -174,10 +174,10 @@ define(function leosSubElementMovePluginModule(require) {
         if (!(softActionAttrVal1 && softActionAttrVal1 === "move_from")) {
             element.setAttribute("data-akn-attr-softaction", "move_from");
             element.setAttribute("data-akn-attr-softactionroot", "true");
-            element.setAttribute("data-akn-attr-softmove_from", "moved_" + idAttr);
+            element.setAttribute("data-akn-attr-softmove_from", "movedX" + idAttr);
         }
-        if(!idAttr.startsWith("temp_")) {
-            element.setAttribute("id", "temp_" + idAttr);
+        if(!idAttr.startsWith("tempX")) {
+            element.setAttribute("id", "tempX" + idAttr);
         }
 
         // original element
@@ -189,7 +189,7 @@ define(function leosSubElementMovePluginModule(require) {
             originalMovedElement.setAttribute("data-akn-attr-softaction", "move_to");
             originalMovedElement.setAttribute("data-akn-attr-softactionroot", "true");
             originalMovedElement.setAttribute("data-akn-attr-softmove_to", idAttr);
-            originalMovedElement.setAttribute("id", "moved_" + idAttr);
+            originalMovedElement.setAttribute("id", "movedX" + idAttr);
         } else {
             originalMovedElement.remove();
         }

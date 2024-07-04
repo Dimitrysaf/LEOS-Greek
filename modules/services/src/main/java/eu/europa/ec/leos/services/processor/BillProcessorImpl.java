@@ -226,10 +226,6 @@ public class BillProcessorImpl implements BillProcessor {
         return updatedContent;
     }
 
-    private String addDocTypeToTemplateXmlId(String template) {
-        return XmlHelper.addDocTypeToXmlId(template, XmlHelper.BILL);
-    }
-
     public byte[] deleteElement(Bill document, String elementId, String tagName, User user) throws Exception {
         Validate.notNull(document, "Document is required.");
         Validate.notNull(elementId, "Element id is required.");
@@ -267,7 +263,6 @@ public class BillProcessorImpl implements BillProcessor {
 
     private byte[] insertNewElement(Bill document, String elementId, boolean before, String tagName, String template) {
         final byte[] contentBytes = getContent(document);
-        template  = this.addDocTypeToTemplateXmlId(template);
         byte[] updatedBytes = xmlContentProcessor.insertElementByTagNameAndId(contentBytes, template, tagName, elementId, before, document.isTrackChangesEnabled());
         return updatedBytes;
     }

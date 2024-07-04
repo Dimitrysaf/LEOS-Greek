@@ -71,11 +71,11 @@ export const ELEMENTS_WITHOUT_CONTENT = [
 ];
 
 export const POINT_ROOT_PARENT_ELEMENTS = [ARTICLE, LEVEL];
-export const SOFT_MOVE_PLACEHOLDER_ID_PREFIX = 'moved_';
-export const SOFT_DELETE_PLACEHOLDER_ID_PREFIX = 'deleted_';
-export const SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX = 'transformed_';
-export const SOFT_SPLITTED_PLACEHOLDER_ID_PREFIX = 'splitted_';
-export const TEMP_PREFIX = 'temp_';
+export const SOFT_MOVE_PLACEHOLDER_ID_PREFIX = 'movedX';
+export const SOFT_DELETE_PLACEHOLDER_ID_PREFIX = 'deletedX';
+export const SOFT_TRANSFORM_PLACEHOLDER_ID_PREFIX = 'transformedX';
+export const SOFT_SPLITTED_PLACEHOLDER_ID_PREFIX = 'splittedX';
+export const TEMP_PREFIX = 'tempX';
 
 export const MOVE_LABEL_SPAN_START_TAG = '<span class="leos-soft-move-label">';
 export const MOVED_TITLE_SPAN_START_TAG = '<span class="leos-soft-move-title">';

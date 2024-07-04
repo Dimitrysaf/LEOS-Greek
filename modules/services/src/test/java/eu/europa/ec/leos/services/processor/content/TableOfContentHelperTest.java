@@ -155,7 +155,7 @@ public class TableOfContentHelperTest extends LeosTest {
 
     @Test
     public void test_restore_Subpoint_FromFirstSubpoint() {
-        TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_firstsubpoint.xml", "transformed_art_1_6G47GHJ");
+        TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_firstsubpoint.xml", "transformedXart_1_6G47GHJ");
         TableOfContentItemVO convertedItem = indentConversionHelper.buildSubElementFromFirstElement(tocItems, item, 1, true, false, false);
         Node node =convertedItem.getNode();
         assertEquals(node.getNodeName(), SUBPARAGRAPH);
@@ -250,7 +250,7 @@ public class TableOfContentHelperTest extends LeosTest {
 
     @Test
     public void test_point_FromFirstSubpoint() {
-        TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_point.xml", "transformed_art_1_urNCcV");
+        TableOfContentItemVO item = getItemFromToc("indent_subpoint_to_point.xml", "transformedXart_1_urNCcV");
         TableOfContentItemVO convertedItem = indentConversionHelper.buildElementFromFirstElement(tocItems, item, 1, false, false, false);
         Node node = convertedItem.getNode();
         assertEquals(node.getNodeName(), POINT);

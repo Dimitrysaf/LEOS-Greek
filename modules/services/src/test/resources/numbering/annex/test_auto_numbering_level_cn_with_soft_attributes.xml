@@ -8,9 +8,9 @@
                 </content>
             </level>
             <level leos:depth="1" leos:softaction="move_to" xml:id="body_level_2">
-                <num xml:id="moved_body_level_2_num">2.#</num>
-                <content xml:id="moved_body_level_2_content">
-                    <p xml:id="moved_body_level_2_content_p">should not be changed</p>
+                <num xml:id="movedXbody_level_2_num">2.#</num>
+                <content xml:id="movedXbody_level_2_content">
+                    <p xml:id="movedXbody_level_2_content_p">should not be changed</p>
                 </content>
             </level>
             <level leos:depth="2" leos:softaction="del" xml:id="body_level_2_1">
@@ -38,9 +38,9 @@
                 </content>
             </level>
             <level leos:depth="1" leos:softaction="del" xml:id="body_level_6">
-                <num xml:id="moved_body_level_6_num">6.</num>
-                <content xml:id="moved_body_level_6_content">
-                    <p xml:id="moved_body_level_6_content_p">should not be changed</p>
+                <num xml:id="movedXbody_level_6_num">6.</num>
+                <content xml:id="movedXbody_level_6_content">
+                    <p xml:id="movedXbody_level_6_content_p">should not be changed</p>
                 </content>
             </level>
             <level leos:depth="2" xml:id="body_level_6_1">

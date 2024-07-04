@@ -21,8 +21,8 @@ define(function mergeContributionExtensionModule(require) {
 
     var MAIN_ELEMENT_SELECTOR = "";
     var REVISION_PREFIX = "revision-";
-    var MOVED_PREFIX = "moved_";
-    var DELETED_PREFIX = "deleted_";
+    var MOVED_PREFIX = "movedX";
+    var DELETED_PREFIX = "deletedX";
     var MERGE_ACTION_ATTR = "leos:mergeAction";
     var SELECTED_ACTION_ATTR = "leos:selectedAction";
     var TRACK_ACTION_ATTR = "leos:action";

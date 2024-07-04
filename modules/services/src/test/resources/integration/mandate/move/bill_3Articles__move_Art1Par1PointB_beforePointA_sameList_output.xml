@@ -134,7 +134,7 @@
                             <p leos:origin="ec" xml:id="art_1__para_1__content__p">art1-par1 (sub) </p>
                         </content>
                     </subparagraph>
-                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2019-05-14T14:24:24.349+02:00" leos:softmove_from="moved_art_1_wLjAPO" leos:softmove_label="MOVED from point (b)" leos:softuser="jane" xml:id="art_1_wLjAPO">
+                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2019-05-14T14:24:24.349+02:00" leos:softmove_from="movedXart_1_wLjAPO" leos:softmove_label="MOVED from point (b)" leos:softuser="jane" xml:id="art_1_wLjAPO">
                             <num leos:origin="cn" xml:id="art_1_K7mffV">(-a)</num>
                             <content leos:origin="ec" xml:id="art_1_qeHeVe">
                                 <p leos:origin="ec" xml:id="art_1_QthCUl">point blast subparagraph</p>
@@ -146,10 +146,10 @@
                                 <p leos:origin="ec" xml:id="art_1_KiKmdt">point a</p>
                             </content>
                         </point>
-                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2019-05-14T14:24:28.620+02:00" leos:softmove_label="MOVED to point (-a)" leos:softmove_to="art_1_wLjAPO" leos:softuser="jane" xml:id="moved_art_1_wLjAPO">
-                            <num leos:origin="ec" xml:id="moved_art_1_K7mffV">(b)</num>
-                            <content leos:origin="ec" xml:id="moved_art_1_qeHeVe">
-                                <p leos:origin="ec" xml:id="moved_art_1_QthCUl">point blast subparagraph</p>
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2019-05-14T14:24:28.620+02:00" leos:softmove_label="MOVED to point (-a)" leos:softmove_to="art_1_wLjAPO" leos:softuser="jane" xml:id="movedXart_1_wLjAPO">
+                            <num leos:origin="ec" xml:id="movedXart_1_K7mffV">(b)</num>
+                            <content leos:origin="ec" xml:id="movedXart_1_qeHeVe">
+                                <p leos:origin="ec" xml:id="movedXart_1_QthCUl">point blast subparagraph</p>
                             </content>
                         </point>
                     </list>

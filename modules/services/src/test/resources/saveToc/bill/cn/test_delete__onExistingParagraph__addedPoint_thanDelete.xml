@@ -7,7 +7,7 @@
                 <paragraph leos:origin="ec" xml:id="art_1__para_1">
                     <num leos:origin="ec" xml:id="art_1__para_1__num">1.</num>
                     <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2021-12-15T21:00:36.195+01:00" leos:softuser="demo jane (Ext)" xml:id="art_1_par_1_list_1">
-                        <subparagraph leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-12-15T21:00:36.196+01:00" leos:softuser="demo jane (Ext)" refersTo="~_INP" xml:id="transformed_art_1__para_1">
+                        <subparagraph leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-12-15T21:00:36.196+01:00" leos:softuser="demo jane (Ext)" refersTo="~_INP" xml:id="transformedXart_1__para_1">
                             <content leos:origin="ec" xml:id="art_1__para_1__content">
                                 <p leos:origin="ec" xml:id="art_1__para_1__content__p">Paragraph 1</p>
                             </content>

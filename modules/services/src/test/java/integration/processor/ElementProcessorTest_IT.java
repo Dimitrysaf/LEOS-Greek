@@ -323,7 +323,7 @@ public class ElementProcessorTest_IT extends LeosTest {
         final byte[] xmlInput = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "test_delete__subParagraph_withList_v1.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "test_delete__subParagraph_withList_v2.xml");
 
-        final String elementId = "transformed___akn_article_MSaviI-par1";
+        final String elementId = "transformedX__akn_article_MSaviI-par1";
 
         byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
@@ -398,7 +398,7 @@ public class ElementProcessorTest_IT extends LeosTest {
         final byte[] xmlInput = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "test_delete__transformedPoint_v1.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "test_delete__transformedPoint_v2.xml");
 
-        final String elementId = "transformed__art_2_SFQ4X0";
+        final String elementId = "transformedX_art_2_SFQ4X0";
 
         byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);
@@ -458,7 +458,7 @@ public class ElementProcessorTest_IT extends LeosTest {
         final byte[] xmlInput = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "test_delete__transformedSubparagraph_v1.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "test_delete__transformedSubparagraph_v2.xml");
 
-        final String elementId = "transformed___akn_article_Vh2NWC-par1";
+        final String elementId = "transformedX__akn_article_Vh2NWC-par1";
 
         byte[] resultXml = xmlContentProcessor.removeElementById(xmlInput, elementId, false);
         String result = new String(resultXml);

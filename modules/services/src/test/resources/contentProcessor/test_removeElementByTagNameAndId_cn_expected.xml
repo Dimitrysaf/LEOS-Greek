@@ -30,15 +30,15 @@
                     </paragraph>
                 </article>
 
-                <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-06-17T09:31:31.006+02:00" leos:softuser="demo(DIGIT)" xml:id="deleted_art486">
-                    <num leos:origin="ec" xml:id="deleted_art_2_n">Article 486</num>
+                <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-06-17T09:31:31.006+02:00" leos:softuser="demo(DIGIT)" xml:id="deletedXart486">
+                    <num leos:origin="ec" xml:id="deletedXart_2_n">Article 486</num>
                     <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2022-08-09T14:36:05.761+02:00"
-                               leos:softuser="demo(DIGIT)" xml:id="deleted_art_2_par">
-                        <num leos:origin="ec" xml:id="deleted_art_2_par_n">1.</num>
-                        <content leos:origin="ec" xml:id="deleted_art_2_par_c">
-                            <p leos:origin="ec" xml:id="deleted_p1">Subject to paragraph 2, this Regulation
-                                <authorialNote leos:origin="ec" marker="3" placement="bottom" xml:id="deleted_a1">
-                                    <p leos:origin="ec" xml:id="deleted_ptest1">TestNote1</p>
+                               leos:softuser="demo(DIGIT)" xml:id="deletedXart_2_par">
+                        <num leos:origin="ec" xml:id="deletedXart_2_par_n">1.</num>
+                        <content leos:origin="ec" xml:id="deletedXart_2_par_c">
+                            <p leos:origin="ec" xml:id="deletedXp1">Subject to paragraph 2, this Regulation
+                                <authorialNote leos:origin="ec" marker="3" placement="bottom" xml:id="deletedXa1">
+                                    <p leos:origin="ec" xml:id="deletedXptest1">TestNote1</p>
                                 </authorialNote>
                                 shall apply from 1 January 2013.
                             </p>

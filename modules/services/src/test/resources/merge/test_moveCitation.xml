@@ -102,8 +102,8 @@
                 <p xml:id="preamble__formula_1__p">THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</p>
             </formula>
             <citations leos:editable="false" xml:id="cits">
-                <citation leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T04:09:09.000Z" leos:softmove_label="MOVED to fifth citation" leos:softmove_to="cit_1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.562+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="moved_cit_1">
-                    <p leos:origin="ec" xml:id="moved_cit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in particular Articles 33, 114 and 207 thereof,</p>
+                <citation leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T04:09:09.000Z" leos:softmove_label="MOVED to fifth citation" leos:softmove_to="cit_1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.562+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="movedXcit_1">
+                    <p leos:origin="ec" xml:id="movedXcit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in particular Articles 33, 114 and 207 thereof,</p>
                 </citation>
                 <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_2">
                     <p xml:id="cit_2__p">Having regard to the proposal from the PENDING CHANGES European Commission,</p>
@@ -122,7 +122,7 @@
                     <p xml:id="cit_6__p">Acting in accordance with the ordinary legislative procedure,</p>
                 </citation>
                 <citation leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
-                          leos:softdate="2024-03-08T04:09:09.000Z" leos:softmove_from="moved_cit_1" leos:softmove_label="MOVED from first citation"
+                          leos:softdate="2024-03-08T04:09:09.000Z" leos:softmove_from="movedXcit_1" leos:softmove_label="MOVED from first citation"
                           leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.615+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="cit_1">
                     <p xml:id="cit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in particular Articles 33, 114 and 207 thereof,</p>
                 </citation>
@@ -131,11 +131,11 @@
                 <intro xml:id="recitalsIntro">
                     <p xml:id="recs_intro">Whereas:</p>
                 </intro>
-                <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_label="MOVED to Recital (6)" leos:softmove_to="rec__tE15Ak" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" leos:uid="gautare" xml:id="moved_rec__tE15Ak">
-                    <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" xml:id="moved_recs_blWVY5">(1)</num>
-                    <p leos:origin="ec" xml:id="moved_recs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
-                        <authorialNote leos:origin="ec" marker="2" placement="bottom" xml:id="moved_recs_je6fAW">
-                            <p leos:origin="ec" xml:id="moved_recs_qfdztM">Regulation (EU) No 952/2013 of the European Parliament and of the Council of 9 October 2013 laying down the Union Customs Code (OJ L 269, 10.10.2013, p. 1).</p>
+                <recital leos:action="delete" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_label="MOVED to Recital (6)" leos:softmove_to="rec__tE15Ak" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" leos:uid="gautare" xml:id="movedXrec__tE15Ak">
+                    <num leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" xml:id="movedXrecs_blWVY5">(1)</num>
+                    <p leos:origin="ec" xml:id="movedXrecs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
+                        <authorialNote leos:origin="ec" marker="2" placement="bottom" xml:id="movedXrecs_je6fAW">
+                            <p leos:origin="ec" xml:id="movedXrecs_qfdztM">Regulation (EU) No 952/2013 of the European Parliament and of the Council of 9 October 2013 laying down the Union Customs Code (OJ L 269, 10.10.2013, p. 1).</p>
                         </authorialNote>
                         is to ensure the security and safety of the Union and its residents, and the protection of the environment, where appropriate, in close cooperation with other authorities. The authorities responsible for Union non-customs regulatory formalities (â€˜partner competent authoritiesâ€™) and customs authorities often work in silos, creating complex and burdensome reporting obligations for traders and inefficient goods clearance processes conducive to error and fraud. To address the fragmented interoperability between customs and partner competent authorities in the management of goods clearance processes and to coordinate action in this area, the Commission and the Member States have taken a number of commitments over the years to develop single window initiatives for the clearance of goods.</p>
                 </recital>
@@ -191,7 +191,7 @@
                         </authorialNote>
                         . To implement the EUÂ Single Window Environment for Customs, it is necessary to establish, on the basis of the pilot project, a certificates exchange system, the EUÂ Customs Single Window Certificates Exchange System (EU CSW-CERTEX), that interconnects national single window environments for customs and Union non-customs systems managing specific non-customs formalities. It is also necessary to harmonise national single window environments for customs, integrate those environments into the EU Single Window Environment for Customs, and establish a set of rules on digital administrative cooperation within the EU Single Window Environment for Customs.</p>
                 </recital>
-                <recital leos:action="insert" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_from="moved_rec__tE15Ak" leos:softmove_label="MOVED from Recital (1)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" leos:uid="nystepa" xml:id="rec__tE15Ak">
+                <recital leos:action="insert" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T06:10:49.000Z" leos:softmove_from="movedXrec__tE15Ak" leos:softmove_label="MOVED from Recital (1)" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.575+01:00" leos:uid="nystepa" xml:id="rec__tE15Ak">
                     <num leos:action="insert" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.626+01:00" leos:uid="gautare" xml:id="recs_blWVY5">(6)</num>
                     <p xml:id="recs_iqjGkS">TheÂ Union's international trade is subject toÂ both customs legislation andÂ Union non-customs legislation. The latter is applicable to specific goods in policy areas such as health and safety, the environment, agriculture, fisheries, cultural heritage and market surveillance. One of the main tasks assigned to customs authorities in line with Regulation (EU) No 952/2013 of the European Parliament and of the Council
                         <authorialNote marker="11" placement="bottom" xml:id="recs_je6fAW">

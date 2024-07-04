@@ -44,7 +44,7 @@
 										<p leos:origin="ec" xml:id="List2akn_article_ebFhaW_l0JZln">(i)</p>
 									</content>
 								</point>
-								<point leos:origin="ec" leos:softaction="trans" xml:id="List2_transformed_akn_article_ebFhaW_ThsuKo">
+								<point leos:origin="ec" leos:softaction="trans" xml:id="List2_transformedXakn_article_ebFhaW_ThsuKo">
 									<num leos:origin="cn" xml:id="List2_num_U7Qqx1">(ii)</num>
 									<subparagraph leos:origin="ec" xml:id="List2akn_article_ebFhaW_ThsuKo">
 										<content leos:origin="ec" xml:id="List2akn_article_ebFhaW_CWnY1r">
@@ -90,7 +90,7 @@
 												<p leos:origin="ec" xml:id="akn_article_ebFhaW_l0JZln">Point(-3)</p>
 											</content>
 										</point>
-										<point leos:origin="ec" leos:softaction="trans" xml:id="transformed_akn_article_ebFhaW_ThsuKo">
+										<point leos:origin="ec" leos:softaction="trans" xml:id="transformedXakn_article_ebFhaW_ThsuKo">
 											<num leos:origin="cn" xml:id="_num_U7Qqx1">(-3a)</num>
 											<subparagraph leos:origin="ec" xml:id="akn_article_ebFhaW_ThsuKo">
 												<content leos:origin="ec" xml:id="akn_article_ebFhaW_CWnY1r">

@@ -125,7 +125,7 @@
             </formula>
         </preamble>
         <body leos:origin="ec" xml:id="body">
-            <section leos:depth="1" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2020-10-09T12:02:21.955+02:00" leos:softmove_from="moved_akn_section_PeBKFV" leos:softmove_label="MOVED from Part I, Title I, Chapter 1, Section 1" leos:softuser="jane" xml:id="akn_section_PeBKFV">
+            <section leos:depth="1" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2020-10-09T12:02:21.955+02:00" leos:softmove_from="movedXakn_section_PeBKFV" leos:softmove_label="MOVED from Part I, Title I, Chapter 1, Section 1" leos:softuser="jane" xml:id="akn_section_PeBKFV">
                 <num leos:origin="cn" xml:id="akn_SALxLC">Section #</num>
                 <heading leos:origin="ec" xml:id="akn_7y8SzC">Section heading...</heading>
                 <article leos:depth="1" leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2020-10-09T12:02:31.680+02:00" leos:softuser="jane" xml:id="akn_article_3ZXKM8">
@@ -144,15 +144,15 @@
                     <paragraph leos:depth="1" leos:origin="ec" xml:id="akn_article_7dU0nW-par1">
                         <num leos:origin="ec" xml:id="akn_article_7dU0nW_kxhHyj">1.</num>
                         
-                        <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T12:21:43.003+02:00" leos:softuser="jane" xml:id="deleted_akn_article_7dU0nW_dsSQoI"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_7dU0nW_Y8SMvI">
+                        <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T12:21:43.003+02:00" leos:softuser="jane" xml:id="deletedXakn_article_7dU0nW_dsSQoI"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_7dU0nW_Y8SMvI">
                             <content leos:origin="ec" xml:id="akn_article_7dU0nW_cN6y1h">
                                 <p leos:origin="ec" xml:id="akn_article_7dU0nW_wOTSaw">Article 5 Paragraph 1</p>
                             </content>
                         </subparagraph>
-                            <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:21:43.003+02:00" leos:softuser="jane" xml:id="deleted_akn_article_7dU0nW_BCdD2t">
-                                <num leos:origin="ec" xml:id="deleted_akn_article_7dU0nW_s8mV5i">(a)</num>
-                                <content leos:origin="ec" xml:id="deleted_akn_article_7dU0nW_MNx3xY">
-                                    <p leos:origin="ec" xml:id="deleted_akn_article_7dU0nW_Ro3yjI">Point (a)</p>
+                            <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:21:43.003+02:00" leos:softuser="jane" xml:id="deletedXakn_article_7dU0nW_BCdD2t">
+                                <num leos:origin="ec" xml:id="deletedXakn_article_7dU0nW_s8mV5i">(a)</num>
+                                <content leos:origin="ec" xml:id="deletedXakn_article_7dU0nW_MNx3xY">
+                                    <p leos:origin="ec" xml:id="deletedXakn_article_7dU0nW_Ro3yjI">Point (a)</p>
                                 </content>
                             </point>
                         </list>
@@ -161,10 +161,10 @@
                 <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="akn_article_c4grpb">
                     <num leos:editable="false" leos:origin="ec" xml:id="akn_article_c4grpb_XPy4V4">Article 6</num>
                     <heading leos:origin="ec" xml:id="akn_article_c4grpb_Zy1UxV">Article heading...</heading>
-                    <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T12:20:50.258+02:00" leos:softuser="jane" xml:id="deleted_akn_article_c4grpb-par1">
-                        <num leos:origin="ec" xml:id="deleted_akn_article_c4grpb_8nIP4g">1.</num>
-                        <content leos:origin="ec" xml:id="deleted_akn_article_c4grpb_Y7dXSX">
-                            <p leos:origin="ec" xml:id="deleted_akn_article_c4grpb_cb2msT">Article 6 - Paragraph 1</p>
+                    <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T12:20:50.258+02:00" leos:softuser="jane" xml:id="deletedXakn_article_c4grpb-par1">
+                        <num leos:origin="ec" xml:id="deletedXakn_article_c4grpb_8nIP4g">1.</num>
+                        <content leos:origin="ec" xml:id="deletedXakn_article_c4grpb_Y7dXSX">
+                            <p leos:origin="ec" xml:id="deletedXakn_article_c4grpb_cb2msT">Article 6 - Paragraph 1</p>
                         </content>
                     </paragraph>
                 </article>
@@ -254,7 +254,7 @@
                             <p leos:origin="ec" xml:id="akn_article_fDbNA5_qpI40u">Article 2 Paragraph 1</p>
                         </content>
                     </subparagraph>
-                        <point leos:depth="1" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2020-10-09T12:03:15.417+02:00" leos:softmove_from="moved_akn_article_fDbNA5_wb91We" leos:softmove_label="MOVED from Article 2(1), point (b)(iii)" leos:softuser="jane" xml:id="akn_article_fDbNA5_wb91We">
+                        <point leos:depth="1" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2020-10-09T12:03:15.417+02:00" leos:softmove_from="movedXakn_article_fDbNA5_wb91We" leos:softmove_label="MOVED from Article 2(1), point (b)(iii)" leos:softuser="jane" xml:id="akn_article_fDbNA5_wb91We">
                             <num leos:origin="cn" xml:id="akn_article_fDbNA5_wwVy6v">(-a)</num>
                             <content leos:origin="ec" xml:id="akn_article_fDbNA5_fKoN9x">
                                 <p leos:origin="ec" xml:id="akn_article_fDbNA5_KDIRxr">Point (iii)</p>
@@ -280,16 +280,16 @@
                                         <p leos:origin="ec" xml:id="akn_article_fDbNA5_dM42ZL">Point (i)</p>
                                     </content>
                                 </point>
-                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T12:04:47.101+02:00" leos:softuser="jane" xml:id="deleted_akn_article_fDbNA5_Q4ItKK">
-                                    <num leos:origin="ec" xml:id="deleted_akn_article_fDbNA5_oTvcRb">(ii)</num>
-                                    <content leos:origin="ec" xml:id="deleted_akn_article_fDbNA5_Y27tPz">
-                                        <p leos:origin="ec" xml:id="deleted_akn_article_fDbNA5_GsPqEp">Point (ii)</p>
+                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T12:04:47.101+02:00" leos:softuser="jane" xml:id="deletedXakn_article_fDbNA5_Q4ItKK">
+                                    <num leos:origin="ec" xml:id="deletedXakn_article_fDbNA5_oTvcRb">(ii)</num>
+                                    <content leos:origin="ec" xml:id="deletedXakn_article_fDbNA5_Y27tPz">
+                                        <p leos:origin="ec" xml:id="deletedXakn_article_fDbNA5_GsPqEp">Point (ii)</p>
                                     </content>
                                 </point>
-                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2020-10-09T12:03:15.417+02:00" leos:softmove_label="MOVED to Article 2(1), point (-a)" leos:softmove_to="akn_article_fDbNA5_wb91We" leos:softuser="jane" xml:id="moved_akn_article_fDbNA5_wb91We">
-                                    <num leos:origin="ec" xml:id="moved_akn_article_fDbNA5_wwVy6v">(iii)</num>
-                                    <content leos:origin="ec" xml:id="moved_akn_article_fDbNA5_fKoN9x">
-                                        <p leos:origin="ec" xml:id="moved_akn_article_fDbNA5_KDIRxr">Point (iii)</p>
+                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2020-10-09T12:03:15.417+02:00" leos:softmove_label="MOVED to Article 2(1), point (-a)" leos:softmove_to="akn_article_fDbNA5_wb91We" leos:softuser="jane" xml:id="movedXakn_article_fDbNA5_wb91We">
+                                    <num leos:origin="ec" xml:id="movedXakn_article_fDbNA5_wwVy6v">(iii)</num>
+                                    <content leos:origin="ec" xml:id="movedXakn_article_fDbNA5_fKoN9x">
+                                        <p leos:origin="ec" xml:id="movedXakn_article_fDbNA5_KDIRxr">Point (iii)</p>
                                     </content>
                                 </point>
                                 <point leos:depth="1" leos:origin="cn" leos:softaction="add" leos:softdate="2020-10-09T12:05:36.227+02:00" leos:softuser="jane" xml:id="akn_point_cQHOXc">
@@ -303,27 +303,27 @@
                     </list>
                 </paragraph>
             </article>
-            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deleted_akn_article_Ovqypt">
-                <num leos:editable="false" leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_T8oQse">Article 3</num>
-                <heading leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_kReV3G">Article heading...</heading>
-                <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deleted_akn_article_Ovqypt-par1">
-                    <num leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_ZErOPM">1.</num>
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deletedXakn_article_Ovqypt">
+                <num leos:editable="false" leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_T8oQse">Article 3</num>
+                <heading leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_kReV3G">Article heading...</heading>
+                <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deletedXakn_article_Ovqypt-par1">
+                    <num leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_ZErOPM">1.</num>
                     
-                    <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deleted_akn_article_Ovqypt_PYchd8"><subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deleted_akn_article_Ovqypt_doleDR">
-                        <content leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_lhmyUQ">
-                            <p leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_qy1xPa">Article 3 Paragraph 3</p>
+                    <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deletedXakn_article_Ovqypt_PYchd8"><subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deletedXakn_article_Ovqypt_doleDR">
+                        <content leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_lhmyUQ">
+                            <p leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_qy1xPa">Article 3 Paragraph 3</p>
                         </content>
                     </subparagraph>
-                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deleted_akn_article_Ovqypt_ZJ6dVS">
-                            <num leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_y3aRwP">(a)</num>
-                            <content leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_7aenmJ">
-                                <p leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_XplHpa">Point (a)</p>
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deletedXakn_article_Ovqypt_ZJ6dVS">
+                            <num leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_y3aRwP">(a)</num>
+                            <content leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_7aenmJ">
+                                <p leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_XplHpa">Point (a)</p>
                             </content>
                         </point>
-                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deleted_akn_article_Ovqypt_5hJRv8">
-                            <num leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_YrI6TB">(b)</num>
-                            <content leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_rVQo7C">
-                                <p leos:origin="ec" xml:id="deleted_akn_article_Ovqypt_YpAyuQ">Point(b)</p>
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T12:06:43.158+02:00" leos:softuser="jane" xml:id="deletedXakn_article_Ovqypt_5hJRv8">
+                            <num leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_YrI6TB">(b)</num>
+                            <content leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_rVQo7C">
+                                <p leos:origin="ec" xml:id="deletedXakn_article_Ovqypt_YpAyuQ">Point(b)</p>
                             </content>
                         </point>
                     </list>
@@ -380,8 +380,8 @@
                     <chapter leos:origin="ec" xml:id="cha_q78MwU">
                         <num leos:origin="ec" xml:id="akn_QhsLui">Chapter 1</num>
                         <heading leos:origin="ec" xml:id="akn_4Eg2IC">Chapter heading...</heading>
-                        <section leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2020-10-09T12:02:21.956+02:00" leos:softmove_label="MOVED to Section #" leos:softmove_to="akn_section_PeBKFV" leos:softuser="jane" xml:id="moved_akn_section_PeBKFV">
-                            <num leos:origin="ec" xml:id="moved_akn_SALxLC">Section 1</num>
+                        <section leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2020-10-09T12:02:21.956+02:00" leos:softmove_label="MOVED to Section #" leos:softmove_to="akn_section_PeBKFV" leos:softuser="jane" xml:id="movedXakn_section_PeBKFV">
+                            <num leos:origin="ec" xml:id="movedXakn_SALxLC">Section 1</num>
                         </section>
                         <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="akn_article_KVwRsO">
                             <num leos:editable="false" leos:origin="ec" xml:id="akn_article_KVwRsO_aBIyaG">Article 7
@@ -412,7 +412,7 @@
                             <paragraph leos:depth="1" leos:origin="ec" xml:id="akn_article_z437jN-par1">
                                 <num leos:origin="ec" xml:id="akn_article_z437jN_IhSair">1.</num>
                                 
-                                <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2020-10-09T11:59:34.841+02:00" leos:softuser="jane" xml:id="lis_gtMYrZ"><subparagraph leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2020-10-09T11:59:34.842+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="transformed_akn_article_z437jN-par1">
+                                <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2020-10-09T11:59:34.841+02:00" leos:softuser="jane" xml:id="lis_gtMYrZ"><subparagraph leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2020-10-09T11:59:34.842+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="transformedXakn_article_z437jN-par1">
                                     <content leos:origin="ec" xml:id="akn_article_z437jN_Bm8Z2k">
                                         <p leos:origin="ec" xml:id="akn_article_z437jN_nOzbLD">Article 8 - Paragraph 1
                                         </p>
@@ -437,16 +437,16 @@
                                 </list>
                             </paragraph>
                         </article>
-                        <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T11:59:34.842+02:00" leos:softuser="jane" xml:id="deleted_akn_article_3iyYya">
-                            <num leos:editable="false" leos:origin="ec" xml:id="deleted_akn_article_3iyYya_cYAQRW">
+                        <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-09T11:59:34.842+02:00" leos:softuser="jane" xml:id="deletedXakn_article_3iyYya">
+                            <num leos:editable="false" leos:origin="ec" xml:id="deletedXakn_article_3iyYya_cYAQRW">
                                 Article 9
                             </num>
-                            <heading leos:origin="ec" xml:id="deleted_akn_article_3iyYya_YtZhpP">Article heading...
+                            <heading leos:origin="ec" xml:id="deletedXakn_article_3iyYya_YtZhpP">Article heading...
                             </heading>
-                            <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T11:59:34.842+02:00" leos:softuser="jane" xml:id="deleted_akn_article_3iyYya-par1">
-                                <num leos:origin="ec" xml:id="deleted_akn_article_3iyYya_xfTvGL">1.</num>
-                                <content leos:origin="ec" xml:id="deleted_akn_article_3iyYya_MGA7Hj">
-                                    <p leos:origin="ec" xml:id="deleted_akn_article_3iyYya_lOCMaM">Article 9 - Paragraph 1</p>
+                            <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-09T11:59:34.842+02:00" leos:softuser="jane" xml:id="deletedXakn_article_3iyYya-par1">
+                                <num leos:origin="ec" xml:id="deletedXakn_article_3iyYya_xfTvGL">1.</num>
+                                <content leos:origin="ec" xml:id="deletedXakn_article_3iyYya_MGA7Hj">
+                                    <p leos:origin="ec" xml:id="deletedXakn_article_3iyYya_lOCMaM">Article 9 - Paragraph 1</p>
                                 </content>
                             </paragraph>
                         </article>
