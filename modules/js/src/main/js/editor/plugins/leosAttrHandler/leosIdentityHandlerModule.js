@@ -287,7 +287,7 @@ define(function leosIdentityHandler(require) {
         if (element && element.hasAttribute("id")) {
             element.removeAttribute("id");
         }
-        _injectTagIdsInNode(element, element.$.closest('[id]').getAttribute('id'));
+        _injectTagIdsInNode(element);
     }
 
     function copyIdentity(sourceElement, destinationElement){
@@ -316,65 +316,48 @@ define(function leosIdentityHandler(require) {
         }
     }
 
-    function _injectTagIdsInNode(element, idPrefix) {
-        if(!element){
+    function _injectTagIdsInNode(element) {
+        if (!element){
             return;
         }
-        if(!idPrefix){
-            idPrefix = generateId("_akn", 7);
-        }
+
         let tagName = element.getName();
         if ("meta" === tagName) {
             return;
         }
 
-        let idAttrValue = null;
         if (!["akomaNtoso", "bill", "documentCollection", "div", "doc", "attachments", "br", "span"].includes(tagName)) {
-            idAttrValue = updateNodeWithId(element, idPrefix);
+            let idAttrValue = element.getAttribute("id");
+            if ((idAttrValue == undefined) || (idAttrValue.trim().length == 0)) {
+                idAttrValue = generateId();
+                element.setAttribute("id", idAttrValue);
+                element.setAttribute("NEW", '');
+            }
         }
-        idPrefix = determinePrefixForChildren(tagName, idAttrValue, idPrefix);
+
         let children = element.getChildren();
         for (let i = 0; i < children.count(); i++) {
             let child = children.getItem(i)
-            if(child.$.nodeType === Node.ELEMENT_NODE){
-                _injectTagIdsInNode(child, idPrefix);
+            if (child.$.nodeType === Node.ELEMENT_NODE) {
+                _injectTagIdsInNode(child);
             }
         }
     }
 
-    function determinePrefixForChildren(tagName, idOfNode, parentPrefix) {
-        let prefixTobeUsedForChildren = ["article", "recitals", "citations"] ;
-        return prefixTobeUsedForChildren.includes(tagName) ? idOfNode : parentPrefix;
+    const DEFAULT_PREFIX = 'ec';
+    const DEFAULT_POSTFIX_LENGTH = 15;
+    const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz01234567890';
+
+    function generateId() {
+        return DEFAULT_PREFIX + generateRandomString(DEFAULT_POSTFIX_LENGTH);
     }
 
-    function updateNodeWithId(element, idPrefix) {
-        let idAttrValue = element.getAttribute("id");
-        if (idAttrValue == undefined || idAttrValue.trim().length == 0) {
-            idAttrValue = generateId(idPrefix, 7);
-            element.setAttribute("id", idAttrValue);
-            element.setAttribute("NEW", '');
-        }
-        return idAttrValue;
-    }
-
-    function generateId(prefix, postfixLength){
-        let sb = "";
-        if(prefix == null || !prefix.startsWith("_")){
-            sb = sb.concat("_");
-        }
-        if(prefix!=null){
-            sb = sb.concat(prefix).concat("_");
-            postfixLength--;
-        }
-        return sb.concat(randomString(postfixLength));
-    }
-
-    function randomString(length) {
-        const chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    function generateRandomString(length) {
         let result = '';
-        for (let i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+        for (let i = 0; i < length; i++) result += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
         return result;
     }
+
     // return module definition
     return {
         handleIdentity: _handleIdentity,

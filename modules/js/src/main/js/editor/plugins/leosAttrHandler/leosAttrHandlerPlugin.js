@@ -51,8 +51,7 @@ define(function leosAttrHandlerPluginModule(require) {
                         for (let i = 0; i < children.count(); i++) {
                             let child = children.getItem(i)
                             if(child.$.nodeType === Node.ELEMENT_NODE){
-                                identityHandler.injectTagIdsInNode(child,
-                                    child.getId() ? child.getId(): child.getName());
+                                identityHandler.injectTagIdsInNode(child);
                             }
                         }
                         event.editor.fire( 'unlockSnapshot' );
