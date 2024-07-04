@@ -18,4 +18,6 @@ public interface CollaboratorService {
     String editCollaborator(Proposal proposal, String userId, String proposalRef, String roleName, String proposalUrl);
 
     List<CollaboratorDTO> getCollaborators(Proposal proposal);
+
+    void synchCollaborators(Proposal proposal);
 }

@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.collection;
 
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -25,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -154,6 +156,18 @@ public class CollaboratorServiceImpl implements CollaboratorService {
         return entity;
     }
 
+    @Override
+    public void synchCollaborators(Proposal proposal) {
+        LOG.trace("Synch collaborators...");
+
+        List<Collaborator> collaborators = proposal.getCollaborators();
+        List<XmlDocument> documents = getXmlDocumentsForProposal(proposal.getMetadata().get().getRef());
+
+        documents.forEach(doc -> {
+            updateCollaborators(doc, collaborators);
+        });
+    }
+
     private User getUser(String userId) {
         if (StringUtils.isEmpty(userId)) {
             throw new CollaboratorException(messageHelper.getMessage("collaborator.message.user.noId"));
@@ -256,8 +270,17 @@ public class CollaboratorServiceImpl implements CollaboratorService {
     }
 
     private List<XmlDocument> getXmlDocumentsForProposal(String proposalRef) {
+        List<XmlDocument> docsList = new ArrayList<>();
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        return packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false);
+        docsList.addAll(packageService.findDocumentsByPackagePath(leosPackage.getPath(), XmlDocument.class, false));
+        List<LinkedPackage> linkedPackages = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
+        for (LinkedPackage pkg : linkedPackages) {
+            LeosPackage linkedPackage = packageService.findPackageByPackageId(pkg.getLinkedPackageId());
+            if (linkedPackage.getTranslated()) {
+                docsList.addAll(packageService.findDocumentsByPackagePath(linkedPackage.getPath(), XmlDocument.class, false));
+            }
+        }
+        return docsList;
     }
 
     //Update document based on action(add/edit/remove)
@@ -279,5 +302,12 @@ public class CollaboratorServiceImpl implements CollaboratorService {
             }
             securityService.updateCollaborators(doc.getMetadata().get().getRef(), doc.getId(), collaborators, doc.getClass());
         }
+    }
+
+    private void updateCollaborators(XmlDocument doc, List<Collaborator> collaborators) {
+        Validate.notNull(doc, "The document must not be null!");
+        Validate.notNull(collaborators, "The collaborators must not be null!");
+
+        securityService.updateCollaborators(doc.getMetadata().get().getRef(), doc.getId(), collaborators, doc.getClass());
     }
 }
