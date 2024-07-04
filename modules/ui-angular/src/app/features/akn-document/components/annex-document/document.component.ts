@@ -384,9 +384,19 @@ export class DocumentComponent
     const xmlElement = doc.getElementById(data.elementId);
     const authorialNotesXmlWithId = xmlElement?.querySelectorAll("authorialNote[id]");
     const authorialNotesFragmentWithId = docFragment?.querySelectorAll("authorialNote[id]");
-    return !!authorialNotesXmlWithId
-        && !!authorialNotesFragmentWithId
-        && authorialNotesXmlWithId.length !== authorialNotesFragmentWithId.length;
+    if(!!authorialNotesXmlWithId && !!authorialNotesFragmentWithId) {
+      if(authorialNotesXmlWithId.length !== authorialNotesFragmentWithId.length) {
+        return true;
+      }
+      for(let i = 0; i < authorialNotesXmlWithId.length; i++) {
+        let authNoteXml = authorialNotesXmlWithId.item(i);
+        const authNoteFragment = Array.from(authorialNotesFragmentWithId).find(node => (node as HTMLElement).id === authNoteXml.id) as HTMLElement;
+        if(!!authNoteFragment && authNoteXml.textContent !== authNoteFragment.textContent) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private isSplitParagraphs(data: {
