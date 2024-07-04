@@ -12,7 +12,9 @@ variables:
   CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
 
 java-build:
-  image: maven:3.8-openjdk-8
+  image:
+    name: maven:3.8-openjdk-8
+    pull_policy: if-not-present
   stage: build
   script:
     - cd $CI_PROJECT_DIR/tools/user-repo
@@ -26,7 +28,7 @@ java-build:
     when: always
     paths:
       - pom.xml
-      - '**/target'
+      - "**/target"
       - "**/package-lock.json"
       - "**/yarn.lock"
   cache:
@@ -43,6 +45,7 @@ java-build:
 cypress-test-for-local:
   image:
     name: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
+    pull_policy: if-not-present
   variables:
     TAGS_TO_RUN: "@local"
     GIT_CLEAN_FLAGS: none
@@ -77,6 +80,7 @@ cypress-test-for-local:
 cypress-test-for-non-local:
   image:
     name: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
+    pull_policy: if-not-present
   stage: test
   resource_group: cypress
   rules:
