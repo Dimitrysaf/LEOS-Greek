@@ -12,7 +12,8 @@ variables:
   CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
 
 java-build:
-  image: maven:3.8-openjdk-8
+  image:
+    name: maven:3.8-openjdk-8
   stage: build
   script:
     - cd $CI_PROJECT_DIR/tools/user-repo
@@ -26,7 +27,7 @@ java-build:
     when: always
     paths:
       - pom.xml
-      - '**/target'
+      - "**/target"
       - "**/package-lock.json"
       - "**/yarn.lock"
   cache:
