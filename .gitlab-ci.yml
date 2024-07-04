@@ -12,8 +12,7 @@ variables:
   CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
 
 java-build:
-  image:
-    name: maven:3.8-openjdk-8
+  image: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
   stage: build
   script:
     - cd $CI_PROJECT_DIR/tools/user-repo
