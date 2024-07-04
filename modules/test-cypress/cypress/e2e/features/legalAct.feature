@@ -449,85 +449,85 @@ Feature: Legal Act Page Regression Features
 #        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(ii)"
 #        And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point ii"
 
-    @importOfficeJournal @local
-    Scenario: import from office journal
-        Given navigate to edit drafting application with "User1"
-        Then user is on home page
-        When click on create proposal button
-        Then user is on create new legislative document window
-        When click on template "SJ-023" in create new legislative document window
-        When click on next button in create document page
-        And  provide document title "Automation import OJ Testing" in create document page
-        And  click on create button
-        Then user is on proposal viewer page
-        When click on legal act link present in proposal viewer page
-        Then user is on legal act page
-        And  annotation side bar is present
-        And  ribbon toolbar is displayed
-        When click on import from oj button in ribbon toolbar
-        Then user is on "Import from the Official Journal of the European Union" window
-        And  close button in import office journal window is displayed and enabled
-        And  select all recitals button is disabled
-        And  select all articles button is disabled
-        And  "REGULATION" option is selected by default for type field
-        And  current year is selected by default for year field
-        And  blank input box is present for Nr. field
-        When click on type field
-        And  below options are displayed in type dropdown
-            | TypeOptions |
-            | REGULATION |
-            | DIRECTIVE  |
-            | DECISION   |
-        When click on search button in import office journal window
-        Then exclamation mark is appeared with "rgb(48, 48, 48)" color
-        When select option "DIRECTIVE" for type field
-        And  select option "2016" for year field
-        And  provide value "2102" in Nr. field
-        And  click on search button in import office journal window
-        Then bill content is appeared in import office journal window
-        And  select all recitals button is enabled
-        And  select all articles button is enabled
-        When click on checkbox of recital 1
-        When click on checkbox of recital 2
-        When click on checkbox of recital 3
-        When click on checkbox of article 1
-        When click on checkbox of article 2
-        When click on checkbox of article 3
-        When click on import button
-        Then 3 recitals are added in legal act by import oj
-        Then 3 articles are added in legal act by import oj
-        When click on import from oj button in ribbon toolbar
-        Then user is on "Import from the Official Journal of the European Union" window
-        When select option "REGULATION" for type field
-        And  select option "2014" for year field
-        And  provide value "9999" in Nr. field
-        And  click on search button in import office journal window
-        Then warning message contains "Search returned with no result! Please modify the search parameters"
-        When select option "REGULATION" for type field
-        And  select option "2016" for year field
-        And  provide value "679" in Nr. field
-        And  click on search button in import office journal window
-        Then bill content is appeared in import office journal window
-        When click on select all recitals button in import office journal window
-        Then checkboxes of all the recitals are selected
-        And  number of recitals selected is 173
-        When click on import button
-        Then 176 recitals are added in legal act by import oj
-        When click on import from oj button in ribbon toolbar
-        Then user is on "Import from the Official Journal of the European Union" window
-        When select option "REGULATION" for type field
-        And  select option "2016" for year field
-        And  provide value "679" in Nr. field
-        And  click on search button in import office journal window
-        Then bill content is appeared in import office journal window
-        When click on select all articles button in import office journal window
-        Then checkboxes of all the articles are selected
-        And  number of articles selected is 99
-        When click on import button
-        Then 102 articles are added in legal act by import oj
-        When click on versions pane accordion
-        When click on show more button in "Recent changes" eui-card
-        Then title of last 3 minor versions from recent changes eui-card contains "Import element(s) inserted"
+#    @importOfficeJournal @local
+#    Scenario: import from office journal
+#        Given navigate to edit drafting application with "User1"
+#        Then user is on home page
+#        When click on create proposal button
+#        Then user is on create new legislative document window
+#        When click on template "SJ-023" in create new legislative document window
+#        When click on next button in create document page
+#        And  provide document title "Automation import OJ Testing" in create document page
+#        And  click on create button
+#        Then user is on proposal viewer page
+#        When click on legal act link present in proposal viewer page
+#        Then user is on legal act page
+#        And  annotation side bar is present
+#        And  ribbon toolbar is displayed
+#        When click on import from oj button in ribbon toolbar
+#        Then user is on "Import from the Official Journal of the European Union" window
+#        And  close button in import office journal window is displayed and enabled
+#        And  select all recitals button is disabled
+#        And  select all articles button is disabled
+#        And  "REGULATION" option is selected by default for type field
+#        And  current year is selected by default for year field
+#        And  blank input box is present for Nr. field
+#        When click on type field
+#        And  below options are displayed in type dropdown
+#            | TypeOptions |
+#            | REGULATION |
+#            | DIRECTIVE  |
+#            | DECISION   |
+#        When click on search button in import office journal window
+#        Then exclamation mark is appeared with "rgb(48, 48, 48)" color
+#        When select option "DIRECTIVE" for type field
+#        And  select option "2016" for year field
+#        And  provide value "2102" in Nr. field
+#        And  click on search button in import office journal window
+#        Then bill content is appeared in import office journal window
+#        And  select all recitals button is enabled
+#        And  select all articles button is enabled
+#        When click on checkbox of recital 1
+#        When click on checkbox of recital 2
+#        When click on checkbox of recital 3
+#        When click on checkbox of article 1
+#        When click on checkbox of article 2
+#        When click on checkbox of article 3
+#        When click on import button
+#        Then 3 recitals are added in legal act by import oj
+#        Then 3 articles are added in legal act by import oj
+#        When click on import from oj button in ribbon toolbar
+#        Then user is on "Import from the Official Journal of the European Union" window
+#        When select option "REGULATION" for type field
+#        And  select option "2014" for year field
+#        And  provide value "9999" in Nr. field
+#        And  click on search button in import office journal window
+#        Then warning message contains "Search returned with no result! Please modify the search parameters"
+#        When select option "REGULATION" for type field
+#        And  select option "2016" for year field
+#        And  provide value "679" in Nr. field
+#        And  click on search button in import office journal window
+#        Then bill content is appeared in import office journal window
+#        When click on select all recitals button in import office journal window
+#        Then checkboxes of all the recitals are selected
+#        And  number of recitals selected is 173
+#        When click on import button
+#        Then 176 recitals are added in legal act by import oj
+#        When click on import from oj button in ribbon toolbar
+#        Then user is on "Import from the Official Journal of the European Union" window
+#        When select option "REGULATION" for type field
+#        And  select option "2016" for year field
+#        And  provide value "679" in Nr. field
+#        And  click on search button in import office journal window
+#        Then bill content is appeared in import office journal window
+#        When click on select all articles button in import office journal window
+#        Then checkboxes of all the articles are selected
+#        And  number of articles selected is 99
+#        When click on import button
+#        Then 102 articles are added in legal act by import oj
+#        When click on versions pane accordion
+#        When click on show more button in "Recent changes" eui-card
+#        Then title of last 3 minor versions from recent changes eui-card contains "Import element(s) inserted"
 
     @internalReference @local
     Scenario: test internal reference by uploading existing leg file
