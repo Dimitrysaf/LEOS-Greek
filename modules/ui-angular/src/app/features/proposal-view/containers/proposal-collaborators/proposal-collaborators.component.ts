@@ -14,6 +14,7 @@ import { ProposalDetailsService } from '../../services/proposal-details.service'
   styleUrls: ['./proposal-collaborators.component.scss'],
 })
 export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
+  translated: boolean = false;
   roles = ['Author', 'Contributor', 'Reviewer'];
   dataSource: Collaborator[] = [];
   filteredData: Collaborator[] = [];
@@ -43,6 +44,7 @@ export class ProposalCollaboratorsComponent implements OnInit, OnDestroy {
         });
         this.dataSource = coll;
       });
+    this.translated = this.detailsService.getTranslated();
   }
 
   ngOnDestroy(): void {

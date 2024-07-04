@@ -13,7 +13,7 @@
       </div>
     </div>
     <app-proposal-collaborators-dialog
-      *ngIf="
+      *ngIf="!translated &&
         this.detailsService.hasPermissions(['CAN_ADD_REMOVE_COLLABORATOR'])
           | async
       "
@@ -34,7 +34,7 @@
           {{ 'page.collection.collaborators.table.td-entity' | translate }}
         </th>
         <th>{{ 'page.collection.collaborators.table.td-role' | translate }}</th>
-        <th>
+        <th *ngIf="!translated">
           {{ 'page.collection.collaborators.table.td-actions' | translate }}
         </th>
       </tr>
@@ -95,7 +95,7 @@
               }}</span>
           </ng-template>
         </td>
-        <td>
+        <td *ngIf="!translated">
           <eui-dropdown
             [euiDisabled]="
               (this.detailsService.hasPermissions([

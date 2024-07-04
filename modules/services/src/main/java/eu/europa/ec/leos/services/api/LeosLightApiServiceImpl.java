@@ -1,7 +1,6 @@
 package eu.europa.ec.leos.services.api;
 
 import eu.europa.ec.leos.domain.common.ErrorCode;
-import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
@@ -22,6 +21,7 @@ import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
+import eu.europa.ec.leos.services.collection.CollaboratorService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
 import eu.europa.ec.leos.services.collection.CreateCollectionResult;
 import eu.europa.ec.leos.services.collection.CreateCollectionService;
@@ -73,7 +73,6 @@ import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocum
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosMetaData;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @Service
 public class LeosLightApiServiceImpl implements LeosLightApiService {
@@ -105,12 +104,13 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     private ApiService apiService;
     private CreateCollectionService createCollectionService;
     private TokenService tokenService;
+    private CollaboratorService collaboratorService;
 
     @Autowired
     public LeosLightApiServiceImpl(ValidationService validationService, ProposalConverterService proposalConverterService, LeosRepository leosRepository,
-            PackageService packageService, MessageHelper messageHelper, SecurityContext securityContext,
-            LeosLightXmlDocumentService leosLightXmlDocumentService,
-            Properties applicationProperties, ApiService apiService, CreateCollectionService createCollectionService, TokenService tokenService) {
+                                   PackageService packageService, MessageHelper messageHelper, SecurityContext securityContext,
+                                   LeosLightXmlDocumentService leosLightXmlDocumentService,
+                                   Properties applicationProperties, ApiService apiService, CreateCollectionService createCollectionService, TokenService tokenService, CollaboratorService collaboratorService) {
         this.validationService = validationService;
         this.proposalConverterService = proposalConverterService;
         this.leosRepository = leosRepository;
@@ -122,6 +122,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         this.apiService = apiService;
         this.createCollectionService = createCollectionService;
         this.tokenService = tokenService;
+        this.collaboratorService = collaboratorService;
     }
 
     @Override
@@ -260,6 +261,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                                 return new Pair<>(messageHelper.getMessage("leoslight.document.updated.major.version"), HttpStatus.OK);
                             }
                         }
+                        collaboratorService.synchCollaborators((Proposal) originalProposal);
                     } else {
                         return new Pair<>(messageHelper.getMessage("leoslight.original.document.not.found"), HttpStatus.NOT_FOUND);
                     }
