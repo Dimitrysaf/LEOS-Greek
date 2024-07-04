@@ -8,15 +8,16 @@ class tableOfContent {
         versionsPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').eq(1).find('.eui-fieldset__header button'),
         navigationPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').first().find('.eui-fieldset__header button'),
         navigationPaneExpanded: () => cy.get("button[aria-label='Collapse Navigation Pane']"),
+        navigationPaneMinimized: () => cy.get("button[aria-label='Expand Navigation Pane']"),
         compareBtn: () => cy.get("button[title='Compare versions']"),
         searchBtn: () => cy.get("button[title='Show search bar']"),
         recentChangesVersionCardContent: () => cy.get('app-versions-pane-group eui-card').first().find('eui-card-content'),
         recentChangesVersionCardSubTitle: () => cy.get('app-versions-pane-group eui-card').first().find('.eui-card-header__title-container-subtitle'),
         lastVersionCardHeaderTitle: () => cy.get('app-versions-pane-group eui-card').last().find('.eui-card-header__title-container-title'),
         nestedTreeNode: () => cy.get('mat-nested-tree-node.mat-nested-tree-node'),
-        changeTypeBtn: () => cy.get('button#ARTICLE_TYPE_CHANGE_ACTION_ID'),
-        definitionArticleTypeBtn: () => cy.get('button#ARTICLE_TYPE_DEFINITION'),
-        regularArticleTypeBtn: () => cy.get('button#ARTICLE_TYPE_REGULAR'),
+        changeTypeBtn: () => cy.get("button[aria-label='Change Type']"),
+        definitionArticleTypeBtn: () => cy.get("button[aria-label='Definition']"),
+        regularArticleTypeBtn: () => cy.get("button[aria-label='Regular']"),
         matTree: () => cy.get('mat-tree.mat-tree'),
         versionPaneCard: () => cy.get('.version-panes.eui-card'),
         cardTitle: () => this.elements.versionPaneCard().find('eui-card-header-title'),
@@ -61,7 +62,7 @@ class tableOfContent {
     }
 
     mouseHoverOnChangeTypeBtn(){
-        this.elements.changeTypeBtn().invoke('show').click()
+        this.elements.changeTypeBtn().realHover({ pointer: "mouse", position: "center" });
     }
 
     clickDefinitionArticleTypeBtn(){

@@ -8,19 +8,33 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn/cache"
   GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository -e .npm
+  npm_config_cache: '$CI_PROJECT_DIR/.npm'
+  CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
+
+cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - .cache/*
+      - cache/Cypress
+      - node_modules
+      - build
 
 java-build:
-  image: maven:3.8-openjdk-8
+  image: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
   stage: build
   script:
+    - cd $CI_PROJECT_DIR/tools/user-repo
+    - mvn clean install
+    - cd $CI_PROJECT_DIR/tools/repository
+    - mvn clean install
+    - cd $CI_PROJECT_DIR
     - mvn clean install
   artifacts:
     expire_in: 1 day
     when: always
     paths:
       - pom.xml
-      - "**/target/*.war"
-      - "**/target/*.jar"
+      - "**/target"
       - "**/package-lock.json"
       - "**/yarn.lock"
   cache:
@@ -39,6 +53,7 @@ cypress-test-for-local:
     name: code.europa.eu:4567/leos/core/image-for-tests:1.0.2
   variables:
     TAGS_TO_RUN: "@local"
+    GIT_CLEAN_FLAGS: none
   stage: test
   resource_group: cypress
   rules:
@@ -47,16 +62,10 @@ cypress-test-for-local:
     - if: "$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH"
       when: never
   script:
-    - cd $CI_PROJECT_DIR/tools/user-repo
-    - mvn clean install
     - cd $CI_PROJECT_DIR/tools/user-repo/web
     - mvn spring-boot:run -Dspring-boot.run.profiles=h2 &
-    - cd $CI_PROJECT_DIR/tools/repository
-    - mvn clean install
     - cd $CI_PROJECT_DIR/tools/repository/web
     - mvn spring-boot:run -Dspring-boot.run.directories=../config/target/generated-config &
-    - cd $CI_PROJECT_DIR
-    - mvn clean install
     - cd $CI_PROJECT_DIR/modules/web
     - mvn jetty:run-war &
     - sleep 40

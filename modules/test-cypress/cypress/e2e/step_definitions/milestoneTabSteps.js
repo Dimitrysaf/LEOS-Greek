@@ -84,3 +84,7 @@ When(`click on send for contribution button`, function () {
 When(`click on row {int} from the user list`, (index) => {
     milestoneTab.clickUser(index);
 });
+
+Then('content of milestone title textbox is {string}', function (content) {
+    milestoneTab.elements.milestoneTitleTextBox().should('have.value', content);
+});

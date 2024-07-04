@@ -1,8 +1,9 @@
 class createProposalPage {
     elements = {
         nextBtn: () => cy.contains('Next'),
-        previousBtn: () => cy.contains('Previous'),
-        cancelBtn: () => cy.contains('Cancel'),
+        collapseAllBtn: () => cy.get("button[title='Collapse All']"),
+        // previousBtn: () => cy.contains('Previous'),
+        // cancelBtn: () => cy.contains('Cancel'),
         dialogHeader: () => cy.contains('Create new legislative document'),
         documentTitle: () => cy.get('input#docPurpose'),
         createBtn: () => cy.get('app-proposal-create-wizard .app-dialog-footer-content button.eui-button.eui-button--primary')

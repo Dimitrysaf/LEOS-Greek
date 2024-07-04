@@ -21,3 +21,7 @@ And('provide document title {string} in create document page', (title) => {
 And('click on create button', () => {
     createProposalPage.clickCreateBtn();
 })
+
+Then(/^collapse all button is displayed in create new legislative document window$/, function () {
+    createProposalPage.elements.collapseAllBtn().should('be.visible');
+});
