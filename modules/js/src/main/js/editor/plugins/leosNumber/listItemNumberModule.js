@@ -25,6 +25,32 @@ define(function listItemNumberModule(require) {
 
     var sequenceMap = [
         {
+            type: "GREEK_ALPHA_LOWER_PARENTHESIS",
+            inDefault: true,
+            format: "x",
+            prefix: "(",
+            suffix: ")",
+            name: 'GreekAlphabets',
+            generator: function generateSequenceForAlpha(list, item, idx) {
+                return this.prefix+this.format.replace('x', generateGreekAlpha(idx))+this.suffix;
+            },
+            getIndex: function getIndexForAlpha(number) {
+                return generateGreekAlphaIndex(number.replace('(', '').replace(')', ''));
+            }
+        }, {
+            type: "CYRILLIC_ALPHA_LOWER_PARENTHESIS",
+            inDefault: true,
+            format: "x",
+            prefix: "(",
+            suffix: ")",
+            name: 'CyrillicAlphabets',
+            generator: function generateSequenceForAlpha(list, item, idx) {
+                return this.prefix+this.format.replace('x', generateCyrillicAlpha(idx))+this.suffix;
+            },
+            getIndex: function getIndexForAlpha(number) {
+                return generateCyrillicAlphaIndex(number.replace('(', '').replace(')', ''));
+            }
+        }, {
             type: "ALPHA_LOWER_PARENTHESIS",
             inDefault: true,
             format: "x",
@@ -234,6 +260,103 @@ define(function listItemNumberModule(require) {
             }
             cumulator += (letterValue) * mult;
             mult *= 26;
+        }
+        return cumulator;
+    }
+
+    /*
+     * Returns the array containing literals for alpha points
+     */
+    function generateGreekAlpha(sequenceNumber) {
+        var startOfAlfaNumerical = 945;
+        var endOfAlfaNumerical = 969;
+        var sequenceBase = 24;
+        var currentSequenceBase = 0;
+        var sequence = [];
+        while (true) {
+            var currentLetter;
+            if (currentSequenceBase > 0) {
+                var currentBaseCount = parseInt(sequenceNumber / (Math.pow(sequenceBase, currentSequenceBase)));
+                if (currentBaseCount === 0) {
+                    break;
+                }
+                currentLetter = String.fromCharCode(currentBaseCount + startOfAlfaNumerical - 1);
+            }
+
+            if (currentSequenceBase === 0) {
+                var decimalCodePoint = (sequenceNumber % sequenceBase) + startOfAlfaNumerical;
+                if(decimalCodePoint >= 962) {
+                    decimalCodePoint = decimalCodePoint + 1;
+                }
+                currentLetter = String.fromCharCode(decimalCodePoint);
+            }
+            currentSequenceBase++;
+            sequence.unshift(currentLetter);
+        }
+        return sequence.join("");
+    }
+
+    /*
+     * Returns the index of a cyrillic alpha number
+     */
+    function generateGreekAlphaIndex(number) {
+        var mult = 1;
+        var cumulator = 0;
+        for (var idxLetter = number.length-1; idxLetter >= 0; idxLetter--) {
+            var letterValue = number.charCodeAt(idxLetter)-944;
+            if(letterValue > 18) {
+                letterValue = letterValue - 1;
+            }
+            if (letterValue <= 0 || letterValue >= 25) {
+                return -1;
+            }
+            cumulator += (letterValue) * mult;
+            mult *= 24;
+        }
+        return cumulator;
+    }
+
+    /*
+     * Returns the array containing literals for alpha points
+     */
+    function generateCyrillicAlpha(sequenceNumber) {
+        var startOfAlfaNumerical = 1072;
+        var endOfAlfaNumerical = 1104;
+        var sequenceBase = endOfAlfaNumerical - startOfAlfaNumerical;
+        var currentSequenceBase = 0;
+        var sequence = [];
+        while (true) {
+            var currentLetter;
+            if (currentSequenceBase > 0) {
+                var currentBaseCount = parseInt(sequenceNumber / (Math.pow(sequenceBase, currentSequenceBase)));
+                if (currentBaseCount === 0) {
+                    break;
+                }
+                currentLetter = String.fromCharCode(currentBaseCount + startOfAlfaNumerical - 1);
+            }
+
+            if (currentSequenceBase === 0) {
+                currentLetter = String.fromCharCode((sequenceNumber % sequenceBase) + startOfAlfaNumerical);
+            }
+            currentSequenceBase++;
+            sequence.unshift(currentLetter);
+        }
+        return sequence.join("");
+    }
+
+    /*
+     * Returns the index of a cyrillic alpha number
+     */
+    function generateCyrillicAlphaIndex(number) {
+        var mult = 1;
+        var cumulator = 0;
+        for (var idxLetter = number.length-1; idxLetter >= 0; idxLetter--) {
+            var letterValue = number.charCodeAt(idxLetter)-1071;
+            if (letterValue <= 0 || letterValue >= 33) {
+                return -1;
+            }
+            cumulator += (letterValue) * mult;
+            mult *= 32;
         }
         return cumulator;
     }

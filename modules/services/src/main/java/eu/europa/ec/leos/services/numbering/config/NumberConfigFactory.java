@@ -83,6 +83,10 @@ public class NumberConfigFactory {
                 return new NumberConfigRoman(true, prefix, suffix);
             case ALPHA_LOWER_PARENTHESIS:
                 return new NumberConfigAlpha(false, prefix, suffix);
+            case GREEK_ALPHA_LOWER_PARENTHESIS:
+                return new NumberConfigGreekAlpha(false, prefix, suffix);
+            case CYRILLIC_ALPHA_LOWER_PARENTHESIS:
+                return new NumberConfigCyrillicAlpha(false, prefix, suffix);
             case ALPHA_UPPER_POSTFIXDOT:
             case ALPHA_UPPER_POSTFIXPARENTHESIS:
                 return new NumberConfigAlpha(true, prefix, suffix);

@@ -33,6 +33,40 @@ public class NumberConfigTest {
     }
 
     @Test
+    public void test_parseCyrillic() {
+        NumberConfig numberConfig = new NumberConfigCyrillicAlpha();
+        numberConfig.parseValue("б");
+        assertEquals(2, numberConfig.getValue());
+        numberConfig.parseValue("д");
+        assertEquals(5, numberConfig.getValue());
+        numberConfig.parseValue("я");
+        assertEquals(32, numberConfig.getValue());
+        numberConfig.parseValue("аа");
+        assertEquals(33, numberConfig.getValue());
+        numberConfig.parseValue("ая");
+        assertEquals(64, numberConfig.getValue());
+        numberConfig.parseValue("ааа");
+        assertEquals(1057, numberConfig.getValue());
+    }
+
+    @Test
+    public void test_parseGreek() {
+        NumberConfig numberConfig = new NumberConfigGreekAlpha();
+        numberConfig.parseValue("α");
+        assertEquals(1, numberConfig.getValue());
+        numberConfig.parseValue("ω");
+        assertEquals(24, numberConfig.getValue());
+        numberConfig.parseValue("αα");
+        assertEquals(25, numberConfig.getValue());
+        numberConfig.parseValue("αω");
+        assertEquals(48, numberConfig.getValue());
+        numberConfig.parseValue("ααα");
+        assertEquals(601, numberConfig.getValue());
+        numberConfig.parseValue("αααα");
+        assertEquals(14425, numberConfig.getValue());
+    }
+
+    @Test
     public void test_parseAlpha() {
         NumberConfig numberConfig = new NumberConfigAlpha();
         numberConfig.parseValue("b");

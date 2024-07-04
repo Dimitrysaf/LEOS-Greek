@@ -198,6 +198,8 @@
             <xs:enumeration value="GREEK_POSTFIXDOT"/>
             <xs:enumeration value="GREEK_PARENTHESIS"/>
             <xs:enumeration value="ALPHA_LOWER_PARENTHESIS"/>
+            <xs:enumeration value="GREEK_ALPHA_LOWER_PARENTHESIS"/>
+            <xs:enumeration value="CYRILLIC_ALPHA_LOWER_PARENTHESIS"/>
             <xs:enumeration value="ROMAN_LOWER_PARENTHESIS"/>
             <xs:enumeration value="ROMAN_UPPER"/>
             <xs:enumeration value="BULLET_BLACK_CIRCLE"/>
@@ -209,6 +211,10 @@
             <xs:enumeration value="HIGHER_ELEMENT_NUM"/>
             <xs:enumeration value="POINT_NUM"/>
             <xs:enumeration value="POINT_NUM_DEF"/>
+            <xs:enumeration value="POINT_NUM_CYRILLIC"/>
+            <xs:enumeration value="POINT_NUM_DEF_CYRILLIC"/>
+            <xs:enumeration value="POINT_NUM_GREEK"/>
+            <xs:enumeration value="POINT_NUM_DEF_GREEK"/>
             <xs:enumeration value="LEVEL_NUM"/>
             <xs:enumeration value="DIVISION_NUM"/>
             <xs:enumeration value="ROMAN_UPPER_POSTFIXDOT"/>

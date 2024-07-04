@@ -207,11 +207,11 @@
                     <numberingType>ARABIC</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>ARABIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>ARABIC</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>optional</itemHeading>
@@ -308,11 +308,11 @@
                     <numberingType>ARABIC_POSTFIXDOT</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>ARABIC_POSTFIXDOT</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -374,11 +374,11 @@
                     <numberingType>POINT_NUM</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>POINT_NUM_CYRILLIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>POINT_NUM_GREEK</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -405,11 +405,11 @@
                     <numberingType>POINT_NUM_DEF</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>POINT_NUM_DEF_CYRILLIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>POINT_NUM_DEF_GREEK</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -436,11 +436,11 @@
                     <numberingType>POINT_NUM</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>POINT_NUM_CYRILLIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>POINT_NUM_GREEK</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -467,11 +467,11 @@
                     <numberingType>POINT_NUM_DEF</numberingType>
                 </langNumConfig>
                 <!-- Default Configuration for other languages -->
-                <langNumConfig langGroup="cyrillic" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="cyrillic" auto="true">
+                    <numberingType>POINT_NUM_DEF_CYRILLIC</numberingType>
                 </langNumConfig>
-                <langNumConfig langGroup="greek" auto="false">
-                    <numberingType>NONE</numberingType>
+                <langNumConfig langGroup="greek" auto="true">
+                    <numberingType>POINT_NUM_DEF_GREEK</numberingType>
                 </langNumConfig>
             </autoNumbering>
             <itemHeading>none</itemHeading>
@@ -532,6 +532,24 @@
             <regex>\d+$|#</regex>
             <regexJS>^\d+$</regexJS>
             <msgValidationError>arabic.num.config.validation.error.message</msgValidationError>
+        </numberingConfig>
+        <numberingConfig>
+            <type>GREEK_ALPHA_LOWER_PARENTHESIS</type>
+            <numbered>true</numbered>
+            <prefix>(</prefix>
+            <suffix>)</suffix>
+            <sequence>a</sequence>
+            <description>(α), (β), etc</description>
+            <regex>[α-ω]+$|#</regex>
+        </numberingConfig>
+        <numberingConfig>
+            <type>CYRILLIC_ALPHA_LOWER_PARENTHESIS</type>
+            <numbered>true</numbered>
+            <prefix>(</prefix>
+            <suffix>)</suffix>
+            <sequence>a</sequence>
+            <description>(a), (б), etc</description>
+            <regex>[а-я]+$|#</regex>
         </numberingConfig>
         <numberingConfig>
             <type>ALPHA_LOWER_PARENTHESIS</type>
@@ -613,6 +631,90 @@
                 <level>
                     <depth>2</depth>
                     <numberingType>ALPHA_LOWER_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>3</depth>
+                    <numberingType>ROMAN_LOWER_PARENTHESIS</numberingType>
+                </level>
+            </levels>
+        </numberingConfig>
+
+        <numberingConfig>
+            <type>POINT_NUM_CYRILLIC</type>
+            <numbered>true</numbered>
+            <levels>
+                <level>
+                    <depth>1</depth>
+                    <numberingType>CYRILLIC_ALPHA_LOWER_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>2</depth>
+                    <numberingType>ROMAN_LOWER_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>3</depth>
+                    <numberingType>ARABIC_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>4</depth>
+                    <numberingType>INDENT</numberingType>
+                </level>
+            </levels>
+        </numberingConfig>
+
+        <numberingConfig>
+            <type>POINT_NUM_DEF_CYRILLIC</type>
+            <numbered>true</numbered>
+            <levels>
+                <level>
+                    <depth>1</depth>
+                    <numberingType>ARABIC_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>2</depth>
+                    <numberingType>CYRILLIC_ALPHA_LOWER_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>3</depth>
+                    <numberingType>ROMAN_LOWER_PARENTHESIS</numberingType>
+                </level>
+            </levels>
+        </numberingConfig>
+
+        <numberingConfig>
+            <type>POINT_NUM_GREEK</type>
+            <numbered>true</numbered>
+            <levels>
+                <level>
+                    <depth>1</depth>
+                    <numberingType>GREEK_ALPHA_LOWER_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>2</depth>
+                    <numberingType>ROMAN_LOWER_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>3</depth>
+                    <numberingType>ARABIC_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>4</depth>
+                    <numberingType>INDENT</numberingType>
+                </level>
+            </levels>
+        </numberingConfig>
+
+        <numberingConfig>
+            <type>POINT_NUM_DEF_GREEK</type>
+            <numbered>true</numbered>
+            <levels>
+                <level>
+                    <depth>1</depth>
+                    <numberingType>ARABIC_PARENTHESIS</numberingType>
+                </level>
+                <level>
+                    <depth>2</depth>
+                    <numberingType>GREEK_ALPHA_LOWER_PARENTHESIS</numberingType>
                 </level>
                 <level>
                     <depth>3</depth>
