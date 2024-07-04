@@ -46,10 +46,10 @@
                                 </point>
                             </list>
                         </point>
-                        <point leos:deletable="false" leos:editable="false" leos:indent-origin-indent-level="2" leos:indent-origin-num="(iii)" leos:indent-origin-num-id="_art_1_5fDsBr" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-05-18T18:40:28.377+02:00" leos:softmove_label="MOVED to Article 1(2), point (ca)" leos:softmove_to="_art_1_zhd7o7" leos:softuser="demo" xml:id="moved__art_1_zhd7o7">
-                            <num leos:origin="ec" xml:id="moved__art_1_5fDsBr">(ba)</num>
-                            <content leos:origin="ec" xml:id="moved__art_1_pfKRVw">
-                                <p leos:origin="ec" xml:id="moved__art_1_CtEjpD">Test b3</p>
+                        <point leos:deletable="false" leos:editable="false" leos:indent-origin-indent-level="2" leos:indent-origin-num="(iii)" leos:indent-origin-num-id="_art_1_5fDsBr" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-05-18T18:40:28.377+02:00" leos:softmove_label="MOVED to Article 1(2), point (ca)" leos:softmove_to="_art_1_zhd7o7" leos:softuser="demo" xml:id="movedX_art_1_zhd7o7">
+                            <num leos:origin="ec" xml:id="movedX_art_1_5fDsBr">(ba)</num>
+                            <content leos:origin="ec" xml:id="movedX_art_1_pfKRVw">
+                                <p leos:origin="ec" xml:id="movedX_art_1_CtEjpD">Test b3</p>
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_PsT01z">
@@ -58,7 +58,7 @@
                                 <p leos:origin="ec" xml:id="_art_1_vLSVtO">Test c</p>
                             </content>
                         </point>
-                        <point leos:indent-origin-indent-level="2" leos:indent-origin-num="(iii)" leos:indent-origin-num-id="_art_1_5fDsBr" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-05-18T18:40:28.378+02:00" leos:softmove_from="moved__art_1_zhd7o7" leos:softmove_label="MOVED from Article 1(2), point (ba)" leos:softuser="demo" xml:id="_art_1_zhd7o7">
+                        <point leos:indent-origin-indent-level="2" leos:indent-origin-num="(iii)" leos:indent-origin-num-id="_art_1_5fDsBr" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-05-18T18:40:28.378+02:00" leos:softmove_from="movedX_art_1_zhd7o7" leos:softmove_label="MOVED from Article 1(2), point (ba)" leos:softuser="demo" xml:id="_art_1_zhd7o7">
                             <num leos:origin="cn" xml:id="_art_1_5fDsBr">#</num>
                             <content leos:origin="ec" xml:id="_art_1_pfKRVw">
                                 <p leos:origin="ec" xml:id="_art_1_CtEjpD">Test b3</p>

@@ -16,8 +16,8 @@
                 </content>
             </point>
             <point leos:softuser="DOE Jane(DGT)" leos:softdate="2022-09-21T15:20:03+02:00" leos:origin="ec"
-                   xml:id="temp__art_1_HEKrHo" leos:softaction="move_from" leos:softactionroot="true"
-                   leos:softmove_from="moved__art_1_HEKrHo">
+                   xml:id="tempX_art_1_HEKrHo" leos:softaction="move_from" leos:softactionroot="true"
+                   leos:softmove_from="movedX_art_1_HEKrHo">
                 <num leos:origin="ls" xml:id="_art_1_GGtnpK">(b)</num>
                 <content leos:origin="ec" xml:id="_art_1_XkyGiE">
                     <p leos:origin="ec" xml:id="_art_1_VqKxid">wergwegwegew</p>

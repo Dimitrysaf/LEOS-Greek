@@ -171,7 +171,7 @@ public class SaveTocBillMoveMandateTest_IT extends SaveTocBillMandateTest_IT {
 
         TableOfContentItemVO moveFromB = getElementById(toc, "point_b");
         TableOfContentHelper.removeChildItem(list, moveFromB);
-        TableOfContentItemVO moveToB = getElementById(toc, "moved_point_b");
+        TableOfContentItemVO moveToB = getElementById(toc, "movedXpoint_b");
         TableOfContentHelper.removeChildItem(list, moveToB);
 
         moveFromB = TocVOCreateMandateUtils.restorePointToPreviousPosition(moveFromB, moveToB);

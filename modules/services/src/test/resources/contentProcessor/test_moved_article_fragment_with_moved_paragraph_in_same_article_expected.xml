@@ -1,6 +1,6 @@
 <article xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" leos:origin="ec"
          leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-09-21T15:39:15.633+02:00"
-         leos:softmove_from="moved___akn_article_XiUbXW" leos:softmove_label="MOVED from Article 2"
+         leos:softmove_from="movedX__akn_article_XiUbXW" leos:softmove_label="MOVED from Article 2"
          leos:softuser="DOE Jane(DGT)" xml:id="__akn_article_XiUbXW">
     <num leos:editable="false" leos:origin="ls" xml:id="__akn_article_XiUbXW_AxA7bt">Article 3</num>
     <heading leos:origin="ec" xml:id="__akn_article_XiUbXW_559BlA">Article heading...</heading>
@@ -12,7 +12,7 @@
     </paragraph>
     <paragraph leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true"
                leos:softdate="2022-09-21T15:43:28.170+02:00" leos:softmove_to="__akn_article_XiUbXW_qTQKIl"
-               leos:softuser="DOE Jane(DGT)" xml:id="moved___akn_article_XiUbXW_qTQKIl">
+               leos:softuser="DOE Jane(DGT)" xml:id="movedX__akn_article_XiUbXW_qTQKIl">
         <num leos:origin="ec" xml:id="__akn_article_XiUbXW_JiOFwK">2.</num>
         <content leos:origin="ec" xml:id="__akn_article_XiUbXW_elKgJg">
             <p leos:origin="ec" xml:id="__akn_article_XiUbXW_ZaR8A1">grhe4h4545y45</p>
@@ -37,8 +37,8 @@
         </content>
     </paragraph>
     <paragraph leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
-               leos:softdate="2022-09-21T15:39:30+02:00" leos:softmove_from="moved___akn_article_XiUbXW_qTQKIl"
-               leos:softuser="DOE Jane(DGT)" xml:id="temp___akn_article_XiUbXW_qTQKIl">
+               leos:softdate="2022-09-21T15:39:30+02:00" leos:softmove_from="movedX__akn_article_XiUbXW_qTQKIl"
+               leos:softuser="DOE Jane(DGT)" xml:id="tempX__akn_article_XiUbXW_qTQKIl">
         <num leos:origin="ls" xml:id="__akn_article_XiUbXW_JiOFwK">
             <del leos:title="demo : 2024-01-11T09:49:18.358+01:00" leos:uid="demo">5.</del>
             <ins leos:title="demo : 2024-01-11T09:49:18.36+01:00" leos:uid="demo">4.</ins>

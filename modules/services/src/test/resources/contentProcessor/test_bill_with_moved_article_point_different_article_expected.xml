@@ -151,33 +151,33 @@
             <article leos:autonumbering="true" leos:deletable="false" leos:editable="false" leos:origin="ec"
                      leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-09-21T15:19:23.446+02:00"
                      leos:softmove_label="MOVED to Article 2" leos:softmove_to="_art_1" leos:softuser="DOE Jane(DGT)"
-                     xml:id="moved__art_1">
-                <num leos:editable="false" leos:origin="ec" xml:id="moved__art_1__num">Article 1</num>
-                <heading leos:origin="ec" xml:id="moved__art_1__heading">Scope</heading>
-                <paragraph leos:origin="ec" xml:id="moved__art_1__para_1">
-                    <num leos:origin="ec" xml:id="moved__art_1__para_1__num">1.</num>
-                    <subparagraph leos:origin="ec" xml:id="moved__art_1_QCgoJn">
-                        <content leos:origin="ec" xml:id="moved__art_1__para_1__content">
-                            <p leos:origin="ec" xml:id="moved__art_1__para_1__content__p">Text...</p>
+                     xml:id="movedX_art_1">
+                <num leos:editable="false" leos:origin="ec" xml:id="movedX_art_1__num">Article 1</num>
+                <heading leos:origin="ec" xml:id="movedX_art_1__heading">Scope</heading>
+                <paragraph leos:origin="ec" xml:id="movedX_art_1__para_1">
+                    <num leos:origin="ec" xml:id="movedX_art_1__para_1__num">1.</num>
+                    <subparagraph leos:origin="ec" xml:id="movedX_art_1_QCgoJn">
+                        <content leos:origin="ec" xml:id="movedX_art_1__para_1__content">
+                            <p leos:origin="ec" xml:id="movedX_art_1__para_1__content__p">Text...</p>
                         </content>
                     </subparagraph>
-                    <list leos:origin="ec" xml:id="moved__art_1_Uvm1Ol">
-                        <point leos:origin="ec" xml:id="moved__art_1_01mqU2">
-                            <num leos:origin="ec" xml:id="moved__art_1_oz60MD">(a)</num>
-                            <content leos:origin="ec" xml:id="moved__art_1_Bnqh4N">
-                                <p leos:origin="ec" xml:id="moved__art_1_9fnogS">threyhwfseh</p>
+                    <list leos:origin="ec" xml:id="movedX_art_1_Uvm1Ol">
+                        <point leos:origin="ec" xml:id="movedX_art_1_01mqU2">
+                            <num leos:origin="ec" xml:id="movedX_art_1_oz60MD">(a)</num>
+                            <content leos:origin="ec" xml:id="movedX_art_1_Bnqh4N">
+                                <p leos:origin="ec" xml:id="movedX_art_1_9fnogS">threyhwfseh</p>
                             </content>
                         </point>
-                        <point leos:origin="ec" xml:id="deleted__art_1_HEKrHo">
-                            <num leos:origin="ec" xml:id="deleted_moved__art_1_GGtnpK">(b)</num>
-                            <content leos:origin="ec" xml:id="deleted_moved__art_1_XkyGiE">
-                                <p leos:origin="ec" xml:id="deleted_moved__art_1_VqKxid">wergwegwegew</p>
+                        <point leos:origin="ec" xml:id="deletedX_art_1_HEKrHo">
+                            <num leos:origin="ec" xml:id="deletedXmovedX_art_1_GGtnpK">(b)</num>
+                            <content leos:origin="ec" xml:id="deletedXmovedX_art_1_XkyGiE">
+                                <p leos:origin="ec" xml:id="deletedXmovedX_art_1_VqKxid">wergwegwegew</p>
                             </content>
                         </point>
-                        <point leos:origin="ec" xml:id="moved__art_1_v01SHK">
-                            <num leos:origin="ec" xml:id="moved__art_1_32Oyqp">(c)</num>
-                            <content leos:origin="ec" xml:id="moved__art_1_pL3jdf">
-                                <p leos:origin="ec" xml:id="moved__art_1_2RXeaM">weewhwehh</p>
+                        <point leos:origin="ec" xml:id="movedX_art_1_v01SHK">
+                            <num leos:origin="ec" xml:id="movedX_art_1_32Oyqp">(c)</num>
+                            <content leos:origin="ec" xml:id="movedX_art_1_pL3jdf">
+                                <p leos:origin="ec" xml:id="movedX_art_1_2RXeaM">weewhwehh</p>
                             </content>
                         </point>
                     </list>
@@ -225,7 +225,7 @@
             </article>
             <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:origin="ec"
                      leos:softaction="move_from" leos:softactionroot="true"
-                     leos:softdate="2022-09-21T15:19:23.448+02:00" leos:softmove_from="moved__art_1"
+                     leos:softdate="2022-09-21T15:19:23.448+02:00" leos:softmove_from="movedX_art_1"
                      leos:softmove_label="MOVED from Article 1" leos:softuser="DOE Jane(DGT)" xml:id="_art_1">
                 <num leos:editable="false" leos:origin="ls" xml:id="_art_1__num">
                     Article 2
@@ -248,7 +248,7 @@
                         <point leos:editable="false" leos:origin="ec" leos:softaction="move_to"
                                leos:softactionroot="true" leos:softdate="2022-09-21T15:31:02.080+02:00"
                                leos:softmove_to="_art_1_HEKrHo" leos:softuser="DOE Jane(DGT)"
-                               xml:id="moved__art_1_HEKrHo">
+                               xml:id="movedX_art_1_HEKrHo">
                             <num leos:origin="ec" xml:id="_art_1_GGtnpK">(b)</num>
                             <content leos:origin="ec" xml:id="_art_1_XkyGiE">
                                 <p leos:origin="ec" xml:id="_art_1_VqKxid">wergwegwegew</p>

@@ -8,10 +8,10 @@
                     <p leos:origin="ec" xml:id="_body_level_1_content_p">Text...</p>
                 </content>
             </level>
-            <level leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-06-17T11:53:22.861+02:00" leos:softuser="jane(DIGIT)" xml:id="deleted__body_level_2">
-                <num leos:origin="ec" xml:id="deleted__body_level_2_num">2.</num>
-                <content leos:origin="ec" xml:id="deleted__body_level_2_content">
-                    <p leos:origin="ec" xml:id="deleted__body_level_2_content_p">Text...</p>
+            <level leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-06-17T11:53:22.861+02:00" leos:softuser="jane(DIGIT)" xml:id="deletedX_body_level_2">
+                <num leos:origin="ec" xml:id="deletedX_body_level_2_num">2.</num>
+                <content leos:origin="ec" xml:id="deletedX_body_level_2_content">
+                    <p leos:origin="ec" xml:id="deletedX_body_level_2_content_p">Text...</p>
                 </content>
             </level>
             <chapter leos:depth="1" leos:origin="ec" xml:id="__akn_chapter_29xZII">
@@ -30,8 +30,8 @@
             </chapter>
 
             <paragraph leos:depth="3" leos:origin="ec" xml:id="akn_paragraph_6y0dox">
-                <content leos:origin="ec" xml:id="deleted__akn_reG1Sr">
-                    <p leos:origin="ec" xml:id="deleted__akn_OWRyQx">
+                <content leos:origin="ec" xml:id="deletedX_akn_reG1Sr">
+                    <p leos:origin="ec" xml:id="deletedX_akn_OWRyQx">
                         Text...
                     </p>
                 </content>

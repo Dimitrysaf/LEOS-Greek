@@ -20,7 +20,7 @@
                                 </p>
                             </content>
                         </subparagraph>
-                        <point leos:indent-origin-indent-level="1" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.975+01:00" leos:softuser="demo(DGT)" xml:id="transformed_art_1_urNCcV">
+                        <point leos:indent-origin-indent-level="1" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.975+01:00" leos:softuser="demo(DGT)" xml:id="transformedXart_1_urNCcV">
                             <num leos:origin="ec" xml:id="art_1_gFkBde">(a)</num>
                             <list leos:origin="cn" xml:id="lis_lMMzND">
                                 <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_urNCcV">
@@ -33,7 +33,7 @@
                                         (i)
                                     </num>
                                     <list leos:origin="cn" xml:id="lis_WTmVBL">
-                                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="transformed_art_1_kWNiUC">
+                                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="transformedXart_1_kWNiUC">
                                             <content xml:id="art_1_flq9C1">
                                                 <p xml:id="art_1_kw4sXt">'introduction of cultural goods' means any entry into the customs territory of the Union of cultural goods which are subject to customs supervision or customs control within the customs territory of the Union in accordance with Regulation (EU) No 952/2013;</p>
                                             </content>
@@ -106,7 +106,7 @@
                                         <p leos:origin="ec" xml:id="art_1_17jvrP">'import of cultural goods' means:</p>
                                     </content>
                                 </subparagraph>
-                                <point leos:indent-origin-indent-level="2" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.978+01:00" leos:softuser="demo(DGT)" xml:id="transformed_art_1_azxVUY">
+                                <point leos:indent-origin-indent-level="2" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.978+01:00" leos:softuser="demo(DGT)" xml:id="transformedXart_1_azxVUY">
                                     <num leos:origin="ec" xml:id="art_1_8G6jeY">(i)</num>
                                     <list leos:origin="ec" xml:id="art_1_gDJwrD">
                                         <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_azxVUY">
@@ -114,7 +114,7 @@
                                                 <p leos:origin="ec" xml:id="art_1_0mo2Fc">the release of cultural goods for free circulation as referred to in Article 201 of Regulation (EU) No 952/2013; or</p>
                                             </content>
                                         </subparagraph>
-                                        <point leos:indent-origin-indent-level="2" leos:indent-origin-num="(ii)" leos:indent-origin-num-id="art_1_Fyvr9w" leos:indent-origin-num-origin="ec" leos:indent-origin-type="FIRST_SUBPOINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.978+01:00" leos:softtrans_from="art_1_6G73F7" leos:softuser="demo(DGT)" xml:id="transformed_art_1_mSvIgb">
+                                        <point leos:indent-origin-indent-level="2" leos:indent-origin-num="(ii)" leos:indent-origin-num-id="art_1_Fyvr9w" leos:indent-origin-num-origin="ec" leos:indent-origin-type="FIRST_SUBPOINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.978+01:00" leos:softtrans_from="art_1_6G73F7" leos:softuser="demo(DGT)" xml:id="transformedXart_1_mSvIgb">
                                             <num leos:origin="cn" xml:id="art_1_Fyvr9w">
                                                 (1)
                                             </num>
@@ -128,7 +128,7 @@
                                     <num leos:origin="cn" xml:id="art_1_Wxy2we">
                                         (ia)
                                     </num>
-                                    <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2021-04-30T10:57:29.337+02:00" leos:softuser="demo(DGT)" xml:id="transformed_art_1_1juLXq">
+                                    <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2021-04-30T10:57:29.337+02:00" leos:softuser="demo(DGT)" xml:id="transformedXart_1_1juLXq">
                                         <content xml:id="art_1_N0JGOv">
                                             <p xml:id="art_1_ddsnGD">
                                                 Text...
@@ -151,7 +151,7 @@
                                         </point>
                                     </list>
                                 </point>
-                                <point leos:indent-origin-indent-level="3" leos:indent-origin-num="(3)" leos:indent-origin-num-id="art_1_vqCBfZ" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.979+01:00" leos:softuser="demo(DGT)" xml:id="transformed_art_1_kqZEk9">
+                                <point leos:indent-origin-indent-level="3" leos:indent-origin-num="(3)" leos:indent-origin-num-id="art_1_vqCBfZ" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-11-03T18:10:14.979+01:00" leos:softuser="demo(DGT)" xml:id="transformedXart_1_kqZEk9">
                                     <num leos:origin="cn" xml:id="art_1_vqCBfZ">
                                         (ib)
                                     </num>

@@ -150,76 +150,76 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" refersTo="~_ART_DEF" xml:id="_imp_art_1_WGq7yd">
-                <num xml:id="_imp_art_1_WGq7yd_QZPE0t">Article 3</num>
-                <heading xml:id="_imp_art_1_WGq7yd_NtIYt5">Subject-matter</heading>
-                <paragraph xml:id="_imp_art_1_WGq7yd_tswlxi">
-                    <content xml:id="_imp_art_1_WGq7yd_P4qHg0">
-                        <p xml:id="_imp_art_1_WGq7yd_kl8DOI">This Regulation lays down the common rules applicable to the European Regional Development Fund (ERDF), the European Social Fund (ESF), the Cohesion Fund, the European Agricultural Fund for Rural Development (EAFRD) and the European Maritime and Fisheries Fund (EMFF), which operate under a common framework (the 'European Structural and Investment' - 'ESI Funds'). It also lays down the provisions necessary to ensure the effectiveness of the ESI Funds and their coordination with one another and with other Union instruments. The common rules applying to the ESI Funds are set out in Part Two.</p>
+            <article leos:deletable="true" leos:editable="true" refersTo="~_ART_DEF" xml:id="impXart_1_WGq7yd">
+                <num xml:id="impXart_1_WGq7yd_QZPE0t">Article 3</num>
+                <heading xml:id="impXart_1_WGq7yd_NtIYt5">Subject-matter</heading>
+                <paragraph xml:id="impXart_1_WGq7yd_tswlxi">
+                    <content xml:id="impXart_1_WGq7yd_P4qHg0">
+                        <p xml:id="impXart_1_WGq7yd_kl8DOI">This Regulation lays down the common rules applicable to the European Regional Development Fund (ERDF), the European Social Fund (ESF), the Cohesion Fund, the European Agricultural Fund for Rural Development (EAFRD) and the European Maritime and Fisheries Fund (EMFF), which operate under a common framework (the 'European Structural and Investment' - 'ESI Funds'). It also lays down the provisions necessary to ensure the effectiveness of the ESI Funds and their coordination with one another and with other Union instruments. The common rules applying to the ESI Funds are set out in Part Two.</p>
                     </content>
                 </paragraph>
-                <paragraph xml:id="_imp_art_1_WGq7yd_91bzUx">
-                    <content xml:id="_imp_art_1_WGq7yd_5NZc1x">
-                        <p xml:id="_imp_art_1_WGq7yd_rh9Nzl">Part Three lays down the general rules governing the ERDF, the ESF (together referred to as the 'Structural Funds') and the Cohesion Fund concerning the tasks, priority objectives and organisation of the Structural Funds and the Cohesion Fund (the 'Funds'), the criteria that Member States and regions are required to fulfil in order to be eligible for support from the Funds, the financial resources available and the criteria for their allocation.</p>
+                <paragraph xml:id="impXart_1_WGq7yd_91bzUx">
+                    <content xml:id="impXart_1_WGq7yd_5NZc1x">
+                        <p xml:id="impXart_1_WGq7yd_rh9Nzl">Part Three lays down the general rules governing the ERDF, the ESF (together referred to as the 'Structural Funds') and the Cohesion Fund concerning the tasks, priority objectives and organisation of the Structural Funds and the Cohesion Fund (the 'Funds'), the criteria that Member States and regions are required to fulfil in order to be eligible for support from the Funds, the financial resources available and the criteria for their allocation.</p>
                     </content>
                 </paragraph>
-                <paragraph xml:id="_imp_art_1_WGq7yd_Rd2wp2">
-                    <content xml:id="_imp_art_1_WGq7yd_SyLl9H">
-                        <p xml:id="_imp_art_1_WGq7yd_8HlQD7">Part Four lays down general rules applicable to the Funds and the EMFF on management and control, financial management, accounts and financial corrections.</p>
+                <paragraph xml:id="impXart_1_WGq7yd_Rd2wp2">
+                    <content xml:id="impXart_1_WGq7yd_SyLl9H">
+                        <p xml:id="impXart_1_WGq7yd_8HlQD7">Part Four lays down general rules applicable to the Funds and the EMFF on management and control, financial management, accounts and financial corrections.</p>
                     </content>
                 </paragraph>
-                <paragraph xml:id="_imp_art_1_WGq7yd_gfchAg">
-                    <list xml:id="_imp_art_1_WGq7yd_l9RxKw">
-                        <subparagraph refersTo="~_INP" xml:id="_imp_art_1_WGq7yd_m6mTSn">
-                            <content xml:id="_imp_art_1_WGq7yd_WZWeWi">
-                                <p xml:id="_imp_art_1_WGq7yd_11KFIA">The rules set out in this Regulation shall apply without prejudice to the provisions laid down in Regulation (EU) No 1306/2013 of the European Parliament and of the Council
-                                    <authorialNote marker="3" placement="bottom" xml:id="_imp_art_1_WGq7yd_tk2w4Y">
-                                        <p xml:id="_imp_art_1_WGq7yd_2LyBM1">Regulation (EU) No 1306/2013 of the European Parliament and of the Council of 17 December 2013 on the financing, management and monitoring of the common agriculture policy and repealing Council Regulations (EEC) No 352/78, (EC) No 165/94, (EC) No 2799/98, (EC) No 814/2000, (EC) No 1290/2005 and (EC) No 485/2008 (See page 549 of this Official Journal).</p>
+                <paragraph xml:id="impXart_1_WGq7yd_gfchAg">
+                    <list xml:id="impXart_1_WGq7yd_l9RxKw">
+                        <subparagraph refersTo="~_INP" xml:id="impXart_1_WGq7yd_m6mTSn">
+                            <content xml:id="impXart_1_WGq7yd_WZWeWi">
+                                <p xml:id="impXart_1_WGq7yd_11KFIA">The rules set out in this Regulation shall apply without prejudice to the provisions laid down in Regulation (EU) No 1306/2013 of the European Parliament and of the Council
+                                    <authorialNote marker="3" placement="bottom" xml:id="impXart_1_WGq7yd_tk2w4Y">
+                                        <p xml:id="impXart_1_WGq7yd_2LyBM1">Regulation (EU) No 1306/2013 of the European Parliament and of the Council of 17 December 2013 on the financing, management and monitoring of the common agriculture policy and repealing Council Regulations (EEC) No 352/78, (EC) No 165/94, (EC) No 2799/98, (EC) No 814/2000, (EC) No 1290/2005 and (EC) No 485/2008 (See page 549 of this Official Journal).</p>
                                     </authorialNote>
                                     and to the specific provisions laid down in the following Regulations (the 'Fund-specific Regulations') in accordance with the fifth paragraph of this Article:</p>
                             </content>
                         </subparagraph>
-                        <point xml:id="_imp_art_1_WGq7yd_fY1gsp">
-                            <num xml:id="_imp_art_1_WGq7yd_kw6Fu1">(1)</num>
-                            <content xml:id="_imp_art_1_WGq7yd_J0SjyD">
-                                <p xml:id="_imp_art_1_WGq7yd_oXvfI6">Regulation (EU) No 1301/2013 (the 'ERDF Regulation');</p>
+                        <point xml:id="impXart_1_WGq7yd_fY1gsp">
+                            <num xml:id="impXart_1_WGq7yd_kw6Fu1">(1)</num>
+                            <content xml:id="impXart_1_WGq7yd_J0SjyD">
+                                <p xml:id="impXart_1_WGq7yd_oXvfI6">Regulation (EU) No 1301/2013 (the 'ERDF Regulation');</p>
                             </content>
                         </point>
-                        <point xml:id="_imp_art_1_WGq7yd_ljsY7X">
-                            <num xml:id="_imp_art_1_WGq7yd_aEMwTt">(2)</num>
-                            <content xml:id="_imp_art_1_WGq7yd_y62SvW">
-                                <p xml:id="_imp_art_1_WGq7yd_irWsJU">Regulation (EU) No 1304/2013 (the 'ESF Regulation');</p>
+                        <point xml:id="impXart_1_WGq7yd_ljsY7X">
+                            <num xml:id="impXart_1_WGq7yd_aEMwTt">(2)</num>
+                            <content xml:id="impXart_1_WGq7yd_y62SvW">
+                                <p xml:id="impXart_1_WGq7yd_irWsJU">Regulation (EU) No 1304/2013 (the 'ESF Regulation');</p>
                             </content>
                         </point>
-                        <point xml:id="_imp_art_1_WGq7yd_q8j0KY">
-                            <num xml:id="_imp_art_1_WGq7yd_RZLIMk">(3)</num>
-                            <content xml:id="_imp_art_1_WGq7yd_y4iZ2M">
-                                <p xml:id="_imp_art_1_WGq7yd_z1Jli6">Regulation (EU) No 1300/2013 (the 'CF Regulation');</p>
+                        <point xml:id="impXart_1_WGq7yd_q8j0KY">
+                            <num xml:id="impXart_1_WGq7yd_RZLIMk">(3)</num>
+                            <content xml:id="impXart_1_WGq7yd_y4iZ2M">
+                                <p xml:id="impXart_1_WGq7yd_z1Jli6">Regulation (EU) No 1300/2013 (the 'CF Regulation');</p>
                             </content>
                         </point>
-                        <point xml:id="_imp_art_1_WGq7yd_faa9mx">
-                            <num xml:id="_imp_art_1_WGq7yd_aOIy1w">(4)</num>
-                            <content xml:id="_imp_art_1_WGq7yd_WSqYCd">
-                                <p xml:id="_imp_art_1_WGq7yd_Qe6UTD">Regulation (EU) No 1299/2013 (the 'ETC Regulation');</p>
+                        <point xml:id="impXart_1_WGq7yd_faa9mx">
+                            <num xml:id="impXart_1_WGq7yd_aOIy1w">(4)</num>
+                            <content xml:id="impXart_1_WGq7yd_WSqYCd">
+                                <p xml:id="impXart_1_WGq7yd_Qe6UTD">Regulation (EU) No 1299/2013 (the 'ETC Regulation');</p>
                             </content>
                         </point>
-                        <point xml:id="_imp_art_1_WGq7yd_koFD0h">
-                            <num xml:id="_imp_art_1_WGq7yd_vmYHUl">(5)</num>
-                            <content xml:id="_imp_art_1_WGq7yd_HFOXeX">
-                                <p xml:id="_imp_art_1_WGq7yd_IL9ydj">Regulation (EU) No 1305/2013 (the 'EAFRD Regulation'); and</p>
+                        <point xml:id="impXart_1_WGq7yd_koFD0h">
+                            <num xml:id="impXart_1_WGq7yd_vmYHUl">(5)</num>
+                            <content xml:id="impXart_1_WGq7yd_HFOXeX">
+                                <p xml:id="impXart_1_WGq7yd_IL9ydj">Regulation (EU) No 1305/2013 (the 'EAFRD Regulation'); and</p>
                             </content>
                         </point>
-                        <point xml:id="_imp_art_1_WGq7yd_CG4kxP">
-                            <num xml:id="_imp_art_1_WGq7yd_FWu5sc">(6)</num>
-                            <content xml:id="_imp_art_1_WGq7yd_RQ2rIr">
-                                <p xml:id="_imp_art_1_WGq7yd_TJChVO">a future Union legal act establishing the conditions for the financial support for maritime and fisheries policy for the programming period 2014 - 2020 (the 'EMFF Regulation").</p>
+                        <point xml:id="impXart_1_WGq7yd_CG4kxP">
+                            <num xml:id="impXart_1_WGq7yd_FWu5sc">(6)</num>
+                            <content xml:id="impXart_1_WGq7yd_RQ2rIr">
+                                <p xml:id="impXart_1_WGq7yd_TJChVO">a future Union legal act establishing the conditions for the financial support for maritime and fisheries policy for the programming period 2014 - 2020 (the 'EMFF Regulation").</p>
                             </content>
                         </point>
                     </list>
                 </paragraph>
-                <paragraph xml:id="_imp_art_1_WGq7yd_nWI92G">
-                    <content xml:id="_imp_art_1_WGq7yd_KQVbM4">
-                        <p xml:id="_imp_art_1_WGq7yd_CQ0OfT">Part Two of this Regulation shall apply to all the ESI Funds except when it explicitly allows for derogations. Parts Three and Four of this Regulation shall establish complementary rules to Part Two that apply respectively to the Funds and to the Funds and the EMFF and may explicitly allow for derogations in the Fund-specific Regulations concerned. The Fund-specific Regulations may establish complementary rules to Part Two of this Regulation for the ESI Funds, to Part Three of this Regulation for the Funds and to Part Four of this Regulation for the Funds and the EMFF. The complementary rules in the Fund-specific Regulations shall not be in contradiction with Parts Two, Three or Four of this Regulation. In case of doubt about the application between provisions, Part Two of this Regulation shall prevail over the Fund-specific rules, and Parts Two, Three and Four of this Regulation shall prevail over the Fund-specific Regulations.</p>
+                <paragraph xml:id="impXart_1_WGq7yd_nWI92G">
+                    <content xml:id="impXart_1_WGq7yd_KQVbM4">
+                        <p xml:id="impXart_1_WGq7yd_CQ0OfT">Part Two of this Regulation shall apply to all the ESI Funds except when it explicitly allows for derogations. Parts Three and Four of this Regulation shall establish complementary rules to Part Two that apply respectively to the Funds and to the Funds and the EMFF and may explicitly allow for derogations in the Fund-specific Regulations concerned. The Fund-specific Regulations may establish complementary rules to Part Two of this Regulation for the ESI Funds, to Part Three of this Regulation for the Funds and to Part Four of this Regulation for the Funds and the EMFF. The complementary rules in the Fund-specific Regulations shall not be in contradiction with Parts Two, Three or Four of this Regulation. In case of doubt about the application between provisions, Part Two of this Regulation shall prevail over the Fund-specific rules, and Parts Two, Three and Four of this Regulation shall prevail over the Fund-specific Regulations.</p>
                     </content>
                 </paragraph>
             </article>

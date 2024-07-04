@@ -4,7 +4,7 @@
         <heading leos:origin="ec" xml:id="art_1__heading">Scope</heading>
         <paragraph xml:id="art_1__para_1" leos:origin="ec" leos:softuser="demo">
             <num xml:id="art_1__para_1__num" leos:origin="ec">1.</num>
-            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softuser="demo" leos:softdate="2019-01-29T11:36:13.035+01:00" xml:id="transformed_art_1__para_1">
+            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softuser="demo" leos:softdate="2019-01-29T11:36:13.035+01:00" xml:id="transformedXart_1__para_1">
                 <content xml:id="art_1_lP7CeV">
                     <p xml:id="art_1_wyGWnb">Text...</p>
                 </content>

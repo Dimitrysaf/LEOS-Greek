@@ -4,10 +4,10 @@
             <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_1">
                 <num leos:editable="false" leos:origin="ec" xml:id="art_1__num">Article 1</num>
                 <heading leos:origin="ec" xml:id="art_1__heading">Scope</heading>
-                <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-06-17T11:40:34.123+02:00" leos:softmove_to="art_1__para_1" leos:softuser="demo jane(Ext)" xml:id="moved_art_1__para_1">
-                    <num leos:origin="ec" xml:id="moved_art_1__para_1__num">1.</num>
-                    <content leos:origin="ec" xml:id="moved_art_1__para_1__content">
-                        <p leos:origin="ec" xml:id="moved_art_1__para_1__content__p">Paragraph 1</p>
+                <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-06-17T11:40:34.123+02:00" leos:softmove_to="art_1__para_1" leos:softuser="demo jane(Ext)" xml:id="movedXart_1__para_1">
+                    <num leos:origin="ec" xml:id="movedXart_1__para_1__num">1.</num>
+                    <content leos:origin="ec" xml:id="movedXart_1__para_1__content">
+                        <p leos:origin="ec" xml:id="movedXart_1__para_1__content__p">Paragraph 1</p>
                     </content>
                 </paragraph>
             </article>
@@ -26,7 +26,7 @@
                                 <p leos:origin="ec" xml:id="art_2__para_1__content__p">Paragraph 1 of Article 2</p>
                             </content>
                         </paragraph>
-                        <paragraph leos:depth="1" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-06-17T11:40:34.139+02:00" leos:softmove_from="moved_art_1__para_1" leos:softuser="demo jane(Ext)" xml:id="art_1__para_1">
+                        <paragraph leos:depth="1" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-06-17T11:40:34.139+02:00" leos:softmove_from="movedXart_1__para_1" leos:softuser="demo jane(Ext)" xml:id="art_1__para_1">
                             <num leos:origin="cn" xml:id="art_1__para_1__num">#</num>
                             <content leos:origin="ec" xml:id="art_1__para_1__content">
                                 <p leos:origin="ec" xml:id="art_1__para_1__content__p">Paragraph 1</p>

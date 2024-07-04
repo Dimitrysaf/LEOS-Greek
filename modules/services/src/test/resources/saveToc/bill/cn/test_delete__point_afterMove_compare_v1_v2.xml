@@ -26,10 +26,10 @@
                                         <p leos:origin="ec" xml:id="_art_1_qEGEHj">Point i of Article 1</p>
                                     </content>
                                 </point>
-                                <point class="leos-content-removed-cn" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2023-02-13T12:54:18.076+01:00" leos:softuser=" jane(DIGIT)" xml:id="deleted__art_1_9Xrkmo">
-                                    <num class="leos-content-removed-cn" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="deleted__art_1_YEYSDb">(ia)</num>
-                                    <content class="leos-content-removed-cn" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="deleted__art_1_6vBqoh">
-                                        <p class="leos-content-removed-cn" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="deleted__art_1_jQm45I">Point a of Article 1</p>
+                                <point class="leos-content-removed-cn" leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2023-02-13T12:54:18.076+01:00" leos:softuser=" jane(DIGIT)" xml:id="deletedX_art_1_9Xrkmo">
+                                    <num class="leos-content-removed-cn" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="deletedX_art_1_YEYSDb">(ia)</num>
+                                    <content class="leos-content-removed-cn" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="deletedX_art_1_6vBqoh">
+                                        <p class="leos-content-removed-cn" leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="deletedX_art_1_jQm45I">Point a of Article 1</p>
                                     </content>
                                 </point>
                                 <point leos:origin="ec" xml:id="_art_1_aaR4gr">

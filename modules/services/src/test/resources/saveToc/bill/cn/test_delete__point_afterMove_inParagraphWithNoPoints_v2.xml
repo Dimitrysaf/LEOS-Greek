@@ -13,10 +13,10 @@
                             </content>
                         </subparagraph>
                         <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true"
-                               leos:softdate="2022-07-18T14:13:58.080+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted_moved__art_1_9Xrkmo">
-                            <num leos:origin="ec" xml:id="deleted_moved__art_1_YEYSDb">(a)</num>
-                            <content leos:origin="ec" xml:id="deleted_moved__art_1_6vBqoh">
-                                <p leos:origin="ec" xml:id="deleted_moved__art_1_jQm45I">Point a of Article 1</p>
+                               leos:softdate="2022-07-18T14:13:58.080+02:00" leos:softuser=" jane(DIGIT)" xml:id="deletedXmovedX_art_1_9Xrkmo">
+                            <num leos:origin="ec" xml:id="deletedXmovedX_art_1_YEYSDb">(a)</num>
+                            <content leos:origin="ec" xml:id="deletedXmovedX_art_1_6vBqoh">
+                                <p leos:origin="ec" xml:id="deletedXmovedX_art_1_jQm45I">Point a of Article 1</p>
                             </content>
                         </point>
                         <point leos:origin="ec" xml:id="_art_1_d5lxNW">

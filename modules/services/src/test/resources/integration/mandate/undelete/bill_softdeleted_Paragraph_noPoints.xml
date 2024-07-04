@@ -5,10 +5,10 @@
             <article leos:deletable="false" leos:editable="false" leos:origin="ec" xml:id="art_1">
                 <num leos:editable="false" leos:origin="ec" xml:id="art_1__num">Article 1</num>
                 <heading leos:origin="ec" xml:id="art_1__heading">Scope</heading>
-                <paragraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2019-04-25T13:45:57.544+02:00" leos:softuser="jane" xml:id="deleted_art_1__para_1">
-                    <num leos:origin="ec" xml:id="deleted_art_1__para_1__num">1.</num>
-                    <content leos:origin="ec" xml:id="deleted_art_1__para_1__content">
-                        <p leos:origin="ec" xml:id="deleted_art_1__para_1__content__p">Text...</p>
+                <paragraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2019-04-25T13:45:57.544+02:00" leos:softuser="jane" xml:id="deletedXart_1__para_1">
+                    <num leos:origin="ec" xml:id="deletedXart_1__para_1__num">1.</num>
+                    <content leos:origin="ec" xml:id="deletedXart_1__para_1__content">
+                        <p leos:origin="ec" xml:id="deletedXart_1__para_1__content__p">Text...</p>
                     </content>
                 </paragraph>
             </article>

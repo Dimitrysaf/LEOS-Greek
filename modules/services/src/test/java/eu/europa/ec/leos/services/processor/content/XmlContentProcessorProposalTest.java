@@ -679,7 +679,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         Node node = document.getFirstChild();
         String id = getId(node);
         assertNotNull(id);
-        assertTrue(id.startsWith("imp_"));
+        assertTrue(id.startsWith("impX"));
         assertFalse(id.contains("null"));
     }
 
@@ -694,7 +694,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         Node node = document.getFirstChild();
         String id = getId(node);
         assertNotNull(id);
-        assertTrue(id.startsWith("imp_"));
+        assertTrue(id.startsWith("impX"));
         assertFalse(id.contains("null"));
     }
 
@@ -712,7 +712,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         byte[] documentXml = TestUtils.getFileContent(FILE_PREFIX + "/test_doXMLPostProcessing_clonedProposal_ECOrigin.xml");
         when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
         when(referenceLabelService.generateSoftMoveLabel(
-                argThat(equalTo(new Ref("moved_art_1__para_1", "art_1__para_1", null, "ec"))),
+                argThat(equalTo(new Ref("movedXart_1__para_1", "art_1__para_1", null, "ec"))),
                 argThat(any(String.class)),
                 argThat(any(Node.class)),
                 argThat(any(String.class)),
@@ -721,13 +721,13 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                         "MOVED to art_1__para_1",
                         null));
         when(referenceLabelService.generateSoftMoveLabel(
-                argThat(equalTo(new Ref("art_1__para_1", "moved_art_1__para_1", null, "ec"))),
+                argThat(equalTo(new Ref("art_1__para_1", "movedXart_1__para_1", null, "ec"))),
                 argThat(any(String.class)),
                 argThat(any(Node.class)),
                 argThat(any(String.class)),
                 argThat(any(String.class))))
                 .thenReturn(new Result<String>(
-                        "MOVED from moved_art_1__para_1",
+                        "MOVED from movedXart_1__para_1",
                         null));
 
         // When
@@ -748,7 +748,7 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
         when(cloneContext.isClonedProposal()).thenReturn(true);
         when(trackChangesContext.isTrackChangesEnabled()).thenReturn(true);
         when(referenceLabelService.generateSoftMoveLabel(
-                argThat(equalTo(new Ref("moved_art_1__para_1", "art_1__para_1", null, null))),
+                argThat(equalTo(new Ref("movedXart_1__para_1", "art_1__para_1", null, null))),
                 argThat(any(String.class)),
                 argThat(any(Node.class)),
                 argThat(any(String.class)),
@@ -757,13 +757,13 @@ public class XmlContentProcessorProposalTest extends XmlContentProcessorTest {
                         "MOVED to art_1__para_1",
                         null));
         when(referenceLabelService.generateSoftMoveLabel(
-                argThat(equalTo(new Ref("art_1__para_1", "moved_art_1__para_1", null, null))),
+                argThat(equalTo(new Ref("art_1__para_1", "movedXart_1__para_1", null, null))),
                 argThat(any(String.class)),
                 argThat(any(Node.class)),
                 argThat(any(String.class)),
                 argThat(any(String.class))))
                 .thenReturn(new Result<String>(
-                        "MOVED from moved_art_1__para_1",
+                        "MOVED from movedXart_1__para_1",
                         null));
 
         // When

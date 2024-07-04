@@ -1,7 +1,7 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <body leos:origin="ec" xml:id="body">
-            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2020-10-06T19:40:28.317+02:00" leos:softmove_from="moved_art_2" leos:softmove_label="MOVED from Article 2" leos:softuser="demo jane (Ext)" xml:id="art_2">
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2020-10-06T19:40:28.317+02:00" leos:softmove_from="movedXart_2" leos:softmove_label="MOVED from Article 2" leos:softuser="demo jane (Ext)" xml:id="art_2">
                 <num leos:editable="false" leos:origin="cn" xml:id="art_2__num">Article -1</num>
                 <heading xml:id="art_2_xhfvBc">Scope</heading>
                 <paragraph leos:depth="1" leos:origin="ec" xml:id="art_2__para_1">
@@ -27,8 +27,8 @@
                 <chapter leos:depth="2" leos:origin="ec" xml:id="chapter_1">
                     <num leos:origin="ec" xml:id="akn_9Stf16">Chapter 1</num>
                     <heading leos:origin="ec" xml:id="akn_LFvufQ">Chapter heading...</heading>
-                    <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2020-10-06T19:40:28.322+02:00" leos:softmove_label="MOVED to Article -1" leos:softmove_to="art_2" leos:softuser="demo jane (Ext)" xml:id="moved_art_2">
-                        <num leos:editable="false" leos:origin="ec" xml:id="moved_art_2__num">Article 2</num>
+                    <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2020-10-06T19:40:28.322+02:00" leos:softmove_label="MOVED to Article -1" leos:softmove_to="art_2" leos:softuser="demo jane (Ext)" xml:id="movedXart_2">
+                        <num leos:editable="false" leos:origin="ec" xml:id="movedXart_2__num">Article 2</num>
                     </article>
                 </chapter>
             </part>

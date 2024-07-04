@@ -31,9 +31,9 @@
 
             <paragraph leos:deletable="false" leos:depth="3" leos:editable="false" leos:origin="ec"
                        leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-06-17T11:53:22.705+02:00"
-                       leos:softuser="jane(DIGIT)" xml:id="deleted_akn_paragraph_6y0dox">
-                <content leos:origin="ec" xml:id="deleted__akn_reG1Sr">
-                    <p leos:origin="ec" xml:id="deleted__akn_OWRyQx">
+                       leos:softuser="jane(DIGIT)" xml:id="deletedXakn_paragraph_6y0dox">
+                <content leos:origin="ec" xml:id="deletedX_akn_reG1Sr">
+                    <p leos:origin="ec" xml:id="deletedX_akn_OWRyQx">
                         Text...
                     </p>
                 </content>

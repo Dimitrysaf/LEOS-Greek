@@ -54,7 +54,7 @@ define(function aknNumberedParagraphPluginModule(require) {
     var SWITCHED = false;
     var PARA_SELECTOR = "*[data-akn-name='aknNumberedParagraph']";
 
-    var DELETED = "deleted_";
+    var DELETED = "deletedX";
     var TRANSFORMED = "trans";
     var DATA_AKN_ATTR_SOFTACTION = "data-akn-attr-softaction";
     var DATA_AKN_ATTR_SOFTTRANSFROM = "data-akn-attr-softtrans_from";

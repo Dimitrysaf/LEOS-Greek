@@ -24,11 +24,11 @@
                                 </content>
                             </subparagraph>
                             <list leos:origin="ec" xml:id="art_1_xzP7r7">
-                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2021-01-18T11:59:09.843+01:00" leos:softmove_label="MOVED to Article 2, first paragraph, point (a)(i)" leos:softmove_to="art_1_1OdGZW" leos:softuser="demo jane (Ext)" xml:id="moved_art_1_1OdGZW">
-                                    <num leos:origin="ec" xml:id="moved_art_1_JFKJJS">(i)</num>
-                                    <content leos:origin="ec" xml:id="moved_art_1_3RUilf">
-                                        <p leos:origin="ec" xml:id="moved_art_1_mGmwNI">
-                                            <b leos:origin="ec" xml:id="moved_art_1_4m75oR">wlnfewldfv</b>
+                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2021-01-18T11:59:09.843+01:00" leos:softmove_label="MOVED to Article 2, first paragraph, point (a)(i)" leos:softmove_to="art_1_1OdGZW" leos:softuser="demo jane (Ext)" xml:id="movedXart_1_1OdGZW">
+                                    <num leos:origin="ec" xml:id="movedXart_1_JFKJJS">(i)</num>
+                                    <content leos:origin="ec" xml:id="movedXart_1_3RUilf">
+                                        <p leos:origin="ec" xml:id="movedXart_1_mGmwNI">
+                                            <b leos:origin="ec" xml:id="movedXart_1_4m75oR">wlnfewldfv</b>
                                             df dfv dfv dfv dfv dfv dfv df v
                                         </p>
                                     </content>
@@ -80,13 +80,13 @@
                     <list leos:origin="ec" xml:id="art_2_rlTP0W">
                         <point leos:origin="ec" xml:id="art_2_pamXSl">
                             <num leos:origin="ec" xml:id="art_2_VIc2oH">(a)</num>
-                            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-01-18T11:59:09.845+01:00" leos:softuser="demo jane (Ext)" xml:id="transformed_art_2_pamXSl">
+                            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-01-18T11:59:09.845+01:00" leos:softuser="demo jane (Ext)" xml:id="transformedXart_2_pamXSl">
                                 <content leos:origin="ec" xml:id="art_2_yDksm5">
                                     <p leos:origin="ec" xml:id="art_2_V3Sqqq">"some text some text some text some text some text some text some text some text some text some text some text"</p>
                                 </content>
                             </subparagraph>
                             <list leos:origin="cn" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2021-01-18T11:59:09.845+01:00" leos:softuser="demo jane (Ext)" xml:id="lis_bsnnyi">
-                                <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2021-01-18T11:59:09.845+01:00" leos:softmove_from="moved_art_1_1OdGZW" leos:softmove_label="MOVED from Article 1(1), point (a)(i)" leos:softuser="demo jane (Ext)" xml:id="art_1_1OdGZW">
+                                <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2021-01-18T11:59:09.845+01:00" leos:softmove_from="movedXart_1_1OdGZW" leos:softmove_label="MOVED from Article 1(1), point (a)(i)" leos:softuser="demo jane (Ext)" xml:id="art_1_1OdGZW">
                                     <num leos:origin="cn" xml:id="art_1_JFKJJS">(i)</num>
                                     <content leos:origin="ec" xml:id="art_1_3RUilf">
                                         <p leos:origin="ec" xml:id="art_1_mGmwNI">

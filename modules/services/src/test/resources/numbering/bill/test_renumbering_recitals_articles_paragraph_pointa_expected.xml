@@ -1,7 +1,7 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
 	<recitals leos:editable="false" xml:id="recs">
-		<recital leos:editable="true" leos:origin="ec" leos:renumbered="true" leos:softaction="move_from" xml:id="moved_from_rec_4">
-			<num leos:origin="cn" xml:id="moved_from_rec_49_num">(1)</num>
+		<recital leos:editable="true" leos:origin="ec" leos:renumbered="true" leos:softaction="move_from" xml:id="movedXfrom_rec_4">
+			<num leos:origin="cn" xml:id="movedXfrom_rec_49_num">(1)</num>
 			<p>Recital...(1)</p>
 		</recital>
 		<recital leos:editable="true" leos:origin="ec" leos:renumbered="true" xml:id="rec_1">
@@ -50,7 +50,7 @@
 		</recital>
 	</recitals>
 	<body leos:origin="ec" xml:id="body">
-		<article leos:editable="true" leos:origin="ec" leos:renumbered="true" leos:softaction="move_from" xml:id="moved_from_art_4">
+		<article leos:editable="true" leos:origin="ec" leos:renumbered="true" leos:softaction="move_from" xml:id="movedXfrom_art_4">
 			<num leos:origin="cn">Article 1</num>
 			<p>should be Article 1</p>
 		</article>

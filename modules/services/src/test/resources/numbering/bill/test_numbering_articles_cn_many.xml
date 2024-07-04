@@ -1,6 +1,6 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos" xml:id="akn">
     <body leos:origin="ec" xml:id="body">
-        <article leos:editable="true" leos:origin="ec" leos:softaction="move_from" xml:id="moved_from_art_4">
+        <article leos:editable="true" leos:origin="ec" leos:softaction="move_from" xml:id="movedXfrom_art_4">
             <num leos:origin="cn">Article #</num>
             <p>should be Article -3</p>
         </article>

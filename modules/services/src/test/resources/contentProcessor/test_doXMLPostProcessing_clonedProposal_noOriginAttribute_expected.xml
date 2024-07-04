@@ -9,10 +9,10 @@
             <article leos:deletable="false" leos:editable="false" leos:origin="ls" leos:softaction="add" leos:softdate="2022-06-17T12:00:22.911+02:00" leos:softuser="demo(DIGIT)" xml:id="art_1">
                 <num leos:editable="false" xml:id="art_1__num">Article 1</num>
                 <heading xml:id="art_1__heading">Scope</heading>
-                <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ls" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2020-10-07T16:55:04.311+02:00" leos:softmove_label="MOVED to art_1__para_1" leos:softmove_to="art_1__para_1" leos:softuser="jane" xml:id="moved_art_1__para_1">
-                    <num xml:id="moved_art_1__para_1__num">1.</num>
-                    <content xml:id="moved_art_1__para_1__content">
-                        <aknp xml:id="moved_art_1__para_1__content__p">Paragraph 1</aknp>
+                <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ls" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2020-10-07T16:55:04.311+02:00" leos:softmove_label="MOVED to art_1__para_1" leos:softmove_to="art_1__para_1" leos:softuser="jane" xml:id="movedXart_1__para_1">
+                    <num xml:id="movedXart_1__para_1__num">1.</num>
+                    <content xml:id="movedXart_1__para_1__content">
+                        <aknp xml:id="movedXart_1__para_1__content__p">Paragraph 1</aknp>
                     </content>
                 </paragraph>
             </article>
@@ -50,7 +50,7 @@
                                 <aknp xml:id="art_2__para_1__content__p">Paragraph 1 of Article 2</aknp>
                             </content>
                         </paragraph>
-                        <paragraph leos:depth="1" leos:origin="ls" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2020-10-07T16:55:04.317+02:00" leos:softmove_from="moved_art_1__para_1" leos:softmove_label="MOVED from moved_art_1__para_1" leos:softuser="jane" xml:id="art_1__para_1">
+                        <paragraph leos:depth="1" leos:origin="ls" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2020-10-07T16:55:04.317+02:00" leos:softmove_from="movedXart_1__para_1" leos:softmove_label="MOVED from movedXart_1__para_1" leos:softuser="jane" xml:id="art_1__para_1">
                             <num leos:origin="cn" xml:id="art_1__para_1__num">1a.</num>
                             <content xml:id="art_1__para_1__content">
                                 <aknp xml:id="art_1__para_1__content__p">Paragraph 1</aknp>

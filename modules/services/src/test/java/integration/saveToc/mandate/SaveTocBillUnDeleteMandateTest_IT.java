@@ -42,7 +42,7 @@ public class SaveTocBillUnDeleteMandateTest_IT extends SaveTocBillMandateTest_IT
         final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "test_undelete__articleWithPoints__expected.xml");
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
-        TableOfContentItemVO articleSoftDeleted = getElementById(toc, "deleted_art_1");
+        TableOfContentItemVO articleSoftDeleted = getElementById(toc, "deletedXart_1");
         unDeleteElement(articleSoftDeleted);
 
         // When
@@ -65,7 +65,7 @@ public class SaveTocBillUnDeleteMandateTest_IT extends SaveTocBillMandateTest_IT
         final byte[] xmlExpected = TestUtils.getFileContent(PREFIX_SAVE_TOC_BILL_CN, "test_undelete__paragraphWithPoints__expected.xml");
         List<TableOfContentItemVO> toc = buildTableOfContentBill(xmlInput);
 
-        TableOfContentItemVO parSoftDeleted = getElementById(toc, "deleted__art_2_num_par2");
+        TableOfContentItemVO parSoftDeleted = getElementById(toc, "deletedX_art_2_num_par2");
         unDeleteElement(parSoftDeleted);
 
         // When

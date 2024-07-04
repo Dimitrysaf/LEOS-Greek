@@ -30,7 +30,7 @@
                 <paragraph leos:affected="true" leos:origin="ec" xml:id="_art_1_uJWnQB">
                     <num leos:origin="ec" xml:id="_art_1_INcldv">2.</num>
                     <subparagraph class="leos-double-compare-added-original" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true"
-                                  leos:softdate="2022-07-18T14:02:40.194+02:00" leos:softuser="DOE Jane(DGT)" xml:id="transformed__art_1_uJWnQB">
+                                  leos:softdate="2022-07-18T14:02:40.194+02:00" leos:softuser="DOE Jane(DGT)" xml:id="transformedX_art_1_uJWnQB">
                         <content leos:origin="ec" xml:id="_art_1_VaI8EU">
                             <p leos:origin="ec" xml:id="_art_1_oIcpbe">Paragraph 2 of Article 1</p>
                         </content>

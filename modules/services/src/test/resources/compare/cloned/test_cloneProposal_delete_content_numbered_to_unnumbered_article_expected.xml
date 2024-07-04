@@ -5,7 +5,7 @@
     <paragraph leos:origin="ec" xml:id="akn_article_yXTDOu_sEVohD">
         <num leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
              leos:softactionroot="true" leos:softdate="2023-02-03T16:53:34.092+01:00" leos:softuser=" jane(DIGIT)"
-             xml:id="deleted_akn_article_yXTDOu_mGqPHE">1.
+             xml:id="deletedXakn_article_yXTDOu_mGqPHE">1.
         </num>
         <content leos:origin="ec" xml:id="akn_article_yXTDOu_bwOhzU">
             <p leos:origin="ec" xml:id="akn_article_yXTDOu_1fr2Y9">An application for the registration of a geographical
@@ -17,7 +17,7 @@
     <paragraph leos:origin="ec" xml:id="akn_article_yXTDOu_7mxkEi">
         <num leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
              leos:softactionroot="true" leos:softdate="2023-02-03T16:53:34.109+01:00" leos:softuser=" jane(DIGIT)"
-             xml:id="deleted_akn_article_yXTDOu_5jJjnV">2.
+             xml:id="deletedXakn_article_yXTDOu_5jJjnV">2.
         </num>
         <list leos:origin="ec" xml:id="akn_article_yXTDOu_PPwwf8">
             <subparagraph leos:origin="ec" xml:id="akn_article_yXTDOu_FfSrEo">
@@ -61,12 +61,12 @@
             </point>
             <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
                    leos:softactionroot="true" leos:softdate="2023-02-03T16:53:34.113+01:00" leos:softuser=" jane(DIGIT)"
-                   xml:id="deleted_akn_article_yXTDOu_Sg1UGm">
+                   xml:id="deletedXakn_article_yXTDOu_Sg1UGm">
                 <num leos:origin="ec" xml:id="akn_article_yXTDOu_rowYj3">(c)</num>
                 <content leos:origin="ec" xml:id="akn_article_yXTDOu_lujCNl">
                     <p leos:origin="ec" xml:id="akn_article_yXTDOu_z8FWIw">the accompanying documents referred to in
                         <mref leos:origin="ec" xml:id="_bill__akn_article_sUTiiX_nyylxi">Article 8
-                            <ref href="REG-cldoemxke000mx05815hudwp1-en/_imp_art_d1e616_b5Mh6Q_ceZwIf" leos:origin="ec"
+                            <ref href="REG-cldoemxke000mx05815hudwp1-en/_impXart_d1e616_b5Mh6Q_ceZwIf" leos:origin="ec"
                                  xml:id="_bill__akn_article_sUTiiX_3Rvtyn">(1)
                             </ref>
                         </mref>
@@ -79,7 +79,7 @@
     <paragraph leos:origin="ec" xml:id="akn_article_yXTDOu_tq31ro">
         <num leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
              leos:softactionroot="true" leos:softdate="2023-02-03T16:53:34.115+01:00" leos:softuser=" jane(DIGIT)"
-             xml:id="deleted_akn_article_yXTDOu_a3N4iy">3.
+             xml:id="deletedXakn_article_yXTDOu_a3N4iy">3.
         </num>
         <content leos:origin="ec" xml:id="akn_article_yXTDOu_fkSUV1">
             <p leos:origin="ec" xml:id="akn_article_yXTDOu_DHH66j">The Member State shall scrutinise the application for
@@ -92,7 +92,7 @@
                xml:id="akn_article_yXTDOu_UUTgyi">
         <num leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
              leos:softactionroot="true" leos:softdate="2023-02-03T16:53:34.116+01:00" leos:softuser=" jane(DIGIT)"
-             xml:id="deleted_akn_article_yXTDOu_RFzOrF">4.
+             xml:id="deletedXakn_article_yXTDOu_RFzOrF">4.
         </num>
         <content leos:origin="ec" xml:id="akn_article_yXTDOu_vVQtf3">
             <p leos:origin="ec" xml:id="akn_article_yXTDOu_s6g6BY">As part of the scrutiny referred to in
@@ -111,7 +111,7 @@
     </paragraph>
     <paragraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
                leos:softactionroot="true" leos:softdate="2023-02-03T16:53:34.116+01:00" leos:softuser=" jane(DIGIT)"
-               xml:id="deleted_akn_article_yXTDOu_vavdo5">
+               xml:id="deletedXakn_article_yXTDOu_vavdo5">
         <num leos:origin="ec" xml:id="akn_article_yXTDOu_j4rQN7">5.</num>
         <content leos:origin="ec" xml:id="akn_article_yXTDOu_5cxV7I">
             <p leos:origin="ec" xml:id="akn_article_yXTDOu_N2RfL7">The Member State shall establish the modalities of
@@ -125,7 +125,7 @@
     <paragraph leos:origin="ec" xml:id="akn_article_yXTDOu_wHIkBE">
         <num leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
              leos:softactionroot="true" leos:softdate="2023-02-03T16:53:34.117+01:00" leos:softuser=" jane(DIGIT)"
-             xml:id="deleted_akn_article_yXTDOu_46p1O8">6.
+             xml:id="deletedXakn_article_yXTDOu_46p1O8">6.
         </num>
         <content leos:origin="ec" xml:id="akn_article_yXTDOu_ABaZbx">
             <p leos:origin="ec" xml:id="akn_article_yXTDOu_Enh50Z">If, after the scrutiny of the application for
@@ -139,7 +139,7 @@
     <paragraph leos:origin="ec" xml:id="akn_article_yXTDOu-par1">
         <num leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del"
              leos:softactionroot="true" leos:softdate="2023-02-03T16:53:34.118+01:00" leos:softuser=" jane(DIGIT)"
-             xml:id="deleted_akn_article_yXTDOu_cE04mj">7.
+             xml:id="deletedXakn_article_yXTDOu_cE04mj">7.
         </num>
         <content leos:origin="ec" xml:id="akn_article_yXTDOu_RW8bYZ">
             <p leos:origin="ec" xml:id="akn_article_yXTDOu_6f36WK">The Member State shall ensure that its decision, be

@@ -11,19 +11,19 @@
                                 <p leos:origin="ec" xml:id="art_1__para_1__content__p">Para1</p>
                             </content>
                         </subparagraph>
-                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false" leos:softdate="2021-02-08T11:13:36.866+01:00" leos:softmove_from="moved_akn_art_YnSKbj_LA9Azw" leos:softmove_label="MOVED from test" leos:softuser="jane" xml:id="akn_art_YnSKbj_LA9Azw">
+                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false" leos:softdate="2021-02-08T11:13:36.866+01:00" leos:softmove_from="movedXakn_art_YnSKbj_LA9Azw" leos:softmove_label="MOVED from test" leos:softuser="jane" xml:id="akn_art_YnSKbj_LA9Azw">
                             <num leos:origin="cn" xml:id="akn_art_YnSKbj_soCjiB">(a)</num>
                             <content leos:origin="ec" xml:id="akn_art_YnSKbj_89xvgD">
                                 <p leos:origin="ec" xml:id="akn_art_YnSKbj_g319GD">point(a)</p>
                             </content>
                         </point>
-                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false" leos:softdate="2021-02-08T11:13:36.866+01:00" leos:softmove_from="moved_akn_art_YnSKbj_LA9Azw" leos:softmove_label="MOVED from test" leos:softuser="jane" xml:id="akn_art_YnSKbj_LA9Azw">
+                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false" leos:softdate="2021-02-08T11:13:36.866+01:00" leos:softmove_from="movedXakn_art_YnSKbj_LA9Azw" leos:softmove_label="MOVED from test" leos:softuser="jane" xml:id="akn_art_YnSKbj_LA9Azw">
                             <num leos:origin="cn" xml:id="akn_art_YnSKbj_soCjiB">(b)</num>
                             <content leos:origin="ec" xml:id="akn_art_YnSKbj_89xvgD">
                                 <p leos:origin="ec" xml:id="akn_art_YnSKbj_g319GD">point(b)</p>
                             </content>
                         </point>
-                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false" leos:softdate="2021-02-08T11:13:36.866+01:00" leos:softmove_from="moved_akn_art_YnSKbj_LA9Azw" leos:softmove_label="MOVED from test" leos:softuser="jane" xml:id="akn_art_YnSKbj_LA9Azw">
+                        <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false" leos:softdate="2021-02-08T11:13:36.866+01:00" leos:softmove_from="movedXakn_art_YnSKbj_LA9Azw" leos:softmove_label="MOVED from test" leos:softuser="jane" xml:id="akn_art_YnSKbj_LA9Azw">
                             <num leos:origin="cn" xml:id="akn_art_YnSKbj_soCjiB">(c)</num>
                             <content leos:origin="ec" xml:id="akn_art_YnSKbj_89xvgD">
                                 <p leos:origin="ec" xml:id="akn_art_YnSKbj_g319GD">point(c)</p>

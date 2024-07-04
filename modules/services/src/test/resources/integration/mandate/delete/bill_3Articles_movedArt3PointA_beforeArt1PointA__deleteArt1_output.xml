@@ -123,27 +123,27 @@
             </formula>
         </preamble>
         <body leos:origin="ec" xml:id="body">
-            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2019-04-30T19:35:19.183+02:00" leos:softuser="jane" xml:id="deleted_art_1">
-                <num leos:editable="false" leos:origin="ec" xml:id="deleted_art_1__num">Article 1</num>
-                <heading leos:origin="ec" xml:id="deleted_art_1__heading">Scope</heading>
-                <paragraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.183+02:00" leos:softuser="jane" xml:id="deleted_art_1__para_1">
-                    <num leos:origin="ec" xml:id="deleted_art_1__para_1__num">1.</num>
+            <article leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2019-04-30T19:35:19.183+02:00" leos:softuser="jane" xml:id="deletedXart_1">
+                <num leos:editable="false" leos:origin="ec" xml:id="deletedXart_1__num">Article 1</num>
+                <heading leos:origin="ec" xml:id="deletedXart_1__heading">Scope</heading>
+                <paragraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.183+02:00" leos:softuser="jane" xml:id="deletedXart_1__para_1">
+                    <num leos:origin="ec" xml:id="deletedXart_1__para_1__num">1.</num>
                     
-                    <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.182+02:00" leos:softuser="jane" xml:id="deleted_art_1_1w6KRX"><subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.180+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deleted_art_1_ftJWXT">
-                        <content leos:origin="ec" xml:id="deleted_art_1__para_1__content">
-                            <p leos:origin="ec" xml:id="deleted_art_1__para_1__content__p">art1-par1 (sub) </p>
+                    <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.182+02:00" leos:softuser="jane" xml:id="deletedXart_1_1w6KRX"><subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.180+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deletedXart_1_ftJWXT">
+                        <content leos:origin="ec" xml:id="deletedXart_1__para_1__content">
+                            <p leos:origin="ec" xml:id="deletedXart_1__para_1__content__p">art1-par1 (sub) </p>
                         </content>
                     </subparagraph>
-                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.181+02:00" leos:softuser="jane" xml:id="deleted_art_1_06zx3M">
-                            <num leos:origin="ec" xml:id="deleted_art_1_uUP9rw">(a)</num>
-                            <content leos:origin="ec" xml:id="deleted_art_1_CXRzLe">
-                                <p leos:origin="ec" xml:id="deleted_art_1_KiKmdt">point a</p>
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.181+02:00" leos:softuser="jane" xml:id="deletedXart_1_06zx3M">
+                            <num leos:origin="ec" xml:id="deletedXart_1_uUP9rw">(a)</num>
+                            <content leos:origin="ec" xml:id="deletedXart_1_CXRzLe">
+                                <p leos:origin="ec" xml:id="deletedXart_1_KiKmdt">point a</p>
                             </content>
                         </point>
-                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.181+02:00" leos:softuser="jane" xml:id="deleted_art_1_wLjAPO">
-                            <num leos:origin="ec" xml:id="deleted_art_1_K7mffV">(b)</num>
-                            <content leos:origin="ec" xml:id="deleted_art_1_qeHeVe">
-                                <p leos:origin="ec" xml:id="deleted_art_1_QthCUl">point blast subparagraph</p>
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.181+02:00" leos:softuser="jane" xml:id="deletedXart_1_wLjAPO">
+                            <num leos:origin="ec" xml:id="deletedXart_1_K7mffV">(b)</num>
+                            <content leos:origin="ec" xml:id="deletedXart_1_qeHeVe">
+                                <p leos:origin="ec" xml:id="deletedXart_1_QthCUl">point blast subparagraph</p>
                             </content>
                         </point>
                     </list>
@@ -193,24 +193,24 @@
                             <p leos:origin="ec" xml:id="akn_art_B6BGPx_S6dVOu">art 3 - par1 (sub)</p>
                         </content>
                     </subparagraph>
-                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2019-04-30T19:35:19.186+02:00" leos:softuser="jane" xml:id="deleted_akn_art_B6BGPx_EFkmBp">
-                            <num leos:origin="ec" xml:id="deleted_akn_art_B6BGPx_55WP4L">(a)</num>
+                        <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2019-04-30T19:35:19.186+02:00" leos:softuser="jane" xml:id="deletedXakn_art_B6BGPx_EFkmBp">
+                            <num leos:origin="ec" xml:id="deletedXakn_art_B6BGPx_55WP4L">(a)</num>
                             
-                            <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.186+02:00" leos:softuser="jane" xml:id="deleted_akn_art_B6BGPx_CKBXAf"><subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.184+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deleted_akn_art_B6BGPx_dS0ZVD">
-                                <content leos:origin="ec" xml:id="deleted_akn_art_B6BGPx_LD9GxL">
-                                    <p leos:origin="ec" xml:id="deleted_akn_art_B6BGPx_GzpWwi">art3- point a</p>
+                            <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.186+02:00" leos:softuser="jane" xml:id="deletedXakn_art_B6BGPx_CKBXAf"><subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.184+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deletedXakn_art_B6BGPx_dS0ZVD">
+                                <content leos:origin="ec" xml:id="deletedXakn_art_B6BGPx_LD9GxL">
+                                    <p leos:origin="ec" xml:id="deletedXakn_art_B6BGPx_GzpWwi">art3- point a</p>
                                 </content>
                             </subparagraph>
-                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.185+02:00" leos:softuser="jane" xml:id="deleted_akn_art_B6BGPx_oHLYyx">
-                                    <num leos:origin="ec" xml:id="deleted_akn_art_B6BGPx_APMWlv">(1)</num>
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_B6BGPx_YoyUYX">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_B6BGPx_xW04jL">art 3- point (1)</p>
+                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.185+02:00" leos:softuser="jane" xml:id="deletedXakn_art_B6BGPx_oHLYyx">
+                                    <num leos:origin="ec" xml:id="deletedXakn_art_B6BGPx_APMWlv">(1)</num>
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_B6BGPx_YoyUYX">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_B6BGPx_xW04jL">art 3- point (1)</p>
                                     </content>
                                 </point>
-                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.185+02:00" leos:softuser="jane" xml:id="deleted_akn_art_B6BGPx_JagOyM">
-                                    <num leos:origin="ec" xml:id="deleted_akn_art_B6BGPx_bPwF1M">(2)</num>
-                                    <content leos:origin="ec" xml:id="deleted_akn_art_B6BGPx_vhsG38">
-                                        <p leos:origin="ec" xml:id="deleted_akn_art_B6BGPx_IO1Uhw">art 3- point (2)</p>
+                                <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2019-04-30T19:35:19.185+02:00" leos:softuser="jane" xml:id="deletedXakn_art_B6BGPx_JagOyM">
+                                    <num leos:origin="ec" xml:id="deletedXakn_art_B6BGPx_bPwF1M">(2)</num>
+                                    <content leos:origin="ec" xml:id="deletedXakn_art_B6BGPx_vhsG38">
+                                        <p leos:origin="ec" xml:id="deletedXakn_art_B6BGPx_IO1Uhw">art 3- point (2)</p>
                                     </content>
                                 </point>
                             </list>

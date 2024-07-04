@@ -114,8 +114,8 @@
                         particular Article [...] thereof,
                     </p>
                 </citation>
-                <citation leos:editable="true" refersTo="~legalBasis" xml:id="deleted_cit_2">
-                    <p xml:id="deleted_cit_2__p">Having regard to the proposal from the European Commission,</p>
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="deletedXcit_2">
+                    <p xml:id="deletedXcit_2__p">Having regard to the proposal from the European Commission,</p>
                 </citation>
                 <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_3">
                     <p xml:id="cit_3__p">After transmission of the draft legislative act to the national Parliaments,

@@ -24,7 +24,7 @@ public class IdGenerator {
     private static final int DEFAULT_POSTFIX_LENGTH = 15;
     private static final Random RANDOM = new SecureRandom();
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWYZabcdefghijklmnopqrstuvwxyz01234567890";
-    public static final String PREFIX_DELIMITER = "_";
+    public static final String PREFIX_DELIMITER = "X";
 
     /**
      * Generates an id in format (generated id = DEFAULT_PREFIX + (DEFAULT_POSTFIX_LENGTH chars long String)

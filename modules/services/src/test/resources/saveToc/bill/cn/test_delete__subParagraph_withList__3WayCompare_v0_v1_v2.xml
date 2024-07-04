@@ -33,14 +33,14 @@
                 <heading leos:origin="ec" xml:id="__akn_article_MSaviI_dcRKgF">Article heading...</heading>
                 <paragraph class="leos-double-compare-removed-original" leos:affected="true" leos:deletable="false" leos:editable="false" leos:origin="ec"
                            leos:softaction="del" leos:softactionroot="true" leos:softdate="2022-08-08T14:46:23.252+02:00" leos:softuser=" jane(DIGIT)"
-                           xml:id="deleted___akn_article_MSaviI-par1">
+                           xml:id="deletedX__akn_article_MSaviI-par1">
                     <num class="leos-double-compare-removed-original" leos:deletable="false" leos:editable="false" leos:origin="ec"
-                         xml:id="deleted___akn_article_MSaviI_kAKK5l">1.
+                         xml:id="deletedX__akn_article_MSaviI_kAKK5l">1.
                     </num>
                     <content class="leos-double-compare-removed-original" leos:deletable="false" leos:editable="false" leos:origin="ec"
-                             xml:id="deleted___akn_article_MSaviI_ilft4r">
+                             xml:id="deletedX__akn_article_MSaviI_ilft4r">
                         <p class="leos-double-compare-removed-original" leos:deletable="false" leos:editable="false" leos:origin="ec"
-                           xml:id="deleted___akn_article_MSaviI_gpsrrq">Article 2 paragraph
+                           xml:id="deletedX__akn_article_MSaviI_gpsrrq">Article 2 paragraph
                         </p>
                     </content>
                 </paragraph>

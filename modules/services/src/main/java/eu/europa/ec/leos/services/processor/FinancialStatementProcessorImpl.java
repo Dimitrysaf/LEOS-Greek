@@ -76,7 +76,6 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         switch (tagName) {
             case SUBPARAGRAPH:
                 template = XmlHelper.getTemplateForFinancialStatement(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
-                template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.STAT_FINANC_LEGIS);
                 updatedContent = xmlContentProcessor.insertElementByTagNameAndId(getContent(financialStatement), template,
                         tagName, elementId, before, financialStatement.isTrackChangesEnabled());
                 break;
@@ -84,7 +83,6 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
                 content = getContent(financialStatement);
                 Element contentElement = xmlContentProcessor.getElementById(content, elementId);
                 template = XmlHelper.getTemplateForFinancialStatement(StructureConfigUtils.getTocItemByNameOrThrow(items, SUBPARAGRAPH), messageHelper);
-                template = XmlHelper.addDocTypeToXmlId(template, XmlHelper.STAT_FINANC_LEGIS);
                 String updatedElementContent = convertToSubparagraph(contentElement, template);
                 try {
                     updatedContent = xmlContentProcessor.replaceElementById(content, updatedElementContent,

@@ -18,29 +18,29 @@
                     </content>
                 </paragraph>
                 <paragraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true"
-                           leos:softdate="2022-08-09T13:52:33.803+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted_moved_par3">
-                    <num leos:origin="ec" xml:id="deleted_moved_art3_SC9AWu">3.</num>
+                           leos:softdate="2022-08-09T13:52:33.803+02:00" leos:softuser=" jane(DIGIT)" xml:id="deletedXmovedXpar3">
+                    <num leos:origin="ec" xml:id="deletedXmovedXart3_SC9AWu">3.</num>
                     <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
-                          leos:softdate="2022-08-09T13:52:33.804+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted_moved_list">
+                          leos:softdate="2022-08-09T13:52:33.804+02:00" leos:softuser=" jane(DIGIT)" xml:id="deletedXmovedXlist">
                         <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
                                       leos:softdate="2022-08-09T13:52:33.804+02:00" leos:softuser=" jane(DIGIT)" refersTo="~_INP"
-                                      xml:id="deleted_moved_par3_sub">
-                            <content leos:origin="ec" xml:id="deleted_moved_art3_ce2U2a">
-                                <p leos:origin="ec" xml:id="deleted_moved_art3_uJJljZ">paragraph 3</p>
+                                      xml:id="deletedXmovedXpar3_sub">
+                            <content leos:origin="ec" xml:id="deletedXmovedXart3_ce2U2a">
+                                <p leos:origin="ec" xml:id="deletedXmovedXart3_uJJljZ">paragraph 3</p>
                             </content>
                         </subparagraph>
                         <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
-                               leos:softdate="2022-08-09T13:52:33.805+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted_moved_par3_point_a">
-                            <num leos:origin="ec" xml:id="deleted_moved_art3_TOdOwf">(a)</num>
-                            <content leos:origin="ec" xml:id="deleted_moved_art3_pkRBe7">
-                                <p leos:origin="ec" xml:id="deleted_moved_art3_xkpzNN">point a</p>
+                               leos:softdate="2022-08-09T13:52:33.805+02:00" leos:softuser=" jane(DIGIT)" xml:id="deletedXmovedXpar3_point_a">
+                            <num leos:origin="ec" xml:id="deletedXmovedXart3_TOdOwf">(a)</num>
+                            <content leos:origin="ec" xml:id="deletedXmovedXart3_pkRBe7">
+                                <p leos:origin="ec" xml:id="deletedXmovedXart3_xkpzNN">point a</p>
                             </content>
                         </point>
                         <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
-                               leos:softdate="2022-08-09T13:52:33.805+02:00" leos:softuser=" jane(DIGIT)" xml:id="deleted_moved_par3_point_b">
-                            <num leos:origin="ec" xml:id="deleted_moved_art3_5c4Hu1">(b)</num>
-                            <content leos:origin="ec" xml:id="deleted_moved_art3_GLb7ZY">
-                                <p leos:origin="ec" xml:id="deleted_moved_art3_6vgJyY">point b</p>
+                               leos:softdate="2022-08-09T13:52:33.805+02:00" leos:softuser=" jane(DIGIT)" xml:id="deletedXmovedXpar3_point_b">
+                            <num leos:origin="ec" xml:id="deletedXmovedXart3_5c4Hu1">(b)</num>
+                            <content leos:origin="ec" xml:id="deletedXmovedXart3_GLb7ZY">
+                                <p leos:origin="ec" xml:id="deletedXmovedXart3_6vgJyY">point b</p>
                             </content>
                         </point>
                     </list>

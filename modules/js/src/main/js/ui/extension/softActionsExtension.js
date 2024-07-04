@@ -32,7 +32,7 @@ define(function SoftActionsExtensionModule(require) {
     var SUBPARAGRAPH = "subparagraph";
     var AKNP = "aknp";
     var LIST = "list";
-    var SOFT_MOVE_PLACEHOLDER_ID_PREFIX = "moved_";
+    var SOFT_MOVE_PLACEHOLDER_ID_PREFIX = "movedX";
     var DOUBLE_COMPARE_PREFIX = "doubleCompare-";
     var SIMPLE_COMPARE_PREFIX = "marked-";
     var REVISION_CONTENT_PREFIX = "revision-";
@@ -184,10 +184,10 @@ define(function SoftActionsExtensionModule(require) {
         }
         var movedElement = document.getElementById(id);
         if (!movedElement) { // movedElement not found
-            id = id.replace('moved_transformed_','moved_');
+            id = id.replace('movedXtransformedX','movedX');
             movedElement = document.getElementById(id);
             if (!movedElement) { // movedElement not found
-                id = id.replace('moved_','');
+                id = id.replace('movedX','');
                 movedElement = document.getElementById(id);
             }
         }

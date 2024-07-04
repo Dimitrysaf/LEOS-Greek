@@ -283,7 +283,7 @@ define(function leosTrackChangesPluginModule(require) {
                 event.data.dataValue = event.data.dataValue.replace(/leos:title="([\s\S][^:]+?)"/g, "leos:title=\"$1 : " + core.getDateFormat() + "\"");
                 event.data.dataValue = event.data.dataValue.replace(/leos:title-number="([\s\S][^:]+?)"/g, "leos:title-number=\"$1 : " + core.getDateFormat() + "\"");
                 event.data.dataValue = event.data.dataValue.replace(/leos:title-enter="([\s\S][^:]+?)"/g, "leos:title-enter=\"$1 : " + core.getDateFormat() + "\"");
-                event.data.dataValue = event.data.dataValue.replace(/xml:id="_temp_tc_([\s\S][^:]+?)"/g, "");
+                event.data.dataValue = event.data.dataValue.replace(/xml:id="XtempXtcX([\s\S][^:]+?)"/g, "");
             }, null, null, 15);
 
             editor.on("toHtml", function() {

@@ -299,7 +299,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_cit_1");
+        mergeActionVO.setElementId("movedXcit_1");
         mergeActionVO.setElementTagName("citation");
         mergeActionVO.setWithTrackChanges(true);
         mergeActionVO.setContributionVO(this.contribution);
@@ -321,7 +321,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_cit_1");
+        mergeActionVO.setElementId("movedXcit_1");
         mergeActionVO.setElementTagName("citation");
         mergeActionVO.setWithTrackChanges(true);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithMovedCitationTest.xml");
@@ -385,7 +385,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_rec__Epl5Gg");
+        mergeActionVO.setElementId("movedXrec__Epl5Gg");
         mergeActionVO.setElementTagName("recital");
         mergeActionVO.setWithTrackChanges(true);
         mergeActionVO.setContributionVO(this.contribution);
@@ -407,7 +407,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_rec__Epl5Gg");
+        mergeActionVO.setElementId("movedXrec__Epl5Gg");
         mergeActionVO.setElementTagName("recital");
         mergeActionVO.setWithTrackChanges(true);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithMovedRecitalTest.xml");
@@ -471,7 +471,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_art_1");
+        mergeActionVO.setElementId("movedXart_1");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(true);
         mergeActionVO.setContributionVO(this.contribution);
@@ -493,7 +493,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_art_1");
+        mergeActionVO.setElementId("movedXart_1");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(true);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithMovedArticleTest.xml");
@@ -600,7 +600,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("deleted_akn_art_q7XGxr");
+        mergeActionVO.setElementId("deletedXakn_art_q7XGxr");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(true);
         mergeActionVO.setContributionVO(this.contribution);
@@ -622,7 +622,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("deleted_akn_art_q7XGxr");
+        mergeActionVO.setElementId("deletedXakn_art_q7XGxr");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(true);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithDeletedArticleTest.xml");
@@ -944,7 +944,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_cit_1");
+        mergeActionVO.setElementId("movedXcit_1");
         mergeActionVO.setElementTagName("citation");
         mergeActionVO.setWithTrackChanges(false);
         mergeActionVO.setContributionVO(this.contribution);
@@ -966,7 +966,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_cit_1");
+        mergeActionVO.setElementId("movedXcit_1");
         mergeActionVO.setElementTagName("citation");
         mergeActionVO.setWithTrackChanges(false);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithMovedCitationTest.xml");
@@ -1030,7 +1030,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_rec__Epl5Gg");
+        mergeActionVO.setElementId("movedXrec__Epl5Gg");
         mergeActionVO.setElementTagName("recital");
         mergeActionVO.setWithTrackChanges(false);
         mergeActionVO.setContributionVO(this.contribution);
@@ -1052,7 +1052,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_rec__Epl5Gg");
+        mergeActionVO.setElementId("movedXrec__Epl5Gg");
         mergeActionVO.setElementTagName("recital");
         mergeActionVO.setWithTrackChanges(false);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithMovedRecitalTest.xml");
@@ -1116,7 +1116,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_art_1");
+        mergeActionVO.setElementId("movedXart_1");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(false);
         mergeActionVO.setContributionVO(this.contribution);
@@ -1138,7 +1138,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("moved_art_1");
+        mergeActionVO.setElementId("movedXart_1");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(false);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithMovedArticleTest.xml");
@@ -1245,7 +1245,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("deleted_akn_art_q7XGxr");
+        mergeActionVO.setElementId("deletedXakn_art_q7XGxr");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(false);
         mergeActionVO.setContributionVO(this.contribution);
@@ -1267,7 +1267,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("deleted_akn_art_q7XGxr");
+        mergeActionVO.setElementId("deletedXakn_art_q7XGxr");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(false);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithDeletedArticleTest.xml");
@@ -1504,7 +1504,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("_imp_art_d1e29372_idXU3e");
+        mergeActionVO.setElementId("impXart_d1e29372_idXU3e");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(true);
         mergeActionVO.setContributionVO(this.contribution2);
@@ -1526,7 +1526,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("_imp_art_d1e29372_idXU3e");
+        mergeActionVO.setElementId("impXart_d1e29372_idXU3e");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(true);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithUpdatedArticleAndDeletedList.xml");
@@ -1548,7 +1548,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("_imp_art_d1e29372_idXU3e");
+        mergeActionVO.setElementId("impXart_d1e29372_idXU3e");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(false);
         mergeActionVO.setContributionVO(this.contribution2);
@@ -1570,7 +1570,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
-        mergeActionVO.setElementId("_imp_art_d1e29372_idXU3e");
+        mergeActionVO.setElementId("impXart_d1e29372_idXU3e");
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(false);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithUpdatedArticleAndDeletedList.xml");

@@ -15,7 +15,7 @@
                         <point leos:origin="ec" xml:id="_art_1_SHnaUi">
                             <num leos:origin="ec" xml:id="_art_1_AXTACj">(a)</num>
                             <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2023-02-08T08:43:19.168+01:00" leos:softuser="DOE Jane(DGT)" xml:id="_lis_mWPTrz">
-                                <subparagraph leos:editable="true" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2023-02-08T08:43:19.359+01:00" leos:softuser="DOE Jane(DGT)" refersTo="~_INP" xml:id="transformed__art_1_SHnaUi">
+                                <subparagraph leos:editable="true" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2023-02-08T08:43:19.359+01:00" leos:softuser="DOE Jane(DGT)" refersTo="~_INP" xml:id="transformedX_art_1_SHnaUi">
                                     <content leos:origin="ec" xml:id="_art_1_XN3rWq">
                                         <p leos:origin="ec" xml:id="_art_1_FPpGfE">First point</p>
                                     </content>

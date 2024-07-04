@@ -350,7 +350,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_merge_paragraph_ec_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, PARAGRAPH, "imp_art_d1e1276_XAPlpX_OzDWGj");
+        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, PARAGRAPH, "impXart_d1e1276_XAPlpX_OzDWGj");
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(new String(result, UTF_8)));
     }
@@ -362,7 +362,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_merge_back_splitted_paragraph_ec_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, SUBPARAGRAPH, "imp_art_d1e1276_XAPlpX_to5uqp");
+        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, SUBPARAGRAPH, "impXart_d1e1276_XAPlpX_to5uqp");
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(new String(result, UTF_8)));
     }
@@ -374,7 +374,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_merge_points_ec_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1221_qiqjdt_GEj1jJ");
+        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, POINT, "impXart_d1e1221_qiqjdt_GEj1jJ");
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(new String(result, UTF_8)));
     }
@@ -386,7 +386,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_merge_back_splitted_point_ec_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, SUBPARAGRAPH, "imp_art_d1e1221_qiqjdt_ajnCHE");
+        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, SUBPARAGRAPH, "impXart_d1e1221_qiqjdt_ajnCHE");
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(new String(result, UTF_8)));
     }
@@ -398,7 +398,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
 
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_merge_softmoved_point_into_ec_point_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_4K2GdA");
+        byte[] result = xercesXmlContentProcessor.mergeElement(xmlInput, elementToMerge, POINT, "impXart_d1e1276_XAPlpX_4K2GdA");
 
         assertEquals(squeezeXmlAndDummyDate(new String(xmlExpected)), squeezeXmlAndDummyDate(new String(result, UTF_8)));
     }
@@ -408,7 +408,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_first_point_of_ec_list.xml");
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_first_point_of_ec_list_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz", true);
+        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "impXart_d1e1276_XAPlpX_VKPtnz", true);
         assertNull(result);
     }
 
@@ -417,7 +417,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_point_of_ec_list.xml");
         byte[] elementToMergeByte = TestUtils.getFileContent(FILE_PREFIX + "/test_getMergeOnElement_point_of_ec_list_elementToMerge.xml");
         String elementToMerge = new String(elementToMergeByte);
-        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "imp_art_d1e1276_XAPlpX_VKPtnz", true);
+        Element result = xercesXmlContentProcessor.getMergeOnElement(xmlInput, elementToMerge, POINT, "impXart_d1e1276_XAPlpX_VKPtnz", true);
         assertNull(result);
     }
 
@@ -425,9 +425,9 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
     public void test_getSplittedElement() {
         byte[] xmlInput = TestUtils.getFileContent(FILE_PREFIX + "/test_merge_back_splitted_paragraph_ec_expected.xml");
         Node node = XercesUtils.createNodeFromXmlFragment(xmlInput);
-        Node splittedNode = XercesUtils.getElementById(node, "imp_art_d1e1276_XAPlpX_OzDWGj");
+        Node splittedNode = XercesUtils.getElementById(node, "impXart_d1e1276_XAPlpX_OzDWGj");
         String splittedElement = XercesUtils.nodeToString(splittedNode);
-        Pair<byte[], Element> result = xercesXmlContentProcessor.getSplittedElement(xmlInput, splittedElement, PARAGRAPH, "imp_art_d1e1276_XAPlpX_w7XSAU");
+        Pair<byte[], Element> result = xercesXmlContentProcessor.getSplittedElement(xmlInput, splittedElement, PARAGRAPH, "impXart_d1e1276_XAPlpX_w7XSAU");
         assertEquals(new String(xmlInput), new String(result.left()));
         assertEquals(trimAndRemoveNS(splittedElement), trimAndRemoveNS(new String(result.right().getElementFragment())));
     }
@@ -438,7 +438,7 @@ public class XmlContentProcessorMandateTest extends XmlContentProcessorTest {
         byte[] xmlExpected = TestUtils.getFileContent(FILE_PREFIX + "/test_getSplittedElement_point_expected.xml");
         Node expectedNode = XercesUtils.createNodeFromXmlFragment(xmlExpected);
         String expectedElement = XercesUtils.nodeToString(expectedNode);
-        Pair<byte[], Element> result = xercesXmlContentProcessor.getSplittedElement(xmlInput, expectedElement, SUBPARAGRAPH, "transformed_imp_art_d1e1221_qiqjdt_GEj1jJ");
+        Pair<byte[], Element> result = xercesXmlContentProcessor.getSplittedElement(xmlInput, expectedElement, SUBPARAGRAPH, "transformedXimpXart_d1e1221_qiqjdt_GEj1jJ");
         assertEquals(new String(xmlInput), new String(result.left()));
         assertEquals(trimAndRemoveNS(new String(xmlExpected)), trimAndRemoveNS(new String(result.right().getElementFragment())));
     }
