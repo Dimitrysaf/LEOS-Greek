@@ -1444,6 +1444,10 @@ define(function leosPluginUtilsModule(require) {
         return refConfig;
     }
 
+    function _isEmpty(element) {
+        return element && $(element).children() && $(element).children().length > 0 && $(element).children().get(0).nodeName.ignoreCase === BOGUS.ignoreCase;
+    }
+
     return {
         hasTextOrBogusAsNextSibling: _hasTextOrBogusAsNextSibling,
         getElementName: _getElementName,
@@ -1518,6 +1522,7 @@ define(function leosPluginUtilsModule(require) {
 		manageNestedSubparagraphs: _manageNestedSubparagraphs,
         selectCorrectPathForList: _selectCorrectPathForList,
         getRefConfig: _getRefConfig,
+        isEmpty: _isEmpty,
         MAX_LEVEL_DEPTH: MAX_LEVEL_DEPTH,
         MAX_LIST_LEVEL: MAX_LIST_LEVEL,
         MAX_LEVEL_LIST_DEPTH: MAX_LEVEL_LIST_DEPTH,
