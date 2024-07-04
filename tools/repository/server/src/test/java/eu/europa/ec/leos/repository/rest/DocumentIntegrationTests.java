@@ -316,13 +316,13 @@ public class DocumentIntegrationTests {
     public void test_deleteDocumentById() throws Exception {
         mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()))
                 .andExpect(status().isOk()).andDo(print());
-        verify(documentService).deleteDocumentById(ArgumentMatchers.eq(xmlDoc.getVersionId()));
+        verify(documentService).deleteDocumentByVersionId(ArgumentMatchers.eq(xmlDoc.getVersionId()));
     }
 
     @Test
     public void test_deleteDocumentByIdWithError() throws Exception {
         Mockito.doThrow(new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND,
-                "Document Not Found")).when(documentService).deleteDocumentById(ArgumentMatchers.eq(xmlDoc.getVersionId()));
+                "Document Not Found")).when(documentService).deleteDocumentByVersionId(ArgumentMatchers.eq(xmlDoc.getVersionId()));
 
         mockMvc.perform(delete("/document/delete-by-id/{id}", xmlDoc.getVersionId()).accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError()).andDo(print());

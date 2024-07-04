@@ -345,7 +345,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
         if(clonedProposalsPresent) {
             byte[] updatedProposalContent;
             String legFileName = cloneProposalMetadataVO.getLegFileName();
-            String countClonedProposalXpath = xPathCatalog.getXPathCPMilestoneRefClonedProposalRef(legFileName);
+            String countClonedProposalXpath = xPathCatalog.getXPathCPMilestoneRefClonedProposalRefByRefAttr(legFileName, clonedProposalId) + "/../akn:clonedProposalRef";
             int clonedProposalsCount = xmlContentProcessor.getElementCountByXpath(xmlContent, countClonedProposalXpath, true);
             if(clonedProposalsCount == 1) {
                 String countMilestonesXpath = xPathCatalog.getXPathCPMilestoneRef();
@@ -353,7 +353,7 @@ public abstract class ProposalServiceImpl implements ProposalService {
                 if(milestoneCount == 1) {
                     updatedProposalContent = xmlContentProcessor.removeElement(xmlContent, clonedProposalsXPath, true);
                 } else {
-                    updatedProposalContent = xmlContentProcessor.removeElement(xmlContent, xPathCatalog.getXPathCPMilestoneRefByNameAttr(legFileName), true);
+                    updatedProposalContent = xmlContentProcessor.removeElement(xmlContent, xPathCatalog.getXPathCPMilestoneRefClonedProposalRefByRefAttr(legFileName, clonedProposalId) + "/..", true);
                 }
             } else {
                 updatedProposalContent = xmlContentProcessor.removeElement(xmlContent, xPathCatalog.getXPathCPMilestoneRefClonedProposalRefByRefAttr(legFileName, clonedProposalId), true);
@@ -363,12 +363,12 @@ public abstract class ProposalServiceImpl implements ProposalService {
     }
 
     @Override
-    public List<CloneProposalMetadataVO> getClonedProposalMetadataVOs(String proposalId, String legDocumentName) {
+    public List<CloneProposalMetadataVO> getClonedProposalMetadataVOs(String proposalId, String legDocumentName, String docVersion) {
         Proposal proposal = findProposal(proposalId);
         List<CloneProposalMetadataVO> clonedProposalMetadataVOs = new ArrayList<>();
         byte[] xmlContent = proposal.getContent().get().getSource().getBytes();
 
-        String xPath = xPathCatalog.getXPathCPMilestoneRefByNameAttr(legDocumentName);
+        String xPath = xPathCatalog.getXPathCPMilestoneRefByNameAndVersionAttr(legDocumentName, docVersion);
         Document document = createXercesDocument(xmlContent);
         Node node = XercesUtils.getFirstElementByXPath(document, xPath);
 

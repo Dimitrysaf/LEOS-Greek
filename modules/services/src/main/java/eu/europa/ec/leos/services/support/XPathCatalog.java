@@ -103,12 +103,12 @@ public class XPathCatalog {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:clonedProposals/leos:milestoneRef";
     }
 
-    public String getXPathCPMilestoneRefByNameAttr(String legFileName) {
-        return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:clonedProposals/leos:milestoneRef[@name=\"" + legFileName + "\"]";
+    public String getXPathCPMilestoneRefByNameAndVersionAttr(String legFileName, String docVersion) {
+        return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:clonedProposals/leos:milestoneRef[@docVersion=\"" + docVersion + "\" and @name=\"" + legFileName + "\"]";
     }
 
-    public String getXPathCPMilestoneRefClonedProposalRef(String legFileName) {
-        return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:clonedProposals/leos:milestoneRef[@name=\"" + legFileName + "\"]/akn:clonedProposalRef";
+    public String getXPathCPMilestoneRefClonedProposalRefByNameAndVersionAttr(String legFileName, String docVersion) {
+        return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:clonedProposals/leos:milestoneRef[@docVersion=\"" + docVersion + "\" and @name=\"" + legFileName + "\"]/akn:clonedProposalRef";
     }
 
     public String getXPathCPMilestoneRefClonedProposalRefByRefAttr(String legFileName, String clonedProposalId) {

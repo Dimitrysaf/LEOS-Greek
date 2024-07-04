@@ -206,12 +206,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public CreateCollectionResult createCloneProposal(String proposalRef, String userLogin, String legDocumentName) {
+    public CreateCollectionResult createCloneProposal(String userLogin, String legDocumentName, String legFileId) {
         Stopwatch stopwatch = Stopwatch.createStarted();
         User user = userService.getUser(userLogin);
-        Proposal proposal = proposalService.getProposalByRef(proposalRef);
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
-        LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legDocumentName, LegDocument.class);
+        LegDocument legDocument = legService.findLegDocumentById(legFileId);
         String loggedInUser = securityContext.getUser().getLogin();
         CreateCollectionResult createCollectionResult = null;
         Collection<? extends GrantedAuthority> loggedInUserAuthorities = SecurityContextHolder.getContext().getAuthentication().getAuthorities();
@@ -229,7 +227,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             if (createCollectionResult != null && createCollectionResult.getError() != null) {
                 LOG.error("Error Occurred while cloning proposal from the Leg file: " + createCollectionResult.getError().getMessage());
             }
-            LOG.info("Proposal id '{}' name '{}' sent for revision to user '{}' in {} milliseconds ({} sec)", proposal.getId(), leosPackage.getName(), user.getLogin(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
+            LOG.info("Proposal legFileId '{}' sent for revision to user '{}' in {} milliseconds ({} sec)", legDocument.getId(), user.getLogin(), stopwatch.elapsed(TimeUnit.MILLISECONDS), stopwatch.elapsed(TimeUnit.SECONDS));
         } catch (Exception ex) {
             LOG.error("Error Occurred while cloning proposal from the Leg file: " + ex.getMessage(), ex);
         } finally {

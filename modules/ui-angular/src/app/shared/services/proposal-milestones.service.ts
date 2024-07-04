@@ -107,13 +107,13 @@ export class ProposalMilestonesService {
     this.receiveStoredDocumentAnnotations.next(null);
   }
 
-  exportMilestonePdf(documentRef: string, legFileName: string) {
+  exportMilestonePdf(documentRef: string, legFileName: string, legFileId: string) {
     this.loadingService.setLoading(true);
     return this.http
       .get(
         `${apiBaseUrl}/secured/list-milestones-view/pdf-export/${documentRef}`,
         {
-          params: { legFileName },
+          params: { legFileName, legFileId },
           observe: 'response',
           responseType: 'blob',
         },

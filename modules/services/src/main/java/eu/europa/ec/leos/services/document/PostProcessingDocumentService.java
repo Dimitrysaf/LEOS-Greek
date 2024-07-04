@@ -7,6 +7,7 @@ import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,14 +65,14 @@ public abstract class PostProcessingDocumentService {
     }
 
     public byte[] preserveClonedDocumentProperties(byte[] xmlContent, String clonedDocumentId,
-                                                   CloneProposalMetadataVO cloneProposalMetadataVO) {
+                                                   CloneProposalMetadataVO cloneProposalMetadataVO, String docVersion) {
         boolean clonedProposalsPresent = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathClonedProposals(), true);
         String legFileName = cloneProposalMetadataVO.getLegFileName();
-        String newClonedRef = getNewClonedRef(clonedDocumentId, cloneProposalMetadataVO, legFileName);
+        String newClonedRef = getNewClonedRef(clonedDocumentId, cloneProposalMetadataVO, legFileName, docVersion);
         if (clonedProposalsPresent) {
-            boolean milestoneRefPresent = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathCPMilestoneRefByNameAttr(legFileName), true);
+            boolean milestoneRefPresent = xmlContentProcessor.evalXPath(xmlContent, xPathCatalog.getXPathCPMilestoneRefByNameAndVersionAttr(legFileName, docVersion), true);
             if (milestoneRefPresent) {
-                return xmlContentProcessor.insertElement(xmlContent, xPathCatalog.getXPathCPMilestoneRefClonedProposalRef(legFileName), true,
+                return xmlContentProcessor.insertElement(xmlContent, xPathCatalog.getXPathCPMilestoneRefClonedProposalRefByNameAndVersionAttr(legFileName, docVersion), true,
                         addClonedProposalRef(clonedDocumentId, cloneProposalMetadataVO));
             } else {
                 return xmlContentProcessor.insertElement(xmlContent, xPathCatalog.getXPathCPMilestoneRef(), true, newClonedRef);
@@ -82,11 +83,22 @@ public abstract class PostProcessingDocumentService {
         }
     }
 
-    private String getNewClonedRef(String clonedDocumentId, CloneProposalMetadataVO cloneProposalMetadataVO, String legFileName) {
+    public byte[] preserveClonedDocumentProperties(byte[] xmlContent, String clonedDocumentId,
+            CloneProposalMetadataVO cloneProposalMetadataVO) {
+        return this.preserveClonedDocumentProperties(xmlContent, clonedDocumentId, cloneProposalMetadataVO, "");
+    }
+
+    private String getNewClonedRef(String clonedDocumentId, CloneProposalMetadataVO cloneProposalMetadataVO, String legFileName, String docVersion) {
         StringBuilder newClonedRefBuilder = new StringBuilder();
-        return newClonedRefBuilder.append("<leos:milestoneRef name=\"").append(legFileName).append("\">")
-        .append(addClonedProposalRef(clonedDocumentId, cloneProposalMetadataVO))
-        .append("</leos:milestoneRef>").toString();
+        if (StringUtils.isEmpty(docVersion)) {
+            return newClonedRefBuilder.append("<leos:milestoneRef name=\"").append(legFileName).append("\">")
+                    .append(addClonedProposalRef(clonedDocumentId, cloneProposalMetadataVO))
+                    .append("</leos:milestoneRef>").toString();
+        } else {
+            return newClonedRefBuilder.append("<leos:milestoneRef docVersion=\"").append(docVersion).append("\" ").append("name=\"").append(legFileName).append("\">")
+                    .append(addClonedProposalRef(clonedDocumentId, cloneProposalMetadataVO))
+                    .append("</leos:milestoneRef>").toString();
+        }
     }
 
     private String addClonedProposalRef(String clonedDocumentId, CloneProposalMetadataVO cloneProposalMetadataVO) {

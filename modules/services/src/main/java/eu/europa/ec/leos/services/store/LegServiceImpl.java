@@ -294,7 +294,7 @@ public class LegServiceImpl implements LegService {
         byte[] xmlContent = content.getSource().getBytes();
         String language = proposal.getMetadata().get().getLanguage().toLowerCase();
         String docCollectionName = xmlContentProcessor.getElementValue(xmlContent, docCollectionXPath, true);
-        return docCollectionName.concat("-").concat(Cuid.createCuid()).concat("-").concat(language).concat(LEG_FILE_EXTENSION);
+        return docCollectionName.concat("-").concat(proposal.getName().substring(proposal.getName().indexOf("-") + 1, proposal.getName().lastIndexOf("."))).concat(LEG_FILE_EXTENSION);
     }
     
     private byte[] addMetadataToProposal(Proposal proposal, byte[] xmlContent) {

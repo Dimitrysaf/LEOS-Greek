@@ -94,7 +94,7 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Document deleted", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity deleteDocumentById(@PathVariable("versionId") BigDecimal versionId) throws RepositoryException {
-        documentService.deleteDocumentById(versionId);
+        documentService.deleteDocumentByVersionId(versionId);
         return ResponseEntity.ok().build();
     }
 

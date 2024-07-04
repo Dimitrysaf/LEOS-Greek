@@ -688,7 +688,7 @@ public class DocumentServiceTests {
         assertNotNull(doc);
         List<DocumentV> docVersionsBeforeDelete =
                 documentVRepository.findAllVersionsByRef(doc.getRef());
-        documentService.deleteDocumentById(doc.getVersionId());
+        documentService.deleteDocumentByVersionId(doc.getVersionId());
 
         List<DocumentV> docV = documentVRepository.findAllVersionsByRef(doc.getRef());
         assertEquals(0, docV.size());

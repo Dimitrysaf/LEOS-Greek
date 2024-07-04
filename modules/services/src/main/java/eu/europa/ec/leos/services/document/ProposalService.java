@@ -72,7 +72,7 @@ public interface ProposalService {
 
     void removeClonedProposalMetadata(String proposalId, String clonedProposalId, CloneProposalMetadataVO cloneProposalMetadataVO);
 
-    List<CloneProposalMetadataVO> getClonedProposalMetadataVOs(String proposalId, String legDocumentName);
+    List<CloneProposalMetadataVO> getClonedProposalMetadataVOs(String proposalId, String legDocumentName, String docVersion);
 
     String generateProposalName(String ref, String language);
 

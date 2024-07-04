@@ -148,6 +148,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       this.milestonesService.exportMilestonePdf(
         this.milestone.proposalRef,
         this.milestone.legDocumentName,
+        this.milestone.legFileId
       );
     } else {
       this.milestonesService.exportMilestonePdfFromVersion(

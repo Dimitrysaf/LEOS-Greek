@@ -501,7 +501,8 @@ class CollectionPresenter extends AbstractLeosPresenter {
     }
 
     private MilestonesVO getMilestonesVO(LegDocument legDocument) {
-        List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName());
+        String docVersion = userHelper.getPropVersion(legDocument);
+        List<CloneProposalMetadataVO> cloneProposalMetadataVOs = proposalService.getClonedProposalMetadataVOs(proposalId, legDocument.getName(), docVersion);
         MilestonesVO milestonesVO = new MilestonesVO(legDocument.getMilestoneComments(),
                 Date.from(legDocument.getCreationInstant()),
                 Date.from(legDocument.getLastModificationInstant()),

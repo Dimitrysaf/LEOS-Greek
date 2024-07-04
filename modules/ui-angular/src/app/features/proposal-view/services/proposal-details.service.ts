@@ -389,7 +389,7 @@ export class ProposalDetailsService implements OnDestroy {
     };
     return this.http
       .post(
-        `${apiBaseUrl}/secured/contribution/create-clone-proposal/${this.proposalRef}`,
+        `${apiBaseUrl}/secured/contribution/create-clone-proposal/${milestone.legFileId}`,
         body,
       )
       .subscribe({

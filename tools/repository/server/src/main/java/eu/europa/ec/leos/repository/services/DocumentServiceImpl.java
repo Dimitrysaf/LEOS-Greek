@@ -299,7 +299,7 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void deleteDocumentById(BigDecimal id) throws RepositoryException {
+    public void deleteDocumentByVersionId(BigDecimal id) throws RepositoryException {
         DocumentV docView = documentVRepository.findVersionByVersionId(id)
                 .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, DocumentV.class.getName()));
         Optional<Document> doc = documentRepository.findById(docView.getDocumentId());
@@ -310,6 +310,26 @@ public class DocumentServiceImpl implements DocumentService {
             content.ifPresent(documentContentRepository::delete);
         }
         List<DocumentPropertyValues> propValues = documentPropertyValuesRepository.findDocumentPropertiesByDocumentId(docView.getDocumentId());
+        documentPropertyValuesRepository.deleteAll(propValues);
+        documentVersionRepository.deleteAll(versions);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteDocumentById(BigDecimal id) throws RepositoryException {
+        Document doc = documentRepository.findDocumentById(id)
+                .orElseThrow(() -> new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, Document.class.getName()));
+        List<DocumentVersion> versions = documentVersionRepository.findAllVersionsByDocumentId(doc.getId());
+        if (versions.isEmpty()) {
+            milestoneDocumentService.deleteMilestoneByRef(doc);
+            documentRepository.delete(doc);
+            return;
+        }
+        documentRepository.delete(doc);
+        for (DocumentVersion v : versions) {
+            Optional<DocumentContent> content = documentContentRepository.findDocumentContentByVersion(v);
+            content.ifPresent(documentContentRepository::delete);
+        }
+        List<DocumentPropertyValues> propValues = documentPropertyValuesRepository.findDocumentPropertiesByDocumentId(doc.getId());
         documentPropertyValuesRepository.deleteAll(propValues);
         documentVersionRepository.deleteAll(versions);
     }
