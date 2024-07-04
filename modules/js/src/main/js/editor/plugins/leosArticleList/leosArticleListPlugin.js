@@ -34,6 +34,7 @@ define(function leosArticleListPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var numberModule = require("plugins/leosNumber/listItemNumberModule");
+    var aknParagraphNumber = require("plugins/aknNumberedParagraph/aknNumberedParagraphPlugin");
     var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
 
     var pluginName = "leosArticleList";
@@ -41,7 +42,14 @@ define(function leosArticleListPluginModule(require) {
     var listNodeNames = { ol: 1, ul: 1 };
     var ORDERED_LIST_SELECTOR = "ol[data-akn-name='aknOrderedList']";
     var DATA_AKN_ELEMENT = "data-akn-element";
+    var DATA_AKN_NAME = "data-akn-name";
+    var DATA_AKN_NUM = "data-akn-num";
+    var DATA_AKN_NUM_ID = "data-akn-num-id";
+    var REFERS_TO = "refersto";
+    var INP = "~_INP";
     var POINT = "point";
+    var SUBPARAGRAPH = "subparagraph";
+    var PARAGRAPH = "paragraph";
 
     var whitespaces = CKEDITOR.dom.walker.whitespaces(),
         bookmarks = CKEDITOR.dom.walker.bookmark(),
@@ -775,7 +783,7 @@ define(function leosArticleListPluginModule(require) {
 
         // Merge with previous block's content.
         nextCursor.enlarge( CKEDITOR.ENLARGE_LIST_ITEM_CONTENTS );
-        var isINP = nextCursor.startContainer.getAttribute("refersto") && nextCursor.startContainer.getAttribute("refersto") === "~_INP";
+        var isINP = nextCursor.startContainer.getAttribute(REFERS_TO) && nextCursor.startContainer.getAttribute(REFERS_TO) === INP;
         var frag = nextCursor.extractContents();
 
         cursor.trim( false, true );
@@ -1060,8 +1068,8 @@ define(function leosArticleListPluginModule(require) {
                                 }
                             }
                             joinNextLineToCursor( editor, cursor, range );
-                            var parentOfPreviousIsParagraph = previous.getParent() && previous.getParent().getAttribute("data-akn-element") === leosPluginUtils.PARAGRAPH;
-                            var parentOfPreviousIsNumbered = previous.getParent() && previous.getParent().getAttribute("data-akn-num");
+                            var parentOfPreviousIsParagraph = previous.getParent() && previous.getParent().getAttribute(DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH;
+                            var parentOfPreviousIsNumbered = previous.getParent() && previous.getParent().getAttribute(DATA_AKN_NUM);
                             /*
                              * This if was created, because the first level of Point (a)
                              * cannot become a paragraph in case of unnumbered paragraphs.
@@ -1133,7 +1141,11 @@ define(function leosArticleListPluginModule(require) {
                                 isAtEnd = 2;
                             }
 
-                            if ( isAtEnd && next ) {
+                            var pathElement = path.lastElement;
+                            if (pathElement.getName() === 'p' && (pathElement.getChildCount() == 0 || (pathElement.getChildCount() == 1 && pathElement.getBogus()))) {
+                                pathElement.remove();
+                                evt.cancel();
+                            } else if ( isAtEnd && next ) {
                                 // Put cursor range there.
                                 nextLine = range.clone();
                                 nextLine.moveToElementEditStart( next );
@@ -1149,7 +1161,7 @@ define(function leosArticleListPluginModule(require) {
                                 //         </ul>
                                 //     </li>
                                 // </ul>
-                                if ( isAtEnd == 1 ) {
+                                if (isAtEnd == 1) {
                                     // Move the cursor to <em> if attached to "x" text node.
                                     cursor.optimize();
 
@@ -1163,12 +1175,12 @@ define(function leosArticleListPluginModule(require) {
                                     //         </ul>
                                     //     </li>
                                     // </ul>
-                                    if ( !cursor.startContainer.equals( li ) ) {
+                                    if (!cursor.startContainer.equals(li)) {
                                         var node = cursor.startContainer,
                                             farthestInlineAscendant;
 
                                         // Find <a>, which is farthest from <em> but still inline element.
-                                        while ( node.is( CKEDITOR.dtd.$inline ) ) {
+                                        while (node.is(CKEDITOR.dtd.$inline)) {
                                             farthestInlineAscendant = node;
                                             node = node.getParent();
                                         }
@@ -1200,19 +1212,19 @@ define(function leosArticleListPluginModule(require) {
                                         //         <p><a href="#one"><em>x</em></a>^<span>y</span></p>
                                         //     </li>
                                         // </ul>
-                                        if ( farthestInlineAscendant ) {
-                                            cursor.moveToPosition( farthestInlineAscendant, CKEDITOR.POSITION_AFTER_END );
+                                        if (farthestInlineAscendant) {
+                                            cursor.moveToPosition(farthestInlineAscendant, CKEDITOR.POSITION_AFTER_END);
                                         }
                                     }
                                 }
 
-								// Moving `cursor` and `next line` only when at the end literally (http://dev.ckeditor.com/ticket/12729).
-                                if ( isAtEnd == 2 ) {
-                                    cursor.moveToPosition( cursor.endPath().block, CKEDITOR.POSITION_BEFORE_END );
+                                // Moving `cursor` and `next line` only when at the end literally (http://dev.ckeditor.com/ticket/12729).
+                                if (isAtEnd == 2) {
+                                    cursor.moveToPosition(cursor.endPath().block, CKEDITOR.POSITION_BEFORE_END);
 
                                     // Next line might be text node not wrapped in block element.
-                                    if ( nextLine.endPath().block ) {
-                                        nextLine.moveToPosition( nextLine.endPath().block, CKEDITOR.POSITION_AFTER_START );
+                                    if (nextLine.endPath().block) {
+                                        nextLine.moveToPosition(nextLine.endPath().block, CKEDITOR.POSITION_AFTER_START);
                                     }
                                 }
 
@@ -1225,7 +1237,76 @@ define(function leosArticleListPluginModule(require) {
                                         return;
                                     }
                                 }
-                                joinNextLineToCursor( editor, cursor, nextLine );
+                                if (li.getChildCount() == 0 || (li.getChildCount() == 1 && li.getBogus())) {
+                                    if (li.getAttribute(DATA_AKN_ELEMENT) === PARAGRAPH) {
+                                        li.remove(false);
+                                        aknParagraphNumber.resetNumbering(evt);
+                                    } else if (li.getAttribute(DATA_AKN_ELEMENT) === POINT) {
+                                        li.remove(false);
+                                        resetNumbering(evt);
+                                    } else if (li.getAttribute(DATA_AKN_ELEMENT) === SUBPARAGRAPH
+                                        && (li.getAttribute(REFERS_TO) && li.getAttribute(REFERS_TO) === INP)
+                                        && $(li.$).siblings().length) {
+                                        var refElement = $(li.$).siblings()[0];
+                                        if ($(li.$).siblings()[0].childElementCount > 0) {
+                                            var parentofOrderedList = refElement.parentElement.parentElement;
+                                            refElement.setAttribute(DATA_AKN_ELEMENT, parentofOrderedList.getAttribute(DATA_AKN_ELEMENT));
+                                            refElement.setAttribute(DATA_AKN_NAME, parentofOrderedList.getAttribute(DATA_AKN_NAME));
+                                            refElement.setAttribute(DATA_AKN_NUM, parentofOrderedList.getAttribute(DATA_AKN_NUM));
+                                            $(refElement).insertAfter($(parentofOrderedList));
+                                            var childOrderedList = $(refElement).children('ol');
+                                            var remainingElements = childOrderedList.children();
+                                            if ($(li.$).siblings().length > 0) {
+                                                $(li.$).siblings().insertAfter($(remainingElements[remainingElements.length - 1]));
+                                            }
+                                            parentofOrderedList.remove();
+                                        } else {
+                                            refElement.removeAttribute(DATA_AKN_NUM);
+                                            refElement.removeAttribute(DATA_AKN_NUM_ID);
+                                            refElement.setAttribute(DATA_AKN_ELEMENT, li.getAttribute(DATA_AKN_ELEMENT));
+                                            refElement.setAttribute(DATA_AKN_NAME, li.getAttribute(DATA_AKN_NAME));
+                                            refElement.setAttribute(REFERS_TO, INP);
+                                            li.remove(false);
+                                        }
+                                        resetNumbering(evt);
+                                    }
+                                } else if (leosPluginUtils.isEmpty(li.$)) {
+                                    var childAknOrderedList = $(li.$).children('ol');
+                                    var childListElement = childAknOrderedList && $($(childAknOrderedList).get(0)).children();
+                                    var listChildElementCount = childListElement && childListElement.length;
+                                    var refElement = childListElement[0];
+                                    if (listChildElementCount > 0) {
+                                        if (refElement.childElementCount === 0) {
+                                            var orderedList = refElement.parentElement;
+                                            var parentOrderedList = orderedList && orderedList.parentElement;
+                                            refElement.setAttribute(DATA_AKN_ELEMENT, parentOrderedList.getAttribute(DATA_AKN_ELEMENT));
+                                            refElement.setAttribute(DATA_AKN_NAME, parentOrderedList.getAttribute(DATA_AKN_NAME));
+                                            refElement.setAttribute(DATA_AKN_NUM, parentOrderedList.getAttribute(DATA_AKN_NUM));
+                                            refElement.setAttribute(REFERS_TO, INP);
+                                            $(refElement).insertAfter($(parentOrderedList));
+                                            if (orderedList.childNodes.length > 0) {
+                                                $(refElement).append(orderedList);
+                                            }
+                                            parentOrderedList.remove(false);
+                                        } else {
+                                            refElement.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
+                                            refElement.setAttribute(DATA_AKN_NAME, SUBPARAGRAPH);
+                                            refElement.setAttribute(REFERS_TO, INP);
+                                            refElement.removeAttribute(DATA_AKN_NUM);
+                                            var childOrderedList = $(refElement).children('ol');
+                                            var listItemOfChildOrderedList = childOrderedList && childOrderedList.children();
+                                            if (listItemOfChildOrderedList) {
+                                                $(listItemOfChildOrderedList).insertAfter($(refElement));
+                                            }
+                                            childOrderedList.remove();
+                                        }
+                                        resetNumbering(evt);
+                                        //this is bogus element
+                                        $(li.$).children().get(0).remove();
+                                    }
+                                } else {
+                                    joinNextLineToCursor(editor, cursor, nextLine);
+                                }
                                 evt.cancel();
                             }
                         } else {

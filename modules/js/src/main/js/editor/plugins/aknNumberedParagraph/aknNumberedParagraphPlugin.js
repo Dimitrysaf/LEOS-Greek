@@ -264,7 +264,7 @@ define(function aknNumberedParagraphPluginModule(require) {
     /*
      * Resets the numbering of the points depending on nesting level
      */
-    function resetNumbering(event) {
+    var resetNumbering = function resetNumbering(event) {
         var ckEditor = event.editor;
         ckEditor.fire('lockSnapshot');
         var jqEditor = $(ckEditor.editable().$);
@@ -609,6 +609,7 @@ define(function aknNumberedParagraphPluginModule(require) {
     var pluginModule = {
         name : pluginName,
         transformSubparagraphs: transformSubparagraphs,
+        resetNumbering: resetNumbering,
         transformationConfig : transformationConfig
     };
 

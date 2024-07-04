@@ -22,10 +22,19 @@ define(function leosAnnexListPluginModule(require) {
     var pluginTools = require("plugins/pluginTools");
     var leosPluginUtils = require("plugins/leosPluginUtils");
     var leosTrackChanges = require("plugins/leosTrackChanges/leosTrackChanges");
+    var leosAnnexOrderedList = require("plugins/leosAnnexOrderedList/leosAnnexOrderedListPlugin");
 
     var pluginName = "leosAnnexList";
 
     var listNodeNames = { ol: 1, ul: 1 };
+    var DATA_AKN_ELEMENT = "data-akn-element";
+    var DATA_AKN_NAME = "data-akn-name";
+    var DATA_AKN_NUM = "data-akn-num";
+    var DATA_AKN_NUM_ID = "data-akn-num-id";
+    var REFERS_TO = "refersto";
+    var INP = "~_INP";
+    var POINT = "point";
+    var SUBPARAGRAPH = "subparagraph";
 
     var whitespaces = CKEDITOR.dom.walker.whitespaces(),
         bookmarks = CKEDITOR.dom.walker.bookmark(),
@@ -1050,7 +1059,11 @@ define(function leosAnnexListPluginModule(require) {
                                 isAtEnd = 2;
                             }
 
-                            if ( isAtEnd && next ) {
+                            var pathElement = path.lastElement;
+                            if (pathElement.getName() === 'p' && (pathElement.getChildCount() == 0 || (pathElement.getChildCount() == 1 && pathElement.getBogus()))) {
+                                pathElement.remove();
+                                evt.cancel();
+                            } else if ( isAtEnd && next ) {
                                 // Put cursor range there.
                                 nextLine = range.clone();
                                 nextLine.moveToElementEditStart( next );
@@ -1141,7 +1154,73 @@ define(function leosAnnexListPluginModule(require) {
                                     evt.cancel();
                                     return;
                                 }
-                                joinNextLineToCursor( editor, cursor, nextLine );
+                                if (li.getChildCount() == 0 || (li.getChildCount() == 1 && li.getBogus())) {
+                                    if (li.getAttribute(DATA_AKN_ELEMENT) === POINT) {
+                                        li.remove(false);
+                                        leosAnnexOrderedList.resetNumbering(evt);
+                                    } else if (li.getAttribute(DATA_AKN_ELEMENT) === SUBPARAGRAPH
+                                        && (li.getAttribute(REFERS_TO) && li.getAttribute(REFERS_TO) === INP)
+                                        && $(li.$).siblings().length) {
+                                        var refElement = $(li.$).siblings()[0];
+                                        if ($(li.$).siblings()[0].childElementCount > 0) {
+                                            var parentofOrderedList = refElement.parentElement.parentElement;
+                                            refElement.setAttribute(DATA_AKN_ELEMENT, parentofOrderedList.getAttribute(DATA_AKN_ELEMENT));
+                                            refElement.setAttribute(DATA_AKN_NAME, parentofOrderedList.getAttribute(DATA_AKN_NAME));
+                                            refElement.setAttribute(DATA_AKN_NUM, parentofOrderedList.getAttribute(DATA_AKN_NUM));
+                                            $(refElement).insertAfter($(parentofOrderedList));
+                                            var childOrderedList = $(refElement).children('ol');
+                                            var remainingElements = childOrderedList.children();
+                                            if ($(li.$).siblings().length > 0) {
+                                                $(li.$).siblings().insertAfter($(remainingElements[remainingElements.length - 1]));
+                                            }
+                                            parentofOrderedList.remove();
+                                        } else {
+                                            refElement.removeAttribute(DATA_AKN_NUM);
+                                            refElement.removeAttribute(DATA_AKN_NUM_ID);
+                                            refElement.setAttribute(DATA_AKN_ELEMENT, li.getAttribute(DATA_AKN_ELEMENT));
+                                            refElement.setAttribute(DATA_AKN_NAME, li.getAttribute(DATA_AKN_NAME));
+                                            refElement.setAttribute(REFERS_TO, INP);
+                                            li.remove(false);
+                                        }
+                                        leosAnnexOrderedList.resetNumbering(evt);
+                                    }
+                                }  else if (leosPluginUtils.isEmpty(li.$)) {
+                                    var childAknOrderedList = $(li.$).children('ol');
+                                    var childListElement = childAknOrderedList && $($(childAknOrderedList).get(0)).children();
+                                    var listChildElementCount = childListElement && childListElement.length;
+                                    var refElement = childListElement[0];
+                                    if (listChildElementCount > 0) {
+                                        if (refElement.childElementCount === 0) {
+                                            var orderedList = refElement.parentElement;
+                                            var parentOrderedList = orderedList && orderedList.parentElement;
+                                            refElement.setAttribute(DATA_AKN_ELEMENT, parentOrderedList.getAttribute(DATA_AKN_ELEMENT));
+                                            refElement.setAttribute(DATA_AKN_NAME, parentOrderedList.getAttribute(DATA_AKN_NAME));
+                                            refElement.setAttribute(DATA_AKN_NUM, parentOrderedList.getAttribute(DATA_AKN_NUM));
+                                            refElement.setAttribute(REFERS_TO, INP);
+                                            $(refElement).insertAfter($(parentOrderedList));
+                                            if (orderedList.childNodes.length > 0) {
+                                                $(refElement).append(orderedList);
+                                            }
+                                            parentOrderedList.remove(false);
+                                        } else {
+                                            refElement.setAttribute(DATA_AKN_ELEMENT, SUBPARAGRAPH);
+                                            refElement.setAttribute(DATA_AKN_NAME, SUBPARAGRAPH);
+                                            refElement.setAttribute(REFERS_TO, INP);
+                                            refElement.removeAttribute(DATA_AKN_NUM);
+                                            var childOrderedList = $(refElement).children('ol');
+                                            var listItemOfChildOrderedList = childOrderedList && childOrderedList.children();
+                                            if (listItemOfChildOrderedList) {
+                                                $(listItemOfChildOrderedList).insertAfter($(refElement));
+                                            }
+                                            childOrderedList.remove();
+                                        }
+                                        leosAnnexOrderedList.resetNumbering(evt);
+                                        //this is bogus element
+                                        $(li.$).children().get(0).remove();
+                                    }
+                                }  else {
+                                    joinNextLineToCursor(editor, cursor, nextLine);
+                                }
                                 evt.cancel();
                             }
                         } else {

@@ -515,6 +515,7 @@ define(function leosAnnexOrderedListPluginModule(require) {
     // return plugin module
     var pluginModule = {
         name : pluginName,
+        resetNumbering : resetNumbering,
         transformationConfig: transformationConfig
     };
 
