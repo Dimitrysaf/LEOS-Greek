@@ -157,7 +157,7 @@ public class LeosLightApiController {
     @RequestMapping(value = "/leos-light/context-token", method = RequestMethod.GET)
     public String getContextToken(@RequestParam String clientId, @RequestParam String user, @RequestParam String role, @RequestParam String systemName) {
         AuthClient authClient = tokenService.getAuthClient(clientId);
-        if(authClient == null && !authClient.isVerified()) {
+        if(authClient == null || !authClient.isVerified()) {
             throw new NotFoundException(messageHelper.getMessage("leoslight.auth.client.not.found"));
         }
         return tokenService.getClientContextToken(clientId, user, role, systemName);

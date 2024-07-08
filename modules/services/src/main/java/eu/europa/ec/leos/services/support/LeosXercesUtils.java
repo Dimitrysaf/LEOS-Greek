@@ -6,7 +6,10 @@ import static eu.europa.ec.leos.services.numbering.depthBased.ClassToDepthType.T
 import static eu.europa.ec.leos.services.support.XercesUtils.*;
 import static eu.europa.ec.leos.services.support.XmlHelper.*;
 
+import eu.europa.ec.leos.domain.repository.Content;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.security.SecurityContext;
+import io.atlassian.fugue.Maybe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -20,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 public class LeosXercesUtils {
 
@@ -240,5 +244,23 @@ public class LeosXercesUtils {
             XercesUtils.replaceNodeWithSelfContent(highlightNodes.item(i));
         }
         return XercesUtils.nodeToByteArray(document);
+    }
+
+    public static byte[] getDocumentContent(XmlDocument document) throws RuntimeException {
+        return Optional.ofNullable(document.getContent())
+                .map(Maybe::get)
+                .map(Content::getSource)
+                .map(Content.Source::getBytes)
+                .orElseThrow(
+                        () -> new RuntimeException(String.format("Document %s is missing content", document.getId())));
+    }
+
+    public static final String getDocTemplate(XmlDocument document) {
+        return Optional.of(document)
+                .map(XmlDocument::getMetadata)
+                .map(Maybe::get)
+                .map(meta -> meta.getDocTemplate())
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("Document %s is missing docTemplate", document.getId())));
     }
 }

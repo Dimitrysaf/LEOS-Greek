@@ -5,6 +5,7 @@ import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.FinancialStatementApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
+import eu.europa.ec.leos.services.api.GenericDocumentTocApiService;
 import eu.europa.ec.leos.services.dto.coedition.CoEditionContext;
 import eu.europa.ec.leos.services.dto.request.SaveIntermediateVersionRequest;
 import eu.europa.ec.leos.services.dto.request.ToggleTrackChangeEnabledRequest;
@@ -53,11 +54,14 @@ public class FinancialStatementController {
     private FinancialStatementApiService financialStatementApiService;
 
     private GenericDocumentApiService genericDocumentApiService;
+    private GenericDocumentTocApiService genericDocumentTocApiService;
     @Autowired
     private CoEditionContext coEditionContext;
 
     public FinancialStatementController(GenericDocumentApiService genericDocumentApiService,
+                                        GenericDocumentTocApiService genericDocumentTocApiService,
                                         FinancialStatementApiService financialStatementApiService) {
+        this.genericDocumentTocApiService = Objects.requireNonNull(genericDocumentTocApiService);
         this.genericDocumentApiService = Objects.requireNonNull(genericDocumentApiService);
         this.financialStatementApiService = Objects.requireNonNull(financialStatementApiService);
     }
@@ -78,7 +82,7 @@ public class FinancialStatementController {
                                              @RequestParam("tocMode") TocMode tocMode) {
         // When the controller will be used as generic document controller the category will be part of the path.
         docRef = encodeParam(docRef);
-        List<TableOfContentItemVO> tableOfContent = this.genericDocumentApiService.getTableOfContent(docRef, tocMode);
+        List<TableOfContentItemVO> tableOfContent = this.genericDocumentTocApiService.getTableOfContent(docRef, tocMode);
         return tableOfContent;
     }
 

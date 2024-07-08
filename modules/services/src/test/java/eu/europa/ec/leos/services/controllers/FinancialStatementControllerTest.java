@@ -5,6 +5,7 @@ import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.FinancialStatementApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
+import eu.europa.ec.leos.services.api.GenericDocumentTocApiService;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.VersionInfoVO;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
@@ -27,6 +28,8 @@ public class FinancialStatementControllerTest {
 
     @Mock
     private GenericDocumentApiService genericDocumentApiService;
+    @Mock
+    private GenericDocumentTocApiService genericDocumentTocApiService;
     @Mock
     private FinancialStatementApiService financialStatementApiService;
     @InjectMocks
@@ -57,7 +60,7 @@ public class FinancialStatementControllerTest {
         final String TEST_DOC_REF = "testDocRef";
         final TocMode TEST_TOC_MODE = TocMode.SIMPLIFIED;
 
-        Mockito.when(this.genericDocumentApiService.getTableOfContent(Mockito.anyString(), Mockito.any(TocMode.class)))
+        Mockito.when(this.genericDocumentTocApiService.getTableOfContent(Mockito.anyString(), Mockito.any(TocMode.class)))
                 .thenReturn(new ArrayList<>());
 
         List<TableOfContentItemVO> response = this.financialStatementController.getToc(TEST_DOC_REF, TEST_TOC_MODE);
@@ -65,7 +68,7 @@ public class FinancialStatementControllerTest {
         Assert.assertNotNull(response);
         Assert.assertTrue(response.isEmpty());
 
-        Mockito.spy(this.genericDocumentApiService).getTableOfContent(Mockito.eq(TEST_DOC_REF), Mockito.eq(TEST_TOC_MODE));
+        Mockito.spy(this.genericDocumentTocApiService).getTableOfContent(Mockito.eq(TEST_DOC_REF), Mockito.eq(TEST_TOC_MODE));
     }
 
     @Test

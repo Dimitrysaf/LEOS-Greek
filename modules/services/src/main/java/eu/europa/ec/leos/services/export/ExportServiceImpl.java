@@ -127,7 +127,10 @@ abstract class ExportServiceImpl implements ExportService {
         }
     }
 
-
+    @Override
+    public byte[] createDocumentPackage(String jobFileName, ExportOptions exportOptions, User user) throws Exception {
+        return null;
+    }
 
 
 }
