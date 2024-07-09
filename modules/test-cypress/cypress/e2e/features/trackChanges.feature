@@ -104,6 +104,15 @@ Feature: Track Changes Feature
     And  document title input field is displayed
     When click on create button in upload document page
     Then user is on proposal viewer page
+    When click on collaborators tab in proposal view page
+    And  click on add button in collaborators tab
+    Then user is on "Add users" window
+    When provide input "demo" in name field of add users window
+    And  click on row 1 from the user list in name field of add users window
+    And  click on add users button
+    Then "DEMO Demo" is displayed in row 2 of column name of collaborators tab
+    And  "Author" is displayed in row 2 of column role of collaborators tab
+    When click on drafts tab in proposal view page
     # Enter in Legal Act
     When click on legal act link present in proposal viewer page
     Then user is on legal act page
@@ -220,7 +229,7 @@ Feature: Track Changes Feature
     #   | text | "graph with"        |
     #   | del  | " some more tex"    |
     #   | text | "t to test."        |
-    Given navigate to edit drafting application with "User2"
+    Given navigate to edit drafting application with "User3"
     Then user is on home page
     When click on view all acts button
     Then user is on repository browser page
@@ -272,9 +281,9 @@ Feature: Track Changes Feature
       | text     | "agraph."    |
     Then paragraph 7 of article 1 has below content
       | text     | "Seventh"     |
-      | html     | <ins leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="dasatya" id=".*"> qu<del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">ery<\/del>ing<\/ins>   |
+      | html     | <ins leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*"> qu<del leos:title="DEMO Demo : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="demo" id=".*">ery<\/del>ing<\/ins>   |
       | text     | " numbered "  |
-      | html     | <ins leos:title="Das Satyabrata : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="dasatya" id=".*">reg<del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">ist</del>ered </ins> |
+      | html     | <ins leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*">reg<del leos:title="DEMO Demo : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="demo" id=".*">ist</del>ered </ins> |
       | text     | "paragraph."  |
     # Ticket created to fix this issue:
     # https://code.europa.eu/leos/core/-/issues/1725

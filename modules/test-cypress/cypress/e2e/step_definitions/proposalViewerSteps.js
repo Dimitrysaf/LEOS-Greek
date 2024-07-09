@@ -125,3 +125,7 @@ When(`click on drafts tab in proposal view page`, function () {
 Then(`active tab name is {string}`, function (tabName) {
     proposalViewerPage.elements.activeTab().should('have.text', tabName);
 });
+
+When(/^click on collaborators tab in proposal view page$/, function () {
+    proposalViewerPage.clickCollaboratorsTab();
+});
