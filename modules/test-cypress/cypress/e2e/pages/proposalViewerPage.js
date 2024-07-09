@@ -20,7 +20,7 @@ class proposalViewerPage extends headerPage{
         tabItem: () => cy.get('div.eui-tabs__items-wrapper .eui-tab-item'),
         draftsTab: () => this.elements.tabItem().contains('Drafts'),
         milestoneTab: () => this.elements.tabItem().contains('Milestones'),
-        // collaboratorsTab: () => this.elements.tabItem().contains('Collaborators'),
+        collaboratorsTab: () => this.elements.tabItem().contains('Collaborators'),
         // proposalDetailsTab: () => this.elements.tabItem().contains('Details'),
         AddBtnAnnex: () => cy.xpath("//div/*[text()='Annexes']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Add ']"),
         addFinancialStatementBtn: () => cy.xpath("//div/*[text()='Financial Statement']//ancestor::div[contains(@class,'eui-u-flex')]//button//span[text()=' Add ']"),
@@ -112,6 +112,10 @@ class proposalViewerPage extends headerPage{
 
     getChipContentContainerElement(chipContentContainerNumber) {
         return this.elements.chipContentContainer().eq(chipContentContainerNumber-1);
+    }
+
+    clickCollaboratorsTab() {
+        this.elements.collaboratorsTab().click();
     }
 }
 export default new proposalViewerPage();
