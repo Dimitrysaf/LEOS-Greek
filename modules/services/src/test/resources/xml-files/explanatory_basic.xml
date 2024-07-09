@@ -75,7 +75,7 @@
                 </subparagraph>
                 <crossHeading leos:indent-level="1" style="--indent-level:1;" xml:id="_body_para_1__crossheading">
                     <inline name="crossHnum" xml:id="_akn_oa6e0J">•</inline>The request of the EP <b xml:id="_akn_Jkqevj2">and</b><u xml:id="_akn_DZhLBD2"> the EU Agency for Fundamental Rights</u>[<u xml:id="_akn_nVHQgK2"><i xml:id="_akn_rSYt6j2">the European Data Protection Officer</i></u>] <authorialNote marker="4" xml:id="_akn_pizveq2"><p xml:id="_akn_vKX4HU2">Comment....</p></authorialNote>delivered an opinion:
-                    <inline name="math-tex" xml:id="_akn_art_xX8jV5_PUBq7h2">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
+                    <inline name="mathTex" xml:id="_akn_art_xX8jV5_PUBq7h2">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
                 </crossHeading>
             </paragraph>
         </mainBody>

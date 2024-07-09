@@ -87,7 +87,7 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
 
     private static final Logger LOG = LoggerFactory.getLogger(XMLContentComparatorServiceImpl.class);
     private static final String FAKE = "</fake>";
-    private static final String NAME_MATH_TEX = "name=\"math-tex\"";
+    private static final String NAME_MATH_TEX = "name=\"mathTex\"";
 
     protected MessageHelper messageHelper;
     protected TextComparator textComparator;
@@ -668,7 +668,7 @@ public abstract class XMLContentComparatorServiceImpl implements ContentComparat
         boolean resultIsFormula = (context.getNewElement() != null && context.getNewElement().getTagName().equalsIgnoreCase("inline") &&
                 context.getNewElement().getNode().getAttributes() != null &&
                 context.getNewElement().getNode().getAttributes().getNamedItem("name") != null &&
-                context.getNewElement().getNode().getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("math-tex"));
+                context.getNewElement().getNode().getAttributes().getNamedItem("name").getNodeValue().equalsIgnoreCase("mathTex"));
         if (resultIsFormula) {
             result = result.replace("\\\\\\\\", "\\\\");
         } else if (inlineFormulaIndex > 0) {
