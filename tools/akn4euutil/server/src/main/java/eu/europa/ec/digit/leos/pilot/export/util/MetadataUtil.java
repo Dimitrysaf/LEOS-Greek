@@ -809,6 +809,7 @@ public class MetadataUtil {
     public static void processInsertCote(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
         MetadataUtil.addInsertCoteToMetaReference(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToCoverPage(fieldInfo, xmlFile);
+        addInserCoteToFRBRWork(fieldInfo, xmlFile);
     }
 
     public static void addInsertCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
@@ -846,6 +847,17 @@ public class MetadataUtil {
         xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
     }
 
+    public static void addInserCoteToFRBRWork(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
+        final Node frbrWork = xmlFile.getElementByName("FRBRWork");
+        if (frbrWork == null) {
+            return;
+        }
+        final Element frbRnumber = xmlFile.newElement("FRBRnumber");
+        XmlUtil.setNodeAttributeValue(frbRnumber, VALUE, fieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(frbRnumber, REFERSTO, fieldInfo.getId());
+        frbrWork.insertBefore(frbRnumber, XmlUtil.getChildNodeWithName(frbrWork, "FRBRprescriptive"));
+    }
+
     public static void processDocumentFinal(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
     {
         if (fieldInfo.getDisplayValue().equals("final")) {
@@ -854,21 +866,15 @@ public class MetadataUtil {
         }
     }
 
-    private static void addFinalToIdentification(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
-    {
-        final Node identificationNode = xmlFile.getElementByName("identification");
-        if (identificationNode == null) {
+    private static void addFinalToIdentification(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
+        final Node frbrExpression = xmlFile.getElementByName("FRBRExpression");
+        if (frbrExpression == null) {
             return;
         }
-
-        final Element frbrExpression = xmlFile.newElement("FRBRExpression");
-
-
         final Element frbrVersionNumber = xmlFile.newElement("FRBRversionNumber");
         XmlUtil.setNodeAttributeValue(frbrVersionNumber, VALUE, fieldInfo.getDisplayValue());
 
-        frbrExpression.appendChild(frbrVersionNumber);
-        identificationNode.appendChild(frbrExpression);
+        frbrExpression.insertBefore(frbrVersionNumber, XmlUtil.getChildNodeWithName(frbrExpression,"FRBRlanguage"));
     }
 
     private static void addFinalToCoverPage(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
