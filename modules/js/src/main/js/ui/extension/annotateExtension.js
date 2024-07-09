@@ -393,7 +393,8 @@ define(function annotateExtensionModule(require) {
     }
 
     function escapeXml(text) {
-        return text.replace(/[<>&'"]/g, function (c) {
+        return text;
+        /*return text.replace(/[<>&'"]/g, function (c) {
             switch (c) {
                 case '<': return '&lt;';
                 case '>': return '&gt;';
@@ -401,7 +402,7 @@ define(function annotateExtensionModule(require) {
                 case '\'': return '&apos;';
                 case '"': return '&quot;';
             }
-        });
+        });*/
     }
 
     //Rules
