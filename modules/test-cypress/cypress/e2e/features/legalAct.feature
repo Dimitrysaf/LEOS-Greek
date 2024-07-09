@@ -276,7 +276,7 @@ Feature: Legal Act Page Regression Features
 #        And  paragraph 1 of article 1 doesnot contain num tag
 #        And  paragraph 2 of article 1 doesnot contain num tag
 
-    @definitionArticle @local @focus
+    @definitionArticle @local
     Scenario: definition article should have maximum three depth
         Given navigate to edit drafting application with "User1"
         Then user is on home page
