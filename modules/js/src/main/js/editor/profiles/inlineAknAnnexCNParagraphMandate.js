@@ -128,6 +128,7 @@ define(function aknAnnexCNParagraphMandateProfileModule(require) {
         height: 515,
         //MathJax plugin configuration - Sets the path to the MathJax library
         mathJaxLib: './webjars/MathJax/2.7.0/MathJax.js?config=default',
+        mathJaxClass: 'mathTex',
         // LEOS-2887 removing tooltip title
         title: false
     };

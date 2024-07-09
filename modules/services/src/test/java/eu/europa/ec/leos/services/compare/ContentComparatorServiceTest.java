@@ -390,13 +390,13 @@ public class ContentComparatorServiceTest extends LeosTest {
 
     @Test
     public void test_formula_diff_values() {
-        String oldContent = "<doc><aknp id=\"1\">formula: <inline id=\"art_260_Fd76DH_yJ8bBu\" name=\"math-tex\">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}\\)</inline></aknp></doc>";
-        String newContent = "<doc><aknp id=\"1\">formula: <inline id=\"art_260_Fd76DH_yJ8bBu\" name=\"math-tex\">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 299999a}\\)</inline></aknp></doc>";
+        String oldContent = "<doc><aknp id=\"1\">formula: <inline id=\"art_260_Fd76DH_yJ8bBu\" name=\"mathTex\">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}\\)</inline></aknp></doc>";
+        String newContent = "<doc><aknp id=\"1\">formula: <inline id=\"art_260_Fd76DH_yJ8bBu\" name=\"mathTex\">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 299999a}\\)</inline></aknp></doc>";
 
-        String expectedResult = "<doc><aknp id=\"1\">formula: <span class=\"leos-content-removed\"><inline id=\"art_260_Fd76DH_yJ8bBu\" name=\"math-tex\">" +
+        String expectedResult = "<doc><aknp id=\"1\">formula: <span class=\"leos-content-removed\"><inline id=\"art_260_Fd76DH_yJ8bBu\" name=\"mathTex\">" +
                 "\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}\\)" +
                 "</inline></span>" +
-                "<span class=\"leos-content-new\"><inline id=\"art_260_Fd76DH_yJ8bBu\" name=\"math-tex\">" +
+                "<span class=\"leos-content-new\"><inline id=\"art_260_Fd76DH_yJ8bBu\" name=\"mathTex\">" +
                 "\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 299999a}\\)" +
                 "</inline></span>" +
                 "</aknp></doc>";

@@ -392,11 +392,11 @@
                     </content>
                 </subparagraph>
                 <crossHeading leos:indent-level="1" style="--indent-level:1;" xml:id="_akn_TNpD172">The request of the EP <b xml:id="_akn_Jkqevj3">and</b><u xml:id="_akn_DZhLBD3"> the EU Agency for Fundamental Rights</u>[<u xml:id="_akn_nVHQgK3"><i xml:id="_akn_rSYt6j3">the European Data Protection Officer</i></u>] <authorialNote marker="4" xml:id="_akn_pizveq3"><p xml:id="_akn_vKX4HU3">Comment....</p></authorialNote>delivered an opinion:
-                    <inline name="math-tex" xml:id="_akn_art_xX8jV5_PUBq7h3">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
+                    <inline name="mathTex" xml:id="_akn_art_xX8jV5_PUBq7h3">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
                 </crossHeading>
                 <list leos:list-type="indent" xml:id="_body_level_24_list_1">
                     <crossHeading leos:crossheading-type="list" leos:indent-level="1" style="--indent-level:1;" xml:id="_akn_TNpD17">The request of the EP <b xml:id="_akn_Jkqevj">and</b><u xml:id="_akn_DZhLBD"> the EU Agency for Fundamental Rights</u>[<u xml:id="_akn_nVHQgK"><i xml:id="_akn_rSYt6j">the European Data Protection Officer</i></u>] <authorialNote marker="4" xml:id="_akn_pizveq"><p xml:id="_akn_vKX4HU">Comment....</p></authorialNote>delivered an opinion:
-                        <inline name="math-tex" xml:id="_akn_art_xX8jV5_PUBq7h">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
+                        <inline name="mathTex" xml:id="_akn_art_xX8jV5_PUBq7h">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
                     </crossHeading>
                     <indent xml:id="_body_level_24_list_1_indent_1">
                         <num xml:id="_body_level_24_list_1_indent_1_num">-</num>
@@ -406,7 +406,7 @@
                     </indent>
                     <crossHeading leos:crossheading-type="list" leos:indent-level="1" leos:origin="cn" style="--indent-level:1;--inline-num:1;" xml:id="_akn_jr0ciX">
                         <inline name="crossHnum" xml:id="_akn_oa6e0J">•</inline>The request of the EP <b xml:id="_akn_Jkqevj2">and</b><u xml:id="_akn_DZhLBD2"> the EU Agency for Fundamental Rights</u>[<u xml:id="_akn_nVHQgK2"><i xml:id="_akn_rSYt6j2">the European Data Protection Officer</i></u>] <authorialNote marker="4" xml:id="_akn_pizveq2"><p xml:id="_akn_vKX4HU2">Comment....</p></authorialNote>delivered an opinion:
-                        <inline name="math-tex" xml:id="_akn_art_xX8jV5_PUBq7h2">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
+                        <inline name="mathTex" xml:id="_akn_art_xX8jV5_PUBq7h2">\(x = {-b \pm \sqrt{b^2-4ac} \over 2a}\)</inline>
                     </crossHeading>
                     <indent xml:id="_body_level_24_list_1_indent_2">
                         <num xml:id="_body_level_24_list_1_indent_2_num">-</num>

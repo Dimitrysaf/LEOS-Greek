@@ -8,7 +8,7 @@
                     <num leos:origin="ec" xml:id="art_1__para_1__num">1.</num>
                     <content leos:origin="ec" xml:id="art_1__para_1__content">
                         <p leos:origin="ec" xml:id="art_1__para_1__content__p">Text...
-                            <inline leos:origin="ec" name="math-tex" xml:id="art_1_0miExA">\\(x = {-b \\pm \\sqrt{b^2-4ac}
+                            <inline leos:origin="ec" name="mathTex" xml:id="art_1_0miExA">\\(x = {-b \\pm \\sqrt{b^2-4ac}
                                 \\over 2a}\\)
                             </inline>
                         </p>

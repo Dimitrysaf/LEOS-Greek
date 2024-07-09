@@ -19,7 +19,7 @@ define(function testLeosMathematicalFormulaPlugin(require) {
     describe(
             "Unit tests for plugins/leosMathematicalFormulaPlugin",
             function() {
-                var transformationConfigForCitation = '{"akn":"inline[name=math-tex]","html":"span[class=math-tex]","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"name=math-tex","html":"class=math-tex"}],"sub":{"akn":"text","html":"span/text"}}';
+                var transformationConfigForCitation = '{"akn":"inline[name=mathTex]","html":"span[class=mathTex]","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"name=mathTex","html":"class=mathTex"}],"sub":{"akn":"text","html":"span/text"}}';
 
                 it("Tests if transformation config is valid.", function() {
                     expect(JSON.stringify(leosMathematicalFormulaPluginToTest.transformationConfig)).toEqual(transformationConfigForCitation);

@@ -6,7 +6,7 @@
             <num leos:origin="ec" xml:id="art_1__para_1__num">1.</num>
             <subparagraph leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-01-29T11:56:51.605+01:00" leos:softuser="demo" xml:id="akn_art_subpara_HaUTRs">
                 <content leos:origin="ec" xml:id="art_1__para_1__content">
-                    <p leos:origin="ec" xml:id="art_1__para_1__content__p">Text...<inline leos:origin="ec" name="math-tex" xml:id="art_1_0miExA">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}\\)</inline>
+                    <p leos:origin="ec" xml:id="art_1__para_1__content__p">Text...<inline leos:origin="ec" name="mathTex" xml:id="art_1_0miExA">\\(x = {-b \\pm \\sqrt{b^2-4ac} \\over 2a}\\)</inline>
                     </p>
                 </content>
             </subparagraph>

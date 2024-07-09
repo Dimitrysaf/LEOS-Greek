@@ -45,8 +45,8 @@ define(function leosMathematicalFormulaPluginModule(require) {
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
     var transformationConfig = {
-        akn : "inline[name=math-tex]",
-        html : "span[class=math-tex]",
+        akn : "inline[name=mathTex]",
+        html : "span[class=mathTex]",
         attr : [{
             akn : "xml:id",
             html : "id"
@@ -54,8 +54,8 @@ define(function leosMathematicalFormulaPluginModule(require) {
             akn : "leos:origin",
             html : "data-origin"
         }, {
-            akn: "name=math-tex",
-            html : "class=math-tex"
+            akn: "name=mathTex",
+            html : "class=mathTex"
         }],
         sub : {
             akn : "text",
