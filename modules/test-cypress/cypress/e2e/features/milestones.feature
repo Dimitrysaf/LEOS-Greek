@@ -60,8 +60,6 @@ Feature: milestone section regression features
 
     @exportBtnInMilestoneExplorer @nonlocal
     Scenario: navigate to legal act page
-        Given navigate to edit drafting application with "User1"
-        Then user is on home page
         When click on create proposal button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
@@ -80,12 +78,14 @@ Feature: milestone section regression features
         Then successful message contains "Milestone created"
         And  "Commission proposal" is showing under title column of row 1 of milestones table
         And  "In Preparation" is showing under status column of row 1 of milestones table
+        And  successful message contains "Milestone status has been updated"
+        And  "File ready" is showing under status column of row 1 of milestones table
         When click on three dots under actions column of row 1 of milestones table
         And  click on option "View" under milestone actions
         Then user is on milestone explorer window
         And  milestone explorer window contains below tabs
             | TabName                         |
-            | Cover Page [1.0.0]              |
+            | Cover Page  [1.0.0]             |
             | Explanatory Memorandum  [1.0.0] |
             | Legal Act  [1.0.0]              |
         When export button is displayed in milestone explorer window
