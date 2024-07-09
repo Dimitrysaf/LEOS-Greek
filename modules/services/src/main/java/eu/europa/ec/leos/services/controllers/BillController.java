@@ -293,7 +293,7 @@ public class BillController {
             List<TableOfContentItemVO> toc = this.billApiService.getToc(documentRef, tocMode);
             return ResponseEntity.ok().body(toc);
         } catch (Exception e) {
-            LOG.error("Error occurred while getting bill toc items - " + e.getMessage());
+            LOG.error("Error occurred while getting bill toc items", e);
             return new ResponseEntity<>("Unexpected error occurred while getting bill toc items", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -306,7 +306,7 @@ public class BillController {
             List<TocItem> tocItems = this.billApiService.getTocItems(documentRef);
             return ResponseEntity.ok().body(tocItems);
         } catch (Exception e) {
-            LOG.error("Error occurred while getting bill toc items - " + e.getMessage());
+            LOG.error("Error occurred while getting bill toc items", e);
             return new ResponseEntity<>("Unexpected error occurred while getting bill toc items", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -532,7 +532,7 @@ public class BillController {
             DocumentConfigResponse view = this.billApiService.getDocumentConfig(documentRef);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
-            LOG.error("Error occurred  while getting document config  - " + e.getMessage());
+            LOG.error("Error occurred  while getting document config", e);
             return new ResponseEntity<>("Error occurred  while getting document config ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

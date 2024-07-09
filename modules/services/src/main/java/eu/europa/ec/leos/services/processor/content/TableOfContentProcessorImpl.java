@@ -110,6 +110,7 @@ public class TableOfContentProcessorImpl implements TableOfContentProcessor {
             LOG.debug("Xerces Build table of content completed in {} ms", (System.currentTimeMillis() - startTime));
             return itemVOList;
         } catch (Exception e) {
+            LOG.error("Unable to build the Table of content item list", e);
             throw new RuntimeException("Unable to build the Table of content item list", e);
         }
     }
