@@ -7,7 +7,7 @@
   >
     <li class="node-li">
       <div class="mat-tree-node" (click)="hanldeNodeSelect(node)">
-        <span class="label">{{ node.name }}</span>
+        <span [class]="'label ' + classAdded(node)" [innerHTML]="node.name"></span>
       </div>
     </li>
   </mat-nested-tree-node>
@@ -30,9 +30,7 @@
           *ngIf="treeControl.isExpanded(node)"
           icon="eui-chevron-down"
         ></eui-icon-svg>
-        <span class="label-extended" (click)="hanldeNodeSelect(node)">{{
-          node.name
-        }}</span>
+        <span [class]="'label-extended ' + classAdded(node)" (click)="hanldeNodeSelect(node)" [innerHTML]="node.name"></span>
       </div>
       <ul class="">
         <div *ngIf="treeControl.isExpanded(node)">

@@ -13,7 +13,7 @@ import {TranslateService} from '@ngx-translate/core';
 import {Subject} from 'rxjs';
 
 import {
-  Milestone,
+  Milestone, MilestoneStatus,
   MilestoneViewItem,
   MilestoneViewResponse,
 } from '@/features/proposal-view/models/milestone.model';
@@ -107,20 +107,11 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       this.status = status;
     });
 
-    /*this.readyToMergeMessage = this.translateService.instant(
-      'page.workspace.proposal-item.ready-status',
-    );*/
-    let isReadyToMerge = 'Ready to merge' === this.status;
-
     this.milestonesService.requestStoredDocumentAnnotations$.subscribe(
       (request) => this.requestStoredDocumentAnnotations(request),
     );
 
-    if (isReadyToMerge) {
-      this.loadContribution(this.hiddenCategories);
-    } else {
-      this.loadDocuments(this.hiddenCategories);
-    }
+    this.reloadDocs();
   }
 
   ngOnDestroy() {
@@ -128,8 +119,18 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.destroy$.unsubscribe();
   }
 
+  reloadDocs() {
+    let isReadyToMerge = MilestoneStatus.ReadyToMerge === this.status;
+    if (isReadyToMerge) {
+      this.loadContribution(this.hiddenCategories);
+    } else {
+      this.loadDocuments(this.hiddenCategories);
+    }
+  }
+
   open() {
     this.isOpened = true;
+    this.reloadDocs();
     this.dialog.openDialog();
   }
 
@@ -264,9 +265,9 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
         case 'BILL':
           return sortOrder(4);
         case 'ANNEX':
-          return sortOrder(5);
-        case 'STAT_FINANC_LEGIS':
           return sortOrder(6);
+        case 'STAT_FINANC_LEGIS':
+          return sortOrder(5);
         default:
           return sortOrder(9);
       }

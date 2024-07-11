@@ -181,6 +181,7 @@
   "page.collection.milestones.type.other": "Autre",
   "page.workspace.milestones.status.file-ready": "Fichier prêt",
   "page.workspace.milestones.status.contribution-sent": "Contribution envoyée",
+  "page.workspace.milestones.status.revision-sent": "Contribution envoyée",
   "page.workspace.milestones.status.in-preparation": "En Préparation",
   "page.collection.milestones.table.add-milestone-dialog.title.placeholder": "S'il-vous-plaît, taper le titre du milestone ici",
   "page.collection.milestones.annotation-warning-modal.title": "Envoyer le milestone pour contribution",

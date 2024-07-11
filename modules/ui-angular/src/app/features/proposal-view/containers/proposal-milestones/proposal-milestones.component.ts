@@ -220,6 +220,10 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
         return this.translateService.instant(
           'page.workspace.proposal-item.ready-status',
         );
+      case MilestoneStatus.RevisionSent:
+        return this.translateService.instant(
+          'page.workspace.milestones.status.revision-sent',
+        );
       default:
         return status;
     }
@@ -232,11 +236,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   }
 
   isReadyToMerge(status: MilestoneStatus): boolean {
-    /*const readyToMergeTranslation = this.translateService.instant(
-      'page.workspace.proposal-item.ready-status',
-    );
-    return this.getStatus(status) === readyToMergeTranslation;*/
-    return 'Ready to merge' === this.getStatus(status);
+    return MilestoneStatus.ReadyToMerge === status;
   }
 
   private initMilestonesDataSource(

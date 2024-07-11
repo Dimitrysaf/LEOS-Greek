@@ -181,6 +181,7 @@
   "page.collection.milestones.type.other": "Other",
   "page.workspace.milestones.status.file-ready": "File ready",
   "page.workspace.milestones.status.contribution-sent": "Contribution sent",
+  "page.workspace.milestones.status.revision-sent": "Sent for contribution",
   "page.workspace.milestones.status.in-preparation": "In Preparation",
   "page.collection.milestones.annotation-warning-modal.title": "Send contribution milestone",
   "page.collection.milestones.annotation-warning-modal.text": "Suggestions will be excluded in the milestone for contribution. Ok to proceed?",

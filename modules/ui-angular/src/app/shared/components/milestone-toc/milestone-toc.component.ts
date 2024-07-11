@@ -35,6 +35,7 @@ export class MilestoneTocComponent implements OnInit {
   hasChildren = (index: number, node: MilestoneTocItem) =>
     node.children.length > 0;
 
+
   hanldeNodeSelect(node: MilestoneTocItem) {
     this.scrollToElement(node);
     this.hilightSelectedNode(node);
@@ -46,6 +47,19 @@ export class MilestoneTocComponent implements OnInit {
       .forEach((el) => el.classList.remove('selected-node'));
     const element = document.querySelector(`[data-id="${node.href}"]`);
     element.children[0].children[0].classList.add('selected-node');
+  }
+
+  classAdded(node: MilestoneTocItem) {
+    const element = document.querySelector(`[data-id="${node.href}"]`);
+    const targetElement = document.getElementById(node.href.substring(1));
+    if (element && targetElement
+      && ((targetElement.hasAttribute("leos:action")
+          && targetElement.getAttribute("leos:action") == 'insert') ||
+        (targetElement.hasAttribute("leos:softaction")
+          && targetElement.getAttribute("leos:softaction") == 'move_from'))) {
+      return 'leos-soft-new';
+    }
+    return '';
   }
 
   private scrollToElement(node: MilestoneTocItem) {

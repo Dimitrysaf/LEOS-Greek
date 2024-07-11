@@ -50,13 +50,13 @@
     </div>
 
     <!-- Tabs -->
-    <eui-tabs (tabSelect)="onTabSelected($event)">
+    <eui-tabs *ngIf="isOpened" (tabSelect)="onTabSelected($event)">
       <eui-tab *ngFor="let doc of documents; let tabIndex = index"
                hasBackgroundFilled
-               [euiSecondary]="doc.selected === false && doc.state === 'Processed' && !this.parentClonedProposal"
-               [euiSuccess]="doc.selected === false && doc.state === 'Added' && !this.parentClonedProposal"
-               [euiWarning]="doc.selected === false && doc.state === 'Modified' && !this.parentClonedProposal"
-               [euiDanger]="doc.selected === false && doc.state === 'Deleted' && !this.parentClonedProposal"
+               [euiSecondary]="doc.state === 'Processed' && !this.parentClonedProposal"
+               [euiSuccess]="doc.state === 'Added' && !this.parentClonedProposal"
+               [euiWarning]="doc.state === 'Modified' && !this.parentClonedProposal"
+               [euiDanger]="doc.state === 'Deleted' && !this.parentClonedProposal"
                [euiPrimary]="doc.selected === true"
           >
         <eui-tab-label>{{ doc.label }}
@@ -97,6 +97,7 @@
                   >
                     <app-akn-document
                       [containerId]="containerId + '_' + doc.ref"
+                      [docId]="doc.ref"
                       containerClass="leos-doc-content"
                       [documentType]="doc.type"
                       [xml]="doc.xml"
