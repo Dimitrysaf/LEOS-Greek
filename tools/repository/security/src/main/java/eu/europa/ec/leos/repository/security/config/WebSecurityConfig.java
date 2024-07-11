@@ -124,8 +124,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		// Not needed CSRF
 		httpSecurity.csrf().disable();
-		httpSecurity.headers().frameOptions().sameOrigin();
-		httpSecurity.headers().contentSecurityPolicy("default-src 'none'");
+		httpSecurity.headers().frameOptions().deny().
+				xssProtection().disable(). // Info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
+				contentSecurityPolicy("default-src 'none';");
 
 		if (jwtAuthEnabled) {
 			// Not authenticate this particular request

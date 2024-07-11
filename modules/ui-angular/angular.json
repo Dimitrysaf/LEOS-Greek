@@ -38,6 +38,7 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
+              "src/index.js",
               "src/assets",
               {
                 "glob": "**/*",
