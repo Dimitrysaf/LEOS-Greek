@@ -614,8 +614,6 @@ public abstract class BillApiServiceImpl implements BillApiService {
             splittedContentIsEmpty = true;
         }
 
-
-
         List<Element> result = getMovedFromElements(updatedBill, newContent);
 
         documentViewService.updateProposalAsync(bill);
@@ -646,7 +644,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
             String movedToAttr = attributes.getNamedItem(XmlHelper.LEOS_SOFT_MOVE_TO).getNodeValue();
             Node parentNode = element.getParentNode();
             String parentId = parentNode.getAttributes().getNamedItem("xml:id").getNodeValue();
-            if(newContentId != parentId // verify not to be moved in the same parent
+            if((newContentId != parentId)// verify not to be moved in the same parent
                     && idsToSearch.contains(movedToAttr)){
                 String parentName = parentNode.getNodeName();
                 String parentFragment = XercesUtils.nodeToString(parentNode);
