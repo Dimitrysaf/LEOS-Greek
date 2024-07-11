@@ -38,5 +38,6 @@ export enum MilestoneStatus {
   ContributionSent = 'CONTRIBUTION_SENT',
   InPreparation = 'IN_PREPARATION',
   Error = 'FILE_ERROR',
-  ReadyToMerge = 'READY_TO_MERGE',
+  ReadyToMerge = 'Ready to merge',
+  RevisionSent = 'Sent for contribution',
 }

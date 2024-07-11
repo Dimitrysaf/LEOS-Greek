@@ -1,9 +1,10 @@
-import { NgClass } from '@angular/common';
+import {DOCUMENT, NgClass} from '@angular/common';
 import {
+  AfterViewChecked,
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
+  ElementRef, Inject,
   Input,
   OnDestroy,
   OnInit,
@@ -15,6 +16,7 @@ import { AppConfigService } from '@/core/services/app-config.service';
 import { DOCUMENT_STYLES } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
 import { DomService } from '@/shared/services/dom.service';
+import { MilestoneViewConnectorsService } from "@/shared/services/milestone-view-connectors.service";
 
 @Component({
   selector: 'app-akn-document',
@@ -22,10 +24,11 @@ import { DomService } from '@/shared/services/dom.service';
   styleUrls: ['./akn-document.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
+export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit, AfterViewChecked {
   @Input() documentType: string;
   @Input() xml: string;
   @Input() containerId: string;
+  @Input() docId: string;
   @Input() containerClass: NgClass['ngClass'] = '';
 
   @ViewChild('container', { static: true })
@@ -35,11 +38,14 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
   private unloadInlineStyle?: () => void;
   private destroy$: Subject<any> = new Subject();
   private cssTrackChanges: string;
+  private softActionsInit: boolean = false;
 
   constructor(
     private domService: DomService,
     public doc: DocumentService,
     private config: AppConfigService,
+    private milestoneViewConnectorsService: MilestoneViewConnectorsService,
+    @Inject(DOCUMENT) private domDocument: Document,
   ) {}
 
   ngOnInit(): void {
@@ -51,10 +57,20 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit {
     this.unloadInlineStyle?.();
     this.destroy$.next(null);
     this.destroy$.complete();
+    this.milestoneViewConnectorsService.destroyExtensions();
   }
 
   ngAfterViewInit(): void {
     this.loadDocument(this.xml);
+    this.softActionsInit = false;
+  }
+
+  ngAfterViewChecked() {
+    const rootElement = this.domDocument.querySelector("#" + this.containerId + " #" + this.docId);
+    if (!this.softActionsInit && rootElement) {
+      this.milestoneViewConnectorsService.init(rootElement as HTMLElement);
+      this.softActionsInit = true;
+    }
   }
 
   private loadDocument(xml: string) {

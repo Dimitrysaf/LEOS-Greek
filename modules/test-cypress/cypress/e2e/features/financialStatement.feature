@@ -36,8 +36,8 @@ Feature: financial statement page regression features
       | TabName                         |
       | Explanatory Memorandum  [1.0.0] |
       | Legal Act  [1.0.0]              |
-      | Annex 1  [1.0.0]                |
       | Financial Statement  [1.0.0]    |
+      | Annex 1  [1.0.0]                |
     When click on close button in milestone explorer view
     Then user is on proposal viewer page
     When click on drafts tab in proposal view page
