@@ -16,8 +16,12 @@
         <!-- Done to allow download (FileDownloader Vaadin Component is using iframes -->
         <sec:headers>
             <sec:frame-options policy="SAMEORIGIN"/>
-            <sec:content-security-policy policy-directives="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.mathjax.org ${leos.content.script.security.policy};" />
-            <sec:content-security-policy policy-directives="style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;" />
+            <sec:xss-protection disabled="true"/><!-- Info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection -->
+            <sec:content-security-policy policy-directives="default-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy};
+                script-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} 'unsafe-eval';
+                script-src-attr 'unsafe-inline';
+                style-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} 'unsafe-inline';
+                img-src 'self' https://cdn.mathjax.org ${leos.content.script.security.policy} data:;"/>
         </sec:headers>
     </sec:http>
 
