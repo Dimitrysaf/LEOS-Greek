@@ -231,11 +231,11 @@
                             <langNumConfig langGroup="latin" auto="true">
                                 <numberingType>POINT_NUM</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="cyrillic" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="cyrillic" auto="true">
+                                <numberingType>POINT_NUM_CYRILLIC</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="greek" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="greek" auto="true">
+                                <numberingType>POINT_NUM_GREEK</numberingType>
                             </langNumConfig>
                         </subElementNumberingConfig>
                         <subElementNumberingConfig>
@@ -243,11 +243,11 @@
                             <langNumConfig langGroup="latin" auto="true">
                                 <numberingType>POINT_NUM</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="cyrillic" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="cyrillic" auto="true">
+                                <numberingType>POINT_NUM_CYRILLIC</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="greek" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="greek" auto="true">
+                                <numberingType>POINT_NUM_GREEK</numberingType>
                             </langNumConfig>
                         </subElementNumberingConfig>
                     </subElementNumberingConfigs>
@@ -262,25 +262,25 @@
                         <subElementNumberingConfig>
                             <subElement>point</subElement>
                             <langNumConfig langGroup="latin" auto="true">
-                                <numberingType>POINT_NUM</numberingType>
+                                <numberingType>POINT_NUM_DEF</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="cyrillic" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="cyrillic" auto="true">
+                                <numberingType>POINT_NUM_DEF_CYRILLIC</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="greek" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="greek" auto="true">
+                                <numberingType>POINT_NUM_DEF_GREEK</numberingType>
                             </langNumConfig>
                         </subElementNumberingConfig>
                         <subElementNumberingConfig>
                             <subElement>indent</subElement>
                             <langNumConfig langGroup="latin" auto="true">
-                                <numberingType>POINT_NUM</numberingType>
+                                <numberingType>POINT_NUM_DEF</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="cyrillic" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="cyrillic" auto="true">
+                                <numberingType>POINT_NUM_DEF_CYRILLIC</numberingType>
                             </langNumConfig>
-                            <langNumConfig langGroup="greek" auto="false">
-                                <numberingType>NONE</numberingType>
+                            <langNumConfig langGroup="greek" auto="true">
+                                <numberingType>POINT_NUM_DEF_GREEK</numberingType>
                             </langNumConfig>
                         </subElementNumberingConfig>
                     </subElementNumberingConfigs>
