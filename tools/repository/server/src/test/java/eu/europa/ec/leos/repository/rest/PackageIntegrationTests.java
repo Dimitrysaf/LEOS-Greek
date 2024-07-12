@@ -253,7 +253,7 @@ public class PackageIntegrationTests {
         when(packageService.findDocumentsByPackageName(TEST_PKG_NAME, findDocumentsRequest.getCategories(), false, false))
                 .thenReturn(listDocs);
 
-        mockMvc.perform(post("/package/find-by-name/{name}/documents", encodeUriVariables(TEST_PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/package/find-by-name/documents?name={name}", encodeUriVariables(TEST_PKG_NAME)).contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))

@@ -167,14 +167,14 @@ public class PackageController {
         return ResponseEntity.ok(pkg);
     }
 
-    @PostMapping(path = "/package/find-by-name/{name}/documents",
+    @PostMapping(path = "/package/find-by-name/documents",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE} )
     @Operation(summary = "Find documents by package name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = { @Content(mediaType = MediaType.APPLICATION_JSON_VALUE) }),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content) })
-    public ResponseEntity<LeosDocumentList> findDocumentsByPackageName(@PathVariable("name") String name,
+    public ResponseEntity<LeosDocumentList> findDocumentsByPackageName(@RequestParam(value="name", required=false, defaultValue="%25") String name,
                                                                    @RequestParam(value = "descendants", required = false, defaultValue = "false") Boolean descendants,
                                                                        @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent,
                                                                   @Valid @RequestBody FindDocumentsRequest findDocumentsRequest) throws Exception {

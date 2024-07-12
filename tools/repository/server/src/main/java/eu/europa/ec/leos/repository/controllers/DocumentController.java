@@ -375,14 +375,15 @@ public class DocumentController {
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @PostMapping(path = "/documents/find-by-filter/{packageName}",
+    @PostMapping(path = "/documents/find-by-filter",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "Find documents using filter")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> findDocumentsUsingFilter(@PathVariable("packageName") String packageName, @RequestBody FindDocumentsRequest findDocumentsRequest,
+    public ResponseEntity<Object> findDocumentsUsingFilter(@RequestParam(value="packageName", required=false, defaultValue="%25") String packageName,
+                                                           @RequestBody FindDocumentsRequest findDocumentsRequest,
                                                                @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults,
                                                            @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent)
             throws MalformedURLException {
@@ -392,14 +393,14 @@ public class DocumentController {
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
 
-    @PostMapping(path = "/documents/count-by-filter/{packageName}",
+    @PostMapping(path = "/documents/count-by-filter",
             consumes = {MediaType.APPLICATION_JSON_VALUE},
             produces = {MediaType.APPLICATION_JSON_VALUE})
     @Operation(summary = "count documents using filter")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<Object> countDocumentsUsingFilter(@PathVariable("packageName") String packageName,
+    public ResponseEntity<Object> countDocumentsUsingFilter(@RequestParam(value="packageName", required=false, defaultValue="%25") String packageName,
                                                             @RequestBody FindDocumentsRequest findDocumentsRequest) throws MalformedURLException {
         packageName = decode(packageName);
         Long count = documentService.countDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(), findDocumentsRequest.getQueryFilter());

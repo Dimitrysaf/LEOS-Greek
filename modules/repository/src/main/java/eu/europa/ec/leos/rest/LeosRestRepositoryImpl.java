@@ -1017,7 +1017,7 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     private String extractPackageNameFromPath(String path) {
         path = path.replace(workspacesPath, "");
         if (!StringUtils.hasText(path) || path.equals("/")) {
-            return "%";
+            return "";
         } else if (path.startsWith("/")) {
             path = path.substring(1);
         }
