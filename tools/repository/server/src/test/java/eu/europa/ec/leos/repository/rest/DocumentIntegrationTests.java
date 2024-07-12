@@ -460,7 +460,8 @@ public class DocumentIntegrationTests {
                 ArgumentMatchers.eq(findDocumentsRequest.getCategories()),
                 any(), ArgumentMatchers.eq(startIndex), ArgumentMatchers.eq(maxResults), ArgumentMatchers.eq(false))).thenReturn(xmlDocs);
 
-        mockMvc.perform(post("/documents/find-by-filter/{packageName}?startIndex={startIndex}&maxResults={maxResults}", encodeUriVariables(PKG_NAME)[0],
+        mockMvc.perform(post("/documents/find-by-filter?packageName={packageName}&startIndex={startIndex}&maxResults={maxResults}",
+                        encodeUriVariables(PKG_NAME)[0],
                         startIndex, maxResults).contentType(MediaType.APPLICATION_JSON)
                         .content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.leosDocumentList[0].ref", is(xmlDoc.getRef())))
@@ -487,7 +488,7 @@ public class DocumentIntegrationTests {
                 ArgumentMatchers.eq(findDocumentsRequest.getCategories()), any()))
                 .thenReturn(1L);
 
-        mockMvc.perform(post("/documents/count-by-filter/{packageName}", encodeUriVariables(PKG_NAME)[0]).contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(post("/documents/count-by-filter?packageName={packageName}", encodeUriVariables(PKG_NAME)[0]).contentType(MediaType.APPLICATION_JSON)
                         .content(json).accept(MediaType.APPLICATION_JSON))
                 .andExpect(content().string("1"))
                 .andExpect(status().isOk()).andDo(print());

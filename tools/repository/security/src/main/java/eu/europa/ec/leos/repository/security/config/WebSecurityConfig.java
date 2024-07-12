@@ -110,7 +110,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public StrictHttpFirewall httpFirewall() {
 		StrictHttpFirewall firewall = new StrictHttpFirewall();
-		firewall.setAllowUrlEncodedPercent(true);
 		return firewall;
 	}
 

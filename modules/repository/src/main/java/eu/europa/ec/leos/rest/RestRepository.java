@@ -33,6 +33,7 @@ import eu.europa.ec.leos.rest.support.requests.FindDocumentsRequest;
 import eu.europa.ec.leos.rest.support.requests.UpdateDocumentRequest;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
+import org.apache.cxf.common.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -262,7 +263,13 @@ public class RestRepository extends AbstractRestClient {
         findDocumentsRequest.setCategories(cats);
 
         String url = getUrl(leosRestFindDocumentsbyPackageNameURI);
-        LeosDocumentList resp = postEntity(url, findDocumentsRequest, LeosDocumentList.class, encodeUriVariables(packageName)[0], descendants, fetchContent);
+        LeosDocumentList resp;
+        if (StringUtils.isEmpty(packageName)) {
+            resp = postEntity(url, findDocumentsRequest, LeosDocumentList.class, descendants, fetchContent);
+        } else {
+            resp = postEntity(url + "&name=" + encodeUriVariables(packageName)[0], findDocumentsRequest, LeosDocumentList.class, descendants,
+                    fetchContent);
+        }
         return resp;
     }
 
@@ -360,8 +367,12 @@ public class RestRepository extends AbstractRestClient {
         findDocumentsRequest.setQueryFilter(workspaceFilter);
 
         String url = getUrl(leosRestFindDocumentsbyFilterURI);
-        LeosDocumentList resp = postEntity(url, findDocumentsRequest, LeosDocumentList.class, encodeUriVariables(packageName)[0], startIndex, maxResults,
-                fetchContent);
+        LeosDocumentList resp;
+        if (StringUtils.isEmpty(packageName)) {
+            resp = postEntity(url, findDocumentsRequest, LeosDocumentList.class, startIndex, maxResults, fetchContent);
+        } else {
+            resp = postEntity(url + "&packageName" + encodeUriVariables(packageName)[0], findDocumentsRequest, LeosDocumentList.class, startIndex, maxResults, fetchContent);
+        }
         return resp;
     }
 
@@ -373,7 +384,12 @@ public class RestRepository extends AbstractRestClient {
         findDocumentsRequest.setQueryFilter(workspaceFilter);
 
         String url = getUrl(leosRestCountDocumentsbyFilterURI);
-        Integer resp = postEntity(url, findDocumentsRequest, Integer.class, encodeUriVariables(packageName)[0]); //TODO Ermal
+        Integer resp;
+        if (StringUtils.isEmpty(packageName)) {
+            resp = postEntity(url, findDocumentsRequest, Integer.class);
+        } else {
+            resp = postEntity(url + "?packageName" + encodeUriVariables(packageName)[0], findDocumentsRequest, Integer.class);
+        }
         return resp == null ? 0 : resp;
     }
 
