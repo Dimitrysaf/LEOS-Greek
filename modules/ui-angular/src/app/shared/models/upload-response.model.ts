@@ -24,3 +24,12 @@ export interface ErrorVO {
   errorCode: string;
   objects: string[];
 }
+
+export interface ExceptionResponseVO {
+  errorCode: string;
+  messageKey: string;
+}
+
+export enum ErrorCode {
+  CM001 = "CM001"
+}

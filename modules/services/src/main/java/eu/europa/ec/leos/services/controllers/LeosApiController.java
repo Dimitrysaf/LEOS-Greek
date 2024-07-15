@@ -639,14 +639,9 @@ public class LeosApiController {
 
     @RequestMapping(value = "/secured/proposals/{proposalRef}/milestones", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> createMilestone(@PathVariable("proposalRef") String proposalRef, @RequestBody String milestoneComment) {
-        try {
-            proposalRef = encodeParam(proposalRef);
-            return new ResponseEntity<>(apiService.createMilestone(proposalRef, milestoneComment), HttpStatus.OK);
-        } catch (Exception e) {
-            LOG.error("Unexpected error while creating new milestone - " + e.getMessage());
-            return new ResponseEntity<>("Unexpected error while creating new milestone", HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Object> createMilestone(@PathVariable("proposalRef") String proposalRef, @RequestBody String milestoneComment) throws Exception {
+        proposalRef = encodeParam(proposalRef);
+        return new ResponseEntity<>(apiService.createMilestone(proposalRef, milestoneComment), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/secured/users/current", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

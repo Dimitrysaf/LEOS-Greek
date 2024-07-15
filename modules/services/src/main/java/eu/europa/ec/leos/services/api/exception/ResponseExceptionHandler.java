@@ -19,7 +19,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleException(Throwable ex) {
         String errorMessage = ex.getMessage();
         LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
-        return new ResponseEntity<>("{\n\t'errorCode': 500 , \n\t'message': '" + errorMessage + "'\n}",
+        return new ResponseEntity<>("{\n\t'errorCode': " + ErrorCode.G001 + " , \n\t'message': '" + errorMessage + "'\n}",
+                HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(CreateMilestoneException.class)
+    public ResponseEntity<ExceptionResponse> handleException(CreateMilestoneException ex) {
+        LOG.error("Unexpected error occurred :" + Arrays.stream(ex.getStackTrace()).findFirst().get(), ex);
+        return new ResponseEntity<>(new ExceptionResponse(ex.getErrorCode().toString(), ex.getMessageKey()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
