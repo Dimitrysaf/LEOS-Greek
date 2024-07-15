@@ -249,3 +249,39 @@ When(`click on internal reference link {int} of paragraph {int} of article {int}
 When(`click on internal reference link {int} of point {int} of list {int} of paragraph {int} of article {int}`, (mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber) => {
     legalActPage.clickRefOfMRefOfPointOfParagraphOfArticle(mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber);
 });
+
+Then(/^"([^"]*)" is showing as moved num in article (\d+) of bill$/, function () {
+
+});
+
+Then(/^"([^"]*)" is showing as soft move label in article (\d+) of bill$/, function () {
+
+});
+
+Then(/^"([^"]*)" is showing as deleted track changes in article (\d+) of bill$/, function () {
+
+});
+
+Then(/^"([^"]*)" is showing as inserted track changes in article (\d+) of bill$/, function () {
+
+});
+
+Then(/^num of article (\d+) of bill contains "([^"]*)" with action "([^"]*)"$/, function () {
+
+});
+
+Then(/^heading tag is not present for article (\d+) of bill$/, function () {
+
+});
+
+Then(/^paragraph tag is not present for article (\d+) of bill$/, function () {
+
+});
+
+Then(/^heading tag is present for article (\d+) of bill$/, function () {
+
+});
+
+Then(/^paragraph tag is present for article (\d+) of bill$/, function () {
+
+});
