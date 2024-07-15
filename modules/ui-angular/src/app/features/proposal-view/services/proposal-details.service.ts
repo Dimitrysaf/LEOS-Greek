@@ -5,10 +5,15 @@ import { EuiGrowlService } from '@eui/core';
 import {
   Collaborator,
   CollaboratorRequest,
- CreateDraftBody, CreateDraftResponse,  Document,
+  CreateDraftBody,
+  CreateDraftResponse,
+  Document,
+  ExceptionResponseVO,
+  ErrorCode,
   LeosAppConfig,
   Permission,
-  User } from '@leos/shared';
+  User
+} from '@leos/shared';
 import { TranslateService } from '@ngx-translate/core';
 import { parse as parseContentDisposition } from 'content-disposition-attachment';
 import {
@@ -33,6 +38,7 @@ import { downloadBlob } from '@/shared/utils';
 
 import { ExportPackageVO } from '../models/export-package.model';
 import { Milestone } from '../models/milestone.model';
+import {EuiDialogService} from "@eui/components/eui-dialog";
 
 @Injectable({ providedIn: 'root' })
 export class ProposalDetailsService implements OnDestroy {
@@ -44,6 +50,7 @@ export class ProposalDetailsService implements OnDestroy {
   exportedDocuments$: Observable<ExportPackageVO[]>;
   permissions$: Observable<Permission[]>;
   clonedProposalCount: number;
+  exceptionResponseVO: ExceptionResponseVO = null;
 
   private collaboratorsBS = new BehaviorSubject<Collaborator[]>([]);
   private userInputFieldChangeBS = new BehaviorSubject('');
@@ -68,6 +75,7 @@ export class ProposalDetailsService implements OnDestroy {
     private loadingService: LoadingService,
     private growlService: EuiGrowlService,
     private translateService: TranslateService,
+    private dialogService: EuiDialogService,
   ) {
     this.userInputFieldChange$ = this.userInputFieldChangeBS.asObservable();
 
@@ -367,16 +375,26 @@ export class ProposalDetailsService implements OnDestroy {
         },
         error: (res) => {
           this.loadingService.setLoading(false);
-          this.growlService.growl({
-            severity: 'danger',
-            summary: this.translateService.instant(
-              'page.collection.milestones.create-milestone-dialog.error',
-            ),
-            detail: res,
-            life: 3000,
-            isGrowlSticky: false,
-            position: 'bottom-right',
-          });
+          this.exceptionResponseVO = res.error;
+          if (this.exceptionResponseVO.errorCode === ErrorCode.CM001) {
+            this.dialogService.openDialog({
+              title: this.translateService.instant(this.exceptionResponseVO.messageKey + '.title'),
+              content: this.translateService.instant(this.exceptionResponseVO.messageKey + '.message'),
+              hasDismissButton: false,
+            });
+            this.growlService.clearGrowl();
+          } else {
+            this.growlService.growl({
+              severity: 'danger',
+              summary: this.translateService.instant(
+                'page.collection.milestones.create-milestone-dialog.error',
+              ),
+              detail: res,
+              life: 3000,
+              isGrowlSticky: false,
+              position: 'bottom-right',
+            });
+          }
         },
       });
   }

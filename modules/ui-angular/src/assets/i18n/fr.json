@@ -172,6 +172,8 @@
   "page.collection.milestones.table.add-milestone-dialog.create": "Créer un milestone",
   "page.collection.milestones.create-milestone-dialog.success": "Milestone créé",
   "page.collection.milestones.create-milestone-dialog.error": "Échec de la création du milestone",
+  "page.milestone.already.exist.for.this.major.version.error.title": "Milestone not created",
+  "page.milestone.already.exist.for.this.major.version.error.message": "The documents contained in the new milestone are identical to the documents in the previous version of the milestone.<br>Please make changes to the document in order to create a new version of the milestone.",
   "page.collection.milestones.create-milestone-dialog.success-clone": "La contribution du Service Légal a été créée pour cette proposition",
   "page.collection.milestones.type.proposal1": "Pour Consultation Interservice",
   "page.collection.milestones.type.cloned-proposal1": "Contribution du Service Légale",

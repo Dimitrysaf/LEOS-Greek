@@ -49,6 +49,7 @@ import eu.europa.ec.leos.integration.rest.UserJSON;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.services.api.exception.CreateMilestoneException;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.collection.CollectionContextService;
 import eu.europa.ec.leos.services.collection.CreateCollectionException;
@@ -1002,22 +1003,21 @@ public abstract class ApiServiceImpl implements ApiService {
     public LegDocument createMilestone(String proposalRef, String milestoneComment) throws Exception {
         LOG.trace(("Creating new milestone..."));
         Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        LegDocument newLegDocument = null;
         if (proposal != null) {
             String proposalId = proposal.getId();
             byte[] proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null) ?
                     proposal.getContent().get().getSource().getBytes() : new byte[0];
             boolean isClonedProposal = proposal.isClonedProposal();
-            try {
-                if (isClonedProposal) {
-                    populateCloneProposalMetadataVO(proposalXmlContent);
-                }
-                final String versionComment = messageHelper.getMessage("milestone.versionComment");
-                createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
-                LegDocument newLegDocument = milestoneService.createMilestone(proposalId, milestoneComment);
-            } catch (Exception e) {
-                LOG.error("Unexpected error occurred while creating new milestone ", e);
-                throw e;
+            if (isClonedProposal) {
+                populateCloneProposalMetadataVO(proposalXmlContent);
             }
+            final String versionComment = messageHelper.getMessage("milestone.versionComment");
+            if (proposal.getVersionType().equals(VersionType.MAJOR) && proposal.getVersionComment().equals(versionComment)) {
+                throw new CreateMilestoneException();
+            }
+            createMajorVersions(proposalRef, milestoneComment, versionComment, collectionContextProvider.get());
+            newLegDocument = milestoneService.createMilestone(proposalId, milestoneComment);
         }
         return null;
     }
