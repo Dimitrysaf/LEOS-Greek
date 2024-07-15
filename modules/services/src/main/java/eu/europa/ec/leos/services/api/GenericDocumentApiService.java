@@ -3,9 +3,7 @@ package eu.europa.ec.leos.services.api;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Stopwatch;
 import com.sun.istack.NotNull;
-import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
-import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
@@ -40,8 +38,6 @@ import eu.europa.ec.leos.services.export.ExportService;
 import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
-import eu.europa.ec.leos.services.processor.FinancialStatementProcessor;
-import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
@@ -49,7 +45,6 @@ import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
-import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
@@ -73,7 +68,6 @@ import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemType;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
-import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import io.atlassian.fugue.Maybe;
 import io.atlassian.fugue.Option;
 import org.slf4j.Logger;
@@ -99,26 +93,14 @@ import java.util.stream.Collectors;
 public class GenericDocumentApiService {
     private static final Logger LOG = LoggerFactory.getLogger(GenericDocumentApiService.class);
 
-    private static final Map<LeosCategory, String> DOCUMENT_TOC_STARTING_NODE = new HashMap<LeosCategory, String>() {{
-        this.put(LeosCategory.BILL, "bill");
-        this.put(LeosCategory.MEMORANDUM, "doc");
-        this.put(LeosCategory.ANNEX, "doc");
-        this.put(LeosCategory.PROPOSAL, "doc");
-        this.put(LeosCategory.STAT_FINANC_LEGIS, "doc");
-        this.put(LeosCategory.COUNCIL_EXPLANATORY, "doc");
-        this.put(LeosCategory.COVERPAGE, "coverPage");
-    }};
 
     private static final String PROPOSAL = "Proposal_";
 
     private final LeosRepository leosRepository;
-    private final TableOfContentProcessor tableOfContentProcessor;
     private final ElementProcessor elementProcessor;
     private final XmlContentProcessor xmlContentProcessor;
-    private final FinancialStatementProcessor financialStatementProcessor;
     private final PackageService packageService;
     private final ProposalService proposalService;
-    private final LegService legService;
     private final DocumentContentService documentContentService;
     private final ValidationService validationService;
     private final TemplateConfigurationService templateConfigurationService;
@@ -141,13 +123,10 @@ public class GenericDocumentApiService {
 
     @Autowired
     public GenericDocumentApiService(@NotNull LeosRepository leosRepository,
-                                     @NotNull TableOfContentProcessor tableOfContentProcessor,
                                      @NotNull ElementProcessor elementProcessor,
                                      @NotNull XmlContentProcessor xmlContentProcessor,
-                                     @NotNull FinancialStatementProcessor financialStatementProcessor,
                                      @NotNull PackageService packageService,
                                      @NotNull ProposalService proposalService,
-                                     @NotNull LegService legService,
                                      @NotNull DocumentContentService documentContentService,
                                      @NotNull ValidationService validationService,
                                      @NotNull TemplateConfigurationService templateConfigurationService,
@@ -167,13 +146,10 @@ public class GenericDocumentApiService {
                                      @NotNull LanguageGroupService languageGroupService,
                                      @NotNull DocumentLanguageContext documentLanguageContext) {
         this.leosRepository = Objects.requireNonNull(leosRepository);
-        this.tableOfContentProcessor = Objects.requireNonNull(tableOfContentProcessor);
         this.elementProcessor = Objects.requireNonNull(elementProcessor);
         this.xmlContentProcessor = Objects.requireNonNull(xmlContentProcessor);
-        this.financialStatementProcessor = Objects.requireNonNull(financialStatementProcessor);
         this.packageService = Objects.requireNonNull(packageService);
         this.proposalService = Objects.requireNonNull(proposalService);
-        this.legService = Objects.requireNonNull(legService);
         this.documentContentService = Objects.requireNonNull(documentContentService);
         this.validationService = Objects.requireNonNull(validationService);
         this.templateConfigurationService = Objects.requireNonNull(templateConfigurationService);
@@ -210,20 +186,6 @@ public class GenericDocumentApiService {
                 XmlDocument.class);
         documentViewService.updateProposalAsync(document);
         return this.getMajorVersionsData(documentRef, 0, 1);
-    }
-
-    public List<TableOfContentItemVO> getTableOfContent(@NotNull String docRef,
-                                                        @NotNull TocMode mode) throws NotFoundException {
-        XmlDocument document = this.findDocumentByRef(docRef);
-        String docTemplate = this.getDocTemplate(document);
-        byte[] content = this.getDocumentContent(document);
-        String startingNode = Optional.ofNullable(DOCUMENT_TOC_STARTING_NODE.get(document.getCategory()))
-                .orElseThrow(
-                        () -> new RuntimeException(String.format("Starting node not found for document %s", docRef)));
-        documentLanguageContext.setDocumentLanguage(document.getMetadata().get().getLanguage());
-        this.getStructureContext().useDocumentTemplate(docTemplate);
-        List<TableOfContentItemVO> toc = this.tableOfContentProcessor.buildTableOfContent(startingNode, content, mode);
-        return toc;
     }
 
     public List<TocItem> getTocItems(@NotNull String docRef) {

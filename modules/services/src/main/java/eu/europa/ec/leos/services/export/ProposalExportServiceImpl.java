@@ -15,7 +15,10 @@ package eu.europa.ec.leos.services.export;
 
 import com.google.common.base.Stopwatch;
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.integration.AKN4EUService;
 import eu.europa.ec.leos.integration.ToolBoxService;
@@ -27,11 +30,15 @@ import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
+import eu.europa.ec.leos.services.dto.request.ExportDocumentOptions;
+import eu.europa.ec.leos.services.exception.InternalServerException;
 import eu.europa.ec.leos.services.exception.XmlValidationException;
+import eu.europa.ec.leos.services.leoslight.service.LeosLightXmlDocumentService;
 import eu.europa.ec.leos.services.notification.NotificationService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import io.atlassian.fugue.Pair;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +49,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -65,18 +73,20 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
     protected final static String ZIP_PACKAGE_NAME = "AkomaNtoso2LegisWrite";
     protected CloneContext cloneContext;
     protected WorkspaceRepository workspaceRepository;
-
+    private LeosLightXmlDocumentService leosLightXmlDocumentService;
     @Autowired
     ProposalExportServiceImpl(LegService legService, PackageService packageService, Optional<ToolBoxService> toolBoxServiceO,
                               SecurityContext securityContext, ExportHelper exportHelper, BillService billService,
                               AnnexService annexService, TransformationService transformationService, NotificationService notificationService,
-                              AKN4EUService akn4euService, CloneContext cloneContext, WorkspaceRepository workspaceRepository) {
+                              AKN4EUService akn4euService, CloneContext cloneContext, WorkspaceRepository workspaceRepository,
+                              LeosLightXmlDocumentService leosLightXmlDocumentService) {
         super(legService, packageService, securityContext, exportHelper, billService, annexService, transformationService);
         toolBoxServiceO.ifPresent(service -> this.toolBoxService = service);
         this.notificationService = notificationService;
         this.akn4euService = akn4euService;
         this.cloneContext = cloneContext;
         this.workspaceRepository = workspaceRepository;
+        this.leosLightXmlDocumentService = leosLightXmlDocumentService;
     }
 
     /**
@@ -271,5 +281,58 @@ public class ProposalExportServiceImpl extends ExportServiceImpl {
             }
             LOG.debug("createLegisWritePackage() end....");
         }
+    }
+    @Override
+    public byte[] createDocumentPackage(String jobFileName, ExportOptions exportOptions, User user) throws Exception {
+        LOG.debug("calling createDocumentPackage()....");
+        Validate.notNull(exportOptions);
+        File exportedFile = null;
+        try {
+            exportOptions.setDocuwrite(false);
+            exportedFile = convertDocument(exportOptions);
+            return FileUtils.readFileToByteArray(exportedFile);
+        } catch (Exception e) {
+            LOG.error("An exception occurred while converting the document: ", e);
+            throw e;
+        } finally {
+            if (exportedFile != null && exportedFile.exists()) {
+                if (!exportedFile.delete()) {
+                    LOG.info(FILE_NOT_DELETED, exportedFile.toPath());
+                }
+            }
+            LOG.debug("createDocumentPackage() end....");
+        }
+    }
+
+    private File convertDocument(ExportOptions exportOptions) {
+        File file = null;
+        try {
+                file = getZipFile(exportOptions);
+        } catch (IOException exception) {
+            if ((file != null) && file.exists()) {
+                file.delete();
+            }
+            LOG.error("An exception occurred while converting the document: ", exception);
+            throw new RuntimeException(exception);
+        }
+
+        return file;
+    }
+
+
+    private File getZipFile(ExportOptions exportOptions) throws IOException {
+        LeosDocument document = exportOptions.getExportVersions().getCurrent();
+        String docName = document.getName();
+        byte[] docContent = document.getContent().get().getSource().getBytes();
+        Map<String, Object> contentToZip = new HashMap<>();
+        //1.add xml doc
+        contentToZip.put(docName, docContent);
+        //2. HTML rendition
+        String cssFileName = document.getCategory().name().toLowerCase(Locale.ROOT) + ".css";
+        leosLightXmlDocumentService.addDocumentHtmlRendition(contentToZip, docName, docContent, cssFileName);
+        //3.process annotation and add document conversion
+        contentToZip.put("exports.zip", leosLightXmlDocumentService.convert(docContent, docName, exportOptions));
+        //4.final packaging
+        return ZipPackageUtil.zipFiles("result.zip", contentToZip, null);
     }
 }

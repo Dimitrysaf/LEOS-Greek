@@ -137,7 +137,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         exportOptions.setWithCoverPage(false);
 
         Proposal proposal = getProposal(currentDocument.getMetadata().get().getRef());
-        String proposalId = proposal.getId();
+        String proposalId = proposal != null ? proposal.getId() : null;
 
         return doDownloadVersion(proposalId, exportOptions);
     }

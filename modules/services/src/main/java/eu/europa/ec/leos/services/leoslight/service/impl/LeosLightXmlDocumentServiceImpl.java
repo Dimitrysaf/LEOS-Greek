@@ -23,8 +23,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.rendition.RenderedDocument;
 import eu.europa.ec.leos.services.annotate.AnnotateService;
-import eu.europa.ec.leos.services.api.GenericDocumentApiService;
-import eu.europa.ec.leos.services.exception.ExportException;
+import eu.europa.ec.leos.services.api.GenericDocumentTocApiService;
 import eu.europa.ec.leos.services.export.ExportHelper;
 import eu.europa.ec.leos.services.export.ExportOptions;
 import eu.europa.ec.leos.services.export.ZipPackageUtil;
@@ -80,17 +79,18 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosLightXmlDocumentServiceImpl.class);
+    public static final String ACCOLADE_NEW_LINE = "; }\n";
 
     private final XPathCatalog xPathCatalog;
     private final HtmlRenditionProcessor htmlRenditionProcessor;
     private final MessageHelper messageHelper;
-    private final GenericDocumentApiService genericDocumentApiService;
-    private RestTemplate restTemplate;
-    private AnnotateService annotateService;
-    private DocumentLanguageContext documentLanguageContext;
-    private ExportHelper exportHelper;
+    private final GenericDocumentTocApiService genericDocumentTocApiService;
+    private final RestTemplate restTemplate;
+    private final AnnotateService annotateService;
+    private final DocumentLanguageContext documentLanguageContext;
+    private final ExportHelper exportHelper;
 
-    private final String XML_EXT = ".xml";
+    private static final String XML_EXT = ".xml";
     private static final String STYLE_SHEET_EXT = ".css";
     private static final String JS_EXT = ".js";
     private static final String STYLE_DEST_DIR = "renditions/html/css/";
@@ -109,13 +109,13 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
 
     @Autowired
     public LeosLightXmlDocumentServiceImpl(XPathCatalog xPathCatalog,
-                                           HtmlRenditionProcessor htmlRenditionProcessor, GenericDocumentApiService genericDocumentApiService,
+                                           HtmlRenditionProcessor htmlRenditionProcessor, GenericDocumentTocApiService genericDocumentTocApiService,
                                            MessageHelper messageHelper, RestTemplate restTemplate, AnnotateService annotateService,
                                             DocumentLanguageContext documentLanguageContext, ExportHelper exportHelper) {
         this.xPathCatalog = xPathCatalog;
         this.htmlRenditionProcessor = htmlRenditionProcessor;
         this.messageHelper = messageHelper;
-        this.genericDocumentApiService = genericDocumentApiService;
+        this.genericDocumentTocApiService = genericDocumentTocApiService;
         this.restTemplate = restTemplate;
         this.annotateService = annotateService;
         this.documentLanguageContext = documentLanguageContext;
@@ -153,7 +153,7 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         final String tocJsName = xmlDocumentName.substring(0, xmlDocumentName.indexOf(XML_EXT)) + "_toc" + ".js";
         final String tocJsFile = JS_DEST_DIR + tocJsName;
 
-        List<TableOfContentItemVO> tableOfContentItemVOList = genericDocumentApiService.getTableOfContent(xmlDocumentName.replace(XML_EXT, ""), TocMode.SIMPLIFIED);
+        List<TableOfContentItemVO> tableOfContentItemVOList = genericDocumentTocApiService.getTableOfContent(xmlDocumentName.replace(XML_EXT, ""), TocMode.SIMPLIFIED);
         String tocJson = getTocAsJson(tableOfContentItemVOList);
 
         contentToZip.put(tocJsFile, htmlRenditionProcessor.processJsTemplate(tocJson).getBytes(UTF_8));
@@ -341,9 +341,9 @@ public class LeosLightXmlDocumentServiceImpl implements LeosLightXmlDocumentServ
         for (int i = 0; i < usersId.size(); i++) {
             String userId = usersId.get(i);
             String userIdColor[] = this.generateColors(String.join("", Collections.nCopies(5, userId)) + proposalRef);
-            trackChangesCss += "akomantoso [leos\\:uid='" + userId + "'] { color: " + userIdColor[0] + "; }\n";
-            trackChangesCss += "akomantoso [leos\\:uid='" + userId + "']:hover { background-color: " + userIdColor[1] + "; }\n";
-            trackChangesCss += "akomantoso tr[leos\\:uid='" + userId + "'] { background-color: " + userIdColor[1] + "; }\n";
+            trackChangesCss += "akomantoso [leos\\:uid='" + userId + "'] { color: " + userIdColor[0] + ACCOLADE_NEW_LINE;
+            trackChangesCss += "akomantoso [leos\\:uid='" + userId + "']:hover { background-color: " + userIdColor[1] + ACCOLADE_NEW_LINE;
+            trackChangesCss += "akomantoso tr[leos\\:uid='" + userId + "'] { background-color: " + userIdColor[1] + ACCOLADE_NEW_LINE;
         }
         trackChangesCss += "</style>";
         return trackChangesCss;

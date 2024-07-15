@@ -74,10 +74,17 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
     @Override
     protected DownloadVersionResponse doDownloadVersion(String proposalId, ExportOptions exportOptions) {
         try {
-            final String jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".zip";
-            exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
+            final String jobFileName;
+            byte[] byteArray = new byte[0];
+            if(proposalId != null) {
+                jobFileName = "Proposal_" + proposalId + "_AKN2DW_" + System.currentTimeMillis() + ".zip";
+                exportService.createDocumentPackage(jobFileName, proposalId, exportOptions, securityContext.getUser());
+            }else{
+                jobFileName = "Document_" +exportOptions.getExportVersions().getCurrent().getName() + "_AKN2DW_" + System.currentTimeMillis() + ".zip";
+                byteArray = exportService.createDocumentPackage(jobFileName, exportOptions, securityContext.getUser());
+            }
             LOG.info("Sent ToolBox Document: {}", jobFileName);
-            return new DownloadVersionResponse(jobFileName, new byte[0]);
+            return new DownloadVersionResponse(jobFileName, byteArray);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
             throw new ExportException(messageHelper.getMessage("export.package.error.message"));
