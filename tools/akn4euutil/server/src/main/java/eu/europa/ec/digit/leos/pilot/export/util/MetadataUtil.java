@@ -14,10 +14,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class MetadataUtil {
 
@@ -810,6 +807,7 @@ public class MetadataUtil {
         MetadataUtil.addInsertCoteToMetaReference(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToCoverPage(fieldInfo, xmlFile);
         addInserCoteToFRBRWork(fieldInfo, xmlFile);
+        MetadataUtil.addInsertCoteToDocumentFilename(fieldInfo, xmlFile);
     }
 
     public static void addInsertCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
@@ -863,6 +861,17 @@ public class MetadataUtil {
         if (fieldInfo.getDisplayValue().equals("final")) {
             MetadataUtil.addFinalToCoverPage(fieldInfo, xmlFile);
             MetadataUtil.addFinalToIdentification(fieldInfo, xmlFile);
+            MetadataUtil.addFinalToFilename(fieldInfo, xmlFile);
+        }
+    }
+
+    private static void addFinalToFilename(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
+    {
+        final String fileName = xmlFile.getName();
+        if (fileName.startsWith("main")) {
+            final String[] splitFileName = fileName.split("-");
+            final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + "final-" + b : a + b + "-");
+            xmlFile.setName(newFileName);
         }
     }
 
@@ -899,6 +908,21 @@ public class MetadataUtil {
         MetadataUtil.addInterinstitutionalCoteToMetaReference(fieldInfo, xmlFile);
         MetadataUtil.addInterinstitutionalCoteToCoverPage(fieldInfo, xmlFile);
         MetadataUtil.addInterinstitutionalCoteToPreface(fieldInfo, xmlFile);
+    }
+
+    private static void addInsertCoteToDocumentFilename(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
+    {
+        final String fileName = xmlFile.getName();
+        if (fileName.startsWith("main")) {
+            final String[] splitFileName = fileName.split("-");
+            splitFileName[1] = prepareInsertCoteForFileName(fieldInfo);
+            xmlFile.setName(String.join("-", splitFileName));
+        }
+    }
+
+    private static String prepareInsertCoteForFileName(ReferenceFieldInfo fieldInfo) {
+        final String insertCote = fieldInfo.getDisplayValue();
+        return insertCote.replace(" ", "_");
     }
 
     private static void addInterinstitutionalCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
