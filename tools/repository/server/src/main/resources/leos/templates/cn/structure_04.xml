@@ -293,7 +293,7 @@
             </profiles>
             <editable>true</editable>
             <template>
-                <![CDATA[<article xml:id="_${id}"><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph xml:id="_${id}-par1"><num>1.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
+                <![CDATA[<article xml:id="_${id}"><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph xml:id="_${id}-par1"><num>1.</num><content><p>${default.content.text}</p></content></paragraph><paragraph><num>2.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
         </tocItem>
 
         <tocItem>
