@@ -52,6 +52,7 @@ import eu.europa.ec.leos.services.label.ReferenceLabelService;
 import eu.europa.ec.leos.services.processor.AttachmentProcessor;
 import eu.europa.ec.leos.services.processor.AttachmentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.TableOfContentProcessor;
+import eu.europa.ec.leos.services.processor.content.TableOfContentProcessorImpl;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorMandate;
 import eu.europa.ec.leos.services.processor.content.indent.IndentHelper;
@@ -153,11 +154,12 @@ public class LegServiceImplTest {
     @Mock
     private CloneContext cloneContext;
     @Mock
-    private IndentHelper indentHelper;
-    @Mock
-    private TableOfContentProcessor tableOfContentProcessor;
+    private IndentHelper indentHelper;;
     @Mock
     private TrackChangesContext trackChangesContext;
+
+    @InjectMocks
+    private TableOfContentProcessor tableOfContentProcessor = spy(new TableOfContentProcessorImpl());
 
     @InjectMocks
     private XPathCatalog xPathCatalog = spy(new XPathCatalog());
@@ -503,6 +505,42 @@ public class LegServiceImplTest {
         // Actual
         assertEquals(hrefExpected,
                 legPackage.getExportResource().getChildResource(LeosCategory.BILL.name()).getChildResource(LeosCategory.ANNEX.name()).getHref());
+    }
+
+    @Test
+    public void test_createLegPackage_withoutDocs() throws IOException {
+        String proposalId = "555";
+
+        List<Collaborator> collaborators = new ArrayList<>();
+        collaborators.add(new Collaborator("login", "OWNER", "SG"));
+
+        Proposal proposal = getMockedProposal(proposalId, collaborators);
+
+        ExportOptions exportOptions = new ExportDW(ExportOptions.Output.PDF);
+
+        LeosPackage leosPackage = new LeosPackage(proposalId, "Proposal", "");
+
+        when(packageRepository.findPackageByDocumentId(proposalId)).thenReturn(leosPackage);
+        when(workspaceRepository.findDocumentById(proposalId, Proposal.class, true)).thenReturn(proposal);
+        when(packageRepository.findDocumentByPackagePathAndName(eq(leosPackage.getPath()), anyString(), eq(Bill.class))).thenReturn(null);
+        when(packageRepository.findDocumentByPackagePathAndName(eq(leosPackage.getPath()), anyString(), eq(Memorandum.class))).thenReturn(null);
+        when(packageRepository.findDocumentByPackagePathAndName(eq(leosPackage.getPath()), anyString(), eq(Annex.class))).thenReturn(null);
+        when(packageRepository.findDocumentByPackagePathAndName(eq(leosPackage.getPath()), anyString(), eq(Explanatory.class))).thenReturn(null);
+        when(structureContextProvider.get()).thenReturn(structureContext);
+        when(structureContext.getTocItems()).thenReturn(tocItems);
+        when(structureContext.getNumberingConfigs()).thenReturn(numberingConfigs);
+        when(htmlRenditionProcessor.processTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processJsTemplate(any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processTocTemplate(any(), any(), any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processCoverPage(any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processCoverPageTocTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
+        when(annotateService.getAnnotations(any(), any())).thenReturn(StringUtils.EMPTY);
+        when(documentContentService.isCoverPageExists(any())).thenReturn(true);
+
+        // Call
+        LegPackage legPackage = legService.createLegPackage(proposalId, exportOptions);
+
+        assertEquals(LeosCategory.PROPOSAL, legPackage.getExportResource().getLeosCategory());
     }
 
     @Test

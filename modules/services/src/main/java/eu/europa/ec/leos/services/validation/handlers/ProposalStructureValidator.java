@@ -21,13 +21,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Component
 public class ProposalStructureValidator implements Validator {
-
-    private static final LeosCategory[] MANDATORY_DOCUMENTS = new LeosCategory[]{LeosCategory.PROPOSAL, LeosCategory.BILL};
 
     @Override
     public void validate(DocumentVO documentVO, final List<ErrorVO> result) throws Exception {
@@ -37,11 +35,14 @@ public class ProposalStructureValidator implements Validator {
     /**
      * A valid proposal should contain instances of this documentvo: memo, bill.
      *
-     * @param documentVO
+     * @param documentVO, input value
      */
     private void validateProposalStructure(DocumentVO documentVO, final List<ErrorVO> result) {
         String docId = documentVO.getId();
-        List<LeosCategory> mandatoryCategories = new ArrayList<>(Arrays.asList(MANDATORY_DOCUMENTS));
+        List<LeosCategory> mandatoryCategories = new ArrayList<>(Collections.singletonList(LeosCategory.PROPOSAL));
+        if(!documentVO.getMetadata().isImported()) {
+            mandatoryCategories.add(LeosCategory.BILL);
+        }
         mandatoryCategories.remove(documentVO.getCategory());
         if (documentVO.getChildDocuments() != null) {
             for (DocumentVO childDoc : documentVO.getChildDocuments()) {

@@ -97,13 +97,11 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
      * array source contains the xml as it is in the zip/leg file.
      *
      * @param file            leg file from where to create the DocumentVO.
-     * @param proposal        DocumentVO with the data of the proposal. The same object will be enriched and returned by the method
      * @param canModifySource true to exclude some xml tags into byte array source, false if you need to keep the original integrity of the document
      * @return the enriched DocumentVO representing the proposal inside the leg file.
      */
-    public DocumentVO createProposalFromLegFile(File file, final DocumentVO proposal, boolean canModifySource) throws XmlValidationException {
-        proposal.clean();
-        proposal.setCategory(LeosCategory.PROPOSAL);
+    public DocumentVO createProposalFromLegFile(File file, boolean canModifySource) throws XmlValidationException {
+        DocumentVO proposal = new DocumentVO(LeosCategory.PROPOSAL);
         // unzip file
         String unzipPath = "/unzip/";
         Map<String, Object> unzippedFiles = ZipPackageUtil.unzipFiles(file, unzipPath);
@@ -119,6 +117,9 @@ public abstract class ProposalConverterServiceImpl implements ProposalConverterS
                 DocumentVO billDoc = null;
                 HashMap<Integer, DocumentVO> annexes = new HashMap<>();
                 for (String docName : unzippedFiles.keySet()) {
+                    if(docName.startsWith(PROPOSAL_FILE)) {
+                        continue;
+                    }
                     File docFile = (File) unzippedFiles.get(docName);
                     DocumentVO doc = createDocument(docName, docFile, canModifySource);
                     if (doc != null) {

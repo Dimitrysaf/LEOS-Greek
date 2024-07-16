@@ -269,15 +269,14 @@ public abstract class ApiServiceImpl implements ApiService {
     @Override
     public LegFileValidation validateLegFile(File legDocument) {
         LegFileValidation legFileValidation = new LegFileValidation();
-        DocumentVO proposal = new DocumentVO(LeosCategory.PROPOSAL);
-        DocumentVO updatedDocumentVO = null;
+        DocumentVO proposalVO = null;
         try {
-            updatedDocumentVO = proposalConverterService.createProposalFromLegFile(legDocument, proposal, true);
-            Result result = postProcessingDocumentService.processDocument(updatedDocumentVO);
+            proposalVO = proposalConverterService.createProposalFromLegFile(legDocument, true);
+            Result result = postProcessingDocumentService.processDocument(proposalVO);
             if (result.isOk()) {
-                legFileValidation.setDocumentToBeCreated(updatedDocumentVO);
+                legFileValidation.setDocumentToBeCreated(proposalVO);
                 ValidationVO validation = new ValidationVO();
-                validation.addErrors(validationService.validateDocument(updatedDocumentVO));
+                validation.addErrors(validationService.validateDocument(proposalVO));
                 List<ErrorVO> errors = validation.getErrors();
                 //FIXME: The skipping of validation needs to be removed
                 if (validation.hasErrors() && !errors.get(0).getErrorCode().name()

@@ -175,6 +175,7 @@ public class LegServiceImpl implements LegService {
     private static final String coverPageStyleSheet = LeosCategory.COVERPAGE.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String financialStatementStyleSheet = LeosCategory.STAT_FINANC_LEGIS.name().toLowerCase() + STYLE_SHEET_EXT;
     private static final String explanatoryStyleSheet = "explanatory" + STYLE_SHEET_EXT;
+    private static final String RESOURCE_NOT_FOUND_MSG = "404 NOT_FOUND";
 
     public static final String FORMAT_DATE_TIME_ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
     public static final String SUGGESTION = "suggestion";
@@ -423,7 +424,7 @@ public class LegServiceImpl implements LegService {
         File legFileTemp = File.createTempFile("RENDITION_", ".leg");
         FileUtils.copyFile(legFile, legFileTemp);
 
-        DocumentVO proposalVO = proposalConverterService.createProposalFromLegFile(legFile, new DocumentVO(LeosCategory.PROPOSAL), false);
+        DocumentVO proposalVO = proposalConverterService.createProposalFromLegFile(legFile, false);
 
         final byte[] proposalXmlContent = proposalVO.getSource();
         ExportResource proposalExportResource = new ExportResource(LeosCategory.PROPOSAL);
@@ -627,9 +628,18 @@ public class LegServiceImpl implements LegService {
                                         LegPackage legPackage, String proposalRef) {
         final String memorandumRef = proposalRefsMap.get(LeosCategory.MEMORANDUM.name() + "_href");
         if (!StringUtils.isEmpty(memorandumRef) && !memorandumRef.equals("#")) {
-            final Memorandum memorandum = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), memorandumRef, Memorandum.class);
-            enrichZipWithMemorandum(contentToZip, exportProposalResource, proposalRefsMap, memorandum, proposalRef);
-            legPackage.addContainedFile(memorandum.getVersionedReference());
+            Memorandum memorandum = null;
+            try {
+                memorandum = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), memorandumRef, Memorandum.class);
+            } catch (Exception ex) {
+                if(!ex.getMessage().contains(RESOURCE_NOT_FOUND_MSG)) {
+                    throw ex;
+                }
+            }
+            if(memorandum != null) {
+                enrichZipWithMemorandum(contentToZip, exportProposalResource, proposalRefsMap, memorandum, proposalRef);
+                legPackage.addContainedFile(memorandum.getVersionedReference());
+            }
         }
     }
 
@@ -638,9 +648,18 @@ public class LegServiceImpl implements LegService {
                                         LegPackage legPackage, String proposalRef) {
         final String financialStatementRef = proposalRefsMap.get(LeosCategory.STAT_FINANC_LEGIS.name() + "_href");
         if (!StringUtils.isEmpty(financialStatementRef) && !financialStatementRef.equals("#")) {
-            final FinancialStatement financialStatement = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), financialStatementRef, FinancialStatement.class);
-            enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement, proposalRef);
-            legPackage.addContainedFile(financialStatement.getVersionedReference());
+            FinancialStatement financialStatement = null;
+            try {
+                financialStatement = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), financialStatementRef, FinancialStatement.class);
+            } catch (Exception ex) {
+                if(!ex.getMessage().contains(RESOURCE_NOT_FOUND_MSG)) {
+                    throw ex;
+                }
+            }
+            if(financialStatement != null) {
+                enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement, proposalRef);
+                legPackage.addContainedFile(financialStatement.getVersionedReference());
+            }
         }
     }
 
@@ -661,18 +680,26 @@ public class LegServiceImpl implements LegService {
             for (Map.Entry<String, String> entry : documentRefMap.entrySet()) {
                 String href = entry.getKey();
                 String id = entry.getValue();
-                Explanatory explanatory;
+                Explanatory explanatory = null;
                 if (explanatoryId == null) {
-                    explanatory = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), href, Explanatory.class);
+                    try {
+                        explanatory = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), href, Explanatory.class);
+                    } catch (Exception ex) {
+                        if(!ex.getMessage().contains(RESOURCE_NOT_FOUND_MSG)) {
+                            throw ex;
+                        }
+                    }
                 } else if(href.contains(explanatoryId)){
                     explanatory = (Explanatory) exportOptions.getExportVersions().getCurrent();
                 } else {
                     continue;
                 }
 
-                String proposalRef = proposal.getMetadata().getOrNull().getRef();
-                enrichZipWithExplanatory(contentToZip, exportProposalResource, explanatory, exportOptions, id, href, proposalRef);
-                legPackage.addContainedFile(explanatory.getVersionedReference());
+                if(explanatory != null) {
+                    String proposalRef = proposal.getMetadata().getOrNull().getRef();
+                    enrichZipWithExplanatory(contentToZip, exportProposalResource, explanatory, exportOptions, id, href, proposalRef);
+                    legPackage.addContainedFile(explanatory.getVersionedReference());
+                }
             }
 
             if (explanatoryId != null) { // only if we are not in comparison mode
@@ -686,18 +713,27 @@ public class LegServiceImpl implements LegService {
                                   LegPackage legPackage, String proposalRef) {
         final String billRef = proposalRefsMap.get(LeosCategory.BILL.name() + "_href");
         if (!StringUtils.isEmpty(billRef) && !billRef.equals("#")) {
-            final Bill bill = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), billRef, Bill.class);
-            byte[] billXmlContent;
-            if (exportOptions.isComparisonMode()) {
-                billXmlContent = getComparedContent(exportOptions);
-            } else {
-                billXmlContent = bill.getContent().get().getSource().getBytes();
-                billXmlContent = addMetadataToBill(bill, billXmlContent);
+            Bill bill = null;
+            try {
+                bill = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), billRef, Bill.class);
+            } catch (Exception ex) {
+                if(!ex.getMessage().contains(RESOURCE_NOT_FOUND_MSG)) {
+                    throw ex;
+                }
             }
-            ExportResource exportBillResource = enrichZipWithBill(contentToZip, exportProposalResource, proposalRefsMap, bill, proposalRef, billXmlContent);
-            legPackage.addContainedFile(bill.getVersionedReference());
+            if(bill != null) {
+                byte[] billXmlContent;
+                if (exportOptions.isComparisonMode()) {
+                    billXmlContent = getComparedContent(exportOptions);
+                } else {
+                    billXmlContent = bill.getContent().get().getSource().getBytes();
+                    billXmlContent = addMetadataToBill(bill, billXmlContent);
+                }
+                ExportResource exportBillResource = enrichZipWithBill(contentToZip, exportProposalResource, proposalRefsMap, bill, proposalRef, billXmlContent);
+                legPackage.addContainedFile(bill.getVersionedReference());
 
-            addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage, proposalRef, billXmlContent);
+                addAnnexToPackage(leosPackage, contentToZip, exportOptions, exportBillResource, legPackage, proposalRef, billXmlContent);
+            }
         }
     }
 
@@ -714,17 +750,25 @@ public class LegServiceImpl implements LegService {
             for (Map.Entry<String, String> entry : attachmentIds.entrySet()) {
                 String href = entry.getKey();
                 String id = entry.getValue();
-                Annex annex;
+                Annex annex = null;
                 if (annexId == null) {
-                    annex = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), href, Annex.class);
+                    try {
+                        annex = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), href, Annex.class);
+                    } catch (Exception ex) {
+                        if(!ex.getMessage().contains(RESOURCE_NOT_FOUND_MSG)) {
+                            throw ex;
+                        }
+                    }
                 } else if(href.contains(annexId)){
                     annex = (Annex) exportOptions.getExportVersions().getCurrent();
                 } else {
                     continue;
                 }
 
-                enrichZipWithAnnex(contentToZip, exportProposalResource, annex, exportOptions, id, href, proposalRef);
-                legPackage.addContainedFile(annex.getVersionedReference());
+                if(annex != null) {
+                    enrichZipWithAnnex(contentToZip, exportProposalResource, annex, exportOptions, id, href, proposalRef);
+                    legPackage.addContainedFile(annex.getVersionedReference());
+                }
             }
 
             if (annexId != null) { // only if we are not in comparison mode

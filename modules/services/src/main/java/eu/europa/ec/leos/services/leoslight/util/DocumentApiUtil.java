@@ -18,11 +18,13 @@ import eu.europa.ec.leos.domain.repository.document.Bill;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.AnnexMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.FinancialStatementMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.MemorandumMetadata;
+import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.DocumentVO;
 import eu.europa.ec.leos.domain.vo.MetadataVO;
 import eu.europa.ec.leos.repository.LeosRepository;
@@ -121,6 +123,18 @@ public class DocumentApiUtil {
                         documentVO.getVersionSeriesId(),
                         metadataVO.getEeaRelevance());
                 break;
+            case PROPOSAL:
+                metaData = new ProposalMetadata(metadataVO.getDocStage(),
+                        metadataVO.getDocType(),
+                        metadataVO.getDocPurpose(),
+                        metadataVO.getTemplate(),
+                        locale,
+                        metadataVO.getDocTemplate(),
+                        docRef,
+                        documentVO.getTitle(),
+                        documentVO.getId(),
+                        metadataVO.getEeaRelevance());
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + documentVO.getDocumentType().name());
         }
@@ -136,6 +150,8 @@ public class DocumentApiUtil {
             return Memorandum.class;
         } else if (docRef.startsWith("ANNEX")) {
             return Annex.class;
+        } else if(docRef.startsWith("main")) {
+            return Proposal.class;
         } else {
             return null;
         }
