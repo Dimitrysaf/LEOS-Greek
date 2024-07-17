@@ -55,6 +55,15 @@ define(function mathJaxExtensionModule(require) {
         log.debug("MathJax extension state changed...");
         // KLUGE delay execution due to sync issues with target update
         setTimeout(_forceMathJaxRendering, 500, connector.target);
+        var otherTargets = connector.otherTargets;
+        if (!!otherTargets && otherTargets.length > 0) {
+            for (const t of otherTargets) {
+                const targetElt = document.getElementById(t);
+                if (!!targetElt) {
+                    setTimeout(_forceMathJaxRendering, 500, targetElt);
+                }
+            }
+        }
     }
 
     function _forceMathJaxRendering(scope) {

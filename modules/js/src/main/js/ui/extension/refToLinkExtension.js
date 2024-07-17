@@ -22,6 +22,7 @@ define(function refToLinkExtensionModule(require) {
     var UTILS = require("core/leosUtils");
     var referencesCache = new Map();
     var target;
+    var otherTargets;
 
     var regExpEscape = function (pattern) {
         return pattern.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -39,6 +40,7 @@ define(function refToLinkExtensionModule(require) {
         log.debug("Initializing refToLink extension...");
 
         target = UTILS.getParentElement(connector);
+        otherTargets = connector.otherTargets;
 
         // configure ref2Link
         $.fn.ref2link.options = {tooltipTrigger: 'notooltip'}; //Disabling the tooltip 
@@ -82,6 +84,16 @@ define(function refToLinkExtensionModule(require) {
             selectors.forEach(selector => {
                 const elementsToObserve = document.querySelectorAll("#" + target.id + " " + selector);
                 elementsToObserve.forEach(elementToObserve => observer.observe(elementToObserve));
+
+                if (!!otherTargets && otherTargets.length > 0) {
+                    for (const t of otherTargets) {
+                        const targetElt = document.getElementById(t);
+                        if (!!targetElt) {
+                            const elementsToObserve = document.querySelectorAll("#" + targetElt.id + " " + selector);
+                            elementsToObserve.forEach(elementToObserve => observer.observe(elementToObserve));
+                        }
+                    }
+                }
             });
         }
     }

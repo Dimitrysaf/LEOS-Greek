@@ -152,6 +152,9 @@ define(function SoftActionsExtensionModule(require) {
         span.innerHTML = label;
         span.setAttribute("title", label);
         span.onclick = function(event) {
+            if ($(event.target).closest('#' + target.id).length > 0) {
+                target = $(event.target).closest('#' + target.id)[0];
+            }
             _navigateToMovedElement(id, target);
         };
         span.classList.remove(MERGE_CONTRIBUTION);

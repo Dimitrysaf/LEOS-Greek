@@ -4,6 +4,7 @@ import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 
 import { MilestoneTocItem } from '@/features/proposal-view/models/milestone-toc-item.model';
+import {MilestoneViewConnectorsService} from "@/shared/services/milestone-view-connectors.service";
 
 @Component({
   selector: 'app-milestone-toc',
@@ -18,7 +19,8 @@ export class MilestoneTocComponent implements OnInit {
   treeControl: NestedTreeControl<MilestoneTocItem>;
   levels = new Map<MilestoneTocItem, number>();
 
-  constructor(@Inject(DOCUMENT) private document: Document) {
+  constructor(@Inject(DOCUMENT) private document: Document,
+              private milestoneViewConnectorsService: MilestoneViewConnectorsService) {
     this.treeControl = new NestedTreeControl<MilestoneTocItem>(
       this.getChildren,
     );
@@ -39,6 +41,10 @@ export class MilestoneTocComponent implements OnInit {
   hanldeNodeSelect(node: MilestoneTocItem) {
     this.scrollToElement(node);
     this.hilightSelectedNode(node);
+  }
+
+  onExpand(node: MilestoneTocItem) {
+    this.milestoneViewConnectorsService.refreshStateMathJaxConnector();
   }
 
   private hilightSelectedNode(node: MilestoneTocItem) {

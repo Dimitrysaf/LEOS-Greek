@@ -15,11 +15,15 @@ export type ActionManagerConnectorOptions = {
 };
 
 export class MathJaxConnector extends AbstractJavaScriptComponent<MathJaxConnectorState> {
+  public otherTargets: string[];
+
   constructor(
     state: MathJaxConnectorInitialState,
+    otherTargets: string[],
     private options: ActionManagerConnectorOptions,
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
+    this.otherTargets = otherTargets;
   }
 }
 

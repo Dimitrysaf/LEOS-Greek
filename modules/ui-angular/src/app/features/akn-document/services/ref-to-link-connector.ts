@@ -13,11 +13,15 @@ export type RefToLinkConnectorOptions = {
 };
 
 export class RefToLinkConnector extends AbstractJavaScriptComponent<RefToLinkConnectorState> {
+  public otherTargets: string[];
+
   constructor(
     state: RefToLinkConnectorInitialState,
+    otherTargets: string[],
     private options: RefToLinkConnectorOptions,
   ) {
     super({ ...staticExtensionState, ...state }, options.rootElement);
+    this.otherTargets = otherTargets;
   }
 }
 

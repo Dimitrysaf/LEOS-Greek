@@ -40,9 +40,8 @@ export class MilestoneViewConnectorsService {
       });
   }
 
-  refreshStateAllAvailableConnectors() {
-    this.softActionsConnector?.$triggerStateChange();
-    this.refToLinkConnector?.$triggerStateChange();
+  refreshStateMathJaxConnector(){
+    this.mathJaxConnector?.$triggerStateChange();
   }
 
   private initRefToLink(
@@ -53,6 +52,7 @@ export class MilestoneViewConnectorsService {
     this.refToLinkConnector = new RefToLinkConnector(
       //TODO pass only required state
       leosState,
+      null,
       {
         rootElement,
       },
@@ -89,7 +89,8 @@ export class MilestoneViewConnectorsService {
     leosState: any,
     rootElement: HTMLElement,
   ) {
-    this.mathJaxConnector = new MathJaxConnector(leosState, {
+    const otherTargets = ['tree'];
+    this.mathJaxConnector = new MathJaxConnector(leosState, otherTargets, {
       rootElement,
     });
 
