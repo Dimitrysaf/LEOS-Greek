@@ -115,12 +115,12 @@ public class LeosLightApiController {
 
         Pair<String, String> result = null;
         try {
-            result = leosLightApiService.importDocument(inputFileName, inputFile.getBytes(), locale, callbackAddress);
+            result = leosLightApiService.importDocument(inputFile.getBytes(), locale, callbackAddress);
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(ImmutableMap.of("documentUrl", result.left(), "result", result.right()));
         } catch (IOException exception) {
-            LOG.info(exception.getMessage());
+            LOG.error("Unexpected error while importing file " + inputFileName + " via Leos Light.", exception);
             return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(
                     ImmutableMap.of("documentUrl", "", "result", messageHelper.getMessage("leoslight.service.import.error")));
         }

@@ -52,6 +52,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.w3c.dom.Document;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -71,6 +72,9 @@ import java.util.Properties;
 
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getDocumentMetadata;
 import static eu.europa.ec.leos.services.leoslight.util.DocumentApiUtil.getLeosMetaData;
+import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
+import static eu.europa.ec.leos.services.support.XercesUtils.getContentByTagName;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_REF;
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
 
@@ -126,9 +130,10 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     }
 
     @Override
-    public Pair<String, String> importDocument(String inputFileName, byte[] docContent, String locale, String callbackAddress) throws InvalidInputException {
+    public Pair<String, String> importDocument(byte[] docContent, String locale, String callbackAddress) throws InvalidInputException {
+        Document document = createXercesDocument(docContent);
+        String docRef = getContentByTagName(document, LEOS_REF);
         DocumentVO documentVO = null;
-        String docRef = encodeParam(inputFileName.substring(0, inputFileName.lastIndexOf("-") + 1) + locale);
         try {
             documentVO = getDocumentVO(docRef, docContent);
         } catch (XmlValidationException e) {
@@ -146,14 +151,14 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
 
         String userLogin = securityContext != null && securityContext.hasAuthenticationInContext() ? securityContext.getUser().getLogin() : null;
         if (savedDocument == null) {
-            LOG.info("User " + userLogin + " created document " + inputFileName + " via leos light import API");
+            LOG.info("User " + userLogin + " created document " + docRef + " via leos light import API");
             createLeosDocument(docRef, docType, documentVO, docMetaData);
             return new Pair<>(documentReferenceUrl, messageHelper.getMessage("leoslight.document.created"));
         } else {
             if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), documentVO.getSource())) {
                 return new Pair<>(documentReferenceUrl, messageHelper.getMessage("leoslight.document.duplicate"));
             } else {
-                LOG.info("User " + userLogin + " updated document " + inputFileName + " via leos light import API");
+                LOG.info("User " + userLogin + " updated document " + docRef + " via leos light import API");
                 updateLeosDocument(savedDocument.getId(), docType, documentVO, docMetaData);
                 return new Pair<>(documentReferenceUrl, messageHelper.getMessage("leoslight.document.updated.major.version"));
             }
@@ -185,17 +190,18 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
             return new Pair<>(Boolean.FALSE, file);
         }
 
-        try {
-            String token = null;
-            if (StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
-                String user = tokenService.extractUserFromToken(clientContextToken);
-                String systemName = tokenService.extractUserSystemNameFromToken(clientContextToken);
-                if (StringUtils.isNotBlank(systemName) && SystemName.DGT_EDIT.value().equalsIgnoreCase(systemName)) {
-                    token = tokenService.getDgtToken(user);
-                }
+        String token = null;
+        if (StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
+            String user = tokenService.extractUserFromToken(clientContextToken);
+            String systemName = tokenService.extractUserSystemNameFromToken(clientContextToken);
+            if (StringUtils.isNotBlank(systemName) && SystemName.DGT_EDIT.value().equalsIgnoreCase(systemName)) {
+                token = tokenService.getDgtToken(user);
             }
+        }
+
+        try {
             leosLightXmlDocumentService.sendFileToCallbackUrl(file.getName(), Files.readAllBytes(file.toPath()), callbackAddress, token);
-        } catch (IOException exception) {
+        } catch (Exception exception) {
             if ((file != null) && file.exists()) {
                 file.delete();
             }

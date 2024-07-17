@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public interface LeosLightApiService {
 
-    Pair<String, String> importDocument(String inputFileName, byte[] docContent, String locale, String callbackAddress) throws InvalidInputException;
+    Pair<String, String> importDocument(byte[] docContent, String locale, String callbackAddress) throws InvalidInputException;
 
     Pair<Boolean, File> exportDocument(ExportDocumentRequest request, String clientContextToken);
 
