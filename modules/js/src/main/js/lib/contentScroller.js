@@ -49,7 +49,9 @@ define(function contentScrollerModule(require) {
 	}
 
     function _scrollTo(element, target, additionalAction, blink= true) {
-        if (typeof element == 'string') {//if ID is passed get element
+
+	    if (typeof element == 'string') {//if ID is passed get element
+	        element = element.charAt(0) === '~' ? element.substring(1) : element;
             element = _findEditElementById(element);
         }
 

@@ -1381,6 +1381,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             } else {
                 href = hrefMixedArr[0];
             }
+            href = href.charAt(0) == '~' ? href.substring(1) : href;
         }
         String refVal = node.getTextContent();
         return new Ref(id, href, documentRef, origin, refVal);
