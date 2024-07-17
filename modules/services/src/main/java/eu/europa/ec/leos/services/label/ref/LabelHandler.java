@@ -21,7 +21,7 @@ abstract public class LabelHandler {
         final String rv;
         if(withAnchor) {
             StringBuilder builder = new StringBuilder("<ref");
-            builder.append(" href=\"").append(ref.getDocumentRef()).append("/").append(ref.getIdentifier()).append("\"");
+            builder.append(" href=\"").append(ref.getDocumentRef()).append("/").append("~"+ref.getIdentifier()).append("\"");
             if (ref.getOrigin() != null) {
                 builder.append(" leos:origin=\"").append(ref.getOrigin()).append("\"");
             }
