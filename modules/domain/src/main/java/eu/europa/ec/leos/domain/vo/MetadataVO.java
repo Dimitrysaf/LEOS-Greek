@@ -32,6 +32,8 @@ public class MetadataVO {
     private String title;
     private String index;
     private String number;
+    private String callbackAddress;
+    private boolean imported;
 
     public MetadataVO() {
     }// added for early binding
@@ -177,6 +179,22 @@ public class MetadataVO {
         this.docTemplateCategory = docTemplateCategory;
     }
 
+    public String getCallbackAddress() {
+        return callbackAddress;
+    }
+
+    public void setCallbackAddress(String callbackAddress) {
+        this.callbackAddress = callbackAddress;
+    }
+
+    public boolean isImported() {
+        return imported;
+    }
+
+    public void setImported(boolean imported) {
+        this.imported = imported;
+    }
+
     public void clean() {
         this.setDocStage(null);
         this.setDocType(null);
@@ -193,5 +211,7 @@ public class MetadataVO {
         this.setIndex(null);
         this.setNumber(null);
         this.setEeaRelevance(false);
+        this.setCallbackAddress(null);
+        this.setImported(false);
     }
 }

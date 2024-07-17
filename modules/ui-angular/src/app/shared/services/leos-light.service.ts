@@ -6,7 +6,7 @@ import { apiBaseUrl } from 'src/config';
 
 import { downloadBlob } from '../utils';
 import { LoadingService } from './loading.service';
-import { DocumentConfig } from "@/shared";
+import {DocumentConfig, DocumentsMetadata, LeosMetadata} from "@/shared";
 import { EuiDialogService } from "@eui/components/eui-dialog";
 import {TranslateService} from "@ngx-translate/core";
 
@@ -27,9 +27,13 @@ export class LeosLightService {
     ref: string,
     documentConfig: DocumentConfig,
   ) {
-    const documentMetadata = documentConfig?.documentsMetadata?.find(
+    let documentMetadata: DocumentsMetadata | LeosMetadata = documentConfig?.documentsMetadata?.find(
       (d) => (d.category = category),
     );
+
+    if((!documentMetadata || documentMetadata === null) && category.toUpperCase() === 'COVERPAGE') {
+      documentMetadata = documentConfig.proposalMetadata;
+    }
 
     if (
       documentMetadata?.callbackAddress === null ||

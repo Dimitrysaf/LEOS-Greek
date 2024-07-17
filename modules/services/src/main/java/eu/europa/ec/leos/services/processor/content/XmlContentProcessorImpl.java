@@ -2583,7 +2583,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     category = LeosCategory.COUNCIL_EXPLANATORY;
                     break;
                 case PROP_ACT:
-                    category = null;
+                    category = LeosCategory.PROPOSAL;
                     break;
                 case STAT_FINANC_LEGIS:
                     category = LeosCategory.STAT_FINANC_LEGIS;

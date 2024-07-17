@@ -236,7 +236,7 @@ class WorkspacePresenter extends AbstractLeosPresenter {
         ValidationVO result = new ValidationVO();
         final List<ErrorVO> errorList = new ArrayList<>();
         try {
-            proposalConverterService.createProposalFromLegFile(event.getFile(), event.getDocument(), true);
+            proposalConverterService.createProposalFromLegFile(event.getFile(), true);
         } catch (XmlValidationException e) {
             LOG.error("Xml validation error occurred while creating proposal from leg file: {}", e);
             errorList.add(new ErrorVO(e.getErrorCode(), e.getMessage()));

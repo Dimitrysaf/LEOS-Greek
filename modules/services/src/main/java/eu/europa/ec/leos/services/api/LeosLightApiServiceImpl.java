@@ -88,7 +88,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         tempMap.put(Explanatory.class, "council_explanatory");
         tempMap.put(FinancialStatement.class, "financial-statement");
         tempMap.put(Memorandum.class, "memorandum");
-        tempMap.put(Proposal.class, "collection");
+        tempMap.put(Proposal.class, "coverpage");
 
         DOC_TYPE_MAP = Collections.unmodifiableMap(tempMap);
     }
@@ -371,6 +371,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
         try {
             docFileTemp = getXmlFile(docRef, docContent);
             documentVO = proposalConverterService.createDocument(docRef + ".xml", docFileTemp, true);
+            documentVO.getMetadata().setImported(true);
             List<ErrorVO> errors = validationService.validateDocument(documentVO);
 
             if (!errors.isEmpty() && errors.size() == 1 && !errors.get(0).getErrorCode().name()

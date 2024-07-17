@@ -80,8 +80,7 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     @Override
     public DocumentVO createDocumentVOFromLegfile(File legDocument) throws XmlValidationException {
         Validate.notNull(legDocument, "Leg document is required");
-        DocumentVO propDocument = proposalConverterService.createProposalFromLegFile(legDocument, new DocumentVO(PROPOSAL),
-                true);
+        DocumentVO propDocument = proposalConverterService.createProposalFromLegFile(legDocument, true);
 
         CollectionContextService context = proposalContextProvider.get();
         context.useTemplate(propDocument.getMetadata().getDocTemplate());

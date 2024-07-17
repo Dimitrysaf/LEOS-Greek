@@ -281,7 +281,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     @Override
     public DocumentViewResponse restoreToVersion(String documentRef, String versionId) {
         Proposal targetVersion = proposalService.findProposalVersion(versionId);
-        Proposal sourceVersion = proposalService.findProposalVersion(documentRef);
+        Proposal sourceVersion = proposalService.findProposalByRef(documentRef);
         byte[] resultXmlContent = getContent(targetVersion);
         Proposal updatedProposal = proposalService.updateProposal(sourceVersion, resultXmlContent, VersionType.MINOR,
                 messageHelper.getMessage("operation.restore.version", targetVersion.getVersionLabel()));

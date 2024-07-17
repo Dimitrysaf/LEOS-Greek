@@ -23,5 +23,5 @@ public interface ProposalConverterService {
 
     DocumentVO createDocument(String docName, File docFile, boolean canModifySource);
 
-    DocumentVO createProposalFromLegFile(File file, final DocumentVO document, boolean canUpdateSource) throws XmlValidationException;
+    DocumentVO createProposalFromLegFile(File file, boolean canUpdateSource) throws XmlValidationException;
 }
