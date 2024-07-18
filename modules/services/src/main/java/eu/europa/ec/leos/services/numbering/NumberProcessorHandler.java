@@ -221,24 +221,23 @@ public abstract class NumberProcessorHandler {
             if (!leosRenumbered) {
                 updateStartingNumber(nodeList, numberConfig, elementName);
             }
-
             for (int i = 0; i < nodeList.size(); i++) {
                 final Node node = nodeList.get(i);
+                Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
+
                 if (skipAutoRenumbering(node)) {
                     if(hasAttributeWithValue(node, "leos:action", "delete")) {
                         // Remove track changes for num node as the parent node is already deleted.
-                        Node numNode = getFirstChild(node, getNumTag(node.getNodeName()));
                         if(numNode != null && getFirstChild(numNode, "del") != null && getFirstChild(numNode, "ins") != null) {
                             numNode.setTextContent(getFirstChild(numNode, "del").getTextContent());
                         }
                     }
-
                     boolean leosRenumberedForNode = XercesUtils.getAttributeValueAsSimpleBoolean(node, LEOS_RENUMBERED);
                     if (!leosRenumberedForNode) {
                         incrementValue(numberConfig);
                     }
                     LOG.trace("Skipping SoftChanged {} '{}', number '{}'", elementName, getId(node), getNodeNum(node));
-                } else {
+                } else if (!deletedNumber(numNode)) {
                     numberProcessors.stream()
                             .filter(numberProcessor -> numberProcessor.canRenumber(node))
                             .findFirst()
@@ -247,6 +246,14 @@ public abstract class NumberProcessorHandler {
                 removeAttribute(node, XmlHelper.LEOS_AFFECTED_ATTR);//TODO temp, until migration finishes
             }
         }
+    }
+
+    private boolean deletedNumber(Node numNode) {
+        Node delNode = numNode != null ? getFirstChild(numNode, "del") : null;
+        Node nextSibblingOfDelNode = delNode != null ? delNode.getNextSibling() : null;
+        return delNode != null && delNode.getNodeName().equals("del")
+                && delNode.getAttributes() != null && delNode.getAttributes().getNamedItem("leos:action-enter") != null && delNode.getAttributes().getNamedItem("leos:action-enter").getNodeValue().equals("delete")
+                && nextSibblingOfDelNode != null && nextSibblingOfDelNode.getNodeName().equals("del");
     }
 
     public void renumberHighSubDiv(List<Node> nodeList, NumberingType numberingType, String language) {
