@@ -6,7 +6,7 @@ class ribbonToolBar {
         searchBtn: () => this.elements.ribbonToolBarContainer().contains('Search'),
         displaySection: () => cy.get('#DISPLAY_SECTION_ID'),
         seeUserGuidanceInput: () => this.elements.displaySection().find('app-ribbon-toolbar-checkbox').find('input'),
-        seeUserGuidanceToggleBtn: () => this.elements.displaySection().find('app-ribbon-toolbar-checkbox').find('span.mat-slide-toggle-bar'),
+        //seeUserGuidanceToggleBtn: () => this.elements.displaySection().find('app-ribbon-toolbar-checkbox').find('span.mat-slide-toggle-bar'),
         seeTrackChangesSection: () => cy.get('#SEE-TRACK_CHANGES-ID'),
         enableTrackChangesInput: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('input'),
         enableTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(0).find('.eui-slide-toggle__container'),

@@ -1,6 +1,4 @@
-import headerPage from './headerPage';
-
-class proposalViewerPage extends headerPage{
+class proposalViewerPage {
     elements = {
         proposalTitle: () => cy.get('app-proposal-header h1'),
         //favouriteIconBtn: () => cy.get('eui-icon.eui-icon--size-l'),

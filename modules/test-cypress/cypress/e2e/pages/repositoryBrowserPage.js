@@ -1,6 +1,4 @@
-import headerPage from './headerPage';
-
-class repositoryBrowserPage extends headerPage {
+class repositoryBrowserPage {
     elements = {
         proposalTable: () => cy.get('app-proposal-item'),
         proposalLink: () => this.elements.proposalTable().find('a'),

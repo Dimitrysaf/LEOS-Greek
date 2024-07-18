@@ -1,5 +1,4 @@
-import headerPage from './headerPage';
-class collaboratorsTab extends headerPage {
+class collaboratorsTab {
     elements = {
         appProposalCollaborators: () => cy.get('app-proposal-collaborators'),
         addBtn: () => this.elements.appProposalCollaborators().find('button').contains('Add'),

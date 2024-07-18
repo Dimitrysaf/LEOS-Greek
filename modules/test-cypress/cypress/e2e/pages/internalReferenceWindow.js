@@ -3,7 +3,7 @@ class internalReferenceWindow {
         dialogTitle: () => cy.get('.cke_dialog_title'),
         okBtn: () => cy.get('.cke_dialog_footer_buttons').contains('OK'),
         legalActTabPanel: () => cy.get("div[role='tabpanel'][name^='REG']"),
-        annexTabPanel: () => cy.get("div[role='tabpanel'][name^='ANNEX']"),
+        //annexTabPanel: () => cy.get("div[role='tabpanel'][name^='ANNEX']"),
         bill: () => this.elements.legalActTabPanel().find('bill'),
         article: () => this.elements.bill().find('article'),
         navigationPane: () => cy.get("div[role='tabpanel'][name^='REG'] div[title='Navigation pane']"),

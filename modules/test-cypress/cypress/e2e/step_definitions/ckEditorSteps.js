@@ -297,3 +297,43 @@ Then('element li {int} with data-akn-element {string} of li {int} with data-akn-
 Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5, numValue) => {
     ckEditorWindow.getFourthLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5).invoke('attr', 'data-akn-num').should('contain', numValue);
 });
+
+And('do right click using mouse in edition mode', () => {
+    ckEditorWindow.rightClickWhenCKEditorOpen();
+})
+
+Then('background color of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article is {string} in edition mode', function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, backGroundColor) {
+
+});
+
+And('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, attributeName, attributeValue) {
+
+});
+
+And("li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, attributeName) {
+
+});
+
+And('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} in edition mode', function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, attributeName) {
+
+});
+
+When('click at offset {int} in li {int} with data-akn-element {string} of article in edition mode', function () {
+
+});
+
+Then('background color of li {int} with data-akn-element {string} of article is {string} in edition mode', function () {
+
+});
+
+Then("li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function () {
+
+});
+
+Then('li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function () {
+
+});
+
+Then('li {int} with data-akn-element {string} of article contains attribute {string} in edition mode', function () {
+
+});

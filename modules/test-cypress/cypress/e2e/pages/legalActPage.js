@@ -1,5 +1,4 @@
-import headerPage from './headerPage';
-class legalActPage extends headerPage {
+class legalActPage {
     elements = {
         closeBtn: () => cy.contains('Close'),
         ribbonToolBar: () => cy.get('app-ribbon-toolbar-container'),
@@ -85,6 +84,10 @@ class legalActPage extends headerPage {
 
     clickInsertAfterIconOfArticle(articleNumber) {
         this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }));
+    }
+
+    clickInsertBeforeIconOfArticle(articleNumber) {
+        this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.before']").click({ force: true }));
     }
 
     getIndentTagFromArticle(articleNumber) {

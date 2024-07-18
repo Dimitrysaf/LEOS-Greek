@@ -1,5 +1,4 @@
-import headerPage from './headerPage';
-class milestoneTab extends headerPage {
+class milestoneTab {
     elements = {
         addBtn: () => cy.get('app-proposal-milestones button').contains('Add'),
         milestoneTypeDropDown: () => cy.get('#milestone_type'),
