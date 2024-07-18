@@ -46,6 +46,10 @@ class ckEditorWindow {
         this.elements.ckEditableInline().type('{del}');
     }
 
+    rightClickWhenCKEditorOpen() {
+        this.elements.ckEditableInline().rightclick();
+    }
+
     clickEnterFromKeyboardWhenCKEditorOpen() {
         this.elements.ckEditableInline().type('{enter}');
     }

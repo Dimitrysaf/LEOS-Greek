@@ -114,6 +114,10 @@ When(`click on insert after icon of article {int}`, (articleNumber) => {
     legalActPage.clickInsertAfterIconOfArticle(articleNumber);
 });
 
+When(`click on insert before icon of article {int}`, (articleNumber) => {
+    legalActPage.clickInsertBeforeIconOfArticle(articleNumber);
+});
+
 Then(`heading of article {int} contains {string}`, (articleNumber, heading) => {
     legalActPage.getHeadingFromArticle(articleNumber).should('have.text',heading);
 });
@@ -250,38 +254,46 @@ When(`click on internal reference link {int} of point {int} of list {int} of par
     legalActPage.clickRefOfMRefOfPointOfParagraphOfArticle(mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber);
 });
 
-Then(/^"([^"]*)" is showing as moved num in article (\d+) of bill$/, function () {
+Then('{string} is showing as moved num in article {int} of bill', function () {
 
 });
 
-Then(/^"([^"]*)" is showing as soft move label in article (\d+) of bill$/, function () {
+Then('{string} is showing as soft move label in article {int} of bill', function () {
 
 });
 
-Then(/^"([^"]*)" is showing as deleted track changes in article (\d+) of bill$/, function () {
+Then('{string} is showing as deleted track changes in article {int} of bill', function () {
 
 });
 
-Then(/^"([^"]*)" is showing as inserted track changes in article (\d+) of bill$/, function () {
+Then('{string} is showing as inserted track changes in article {int} of bill', function () {
 
 });
 
-Then(/^num of article (\d+) of bill contains "([^"]*)" with action "([^"]*)"$/, function () {
+Then('num of article {int} of bill contains {string} with action {string}', function () {
 
 });
 
-Then(/^heading tag is not present for article (\d+) of bill$/, function () {
+Then('heading tag is not present for article {int} of bill', function () {
 
 });
 
-Then(/^paragraph tag is not present for article (\d+) of bill$/, function () {
+Then('paragraph tag is not present for article {int} of bill', function () {
 
 });
 
-Then(/^heading tag is present for article (\d+) of bill$/, function () {
+Then('heading tag is present for article {int} of bill', function () {
 
 });
 
-Then(/^paragraph tag is present for article (\d+) of bill$/, function () {
+Then('paragraph tag is present for article {int} of bill', function () {
+
+});
+
+Then('point {int} of paragraph {int} of article {int} contains attribute {string} with value {string}', function () {
+
+});
+
+Then('paragraph {int} of article {int} contains attribute {string} with value {string}', function () {
 
 });

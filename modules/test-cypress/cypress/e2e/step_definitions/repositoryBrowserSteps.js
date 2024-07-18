@@ -25,10 +25,6 @@ When(`upload button is not present`, () => {
     repositoryBrowserPage.elements.uploadBtn().should('not.exist');
 });
 
-When(`click on home button`, () => {
-    repositoryBrowserPage.clickHomeBtn();
-});
-
 Then('name of proposal {int} contains {string}', (proposalIndex, name) => {
     repositoryBrowserPage.getNameOfProposal(proposalIndex).should('include.text', name);
 });

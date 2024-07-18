@@ -1,6 +1,4 @@
-import headerPage from './headerPage';
-
-class homePage extends headerPage {
+class homePage {
     elements = {
         createProposalBtn: () => cy.contains('Create Proposal'),
         uploadBtn: () => cy.contains('Upload'),

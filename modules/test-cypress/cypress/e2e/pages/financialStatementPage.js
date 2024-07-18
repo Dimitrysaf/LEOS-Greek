@@ -1,6 +1,4 @@
-import headerPage from './headerPage';
-
-class financialStatementPage extends headerPage{
+class financialStatementPage {
     elements = {
         closeBtn: () => cy.xpath("//button[text()='Close']"),
         doctype: () => cy.get("doctype[refersto='~STAT_FINANC_LEGIS']")

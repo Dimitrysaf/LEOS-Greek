@@ -1,14 +1,13 @@
-import headerPage from './headerPage';
-class coverPage extends headerPage {
+class coverPage {
     elements = {
-        coverpage: () => cy.get('coverpage'),
-        longtitle: () => this.elements.coverpage().find('longtitle'),
-        docpurpose: () => this.elements.longtitle().find('docpurpose'),
+        coverPage: () => cy.get('coverpage'),
+        longTitle: () => this.elements.coverPage().find('longtitle'),
+        docPurpose: () => this.elements.longTitle().find('docpurpose'),
         closeBtn: () => cy.contains('Close'),
     }
 
     clickDocPurpose(){
-        this.elements.docpurpose().click();
+        this.elements.docPurpose().click();
     }
 
     clickCloseBtn(){
