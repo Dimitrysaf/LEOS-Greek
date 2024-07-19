@@ -56,6 +56,7 @@ public class FinancialStatementContextService {
     private String title = "";
     private String type = null;
     private String template = null;
+    private String docTemplate = null;
     private List<Collaborator> collaborators = null;
 
     private DocumentVO financialStatementDocument;
@@ -83,13 +84,18 @@ public class FinancialStatementContextService {
         this.xmlNodeConfigProcessor = xmlNodeConfigProcessor;
     }
 
+    public void useDocTemplate(String docTemplate) {
+        Validate.notNull(docTemplate, "Doc Template name is required!");
+
+        this.financialStatement = (FinancialStatement) templateService.getTemplate(docTemplate);
+        Validate.notNull(financialStatement, "Template not found! [name=%s]", docTemplate);
+        this.docTemplate = docTemplate;
+        LOG.trace("Using {} template... [id={}, name={}]", financialStatement.getCategory(), financialStatement.getId(), financialStatement.getName());
+    }
+
     public void useTemplate(String template) {
         Validate.notNull(template, "Template name is required!");
-
-        this.financialStatement = (FinancialStatement) templateService.getTemplate(template);
-        Validate.notNull(financialStatement, "Template not found! [name=%s]", template);
         this.template = template;
-        LOG.trace("Using {} template... [id={}, name={}]", financialStatement.getCategory(), financialStatement.getId(), financialStatement.getName());
     }
 
     public void useActionMessageMap(Map<ContextActionService, String> messages) {
@@ -193,6 +199,7 @@ public class FinancialStatementContextService {
                 .withPurpose(purpose)
                 .withType(type)
                 .withTemplate(template)
+                .withDocTemplate(docTemplate)
                 .withTitle(title)
                 .withPackageRef(packageRef)
                 .build();

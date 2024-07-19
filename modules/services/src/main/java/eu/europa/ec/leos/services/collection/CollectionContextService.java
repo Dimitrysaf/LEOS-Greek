@@ -353,10 +353,11 @@ public abstract class CollectionContextService {
                 case STAT_FINANC_LEGIS:
                     FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
                     financialStatementContext.usePackage(leosPckg);
-                    String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
-                    financialStatementContext.useTemplate(template);
+                    String docTemplate = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
+                    financialStatementContext.useDocTemplate(docTemplate);
+                    financialStatementContext.useTemplate(metadata.getTemplate());
                     financialStatementContext.usePurpose(purpose);
-                    financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + template));
+                    financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + docTemplate));
                     financialStatementContext.useDocument(docChild);
                     financialStatementContext.useEeaRelevance(eeaRelevance);
                     Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
@@ -393,13 +394,14 @@ public abstract class CollectionContextService {
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
         financialStatementContext.usePackage(leosPackage);
-        String template = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
-        financialStatementContext.useTemplate(template);
-        financialStatementContext.usePurpose(purpose);
-        financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + template));
+        String docTemplate = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
         Option<ProposalMetadata> metadataOption = proposal.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), PROPOSAL_METADATA_IS_REQUIRED);
         ProposalMetadata metadata = metadataOption.get();
+        financialStatementContext.useDocTemplate(docTemplate);
+        financialStatementContext.useTemplate(metadata.getTemplate());
+        financialStatementContext.usePurpose(purpose);
+        financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + docTemplate));
         financialStatementContext.useType(metadata.getType());
         financialStatementContext.useActionMessageMap(actionMsgMap);
         financialStatementContext.useCollaborators(proposal.getCollaborators());
