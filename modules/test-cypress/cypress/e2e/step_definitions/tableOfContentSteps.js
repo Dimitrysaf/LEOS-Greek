@@ -158,25 +158,25 @@ When('drag element {string} from element tree list and drop to node label {strin
 });
 
 Then('enacting terms contains node label {string} and showing as bold', function (label) {
-    tableOfContent.getEnactingTerms().contains(label).should('exist').should('have.class', 'leos-soft-new');
+    tableOfContent.getLabelExtended().contains(label).should('exist').should('have.class', 'leos-soft-new');
 });
 
 Then('enacting terms contains node label {string}', function (label) {
-    tableOfContent.getEnactingTerms().contains(label).should('be.visible');
+    tableOfContent.getLabelExtended().contains(label).should('be.visible');
 });
 
-When('{string} is showing as soft move title in navigation pane', function (softMoveTitle) {
-
-});
-
-When('{string} is showing as soft move label with soft move title {string} in navigation pane', function (softMoveLabel, softMoveTitle) {
-
-});
-
-When('{string} is showing as soft move title in selected node in navigation pane', function (softMoveTitle) {
-
-});
-
-When('{string} is showing as soft move label with soft move title {string} in selected node in navigation pane', function (softMoveLabel, softMoveTitle) {
-
-});
+// When('{string} is showing as soft move title in navigation pane', function (softMoveTitle) {
+//
+// });
+//
+// When('{string} is showing as soft move label with soft move title {string} in navigation pane', function (softMoveLabel, softMoveTitle) {
+//
+// });
+//
+// When('{string} is showing as soft move title in selected node in navigation pane', function (softMoveTitle) {
+//
+// });
+//
+// When('{string} is showing as soft move label with soft move title {string} in selected node in navigation pane', function (softMoveLabel, softMoveTitle) {
+//
+// });

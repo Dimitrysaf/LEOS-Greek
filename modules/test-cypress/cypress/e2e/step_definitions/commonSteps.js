@@ -2,7 +2,6 @@ import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import messageGrowl from "../pages/messageGrowl";
 import dialogBoxPage from "../pages/dialogBoxPage";
 import headerPage from "../pages/headerPage";
-import repositoryBrowserPage from "../pages/repositoryBrowserPage";
 
 And(`extract recent {string} file present in download folder`, (extension) => {
     let path = Cypress.config('downloadsFolder');

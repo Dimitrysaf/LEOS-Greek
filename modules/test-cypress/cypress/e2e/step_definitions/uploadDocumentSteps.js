@@ -12,8 +12,8 @@ When(`upload a leg file from a relative location {string}`, (location) => {
 When(`upload recent leg file from downloads folder`, () => {
     let path = Cypress.config('downloadsFolder');
     let extension = 'leg';
-    cy.task('getFiles', { downloadspath: path, extension: extension }).then(before => {
-        cy.task('getFiles', { downloadspath: path, extension: extension }).then(after => {
+    cy.task('getFiles', { downloadsPath: path, extension: extension }).then(before => {
+        cy.task('getFiles', { downloadsPath: path, extension: extension }).then(after => {
             const files = after.filter(file => before.includes(file));
             let index = 0;
             while (index < files.length) {
