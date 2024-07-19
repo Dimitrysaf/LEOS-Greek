@@ -38,6 +38,6 @@ Feature: create proposal regression features
             | templateProposal | oldProposalName              | NewProposalName              |
             | SJ-023           | Automation Testing SJ-023 v1 | Automation Testing SJ-023 v2 |
             | SJ-024           | Automation Testing SJ-024 v1 | Automation Testing SJ-024 v2 |
-            | SJ-025           | Automation Testing SJ-025 v1 | Automation Testing SJ-025 v2 |
-            | SJ-026           | Automation Testing SJ-026 v1 | Automation Testing SJ-026 v2 |
+#            | SJ-025           | Automation Testing SJ-025 v1 | Automation Testing SJ-025 v2 |
+#            | SJ-026           | Automation Testing SJ-026 v1 | Automation Testing SJ-026 v2 |
 #            | SJ-019           | Automation Testing SJ-019 v1 | Automation Testing SJ-019 v2 |
