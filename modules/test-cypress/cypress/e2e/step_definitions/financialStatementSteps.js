@@ -1,8 +1,9 @@
 import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import financialStatementPage from "../pages/financialStatementPage";
+import headerPage from "../pages/headerPage";
 
 Then('user is on financial statement page', () => {
-    financialStatementPage.getCurrentPageName().should("have.text", "Financial Statement");
+    headerPage.getCurrentPageName().should("have.text", "Financial Statement");
     cy.wait(5000);
 });
 

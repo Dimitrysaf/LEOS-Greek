@@ -1,9 +1,10 @@
 import { When, Then } from "cypress-cucumber-preprocessor/steps";
 require('@cypress/xpath');
 import annexPage from "../pages/annexPage";
+import headerPage from "../pages/headerPage";
 
 Then(`user is on annex page`, () => {
-    annexPage.getCurrentPageName().should("have.text", "Annex");
+    headerPage.getCurrentPageName().should("have.text", "Annex");
     cy.wait(5000);
 });
 

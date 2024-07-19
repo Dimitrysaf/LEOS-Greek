@@ -46,6 +46,10 @@ class ckEditorWindow {
         this.elements.ckEditableInline().type('{del}');
     }
 
+    rightClickWhenCKEditorOpen() {
+        this.elements.ckEditableInline().rightclick();
+    }
+
     clickEnterFromKeyboardWhenCKEditorOpen() {
         this.elements.ckEditableInline().type('{enter}');
     }
@@ -103,8 +107,8 @@ class ckEditorWindow {
         return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement + "']").eq(li - 1);
     }
 
-    getElementPTagOfParagraphOfArticle(ptag, paragraphLi, paragraphDataAknElement) {
-        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find('p').eq(ptag - 1);
+    getElementPTagOfParagraphOfArticle(pTag, paragraphLi, paragraphDataAknElement) {
+        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find('p').eq(pTag - 1);
     }
 
     getElementPTagOfPointOfParagraphOfArticle(pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {

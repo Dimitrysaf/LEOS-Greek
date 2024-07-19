@@ -25,7 +25,9 @@ class tableOfContent {
         cardContentOfRecentChanges: () => this.elements.recentChangesCard().find('eui-card-content'),
         subVersionTitle: () => this.elements.cardContentOfRecentChanges().find('div.subversion .title'),
         nodeLabel: () => cy.get(".mat-tree-node div.label[id^='node-label']"),
-        preambleLink: () => this.elements.nestedTreeNode().find('#node-label-_preamble').closest('div.mat-tree-node')
+        preambleLink: () => this.elements.nestedTreeNode().find('#node-label-_preamble').closest('div.mat-tree-node'),
+        elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
+        labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node')
     }
     
     clickEditBtn(){
@@ -87,6 +89,14 @@ class tableOfContent {
 
     clickRightAngleIconOfPreambleLink(){
         this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-forward']").click();
+    }
+
+    getElementList(){
+        return this.elements.elementList();
+    }
+
+    getLabelExtended(){
+        return this.elements.labelExtended();
     }
 }
 export default new tableOfContent();

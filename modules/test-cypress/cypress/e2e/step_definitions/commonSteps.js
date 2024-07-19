@@ -1,11 +1,12 @@
-import { And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import messageGrowl from "../pages/messageGrowl";
 import dialogBoxPage from "../pages/dialogBoxPage";
+import headerPage from "../pages/headerPage";
 
 And(`extract recent {string} file present in download folder`, (extension) => {
     let path = Cypress.config('downloadsFolder');
-    cy.task('getFiles', { downloadspath: path, extension: extension }).then(before => {
-        cy.task('getFiles', { downloadspath: path, extension: extension }).then(after => {
+    cy.task('getFiles', { downloadsPath: path, extension: extension }).then(before => {
+        cy.task('getFiles', { downloadsPath: path, extension: extension }).then(after => {
             const files = after.filter(file => before.includes(file));
             files.forEach((file) => {
                 cy.task('unzipping', { path, file });
@@ -30,8 +31,8 @@ Then(`xml files having separator {string} present in download folder contain bel
     datatable.hashes().forEach((file) => {
         givenFileNameList.push(file.fileName);
     });
-    cy.task('getFiles', { downloadspath: path, extension: extension }).then(before => {
-        cy.task('getFiles', { downloadspath: path, extension: extension }).then(after => {
+    cy.task('getFiles', { downloadsPath: path, extension: extension }).then(before => {
+        cy.task('getFiles', { downloadsPath: path, extension: extension }).then(after => {
             const allFiles = after.filter(file => before.includes(file));
             const xmlFiles = [];
             allFiles.forEach((file) => {
@@ -49,6 +50,14 @@ Then(`xml files having separator {string} present in download folder contain bel
 
 Then(`user is on {string} window`, (windowName) => {
     dialogBoxPage.elements.headerTitle().should('have.text', windowName);
+});
+
+When(/^click on workspace button in breadcrumb item$/, function () {
+    headerPage.clickWorkspace();
+});
+
+When(`click on home button`, () => {
+    headerPage.clickHomeBtn();
 });
 
 // When(`recent pdf file present in downloads folder contains below words`, (datatable) => {

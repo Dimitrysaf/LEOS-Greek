@@ -1,6 +1,4 @@
-import headerPage from './headerPage';
-
-class expMemoPage extends headerPage{
+class expMemoPage {
     elements = {
         closeBtn: () => cy.contains('Close'),
         documentContainer: () => cy.get('#docContainer'),

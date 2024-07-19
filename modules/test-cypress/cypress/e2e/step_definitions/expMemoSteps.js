@@ -1,8 +1,9 @@
 import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import expMemoPage from "../pages/expMemoPage";
+import headerPage from "../pages/headerPage";
 
 Then('user is on explanatory memorandum page', () => {
-    expMemoPage.getCurrentPageName().should("have.text", "Explanatory Memorandum");
+    headerPage.getCurrentPageName().should("have.text", "Explanatory Memorandum");
     cy.wait(2000);
 })
 

@@ -1,8 +1,9 @@
 import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import repositoryBrowserPage from "../pages/repositoryBrowserPage";
+import headerPage from "../pages/headerPage";
 
 Then('user is on repository browser page', () => {
-    repositoryBrowserPage.getCurrentPageName().should("have.text", "Workspace");
+    headerPage.getCurrentPageName().should("have.text", "Workspace");
 })
 
 When('click on create proposal button', () => {
@@ -23,10 +24,6 @@ When('click on proposal {int}', (proposalIndex) => {
 
 When(`upload button is not present`, () => {
     repositoryBrowserPage.elements.uploadBtn().should('not.exist');
-});
-
-When(`click on home button`, () => {
-    repositoryBrowserPage.clickHomeBtn();
 });
 
 Then('name of proposal {int} contains {string}', (proposalIndex, name) => {

@@ -1,20 +1,21 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 require('@cypress/xpath');
 import legalActPage from "../pages/legalActPage";
+import headerPage from "../pages/headerPage";
 
 Then('user is on legal act page', () => {
-    legalActPage.getCurrentPageName().should("have.text", "Legal Act");
+    headerPage.getCurrentPageName().should("have.text", "Legal Act");
     cy.wait(7000);
 })
 
 Then('document has {int} trackChange {string} tags with {string} content', (count, type, content) => {
-    legalActPage.getCurrentPageName().get(type).should("have.length", count);
-    legalActPage.getCurrentPageName().get(type).should("have.text", content);
+    headerPage.getCurrentPageName().get(type).should("have.length", count);
+    headerPage.getCurrentPageName().get(type).should("have.text", content);
 })
 
 Then('document has {int} trackChange {string} tags with below content', (count, type, datatable) => {
-    legalActPage.getCurrentPageName().get(type).should("have.length", count);
-    legalActPage.getCurrentPageName().get(type).each((element, index) => {
+    headerPage.getCurrentPageName().get(type).should("have.length", count);
+    headerPage.getCurrentPageName().get(type).each((element, index) => {
         expect(element[0].textContent).equal(datatable.raw().at(index).toString());
     });
 })
@@ -112,6 +113,10 @@ Then(`preface long title docPurpose contains {string}`, (title) => {
 
 When(`click on insert after icon of article {int}`, (articleNumber) => {
     legalActPage.clickInsertAfterIconOfArticle(articleNumber);
+});
+
+When(`click on insert before icon of article {int}`, (articleNumber) => {
+    legalActPage.clickInsertBeforeIconOfArticle(articleNumber);
 });
 
 Then(`heading of article {int} contains {string}`, (articleNumber, heading) => {
@@ -249,3 +254,47 @@ When(`click on internal reference link {int} of paragraph {int} of article {int}
 When(`click on internal reference link {int} of point {int} of list {int} of paragraph {int} of article {int}`, (mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber) => {
     legalActPage.clickRefOfMRefOfPointOfParagraphOfArticle(mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber);
 });
+
+// Then('{string} is showing as moved num in article {int} of bill', function () {
+//
+// });
+//
+// Then('{string} is showing as soft move label in article {int} of bill', function () {
+//
+// });
+//
+// Then('{string} is showing as deleted track changes in article {int} of bill', function () {
+//
+// });
+//
+// Then('{string} is showing as inserted track changes in article {int} of bill', function () {
+//
+// });
+//
+// Then('num of article {int} of bill contains {string} with action {string}', function () {
+//
+// });
+//
+// Then('heading tag is not present for article {int} of bill', function () {
+//
+// });
+//
+// Then('paragraph tag is not present for article {int} of bill', function () {
+//
+// });
+//
+// Then('heading tag is present for article {int} of bill', function () {
+//
+// });
+//
+// Then('paragraph tag is present for article {int} of bill', function () {
+//
+// });
+//
+// Then('point {int} of paragraph {int} of article {int} contains attribute {string} with value {string}', function () {
+//
+// });
+//
+// Then('paragraph {int} of article {int} contains attribute {string} with value {string}', function () {
+//
+// });

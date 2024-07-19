@@ -1,8 +1,9 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import proposalViewerPage from "../pages/proposalViewerPage";
+import headerPage from "../pages/headerPage";
 
 Then('user is on proposal viewer page', () => {
-    proposalViewerPage.getCurrentPageName().should("have.text", "Proposal View");
+    headerPage.getCurrentPageName().should("have.text", "Proposal View");
 })
 
 Then('click on legal act link present in proposal viewer page', () => {
@@ -75,7 +76,7 @@ When(`click on actions button`, () => {
 
 And(`click on download button`, () => {
     proposalViewerPage.clickDownloadButton();
-    proposalViewerPage.getLoadingIcon().should('not.exist');
+    headerPage.getLoadingIcon().should('not.exist');
 });
 
 When(`click on milestones tab in proposal view page`, () => {

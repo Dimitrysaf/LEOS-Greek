@@ -10,11 +10,6 @@ When(`click on toc edit button`, () => {
     tableOfContent.clickEditBtn();
 });
 
-Then(`cancel button in navigation pane is displayed and enabled`, () => {
-    tableOfContent.elements.cancelBtn().should('be.visible');
-    tableOfContent.elements.cancelBtn().should('not.be.disabled');
-});
-
 Then(`below element lists are displayed in Elements menu`, (datatable) => {
     const actualElementList = [];
     datatable.hashes().forEach((element) => {
@@ -139,3 +134,49 @@ Then('navigation pane is expanded', function () {
 Then(/^navigation pane is minimized$/, function () {
     tableOfContent.elements.navigationPaneMinimized().should('be.visible');
 });
+
+When('drag node label {string} and drop to node label {string} in navigation pane', function (dragLabel,dropLabel) {
+    tableOfContent.elements.nodeLabel().contains(dragLabel)
+        .realMouseDown({ button: 'left', position: 'center' })
+        .realMouseMove(0, 10, { position: 'center' })
+        .wait(200);
+    tableOfContent.elements.nodeLabel().contains(dropLabel)
+        .realMouseMove(0, 0, { position: 'center' })
+        .realMouseUp({ position: "center" })
+        .wait(200);
+});
+
+When('drag element {string} from element tree list and drop to node label {string} in navigation pane', function (dragElement, dropLabel) {
+    tableOfContent.getElementList().contains(dragElement)
+        .realMouseDown({ button: 'left', position: 'center' })
+        .realMouseMove(0, 10, { position: 'center' })
+        .wait(200);
+    tableOfContent.elements.nodeLabel().contains(dropLabel)
+        .realMouseMove(0, 0, { position: 'center' })
+        .realMouseUp({ position: "center" })
+        .wait(200);
+});
+
+Then('enacting terms contains node label {string} and showing as bold', function (label) {
+    tableOfContent.getLabelExtended().contains(label).should('exist').should('have.class', 'leos-soft-new');
+});
+
+Then('enacting terms contains node label {string}', function (label) {
+    tableOfContent.getLabelExtended().contains(label).should('be.visible');
+});
+
+// When('{string} is showing as soft move title in navigation pane', function (softMoveTitle) {
+//
+// });
+//
+// When('{string} is showing as soft move label with soft move title {string} in navigation pane', function (softMoveLabel, softMoveTitle) {
+//
+// });
+//
+// When('{string} is showing as soft move title in selected node in navigation pane', function (softMoveTitle) {
+//
+// });
+//
+// When('{string} is showing as soft move label with soft move title {string} in selected node in navigation pane', function (softMoveLabel, softMoveTitle) {
+//
+// });

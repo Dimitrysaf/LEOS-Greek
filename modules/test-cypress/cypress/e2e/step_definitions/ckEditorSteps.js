@@ -171,7 +171,7 @@ When('add {string} at offset {int} in recital in edition mode', function (newCon
     ckEditorWindow.addContentInRecital(newContent, offset);
 });
 
-And('select content from offset {int} till offset {int} in recital in edition mode', function (offsetStart, offsetEnd) {
+And('select content from offset {int} till offset {int} in recital in edition mode', (offsetStart, offsetEnd) => {
     ckEditorWindow.selectContentInRecital(offsetStart, offsetEnd);
 });
 
@@ -233,8 +233,8 @@ When(`click at offset {int} of p tag {int} of li {int} with data-akn-element {st
     ckEditorWindow.moveCursorToSpecificOffsetInPTagOfPointOfParagraphOfArticle(pointOffset, pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement);
 });
 
-Then(`p tag {int} of li {int} with data-akn-element {string} of article contains {string} in edition mode`, (ptag, paragraphLi, paragraphDataAknElement, content) => {
-    ckEditorWindow.getElementPTagOfParagraphOfArticle(ptag, paragraphLi, paragraphDataAknElement).invoke('text').should('contain', content);
+Then(`p tag {int} of li {int} with data-akn-element {string} of article contains {string} in edition mode`, (pTag, paragraphLi, paragraphDataAknElement, content) => {
+    ckEditorWindow.getElementPTagOfParagraphOfArticle(pTag, paragraphLi, paragraphDataAknElement).invoke('text').should('contain', content);
 });
 
 Then(`{string} attribute is not present in li {int} with data-akn-element {string} of article in edition mode`, (attribute, li, dataAknElement) => {
@@ -282,18 +282,42 @@ Then('click dialog ok button', () => {
     ckEditorWindow.clickCkEditorDialogOkBtn();
 });
 
-Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, numValue) => {
-    ckEditorWindow.getFirstLevelPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'data-akn-num').should('contain', numValue);
-});
+And('do right click using mouse in edition mode', () => {
+    ckEditorWindow.rightClickWhenCKEditorOpen();
+})
 
-Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, numValue) => {
-    ckEditorWindow.getSecondLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3).invoke('attr', 'data-akn-num').should('contain', numValue);
-});
-
-Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, numValue) => {
-    ckEditorWindow.getThirdLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4).invoke('attr', 'data-akn-num').should('contain', numValue);
-});
-
-Then('element li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode has num value {string}', (li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5, numValue) => {
-    ckEditorWindow.getFourthLevelPointOfParagraphOfArticle(li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3, li4, dataAknElement4, li5, dataAknElement5).invoke('attr', 'data-akn-num').should('contain', numValue);
-});
+// Then('background color of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article is {string} in edition mode', function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, backGroundColor) {
+//
+// });
+//
+// And('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, attributeName, attributeValue) {
+//
+// });
+//
+// And("li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, attributeName) {
+//
+// });
+//
+// And('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} in edition mode', function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, attributeName) {
+//
+// });
+//
+// When('click at offset {int} in li {int} with data-akn-element {string} of article in edition mode', function () {
+//
+// });
+//
+// Then('background color of li {int} with data-akn-element {string} of article is {string} in edition mode', function () {
+//
+// });
+//
+// Then("li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function () {
+//
+// });
+//
+// Then('li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function () {
+//
+// });
+//
+// Then('li {int} with data-akn-element {string} of article contains attribute {string} in edition mode', function () {
+//
+// });
