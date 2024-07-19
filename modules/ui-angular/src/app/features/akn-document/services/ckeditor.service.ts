@@ -159,10 +159,9 @@ export class CKEditorService {
     this.datePickerConnector?.$triggerStateChange();
     this.checkBoxesConnector?.$triggerStateChange();
   }
-  refreshStateSoftActionsConnector(){
-    this.softActionsConnector?.$triggerStateChange();
-  }
+
   refreshStateSpecificConnectors() {
+    this.softActionsConnector?.$triggerStateChange();
     this.refToLinkConnector?.$triggerStateChange();
     this.mathJaxConnector?.$triggerStateChange();
     this.trackChangesConnector?.$triggerStateChange();
@@ -317,9 +316,10 @@ export class CKEditorService {
     leosState: any,
     rootElement: HTMLElement,
   ) {
+    const otherTargets = ['contributionViewContainer','versionComparisonContainer'];
     this.refToLinkConnector = new RefToLinkConnector(
       //TODO pass only required state
-      leosState,
+      leosState, otherTargets,
       {
         rootElement,
       },
@@ -355,7 +355,9 @@ export class CKEditorService {
     leosState: any,
     rootElement: HTMLElement,
   ) {
-    this.mathJaxConnector = new MathJaxConnector(leosState, {
+    const otherTargets = ['contributionViewContainer','versionComparisonContainer','treeContainer'];
+    this.mathJaxConnector = new MathJaxConnector(leosState, otherTargets,
+      {
       rootElement,
     });
 

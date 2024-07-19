@@ -115,6 +115,7 @@ export class DocumentComponent
     ) {
       this.xml = changes.xml.currentValue;
       this.loadDocument(this.xml);
+      this.ckeditorService.refreshStateSpecificConnectors();
     }
   }
 
@@ -208,7 +209,7 @@ export class DocumentComponent
               });
               this.documentService.reloadView();
               this.tableOfContentService.reload();
-              this.ckeditorService.refreshStateSoftActionsConnector();
+              this.ckeditorService.refreshStateSpecificConnectors();
             } else {
               const ckeditorsOpen = this.document.querySelectorAll('.cke_editable');
               if (!ckeditorsOpen || ckeditorsOpen.length === 0) {

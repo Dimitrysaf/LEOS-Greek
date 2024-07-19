@@ -61,6 +61,7 @@ export class AknDocumentComponent implements OnDestroy, OnInit, AfterViewInit, A
   }
 
   ngAfterViewInit(): void {
+    this.milestoneViewConnectorsService.destroyExtensions();
     this.loadDocument(this.xml);
     this.softActionsInit = false;
   }

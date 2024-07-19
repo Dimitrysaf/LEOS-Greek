@@ -24,6 +24,7 @@
           matTreeNodeToggle
           *ngIf="!treeControl.isExpanded(node)"
           icon="eui-chevron-forward"
+          (click)="onExpand(node)"
         ></eui-icon-svg>
         <eui-icon-svg
           matTreeNodeToggle

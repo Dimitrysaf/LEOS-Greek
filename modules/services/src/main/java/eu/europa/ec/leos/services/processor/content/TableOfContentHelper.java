@@ -139,7 +139,19 @@ public class TableOfContentHelper {
             itemDescription.append(itemDescription.length() > 0 ? StructureConfigUtils.CONTENT_SEPARATOR : "").append(removeTag(tocItem.getContent()));
         }
 
-        return StringUtils.abbreviate(itemDescription.toString(), shoudlAddMovedLabel ? captionMaxSize + MOVED_LABEL_SIZE : captionMaxSize);
+        // contains mathJax ?
+        if (itemDescription.toString().contains("\\(") && itemDescription.toString().contains("\\)")) {
+            int startIndex = itemDescription.toString().indexOf("\\(") + 3; // the three dots
+            int endIndex = itemDescription.toString().indexOf("\\)") + 5; // 2 characters + the three dots
+            captionMaxSize = shoudlAddMovedLabel ? captionMaxSize + MOVED_LABEL_SIZE : captionMaxSize;
+            if (startIndex >= endIndex || endIndex < captionMaxSize || startIndex > captionMaxSize) {
+                return StringUtils.abbreviate(itemDescription.toString(), captionMaxSize);
+            } else {
+                return StringUtils.abbreviate(itemDescription.toString(), endIndex);
+            }
+        } else {
+            return StringUtils.abbreviate(itemDescription.toString(), shoudlAddMovedLabel ? captionMaxSize + MOVED_LABEL_SIZE : captionMaxSize);
+        }
     }
 
     public static String getDisplayableTocItem(TocItem tocItem, String language, MessageHelper messageHelper) {
