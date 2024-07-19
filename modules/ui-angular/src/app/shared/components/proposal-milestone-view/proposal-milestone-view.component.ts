@@ -131,6 +131,10 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   open() {
     this.isOpened = true;
     this.reloadDocs();
+    this.dialog.dialogClose.subscribe((value) => {
+      this.isOpened = false;
+      this.closed.emit();
+    });
     this.dialog.openDialog();
   }
 

@@ -53,10 +53,10 @@
     <eui-tabs *ngIf="isOpened" (tabSelect)="onTabSelected($event)">
       <eui-tab *ngFor="let doc of documents; let tabIndex = index"
                hasBackgroundFilled
-               [euiSecondary]="doc.state === 'Processed' && !this.parentClonedProposal"
-               [euiSuccess]="doc.state === 'Added' && !this.parentClonedProposal"
+               [euiSecondary]="(doc.state === 'Processed' || doc.state === 'Accepted_Deleted' || doc.state === 'Accepted_Added') && !this.parentClonedProposal"
+               [euiSuccess]="(doc.state === 'Added' || doc.state === 'Accepted_Added') && !this.parentClonedProposal"
                [euiWarning]="doc.state === 'Modified' && !this.parentClonedProposal"
-               [euiDanger]="doc.state === 'Deleted' && !this.parentClonedProposal"
+               [euiDanger]="(doc.state === 'Deleted' || doc.state === 'Accepted_Deleted') && !this.parentClonedProposal"
                [euiPrimary]="doc.selected === true"
           >
         <eui-tab-label>{{ doc.label }}
@@ -142,12 +142,14 @@
   </div>
   <eui-dialog-footer>
     <div class="eui-dialog__footer-content responsive-chip-list">
-      <span class="eui-legends">Legend:</span>
+      <span class="eui-legends">{{ 'page.collection.milestone-view-dialog.legend' | translate }}: </span>
       <eui-chip-list class="responsive-chip-list">
-        <eui-chip euiDanger><span euiLabel>Deleted</span></eui-chip>
-        <eui-chip euiSuccess><span euiLabel>Added</span></eui-chip>
-        <eui-chip euiWarning><span euiLabel>Modified</span></eui-chip>
-        <eui-chip euiSecondary><span euiLabel>Processed</span></eui-chip>
+        <eui-chip euiDanger><span euiLabel>{{ 'page.collection.milestone-view-dialog.deleted' | translate }}</span></eui-chip>
+        <eui-chip euiDanger euiSecondary><span euiLabel>{{ 'page.collection.milestone-view-dialog.accept-deleted' | translate }}</span></eui-chip>
+        <eui-chip euiSuccess><span euiLabel>{{ 'page.collection.milestone-view-dialog.added' | translate }}</span></eui-chip>
+        <eui-chip euiSuccess euiSecondary><span euiLabel>{{ 'page.collection.milestone-view-dialog.accept-added' | translate }}</span></eui-chip>
+        <eui-chip euiWarning><span euiLabel>{{ 'page.collection.milestone-view-dialog.updated' | translate }}</span></eui-chip>
+        <eui-chip euiSecondary><span euiLabel>{{ 'page.collection.milestone-view-dialog.processed' | translate }}</span></eui-chip>
       </eui-chip-list>
     </div>
 

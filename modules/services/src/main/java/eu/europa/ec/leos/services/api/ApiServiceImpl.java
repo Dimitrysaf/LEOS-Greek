@@ -124,6 +124,10 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_ADDED;
+import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
+import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
+
 @Service
 public abstract class ApiServiceImpl implements ApiService {
     private static final String DOC = "doc";
@@ -1136,8 +1140,10 @@ public abstract class ApiServiceImpl implements ApiService {
                         milestoneView.setOrder(annexKeyMap.get(contentFileName));
                         if (annexAddedMap.containsKey(contentFileName)) {
                             milestoneView.setContentStatus("Added");
-                        } else if (annexAddedMap.containsKey(contentFileName.concat("_processed"))) {
+                        } else if (annexAddedMap.containsKey(contentFileName.concat(PROCESSED))) {
                             milestoneView.setContentStatus("Processed");
+                        } else if (annexAddedMap.containsKey(contentFileName.concat(ACCEPTED_ADDED))) {
+                            milestoneView.setContentStatus("Accepted_Added");
                         }
                     } else if (category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
                         milestoneView.setOrder(1);
@@ -1153,12 +1159,12 @@ public abstract class ApiServiceImpl implements ApiService {
                                 milestoneView.setContentStatus("Added");
                                 Optional<String> clonedFS =
                                         legDocument.getContainedDocuments().stream().filter((d) -> d.contains(contentFileName)).findFirst();
-                                if (clonedFS.isPresent() && clonedFS.get().contains("_processed")) {
+                                if (clonedFS.isPresent() && clonedFS.get().contains(PROCESSED)) {
                                     milestoneView.setContentStatus("Processed");
                                 }
                                 boolean accepted = !getFinancialStatements(originalLeosPackage).isEmpty();
                                 if (accepted) {
-                                    milestoneView.setContentStatus("Processed");
+                                    milestoneView.setContentStatus("Accepted_Added");
                                 }
                                 isContributionChanged = true;
                             }
@@ -1181,7 +1187,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
         if (proposal.isClonedProposal()) {
             for (Map.Entry<String, Object> entry : annexDeletedMap.entrySet()) {
-                String contentFileName = entry.getKey().replace("_processed", "");
+                String contentFileName = entry.getKey().replace(PROCESSED, "").replace(ACCEPTED_ADDED, "").replace(ACCEPTED_DELETED, "");
                 String version = docVersionOriginalMap.get(contentFileName);
                 byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
                 String htmlContent = new String(xmlBytes, StandardCharsets.UTF_8);
@@ -1190,8 +1196,10 @@ public abstract class ApiServiceImpl implements ApiService {
                 milestoneView.setLeosCategory(LeosCategory.ANNEX);
                 milestoneView.setOrder(annexKeyOriginalMap.get(contentFileName));
                 milestoneView.setContentStatus("Deleted");
-                if (entry.getKey().contains("_processed")) {
+                if (entry.getKey().contains(PROCESSED)) {
                     milestoneView.setContentStatus("Processed");
+                } else if (entry.getKey().contains(ACCEPTED_DELETED)) {
+                    milestoneView.setContentStatus("Accepted_Deleted");
                 }
                 String tocFile = contentFileName + TOC_JS;
                 File toc = (File) originalDocumentFiles.get(tocFile);
@@ -1233,7 +1241,7 @@ public abstract class ApiServiceImpl implements ApiService {
                         if (originalLegDocument != null) {
                             Optional<String> originalFS =
                                     originalLegDocument.getContainedDocuments().stream().filter((d) -> d.contains(contentFileNameWithoutHtml)).findFirst();
-                            if (originalFS.isPresent() && originalFS.get().contains("_processed")) {
+                            if (originalFS.isPresent() && originalFS.get().contains(PROCESSED)) {
                                 milestoneView.setContentStatus("Processed");
                             }
                         }
@@ -1242,7 +1250,7 @@ public abstract class ApiServiceImpl implements ApiService {
                                 !getFinancialStatements(originalLeosPackage).stream().filter((fs) -> contentFileNameWithoutHtml.equalsIgnoreCase(fs.getMetadata().get().getRef())).findFirst().isPresent();
 
                         if (accepted) {
-                            milestoneView.setContentStatus("Processed");
+                            milestoneView.setContentStatus("Accepted_Deleted");
                         }
                         String tocFile = contentFileName.replace(".html", "") + TOC_JS;
                         File toc = (File) originalDocumentFiles.get(tocFile);

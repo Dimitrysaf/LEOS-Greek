@@ -21,11 +21,13 @@
 
   <eui-card-footer>
     <eui-card-footer-action-buttons>
-      <span euiLabel style="color: red; padding-right: 10px;" *ngIf="this.feedbackToBeSent">
-        <eui-icon
-          euiSizeS
-          iconClass="eui-icon-circle"
-        ></eui-icon>
+      <span euiLabel style="padding-right: 10px;" *ngIf="this.feedbackToBeSent">
+        <eui-icon-svg
+          size="s"
+          fillColor="danger-100"
+          icon="eui-ellipse"
+          set="eui"
+        ></eui-icon-svg>
       </span>
       <span class="updatedBy">{{
         'page.editor.contribution-item.updated-by'
