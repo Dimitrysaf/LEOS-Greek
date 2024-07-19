@@ -27,7 +27,7 @@ class tableOfContent {
         nodeLabel: () => cy.get(".mat-tree-node div.label[id^='node-label']"),
         preambleLink: () => this.elements.nestedTreeNode().find('#node-label-_preamble').closest('div.mat-tree-node'),
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
-        enactingTerms: () => cy.get("#node-label-_body").closest('mat-nested-tree-node')
+        labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node')
     }
     
     clickEditBtn(){
@@ -95,8 +95,8 @@ class tableOfContent {
         return this.elements.elementList();
     }
 
-    getEnactingTerms(){
-        return this.elements.enactingTerms();
+    getLabelExtended(){
+        return this.elements.labelExtended();
     }
 }
 export default new tableOfContent();

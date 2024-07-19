@@ -21,11 +21,11 @@ module.exports = defineConfig({
       // implement node event listeners here
       on("before:browser:launch", (browser, launchOptions) => {
         if (["chrome", "edge"].includes(browser.name)) {
-          if (browser.isHeadless) {
+          /*if (browser.isHeadless) {
             launchOptions.args.push("--no-sandbox");
             launchOptions.args.push("--disable-gl-drawing-for-tests");
             launchOptions.args.push("--disable-gpu");
-          }
+          }*/
           launchOptions.args.push('--disable-dev-shm-usage');
         }
         return launchOptions;
@@ -51,13 +51,13 @@ module.exports = defineConfig({
         'unzipping': unzip
       });
       on('task', {
-        getFiles: ({ downloadspath, extension }) => {
-          const files = fs.readdirSync(downloadspath);
+        getFiles: ({ downloadsPath, extension }) => {
+          const files = fs.readdirSync(downloadsPath);
           const result = [];
           files.forEach(
               function (file) {
-                const newbase = path.join(downloadspath, file);
-                if (!fs.statSync(newbase).isDirectory()) {
+                const newBase = path.join(downloadsPath, file);
+                if (!fs.statSync(newBase).isDirectory()) {
                   if (file.substr(-1 * (extension.length + 1)) === '.' + extension) {
                     result.push(file);
                   }

@@ -131,7 +131,7 @@ Feature: Legal Act Page Regression Features
         Then user is on home page
         When click on upload button
         Then active upload window label contains "Upload a legislative document"
-        When upload a leg file from a relative location "PROP_ACT-3210011215583606762-EN.leg"
+        When upload a leg file from a relative location "PROP_ACT-clymts48h00018g73xyrc19ma-en.leg"
         Then active upload window label contains "Document metadata"
         And  document title input field is displayed
         When click on create button in upload document page
@@ -152,19 +152,21 @@ Feature: Legal Act Page Regression Features
             | Chapter     |
             | Section     |
             | Article     |
-        When drag element "Article" from element tree list and drop to node label "Article 1 - Article heading... 1.Text..." in navigation pane
+        When drag element "Article" from element tree list and drop to node label "Article 1 - Scope 1. Text..." in navigation pane
         Then enacting terms contains node label "Article # - Article heading... Text..." and showing as bold
         When click on save and close button in navigation pane
         Then toc editing button is displayed and enabled
         And  enacting terms contains node label "Article 2 - Article heading... 1.Text..."
         When click on "Article 2 - Article heading... 1.Text..." link in navigation pane
         Then article 2 is displayed
-        Then heading of article 1 contains "Article heading..."
+        Then heading of article 2 contains "Article heading..."
         And  2 paragraphs are present in article 2
         When click on insert before icon of article 2
         Then heading of article 2 contains "Article heading..."
         And  2 paragraphs are present in article 2
-        When click on insert before icon of article 3
+        When click on "Article 3 - Article heading... 1.Text..." link in navigation pane
+        Then article 3 is displayed
+        When click on insert after icon of article 3
         Then heading of article 4 contains "Article heading..."
         And  2 paragraphs are present in article 4
         When mouseover and click on article 7
