@@ -27,7 +27,9 @@ public class MilestoneHelper {
 
     private static final String TOC_HTML = "_toc.html";
     private static final String XML = ".xml";
-    private static final String PROCESSED = "_processed";
+    public static final String PROCESSED = "_processed";
+    public static final String ACCEPTED_ADDED = "_accepted_added";
+    public static final String ACCEPTED_DELETED = "_accepted_deleted";
 
     private static final String TMP_DIR = "java.io.tmpdir";
     private static final String MILESTONE_DIR = "/milestone/";
@@ -76,9 +78,12 @@ public class MilestoneHelper {
                     Optional<String> rejectedAnnex = legDocument.getContainedDocuments().stream().filter(
                             fileName -> fileName.contains(PROCESSED) && fileName.startsWith(annexFilename)).findFirst();
 
-                    if (acceptedAnnex.isPresent() || rejectedAnnex.isPresent()) {
+                    if (rejectedAnnex.isPresent()) {
                         //Add the processed annexes with the suffix "_processed"
                         String processedAnnexFilename = annexFilename.concat(PROCESSED);
+                        annexAddedMap.put(processedAnnexFilename, value);
+                    } else if (acceptedAnnex.isPresent()) {
+                        String processedAnnexFilename = annexFilename.concat(ACCEPTED_ADDED);
                         annexAddedMap.put(processedAnnexFilename, value);
                     } else {
                         annexAddedMap.put(annexFilename, value);
@@ -124,7 +129,9 @@ public class MilestoneHelper {
                     Optional<String> rejectedAnnex = originalLegDocument.getContainedDocuments().stream().filter(
                             fileName -> fileName.contains(PROCESSED) && fileName.startsWith(originalEntryKey)).findFirst();
 
-                    if (!acceptedAnnex.isPresent() || rejectedAnnex.isPresent()) {
+                    if (!acceptedAnnex.isPresent()) {
+                        annexDeletedMap.put(originalEntryKey.concat(ACCEPTED_DELETED), entry.getValue());
+                    } else if (rejectedAnnex.isPresent()) {
                         //Add the processed annexes with the suffix "_processed"
                         annexDeletedMap.put(originalEntryKey.concat(PROCESSED), entry.getValue());
                     } else {

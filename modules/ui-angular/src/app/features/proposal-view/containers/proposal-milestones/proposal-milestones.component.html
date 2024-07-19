@@ -136,9 +136,13 @@
           "
         >
           <div class="icon-container">
-            <eui-icon *ngIf="clonedMilestone.contributionChanged" euiPrimary
-                      iconClass="eui-icon-info-circle eui-icon-1x"></eui-icon>
-            <span class="tooltip" [innerHTML]="'page.collection.milestones.component.tooltip' | translate"></span>
+            <eui-icon-svg *ngIf="clonedMilestone.contributionChanged"
+                          size="s"
+                          fillColor="primary-100"
+                          icon="eui-ecl-information"
+                          set="eui"
+                          [euiTooltip]="'page.collection.milestones.component.tooltip' | translate">
+            </eui-icon-svg>
           </div>
           {{ clonedMilestone.title }}
         </td>
