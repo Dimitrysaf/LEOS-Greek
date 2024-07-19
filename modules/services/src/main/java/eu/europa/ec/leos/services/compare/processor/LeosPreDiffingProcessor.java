@@ -20,10 +20,13 @@ public class LeosPreDiffingProcessor {
         NodeList elements = XercesUtils.getElementsByXPath(document, xPathCatalog.getXPathTrackChanges());
         for (int countElements = 0; countElements < elements.getLength(); countElements++) {
             Node element = elements.item(countElements);
-            if(XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null){
-                if (XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_DELETE_ACTION)) {
+            if(XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null
+                    || element.getNodeName().equals("ins") || element.getNodeName().equals("del")){
+                if ((XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null && XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_DELETE_ACTION))
+                        || element.getNodeName().equals("del")) {
                     element.getParentNode().removeChild(element);
-                } else if (XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION)) {
+                } else if ((XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR) != null && XercesUtils.getAttributeValue(element, LEOS_ACTION_ATTR).equals(LEOS_TC_INSERT_ACTION))
+                        || element.getNodeName().equals("ins")) {
                     for(int countChildren = 0; countChildren < element.getChildNodes().getLength(); countChildren++) {
                         Node child = element.getChildNodes().item(countChildren);
                         element.getParentNode().insertBefore(child, element);

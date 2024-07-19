@@ -19,9 +19,12 @@ import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorContext;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
+import eu.europa.ec.leos.services.compare.processor.LeosPreDiffingProcessor;
 import eu.europa.ec.leos.services.document.DocumentContentService;
 import eu.europa.ec.leos.services.document.TransformationService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -47,10 +50,19 @@ public class ComparisonDelegateAPIProposal<T extends XmlDocument> extends Compar
     @Override
     protected String getComparedContent(T oldVersion, T newVersion, boolean includeCoverPage) {
         final String contextPath = "";
-        final String firstItemHtml = documentContentService.getDocumentAsHtml(oldVersion, contextPath, securityContext.getPermissions(oldVersion),
+        String firstItemHtml = documentContentService.getDocumentAsHtml(oldVersion, contextPath, securityContext.getPermissions(oldVersion),
                 includeCoverPage);
-        final String secondItemHtml = documentContentService.getDocumentAsHtml(newVersion, contextPath, securityContext.getPermissions(newVersion),
+        String secondItemHtml = documentContentService.getDocumentAsHtml(newVersion, contextPath, securityContext.getPermissions(newVersion),
                 includeCoverPage);
+
+        LeosPreDiffingProcessor leosPreDiffingProcessor = new LeosPreDiffingProcessor();
+        firstItemHtml = leosPreDiffingProcessor.adjustTrackChanges(firstItemHtml);
+        secondItemHtml = leosPreDiffingProcessor.adjustTrackChanges(secondItemHtml);
+
+        //Remove highlight before comparison
+        firstItemHtml = new String(LeosXercesUtils.removeHighlights(XercesUtils.createXercesDocument(firstItemHtml.getBytes())));
+        secondItemHtml = new String(LeosXercesUtils.removeHighlights(XercesUtils.createXercesDocument(secondItemHtml.getBytes())));
+
         return compareService.compareContents(new ContentComparatorContext.Builder(firstItemHtml, secondItemHtml)
                 .withAttrName(ATTR_NAME)
                 .withRemovedValue(CONTENT_REMOVED_CLASS)
