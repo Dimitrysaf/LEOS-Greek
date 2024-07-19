@@ -659,6 +659,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
                 financialStatementContext.usePackage(leosPackage);
                 String template = metadata.getTemplate();
                 financialStatementContext.useTemplate(template);
+                financialStatementContext.useDocTemplate(metadata.getDocTemplate());
                 financialStatementContext.usePurpose(proposal.getMetadata().get().getPurpose());
                 financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + template));
                 financialStatementContext.useEeaRelevance(proposal.getMetadata().get().getEeaRelevance());
