@@ -29,27 +29,6 @@ public class LeosSchedulerService {
         this.tokenService = tokenService;
     }
 
-    @Scheduled(cron = "#{applicationProperties['leos.delete.clone.proposal.cron.schedule']}")
-    public void deleteCloneCronTask() {
-        try {
-            LOG.info("Deleting cloned proposals using cron task....");
-            List<Proposal> proposals = workspaceService.browseWorkspace(Proposal.class, false);
-            CollectionContextService context = proposalContextProvider.get();
-            proposals.forEach(proposal -> {
-                if (proposal.isClonedProposal() && StringUtils.isEmpty(proposal.getClonedFrom())) {
-                    context.useProposal(proposal);
-                    try {
-                        context.executeDeleteProposal();
-                    } catch (Exception e) {
-                        LOG.error("Error deleting the cloned proposal from the cron task", e);
-                    }
-                }
-            });
-        } catch (Exception ex) {
-            LOG.error("Unable to connect to CMIS repo", ex);
-        }
-    }
-
     @Scheduled(cron = "#{applicationProperties['leos.empty.access.token.list.cron.schedule']}")
     public void emptyAccessTokenList() {
         try {
