@@ -38,6 +38,8 @@ public class MetadataUtil {
 
     private static final String LINKED_DOCUMENT_HREF_PATTERN = "http://data.europa.eu/eli/%s/%s/%s";
 
+    private static final String LINKED_DOCUMENT_PARSE_PATTERN = "([A-Za-z0-9]+)\\((\\d{4})\\)(\\s?)(\\d+)(\\s?)([A-Za-z0-9]*)";
+
     private static final String CONCLUSIONS = "conclusions";
     private static final String CONCLUSIONSNEW = "_" + CONCLUSIONS;
     private static final String CONCLUSION_NODE_ID = "conclusions__p_1";
@@ -586,9 +588,13 @@ public class MetadataUtil {
         return new MultipleReferencesFieldInfo(referenceFieldInfoList, MetadataFieldType.LINKED_DOCUMENTS);
     }
 
-    private static ReferenceFieldInfo parseLinkedDocumentInfo(final String referenceValue) {
+    private static ReferenceFieldInfo parseLinkedDocumentInfo(final String referenceValue) throws MetadataUtilsException
+    {
         final String displayValue = referenceValue.replace("{", "").replace("}", "").trim();
 
+        if (!displayValue.matches(LINKED_DOCUMENT_PARSE_PATTERN)){
+            throw new MetadataUtilsException(INVALID_FIELD_VALUE_MESSAGE);
+        }
         int bracketIndex = displayValue.indexOf("(");
         final String abbreviation = displayValue.substring(0, bracketIndex).trim();
 
