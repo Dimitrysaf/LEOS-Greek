@@ -227,6 +227,8 @@ export class DocumentService {
 
   private getAnnotations?: () => Promise<string>;
   private refreshAnnotateCall?: () => void;
+  private currentDocumentRef: string;
+  private currentConfig: DocumentConfig;
 
   constructor(
     private http: HttpClient,
@@ -386,6 +388,9 @@ export class DocumentService {
     isTrackChangesEnabled: boolean;
     isTrackChangesShowed: boolean;
   }) {
+    if (this.currentConfig) {
+      this.currentConfig.trackChangesShowed = status.isTrackChangesShowed;
+    }
     this.trackChangesStatusBS.next(status);
     this.tocService.setIsTrackChangesEnabled(status.isTrackChangesEnabled);
   }
@@ -1264,6 +1269,11 @@ export class DocumentService {
         `${apiBaseUrl}/secured/${documentType}/${documentRef}/document-config`,
       )
       .subscribe((config) => {
+        if (documentRef === this.currentDocumentRef && this.currentConfig) {
+          config.trackChangesShowed = this.currentConfig.trackChangesShowed;
+        }
+        this.currentDocumentRef = documentRef;
+        this.currentConfig = config;
         this.documentConfigBS.next(config);
       });
   }
