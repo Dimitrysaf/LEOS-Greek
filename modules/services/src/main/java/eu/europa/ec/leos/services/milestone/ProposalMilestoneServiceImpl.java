@@ -55,10 +55,6 @@ public class ProposalMilestoneServiceImpl extends AbstractMilestoneService {
     @Override
     protected LegPackage createLegPackage(String proposalId) throws IOException {
         if(cloneContext != null && cloneContext.isClonedProposal()) {
-            // TODO:
-            // Trackchanges: Comparison removed because of trackchanges. Remove this line when we clean up after finish track changes
-            /*ExportLW exportOptions = new ExportLW(ExportOptions.Output.PDF,
-                    true, ComparisonType.SIMPLE);*/
             ExportLW exportOptions = new ExportLW(ExportOptions.Output.PDF, true);
             exportOptions.setWithSuggestions(false);
             exportOptions.setWithAnonymization(true);

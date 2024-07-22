@@ -250,7 +250,7 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                             createCollectionResult = createCollectionService.createCollectionFromLeg(content, propDocument, languageCode, true);
                             if (createCollectionResult.isCollectionCreated()) {
                                 String pkgName = createCollectionResult.getPackageName();
-                                addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false);
+                                addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, pkgName, false, "1.0.0");
                             }
                         } else {
                             if (ByteChecksumComparator.checksumMatched(savedDocument.getContent().get().getSource().getBytes(), propDocument.getSource())) {
@@ -286,8 +286,11 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                     String languageCode = propDocument.getMetadata().getLanguage().toUpperCase(Locale.ROOT);
                     String translatedDocRef = LanguageMapUtils.getTranslatedProposalReference(propDocument.getRef(), languageCode);
                     LeosPackage leosPackage = findLeosPackageById(savedLegDocument.getPackageId());
+                    List<Proposal> proposals = leosRepository.findDocumentsByPackageId(leosPackage.getId(), Proposal.class, false, false);
                     try {
-                        addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode, leosPackage.getName(), true);
+                        String versionLabel = getNextVersionLabel(VersionType.MAJOR, proposals.get(0).getVersionLabel());
+                        addLegDocument(file, fileContent, propDocument, translatedDocRef, languageCode,
+                                leosPackage.getName(), true, versionLabel);
                     } catch (Exception e) {
                         LOG.error("Error Occurred while adding the Leg file: " + e.getMessage(), e);
                         return new Pair<>("An error occurred adding the Leg file. " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
@@ -308,20 +311,27 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
     }
 
     private void addLegDocument(MultipartFile file, byte[] fileContent, DocumentVO propDocument, String proposalRef, String languageCode,
-            String pkgName, boolean updateDocs) throws Exception {
+                                String pkgName, boolean updateDocs, String currentVersionLabel) throws Exception {
         List<String> containedDocs = new ArrayList<>();
-        containedDocs.add(proposalRef + "_" + getNextVersionLabel(VersionType.MAJOR, propDocument.getMetadata().getDocVersion()));
+        containedDocs.add(proposalRef + "_" + currentVersionLabel);
         if (updateDocs) {
             Proposal proposal = leosRepository.findDocumentByRef(proposalRef, Proposal.class);
             updateLeosDocument(proposal.getId(), Proposal.class, propDocument, propDocument.getMetadataDocument());
         }
         propDocument.getChildDocuments().forEach(docVo -> {
             String translatedChildDocRef = LanguageMapUtils.getTranslatedProposalReference(docVo.getRef(), languageCode);
-            containedDocs.add(translatedChildDocRef + "_" + getNextVersionLabel(VersionType.MAJOR, docVo.getMetadata().getDocVersion()));
-            updateChildDocuments(translatedChildDocRef, docVo);
+            String versionLabel = "1.0.0";
+            if(updateDocs) {
+                LeosDocument document = leosRepository.findDocumentByRef(translatedChildDocRef,
+                        LeosCategoryClass.getClass(docVo.getCategory()));
+                updateLeosDocument(document.getId(), LeosCategoryClass.getClass(docVo.getCategory()),
+                        docVo, docVo.getMetadataDocument());
+                versionLabel = getNextVersionLabel(VersionType.MAJOR, document.getVersionLabel());
+            }
+            containedDocs.add(translatedChildDocRef + "_" + versionLabel);
         });
         List<String> milestoneComments = new ArrayList<>();
-        milestoneComments.add("Milestone imported");
+        milestoneComments.add(messageHelper.getMessage("leoslight.document.milestone.imported"));
         apiService.addLegDocument(pkgName, file.getOriginalFilename(), milestoneComments, fileContent, LeosLegStatus.IMPORTED,
                 containedDocs);
     }
@@ -442,16 +452,6 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
                 VersionType.MAJOR,
                 messageHelper.getMessage("leoslight.document.updated.major.version"),
                 docType);
-    }
-
-    private void updateLegDocument(String id, LeosLegStatus status, byte[] contentBytes) {
-        leosRepository.updateLegDocument(
-                id,
-                status,
-                contentBytes,
-                VersionType.MAJOR,
-                "Document updated using import"
-        );
     }
 
     private <D extends LeosDocument> String getDocumentViewUrl(String docRef, Class<? extends D> docType) {
