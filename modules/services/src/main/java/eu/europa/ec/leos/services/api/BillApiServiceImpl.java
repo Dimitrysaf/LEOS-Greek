@@ -297,7 +297,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
         context.get().usePackage(leosPackage);
         Proposal proposal = this.documentViewService.getProposalFromPackage(bill);
         String proposalId = proposal.getId();
-        if (isClonedProposal()) {
+        if (proposal.isClonedProposal()) {
             try {
                 final String jobFileName =
                         PROPOSAL + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".zip";
