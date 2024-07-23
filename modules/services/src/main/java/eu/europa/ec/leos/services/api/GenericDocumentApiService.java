@@ -266,8 +266,7 @@ public class GenericDocumentApiService {
         Stopwatch stopwatch = Stopwatch.createStarted();
         Proposal proposal = this.documentViewService.getProposalFromPackage(document);
         String proposalId = proposal.getId();
-        CloneContext cloneContext = getCloneContext();
-        if (cloneContext != null && cloneContext.isClonedProposal()) {
+        if (proposal.isClonedProposal()) {
             try {
                 final String jobFileName =
                         PROPOSAL + proposalId + "_AKN2LW_CLEAN_" + System.currentTimeMillis() + ".docx";
