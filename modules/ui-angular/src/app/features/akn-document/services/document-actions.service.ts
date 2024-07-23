@@ -930,7 +930,7 @@ export abstract class DocumentActionsService {
   }
 
   private updateTrackChangesStatus() {
-    this.seeTrackChanges = this.documentConfig.trackChangesShowed;
+    this.documentConfig.trackChangesShowed = this.seeTrackChanges;
     this.documentService.updateTrackChangesStatus({
       isTrackChangesEnabled: this.isTrackChangesEnabled,
       isTrackChangesShowed: this.seeTrackChanges,
