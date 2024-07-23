@@ -1,8 +1,10 @@
 $color-tab-added: rgba(92, 124, 84, 1.0);
 $color-tab-deleted: rgba(252, 16, 16, 1.0);
 $color-tab-updated: rgba(242, 149, 39, 1.0);
-$color-tab-processed: rgba(183, 183, 183, 1.0);
-$color-tab-selected-gradient: 0.6;
+$color-tab-accepted: rgba(9, 124, 84, 1.0);
+$color-tab-rejected: rgba(202, 16, 16, 1.0);
+$color-tab-selected-gradient: 0.2;
+$color-tab-process-gradient: 0.6;
 $color-tab-selected: rgba(230, 230, 230, 1.0);
 
 .milestone-view-dialog__body {
@@ -45,6 +47,11 @@ $color-tab-selected: rgba(230, 230, 230, 1.0);
     flex-grow: 1;
   }
 
+  .tab-icon {
+    margin-left: 10px;
+    padding-bottom: 10px;
+  }
+
   .eui-tab-content-wrapper {
     display: flex;
     flex-direction: column;
@@ -71,12 +78,22 @@ $color-tab-selected: rgba(230, 230, 230, 1.0);
     color: white !important;
   }
 
+  .eui-tab-item--danger.eui-tab-item--primary {
+    background-color: #{'rgba(#{red($color-tab-deleted)}, #{green($color-tab-deleted)}, #{blue($color-tab-deleted)}, #{$color-tab-process-gradient})'} !important;
+    color: white !important;
+    svg {
+      color: var(--eui-base-color-white);
+      fill: var(--eui-base-color-white);
+    }
+  }
+
   .eui-tab-item--danger.eui-tab-item--secondary {
-    background-color: $color-tab-processed !important;
-    border-width: 4px !important;
-    border-style: solid !important;
-    border-color: $color-tab-deleted !important;
-    color: var(--eui-base-color-grey-15-contrast) !important;
+    background-color: #{'rgba(#{red($color-tab-deleted)}, #{green($color-tab-deleted)}, #{blue($color-tab-deleted)}, #{$color-tab-process-gradient})'} !important;
+    color: white !important;
+    svg {
+      color: var(--eui-base-color-white);
+      fill: var(--eui-base-color-white);
+    }
   }
 
   .eui-tab-item--success {
@@ -84,12 +101,22 @@ $color-tab-selected: rgba(230, 230, 230, 1.0);
     color: white !important;
   }
 
+  .eui-tab-item--success.eui-tab-item--primary {
+    background-color: #{'rgba(#{red($color-tab-added)}, #{green($color-tab-added)}, #{blue($color-tab-added)}, #{$color-tab-process-gradient})'} !important;
+    color: white !important;
+    svg {
+      color: var(--eui-base-color-white);
+      fill: var(--eui-base-color-white);
+    }
+  }
+
   .eui-tab-item--success.eui-tab-item--secondary {
-    background-color: $color-tab-processed !important;
-    border-width: 4px !important;
-    border-style: solid !important;
-    border-color: $color-tab-added !important;
-    color: var(--eui-base-color-grey-15-contrast) !important;
+    background-color: #{'rgba(#{red($color-tab-added)}, #{green($color-tab-added)}, #{blue($color-tab-added)}, #{$color-tab-process-gradient})'} !important;
+    color: white !important;
+    svg {
+      color: var(--eui-base-color-white);
+      fill: var(--eui-base-color-white);
+    }
   }
 
   .eui-tab-item--warning {
@@ -98,46 +125,67 @@ $color-tab-selected: rgba(230, 230, 230, 1.0);
   }
 
   .eui-tab-item--secondary {
-    background-color: $color-tab-processed !important;
+    background-color: $color-tab-rejected !important;
   }
 
   .eui-tab-item--primary {
+    background-color: $color-tab-accepted !important;
+    color: white !important;
+  }
+
+  .eui-tab-item--accent {
     background-color: $color-tab-selected !important;
   }
 
-  .eui-tab-item--danger.eui-tab-item--primary {
+  .eui-tab-item--danger.eui-tab-item--accent {
     background-color: #{'rgba(#{red($color-tab-deleted)}, #{green($color-tab-deleted)}, #{blue($color-tab-deleted)}, #{$color-tab-selected-gradient})'} !important;
-    color: white !important;
-  }
-
-  .eui-tab-item--danger.eui-tab-item--secondary.eui-tab-item--primary {
-    background-color: #{'rgba(#{red($color-tab-processed)}, #{green($color-tab-processed)}, #{blue($color-tab-processed)}, #{$color-tab-selected-gradient})'} !important;
-    border-width: 4px !important;
-    border-style: solid !important;
-    border-color: $color-tab-deleted !important;
     color: var(--eui-base-color-grey-15-contrast) !important;
   }
 
-  .eui-tab-item--success.eui-tab-item--primary {
+  .eui-tab-item--danger.eui-tab-item--primary.eui-tab-item--accent {
+    background-color: #{'rgba(#{red($color-tab-deleted)}, #{green($color-tab-deleted)}, #{blue($color-tab-deleted)}, #{$color-tab-selected-gradient})'} !important;
+    color: var(--eui-base-color-grey-15-contrast) !important;
+    svg {
+      color: var(--eui-base-color-black);
+      fill: var(--eui-base-color-black);
+    }
+  }
+
+  .eui-tab-item--danger.eui-tab-item--secondary.eui-tab-item--accent {
+    background-color: #{'rgba(#{red($color-tab-deleted)}, #{green($color-tab-deleted)}, #{blue($color-tab-deleted)}, #{$color-tab-selected-gradient})'} !important;
+    color: var(--eui-base-color-grey-15-contrast) !important;
+    svg {
+      color: var(--eui-base-color-black);
+      fill: var(--eui-base-color-black);
+    }
+  }
+
+  .eui-tab-item--success.eui-tab-item--accent {
     background-color: #{'rgba(#{red($color-tab-added)}, #{green($color-tab-added)}, #{blue($color-tab-added)}, #{$color-tab-selected-gradient})'} !important;
-    color: white !important;
-  }
-
-  .eui-tab-item--success.eui-tab-item--secondary.eui-tab-item--primary {
-    background-color: #{'rgba(#{red($color-tab-processed)}, #{green($color-tab-processed)}, #{blue($color-tab-processed)}, #{$color-tab-selected-gradient})'} !important;
-    border-width: 4px !important;
-    border-style: solid !important;
-    border-color: $color-tab-added !important;
     color: var(--eui-base-color-grey-15-contrast) !important;
   }
 
-  .eui-tab-item--warning.eui-tab-item--primary {
-    background-color: #{'rgba(#{red($color-tab-updated)}, #{green($color-tab-updated)}, #{blue($color-tab-updated)}, #{$color-tab-selected-gradient})'} !important;
-    color: white !important;
+  .eui-tab-item--success.eui-tab-item--primary.eui-tab-item--accent {
+    background-color: #{'rgba(#{red($color-tab-added)}, #{green($color-tab-added)}, #{blue($color-tab-added)}, #{$color-tab-selected-gradient})'} !important;
+    color: var(--eui-base-color-grey-15-contrast) !important;
+    svg {
+      color: var(--eui-base-color-black);
+      fill: var(--eui-base-color-black);
+    }
   }
 
-  .eui-tab-item--secondary.eui-tab-item--primary {
-    background-color: #{'rgba(#{red($color-tab-processed)}, #{green($color-tab-processed)}, #{blue($color-tab-processed)}, #{$color-tab-selected-gradient})'} !important;
+  .eui-tab-item--success.eui-tab-item--secondary.eui-tab-item--accent {
+    background-color: #{'rgba(#{red($color-tab-added)}, #{green($color-tab-added)}, #{blue($color-tab-added)}, #{$color-tab-selected-gradient})'} !important;
+    color: var(--eui-base-color-grey-15-contrast) !important;
+    svg {
+      color: var(--eui-base-color-black);
+      fill: var(--eui-base-color-black);
+    }
+  }
+
+  .eui-tab-item--warning.eui-tab-item--accent {
+    background-color: #{'rgba(#{red($color-tab-updated)}, #{green($color-tab-updated)}, #{blue($color-tab-updated)}, #{$color-tab-selected-gradient})'} !important;
+    color: var(--eui-base-color-grey-15-contrast) !important;
   }
 
   .eui-page-column__header-right-content {
@@ -200,8 +248,16 @@ $color-tab-selected: rgba(230, 230, 230, 1.0);
     color: white !important;
   }
 
+  .eui-chip--danger.eui-chip--accent {
+    background-color: $color-tab-accepted !important;
+    border-width: 4px !important;
+    border-style: solid !important;
+    border-color: $color-tab-deleted !important;
+    color: white !important;
+  }
+
   .eui-chip--danger.eui-chip--secondary {
-    background-color: $color-tab-processed !important;
+    background-color: $color-tab-rejected !important;
     border-width: 4px !important;
     border-style: solid !important;
     border-color: $color-tab-deleted !important;
@@ -213,8 +269,16 @@ $color-tab-selected: rgba(230, 230, 230, 1.0);
     color: white !important;
   }
 
+  .eui-chip--success.eui-chip--accent {
+    background-color: $color-tab-accepted !important;
+    border-width: 4px !important;
+    border-style: solid !important;
+    border-color: $color-tab-added !important;
+    color: white !important;
+  }
+
   .eui-chip--success.eui-chip--secondary {
-    background-color: $color-tab-processed !important;
+    background-color: $color-tab-rejected !important;
     border-width: 4px !important;
     border-style: solid !important;
     border-color: $color-tab-added !important;
@@ -224,10 +288,6 @@ $color-tab-selected: rgba(230, 230, 230, 1.0);
   .eui-chip--warning {
     background-color: $color-tab-updated !important;
     color: white !important;
-  }
-
-  .eui-chip--secondary {
-    background-color: $color-tab-processed !important;
   }
 }
 

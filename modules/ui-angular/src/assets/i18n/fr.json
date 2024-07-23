@@ -144,6 +144,8 @@
   "page.collection.milestone-view-dialog.reject-button": "Rejeter",
   "page.collection.milestone-view-dialog.accept-added": "Ajout accepté",
   "page.collection.milestone-view-dialog.accept-deleted": "Suppression acceptée",
+  "page.collection.milestone-view-dialog.reject-added": "Ajout rejeté",
+  "page.collection.milestone-view-dialog.reject-deleted": "Suppression rejetée",
   "page.collection.milestone-view-dialog.legend": "Légende",
   "page.collection.milestone-view-dialog.added": "Ajouté",
   "page.collection.milestone-view-dialog.deleted": "Supprimé",

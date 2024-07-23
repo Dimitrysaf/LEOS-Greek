@@ -1078,11 +1078,8 @@ public abstract class ApiServiceImpl implements ApiService {
         Map<String, Object> contentFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, HTML);
         Map<String, Object> annexAddedMap = new HashMap<>();
         Map<String, Object> annexDeletedMap = new HashMap<>();
-        String milestoneDir = MilestoneHelper.getMilestoneDir(legFileTemp);
-        Map<String, Object> jsFiles = MilestoneHelper.filterAndSortFiles(unzippedFiles, TOC_JS);
         Map<String, Map> versionAndAnnexNumberMap = populateVersionAndAnnexNumberMap(unzippedFiles, legDocument.getContainedDocuments());
         Map<String, String> docVersionMap = versionAndAnnexNumberMap.get("docVersionMap");
-        Map<Integer, String> annexIndexesMap = versionAndAnnexNumberMap.get("annexIndexesMap");
         Map<String, Integer> annexKeyMap = versionAndAnnexNumberMap.get("annexKeyMap");
         Map<String, Object> originalDocumentFiles = new HashMap<>();
         Map<String, Object> originalContentFiles = new HashMap<>();
@@ -1120,84 +1117,6 @@ public abstract class ApiServiceImpl implements ApiService {
             isContributionChanged = false;
         }
 
-        for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
-            String key = entry.getKey();
-            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
-            String docName = "";
-            if(key.startsWith(COVER_PAGE_CONTENT_FILE_NAME)) {
-                docName = mainFileName;
-            } else {
-                docName = docVersionMap.keySet().stream().filter(value -> value.startsWith(key.substring(0, key.lastIndexOf(DOC_LANGUAGE_SEPARATOR)))).findFirst().orElse("");
-            }
-
-            String contentFileName = docName;
-            String version = docVersionMap.get(contentFileName);
-            boolean isCoverPage = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME);
-            boolean isCompared = false;
-            try {
-                byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
-                String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
-                String htmlContent = new String(xmlBytes, StandardCharsets.UTF_8);
-                String tocFile = null;
-                MilestoneDocumentView milestoneView = new MilestoneDocumentView(htmlContent,
-                        version, contentFileName, isCoverPage, null);
-                if (isCoverPage) {
-                    milestoneView.setLeosCategory(LeosCategory.COVERPAGE);
-                    tocFile = "coverPage_toc.js";
-                } else {
-                    tocFile = key.substring(0, key.indexOf(HTML)) + TOC_JS;
-                    LeosCategory category = xmlContentProcessor.identifyCategory(key,
-                            xmlContent.getBytes(StandardCharsets.UTF_8));
-                    milestoneView.setLeosCategory(category);
-                    if (category.equals(LeosCategory.ANNEX)) {
-                        milestoneView.setOrder(annexKeyMap.get(contentFileName));
-                        if (annexAddedMap.containsKey(contentFileName)) {
-                            milestoneView.setContentStatus("Added");
-                        } else if (annexAddedMap.containsKey(contentFileName.concat(PROCESSED))) {
-                            milestoneView.setContentStatus("Processed");
-                        } else if (annexAddedMap.containsKey(contentFileName.concat(ACCEPTED_ADDED))) {
-                            milestoneView.setContentStatus("Accepted_Added");
-                        }
-                    } else if (category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
-                        milestoneView.setOrder(1);
-                        Boolean existsStatFinancial = false;
-                        if (proposal.isClonedProposal()) {
-                            for (String x : originalContentFiles.keySet()) {
-                                if (x.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
-                                    existsStatFinancial = true;
-                                    break;
-                                }
-                            }
-                            if (!existsStatFinancial) {
-                                milestoneView.setContentStatus("Added");
-                                Optional<String> clonedFS =
-                                        legDocument.getContainedDocuments().stream().filter((d) -> d.contains(contentFileName)).findFirst();
-                                if (clonedFS.isPresent() && clonedFS.get().contains(PROCESSED)) {
-                                    milestoneView.setContentStatus("Processed");
-                                }
-                                boolean accepted = !getFinancialStatements(originalLeosPackage).isEmpty();
-                                if (accepted) {
-                                    milestoneView.setContentStatus("Accepted_Added");
-                                }
-                                isContributionChanged = true;
-                            }
-                        }
-                    }
-                    if (isModifiedXmlContent(xmlContent)) {
-                        milestoneView.setContentStatus("Modified");
-                        isContributionChanged = true;
-                    }
-                }
-                File toc = (File) unzippedFiles.get(tocFile);
-                if (toc.exists()) {
-                    milestoneView.setTocData(this.buildTocTree(toc));
-                }
-                listDocuments.add(milestoneView);
-            } catch (Exception e) {
-                LOG.error("Error when trying to get milestone view {}", e.getMessage(), e.getMessage());
-            }
-        }
-
         if (proposal.isClonedProposal()) {
             for (Map.Entry<String, Object> entry : annexDeletedMap.entrySet()) {
                 String contentFileName = entry.getKey().replace(PROCESSED, "").replace(ACCEPTED_ADDED, "").replace(ACCEPTED_DELETED, "");
@@ -1210,7 +1129,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 milestoneView.setOrder(annexKeyOriginalMap.get(contentFileName));
                 milestoneView.setContentStatus("Deleted");
                 if (entry.getKey().contains(PROCESSED)) {
-                    milestoneView.setContentStatus("Processed");
+                    milestoneView.setContentStatus("Rejected_Deleted");
                 } else if (entry.getKey().contains(ACCEPTED_DELETED)) {
                     milestoneView.setContentStatus("Accepted_Deleted");
                 }
@@ -1255,7 +1174,7 @@ public abstract class ApiServiceImpl implements ApiService {
                             Optional<String> originalFS =
                                     originalLegDocument.getContainedDocuments().stream().filter((d) -> d.contains(contentFileNameWithoutHtml)).findFirst();
                             if (originalFS.isPresent() && originalFS.get().contains(PROCESSED)) {
-                                milestoneView.setContentStatus("Processed");
+                                milestoneView.setContentStatus("Rejected_Deleted");
                             }
                         }
                         // Checks if this is accepted
@@ -1273,6 +1192,76 @@ public abstract class ApiServiceImpl implements ApiService {
                         listDocuments.add(milestoneView);
                     }
                 }
+            }
+        }
+
+        for (Map.Entry<String, Object> entry : contentFiles.entrySet()) {
+            String key = entry.getKey();
+            String mainFileName = docVersionMap.keySet().stream().filter(value -> value.startsWith(MAIN_DOCUMENT_FILE_NAME)).findFirst().orElse("");
+            String contentFileName = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME) ? mainFileName : key.substring(0, key.indexOf(HTML));
+            String version = docVersionMap.get(contentFileName);
+            boolean isCoverPage = key.startsWith(COVER_PAGE_CONTENT_FILE_NAME);
+            try {
+                byte[] xmlBytes = Files.readAllBytes(((File) entry.getValue()).toPath());
+                String xmlContent = LeosDomainUtil.wrapXmlFragment(new String(xmlBytes));
+                String htmlContent = new String(xmlBytes, StandardCharsets.UTF_8);
+                String tocFile = null;
+                MilestoneDocumentView milestoneView = new MilestoneDocumentView(htmlContent,
+                        version, contentFileName, isCoverPage, null);
+                if (isCoverPage) {
+                    milestoneView.setLeosCategory(LeosCategory.COVERPAGE);
+                    tocFile = "coverPage_toc.js";
+                } else {
+                    tocFile = contentFileName + TOC_JS;
+                    LeosCategory category = xmlContentProcessor.identifyCategory(key,
+                            xmlContent.getBytes(StandardCharsets.UTF_8));
+                    milestoneView.setLeosCategory(category);
+                    if (category.equals(LeosCategory.ANNEX)) {
+                        milestoneView.setOrder(annexKeyMap.get(contentFileName));
+                        if (annexAddedMap.containsKey(contentFileName)) {
+                            milestoneView.setContentStatus("Added");
+                        } else if (annexAddedMap.containsKey(contentFileName.concat(PROCESSED))) {
+                            milestoneView.setContentStatus("Rejected_Added");
+                        } else if (annexAddedMap.containsKey(contentFileName.concat(ACCEPTED_ADDED))) {
+                            milestoneView.setContentStatus("Accepted_Added");
+                        }
+                    } else if (category.equals(LeosCategory.STAT_FINANC_LEGIS)) {
+                        milestoneView.setOrder(1);
+                        Boolean existsStatFinancial = false;
+                        if (proposal.isClonedProposal()) {
+                            for (String x : originalContentFiles.keySet()) {
+                                if (x.startsWith(String.valueOf(LeosCategory.STAT_FINANC_LEGIS))) {
+                                    existsStatFinancial = true;
+                                    break;
+                                }
+                            }
+                            if (!existsStatFinancial) {
+                                milestoneView.setContentStatus("Added");
+                                Optional<String> clonedFS =
+                                        legDocument.getContainedDocuments().stream().filter((d) -> d.contains(contentFileName)).findFirst();
+                                if (clonedFS.isPresent() && clonedFS.get().contains(PROCESSED)) {
+                                    milestoneView.setContentStatus("Rejected_Added");
+                                }
+                                boolean accepted = !getFinancialStatements(originalLeosPackage).isEmpty();
+                                if (accepted) {
+                                    milestoneView.setContentStatus("Accepted_Added");
+                                }
+                                isContributionChanged = true;
+                            }
+                        }
+                    }
+                    if (isModifiedXmlContent(xmlContent)) {
+                        milestoneView.setContentStatus("Modified");
+                        isContributionChanged = true;
+                    }
+                }
+                File toc = (File) unzippedFiles.get(tocFile);
+                if (toc.exists()) {
+                    milestoneView.setTocData(this.buildTocTree(toc));
+                }
+                listDocuments.add(milestoneView);
+            } catch (Exception e) {
+                LOG.error("Error when trying to get milestone view {}", e.getMessage(), e.getMessage());
             }
         }
 

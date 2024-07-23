@@ -279,6 +279,30 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     return getSortOrder(a) - getSortOrder(b);
   }
 
+  getIconTabHelp(state) {
+    if (state === 'Accepted_Deleted') {
+      return this.translateService.instant(
+        'page.collection.milestone-view-dialog.accept-deleted'
+      );
+    }
+    if (state === 'Accepted_Added') {
+      return this.translateService.instant(
+        'page.collection.milestone-view-dialog.accept-added'
+      );
+    }
+    if (state === 'Rejected_Deleted') {
+      return this.translateService.instant(
+        'page.collection.milestone-view-dialog.reject-deleted'
+      );
+    }
+    if (state === 'Rejected_Added') {
+      return this.translateService.instant(
+        'page.collection.milestone-view-dialog.reject-added'
+      );
+    }
+    return "";
+  }
+
   private setActiveTab(index: number) {
     this.documents.forEach(doc => {
       doc.selected = false;
@@ -295,7 +319,9 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     const doc= this.documents[this.activeTabIndex];
     return this.contributionChanged &&
       !this.parentClonedProposal &&
-      (doc.state === 'Added' || doc.state === 'Deleted' || doc.state === 'Processed');
+      (doc.state === 'Added' || doc.state === 'Deleted'
+        || doc.state === 'Rejected_Deleted'
+        || doc.state === 'Rejected_Added' || doc.state === 'Accepted_Added' || doc.state === 'Accepted_Deleted');
   }
 
   evaluateState(state: string): boolean {
