@@ -51,6 +51,10 @@ public class LeosXercesUtils {
                         // Skip track changes for num node as the parent node is already being tracked.
                         // Skip track change for num node as it is moved from somewhere else.
                         numNode.setTextContent(numLabel);
+                        removeAttribute(node, LEOS_UID_NUMBER);
+                        removeAttribute(node, LEOS_TITLE_NUMBER);
+                        removeAttribute(node, LEOS_ACTION_NUMBER);
+                        removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
                     } else if (delNode != null && insNode != null) {
                         // It would be delNode != null && insNode != null && !delNode.getTextContent().equals(numLabel)
                         // But there is not need od adding !delNode.getTextContent().equals(numLabel) in the end
@@ -89,6 +93,10 @@ public class LeosXercesUtils {
                     numNode.removeChild(delNode);
                     numNode.removeChild(insNode);
                     numNode.setTextContent(numLabel);
+                    removeAttribute(node, LEOS_UID_NUMBER);
+                    removeAttribute(node, LEOS_TITLE_NUMBER);
+                    removeAttribute(node, LEOS_ACTION_NUMBER);
+                    removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
                 }
             }
         } else {
