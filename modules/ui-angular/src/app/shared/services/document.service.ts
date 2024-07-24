@@ -1467,7 +1467,12 @@ export class DocumentService {
     }
     /** Entity collaborators **/
     const entityCollaborators = collaborators
-      .filter((c) => c.login === c.entity.name);
+      .filter((c) => c.login === c.entity.name)
+      .sort((c1, c2) => {
+        const c1l = c1.entity.name.split(".").length - 1,
+          c2l = c2.entity.name.split(".").length - 1;
+        return (c2l < c1l) ? -1 : ((c1l === c2l) ? 0 : 1); // Reverse order
+      });
     for (const collaborator of entityCollaborators) {
       for (const entity of config.user.entities) {
         if (entity.name.startsWith(collaborator.entity.name)) {

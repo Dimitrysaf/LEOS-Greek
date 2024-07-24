@@ -78,7 +78,10 @@ class DocumentVOVoter implements AccessDecisionVoter<DocumentVO> {
         }
         // Entity collaborators
         List<Collaborator> entityCollaborators = documentVO.getCollaborators().stream().
-                filter(c -> c.getLogin().equals(c.getEntity())).collect(Collectors.toList());
+                filter(c -> c.getLogin().equals(c.getEntity())).
+                sorted((c1, c2) -> Long.compare(c2.getEntity().chars().filter(ch -> ch == '.').count(),
+                        c1.getEntity().chars().filter(ch -> ch == '.').count())).
+                collect(Collectors.toList());
         for (Collaborator collaborator : entityCollaborators) {
             for (Entity entity : authenticatedUser.getEntities()) {
                 if (entity.getName().startsWith(collaborator.getEntity())) {
