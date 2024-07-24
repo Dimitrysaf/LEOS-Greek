@@ -15,6 +15,7 @@ package eu.europa.ec.leos.security;
 
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionVoter;
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component class XmlDocumentVoter implements AccessDecisionVoter<XmlDocument> {
 
@@ -60,13 +62,30 @@ import java.util.Set;
     }
 
     private String retrieveAuthority(Authentication authentication, XmlDocument xmlDocument) {
-        String userLogin = ((User) authentication.getPrincipal()).getLogin();
-        List<Collaborator> collaborators = xmlDocument.getCollaborators();
-        return collaborators.stream()
-                .filter(c -> userLogin.equals(c.getLogin()))
-                .map(Collaborator::getRole)
-                .findFirst()
-                .orElse(null);
+        User authenticatedUser = ((User) authentication.getPrincipal());
+        // Normal user collaborator - has preference over entity collaborators
+        List<Collaborator> userCollaborators = xmlDocument.getCollaborators().stream().
+                filter(c -> authenticatedUser.getLogin().equals(c.getLogin())).collect(Collectors.toList());
+        for (Collaborator collaborator : userCollaborators) {
+            String[] collaboratorRootEntity = collaborator.getEntity().split("\\.", 2);
+            for (Entity entity : authenticatedUser.getEntities()) {
+                String[] userRootEntity = entity.getName().split("\\.", 2);
+                if (userRootEntity[0].equals(collaboratorRootEntity[0])) {
+                    return collaborator.getRole();
+                }
+            }
+        }
+        // Entity collaborators
+        List<Collaborator> entityCollaborators = xmlDocument.getCollaborators().stream().
+                filter(c -> c.getLogin().equals(c.getEntity())).collect(Collectors.toList());
+        for (Collaborator collaborator : entityCollaborators) {
+            for (Entity entity : authenticatedUser.getEntities()) {
+                if (entity.getName().startsWith(collaborator.getEntity())) {
+                    return collaborator.getRole();
+                }
+            }
+        }
+        return null;
     }
 
     private LeosPermission retrievePermission(Collection<ConfigAttribute> attributes) {

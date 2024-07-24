@@ -1452,10 +1452,34 @@ export class DocumentService {
     );
   }
 
+  private retrieveAuthority(collaborators: Collaborator[], config: LeosAppConfig) {
+    /** Normal user collaborator - has preference over entity collaborators **/
+    const userCollaborators = collaborators
+      .filter((c) => c.login === config.user.login);
+    for (const collaborator of userCollaborators) {
+      const collaboratorRootEntity = collaborator.entity.name.split("\\.", 2);
+      for (const entity of config.user.entities) {
+        const userRootEntity = entity.name.split("\\.", 2);
+        if (userRootEntity[0] === collaboratorRootEntity[0]) {
+          return [collaborator.role];
+        }
+      }
+    }
+    /** Entity collaborators **/
+    const entityCollaborators = collaborators
+      .filter((c) => c.login === c.entity.name);
+    for (const collaborator of entityCollaborators) {
+      for (const entity of config.user.entities) {
+        if (entity.name.startsWith(collaborator.entity.name)) {
+          return [collaborator.role];
+        }
+      }
+    }
+    return [];
+  }
+
   private resolveRoles(collaborators: Collaborator[], config: LeosAppConfig) {
-    const docRoles = collaborators
-      .filter((c) => c.login === config.user.login)
-      .map((c) => c.role);
+    const docRoles = this.retrieveAuthority(collaborators, config);
     return [...config.user.roles, ...docRoles, config.contextRole].filter(
       Boolean,
     );
@@ -1465,9 +1489,7 @@ export class DocumentService {
     collaborators: Collaborator[],
     config: LeosAppConfig,
   ) {
-    const docRoles = collaborators
-      .filter((c) => c.login === config.user.login)
-      .map((c) => c.role);
+    const docRoles = this.retrieveAuthority(collaborators, config);
     const roles = [...config.user.roles, ...docRoles, config.contextRole];
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);
     return [...new Set(permissions)];

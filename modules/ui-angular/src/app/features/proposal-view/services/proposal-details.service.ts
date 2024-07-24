@@ -62,7 +62,7 @@ export class ProposalDetailsService implements OnDestroy {
   private permissionsBS = new BehaviorSubject<Permission[]>([]);
 
   private userAutocompleteDataResponse$ = this.userInputFieldChangeBS.pipe(
-    filter((name) => name.length > 2),
+    filter((name) => name.length > 1),
     switchMap((name) => this.searchUsers(name)),
   );
   private destroy$ = new Subject<void>();
@@ -667,13 +667,37 @@ export class ProposalDetailsService implements OnDestroy {
     });
   }
 
+  private retrieveAuthority(collaborators: Collaborator[], config: LeosAppConfig) {
+    /** Normal user collaborator - has preference over entity collaborators **/
+    const userCollaborators = collaborators
+      .filter((c) => c.login === config.user.login);
+    for (const collaborator of userCollaborators) {
+      const collaboratorRootEntity = collaborator.entity.name.split("\\.", 2);
+      for (const entity of config.user.entities) {
+        const userRootEntity = entity.name.split("\\.", 2);
+        if (userRootEntity[0] === collaboratorRootEntity[0]) {
+          return [collaborator.role];
+        }
+      }
+    }
+    /** Entity collaborators **/
+    const entityCollaborators = collaborators
+      .filter((c) => c.login === c.entity.name);
+    for (const collaborator of entityCollaborators) {
+      for (const entity of config.user.entities) {
+        if (entity.name.startsWith(collaborator.entity.name)) {
+          return [collaborator.role];
+        }
+      }
+    }
+    return [];
+  }
+
   private resolvePermissions(
     collaborators: Collaborator[],
     config: LeosAppConfig,
   ) {
-    const docRoles = collaborators
-      .filter((c) => c.login === config.user.login)
-      .map((c) => c.role);
+    const docRoles = this.retrieveAuthority(collaborators, config);
     const roles = [...config.user.roles, ...docRoles, config.contextRole];
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);
     return [...new Set(permissions)];

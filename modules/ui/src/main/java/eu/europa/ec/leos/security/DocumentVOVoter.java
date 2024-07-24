@@ -17,8 +17,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import eu.europa.ec.leos.model.user.Collaborator;
+import eu.europa.ec.leos.model.user.Entity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.ConfigAttribute;
@@ -61,13 +63,30 @@ class DocumentVOVoter implements AccessDecisionVoter<DocumentVO> {
     }
 
     private String retrieveAuthority(Authentication authentication, DocumentVO documentVO) {
-        String userLogin = ((AuthenticatedUser) authentication.getPrincipal()).getLogin();
-        List<Collaborator> collaborators =  documentVO.getCollaborators();
-        return collaborators.stream()
-                .filter(c -> userLogin.equals(c.getLogin()))
-                .map(Collaborator::getRole)
-                .findFirst()
-                .orElse(null);
+        AuthenticatedUser authenticatedUser = ((AuthenticatedUser) authentication.getPrincipal());
+        // Normal user collaborator - has preference over entity collaborators
+        List<Collaborator> userCollaborators = documentVO.getCollaborators().stream().
+                filter(c -> authenticatedUser.getLogin().equals(c.getLogin())).collect(Collectors.toList());
+        for (Collaborator collaborator : userCollaborators) {
+            String[] collaboratorRootEntity = collaborator.getEntity().split("\\.", 2);
+            for (Entity entity : authenticatedUser.getEntities()) {
+                String[] userRootEntity = entity.getName().split("\\.", 2);
+                if (userRootEntity[0].equals(collaboratorRootEntity[0])) {
+                    return collaborator.getRole();
+                }
+            }
+        }
+        // Entity collaborators
+        List<Collaborator> entityCollaborators = documentVO.getCollaborators().stream().
+                filter(c -> c.getLogin().equals(c.getEntity())).collect(Collectors.toList());
+        for (Collaborator collaborator : entityCollaborators) {
+            for (Entity entity : authenticatedUser.getEntities()) {
+                if (entity.getName().startsWith(collaborator.getEntity())) {
+                    return collaborator.getRole();
+                }
+            }
+        }
+        return null;
     }
 
     private LeosPermission retrievePermission(Collection<ConfigAttribute> attributes) {
