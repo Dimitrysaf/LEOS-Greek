@@ -87,6 +87,7 @@ export class DocumentService {
   documentView$: Observable<DocumentViewResponse | null>;
   didDocumentLoadAndRender$: Observable<boolean>;
   searchPaneOpen$: Observable<boolean>;
+  replacePaneOpen$: Observable<boolean>;
   searchParams$: Observable<DocumentSearchParams>;
   versions$: Observable<Version[]>;
   versionSearchOpen$: Observable<boolean>;
@@ -152,6 +153,7 @@ export class DocumentService {
   private documentPageTitleBS = new BehaviorSubject<string>('');
   private resetZoomBS = new BehaviorSubject<void>(null);
   private searchPaneOpenBS = new BehaviorSubject(false);
+  private replacePaneOpenBS = new BehaviorSubject(false);
   private searchParamsBS = new BehaviorSubject({
     searchText: '',
     wholeWords: false,
@@ -266,6 +268,7 @@ export class DocumentService {
       .subscribe();
 
     this.searchPaneOpen$ = this.searchPaneOpenBS.asObservable();
+    this.replacePaneOpen$ = this.replacePaneOpenBS.asObservable();
     this.documentConfig$ = this.documentConfigBS
       .asObservable()
       .pipe(filter(Boolean));
@@ -945,10 +948,15 @@ export class DocumentService {
     this.currentSearchResults = [];
     this.focusedSearchResult = null;
     this.setSearchParams({ searchText: '' });
+    this.toggleSubject(this.replacePaneOpenBS, false);
     this.toggleSubject(this.searchPaneOpenBS, open);
     this.setDocumentRefAndCategory(this.documentRef, this.documentType);
     this.setSearchResultsCounter(0);
     this.updatedContentToSaveAfterReplace = null;
+  }
+
+  toggleReplacePane(open?: boolean) {
+    this.toggleSubject(this.replacePaneOpenBS, open);
   }
 
   toggleVersionsSearchPane(open?: boolean) {

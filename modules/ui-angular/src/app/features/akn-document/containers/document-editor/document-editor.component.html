@@ -329,7 +329,9 @@
         <eui-page-column-body
           class="leos-editing-pane"
           [ngStyle]="{
-            height: (documentService.searchPaneOpen$ | async) ? '87%' : '100%'
+            height: '100%',
+            display: 'flex',
+            'flex-direction': 'column'
           }"
           euiNoContentPadding
         >
@@ -340,6 +342,9 @@
             euiNoShadow
             [ngClass]="{ 'toc-edit-mode': isEditMode }"
             *ngIf="documentService.searchPaneOpen$ | async"
+            [ngStyle]="{
+              height: (documentService.replacePaneOpen$ | async) ? '140px' : '80px'
+            }"
           >
             <eui-card-content class="eui-u-overflow-auto">
               <app-document-search></app-document-search>
@@ -393,6 +398,9 @@
               'leos-doc-content': true,
               'sync-scroll': true,
               'toc-edit-mode': isEditMode
+            }"
+            [ngStyle]="{
+              flex: 1
             }"
           ></app-document>
         </eui-page-column-body>
