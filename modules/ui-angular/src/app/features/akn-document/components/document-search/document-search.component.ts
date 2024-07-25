@@ -46,6 +46,7 @@ export class DocumentSearchComponent implements OnDestroy {
   }
 
   toggleReplace(isReplace = !this.isReplace) {
+    this.doc.toggleReplacePane(isReplace);
     this.isReplace = isReplace;
     if (!this.isReplace) {
       this.doc.setSearchAndReplaceText('');
