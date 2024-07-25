@@ -846,7 +846,7 @@ public class DocumentServiceImpl implements DocumentService {
                     queryBuild.append(" AND p.collaborator.role = :collaboratorRole_").append(i);
                     queryBuild.append(" AND p.collaborator.organization = :collaboratorOrganization_").append(i).append(")");
                     queryBuild.append(" OR (p.collaborator.collaboratorName = p.collaborator.organization");
-                    queryBuild.append(" AND :collaboratorOrganization_").append(i).append(" LIKE CONCAT(p.collaborator.organization,'%')))");
+                    queryBuild.append(" AND CONCAT(:collaboratorOrganization_").append(i).append(",'.') LIKE CONCAT(p.collaborator.organization,'.%')))");
                 }
                 if (i < values.length - 1) {
                     queryBuild.append(" OR ");

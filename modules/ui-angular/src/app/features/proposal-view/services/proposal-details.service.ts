@@ -690,7 +690,7 @@ export class ProposalDetailsService implements OnDestroy {
       });
     for (const collaborator of entityCollaborators) {
       for (const entity of config.user.entities) {
-        if (entity.name.startsWith(collaborator.entity.name)) {
+        if (entity.name.concat(".").startsWith(collaborator.entity.name.concat("."))) {
           return [collaborator.role];
         }
       }

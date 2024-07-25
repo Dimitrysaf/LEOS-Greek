@@ -83,7 +83,7 @@ import java.util.stream.Collectors;
                 collect(Collectors.toList());
         for (Collaborator collaborator : entityCollaborators) {
             for (Entity entity : authenticatedUser.getEntities()) {
-                if (entity.getName().startsWith(collaborator.getEntity())) {
+                if (entity.getName().concat(".").startsWith(collaborator.getEntity().concat("."))) {
                     return collaborator.getRole();
                 }
             }
