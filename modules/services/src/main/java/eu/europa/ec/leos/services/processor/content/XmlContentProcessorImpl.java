@@ -1377,6 +1377,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             String[] hrefMixedArr = href.split("/");
             if (hrefMixedArr.length > 1) {
                 documentRef = hrefMixedArr[0];
+                if (documentRef.endsWith(".xml")) {
+                    documentRef = documentRef.substring(0, documentRef.length() - 4);
+                }
                 href = hrefMixedArr[1];
             } else {
                 href = hrefMixedArr[0];

@@ -52,9 +52,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sourceParagraph2_targetParagraph234() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_FeJW6z", "bill", null), new Ref("","art_5_TxunI0", "bill", null), new Ref("","art_5_A42pW6", "bill", null)), "bill", "a5_FeJW6z",  document, false);
-        String expectedResults ="<ref href=\"bill/~a5_FeJW6z\" xml:id=\"\">second</ref>"
-                + ", <ref href=\"bill/~art_5_TxunI0\" xml:id=\"\">third</ref>"
-                + " and <ref href=\"bill/~art_5_A42pW6\" xml:id=\"\">fourth</ref>"
+        String expectedResults ="<ref href=\"bill.xml/~a5_FeJW6z\" xml:id=\"\">second</ref>"
+                + ", <ref href=\"bill.xml/~art_5_TxunI0\" xml:id=\"\">third</ref>"
+                + " and <ref href=\"bill.xml/~art_5_A42pW6\" xml:id=\"\">fourth</ref>"
                 + " paragraphs";
 
         assertEquals(expectedResults, result.get());
@@ -63,9 +63,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sourceParagraph2_targetParagraph345() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","art_5_TxunI0", "bill", null), new Ref("","art_5_A42pW6", "bill", null), new Ref("","art_5_BGt5eN", "bill", null)), "bill", "a5_FeJW6z",  document, false);
-        String expectedResults ="<ref href=\"bill/~art_5_TxunI0\" xml:id=\"\">third</ref>"
-                + ", <ref href=\"bill/~art_5_A42pW6\" xml:id=\"\">fourth</ref>"
-                + " and <ref href=\"bill/~art_5_BGt5eN\" xml:id=\"\">fifth</ref>"
+        String expectedResults ="<ref href=\"bill.xml/~art_5_TxunI0\" xml:id=\"\">third</ref>"
+                + ", <ref href=\"bill.xml/~art_5_A42pW6\" xml:id=\"\">fourth</ref>"
+                + " and <ref href=\"bill.xml/~art_5_BGt5eN\" xml:id=\"\">fifth</ref>"
                 + " paragraphs";
 
         assertEquals(expectedResults, result.get());
@@ -74,9 +74,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sourceParagraph2_targetParagraph345_withCapitalTrue() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","art_5_TxunI0", "bill", null), new Ref("","art_5_A42pW6", "bill", null), new Ref("","art_5_BGt5eN", "bill", null)), "bill", "a5_FeJW6z",  document, true);
-        String expectedResults ="<ref href=\"bill/~art_5_TxunI0\" xml:id=\"\">Third</ref>"
-                + ", <ref href=\"bill/~art_5_A42pW6\" xml:id=\"\">fourth</ref>"
-                + " and <ref href=\"bill/~art_5_BGt5eN\" xml:id=\"\">fifth</ref>"
+        String expectedResults ="<ref href=\"bill.xml/~art_5_TxunI0\" xml:id=\"\">Third</ref>"
+                + ", <ref href=\"bill.xml/~art_5_A42pW6\" xml:id=\"\">fourth</ref>"
+                + " and <ref href=\"bill.xml/~art_5_BGt5eN\" xml:id=\"\">fifth</ref>"
                 + " paragraphs";
 
         assertEquals(expectedResults, result.get());
@@ -165,9 +165,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD_target3siblingsABC() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_fQYvU7", "bill", null), new Ref("","a5_lwMbkL", "bill", null), new Ref("","a5_v0SBeN", "bill", null)), "bill", "a5_bSsbTj", document, false);
-        String expectedResults = "points <ref href=\"bill/~a5_fQYvU7\" xml:id=\"\">(a)</ref>"
-                + ", <ref href=\"bill/~a5_lwMbkL\" xml:id=\"\">(b)</ref>"
-                + " and <ref href=\"bill/~a5_v0SBeN\" xml:id=\"\">(c)</ref>";
+        String expectedResults = "points <ref href=\"bill.xml/~a5_fQYvU7\" xml:id=\"\">(a)</ref>"
+                + ", <ref href=\"bill.xml/~a5_lwMbkL\" xml:id=\"\">(b)</ref>"
+                + " and <ref href=\"bill.xml/~a5_v0SBeN\" xml:id=\"\">(c)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -175,8 +175,8 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD_chose2Points() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_TcYL6X", "bill", null), new Ref("","a5_Vdotsh", "bill", null)), "bill", "a5_fQYvU7", document, false);
-        String expectedResults = "points (d)<ref href=\"bill/~a5_TcYL6X\" xml:id=\"\">(1)</ref>"
-                + " and <ref href=\"bill/~a5_Vdotsh\" xml:id=\"\">(2)</ref>";
+        String expectedResults = "points (d)<ref href=\"bill.xml/~a5_TcYL6X\" xml:id=\"\">(1)</ref>"
+                + " and <ref href=\"bill.xml/~a5_Vdotsh\" xml:id=\"\">(2)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -184,9 +184,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD3_chose3Points() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_W9FxgJ", "bill", null), new Ref("","a5_oFgu8x", "bill", null), new Ref("","a5_HTmAdx", "bill", null)), "bill", "a5_fQYvU7",  document, false);
-        String expectedResults = "points (d)(3)<ref href=\"bill/~a5_HTmAdx\" xml:id=\"\">(i)</ref>"
-                + ", <ref href=\"bill/~a5_oFgu8x\" xml:id=\"\">(ii)</ref>"
-                + " and <ref href=\"bill/~a5_W9FxgJ\" xml:id=\"\">(iii)</ref>";
+        String expectedResults = "points (d)(3)<ref href=\"bill.xml/~a5_HTmAdx\" xml:id=\"\">(i)</ref>"
+                + ", <ref href=\"bill.xml/~a5_oFgu8x\" xml:id=\"\">(ii)</ref>"
+                + " and <ref href=\"bill.xml/~a5_W9FxgJ\" xml:id=\"\">(iii)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -195,9 +195,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD3IV_chose3Indent() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_IktngU", "bill", null), new Ref("","a5_51QZD5", "bill", null), new Ref("","a5_A8TAMj", "bill", null)), "bill", "a5_fQYvU7",  document, false);
         String expectedResults = "point (d)(3)(iv)"
-                + ", <ref href=\"bill/~a5_A8TAMj\" xml:id=\"\">first</ref>"
-                + ", <ref href=\"bill/~a5_51QZD5\" xml:id=\"\">second</ref>"
-                + " and <ref href=\"bill/~a5_IktngU\" xml:id=\"\">third</ref>"
+                + ", <ref href=\"bill.xml/~a5_A8TAMj\" xml:id=\"\">first</ref>"
+                + ", <ref href=\"bill.xml/~a5_51QZD5\" xml:id=\"\">second</ref>"
+                + " and <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indents";
 
         assertEquals(expectedResults, result.get());
@@ -207,9 +207,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointD2_targetPointD3IV_chose3Indent() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_IktngU", "bill", null), new Ref("","a5_51QZD5", "bill", null), new Ref("","a5_A8TAMj", "bill", null)), "bill", "a5_Vdotsh", document, false);
         String expectedResults = "point (3)(iv)"
-                + ", <ref href=\"bill/~a5_A8TAMj\" xml:id=\"\">first</ref>"
-                + ", <ref href=\"bill/~a5_51QZD5\" xml:id=\"\">second</ref>"
-                + " and <ref href=\"bill/~a5_IktngU\" xml:id=\"\">third</ref>"
+                + ", <ref href=\"bill.xml/~a5_A8TAMj\" xml:id=\"\">first</ref>"
+                + ", <ref href=\"bill.xml/~a5_51QZD5\" xml:id=\"\">second</ref>"
+                + " and <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indents";
 
         assertEquals(expectedResults, result.get());
@@ -219,9 +219,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3III_targetPointD3IV_chose3Indent() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_IktngU", "bill", null), new Ref("","a5_51QZD5", "bill", null), new Ref("","a5_A8TAMj", "bill", null)), "bill", "a5_W9FxgJ", document, false);
         String expectedResults = "point (iv)"
-                + ", <ref href=\"bill/~a5_A8TAMj\" xml:id=\"\">first</ref>"
-                + ", <ref href=\"bill/~a5_51QZD5\" xml:id=\"\">second</ref>"
-                + " and <ref href=\"bill/~a5_IktngU\" xml:id=\"\">third</ref>"
+                + ", <ref href=\"bill.xml/~a5_A8TAMj\" xml:id=\"\">first</ref>"
+                + ", <ref href=\"bill.xml/~a5_51QZD5\" xml:id=\"\">second</ref>"
+                + " and <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indents";
 
         assertEquals(expectedResults, result.get());
@@ -231,8 +231,8 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD3VIndent() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_4Lmhzh", "bill", null), new Ref("","a5_nirQOI", "bill", null)), "bill", "a5_A8TAMj", document, false);
         String expectedResults = "point (v)"
-                + ", <ref href=\"bill/~a5_nirQOI\" xml:id=\"\">first</ref>"
-                + " and <ref href=\"bill/~a5_4Lmhzh\" xml:id=\"\">second</ref>"
+                + ", <ref href=\"bill.xml/~a5_nirQOI\" xml:id=\"\">first</ref>"
+                + " and <ref href=\"bill.xml/~a5_4Lmhzh\" xml:id=\"\">second</ref>"
                 + " indents";
 
         assertEquals(expectedResults, result.get());
@@ -241,8 +241,8 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_target2Sibilings() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_51QZD5", "bill", null), new Ref("","a5_IktngU", "bill", null)), "bill", "a5_A8TAMj", document, false);
-        String expectedResults = "<ref href=\"bill/~a5_51QZD5\" xml:id=\"\">second</ref>"
-                + " and <ref href=\"bill/~a5_IktngU\" xml:id=\"\">third</ref>"
+        String expectedResults = "<ref href=\"bill.xml/~a5_51QZD5\" xml:id=\"\">second</ref>"
+                + " and <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indents";
 
         assertEquals(expectedResults, result.get());
@@ -252,9 +252,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointABC() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_fQYvU7", "bill", null), new Ref("","a5_lwMbkL", "bill", null), new Ref("","a5_v0SBeN", "bill", null)), "bill", "a5_A8TAMj", document, false);
         String expectedResults = "points"
-                + " <ref href=\"bill/~a5_fQYvU7\" xml:id=\"\">(a)</ref>"
-                + ", <ref href=\"bill/~a5_lwMbkL\" xml:id=\"\">(b)</ref>"
-                + " and <ref href=\"bill/~a5_v0SBeN\" xml:id=\"\">(c)</ref>";
+                + " <ref href=\"bill.xml/~a5_fQYvU7\" xml:id=\"\">(a)</ref>"
+                + ", <ref href=\"bill.xml/~a5_lwMbkL\" xml:id=\"\">(b)</ref>"
+                + " and <ref href=\"bill.xml/~a5_v0SBeN\" xml:id=\"\">(c)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -263,8 +263,8 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD12() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_TcYL6X", "bill", null), new Ref("","a5_Vdotsh", "bill", null)), "bill", "a5_A8TAMj", document, false);
         String expectedResults = "points"
-                + " <ref href=\"bill/~a5_TcYL6X\" xml:id=\"\">(1)</ref>"
-                + " and <ref href=\"bill/~a5_Vdotsh\" xml:id=\"\">(2)</ref>";
+                + " <ref href=\"bill.xml/~a5_TcYL6X\" xml:id=\"\">(1)</ref>"
+                + " and <ref href=\"bill.xml/~a5_Vdotsh\" xml:id=\"\">(2)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -273,9 +273,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
 
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD3_I_II_III() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_W9FxgJ", "bill", null), new Ref("","a5_oFgu8x", "bill", null), new Ref("","a5_HTmAdx", "bill", null)), "bill", "a5_A8TAMj", document, false);
-        String expectedResults = "points <ref href=\"bill/~a5_HTmAdx\" xml:id=\"\">(i)</ref>"
-                + ", <ref href=\"bill/~a5_oFgu8x\" xml:id=\"\">(ii)</ref>"
-                + " and <ref href=\"bill/~a5_W9FxgJ\" xml:id=\"\">(iii)</ref>";
+        String expectedResults = "points <ref href=\"bill.xml/~a5_HTmAdx\" xml:id=\"\">(i)</ref>"
+                + ", <ref href=\"bill.xml/~a5_oFgu8x\" xml:id=\"\">(ii)</ref>"
+                + " and <ref href=\"bill.xml/~a5_W9FxgJ\" xml:id=\"\">(iii)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -285,7 +285,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD3IVSubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_csTSSU", "bill", null)), "bill", "a5_A8TAMj", document, false);
-        String expectedResults = "<ref href=\"bill/~a5_csTSSU\" xml:id=\"\">first</ref>"
+        String expectedResults = "<ref href=\"bill.xml/~a5_csTSSU\" xml:id=\"\">first</ref>"
                 + " subparagraph";
 
         assertEquals(expectedResults, result.get());
@@ -294,7 +294,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD3IVSubPoint_withCapitaltrue() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_csTSSU", "bill", null)), "bill", "a5_A8TAMj", document, true);
-        String expectedResults = "<ref href=\"bill/~a5_csTSSU\" xml:id=\"\">First</ref>"
+        String expectedResults = "<ref href=\"bill.xml/~a5_csTSSU\" xml:id=\"\">First</ref>"
                 + " subparagraph";
 
         assertEquals(expectedResults, result.get());
@@ -312,8 +312,8 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD3SubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_nmQFmM", "bill", null)), "bill", "a5_A8TAMj", document, false);
-        String expectedResults = "point <ref href=\"bill/~a5_jlazVX\" xml:id=\"\">(3)</ref>"
-                + ", <ref href=\"bill/~a5_nmQFmM\" xml:id=\"\">first</ref> subparagraph";
+        String expectedResults = "point <ref href=\"bill.xml/~a5_jlazVX\" xml:id=\"\">(3)</ref>"
+                + ", <ref href=\"bill.xml/~a5_nmQFmM\" xml:id=\"\">first</ref> subparagraph";
 
         assertEquals(expectedResults, result.get());
     }
@@ -321,7 +321,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD3() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_jlazVX", "bill", null)), "bill", "a5_A8TAMj", document, false);
-        String expectedResults = "point <ref href=\"bill/~a5_jlazVX\" xml:id=\"\">(3)</ref>";
+        String expectedResults = "point <ref href=\"bill.xml/~a5_jlazVX\" xml:id=\"\">(3)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -330,8 +330,8 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointDSubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_T0L37f", "bill", null)), "bill", "a5_A8TAMj", document, false);
-        String expectedResults = "point <ref href=\"bill/~a5_bSsbTj\" xml:id=\"\">(d)</ref>"
-                + ", <ref href=\"bill/~a5_T0L37f\" xml:id=\"\">first</ref> subparagraph";
+        String expectedResults = "point <ref href=\"bill.xml/~a5_bSsbTj\" xml:id=\"\">(d)</ref>"
+                + ", <ref href=\"bill.xml/~a5_T0L37f\" xml:id=\"\">first</ref> subparagraph";
 
         assertEquals(expectedResults, result.get());
     }
@@ -339,7 +339,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointD3IVIndent_targetPointD() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_bSsbTj", "bill", null)), "bill", "a5_A8TAMj", document, false);
-        String expectedResults = "point <ref href=\"bill/~a5_bSsbTj\" xml:id=\"\">(d)</ref>";
+        String expectedResults = "point <ref href=\"bill.xml/~a5_bSsbTj\" xml:id=\"\">(d)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -350,7 +350,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD3IVSubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_csTSSU", "bill", null)), "bill", "a5_fQYvU7", document, false);
         String expectedResults = "point (d)(3)(iv)"
-                + ", <ref href=\"bill/~a5_csTSSU\" xml:id=\"\">first</ref> subparagraph";
+                + ", <ref href=\"bill.xml/~a5_csTSSU\" xml:id=\"\">first</ref> subparagraph";
 
         assertEquals(expectedResults, result.get());
     }
@@ -359,7 +359,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD3IV() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_Pxc9VZ", "bill", null)), "bill", "a5_fQYvU7", document, false);
         String expectedResults = "point (d)(3)"
-                + "<ref href=\"bill/~a5_Pxc9VZ\" xml:id=\"\">(iv)</ref>";
+                + "<ref href=\"bill.xml/~a5_Pxc9VZ\" xml:id=\"\">(iv)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -368,7 +368,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD3SubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_nmQFmM", "bill", null)), "bill", "a5_fQYvU7", document, false);
         String expectedResults = "point (d)(3)"
-                + ", <ref href=\"bill/~a5_nmQFmM\" xml:id=\"\">first</ref> subparagraph";
+                + ", <ref href=\"bill.xml/~a5_nmQFmM\" xml:id=\"\">first</ref> subparagraph";
 
         assertEquals(expectedResults, result.get());
     }
@@ -377,7 +377,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD3() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_jlazVX", "bill", null)), "bill", "a5_fQYvU7", document, false);
         String expectedResults = "point (d)"
-                + "<ref href=\"bill/~a5_jlazVX\" xml:id=\"\">(3)</ref>";
+                + "<ref href=\"bill.xml/~a5_jlazVX\" xml:id=\"\">(3)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -386,7 +386,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointDSubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_T0L37f", "bill", null)), "bill", "a5_fQYvU7", document, false);
         String expectedResults = "point (d)"
-                + ", <ref href=\"bill/~a5_T0L37f\" xml:id=\"\">first</ref> subparagraph";
+                + ", <ref href=\"bill.xml/~a5_T0L37f\" xml:id=\"\">first</ref> subparagraph";
 
         assertEquals(expectedResults, result.get());
     }
@@ -395,7 +395,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_bSsbTj", "bill", null)), "bill", "a5_fQYvU7", document, false);
         String expectedResults = "point"
-                + " <ref href=\"bill/~a5_bSsbTj\" xml:id=\"\">(d)</ref>";
+                + " <ref href=\"bill.xml/~a5_bSsbTj\" xml:id=\"\">(d)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -404,7 +404,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD_withCapitalTrue() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_bSsbTj", "bill", null)), "bill", "a5_fQYvU7", document, true);
         String expectedResults = "Point"
-                + " <ref href=\"bill/~a5_bSsbTj\" xml:id=\"\">(d)</ref>";
+                + " <ref href=\"bill.xml/~a5_bSsbTj\" xml:id=\"\">(d)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -413,7 +413,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetPointD_withCapitalTrueAndLEOSProperty() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_bSsbTj", "bill", "ec")), "bill", "a5_fQYvU7", document, true);
         String expectedResults = "Point"
-                + " <ref href=\"bill/~a5_bSsbTj\" leos:origin=\"ec\" xml:id=\"\">(d)</ref>";
+                + " <ref href=\"bill.xml/~a5_bSsbTj\" leos:origin=\"ec\" xml:id=\"\">(d)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -422,7 +422,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     @Test
     public void generateLabel_sameArticle_sameParagraph_sourcePointA_targetSubParagraph1() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_Bxi62k", "bill", null)), "bill", "a5_fQYvU7", document, false);
-        String expectedResults ="<ref href=\"bill/~a5_Bxi62k\" xml:id=\"\">first</ref>"
+        String expectedResults ="<ref href=\"bill.xml/~a5_Bxi62k\" xml:id=\"\">first</ref>"
                 + " subparagraph";
 
         assertEquals(expectedResults, result.get());
@@ -432,7 +432,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_sameArticle_sourceParagraph2_targetParagraph1SubParagraph1() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_Bxi62k", "bill", null)), "bill","a5_FeJW6z", document, false);
         String expectedResults ="first paragraph"
-                + ", <ref href=\"bill/~a5_Bxi62k\" xml:id=\"\">first</ref> subparagraph";
+                + ", <ref href=\"bill.xml/~a5_Bxi62k\" xml:id=\"\">first</ref> subparagraph";
 
         assertEquals(expectedResults, result.get());
     }
@@ -442,9 +442,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_A8TAMj", "bill", null), new Ref("","a5_51QZD5", "bill", null), new Ref("","a5_IktngU", "bill", null)), "bill", "a5_FeJW6z", document, false);
         String expectedResults ="first paragraph"
                 + ", point (d)(3)(iv)"
-                + ", <ref href=\"bill/~a5_A8TAMj\" xml:id=\"\">first</ref>"
-                + ", <ref href=\"bill/~a5_51QZD5\" xml:id=\"\">second</ref>"
-                + " and <ref href=\"bill/~a5_IktngU\" xml:id=\"\">third</ref>"
+                + ", <ref href=\"bill.xml/~a5_A8TAMj\" xml:id=\"\">first</ref>"
+                + ", <ref href=\"bill.xml/~a5_51QZD5\" xml:id=\"\">second</ref>"
+                + " and <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indents";
 
         assertEquals(expectedResults, result.get());
@@ -455,9 +455,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_A8TAMj", "bill", null), new Ref("","a5_51QZD5", "bill", null), new Ref("","a5_IktngU", "bill", null)), "bill", "a5_FeJW6z", document, true);
         String expectedResults ="First paragraph"
                 + ", point (d)(3)(iv)"
-                + ", <ref href=\"bill/~a5_A8TAMj\" xml:id=\"\">first</ref>"
-                + ", <ref href=\"bill/~a5_51QZD5\" xml:id=\"\">second</ref>"
-                + " and <ref href=\"bill/~a5_IktngU\" xml:id=\"\">third</ref>"
+                + ", <ref href=\"bill.xml/~a5_A8TAMj\" xml:id=\"\">first</ref>"
+                + ", <ref href=\"bill.xml/~a5_51QZD5\" xml:id=\"\">second</ref>"
+                + " and <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indents";
 
         assertEquals(expectedResults, result.get());
@@ -467,9 +467,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_differentArticle_targetParagraph234() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_FeJW6z", "bill", null), new Ref("","art_5_TxunI0", "bill", null), new Ref("","art_5_A42pW6", "bill", null)), "bill", "art_1_A42pW6",document, false);
         String expectedResults ="Article 46"
-                + ", <ref href=\"bill/~a5_FeJW6z\" xml:id=\"\">second</ref>"
-                + ", <ref href=\"bill/~art_5_TxunI0\" xml:id=\"\">third</ref>"
-                + " and <ref href=\"bill/~art_5_A42pW6\" xml:id=\"\">fourth</ref>"
+                + ", <ref href=\"bill.xml/~a5_FeJW6z\" xml:id=\"\">second</ref>"
+                + ", <ref href=\"bill.xml/~art_5_TxunI0\" xml:id=\"\">third</ref>"
+                + " and <ref href=\"bill.xml/~art_5_A42pW6\" xml:id=\"\">fourth</ref>"
                 + " paragraphs";
 
         assertEquals(expectedResults, result.get());
@@ -480,9 +480,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_v0SBeN", "bill", null), new Ref("","a5_lwMbkL", "bill", null), new Ref("","a5_fQYvU7", "bill", null)), "bill", "art_1_A42pW6",document, false);
         String expectedResults ="Article 46"
                 + ", first paragraph"
-                + ", points <ref href=\"bill/~a5_fQYvU7\" xml:id=\"\">(a)</ref>"
-                + ", <ref href=\"bill/~a5_lwMbkL\" xml:id=\"\">(b)</ref>"
-                + " and <ref href=\"bill/~a5_v0SBeN\" xml:id=\"\">(c)</ref>";
+                + ", points <ref href=\"bill.xml/~a5_fQYvU7\" xml:id=\"\">(a)</ref>"
+                + ", <ref href=\"bill.xml/~a5_lwMbkL\" xml:id=\"\">(b)</ref>"
+                + " and <ref href=\"bill.xml/~a5_v0SBeN\" xml:id=\"\">(c)</ref>";
 
         assertEquals(expectedResults, result.get());
     }
@@ -491,7 +491,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_differentArticle_targetParagraph1SubParagraph() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_Bxi62k", "bill", null)), "bill", "art_1_A42pW6", document, false);
         String expectedResults ="Article 46, first paragraph"
-                + ", <ref href=\"bill/~a5_Bxi62k\" xml:id=\"\">first</ref> subparagraph";
+                + ", <ref href=\"bill.xml/~a5_Bxi62k\" xml:id=\"\">first</ref> subparagraph";
 
         assertEquals(expectedResults, result.get());
     }
@@ -500,7 +500,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
     public void generateLabel_differentArticle_targetParagraph1PointDSubPoint() throws Exception {
         Result<String> result = referenceLabelGenerator.generateLabel(Arrays.asList(new Ref("","a5_T0L37f", "bill", null)), "bill", "art_1_A42pW6", document, false);
         String expectedResults ="Article 46, first paragraph, point (d)"
-                + ", <ref href=\"bill/~a5_T0L37f\" xml:id=\"\">first</ref>"
+                + ", <ref href=\"bill.xml/~a5_T0L37f\" xml:id=\"\">first</ref>"
                 + " subparagraph";
 
         assertEquals(expectedResults, result.get());
@@ -512,9 +512,9 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
         String expectedResults ="Article 46"
                 + ", first paragraph"
                 + ", point (d)(3)(iv)"
-                + ", <ref href=\"bill/~a5_A8TAMj\" xml:id=\"\">first</ref>"
-                + ", <ref href=\"bill/~a5_51QZD5\" xml:id=\"\">second</ref>"
-                + " and <ref href=\"bill/~a5_IktngU\" xml:id=\"\">third</ref>"
+                + ", <ref href=\"bill.xml/~a5_A8TAMj\" xml:id=\"\">first</ref>"
+                + ", <ref href=\"bill.xml/~a5_51QZD5\" xml:id=\"\">second</ref>"
+                + " and <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indents";
 
         assertEquals(expectedResults, result.get());
@@ -526,8 +526,8 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
         String expectedResults ="Article 46"
                 + ", first paragraph"
                 + ", point (d)(3)(iv)"
-                + ", <ref href=\"bill/~a5_51QZD5\" xml:id=\"\">second</ref>"
-                + " and <ref href=\"bill/~a5_IktngU\" xml:id=\"\">third</ref>"
+                + ", <ref href=\"bill.xml/~a5_51QZD5\" xml:id=\"\">second</ref>"
+                + " and <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indents";
         Assert.assertEquals(expectedResults, result.get());
     }
@@ -538,7 +538,7 @@ public class ReferenceLabelServiceUnnumberedTest extends ReferenceLabelServiceTe
         String expectedResults ="Article 46"
                 + ", first paragraph"
                 + ", point (d)(3)(iv)"
-                + ", <ref href=\"bill/~a5_IktngU\" xml:id=\"\">third</ref>"
+                + ", <ref href=\"bill.xml/~a5_IktngU\" xml:id=\"\">third</ref>"
                 + " indent";
         Assert.assertEquals(expectedResults, result.get());
     }
