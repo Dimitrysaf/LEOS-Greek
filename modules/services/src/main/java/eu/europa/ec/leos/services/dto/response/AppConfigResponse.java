@@ -46,7 +46,8 @@ public class AppConfigResponse {
     private boolean collectionCloseButtonEnabled;
 
     private boolean showRevisionEnabled;
-    
+    private boolean leosSwitchLevelArticle;
+
     public AppConfigResponse() {
     }
 
@@ -235,4 +236,9 @@ public class AppConfigResponse {
     public void setContextRole(String contextRole) {
         this.contextRole = contextRole;
     }
+
+    public boolean getLeosSwitchLevelArticle() {
+        return leosSwitchLevelArticle;
+    }
+    public void setLeosSwitchLevelArticle(boolean leosSwitchLevelArticle)  { this.leosSwitchLevelArticle = leosSwitchLevelArticle; }
 }

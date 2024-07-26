@@ -104,6 +104,7 @@ export abstract class DocumentActionsService {
 
   private actionItemsBS = new BehaviorSubject<IRibbonToolbarSection[]>([]);
   private applyDisabledBS = new BehaviorSubject<boolean>(true);
+  private leosSwitchLevelArticle = false;
 
   protected constructor(
     protected router: Router,
@@ -145,6 +146,7 @@ export abstract class DocumentActionsService {
       this.pageModeService.pageMode$,
     ]).subscribe(([appConfig, config, permissions, pageMode]) => {
       this.profile = appConfig.profile;
+      this.leosSwitchLevelArticle = appConfig.leosSwitchLevelArticle;
       this.documentConfig = config;
       this.pageMode = pageMode;
       this.isTrackChangesEnabled =
@@ -541,7 +543,7 @@ export abstract class DocumentActionsService {
 
     if (
       this.isDocumentTypeTheSame(this.documentService.documentType, 'ANNEX')
-    ) {
+        && this.leosSwitchLevelArticle) {
       section.children.push(this.buildChangeAnnexStructure());
     }
 

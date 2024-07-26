@@ -19,7 +19,6 @@ import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.dto.response.AppConfigResponse;
-import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.profile.ProfileService;
 import eu.europa.ec.leos.vo.light.Profile;
@@ -27,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Provider;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -90,6 +88,7 @@ public class ConfigServiceImpl implements ConfigService {
             contextRole = tokenService.extractUserRoleFromToken(clientContextToken);
             profile = profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken));
         }
+        boolean leosSwitchLevelArticle = Boolean.parseBoolean(applicationProperties.getProperty("leos.switch.level.article"));
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -113,6 +112,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setShowRevisionEnabled(showRevisionEnabled);
         appConfigResponse.setContextRole(contextRole);
         appConfigResponse.setProfile(profile);
+        appConfigResponse.setLeosSwitchLevelArticle(leosSwitchLevelArticle);
 
         return appConfigResponse;
     }
