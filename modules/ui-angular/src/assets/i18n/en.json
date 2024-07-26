@@ -146,6 +146,8 @@
   "page.collection.milestone-view-dialog.handle-doc.error": "An issue occured while processing the milestone's document",
   "page.collection.milestone-view-dialog.accept-added": "Accepted addition",
   "page.collection.milestone-view-dialog.accept-deleted": "Accepted deletion",
+  "page.collection.milestone-view-dialog.reject-added": "Rejected addition",
+  "page.collection.milestone-view-dialog.reject-deleted": "Rejected deletion",
   "page.collection.milestone-view-dialog.legend": "Legend",
   "page.collection.milestone-view-dialog.added": "Added",
   "page.collection.milestone-view-dialog.deleted": "Deleted",

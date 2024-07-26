@@ -19,7 +19,7 @@
     </eui-card-header-right-content>
   </eui-card-header>
 
-  <eui-card-footer>
+  <eui-card-footer [ngClass]="{ greyed: contribution.greyed }">
     <eui-card-footer-action-buttons>
       <span euiLabel style="padding-right: 10px;" *ngIf="this.feedbackToBeSent">
         <eui-icon-svg

@@ -28,14 +28,20 @@
     <div class="eui-u-p-absolute export-accept-reject-div">
       <div *ngIf="shouldDisplayButtons()" class="accept-reject-div" style="margin-right: 50px;">
         <button euiButton euiSizeS euiPrimary
-                [euiDisabled]="documents[this.activeTabIndex].state === 'Processed'"
+                [euiDisabled]="documents[this.activeTabIndex].state === 'Accepted_Added'
+                || documents[this.activeTabIndex].state === 'Accepted_Deleted'
+                || documents[this.activeTabIndex].state === 'Rejected_Added'
+                || documents[this.activeTabIndex].state === 'Rejected_Deleted'"
                 class="accept-reject-button"
                 (click)="this.handleAcceptReject(documents[this.activeTabIndex], true)"
         >
           {{ 'page.collection.milestone-view-dialog.accept-button' | translate }}
         </button>
         <button euiButton euiSizeS euiPrimary
-                [euiDisabled]="documents[this.activeTabIndex].state === 'Processed'"
+                [euiDisabled]="documents[this.activeTabIndex].state === 'Accepted_Added'
+                || documents[this.activeTabIndex].state === 'Accepted_Deleted'
+                || documents[this.activeTabIndex].state === 'Rejected_Added'
+                || documents[this.activeTabIndex].state === 'Rejected_Deleted'"
                 class="accept-reject-button"
                 (click)="handleAcceptReject(documents[this.activeTabIndex], false)">
           {{ 'page.collection.milestone-view-dialog.reject-button' | translate }}
@@ -53,14 +59,30 @@
     <eui-tabs *ngIf="isOpened" (tabSelect)="onTabSelected($event)">
       <eui-tab *ngFor="let doc of documents; let tabIndex = index"
                hasBackgroundFilled
-               [euiSecondary]="(doc.state === 'Processed' || doc.state === 'Accepted_Deleted' || doc.state === 'Accepted_Added') && !this.parentClonedProposal"
-               [euiSuccess]="(doc.state === 'Added' || doc.state === 'Accepted_Added') && !this.parentClonedProposal"
+               [euiPrimary]="(doc.state === 'Accepted_Deleted' || doc.state === 'Accepted_Added') && !this.parentClonedProposal"
+               [euiSecondary]="(doc.state === 'Rejected_Deleted' || doc.state === 'Rejected_Added') && !this.parentClonedProposal"
+               [euiSuccess]="(doc.state === 'Added' || doc.state === 'Accepted_Added' || doc.state === 'Rejected_Added') && !this.parentClonedProposal"
                [euiWarning]="doc.state === 'Modified' && !this.parentClonedProposal"
-               [euiDanger]="(doc.state === 'Deleted' || doc.state === 'Accepted_Deleted') && !this.parentClonedProposal"
-               [euiPrimary]="doc.selected === true"
+               [euiDanger]="(doc.state === 'Deleted' || doc.state === 'Accepted_Deleted' || doc.state === 'Rejected_Deleted') && !this.parentClonedProposal"
+               [euiAccent]="doc.selected === true"
           >
-        <eui-tab-label>{{ doc.label }}
-          <small class="eui-u-font-regular"> [{{ doc.version }}] </small>
+        <eui-tab-label>
+          <div [title]="getIconTabHelp(doc.state)">
+            {{ doc.label }}
+            <small class="eui-u-font-regular"> [{{ doc.version }}] </small>
+            <eui-icon-svg
+              class="tab-icon"
+              *ngIf="(doc.state === 'Rejected_Deleted' || doc.state === 'Rejected_Added') && !this.parentClonedProposal"
+              size="s"
+              icon="eui-undo">
+            </eui-icon-svg>
+            <eui-icon-svg
+              class="tab-icon"
+              *ngIf="(doc.state === 'Accepted_Deleted' || doc.state === 'Accpeted_Added') && !this.parentClonedProposal"
+              size="s"
+              icon="eui-check">
+            </eui-icon-svg>
+          </div>
         </eui-tab-label>
         <eui-tab-content *ngIf="activeTabIndex === tabIndex">
           <eui-page>
@@ -145,11 +167,8 @@
       <span class="eui-legends">{{ 'page.collection.milestone-view-dialog.legend' | translate }}: </span>
       <eui-chip-list class="responsive-chip-list">
         <eui-chip euiDanger><span euiLabel>{{ 'page.collection.milestone-view-dialog.deleted' | translate }}</span></eui-chip>
-        <eui-chip euiDanger euiSecondary><span euiLabel>{{ 'page.collection.milestone-view-dialog.accept-deleted' | translate }}</span></eui-chip>
         <eui-chip euiSuccess><span euiLabel>{{ 'page.collection.milestone-view-dialog.added' | translate }}</span></eui-chip>
-        <eui-chip euiSuccess euiSecondary><span euiLabel>{{ 'page.collection.milestone-view-dialog.accept-added' | translate }}</span></eui-chip>
         <eui-chip euiWarning><span euiLabel>{{ 'page.collection.milestone-view-dialog.updated' | translate }}</span></eui-chip>
-        <eui-chip euiSecondary><span euiLabel>{{ 'page.collection.milestone-view-dialog.processed' | translate }}</span></eui-chip>
       </eui-chip-list>
     </div>
 
