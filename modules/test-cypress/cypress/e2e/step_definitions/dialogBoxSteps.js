@@ -45,3 +45,7 @@ And(`input value of dialog box window is {string}`, (input) => {
 When(`click on save button in dialog input box window`, () => {
     dialogBoxPage.clickAcceptBtn();
 });
+
+When('click on revert button in dialog box', function () {
+    dialogBoxPage.clickAcceptBtn();
+});

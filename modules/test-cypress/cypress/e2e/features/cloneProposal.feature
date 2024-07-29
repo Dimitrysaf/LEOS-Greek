@@ -79,7 +79,7 @@ Feature: clone proposal regression features
     And  enable track changes is disabled
     And  see track changes is enabled
 
-#  @moveLabelWithTrackChanges @local
+#  @moveLabelWithTrackChanges @local @focus
 #  Scenario: Basic test to move element inside legal act when track changes is on
 #    Given navigate to edit drafting application with "User1"
 #    Then user is on home page
@@ -174,7 +174,7 @@ Feature: clone proposal regression features
 #    Then article 5 is displayed
 #    When mouseover and click on article 5
 #    Then ck editor window is displayed
-#    When click at offset 12 in li 2 with data-akn-element "paragraph" of article in edition mode
+#    When click at offset 12 of li 2 with data-akn-element "paragraph" of article in edition mode
 #    And  do right click using mouse in edition mode
 #    And  click on option "Move this paragraph to..." in "cke_panel_frame" iframe
 #    Then background color of li 1 with data-akn-element "paragraph" of article is "cornsilk" in edition mode
@@ -184,7 +184,7 @@ Feature: clone proposal regression features
 #    Then article 9 is displayed
 #    When mouseover and click on article 9
 #    Then ck editor window is displayed
-#    When click at offset 245 in li 3 with data-akn-element "paragraph" of article in edition mode
+#    When click at offset 245 of li 3 with data-akn-element "paragraph" of article in edition mode
 #    And  click enter from keyboard in edition mode
 #    Then li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "insert" in edition mode
 #    And  li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "4." in edition mode

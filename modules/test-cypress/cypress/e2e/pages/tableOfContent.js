@@ -27,7 +27,8 @@ class tableOfContent {
         nodeLabel: () => cy.get(".mat-tree-node div.label[id^='node-label']"),
         preambleLink: () => this.elements.nestedTreeNode().find('#node-label-_preamble').closest('div.mat-tree-node'),
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
-        labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node')
+        labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node'),
+        revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version')
     }
     
     clickEditBtn(){
@@ -97,6 +98,14 @@ class tableOfContent {
 
     getLabelExtended(){
         return this.elements.labelExtended();
+    }
+
+    clickRevertToThisVersion() {
+        this.elements.revertToThisVersionBtn().click();
+    }
+
+    clickThreeDotsOfCardHeader(headerTitle) {
+        this.elements.cardTitle().contains(headerTitle).closest('eui-card-header').find('button eui-icon-svg').click();
     }
 }
 export default new tableOfContent();
