@@ -1,4 +1,4 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import {When, And, Then} from "cypress-cucumber-preprocessor/steps";
 import tableOfContent from "../pages/tableOfContent";
 
 And('toc editing button is displayed and enabled', () => {
@@ -116,11 +116,11 @@ When(`click on show more button in {string} eui-card`, (euiCardName) => {
 });
 
 Then(`title of last {int} minor versions from recent changes eui-card contains {string}`, (minorVersionNumber, euiCardStr) => {
-      tableOfContent.elements.subVersionTitle().each(($ele, index) => {
-        if(index<minorVersionNumber){
+    tableOfContent.elements.subVersionTitle().each(($ele, index) => {
+        if (index < minorVersionNumber) {
             expect($ele.text()).to.equal(euiCardStr);
         }
-      })
+    })
 });
 
 When(`click on right angle icon of preamble link`, () => {
@@ -135,26 +135,25 @@ Then(/^navigation pane is minimized$/, function () {
     tableOfContent.elements.navigationPaneMinimized().should('be.visible');
 });
 
-When('drag node label {string} and drop to node label {string} in navigation pane', function (dragLabel,dropLabel) {
+When('drag node label {string} and drop to node label {string} in navigation pane', function (dragLabel, dropLabel) {
     tableOfContent.elements.nodeLabel().contains(dragLabel)
-        .realMouseDown({ button: 'left', position: 'center' })
-        .realMouseMove(0, 10, { position: 'center' })
+        .realMouseDown({button: 'left', position: 'center'})
+        .realMouseMove(0, 10, {position: 'center'})
         .wait(200);
     tableOfContent.elements.nodeLabel().contains(dropLabel)
-        .realMouseMove(0, 0, { position: 'center' })
-        .realMouseUp({ position: "center" })
+        .realMouseMove(0, 0, {position: 'center'})
+        .realMouseUp({position: "center"})
         .wait(200);
 });
 
 When('drag element {string} from element tree list and drop to node label {string} in navigation pane', function (dragElement, dropLabel) {
-    tableOfContent.getElementList().contains(dragElement)
-        .realMouseDown({ button: 'left', position: 'center' })
-        .realMouseMove(0, 10, { position: 'center' })
+    tableOfContent.elements.elementList().contains(dragElement)
+        .trigger("mousedown", {button: 0, force: true})
+        .trigger("mousemove", 0, 10, {force: true})
         .wait(200);
-    tableOfContent.elements.nodeLabel().contains(dropLabel)
-        .realMouseMove(0, 0, { position: 'center' })
-        .realMouseUp({ position: "center" })
-        .wait(200);
+    tableOfContent.elements.nodeLabel().contains(dropLabel).trigger("mousemove", {force: true})
+        .wait(200)
+        .trigger("mouseup", {force: true});
 });
 
 Then('enacting terms contains node label {string} and showing as bold', function (label) {
@@ -165,18 +164,26 @@ Then('enacting terms contains node label {string}', function (label) {
     tableOfContent.getLabelExtended().contains(label).should('be.visible');
 });
 
-// When('{string} is showing as soft move title in navigation pane', function (softMoveTitle) {
-//
-// });
-//
-// When('{string} is showing as soft move label with soft move title {string} in navigation pane', function (softMoveLabel, softMoveTitle) {
-//
-// });
-//
-// When('{string} is showing as soft move title in selected node in navigation pane', function (softMoveTitle) {
-//
-// });
-//
-// When('{string} is showing as soft move label with soft move title {string} in selected node in navigation pane', function (softMoveLabel, softMoveTitle) {
-//
-// });
+When('click on revert to this version', function () {
+    tableOfContent.clickRevertToThisVersion()
+});
+
+When('click on three vertical dots of card header title {string} in version pane', function (headerTitle) {
+    tableOfContent.clickThreeDotsOfCardHeader(headerTitle);
+});
+/*
+When('{string} is showing as soft move title in navigation pane', function (softMoveTitle) {
+
+});
+
+When('{string} is showing as soft move label with soft move title {string} in navigation pane', function (softMoveLabel, softMoveTitle) {
+
+});
+
+When('{string} is showing as soft move title in selected node in navigation pane', function (softMoveTitle) {
+
+});
+
+When('{string} is showing as soft move label with soft move title {string} in selected node in navigation pane', function (softMoveLabel, softMoveTitle) {
+
+});*/

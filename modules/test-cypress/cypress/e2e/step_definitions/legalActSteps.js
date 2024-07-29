@@ -1,5 +1,4 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
-require('@cypress/xpath');
+import {When, And, Then} from "cypress-cucumber-preprocessor/steps";
 import legalActPage from "../pages/legalActPage";
 import headerPage from "../pages/headerPage";
 
@@ -74,7 +73,7 @@ When('click on edit icon of article {int}', articleNumber => {
 When('click on close button present in legal act page', () => {
     legalActPage.clickCloseBtn();
 })
- 
+
 When('{int} paragraphs are present in article {int}', (paragraphNumber, articleNumber) => {
     legalActPage.getAllParagraphFromArticle(articleNumber).should('have.length', paragraphNumber);
 })
@@ -82,33 +81,33 @@ When('{int} paragraphs are present in article {int}', (paragraphNumber, articleN
 And('ribbon toolbar is displayed', () => {
     legalActPage.elements.ribbonToolBar().should('be.visible');
 })
-  
-And('citation {int} contains {string}', (citationNumber,text) => {
+
+And('citation {int} contains {string}', (citationNumber, text) => {
     legalActPage.getCitation(citationNumber).contains(text);
 })
 
-And("citation {int} doesn't contain {string}", (citationNumber,text) => {
+And("citation {int} doesn't contain {string}", (citationNumber, text) => {
     legalActPage.getCitation(citationNumber).should('not.include.text', text)
 })
 
-And('recital {int} contains {string}', (recitalNumber,text) => {
+And('recital {int} contains {string}', (recitalNumber, text) => {
     legalActPage.getRecital(recitalNumber).contains(text);
 })
 
-And("recital {int} doesn't contain {string}", (recitalNumber,text) => {
+And("recital {int} doesn't contain {string}", (recitalNumber, text) => {
     legalActPage.getRecital(recitalNumber).should('not.include.text', text)
 })
 
 Then(`content of paragraph {int} of article {int} contains {string}`, (paragraphNumber, articleNumber, text) => {
-    legalActPage.getContentOfParagraphFromArticle(paragraphNumber,articleNumber).should('include.text', text);
+    legalActPage.getContentOfParagraphFromArticle(paragraphNumber, articleNumber).should('include.text', text);
 });
 
 Then(`paragraph {int} of article {int} doesn't contain {string}`, (paragraphNumber, articleNumber, text) => {
-    legalActPage.getParagraphFromArticle(paragraphNumber,articleNumber).should('not.include.text', text);
+    legalActPage.getParagraphFromArticle(paragraphNumber, articleNumber).should('not.include.text', text);
 });
 
 Then(`preface long title docPurpose contains {string}`, (title) => {
-    legalActPage.elements.docPurpose().should('include.text',title);
+    legalActPage.elements.docPurpose().should('include.text', title);
 });
 
 When(`click on insert after icon of article {int}`, (articleNumber) => {
@@ -120,7 +119,7 @@ When(`click on insert before icon of article {int}`, (articleNumber) => {
 });
 
 Then(`heading of article {int} contains {string}`, (articleNumber, heading) => {
-    legalActPage.getHeadingFromArticle(articleNumber).should('have.text',heading);
+    legalActPage.getHeadingFromArticle(articleNumber).should('have.text', heading);
 });
 
 Then(`paragraph {int} of article {int} doesn't contain num tag`, (paragraphNumber, articleNumber) => {
@@ -146,7 +145,7 @@ And(`num tag of point {int} of list {int} of point {int} of list {int} of point 
 And(`num tag of indent {int} of list {int} of point {int} of list {int} of point {int} of list {int} of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (indentNumber, listNumber4, pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber, content) => {
     legalActPage.getNumTagOfIndentOfPointOfPointOfPointOfParagraphFromArticle(indentNumber, listNumber4, pointNumber3, listNumber3, pointNumber2, listNumber2, pointNumber1, listNumber1, paragraphNumber, articleNumber).should('have.text', content);
 });
-  
+
 Then(`content of point {int} of list {int} of paragraph {int} of article {int} contains {string}`, (pointNumber, listNumber, paragraphNumber, articleNumber, content) => {
     legalActPage.getContentOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).should('include.text', content);
 });
@@ -204,11 +203,11 @@ When(`click on edit icon of citation {int}`, (citationNumber) => {
 });
 
 Then(`{string} is added as internal reference {int} of citation {int}`, (text, mReferenceNumber, citationNumber) => {
-    legalActPage.getMRefTextFromCitation(mReferenceNumber,citationNumber).should('have.text', text);
+    legalActPage.getMRefTextFromCitation(mReferenceNumber, citationNumber).should('have.text', text);
 });
 
 Then(`{string} is added as internal reference {int} of recital {int}`, (text, mReferenceNumber, recitalNumber) => {
-    legalActPage.getMRefTextFromRecital(mReferenceNumber,recitalNumber).should('have.text', text);
+    legalActPage.getMRefTextFromRecital(mReferenceNumber, recitalNumber).should('have.text', text);
 });
 
 Then(`{string} is added as internal reference {int} of point {int} of list {int} of paragraph {int} of article {int}`, (text, mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber) => {
@@ -255,46 +254,76 @@ When(`click on internal reference link {int} of point {int} of list {int} of par
     legalActPage.clickRefOfMRefOfPointOfParagraphOfArticle(mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber);
 });
 
-// Then('{string} is showing as moved num in article {int} of bill', function () {
-//
-// });
-//
-// Then('{string} is showing as soft move label in article {int} of bill', function () {
-//
-// });
-//
-// Then('{string} is showing as deleted track changes in article {int} of bill', function () {
-//
-// });
-//
-// Then('{string} is showing as inserted track changes in article {int} of bill', function () {
-//
-// });
-//
-// Then('num of article {int} of bill contains {string} with action {string}', function () {
-//
-// });
-//
-// Then('heading tag is not present for article {int} of bill', function () {
-//
-// });
-//
-// Then('paragraph tag is not present for article {int} of bill', function () {
-//
-// });
-//
-// Then('heading tag is present for article {int} of bill', function () {
-//
-// });
-//
-// Then('paragraph tag is present for article {int} of bill', function () {
-//
-// });
-//
-// Then('point {int} of paragraph {int} of article {int} contains attribute {string} with value {string}', function () {
-//
-// });
-//
-// Then('paragraph {int} of article {int} contains attribute {string} with value {string}', function () {
-//
-// });
+Then('paragraph {int} of article {int} contains attribute {string} with value {string}', function (paragraphNumber, articleNumber, attributeName, attributeValue) {
+    legalActPage.getParagraphFromArticle(paragraphNumber, articleNumber).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then('content of paragraph {int} of article {int} contains tag {string}', function (paragraphNumber, articleNumber, tagName) {
+    legalActPage.getContentOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName).should('exist');
+});
+
+Then('inserted paragraph number of paragraph {int} of article {int} is {string}', function (paragraphNumber, articleNumber, newParagraphNumber) {
+    const tagName = 'ins';
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName).should('have.text', newParagraphNumber);
+});
+
+Then('deleted paragraph number of paragraph {int} of article {int} is {string}', function (paragraphNumber, articleNumber, oldParagraphNumber) {
+    const tagName = 'del';
+    const attributeName = 'leos\\:action-number';
+    const attributeValue = 'delete';
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', oldParagraphNumber);
+});
+
+Then('ins tag of num tag of paragraph {int} of article {int} contains attribute {string} with value {string}', function (paragraphNumber, articleNumber, attributeName, attributeValue) {
+    const tagName = 'ins';
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then('del tag with attribute {string} and value {string} of num tag of paragraph {int} of article {int} contains value {string}', function (attributeName, attributeValue, paragraphNumber, articleNumber, value) {
+    const tagName = 'del';
+    legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+/*
+Then('{string} is showing as moved num in article {int} of bill', function () {
+
+});
+
+Then('{string} is showing as soft move label in article {int} of bill', function () {
+
+});
+
+Then('{string} is showing as deleted track changes in article {int} of bill', function () {
+
+});
+
+Then('{string} is showing as inserted track changes in article {int} of bill', function () {
+
+});
+
+Then('num of article {int} of bill contains {string} with action {string}', function () {
+
+});
+
+Then('heading tag is not present for article {int} of bill', function () {
+
+});
+
+Then('paragraph tag is not present for article {int} of bill', function () {
+
+});
+
+Then('heading tag is present for article {int} of bill', function () {
+
+});
+
+Then('paragraph tag is present for article {int} of bill', function () {
+
+});
+
+Then('point {int} of paragraph {int} of article {int} contains attribute {string} with value {string}', function () {
+
+});
+
+Then("paragraph {int} of article {int} doesn't contain attribute {string}", function () {
+
+});*/

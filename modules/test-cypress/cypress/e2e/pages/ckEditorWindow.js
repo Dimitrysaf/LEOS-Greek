@@ -54,6 +54,10 @@ class ckEditorWindow {
         this.elements.ckEditableInline().type('{enter}');
     }
 
+    clickBackspaceFromKeyboardWhenCKEditorOpen() {
+        this.elements.ckEditableInline().type('{backspace}');
+    }
+
     getCkEditableInlineElement() {
         return this.elements.ckEditableInline();
     }
@@ -101,6 +105,10 @@ class ckEditorWindow {
 
     getNumberedParagraphElementOfArticle(paragraphNumber) {
         return this.elements.ckEditableInline().find("article li[data-akn-element='paragraph'][data-akn-num='" + paragraphNumber + ".']");
+    }
+
+    getAllParagraphElementsOfArticle() {
+        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='paragraph']");
     }
 
     getParagraphElementOfArticle(li, dataAknElement) {
