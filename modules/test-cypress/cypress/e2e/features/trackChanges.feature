@@ -420,7 +420,7 @@ Feature: Track Changes Feature
     And  16 paragraphs are present in article 1
     When click on versions pane accordion
     Then search button is displayed in versions pane section
-    When click on three vertical dots of card header title "Version 0.1.0 - Element Created" in version pane
+    When click on three vertical dots of card header title "Version 0.1.0 - Document created" in version pane
     And  click on revert to this version
     And  click on revert button in dialog box
     And  click on navigation pane accordion

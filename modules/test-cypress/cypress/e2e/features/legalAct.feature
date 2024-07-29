@@ -152,7 +152,7 @@ Feature: Legal Act Page Regression Features
             | Chapter     |
             | Section     |
             | Article     |
-        When drag element "Article" from element tree list and drop to node label "Article 1 - Scope 1. Text..." in navigation pane
+        When drag element "Article" from element tree list and drop to node label "Article 2 - Definitions Text..." in navigation pane
         Then enacting terms contains node label "Article # - Article heading... Text..." and showing as bold
         When click on save and close button in navigation pane
         Then toc editing button is displayed and enabled
@@ -527,7 +527,7 @@ Feature: Legal Act Page Regression Features
 #        Then checkboxes of all the recitals are selected
 #        And  number of recitals selected is 173
 #        When click on import button
-#        Then 176 recitals are added in legal act by import oj
+#        Then 176 recitals are added FVin legal act by import oj
 #        When click on import from oj button in ribbon toolbar
 #        Then user is on "Import from the Official Journal of the European Union" window
 #        When select option "REGULATION" for type field
