@@ -21,7 +21,7 @@ export class ProposalItemHomeCardComponent implements OnInit {
   @Input() status: string | null;
   @Input() originRef: string | null;
 
-  createdBy;
+  updatedBy;
   updatedOn;
   title: string;
   isClonedProposal = false;
@@ -42,7 +42,7 @@ export class ProposalItemHomeCardComponent implements OnInit {
       this.landingPageService
         .getUserDoc(this.package.ref)
         .subscribe((document) => {
-          this.createdBy = document.createdBy;
+          this.updatedBy = document.updatedBy;
           this.updatedOn = document.updatedOn;
           this.originRef = this.determineOriginRefFromDocument(document);
           this.status = this.determineStatusFromDocument(document);
