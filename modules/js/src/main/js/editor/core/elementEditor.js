@@ -192,7 +192,8 @@ define(function elementEditorModule(require) {
                 elementCursorId: params.elementCursorId,
                 elementCursorChildPos: params.elementCursorChildPos,
                 elementCursorPos: params.elementCursorPos,
-                langGroup: params.langGroup
+                langGroup: params.langGroup,
+                tocEdition: connector.getState().tocEdition
             };
             // register editor event callbacks
             editor.on("close", _destroyEditor.bind(undefined, connector, params.elementId, params.elementType));

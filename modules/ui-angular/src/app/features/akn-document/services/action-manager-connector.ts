@@ -6,6 +6,7 @@ export type ActionManagerConnectorState = LeosJavaScriptExtensionState & {
   instanceType: string; // ec|cn|os
   tocItemsJsonArray: string; // json
   isAngularUI?: boolean;
+  tocEdition?: boolean;
 };
 
 export type ActionManagerConnectorInitialState = Omit<
@@ -31,7 +32,7 @@ export class ActionManagerConnector extends AbstractJavaScriptComponent<ActionMa
     private options: ActionManagerConnectorOptions,
   ) {
     super(
-      { ...staticExtensionState, isAngularUI: true, ...state },
+      { ...staticExtensionState, isAngularUI: true, tocEdition: true, ...state },
       options.rootElement,
     );
   }
