@@ -283,47 +283,49 @@ Then('del tag with attribute {string} and value {string} of num tag of paragraph
     const tagName = 'del';
     legalActPage.getNumTagOfParagraphFromArticle(paragraphNumber, articleNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
 });
-/*
-Then('{string} is showing as moved num in article {int} of bill', function () {
 
+Then('{string} is showing as strikethrough in num of article {int} of bill', function (label, articleNumber) {
+    legalActPage.getArticle(articleNumber).should('have.attr', 'leos:action', 'delete').find('num').should('have.text', label).should('have.attr', 'id').and('contain', 'moved');
 });
 
-Then('{string} is showing as soft move label in article {int} of bill', function () {
-
+Then('{string} is showing as soft move label in num of article {int} of bill', function (softLabel, articleNumber) {
+    legalActPage.getNumTagOfArticle(articleNumber).find('span.leos-soft-move-label').should('include.text', softLabel);
 });
 
-Then('{string} is showing as deleted track changes in article {int} of bill', function () {
-
+Then('heading tag is not present for article {int} of bill', function (articleNumber) {
+    legalActPage.getHeadingFromArticle(articleNumber).should('not.exist');
 });
 
-Then('{string} is showing as inserted track changes in article {int} of bill', function () {
-
+Then('paragraph tag is not present for article {int} of bill', function (articleNumber) {
+    legalActPage.getAllParagraphFromArticle(articleNumber).should('not.exist');
 });
 
-Then('num of article {int} of bill contains {string} with action {string}', function () {
-
+Then('{string} is showing as track changes deleted in num of article {int} of bill', function (label, articleNumber) {
+    legalActPage.getNumTagOfArticle(articleNumber).find('del').should('have.text', label);
 });
 
-Then('heading tag is not present for article {int} of bill', function () {
-
+Then('{string} is showing as track changes inserted in num of article {int} of bill', function (label, articleNumber) {
+    legalActPage.getNumTagOfArticle(articleNumber).find('ins').should('have.text', label);
 });
 
-Then('paragraph tag is not present for article {int} of bill', function () {
-
+Then('heading tag is present for article {int} of bill', function (articleNumber) {
+    legalActPage.getHeadingFromArticle(articleNumber).should('exist');
 });
 
-Then('heading tag is present for article {int} of bill', function () {
-
+Then('paragraph tag is present for article {int} of bill', function (articleNumber) {
+    legalActPage.getAllParagraphFromArticle(articleNumber).should('exist');
 });
 
-Then('paragraph tag is present for article {int} of bill', function () {
-
+Then('{string} is showing as inserted in num of article {int} of bill', function (label, articleNumber) {
+    legalActPage.getNumTagOfArticle(articleNumber).should('have.attr', 'leos:action', 'insert')
+        .should(($el) => {
+            const ownText = Cypress._.filter($el[0].childNodes, {
+                nodeType: Node.TEXT_NODE,
+            }).map((el) => el.textContent.trim()).filter(Boolean).join(' ');
+            expect(ownText, 'own text').to.equal(label)
+        })
 });
 
-Then('point {int} of paragraph {int} of article {int} contains attribute {string} with value {string}', function () {
-
+Then('point {int} of list {int} of paragraph {int} of article {int} contains attribute {string} with value {string}', function (pointNumber, listNumber, paragraphNumber, articleNumber, attributeName, attributeValue) {
+    legalActPage.getPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).should('have.attr', attributeName).and('equal', attributeValue);
 });
-
-Then("paragraph {int} of article {int} doesn't contain attribute {string}", function () {
-
-});*/

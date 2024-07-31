@@ -30,6 +30,10 @@ class legalActPage {
         return cy.get('article').eq(articleNumber-1);
     }
 
+    getNumTagOfArticle(articleNumber) {
+        return this.getArticle(articleNumber).find('num');
+    }
+
     mouseHoverAndClickOnArticle(articleNumber) {
         this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).realClick({ position: "top" }));
     }
@@ -42,36 +46,36 @@ class legalActPage {
         cy.xpath("//recital[" + recitalNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
     }
 
-    getMRefTextFromCitation(mreferenceNumber,citationNumber){
-        return this.getCitation(citationNumber).find('mref').eq(mreferenceNumber-1);
+    getMRefTextFromCitation(mReferenceNumber,citationNumber){
+        return this.getCitation(citationNumber).find('mref').eq(mReferenceNumber-1);
     }
 
-    getMRefTextFromRecital(mreferenceNumber,recitalNumber){
-        return this.getRecital(recitalNumber).find('mref').eq(mreferenceNumber-1);
+    getMRefTextFromRecital(mReferenceNumber,recitalNumber){
+        return this.getRecital(recitalNumber).find('mref').eq(mReferenceNumber-1);
     }
 
-    getMRefTextFromPointOfParagraphOfArticle(mreferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber){
-        return this.getContentOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).find('mref').eq(mreferenceNumber-1);
+    getMRefTextFromPointOfParagraphOfArticle(mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber){
+        return this.getContentOfPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).find('mref').eq(mReferenceNumber-1);
     }
 
-    getMRefTextFromParagraphOfArticle(mreferenceNumber, paragraphNumber, articleNumber){
-        return this.getContentOfParagraphFromArticle(paragraphNumber, articleNumber).find('mref').eq(mreferenceNumber-1);
+    getMRefTextFromParagraphOfArticle(mReferenceNumber, paragraphNumber, articleNumber){
+        return this.getContentOfParagraphFromArticle(paragraphNumber, articleNumber).find('mref').eq(mReferenceNumber-1);
     }
 
-    clickRefOfMRefOfCitation(mreferenceNumber, citationNumber){
-        this.getCitation(citationNumber).find('mref').eq(mreferenceNumber-1).find('ref').click();
+    clickRefOfMRefOfCitation(mReferenceNumber, citationNumber){
+        this.getCitation(citationNumber).find('mref').eq(mReferenceNumber-1).find('ref').click();
     }
 
-    clickRefOfMRefOfRecital(mreferenceNumber, recitalNumber){
-        this.getRecital(recitalNumber).find('mref').eq(mreferenceNumber-1).find('ref').click();
+    clickRefOfMRefOfRecital(mReferenceNumber, recitalNumber){
+        this.getRecital(recitalNumber).find('mref').eq(mReferenceNumber-1).find('ref').click();
     }
 
-    clickRefOfMRefOfParagraphOfArticle(mreferenceNumber, paragraphNumber, articleNumber){
-        this.getParagraphFromArticle(paragraphNumber, articleNumber).find('mref').eq(mreferenceNumber-1).find('ref').click();
+    clickRefOfMRefOfParagraphOfArticle(mReferenceNumber, paragraphNumber, articleNumber){
+        this.getParagraphFromArticle(paragraphNumber, articleNumber).find('mref').eq(mReferenceNumber-1).find('ref').click();
     }
 
-    clickRefOfMRefOfPointOfParagraphOfArticle(mreferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber){
-        this.getPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).find('mref').eq(mreferenceNumber-1).find('ref').click();
+    clickRefOfMRefOfPointOfParagraphOfArticle(mReferenceNumber, pointNumber, listNumber, paragraphNumber, articleNumber){
+        this.getPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).find('mref').eq(mReferenceNumber-1).find('ref').click();
     }
 
     clickEditIconOfCitation(citationNumber) {

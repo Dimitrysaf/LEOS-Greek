@@ -46,10 +46,6 @@ class ckEditorWindow {
         this.elements.ckEditableInline().type('{del}');
     }
 
-    rightClickWhenCKEditorOpen() {
-        this.elements.ckEditableInline().rightclick();
-    }
-
     clickEnterFromKeyboardWhenCKEditorOpen() {
         this.elements.ckEditableInline().type('{enter}');
     }
@@ -115,12 +111,16 @@ class ckEditorWindow {
         return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + dataAknElement + "']").eq(li - 1);
     }
 
+    getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
+        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + pointDataAknElement + "']").eq(pointLi - 1);
+    }
+
     getElementPTagOfParagraphOfArticle(pTag, paragraphLi, paragraphDataAknElement) {
         return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find('p').eq(pTag - 1);
     }
 
     getElementPTagOfPointOfParagraphOfArticle(pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        return this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + pointDataAknElement + "']").eq(pointLi - 1).find('p').eq(pTag - 1);
+        return this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1);
     }
 
     moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber) {
@@ -136,11 +136,11 @@ class ckEditorWindow {
     }
 
     moveCursorToSpecificOffsetInPointOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + pointDataAknElement + "']").eq(pointLi - 1).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
+        this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
     }
 
     moveCursorToSpecificOffsetInPTagOfPointOfParagraphOfArticle(pointOffset, pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + pointDataAknElement + "']").eq(pointLi - 1).find('p').eq(pTag - 1).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
+        this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
     }
 
     appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber, child) {
@@ -156,7 +156,7 @@ class ckEditorWindow {
     }
 
     addContentInPointOfParagraphOfArticle(newContent, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
-        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).find("ol li[data-akn-element='" + pointDataAknElement + "']").eq(pointLi - 1).type(newContent);
+        this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).type(newContent);
     }
 
     addContentInSecondLayerPointOfParagraphOfArticle(newContent, li1, dataAknElement1, li2, dataAknElement2, li3, dataAknElement3) {
