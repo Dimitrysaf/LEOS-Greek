@@ -62,6 +62,7 @@ export type LeosConfig = {
   showRevisionEnabled: boolean;
   profile: Profile;
   contextRole: string;
+  leosSwitchLevelArticle: boolean;
 };
 
 export type LeosAppConfig = LeosConfig & {
