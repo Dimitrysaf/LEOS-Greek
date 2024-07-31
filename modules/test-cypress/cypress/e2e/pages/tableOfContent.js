@@ -107,5 +107,9 @@ class tableOfContent {
     clickThreeDotsOfCardHeader(headerTitle) {
         this.elements.cardTitle().contains(headerTitle).closest('eui-card-header').find('button eui-icon-svg').click();
     }
+
+    getNodeLabelText(label){
+        return this.elements.nodeLabel().contains(label);
+    }
 }
 export default new tableOfContent();

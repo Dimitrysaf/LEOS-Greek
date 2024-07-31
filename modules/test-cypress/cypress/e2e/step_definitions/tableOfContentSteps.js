@@ -136,14 +136,13 @@ Then(/^navigation pane is minimized$/, function () {
 });
 
 When('drag node label {string} and drop to node label {string} in navigation pane', function (dragLabel, dropLabel) {
-    tableOfContent.elements.nodeLabel().contains(dragLabel)
-        .realMouseDown({button: 'left', position: 'center'})
-        .realMouseMove(0, 10, {position: 'center'})
+    tableOfContent.getNodeLabelText(dragLabel)
+        .trigger("mousedown", {button: 0, force: true})
+        .trigger("mousemove", 0, 10, {force: true})
         .wait(200);
-    tableOfContent.elements.nodeLabel().contains(dropLabel)
-        .realMouseMove(0, 0, {position: 'center'})
-        .realMouseUp({position: "center"})
-        .wait(200);
+    tableOfContent.getNodeLabelText(dropLabel).trigger("mousemove", {force: true})
+        .wait(200)
+        .trigger("mouseup", {force: true});
 });
 
 When('drag element {string} from element tree list and drop to node label {string} in navigation pane', function (dragElement, dropLabel) {
@@ -151,7 +150,7 @@ When('drag element {string} from element tree list and drop to node label {strin
         .trigger("mousedown", {button: 0, force: true})
         .trigger("mousemove", 0, 10, {force: true})
         .wait(200);
-    tableOfContent.elements.nodeLabel().contains(dropLabel).trigger("mousemove", {force: true})
+    tableOfContent.getNodeLabelText(dropLabel).trigger("mousemove", {force: true})
         .wait(200)
         .trigger("mouseup", {force: true});
 });
@@ -171,19 +170,11 @@ When('click on revert to this version', function () {
 When('click on three vertical dots of card header title {string} in version pane', function (headerTitle) {
     tableOfContent.clickThreeDotsOfCardHeader(headerTitle);
 });
-/*
-When('{string} is showing as soft move title in navigation pane', function (softMoveTitle) {
 
+When('{string} is showing as soft move title in navigation pane', function (title) {
+    tableOfContent.elements.nodeLabel().find('span.leos-soft-move-title').should('include.text', title).should('be.visible');
 });
 
-When('{string} is showing as soft move label with soft move title {string} in navigation pane', function (softMoveLabel, softMoveTitle) {
-
+When('{string} is showing as soft move label with soft move title {string} in navigation pane', function (label, title) {
+    tableOfContent.elements.nodeLabel().find('span.leos-soft-move-title').should('include.text', title).siblings('span.leos-soft-move-label').should('include.text', label).should('be.visible');
 });
-
-When('{string} is showing as soft move title in selected node in navigation pane', function (softMoveTitle) {
-
-});
-
-When('{string} is showing as soft move label with soft move title {string} in selected node in navigation pane', function (softMoveLabel, softMoveTitle) {
-
-});*/

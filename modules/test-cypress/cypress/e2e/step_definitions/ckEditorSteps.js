@@ -285,7 +285,6 @@ Then('header of level in financial statement is not editable in ck editor text b
     ckEditorWindow.getHeadingOfLevel().invoke('attr', 'contenteditable').should('eq', 'false');
 });
 
-
 Then('drafting rule violations dialog box displayed with message {string}', (msg) => {
     ckEditorWindow.getCkEditorDialogHtml().invoke('text').then(text => expect(text.trim()).equal(msg));
 });
@@ -294,34 +293,38 @@ Then('click dialog ok button', () => {
     ckEditorWindow.clickCkEditorDialogOkBtn();
 });
 
-And('do right click using mouse in edition mode', () => {
-    ckEditorWindow.rightClickWhenCKEditorOpen();
-})
-
 Then('{int} paragraphs are present in article in edition mode', function (paragraphCount) {
     ckEditorWindow.getAllParagraphElementsOfArticle().should('have.length', paragraphCount);
 });
-/*
-Then('background color of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article is {string} in edition mode', function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, backGroundColor) {
 
+When('do right click in li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
+    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).rightclick({force:true});
 });
 
-And('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, attributeName, attributeValue) {
-
+When('do right click in li {int} with data-akn-element {string} of article in edition mode', function (paragraphLi, paragraphDataAknElement) {
+    ckEditorWindow.getParagraphElementOfArticle(paragraphLi, paragraphDataAknElement).rightclick({force:true});
 });
 
-And("li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, attributeName) {
-
+And("li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, attributeName) {
+    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('not.have.attr', attributeName);
 });
 
-And('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} in edition mode', function (pointLi, dataAknElementPoint, paragraphLi, dataAknElementParagraph, attributeName) {
-
+And('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, attributeName) {
+    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName);
 });
 
-Then('background color of li {int} with data-akn-element {string} of article is {string} in edition mode', function () {
-
+Then("li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function (paragraphLi, paragraphDataAknElement, attributeName) {
+    ckEditorWindow.getParagraphElementOfArticle(paragraphLi, paragraphDataAknElement).should('not.have.attr', attributeName);
 });
 
-Then("li {int} with data-akn-element {string} of article doesn't contain attribute {string} in edition mode", function () {
+And('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, attributeName, attributeValue) {
+    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName, attributeValue);
+});
 
-});*/
+Then('background color of li {int} with data-akn-element {string} of article is {string} in edition mode', function (paragraphLi, paragraphDataAknElement, backgroundColor) {
+    ckEditorWindow.getParagraphElementOfArticle(paragraphLi, paragraphDataAknElement).should('have.css', 'background-color').and('eq', backgroundColor);
+});
+
+Then('background color of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article is {string} in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, backgroundColor) {
+    ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.css', 'background-color').and('eq', backgroundColor);
+});
