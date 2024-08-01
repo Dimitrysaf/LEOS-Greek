@@ -324,9 +324,13 @@ public class LeosLightApiServiceImpl implements LeosLightApiService {
             if(updateDocs) {
                 LeosDocument document = leosRepository.findDocumentByRef(translatedChildDocRef,
                         LeosCategoryClass.getClass(docVo.getCategory()));
-                updateLeosDocument(document.getId(), LeosCategoryClass.getClass(docVo.getCategory()),
-                        docVo, docVo.getMetadataDocument());
-                versionLabel = getNextVersionLabel(VersionType.MAJOR, document.getVersionLabel());
+                if (!ByteChecksumComparator.checksumMatched(document.getContent().get().getSource().getBytes(), docVo.getSource())) {
+                    updateLeosDocument(document.getId(), LeosCategoryClass.getClass(docVo.getCategory()),
+                            docVo, docVo.getMetadataDocument());
+                    versionLabel = getNextVersionLabel(VersionType.MAJOR, document.getVersionLabel());
+                } else {
+                    versionLabel = document.getVersionLabel();
+                }
             }
             containedDocs.add(translatedChildDocRef + "_" + versionLabel);
         });
