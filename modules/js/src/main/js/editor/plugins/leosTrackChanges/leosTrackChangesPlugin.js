@@ -540,10 +540,6 @@ define(function leosTrackChangesPluginModule(require) {
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER);
                         elementToRemoveAttribute.removeAttribute(core.DATA_AKN_ACTION_ENTER);
                         event.editor.fire("handleTcIndent", { data: elementToRemoveAttribute, previousNumber: elementToRemoveAttribute.getAttribute(leosPluginUtils.DATA_AKN_NUM) });
-                        if(!UTILS.isEmptyElement(elementToRemoveAttribute)) {
-                            var newTcElement = core.buildTrackChangeElement(editor, core.INSERT_ACTION, elementToRemoveAttribute.innerHTML, true);
-                            elementToRemoveAttribute.innerHTML = newTcElement.$.outerHTML;
-                        }
                     }
                 }
             }, null, null, 15);
@@ -610,7 +606,7 @@ define(function leosTrackChangesPluginModule(require) {
             });
 
             // Handle widgets deletion
-            editor.widgets.on("instanceCreated", function instanceCreated(event) {
+            editor.widgets?.on("instanceCreated", function instanceCreated(event) {
                 if (isTrackChangesEnabled) {
                     var widget = event.data;
                     widget.on("key", function(event) {

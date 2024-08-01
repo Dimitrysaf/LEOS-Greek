@@ -140,7 +140,6 @@ define(function leosSubElementMovePluginModule(require) {
                 element.setAttribute("data-akn-num", element.getAttribute("data-akn-num"));
                 element.setAttribute("data-num-origin", LS_ORIGIN);
                 _setSoftMovedAttributes(editor, element);
-                _setTrackChangesElement(element, editor);
                 UTILS.clearItemStorage();
             }
         }

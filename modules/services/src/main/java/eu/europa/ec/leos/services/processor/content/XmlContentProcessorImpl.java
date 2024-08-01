@@ -2091,17 +2091,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 case LEOS_SOFT_MOVE_TO:
                     leosAction = "delete";
                     break;
-                case LEOS_SOFT_MOVE_FROM:
-                    leosAction = "insert";
-                    break;
                 default:
                     leosAction = null;
 
             }
-            if (!XercesUtils.hasAttribute(node, LEOS_UID_ATTR)) {
-                XercesUtils.addAttribute(node, LEOS_UID_ATTR, userLogin);
+            if(leosAction != null) {
+                if (!XercesUtils.hasAttribute(node, LEOS_UID_ATTR)) {
+                    XercesUtils.addAttribute(node, LEOS_UID_ATTR, userLogin);
+                }
+                XercesUtils.addAttribute(node, LEOS_ACTION_ATTR, leosAction);
             }
-            XercesUtils.addAttribute(node, LEOS_ACTION_ATTR, leosAction);
         }
     }
 
