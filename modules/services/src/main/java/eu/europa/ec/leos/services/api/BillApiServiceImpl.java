@@ -109,6 +109,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
+
 public abstract class BillApiServiceImpl implements BillApiService {
 
     private static final String BILL_METADATA_IS_REQUIRED = "Bill metadata is required!";
@@ -614,37 +616,39 @@ public abstract class BillApiServiceImpl implements BillApiService {
             splittedContentIsEmpty = true;
         }
 
-        List<Element> result = getMovedFromElements(updatedBill, newContent);
+        List<Element> result = getMovedFromElements(updatedBill, newContent, elementId);
 
         documentViewService.updateProposalAsync(bill);
         return new SaveElementResponse(elementId, elementName, newContent, elementToEditAfterClose, splittedContentIsEmpty, result);
     }
 
-    private List<Element> getMovedFromElements(Bill updatedBill, String newContent) {
+    private List<Element> getMovedFromElements(Bill updatedBill, String newContent, String elementId) {
         List<Element> result = new ArrayList<>();
         List<String> idsToSearch = new ArrayList<>();
         String newContentId = null;
         //Get id moved from for new short xml fragment (newContent)
         Document newContentDocument = XercesUtils.createXercesDocument(LeosDomainUtil.wrapXmlFragment(newContent).getBytes(StandardCharsets.UTF_8));
-        NodeList elementsByXPath = XercesUtils.getElementsByXPath(newContentDocument, String.format("//*[@%s]", XmlHelper.LEOS_SOFT_MOVE_FROM));
+        NodeList elementsByXPath = XercesUtils.getElementsByXPath(newContentDocument, String.format("//*[@%s = '%s']//*[@%s]",
+                XMLID, elementId, XmlHelper.LEOS_SOFT_MOVE_FROM));
         for (int countElements = 0; countElements < elementsByXPath.getLength(); countElements++) {
             Node element = elementsByXPath.item(countElements);
-            newContentId = (newContentId == null) ? element.getParentNode().getAttributes().getNamedItem("xml:id").getNodeValue() : newContentId;
+            newContentId = (newContentId == null) ? element.getParentNode().getAttributes().getNamedItem(XMLID).getNodeValue()
+                    : newContentId;
             NamedNodeMap attributes = element.getAttributes();
-            String idXml = attributes.getNamedItem("xml:id").getNodeValue();
+            String idXml = attributes.getNamedItem(XMLID).getNodeValue();
             idsToSearch.add(idXml);
         }
 
         Document billDocument = XercesUtils.createXercesDocument(LeosDomainUtil.wrapXmlFragment(updatedBill.getContent().get().getSource().toString())
                 .getBytes(StandardCharsets.UTF_8));
-        NodeList billElementsByXPath = XercesUtils.getElementsByXPath(billDocument, String.format("//*[@%s]", XmlHelper.LEOS_SOFT_MOVE_TO));
+        NodeList billElementsByXPath = XercesUtils.getElementsByXPath(billDocument, String.format("//*[@%s = '%s']//*[@%s]", XMLID, elementId, XmlHelper.LEOS_SOFT_MOVE_TO));
         for (int countElements = 0; countElements < billElementsByXPath.getLength(); countElements++) {
             Node element = billElementsByXPath.item(countElements);
             NamedNodeMap attributes = element.getAttributes();
             String movedToAttr = attributes.getNamedItem(XmlHelper.LEOS_SOFT_MOVE_TO).getNodeValue();
             Node parentNode = element.getParentNode();
-            String parentId = parentNode.getAttributes().getNamedItem("xml:id").getNodeValue();
-            if((newContentId != parentId)// verify not to be moved in the same parent
+            String parentId = parentNode.getAttributes().getNamedItem(XMLID).getNodeValue();
+            if((!parentId.equals(newContentId))// verify not to be moved in the same parent
                     && idsToSearch.contains(movedToAttr)){
                 String parentName = parentNode.getNodeName();
                 String parentFragment = XercesUtils.nodeToString(parentNode);

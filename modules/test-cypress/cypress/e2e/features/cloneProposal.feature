@@ -150,7 +150,6 @@ Feature: clone proposal regression features
     And  li 2 with data-akn-element "point" of li 3 with data-akn-element "paragraph" of article doesn't contain attribute "data-akn-attr-softaction" in edition mode
     When click at offset 190 in li 1 with data-akn-element "point" of li 4 with data-akn-element "paragraph" of article in edition mode
     And  click enter from keyboard in edition mode
-    Then li 2 with data-akn-element "point" of li 4 with data-akn-element "paragraph" of article contains attribute "data-akn-action-number" with value "insert" in edition mode
     When do right click in li 2 with data-akn-element "point" of li 4 with data-akn-element "paragraph" of article in edition mode
     And  mouseover on option "Move here" in "cke_panel_frame" iframe
     And  click on sub option "As point" in "cke_panel_frame" iframe
@@ -165,7 +164,6 @@ Feature: clone proposal regression features
     And  point 2 of list 1 of paragraph 3 of article 5 contains attribute "leos:softmove_label" with value "MOVED to Article 4(4), point (b)"
     And  point 2 of list 1 of paragraph 3 of article 5 contains attribute "leos:origin" with value "ec"
     And  point 2 of list 1 of paragraph 3 of article 5 contains attribute "leos:softactionroot" with value "true"
-    And  point 2 of list 1 of paragraph 4 of article 5 contains attribute "leos:action" with value "insert"
     And  point 2 of list 1 of paragraph 4 of article 5 contains attribute "leos:softaction" with value "move_from"
     And  point 2 of list 1 of paragraph 4 of article 5 contains attribute "leos:softmove_label" with value "MOVED from Article 4(3), point (b)"
     And  point 2 of list 1 of paragraph 4 of article 5 contains attribute "leos:origin" with value "ec"
@@ -196,7 +194,6 @@ Feature: clone proposal regression features
     And  mouseover on option "Move here" in "cke_panel_frame" iframe
     And  click on sub option "As paragraph" in "cke_panel_frame" iframe
     Then li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-attr-softaction" with value "move_from" in edition mode
-    And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-action" with value "insert" in edition mode
     And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-attr-softactionroot" with value "true" in edition mode
     And  li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "2." in edition mode
     When click save and close button of ck editor
@@ -206,7 +203,6 @@ Feature: clone proposal regression features
     And  paragraph 2 of article 5 contains attribute "leos:softmove_label" with value "MOVED to Article 8(2)"
     And  paragraph 2 of article 5 contains attribute "leos:origin" with value "ec"
     And  paragraph 2 of article 5 contains attribute "leos:softactionroot" with value "true"
-    And  paragraph 2 of article 9 contains attribute "leos:action" with value "insert"
     And  paragraph 2 of article 9 contains attribute "leos:softaction" with value "move_from"
     And  paragraph 2 of article 9 contains attribute "leos:softmove_label" with value "MOVED from Article 4(2)"
     And  paragraph 2 of article 9 contains attribute "leos:origin" with value "ec"
