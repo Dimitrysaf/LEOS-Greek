@@ -18,6 +18,7 @@ import javax.xml.validation.SchemaFactory;
 
 import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
+import eu.europa.ec.leos.vo.structure.DocumentRules;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.ObjectFactory;
 import eu.europa.ec.leos.vo.structure.RefConfig;
@@ -58,6 +59,13 @@ public class StructureServiceImpl implements StructureService {
     public Map<TocItem, List<TocItem>> getTocRules(String docTemplate) {
         loadTocStructure(docTemplate);
         return tocStructureMap.get(docTemplate).getTocRules();
+    }
+
+    @Override
+    @Cacheable(value = "tocStructureDocumentRulesMap")
+    public Map<String, List<TocItem>> getDocumentRules(String docTemplate) {
+        loadTocStructure(docTemplate);
+        return tocStructureMap.get(docTemplate).getDocumentRules();
     }
     
     @Override
@@ -120,6 +128,7 @@ public class StructureServiceImpl implements StructureService {
         List<TocItem> tocItems = structure.getTocItems().getTocItems();
         tocStructure.setTocItems(tocItems);
         tocStructure.setTocRules(buildProposalTocRules(structure, tocItems));
+        tocStructure.setDocumentRules(buildProposalDocumentRules(structure, tocItems));
 
         tocStructureMap.put(docTemplate, tocStructure); //cache it for the next call
     }
@@ -163,4 +172,25 @@ public class StructureServiceImpl implements StructureService {
         }
         return tocRules;
     }
+
+    private Map<String, List<TocItem>> buildProposalDocumentRules(Structure structure, List<TocItem> tocItems) {
+        Map<String, List<TocItem>> documentRules = new HashMap<>();
+        if(structure.getDocumentRules() != null) {
+            for (DocumentRules.Rule rule : structure.getDocumentRules().getRules()) {
+                String itemName = rule.getTocItem().value();
+                List<TocItem> exceptionList = new ArrayList<>();
+                for (AknTag listTocName : rule.getException().getTocItems()) {
+                    exceptionList.addAll(getTocItemsByName(tocItems, listTocName.value()));
+                }
+                documentRules.put(itemName + "-exception", exceptionList);
+                List<TocItem> notAllowedList = new ArrayList<>();
+                for (AknTag listTocName : rule.getNotAllowed().getTocItems()) {
+                    notAllowedList.addAll(getTocItemsByName(tocItems, listTocName.value()));
+                }
+                documentRules.put(itemName + "-not-allowed", notAllowedList);
+            }
+        }
+        return documentRules;
+    }
+
 }
