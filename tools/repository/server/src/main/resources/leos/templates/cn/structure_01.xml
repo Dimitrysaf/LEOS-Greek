@@ -103,6 +103,12 @@
             <editable>true</editable>
             <template>
                 <![CDATA[<citation xml:id="_${id}" leos:editable="true"><p>${default.content.text}</p></citation>]]></template>
+            <dapInfos>
+                <dapInfo>
+                    <dapInfoLabel>Citations</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Citations</dapInfoURL>
+                </dapInfo>
+            </dapInfos>
         </tocItem>
 
         <tocItem>
@@ -159,6 +165,12 @@
             <editable>true</editable>
             <template>
                 <![CDATA[<recital xml:id="_${id}" leos:editable="true"><num leos:editable="false">${num}</num><p>${default.content.text}</p></recital>]]></template>
+            <dapInfos>
+                <dapInfo>
+                    <dapInfoLabel>Recitals</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/pages/viewpage.action?pageId=343284579</dapInfoURL>
+                </dapInfo>
+            </dapInfos>
         </tocItem>
 
         <tocItem>
@@ -390,6 +402,20 @@
             <editable>true</editable>
             <template>
                 <![CDATA[<article xml:id="_${id}"><num leos:editable="false">${num}</num><heading>${heading}</heading><paragraph xml:id="_${id}-par1"><num>1.</num><content><p>${default.content.text}</p></content></paragraph><paragraph><num>2.</num><content><p>${default.content.text}</p></content></paragraph></article>]]></template>
+            <dapInfos>
+                <dapInfo>
+                    <dapInfoLabel>Scope and definition default articles</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Introductory+provisions</dapInfoURL>
+                </dapInfo>
+                <dapInfo>
+                    <dapInfoLabel>Other Articles</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Subdivisions+in+an+article</dapInfoURL>
+                </dapInfo>
+                <dapInfo>
+                    <dapInfoLabel>Entry into force default article</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Date+of+entry+into+force</dapInfoURL>
+                </dapInfo>
+            </dapInfos>
         </tocItem>
 
         <tocItem>

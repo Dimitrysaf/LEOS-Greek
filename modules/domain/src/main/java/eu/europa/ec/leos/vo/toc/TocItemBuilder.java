@@ -16,6 +16,7 @@ package eu.europa.ec.leos.vo.toc;
 import eu.europa.ec.leos.vo.structure.ActionPositions;
 import eu.europa.ec.leos.vo.structure.AknTag;
 import eu.europa.ec.leos.vo.structure.AutoNumbering;
+import eu.europa.ec.leos.vo.structure.DapInfos;
 import eu.europa.ec.leos.vo.structure.NumberingType;
 import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.structure.Profiles;
@@ -44,6 +45,7 @@ public class TocItemBuilder {
     protected String template;
     protected String maxDepth;
     protected ActionPositions actionsPosition;
+    protected DapInfos dapInfos;
 
     private TocItemBuilder() {
     }
@@ -161,7 +163,10 @@ public class TocItemBuilder {
         this.actionsPosition = actionsPosition;
         return this;
     }
-
+    public TocItemBuilder withDapInfos(DapInfos dapInfos) {
+        this.dapInfos = dapInfos;
+        return this;
+    }
     public TocItem build() {
         TocItem tocItem = new TocItem();
         tocItem.setAknTag(aknTag);
@@ -185,6 +190,7 @@ public class TocItemBuilder {
         tocItem.setTemplate(template);
         tocItem.setMaxDepth(maxDepth);
         tocItem.setActionsPosition(actionsPosition);
+        tocItem.setDapInfos(dapInfos);
         return tocItem;
     }
 }

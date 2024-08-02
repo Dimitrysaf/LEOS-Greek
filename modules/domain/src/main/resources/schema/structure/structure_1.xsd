@@ -52,6 +52,20 @@
             <xs:element name="template" type="xs:string" minOccurs="0"/>
             <xs:element name="maxDepth" type="xs:string" minOccurs="0"/>
             <xs:element name="actionsPosition" type="actionPositions" default="RIGHT" minOccurs="0"/>
+            <xs:element name="dapInfos" type="dapInfos" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="dapInfos">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="dapInfo" type="dapInfo"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="dapInfo">
+        <xs:sequence>
+            <xs:element name="dapInfoLabel" type="xs:string" default=""/>
+            <xs:element name="dapInfoURL" type="xs:string" default=""/>
         </xs:sequence>
     </xs:complexType>
 

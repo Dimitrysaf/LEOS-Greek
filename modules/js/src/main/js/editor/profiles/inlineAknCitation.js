@@ -51,6 +51,7 @@ define(function aknCitationProfileModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
     plugins.push(require("plugins/leosTextHighlight/leosTextHighlightPlugin"));
+    plugins.push(require("plugins/leosDapInfo/leosDapInfo"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -129,6 +130,8 @@ define(function aknCitationProfileModule(require) {
             name : "about"
         },{
             name : "colors"
+        },{
+            name: 'dapInfo'
         } ]
     };
     // adding the specific configs coming from the plugins.

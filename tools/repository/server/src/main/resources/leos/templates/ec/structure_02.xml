@@ -234,6 +234,12 @@
             </profiles>
             <editable>true</editable>
             <maxDepth>7</maxDepth>
+            <dapInfos>
+                <dapInfo>
+                    <dapInfoLabel>Level</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Annexes</dapInfoURL>
+                </dapInfo>
+            </dapInfos>
         </tocItem>
 
         <tocItem>
