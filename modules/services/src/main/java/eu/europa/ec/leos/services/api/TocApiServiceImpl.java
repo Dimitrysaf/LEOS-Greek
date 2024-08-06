@@ -51,6 +51,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getElementById;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
@@ -122,6 +123,7 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     private TocDropResult validateDrop(NodeDropValidationRequest request, byte[] xmlContent) {
         Map<TocItem, List<TocItem>> tableOfContentRules = structureContextProvider.get().getTocRules();
+        Map<String, List<TocItem>> tableOfContentDocumentRules = structureContextProvider.get().getDocumentRules();
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
 
@@ -142,7 +144,54 @@ public abstract class TocApiServiceImpl implements TocApiService {
             validateAddingItemAsChildOrSibling(result, draggedTocItemVO, targetTocItemVO, tableOfContentRules,
                     parentTocItemVO, request.getPosition(), language);
         }
+        if (tableOfContentDocumentRules != null && !tableOfContentDocumentRules.isEmpty()) {
+            validateLevelStructure(result, tableOfContentDocumentRules, draggedTocItemVO, targetTocItemVO, xmlContent, request.getPosition());
+        }
+
         return result;
+    }
+
+    private boolean validateLevelStructure(final TocDropResult result, final Map<String, List<TocItem>> tableOfContentDocumentRules,
+            final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetTocItemVO, final byte[] xmlContent, final TocItemPosition position) {
+        // Only elements in exception list are accepted in between levels
+        List<TocItem> exceptionRules = tableOfContentDocumentRules.get(LEVEL + "-exception");
+        String stringContent = new String(xmlContent);
+        int positionOfTargetItem = stringContent.indexOf(targetTocItemVO.getId());
+        if (position.equals(TocItemPosition.BEFORE)) {
+            positionOfTargetItem = stringContent.lastIndexOf("<" + targetTocItemVO.getTocItem().getAknTag().value(), positionOfTargetItem);
+            positionOfTargetItem--;
+        }
+        int positionOfPreviousLevel = stringContent.lastIndexOf("<" + LEVEL, positionOfTargetItem);
+        int positionOfNextLevel = stringContent.indexOf("<" + LEVEL, positionOfTargetItem);
+        if (exceptionRules != null && !sourceItem.getTocItem().getAknTag().value().equals(LEVEL)) {
+            boolean isException = false;
+            for (TocItem rule: exceptionRules) {
+                if (rule.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value())) {
+                    isException = true;
+                }
+            }
+            if (!isException) {
+                if (positionOfPreviousLevel != -1 && positionOfNextLevel != -1) {
+                    result.setSuccess(false);
+                    result.setMessageKey("toc.paragraph.position.not.allowed.error.message");
+                    return false;
+                }
+            }
+        }
+        // Should block when adding new levels and this would create a not allowed structure
+        List<TocItem> notAlloweRules = tableOfContentDocumentRules.get(LEVEL + "-not-allowed");
+        if (notAlloweRules != null && sourceItem.getTocItem().getAknTag().value().equals(LEVEL)) {
+            String previousPieceToCheck = positionOfPreviousLevel != -1 ? stringContent.substring(positionOfPreviousLevel, positionOfTargetItem+1) : "";
+            String nextPieceToCheck = positionOfNextLevel != -1 ? stringContent.substring(positionOfTargetItem, positionOfNextLevel+1) : "";
+            for (TocItem rule: notAlloweRules) {
+                if (previousPieceToCheck.contains("<" + rule.getAknTag().value()) || nextPieceToCheck.contains("<" + rule.getAknTag().value())) {
+                    result.setSuccess(false);
+                    result.setMessageKey("toc.level.position.not.allowed.error.message");
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static TableOfContentItemVO getTableOfContentItemVO(String nodeId, String nodeName, List<TocItem> tocItems,

@@ -13,6 +13,8 @@ public interface StructureService {
     List<TocItem> getTocItems(String docTemplate);
     
     Map<TocItem, List<TocItem>> getTocRules(String docTemplate);
+
+    Map<String, List<TocItem>> getDocumentRules(String docTemplate);
     
     List<NumberingConfig> getNumberingConfigs(String docTemplate);
 

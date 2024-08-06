@@ -44,6 +44,12 @@ public class StructureContext {
         return structureService.getTocRules(docTemplate);
     }
 
+    public Map<String, List<TocItem>> getDocumentRules() {
+        Validate.notNull(docTemplate, "Document template is required!");
+        LOG.trace("Retrieving document rules configuration...");
+        return structureService.getDocumentRules(docTemplate);
+    }
+
     public List<NumberingConfig> getNumberingConfigs() {
         Validate.notNull(docTemplate, "Document template is required!");
         LOG.trace("Retrieving numbering configuration...");

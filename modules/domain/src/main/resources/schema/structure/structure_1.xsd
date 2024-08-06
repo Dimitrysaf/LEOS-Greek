@@ -14,6 +14,7 @@
                 <xs:element name="numberingConfigs" type="numberingConfigs"/>
                 <xs:element name="alternateConfigs" type="alternateConfigs"/>
                 <xs:element name="tocRules" type="tocRules" minOccurs="0"/>
+                <xs:element name="documentRules" type="documentRules" minOccurs="0"/>
                 <xs:element name="referenceConfig" type="referenceConfig" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
@@ -284,6 +285,24 @@
                     <xs:sequence>
                         <xs:element name="tocItem" minOccurs="0" type="aknTag"/>
                         <xs:element name="list" minOccurs="0" type="tocIdList"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="documentRules">
+        <xs:sequence>
+            <xs:element name="rule" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="description" type="xs:string"/>
+                        <xs:element name="type" type="xs:string"/>
+                        <xs:element name="tocItem" type="aknTag"/>
+                        <xs:element name="scope" type="xs:string"/>
+                        <xs:element name="exception" minOccurs="0" type="tocIdList"/>
+                        <xs:element name="notAllowed" minOccurs="0" type="tocIdList"/>
+                        <xs:element name="errorMessage" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

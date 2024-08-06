@@ -799,4 +799,23 @@
         </entry>
     </tocRules>
 
+    <documentRules>
+        <rule>
+            <description>Levels sequence cannot be broken by elements outside the exception list</description>
+            <type>sequence</type>
+            <tocItem>level</tocItem>
+            <scope>drop</scope>
+            <exception>
+                <tocItem>part</tocItem>
+                <tocItem>title</tocItem>
+                <tocItem>chapter</tocItem>
+                <tocItem>section</tocItem>
+            </exception>
+            <notAllowed>
+                <tocItem>paragraph</tocItem>
+            </notAllowed>
+            <errorMessage>toc.level.position.not.allowed.error.message</errorMessage>
+        </rule>
+    </documentRules>
+
 </structure>
