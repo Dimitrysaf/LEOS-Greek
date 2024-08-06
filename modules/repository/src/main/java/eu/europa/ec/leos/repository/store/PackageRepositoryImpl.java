@@ -140,7 +140,7 @@ public class PackageRepositoryImpl implements PackageRepository {
     }
 
     @Override
-    public LegDocument findLastLegByVersionedReference(String path, String versionedReference) {
+    public LegDocument findLastLegByVersionedReference(String path, String versionedReference) throws Exception {
         logger.debug("Finding document by document reference... [path=$path, versionedReference=$versionedReference]");
         QueryFilter queryFilter = new QueryFilter();
         QueryFilter.Filter filter = new QueryFilter.Filter(QueryFilter.FilterType.containedDocuments.name(), "=", false, versionedReference);
@@ -150,6 +150,63 @@ public class PackageRepositoryImpl implements PackageRepository {
         // TODO set maximum value using a global constant
         Stream<LegDocument> legDocuments = leosRepository.findPagedDocumentsByParentPath(path, LegDocument.class, true, true, 0, 100, queryFilter);
         Optional<LegDocument> optionalLegDocument = legDocuments.findFirst();
+        if (optionalLegDocument.isPresent()) {
+            return optionalLegDocument.get();
+        } else {
+            throw new Exception("Unable to retrieve the Milestone");
+        }
+    }
+
+    @Override
+    public LegDocument findLastContributionByVersionedReferenceAndName(String path, String legFileName, String versionedReference) throws Exception {
+        logger.debug("Finding document by document reference... [path=$path, versionedReference=$versionedReference]");
+        QueryFilter queryFilter = new QueryFilter();
+        QueryFilter.Filter filter = new QueryFilter.Filter(QueryFilter.FilterType.containedDocuments.name(), "=", false, versionedReference);
+        queryFilter.addFilter(filter);
+        filter = new QueryFilter.Filter(QueryFilter.FilterType.ref.name(), "=", false, legFileName.replace(".leg", ""));
+        queryFilter.addFilter(filter);
+        QueryFilter.SortOrder sortOrder = new QueryFilter.SortOrder(QueryFilter.FilterType.creationDate.name(), QueryFilter.SORT_DESCENDING);
+        queryFilter.addSortOrder(sortOrder);
+        // TODO set maximum value using a global constant
+        Stream<LegDocument> legDocuments = leosRepository.findPagedDocumentsByParentPath(path, LegDocument.class, true, true, 0, 100, queryFilter);
+        Optional<LegDocument> optionalLegDocument = legDocuments.filter((l) -> l.getStatus().equals(LeosLegStatus.CONTRIBUTION_SENT)).findFirst();
+        if (optionalLegDocument.isPresent()) {
+            return optionalLegDocument.get();
+        } else {
+            throw new Exception("Unable to retrieve the Milestone");
+        }
+    }
+
+    @Override
+    public LegDocument findLastContributionByVersionedReference(String path, String versionedReference) throws Exception {
+        logger.debug("Finding document by document reference... [path=$path, versionedReference=$versionedReference]");
+        QueryFilter queryFilter = new QueryFilter();
+        QueryFilter.Filter filter = new QueryFilter.Filter(QueryFilter.FilterType.containedDocuments.name(), "=", false, versionedReference);
+        queryFilter.addFilter(filter);
+        QueryFilter.SortOrder sortOrder = new QueryFilter.SortOrder(QueryFilter.FilterType.creationDate.name(), QueryFilter.SORT_DESCENDING);
+        queryFilter.addSortOrder(sortOrder);
+        // TODO set maximum value using a global constant
+        Stream<LegDocument> legDocuments = leosRepository.findPagedDocumentsByParentPath(path, LegDocument.class, true, true, 0, 100, queryFilter);
+        Optional<LegDocument> optionalLegDocument = legDocuments.filter((l) -> l.getStatus().equals(LeosLegStatus.CONTRIBUTION_SENT)).findFirst();
+        if (optionalLegDocument.isPresent()) {
+            return optionalLegDocument.get();
+        } else {
+            throw new Exception("Unable to retrieve the Milestone");
+        }
+    }
+
+    @Override
+    public LegDocument findLastContribution(String path, String legFileName) {
+        logger.debug("Finding contribution leg document by name ... [path=$path, legFileName=$legFileName]");
+        String ref = legFileName.replace(".leg", "");
+        QueryFilter queryFilter = new QueryFilter();
+        QueryFilter.Filter filter = new QueryFilter.Filter(QueryFilter.FilterType.ref.name(), "=", false, ref);
+        queryFilter.addFilter(filter);
+        QueryFilter.SortOrder sortOrder = new QueryFilter.SortOrder(QueryFilter.FilterType.creationDate.name(), QueryFilter.SORT_DESCENDING);
+        queryFilter.addSortOrder(sortOrder);
+        // TODO set maximum value using a global constant
+        Stream<LegDocument> legDocuments = leosRepository.findPagedDocumentsByParentPath(path, LegDocument.class, true, true, 0, 100, queryFilter);
+        Optional<LegDocument> optionalLegDocument = legDocuments.filter((l) -> l.getStatus().equals(LeosLegStatus.CONTRIBUTION_SENT)).findFirst();
         if (optionalLegDocument.isPresent()) {
             return optionalLegDocument.get();
         } else {

@@ -1063,7 +1063,12 @@ class ExplanatoryPresenter extends AbstractLeosPresenter {
     @Subscribe
     public void fetchMilestoneByVersionedReference(FetchMilestoneByVersionedReferenceEvent event) {
         LeosPackage leosPackage = packageService.findPackageByDocumentId(documentId);
-        LegDocument legDocument = legService.findLastLegByVersionedReference(leosPackage.getPath(), event.getVersionedReference());
+        LegDocument legDocument;
+        try {
+            legDocument = legService.findLastLegByVersionedReference(leosPackage.getPath(), event.getVersionedReference());
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to retrieve the Milestone");
+        }
         milestoneExplorerOpened = true;
         explanatoryScreen.showMilestoneExplorer(legDocument, String.join(",", legDocument.getMilestoneComments()), proposalRef);
     }

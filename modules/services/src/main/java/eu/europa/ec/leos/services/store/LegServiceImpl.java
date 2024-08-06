@@ -105,6 +105,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.services.api.ApiServiceImpl.DOC_VERSION_SEPARATOR;
+import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.ATTR_NAME;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_ADDED_CLASS;
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
@@ -225,8 +227,50 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
-    public LegDocument findLastLegByVersionedReference(String path, String versionedReference) {
-        return packageRepository.findLastLegByVersionedReference(path, versionedReference);
+    public LegDocument findLastLegByVersionedReference(String path, String versionedReference) throws Exception {
+        int indexDocVersionSeparator = versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR);
+        LegDocument legDocument;
+        try {
+            legDocument = packageRepository.findLastLegByVersionedReference(path, versionedReference);
+        } catch (Exception e) {
+            versionedReference =
+                    versionedReference.substring(0, indexDocVersionSeparator) + PROCESSED + versionedReference.substring(indexDocVersionSeparator);
+            legDocument = packageRepository.findLastLegByVersionedReference(path, versionedReference);
+        }
+        return legDocument;
+    }
+
+    @Override
+    public LegDocument findLastContributionByVersionedReference(String path, String versionedReference) throws Exception {
+        int indexDocVersionSeparator = versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR);
+        LegDocument legDocument;
+        try {
+            legDocument = packageRepository.findLastContributionByVersionedReference(path, versionedReference);
+        } catch (Exception e) {
+            versionedReference =
+                    versionedReference.substring(0, indexDocVersionSeparator) + PROCESSED + versionedReference.substring(indexDocVersionSeparator);
+            legDocument = packageRepository.findLastContributionByVersionedReference(path, versionedReference);
+        }
+        return legDocument;
+    }
+
+    @Override
+    public LegDocument findLastContributionByVersionedReferenceAndName(String path, String legFileName, String versionedReference) throws Exception {
+        int indexDocVersionSeparator = versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR);
+        LegDocument legDocument;
+        try {
+            legDocument = packageRepository.findLastContributionByVersionedReference(path, versionedReference);
+        } catch (Exception e) {
+            versionedReference =
+                    versionedReference.substring(0, indexDocVersionSeparator) + PROCESSED + versionedReference.substring(indexDocVersionSeparator);
+            legDocument = packageRepository.findLastContributionByVersionedReference(path, versionedReference);
+        }
+        return legDocument;
+    }
+
+    @Override
+    public LegDocument findLastContribution(String path, String legFileName) {
+        return packageRepository.findLastContribution(path, legFileName);
     }
 
     @Override
@@ -1212,9 +1256,11 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
-    public LegDocument updateLegDocumentFeedbackAnnotations(String proposalRef, String legFileName, String documentRef, String documentName, ExportOptions exportOptions) throws IOException {
+    public LegDocument updateLegDocumentFeedbackAnnotations(String proposalRef, String legFileName, String documentRef,
+                                                            String versionedReference, String documentName,
+                                                            ExportOptions exportOptions) throws Exception {
         LeosPackage clonedPackage = packageRepository.findPackageByDocumentRef(proposalRef, Proposal.class);
-        LegDocument legDocument = packageRepository.findDocumentByPackagePathAndName(clonedPackage.getPath(), legFileName, LegDocument.class);
+        LegDocument legDocument = findLastContributionByVersionedReference(clonedPackage.getPath(), versionedReference);
         Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().getSource().getBytes());
 
         addFeedbackAnnotateToZipContent(legContent, documentRef, documentName, exportOptions, proposalRef, legFileName);
@@ -1950,12 +1996,10 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
-    public String getFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef) throws IOException {
+    public String getFeedbackAnnotationsFromLeg(String legFileId, String documentRef, String proposalRef) throws IOException {
         String annotFileName = "media/annot_" + documentRef + ".xml.json";
         try {
-            LeosPackage leosPackage = packageRepository.findPackageByDocumentRef(proposalRef, Proposal.class);
-            LegDocument legDocument = packageRepository.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName,
-                    LegDocument.class);
+            LegDocument legDocument = findLegDocumentById(legFileId);
 
             Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().getOrNull().getSource().getBytes());
             if (legContent.containsKey(annotFileName)) {
@@ -1963,17 +2007,20 @@ public class LegServiceImpl implements LegService {
                 return new String(annotFileContent, StandardCharsets.UTF_8);
             }
         } catch (Exception e) {
-            LOG.info("Error while getting annotations in LEG file {}", legFileName);
+            LOG.info("Error while getting annotations in LEG file {}", legFileId);
             throw new IOException("Error while getting annotations in LEG file", e);
         }
         return "";
     }
 
     @Override
-    public int countFeedbacksToBeSentOnContribution(String ref, String proposalRef, String legFileName) {
+    public int countFeedbacksToBeSentOnContribution(String versionedReference, String proposalRef, String legFileName) {
         try {
-            String feedbackLegAnnotations = getFeedbackAnnotationsFromLeg(legFileName, ref, proposalRef);
-            String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
+            LeosPackage leosPackage = packageRepository.findPackageByDocumentRef(proposalRef, Proposal.class);
+            LegDocument legDocument = findLastContributionByVersionedReference(leosPackage.getPath(), versionedReference);
+            String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
+            String feedbackLegAnnotations = getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
+            String feedbackAnnotations = annotateService.getFeedbackAnnotations(documentRef, legFileName, proposalRef);
             return countFeedbacksToBeSent(feedbackAnnotations, feedbackLegAnnotations);
         } catch(Exception e) {
             LOG.error("Exception occurred", e);

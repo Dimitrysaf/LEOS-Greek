@@ -135,7 +135,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                 continue;
             }
             LeosPackage clonedPackage = packageService.findPackageByDocumentRef(clonedProposal.getMetadata().get().getRef(), Proposal.class);
-            LegDocument legDocument = packageService.findDocumentByPackagePathAndName(clonedPackage.getPath(), legName, LegDocument.class);
+            LegDocument legDocument = legService.findLastContribution(clonedPackage.getPath(), legName);
             List<String> containedDocuments = legDocument.getContainedDocuments();
             Map<String, Object> legContent;
             try {
@@ -218,16 +218,14 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     }
 
     @Override
-    public Result<?> updateContributionStatusAfterContributionDone(String cloneProposalRef, String cloneLegFileName,
+    public Result<?> updateContributionStatusAfterContributionDone(String cloneProposalRef, String cloneLegFileId,
                                                                    CloneProposalMetadataVO cloneProposalMetadataVO) {
         Proposal updatedProposal;
         LegDocument updatedLegDocument;
         try {
             Proposal clonedProposal = proposalService.findProposalByRef(cloneProposalRef);
             Proposal originalProposal = proposalService.findProposalByRef(clonedProposal.getClonedFrom());
-            LeosPackage clonedPackage = packageService.findPackageByDocumentRef(clonedProposal.getMetadata().get().getRef(), Proposal.class);
-            LegDocument legDocument = packageService.findDocumentByPackagePathAndName(clonedPackage.getPath(), cloneLegFileName,
-                    LegDocument.class);
+            LegDocument legDocument = legService.findLegDocumentById(cloneLegFileId);
             List<String> containedDocuments = legDocument.getContainedDocuments();
 
             //update cloned proposal properties
@@ -275,7 +273,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
             //update original proposal properties
             Map<String, Object> properties = new HashMap<>();
             List<String> clonedMilestoneIds = originalProposal.getClonedMilestoneIds();
-            clonedMilestoneIds.add(getClonedMilestoneId(cloneProposalRef, cloneLegFileName));
+            clonedMilestoneIds.add(getClonedMilestoneId(cloneProposalRef, legDocument.getName()));
             properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CLONED_MILESTONE_ID), clonedMilestoneIds);
             updatedProposal = proposalService.updateProposal(originalProposal.getMetadata().get().getRef(), originalProposal.getId(), properties);
             updatedLegDocument = legService.updateLegDocument(legDocument.getMilestoneRef(), legDocument.getId(), LeosLegStatus.CONTRIBUTION_SENT);

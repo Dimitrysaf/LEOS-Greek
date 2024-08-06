@@ -146,6 +146,8 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
 
       promise.then(() => {
         this.handleEdit(data);
+      }).catch(e => {
+        console.log(e);
       });
     } else {
       this.handleEdit(data);

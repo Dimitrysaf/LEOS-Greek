@@ -13,7 +13,7 @@ public interface ContributionService {
 
     <T extends XmlDocument> List<ContributionVO> getDocumentContributions(String documentId, int annexIndex, Class<T> filterType);
 
-    Result<?> updateContributionStatusAfterContributionDone(String cloneProposalRef, String cloneLegFileName,
+    Result<?> updateContributionStatusAfterContributionDone(String cloneProposalRef, String cloneLegFileId,
                                                             CloneProposalMetadataVO cloneProposalMetadataVO);
 
     void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName,

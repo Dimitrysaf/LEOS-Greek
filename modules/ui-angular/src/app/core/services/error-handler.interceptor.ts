@@ -55,6 +55,8 @@ export class ErrorInterceptor implements HttpInterceptor {
             if (err.error instanceof Blob) {
               err.error.text().then((text) => {
                 this.notifyError(text);
+              }).catch(e => {
+                console.log(e);
               });
             } else {
               this.notifyError(`${err.error}`);

@@ -1,13 +1,13 @@
 package eu.europa.ec.leos.ui.event;
 
 public class RevisionDoneEvent {
-    private String legFileName;
+    private String legFileId;
 
-    public RevisionDoneEvent(String legFileName) {
-        this.legFileName = legFileName;
+    public RevisionDoneEvent(String legFileId) {
+        this.legFileId = legFileId;
     }
 
-    public String getLegFileName() {
-        return legFileName;
+    public String getLegFileId() {
+        return legFileId;
     }
 }

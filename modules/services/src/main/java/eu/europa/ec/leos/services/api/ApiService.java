@@ -97,13 +97,13 @@ public interface ApiService {
 
     MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName, String legFileId) throws IOException;
 
-    MilestoneViewResponse listMilestoneDocumentsFromVersionRef(String proposalRef, String versionedReference) throws IOException;
+    MilestoneViewResponse listMilestoneDocumentsFromVersionRef(String proposalRef, String versionedReference) throws Exception;
 
-    MilestoneViewResponse listContributionsView(String proposalRef, String legFilename) throws IOException;
+    MilestoneViewResponse listContributionsView(String proposalRef, String clonedLegFileName, String originalLegFileId) throws IOException;
 
     MilestonePDFDownloadResponse downloadMilestonePDF(String proposalRef, String legFileName, String legFileId) throws IOException;
 
-    MilestonePDFDownloadResponse downloadMilestonePDFFromVersion(String proposalRef, String versionedReference) throws IOException;
+    MilestonePDFDownloadResponse downloadMilestonePDFFromVersion(String proposalRef, String versionedReference) throws Exception;
 
     void validateProposal(String proposalRef) throws Exception;
 }

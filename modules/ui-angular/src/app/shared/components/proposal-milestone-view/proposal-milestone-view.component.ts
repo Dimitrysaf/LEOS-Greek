@@ -59,7 +59,7 @@ export type MilestoneDescriptor = Pick<Milestone,
 export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   @Input() milestone: MilestoneDescriptor;
   @Input() parentClonedProposal: boolean;
-  @Input() parentLegDocumentName: string;
+  @Input() parentLegDocumentId: string;
   @Output() closed = new EventEmitter();
   @ViewChild('dialog') dialog: EuiDialogComponent;
 
@@ -130,7 +130,6 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   open() {
     this.isOpened = true;
-    this.reloadDocs();
     this.dialog.dialogClose.subscribe((value) => {
       this.isOpened = false;
       this.closed.emit();
@@ -176,12 +175,28 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   requestStoredDocumentAnnotations(request: string) {
     if (request && this.isOpened) {
       const doc = this.documents[this.activeTabIndex];
-      this.milestonesService.sendRequestStoredDocumentAnnotations(
-        this.milestone.proposalRef,
-        this.milestone.legDocumentName,
-        doc.ref,
-        true,
-      );
+      if (this.parentLegDocumentId) {
+        this.milestonesService.sendRequestStoredDocumentAnnotationsFromVersionedRef(
+          this.milestone.proposalRef,
+          this.milestone.legDocumentName,
+          doc.ref + '_' + doc.version,
+          true,
+        );
+      } else if (this.milestone.legFileId) {
+        this.milestonesService.sendRequestStoredDocumentAnnotations(
+          this.milestone.proposalRef,
+          this.milestone.legFileId,
+          doc.ref,
+          true,
+        );
+      } else {
+        this.milestonesService.sendRequestStoredDocumentAnnotationsFromVersionedRef(
+          this.milestone.proposalRef,
+          this.milestone.legDocumentName,
+          this.milestone.versionedReference,
+          true,
+        );
+      }
     } else {
       this.milestonesService.sendEmptyStoredDocumentAnnotations();
     }
@@ -192,6 +207,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       .listContributionsView(
         this.milestone.proposalRef,
         this.milestone.legDocumentName,
+        this.milestone.legFileId,
       )
       .subscribe((response) => {
         this.handleMilestoneExplorerDocuments(response, hiddenCategories);
@@ -357,7 +373,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
         this.doAccept();
       }
     } else {
-      this.milestonesService.handleReject(this.milestone.proposalRef, this.parentLegDocumentName, this.milestone.legDocumentName, this.evaluateState(doc.state), doc.ref).subscribe({
+      this.milestonesService.handleReject(this.milestone.proposalRef, this.parentLegDocumentId, this.milestone.legDocumentName, this.evaluateState(doc.state), doc.ref).subscribe({
         next: (milestoneViewResponse: MilestoneViewResponse) => {
           this.handleMilestoneExplorerDocuments(milestoneViewResponse, this.hiddenCategories);
           this.setActiveTab(this.tmpSelectedTab);
@@ -391,7 +407,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
 
   doAccept() {
     const doc:MilestoneDocument = this.documents[this.activeTabIndex];
-    this.milestonesService.handleAccept(this.milestone.proposalRef, this.milestone.legDocumentName, this.evaluateState(doc.state), doc.ref, doc.type).subscribe({
+    this.milestonesService.handleAccept(this.milestone.proposalRef, this.parentLegDocumentId, this.milestone.legDocumentName, this.evaluateState(doc.state), doc.ref, doc.type).subscribe({
       next: (milestoneViewResponse: MilestoneViewResponse) => {
         this.handleMilestoneExplorerDocuments(milestoneViewResponse, this.hiddenCategories);
         this.setActiveTab(this.tmpSelectedTab);

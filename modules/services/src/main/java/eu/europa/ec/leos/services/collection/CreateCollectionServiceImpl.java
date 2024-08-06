@@ -244,14 +244,14 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
     }
 
     @Override
-    public Result<?> updateOriginalProposalAfterRevisionDone(String cloneProposalRef, String cloneLegFileName) {
+    public Result<?> updateOriginalProposalAfterRevisionDone(String cloneProposalRef, String cloneLegFileId) {
         CloneProposalMetadataVO cloneProposalMetadataVO = cloneContext.getCloneProposalMetadataVO();
         if (cloneProposalMetadataVO == null) {
             cloneProposalMetadataVO = new CloneProposalMetadataVO();
         }
         cloneProposalMetadataVO.setRevisionStatus(messageHelper.getMessage("clone.proposal.status.contribution.done"));
         Result<?> result = contributionService.updateContributionStatusAfterContributionDone(cloneProposalRef,
-                cloneLegFileName, cloneProposalMetadataVO);
+                cloneLegFileId, cloneProposalMetadataVO);
         if (result.isOk()) {
             Proposal updatedProposal = (Proposal) ((Pair) result.get()).left();
             String proposalUrl = urlBuilder.buildProposalViewUrl(updatedProposal.getMetadata().get().getRef());

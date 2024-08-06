@@ -79,7 +79,7 @@ export class DocumentComponent
 
     this.milestoneService.triggerRequestStoredDocumentAnnotations$.subscribe((request) => {
       if (request && this.contributionView) {
-        this.milestoneService.sendRequestStoredDocumentAnnotations(request.proposalRef, request.legFileName, request.documentRef, false);
+        this.milestoneService.sendRequestStoredDocumentAnnotationsFromVersionedRef(request.proposalRef, request.legFileName, request.versionedReference, false);
       } else {
         this.milestoneService.sendEmptyStoredDocumentAnnotations();
       }

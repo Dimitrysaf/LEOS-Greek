@@ -173,7 +173,6 @@ public interface PackageRepository {
      */
     <D extends LeosDocument> D findDocumentByPackagePathAndName(String path, String name, Class<? extends D> type);
 
-
     /**
      * Finds leg most recent leg document that contains a specific version of a document.
      *
@@ -181,7 +180,35 @@ public interface PackageRepository {
      * @param versionedReference the document reference with the version.
      * @return A leg document that contains the reference
      */
-    LegDocument findLastLegByVersionedReference(String path, String versionedReference);
+    LegDocument findLastLegByVersionedReference(String path, String versionedReference) throws Exception;
+
+    /**
+     * Finds leg most recent leg document that contains a specific version of a document.
+     *
+     * @param path the path of the package where to find the documents
+     * @param versionedReference the document reference with the version.
+     * @return A list of leg documents that contain the reference
+     */
+    LegDocument findLastContributionByVersionedReference(String path, String versionedReference) throws Exception;
+
+    /**
+     * Finds leg most recent leg document that contains a specific version of a document.
+     *
+     * @param path the path of the package where to find the documents
+     * @param legFileName the leg file name.
+     * @param versionedReference the document reference with the version.
+     * @return A list of leg documents that contain the reference
+     */
+    LegDocument findLastContributionByVersionedReferenceAndName(String path, String legFileName, String versionedReference) throws Exception;
+
+    /**
+     * Finds leg most recent contribtuion'leg document from name.
+     *
+     * @param path the path of the package where to find the documents
+     * @param legFileName the document leg's file name.
+     * @return A leg document that contains the reference
+     */
+    LegDocument findLastContribution(String path, String legFileName);
 
     /**
      * Finds documents with the specified characteristics.

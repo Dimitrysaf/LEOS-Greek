@@ -448,7 +448,7 @@ export class ProposalDetailsService implements OnDestroy {
     return this.http
       .post(
         `${apiBaseUrl}/secured/contribution/revision-done/${this.proposalRef}`,
-        milestone.legDocumentName,
+        milestone.legFileId,
       )
       .subscribe({
         next: (res) => {

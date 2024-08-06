@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_ADDED;
+import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.support.XmlHelper.ANNEX_FILE_PREFIX;
 
 public class MilestoneHelper {
@@ -81,7 +83,10 @@ public class MilestoneHelper {
                     Optional<String> rejectedAnnex = legDocument.getContainedDocuments().stream().filter(
                             fileName -> fileName.contains(PROCESSED) && fileName.startsWith(annexFilename)).findFirst();
 
-                    if (acceptedAnnex.isPresent() || rejectedAnnex.isPresent()) {
+                    if (acceptedAnnex.isPresent()) {
+                        String processedAnnexFilename = annexFilename.concat(ACCEPTED_ADDED);
+                        annexAddedMap.put(processedAnnexFilename, value);
+                    } else if (rejectedAnnex.isPresent()) {
                         //Add the processed annexes with the suffix "_processed"
                         String processedAnnexFilename = annexFilename.concat(PROCESSED);
                         annexAddedMap.put(processedAnnexFilename, value);
@@ -129,7 +134,9 @@ public class MilestoneHelper {
                     Optional<String> rejectedAnnex = originalLegDocument.getContainedDocuments().stream().filter(
                             fileName -> fileName.contains(PROCESSED) && fileName.startsWith(originalEntryKey)).findFirst();
 
-                    if (!acceptedAnnex.isPresent() || rejectedAnnex.isPresent()) {
+                    if (!acceptedAnnex.isPresent()) {
+                        annexDeletedMap.put(originalEntryKey.concat(ACCEPTED_DELETED), entry.getValue());
+                    } else if (rejectedAnnex.isPresent()) {
                         //Add the processed annexes with the suffix "_processed"
                         annexDeletedMap.put(originalEntryKey.concat(PROCESSED), entry.getValue());
                     } else {
