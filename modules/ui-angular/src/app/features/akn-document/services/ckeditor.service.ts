@@ -231,6 +231,7 @@ export class CKEditorService {
       {
         instanceType: process.env.NG_APP_LEOS_INSTANCE,
         tocItemsJsonArray: leosState.tocItemsJsonArray,
+        tocEdition: leosState.tocEdition
       },
       { rootElement },
     );
@@ -566,6 +567,8 @@ export class CKEditorService {
     config['refConfigs'] = oldConfig.refConfigs;
 
     config['langGroup'] = oldConfig.langGroup;
+
+    config['tocEdition'] = !oldConfig.profile || oldConfig.profile.tocEdition;
 
     const profileTCEnabled =
       !oldConfig.profile || oldConfig.profile.trackChangesEnabled;
