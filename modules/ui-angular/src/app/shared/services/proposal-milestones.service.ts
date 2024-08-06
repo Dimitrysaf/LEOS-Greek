@@ -20,13 +20,13 @@ export class ProposalMilestonesService {
   triggerRequestStoredDocumentAnnotations$: Observable<{
     proposalRef;
     legFileName;
-    documentRef;
+    versionedReference;
   }>;
   private requestStoredDocumentAnnotations = new BehaviorSubject<string>(null);
   private triggerRequestStoredDocumentAnnotationsBS = new BehaviorSubject<{
     proposalRef;
     legFileName;
-    documentRef;
+    versionedReference;
   }>(null);
   private receiveStoredDocumentAnnotations = new BehaviorSubject<string>(null);
   private readyToMergeStatusSource = new BehaviorSubject<string>('');
@@ -66,9 +66,9 @@ export class ProposalMilestonesService {
     );
   }
 
-  listContributionsView(proposalRef: string, legFileName: string) {
+  listContributionsView(proposalRef: string, legFileName: string, legFileId: string) {
     return this.http.get<MilestoneViewResponse>(
-      `${apiBaseUrl}/secured/contribution/milestones/${proposalRef}/viewContribution/${legFileName}`,
+      `${apiBaseUrl}/secured/contribution/milestones/${proposalRef}/viewContribution/${legFileName}?legFileId=${legFileId}`,
     );
   }
 
@@ -79,16 +79,31 @@ export class ProposalMilestonesService {
   triggerRequestStoredDocumentAnnotations(
     proposalRef: string,
     legFileName: string,
-    documentRef: string,
+    versionedReference: string,
   ) {
     this.triggerRequestStoredDocumentAnnotationsBS.next({
       proposalRef,
       legFileName,
-      documentRef,
+      versionedReference,
     });
   }
 
   sendRequestStoredDocumentAnnotations(
+    proposalRef: string,
+    legFileId: string,
+    documentRef: string,
+    removeRevisionPrefix: boolean,
+  ) {
+    return this.http
+      .get<string>(
+        `${apiBaseUrl}/secured/document/${proposalRef}/stored-annotations/${documentRef}?legFileId=${legFileId}&removeRevisionPrefix=${removeRevisionPrefix}`,
+      )
+      .subscribe((response) => {
+        this.receiveStoredDocumentAnnotations.next(response);
+      });
+  }
+
+  sendRequestStoredDocumentAnnotationsFromContribution(
     proposalRef: string,
     legFileName: string,
     documentRef: string,
@@ -101,6 +116,31 @@ export class ProposalMilestonesService {
       .subscribe((response) => {
         this.receiveStoredDocumentAnnotations.next(response);
       });
+  }
+
+  sendRequestStoredDocumentAnnotationsFromVersionedRef(
+    proposalRef: string,
+    legFileName: string,
+    versionedRef: string,
+    removeRevisionPrefix: boolean,
+  ) {
+    if (legFileName) {
+      return this.http
+        .get<string>(
+          `${apiBaseUrl}/secured/document/${proposalRef}/stored-annotations?legFileName=${legFileName}&versionedReference=${versionedRef}&removeRevisionPrefix=${removeRevisionPrefix}`,
+        )
+        .subscribe((response) => {
+          this.receiveStoredDocumentAnnotations.next(response);
+        });
+    } else {
+      return this.http
+        .get<string>(
+          `${apiBaseUrl}/secured/document/${proposalRef}/stored-annotations?versionedReference=${versionedRef}&removeRevisionPrefix=${removeRevisionPrefix}`,
+        )
+        .subscribe((response) => {
+          this.receiveStoredDocumentAnnotations.next(response);
+        });
+    }
   }
 
   sendEmptyStoredDocumentAnnotations() {
@@ -210,18 +250,13 @@ export class ProposalMilestonesService {
     this.readyToMergeStatusSource.next('');
   }
 
-  handleAccept(proposalRef: string, legFileName: string, isAdded: boolean, docRef: string, docCategory: string) {
+  handleAccept(proposalRef: string, originalLegFileId: string, legFileName: string, isAdded: boolean, docRef: string, docCategory: string) {
     return this.http
-      .get(`${apiBaseUrl}/secured/contribution/milestones/accept-doc/${proposalRef}/${docRef}/${legFileName}?isAdded=${isAdded}&docCategory=${docCategory}`);
+      .get(`${apiBaseUrl}/secured/contribution/milestones/accept-doc/${proposalRef}/${docRef}/${legFileName}?isAdded=${isAdded}&originalLegFileId=${originalLegFileId}&docCategory=${docCategory}`);
   }
 
-  handleReject(proposalRef: string, parentLegFileName: string, milestoneLegFileName: string, isAdded: boolean, docRef: string) {
-    if (parentLegFileName) {
-      return this.http
-        .get(`${apiBaseUrl}/secured/contribution/milestones/reject-doc/${proposalRef}/${docRef}/${milestoneLegFileName}?isAdded=${isAdded}&parentLegFileName=${parentLegFileName}`);
-    } else {
-      return this.http
-        .get(`${apiBaseUrl}/secured/contribution/milestones/reject-doc/${proposalRef}/${docRef}/${milestoneLegFileName}?isAdded=${isAdded}`);
-    }
+  handleReject(proposalRef: string, originalLegFileId: string, milestoneLegFileName: string, isAdded: boolean, docRef: string) {
+    return this.http
+      .get(`${apiBaseUrl}/secured/contribution/milestones/reject-doc/${proposalRef}/${docRef}/${milestoneLegFileName}?isAdded=${isAdded}&originalLegFileId=${originalLegFileId}`);
   }
 }

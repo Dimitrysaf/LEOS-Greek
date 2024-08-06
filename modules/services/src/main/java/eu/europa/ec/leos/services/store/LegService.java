@@ -15,7 +15,13 @@ import java.util.Map;
 
 public interface LegService {
     
-    LegDocument findLastLegByVersionedReference(String path, String versionedReference);
+    LegDocument findLastLegByVersionedReference(String path, String versionedReference) throws Exception;
+
+    LegDocument findLastContribution(String path, String legFileName);
+
+    LegDocument findLastContributionByVersionedReference(String path, String versionedReference) throws Exception;
+
+    LegDocument findLastContributionByVersionedReferenceAndName(String path, String legFileName, String versionedReference) throws Exception;
 
     LegPackage createLegPackage(String proposalId, ExportOptions exportOptions) throws IOException;
 
@@ -38,7 +44,9 @@ public interface LegService {
     
     LegDocument updateLegDocument(String id, byte[] pdfJobZip, byte[] wordJobZip);
 
-    LegDocument updateLegDocumentFeedbackAnnotations(String proposalRef, String legFileName, String documentRef, String documentName, ExportOptions exportOptions) throws IOException;
+    LegDocument updateLegDocumentFeedbackAnnotations(String proposalRef, String legFileName, String documentRef, String contributionsVersionRef,
+                                                     String documentName,
+                                                     ExportOptions exportOptions) throws Exception;
     
     LegDocument findLegDocumentById(String id);
     
@@ -66,9 +74,9 @@ public interface LegService {
 
     String storeLegDocumentTemporary(final byte[] bytes);
 
-    String getFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef) throws IOException;
+    String getFeedbackAnnotationsFromLeg(String legFileId, String documentRef, String proposalRef) throws IOException;
 
     String removePermissionsStoredAnnotations(String storedFeedbackAnnotations);
 
-    int countFeedbacksToBeSentOnContribution(String ref, String proposalRef, String legFileName);
+    int countFeedbacksToBeSentOnContribution(String versionedReference, String proposalRef, String legFileName);
 }

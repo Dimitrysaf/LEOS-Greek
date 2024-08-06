@@ -23,6 +23,7 @@ import java.util.Objects;
 public class MilestonesVO {
     private String title;
     private final String legDocumentName;
+    private final String legDocumentId;
     private final String proposalRef;
     private final String createdDate;
     private Date updatedDate;
@@ -32,13 +33,14 @@ public class MilestonesVO {
     private boolean isContributionChanged;
 
     private static final DateTimeFormatter dateFormat =  DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
-    public MilestonesVO(List<String> titles, Date createdDate, Date updatedDate, String status, String legDocumentName,
+    public MilestonesVO(List<String> titles, Date createdDate, Date updatedDate, String status, String legDocumentName, String legDocumentId,
                         String proposalRef) {
         this.title = String.join(",", titles);
         this.updatedDate = updatedDate;
         this.createdDate = dateFormat.format(createdDate.toInstant());
         this.status = status;
         this.legDocumentName = legDocumentName;
+        this.legDocumentId = legDocumentId;
         this.proposalRef = proposalRef;
     }
 
@@ -127,5 +129,9 @@ public class MilestonesVO {
                 ", updatedDate=" + updatedDate +
                 ", legDocumentName='" + legDocumentName + '\'' +
                 '}';
+    }
+
+    public String getLegDocumentId() {
+        return legDocumentId;
     }
 }

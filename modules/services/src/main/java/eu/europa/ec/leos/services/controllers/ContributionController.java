@@ -54,9 +54,9 @@ public class ContributionController {
 
     @PostMapping(value = "/revision-done/{proposalRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> updateClonedProposalRevisionStatus(@PathVariable("proposalRef") String proposalRef, @RequestBody String legFilename) {
+    public ResponseEntity<Object> updateClonedProposalRevisionStatus(@PathVariable("proposalRef") String proposalRef, @RequestBody String legFileId) {
         proposalRef = encodeParam(proposalRef);
-        Result result = contributionApiService.updateClonedProposalRevisionStatus(proposalRef, legFilename);
+        Result result = contributionApiService.updateClonedProposalRevisionStatus(proposalRef, legFileId);
         if (result.isOk()) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -120,11 +120,13 @@ public class ContributionController {
 
     @RequestMapping(value = "/milestones/{proposalRef}/viewContribution/{legFileName}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getClonedMilestoneContribution(@PathVariable("proposalRef") String proposalRef,
-                                                                 @PathVariable("legFileName") String legFileName) {
+                                                                 @PathVariable("legFileName") String clonedLegFileName,
+                                                                 @RequestParam("legFileId") String originalLegFileId) {
         try {
             proposalRef = encodeParam(proposalRef);
-            legFileName = encodeParam(legFileName);
-            MilestoneViewResponse milestoneView = apiService.listContributionsView(proposalRef, legFileName);
+            clonedLegFileName = encodeParam(clonedLegFileName);
+            originalLegFileId = encodeParam(originalLegFileId);
+            MilestoneViewResponse milestoneView = apiService.listContributionsView(proposalRef, clonedLegFileName, originalLegFileId);
             return new ResponseEntity<>(milestoneView, HttpStatus.OK);
         } catch (Exception e) {
             LOG.error("Error occurred while getting milestone contribution views - " + e.getMessage());
@@ -137,24 +139,29 @@ public class ContributionController {
     public ResponseEntity<Object> sendFeedback(@RequestBody SendFeedbackRequest sendFeedbackRequest) {
         try {
             contributionApiService.updateFeedbackAnnotations(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getLegFileName(), sendFeedbackRequest.getContributionsVersionRef());
-            contributionApiService.sendFeedback(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getDocumentRef(), sendFeedbackRequest.getLegFileName());
-            return ResponseEntity.ok().build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        try {
+            contributionApiService.sendFeedback(sendFeedbackRequest.getProposalRef(), sendFeedbackRequest.getDocumentRef(), sendFeedbackRequest.getLegFileName());
+        } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/{legFileName}/{proposalRef}/count-feedbacks/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/{legFileName}/{proposalRef}/count-feedbacks/{versionedReference}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> countFeedbacks(@PathVariable("legFileName") String legFileName,
-                                                  @PathVariable("documentRef") String documentRef,
+                                                  @PathVariable("versionedReference") String versionedReference,
                                                   @PathVariable("proposalRef") String proposalRef) {
         try {
-            documentRef = encodeParam(documentRef);
+            versionedReference = encodeParam(versionedReference);
             proposalRef = encodeParam(proposalRef);
             legFileName = encodeParam(legFileName);
-            int nbFeedbacks = contributionApiService.countFeedbackAnnotationsFromLeg(legFileName, documentRef, proposalRef);
+            int nbFeedbacks = contributionApiService.countFeedbackAnnotationsFromLeg(legFileName, versionedReference, proposalRef);
             return ResponseEntity.ok().body(nbFeedbacks);
         } catch (Exception e) {
             LOG.error("Error occurred while counting feedbacks for - " + legFileName, e);
@@ -168,10 +175,12 @@ public class ContributionController {
     public ResponseEntity<Object> milestoneAcceptAnnex(@PathVariable("proposalRef") String proposalRef,
                                                        @PathVariable("annexRef") String annexRef,
                                                        @PathVariable("legFileName") String legFileName,
+                                                       @RequestParam(value="originalLegFileId") String originalLegFileId,
                                                        @RequestParam("isAdded") boolean isAdded,
                                                        @RequestParam(value = "docCategory", required = false) String docCategory) {
         try {
             LeosCategory category = docCategory != null ? LeosCategory.valueOf(docCategory) : LeosCategory.ANNEX;
+            originalLegFileId = encodeParam(originalLegFileId);
             annexRef = encodeParam(annexRef);
             proposalRef = encodeParam(proposalRef);
             legFileName = encodeParam(legFileName);
@@ -181,7 +190,7 @@ public class ContributionController {
                     isAdded,
                     annexRef,
                     category);
-            return ResponseEntity.ok().body(apiService.listMilestoneDocuments(proposalRef, legFileName, null));
+            return ResponseEntity.ok().body(apiService.listContributionsView(proposalRef, legFileName, originalLegFileId));
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while handling annex on milestone - " + proposalRef, e);
             return new ResponseEntity<>("Unexpected error occurred while handling annex on milestone", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -195,18 +204,16 @@ public class ContributionController {
                                                        @PathVariable("docRef") String docRef,
                                                        @PathVariable("milestoneLegFileName") String milestoneLegFileName,
                                                        @RequestParam("isAdded") boolean isAdded,
-                                                       @RequestParam(value="parentLegFileName", required = false) String parentLegFileName) {
+                                                       @RequestParam(value="originalLegFileId") String originalLegFileId) {
         try {
-            if (parentLegFileName != null) {
-                parentLegFileName = encodeParam(parentLegFileName);
-            }
+            originalLegFileId = encodeParam(originalLegFileId);
             docRef = encodeParam(docRef);
             proposalRef = encodeParam(proposalRef);
             milestoneLegFileName = encodeParam(milestoneLegFileName);
             contributionApiService.handleMilestoneReject(proposalRef,
-                    isAdded ? milestoneLegFileName : parentLegFileName,
+                    milestoneLegFileName, originalLegFileId,
                     docRef, isAdded);
-            return ResponseEntity.ok().body(apiService.listMilestoneDocuments(proposalRef, milestoneLegFileName, null));
+            return ResponseEntity.ok().body(apiService.listContributionsView(proposalRef, milestoneLegFileName, originalLegFileId));
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while handling annex on milestone - " + proposalRef, e);
             return new ResponseEntity<>("Unexpected error occurred while handling annex on milestone", HttpStatus.INTERNAL_SERVER_ERROR);

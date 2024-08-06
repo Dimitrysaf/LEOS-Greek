@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.dto.request.ExportToConsiliumRequest;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.DownloadVersionResponse;
 import eu.europa.ec.leos.services.dto.response.FetchElementResponse;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 import java.util.List;
@@ -48,5 +49,11 @@ public interface DocumentApiService {
 
     DocumentViewResponse changeBaseVersion(String documentRef, LeosCategory documentType, String documentId, String versionLabel, String versionComment);
 
-    String getFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef, boolean removeRevisionprefix) throws IOException;
+    String getFeedbackAnnotationsFromVersionedReference(String versionedReference, String proposalRef, boolean removeRevisionprefix) throws Exception;
+
+    String getFeedbackAnnotationsFromVersionedReference(String versionedReference, String legFileName, String proposalRef, boolean removeRevisionprefix) throws Exception;
+
+    String getFeedbackAnnotationsFromLeg(String legFileId, String documentRef, String proposalRef, boolean removeRevisionprefix) throws IOException;
+
+    String getFeedbackAnnotationsFromContribution(String legFileName, String documentRef, String proposalRef, boolean removeRevisionprefix) throws IOException;
 }

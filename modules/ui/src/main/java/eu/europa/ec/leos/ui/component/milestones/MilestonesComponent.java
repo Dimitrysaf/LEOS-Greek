@@ -164,7 +164,7 @@ public class MilestonesComponent extends CustomComponent {
                         actionMenuItem.createMenuItem(messageHelper.getMessage("milestone.menu.item.send.contribution"), selectedItem -> sendCopyForRevision(vo));
                     } else {
                         MenuBar.MenuItem status = actionMenuItem.createMenuItem(messageHelper.getMessage("milestone.menu.item.contribution.done"),
-                                selectedItem -> revisionDone(vo.getLegDocumentName()));
+                                selectedItem -> revisionDone(vo.getLegDocumentId()));
 
                         if (!vo.getStatus().equals(messageHelper.getMessage("milestones.column.status.value." + LeosLegStatus.FILE_READY.name()))) {
                             status.setEnabled(false);
@@ -208,7 +208,7 @@ public class MilestonesComponent extends CustomComponent {
         eventBus.post(new ViewContributionEvent(vo.getLegDocumentName(), vo.getProposalRef(), vo.getTitle()));
     }
 
-    private void revisionDone(String legDocumentName) {
+    private void revisionDone(String legDocumentId) {
         if (isClonedProposal) {
             ConfirmDialog.show(getUI(),
                     messageHelper.getMessage("create.clone.milestone.title"),
@@ -217,7 +217,7 @@ public class MilestonesComponent extends CustomComponent {
                     messageHelper.getMessage("create.clone.milestone.cancel"),
                     (ConfirmDialog.Listener) dialog -> {
                         if (dialog.isConfirmed()) {
-                            eventBus.post(new RevisionDoneEvent(legDocumentName));
+                            eventBus.post(new RevisionDoneEvent(legDocumentId));
                         }
                     });
         }

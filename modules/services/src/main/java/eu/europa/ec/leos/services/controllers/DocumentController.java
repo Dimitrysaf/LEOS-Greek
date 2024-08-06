@@ -17,6 +17,9 @@ package eu.europa.ec.leos.services.controllers;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosExportStatus;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.services.api.DocumentApiService;
 import eu.europa.ec.leos.services.dto.request.DoubleCompareRequest;
 import eu.europa.ec.leos.services.dto.request.DownloadComparedVersionRequest;
@@ -235,6 +238,22 @@ public class DocumentController {
         }
     }
 
+    @GetMapping(value = "/{proposalRef}/stored-annotations/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getStoredAnnotationsFromId(@PathVariable("documentRef") String documentRef,
+                                                             @PathVariable("proposalRef") String proposalRef,
+                                                             @RequestParam("legFileId") String legFileId,
+                                                             @RequestParam("removeRevisionPrefix") Boolean removeRevisionPrefix) {
+        try {
+            documentRef = encodeParam(documentRef);
+            proposalRef = encodeParam(proposalRef);
+            String annots = documentApiService.getFeedbackAnnotationsFromLeg(legFileId, documentRef, proposalRef, removeRevisionPrefix);
+            return ResponseEntity.ok().body(annots);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting annotations in LEG file for - " + legFileId, e);
+            return new ResponseEntity<>("Unexpected error while trying to get annotations in LEG file ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @GetMapping(value = "/{legFileName}/{proposalRef}/stored-annotations/{documentRef}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -246,10 +265,32 @@ public class DocumentController {
             documentRef = encodeParam(documentRef);
             proposalRef = encodeParam(proposalRef);
             legFileName = encodeParam(legFileName);
-            String annots = documentApiService.getFeedbackAnnotationsFromLeg(legFileName, documentRef, proposalRef, removeRevisionPrefix);
+            String annots = documentApiService.getFeedbackAnnotationsFromContribution(legFileName, documentRef, proposalRef, removeRevisionPrefix);
             return ResponseEntity.ok().body(annots);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annotations in LEG file for - " + legFileName, e);
+            return new ResponseEntity<>("Unexpected error while trying to get annotations in LEG file ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value = "/{proposalRef}/stored-annotations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> getStoredAnnotationsFromVersionedRef(@PathVariable("proposalRef") String proposalRef,
+                                                                       @RequestParam(required=false, value="legFileName") String legFileName,
+                                                                       @RequestParam("versionedReference") String versionedReference,
+                                                                       @RequestParam("removeRevisionPrefix") Boolean removeRevisionPrefix) {
+        try {
+            proposalRef = encodeParam(proposalRef);
+            String annots;
+            if (legFileName != null) {
+                legFileName = encodeParam(legFileName);
+                annots = documentApiService.getFeedbackAnnotationsFromVersionedReference(versionedReference, legFileName, proposalRef, removeRevisionPrefix);
+            } else {
+                annots = documentApiService.getFeedbackAnnotationsFromVersionedReference(versionedReference, proposalRef, removeRevisionPrefix);
+            }
+            return ResponseEntity.ok().body(annots);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting annotations in LEG file by versioned Reference - " + versionedReference, e);
             return new ResponseEntity<>("Unexpected error while trying to get annotations in LEG file ", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

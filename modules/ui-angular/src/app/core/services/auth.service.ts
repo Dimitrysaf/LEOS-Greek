@@ -307,6 +307,8 @@ export class AuthService implements OnDestroy {
       if (requestError.error instanceof Blob) {
         requestError.error.text().then((text) => {
           this.showErrorPopup(text);
+        }).catch(e => {
+          console.log(e);
         });
       } else {
         this.showErrorPopup(`${requestError.error}`);

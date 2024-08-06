@@ -44,7 +44,7 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
   milestoneAnnotationWarningModal: MilestoneAnnotationWarningModalComponent;
   milestoneViewData: MilestoneDescriptor = null;
   parentClonedProposal;
-  parentLegDocumentName: string = null;
+  parentLegDocumentId: string = null;
   dataSource: Milestone[] = [];
   permissions: Permission[];
   milestoneStatus = MilestoneStatus;
@@ -229,8 +229,8 @@ export class ProposalMilestonesComponent implements OnInit, OnDestroy {
     }
   }
 
-  updateReadyToMergeStatus(milestone: Milestone, parentLegDocumentName: string): void {
-    this.parentLegDocumentName = parentLegDocumentName;
+  updateReadyToMergeStatus(milestone: Milestone, parentLegDocumentId: string): void {
+    this.parentLegDocumentId = parentLegDocumentId;
     this.proposalMilestonesService.updateReadyToMergeStatus(milestone.status);
     this.openMilestoneViewDialog(milestone, this.proposal.cloneProposalMetadataVO?.clonedProposal);
   }

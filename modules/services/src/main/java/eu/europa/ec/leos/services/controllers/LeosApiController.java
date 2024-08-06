@@ -486,12 +486,12 @@ public class LeosApiController {
     @RequestMapping(value = "/secured/revisionDone", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> updateClonedProposalRevisionStatus(@RequestParam("cloneProposalId") String cloneProposalId,
-                                                                     @RequestParam("legFileName") String legFileName) {
+                                                                     @RequestParam("legFileId") String legFileId) {
         Result<?> result;
         try {
             cloneProposalId = encodeParam(cloneProposalId);
-            legFileName = encodeParam(legFileName);
-            result = createCollectionService.updateOriginalProposalAfterRevisionDone(cloneProposalId, legFileName);
+            legFileId = encodeParam(legFileId);
+            result = createCollectionService.updateOriginalProposalAfterRevisionDone(cloneProposalId, legFileId);
         } catch (Exception ex) {
             LOG.error("Error Occurred while getting revision done status: " + ex.getMessage(), ex);
             return new ResponseEntity<>("Error Occurred while getting revision done status", HttpStatus.INTERNAL_SERVER_ERROR);

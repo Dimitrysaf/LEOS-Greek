@@ -23,7 +23,7 @@ public class ContributionServiceMandateImpl implements ContributionService {
     }
 
     @Override
-    public Result<?> updateContributionStatusAfterContributionDone(String cloneProposalRef, String cloneLegFileName,
+    public Result<?> updateContributionStatusAfterContributionDone(String cloneProposalRef, String cloneLegFileId,
                                                                    CloneProposalMetadataVO cloneProposalMetadataVO) {
         return new Result<>(new Pair(null, null), null);
     }

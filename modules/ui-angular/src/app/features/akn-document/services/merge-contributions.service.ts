@@ -254,10 +254,10 @@ export class MergeContributionsService {
         if (!contribution.greyed) {
           const legFileName = contribution.legFileName;
           const proposalRef = contribution.proposalRef;
-          const documentRef = contribution.documentName.replaceAll('.xml', '');
+          const versionedReference = contribution.versionedReference;
           return this.http
             .get<number>(
-              `${apiBaseUrl}/secured/contribution/${legFileName}/${proposalRef}/count-feedbacks/${documentRef}`,
+              `${apiBaseUrl}/secured/contribution/${legFileName}/${proposalRef}/count-feedbacks/${versionedReference}`,
             )
             .subscribe((nbFeedbacks) => {
               if (nbFeedbacks > 0) {

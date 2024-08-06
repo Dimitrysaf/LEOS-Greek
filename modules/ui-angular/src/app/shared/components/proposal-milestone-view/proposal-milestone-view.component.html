@@ -74,11 +74,11 @@
               class="tab-icon"
               *ngIf="(doc.state === 'Rejected_Deleted' || doc.state === 'Rejected_Added') && !this.parentClonedProposal"
               size="s"
-              icon="eui-undo">
+              icon="eui-close">
             </eui-icon-svg>
             <eui-icon-svg
               class="tab-icon"
-              *ngIf="(doc.state === 'Accepted_Deleted' || doc.state === 'Accpeted_Added') && !this.parentClonedProposal"
+              *ngIf="(doc.state === 'Accepted_Deleted' || doc.state === 'Accepted_Added') && !this.parentClonedProposal"
               size="s"
               icon="eui-check">
             </eui-icon-svg>

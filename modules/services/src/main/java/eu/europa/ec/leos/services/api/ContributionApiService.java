@@ -15,7 +15,7 @@ public interface ContributionApiService {
 
     CreateCollectionResult createCloneProposal(String userLogin, String legDocumentName, String legFileId);
 
-    Result<?> updateClonedProposalRevisionStatus(String proposalRef, String legFilename);
+    Result<?> updateClonedProposalRevisionStatus(String proposalRef, String legFileId);
 
     List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex);
 
@@ -29,11 +29,11 @@ public interface ContributionApiService {
 
     void sendFeedback(String proposalRef, String documentRef, String legFileName);
     
-    void updateFeedbackAnnotations(String cloneProposalRef, String cloneLegFileName, String contributionsVersionRef) throws IOException;
+    void updateFeedbackAnnotations(String cloneProposalRef, String cloneLegFileName, String contributionsVersionRef) throws Exception;
 
-    int countFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef);
+    int countFeedbackAnnotationsFromLeg(String legFileName, String versionedReference, String proposalRef);
 
-    void handleMilestoneAccept(String proposalRef, String legFileName, Boolean isAddedElseDeleted, String annexRef, LeosCategory category) throws IOException;
+    void handleMilestoneAccept(String proposalRef, String clonedLegFileName, Boolean isAddedElseDeleted, String annexRef, LeosCategory category) throws IOException;
 
-    void handleMilestoneReject(String proposalRef, String legFileName, String annexRef, boolean isAdded);
+    void handleMilestoneReject(String proposalRef, String clonedLegFileName, String originalLegFileId, String annexRef, boolean isAdded);
 }

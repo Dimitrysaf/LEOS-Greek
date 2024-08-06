@@ -245,10 +245,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public Result<?> updateClonedProposalRevisionStatus(String proposalRef, String legFilename) {
+    public Result<?> updateClonedProposalRevisionStatus(String proposalRef, String legFileId) {
         Proposal proposal = proposalService.getProposalByRef(proposalRef);
         this.populateCloneProposalMetadata(proposal);
-        return createCollectionService.updateOriginalProposalAfterRevisionDone(proposalRef, legFilename);
+        return createCollectionService.updateOriginalProposalAfterRevisionDone(proposalRef, legFileId);
     }
 
     @Override
@@ -290,7 +290,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public void updateFeedbackAnnotations(String cloneProposalRef, String cloneLegFileName, String contributionsVersionRef) throws IOException {
+    public void updateFeedbackAnnotations(String cloneProposalRef, String cloneLegFileName, String contributionsVersionRef) throws Exception {
         XmlDocument contributionVersion = Optional.ofNullable(this.contributionService.findVersionByVersionedReference(contributionsVersionRef, XmlDocument.class))
                 .orElseThrow(() -> new RuntimeException(String.format("Contribution version not found for %s", contributionsVersionRef)));
         String documentRef = contributionVersion.getMetadata().get().getRef();
@@ -299,7 +299,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         exportOptions.setWithAnonymization(true);
         exportOptions.setWithAnnotations(true);
         exportOptions.setWithFeedbackAnnotations(true);
-        legService.updateLegDocumentFeedbackAnnotations(cloneProposalRef, cloneLegFileName, documentRef, contributionVersion.getName(), exportOptions);
+        legService.updateLegDocumentFeedbackAnnotations(cloneProposalRef, cloneLegFileName, documentRef, contributionsVersionRef,
+                contributionVersion.getName(),
+                exportOptions);
     }
 
     private String storeRevisionAnnotationsTemporary(final String documentRef, final String legFileName, final String versionedReference) {
@@ -447,8 +449,8 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public int countFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef) {
-        return legService.countFeedbacksToBeSentOnContribution(documentRef, proposalRef, legFileName);
+    public int countFeedbackAnnotationsFromLeg(String legFileName, String versionedReference, String proposalRef) {
+        return legService.countFeedbacksToBeSentOnContribution(versionedReference, proposalRef, legFileName);
     }
     
     private void populateTrackChangesContext(Proposal proposal) {
@@ -557,15 +559,12 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public void handleMilestoneReject(String proposalRef, String legFileName, String docRef, boolean isAdded) {
+    public void handleMilestoneReject(String proposalRef, String clonedLegFileName, String originalLegFileId, String docRef, boolean isAdded) {
         LeosPackage leosClonedPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosClonedPackage.getPath(), legFileName,
-                LegDocument.class);
+        LegDocument legDocument =
+                legService.findLastContribution(leosClonedPackage.getPath(), clonedLegFileName);
         if (!isAdded) {
-            Proposal clonedProposal = proposalService.findProposalByRef(proposalRef);
-            LeosPackage leosPackage = packageService.findPackageByDocumentRef(clonedProposal.getClonedFrom(), Proposal.class);
-            legDocument = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName,
-                    LegDocument.class);
+            legDocument = legService.findLegDocumentById(originalLegFileId);
         }
         final String docName = docRef;
         List<String> updatedDocuments = new ArrayList<>();
@@ -591,8 +590,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     @Override
     public void handleMilestoneAccept(String proposalRef, String legFileName, Boolean isAdded, String docRef, LeosCategory category) throws IOException {
         LeosPackage leosClonedPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosClonedPackage.getPath(), legFileName,
-                LegDocument.class);
+        LegDocument legDocument = legService.findLastContribution(leosClonedPackage.getPath(), legFileName);
         Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().
                 getSource().getBytes());
         String docName = docRef;

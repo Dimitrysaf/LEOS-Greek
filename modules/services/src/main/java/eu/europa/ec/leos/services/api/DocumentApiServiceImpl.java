@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
+import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
@@ -49,6 +50,7 @@ import eu.europa.ec.leos.services.store.WorkspaceService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -60,6 +62,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static eu.europa.ec.leos.services.api.ApiServiceImpl.DOC_VERSION_SEPARATOR;
+import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
 
@@ -224,8 +228,9 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
     }
 
     @Override
-    public String getFeedbackAnnotationsFromLeg(String legFileName, String documentRef, String proposalRef, boolean removeRevisionPrefix) throws IOException {
-        String result = legService.getFeedbackAnnotationsFromLeg(legFileName, documentRef, proposalRef);
+    public String getFeedbackAnnotationsFromLeg(String legFileId, String documentRef, String proposalRef,
+                                                boolean removeRevisionPrefix) throws IOException {
+        String result = legService.getFeedbackAnnotationsFromLeg(legFileId, documentRef, proposalRef);
 
         if (removeRevisionPrefix) {
             result = result.replaceAll("revision-", "");
@@ -235,4 +240,50 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         return result;
     }
 
+    @Override
+    public String getFeedbackAnnotationsFromVersionedReference(String versionedReference, String proposalRef,
+                                                boolean removeRevisionPrefix) throws Exception {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
+        String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
+        String result = legService.getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
+
+        if (removeRevisionPrefix) {
+            result = result.replaceAll("revision-", "");
+        } else {
+            result = legService.removePermissionsStoredAnnotations(result);
+        }
+        return result;
+    }
+
+    @Override
+    public String getFeedbackAnnotationsFromVersionedReference(String versionedReference, String legFileName, String proposalRef,
+                                                               boolean removeRevisionPrefix) throws Exception {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+        LegDocument legDocument = this.legService.findLastContributionByVersionedReferenceAndName(leosPackage.getPath(), legFileName, versionedReference);
+        String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
+        String result = legService.getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
+
+        if (removeRevisionPrefix) {
+            result = result.replaceAll("revision-", "");
+        } else {
+            result = legService.removePermissionsStoredAnnotations(result);
+        }
+        return result;
+    }
+
+    @Override
+    public String getFeedbackAnnotationsFromContribution(String legFileName, String documentRef, String proposalRef,
+                                                boolean removeRevisionPrefix) throws IOException {
+        LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
+        LegDocument legDoc = legService.findLastContribution(leosPackage.getPath(), legFileName);
+        String result = legService.getFeedbackAnnotationsFromLeg(legDoc.getId(), documentRef, proposalRef);
+
+        if (removeRevisionPrefix) {
+            result = result.replaceAll("revision-", "");
+        } else {
+            result = legService.removePermissionsStoredAnnotations(result);
+        }
+        return result;
+    }
 }

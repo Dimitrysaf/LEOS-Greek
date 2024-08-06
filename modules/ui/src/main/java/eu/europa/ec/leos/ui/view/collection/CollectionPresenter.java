@@ -507,7 +507,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                 Date.from(legDocument.getCreationInstant()),
                 Date.from(legDocument.getLastModificationInstant()),
                 messageHelper.getMessage("milestones.column.status.value." + legDocument.getStatus().name()),
-                legDocument.getName(), getProposalRef());
+                legDocument.getName(), legDocument.getId(), getProposalRef());
 
         if (cloneProposalMetadataVOs != null && !cloneProposalMetadataVOs.isEmpty()) {
             List<MilestonesVO> clonedMilestonesVOS = new ArrayList<>();
@@ -517,7 +517,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
                         concat(userService.getUser(cpmVo.getTargetUser()).getName()));
                 MilestonesVO milestoneVO = new MilestonesVO(titles, cpmVo.getCreationDate(),
                         null, cpmVo.getRevisionStatus(),
-                        cpmVo.getLegFileName(), cpmVo.getCloneProposalRef());
+                        cpmVo.getLegFileName(), legDocument.getId(), cpmVo.getCloneProposalRef());
                 milestoneVO.setClone(true);
                 if (cpmVo.getRevisionStatus().equalsIgnoreCase(
                         messageHelper.getMessage("clone.proposal.status.contribution.done")) &&
@@ -1640,7 +1640,7 @@ class CollectionPresenter extends AbstractLeosPresenter {
 
     @Subscribe
     public void revisionDoneRequestHandler(RevisionDoneEvent event) {
-        Result<?> result = createCollectionService.updateOriginalProposalAfterRevisionDone(proposalRef, event.getLegFileName());
+        Result<?> result = createCollectionService.updateOriginalProposalAfterRevisionDone(proposalRef, event.getLegFileId());
         Pair resultFiles = (Pair) result.get();
         if (result.isOk()) {
             eventBus.post(new MilestoneUpdatedEvent((LegDocument) resultFiles.right(), false));
