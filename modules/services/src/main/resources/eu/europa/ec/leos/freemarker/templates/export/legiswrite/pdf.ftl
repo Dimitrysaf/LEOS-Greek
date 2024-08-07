@@ -76,7 +76,6 @@ ns_prefixes={}>
             </leos>
             <formats>
                 <pdf>
-                    <format>pdf</format>
                     <format>pdf/a</format>
                 </pdf>
             </formats>
