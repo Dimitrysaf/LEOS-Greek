@@ -47,6 +47,12 @@
                 </profile>
             </profiles>
             <editable>true</editable>
+            <dapInfos>
+                <dapInfo>
+                    <dapInfoLabel>The title of a legal act</dapInfoLabel>
+                    <dapInfoURL>https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Title</dapInfoURL>
+                </dapInfo>
+            </dapInfos>
         </tocItem>
     </tocItems>
 

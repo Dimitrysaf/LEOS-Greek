@@ -48,6 +48,7 @@ define(function aknDocPurposeModule(require) {
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
     plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
     plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
+    plugins.push(require("plugins/leosDapInfo/leosDapInfo"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -94,7 +95,8 @@ define(function aknDocPurposeModule(require) {
             {name: 'insert', items: ['Mathjax', 'SpecialChar']},
             {name: 'tools', items: ['LeosShowBlocks']},
             {name: "mode", items: ['Sourcedialog']},
-            {name: 'colors', items: ['BGColor']}
+            {name: 'colors', items: ['BGColor']},
+            {name: 'dapInfo', items: ['leosDapInfo']}
         ],
         //show toolbar on startup
         startupFocus: 'end',

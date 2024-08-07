@@ -44,7 +44,17 @@ export interface TocItem {
   template: string | null;
   maxDepth: string | null;
   actionsPosition: ActionPositions | null;
+  dapInfos: DapInfos | null;
 }
+
+export type DapInfos = {
+  dapInfos: DapInfo[];
+};
+
+export type DapInfo = {
+  dapInfoLabel: string;
+  dapInfoURL: string;
+};
 
 export interface AutoNumbering {
   langNumConfigs: LangNumConfig[];
