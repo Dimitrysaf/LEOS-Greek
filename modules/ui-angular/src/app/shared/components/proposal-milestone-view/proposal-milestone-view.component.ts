@@ -39,6 +39,7 @@ type MilestoneDocument = {
 };
 
 export type MilestoneDescriptor = Pick<Milestone,
+  | 'clone'
   | 'createdBy'
   | 'createdDate'
   | 'legDocumentName'
@@ -175,18 +176,18 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   requestStoredDocumentAnnotations(request: string) {
     if (request && this.isOpened) {
       const doc = this.documents[this.activeTabIndex];
-      if (this.parentLegDocumentId) {
-        this.milestonesService.sendRequestStoredDocumentAnnotationsFromVersionedRef(
-          this.milestone.proposalRef,
-          this.milestone.legDocumentName,
-          doc.ref + '_' + doc.version,
-          true,
-        );
-      } else if (this.milestone.legFileId) {
+      if (this.milestone.legFileId && !this.milestone.clone) {
         this.milestonesService.sendRequestStoredDocumentAnnotations(
           this.milestone.proposalRef,
           this.milestone.legFileId,
           doc.ref,
+          true,
+        );
+      } else if (this.parentLegDocumentId) {
+        this.milestonesService.sendRequestStoredDocumentAnnotationsFromVersionedRef(
+          this.milestone.proposalRef,
+          this.milestone.legDocumentName,
+          doc.ref + '_' + doc.version,
           true,
         );
       } else {
