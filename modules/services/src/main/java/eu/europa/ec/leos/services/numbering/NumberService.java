@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.services.numbering;
 
+import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 
 import java.util.List;
@@ -39,4 +40,5 @@ public interface NumberService {
 
     byte[] renumberHigherSubDivisions(byte[] xmlContent, List<TableOfContentItemVO> tocList);
 
+    byte[] renumberHigherSubDivisions(byte[] xmlContent, String language, String elementName, List<TocItem> tocItems);
 }

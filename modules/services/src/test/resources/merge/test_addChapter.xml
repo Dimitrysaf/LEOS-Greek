@@ -331,7 +331,7 @@
                     <num xml:id="_akn_AWjBcM">Title #</num>
                     <heading xml:id="_akn_qmc6PN">Title heading...</heading>
                     <chapter leos:depth="3" xml:id="__akn_chapter_z3Ibxh">
-                        <num xml:id="_akn_nzX8wI">Chapter #</num>
+                        <num xml:id="_akn_nzX8wI">Chapter I</num>
                         <heading xml:id="_akn_BceP3R">Chapter heading...</heading>
                         <section leos:depth="4" xml:id="__akn_section_UG4Uqt">
                             <num xml:id="_akn_F9pAlu">Section #</num>
@@ -341,11 +341,11 @@
                 </title>
             </part>
             <chapter leos:depth="1" xml:id="__akn_chapter_BjDYqk">
-                <num xml:id="_akn_NoOLoV">Chapter #</num>
+                <num xml:id="_akn_NoOLoV">Chapter I</num>
                 <heading xml:id="_akn_py0g2K">IntitulÃ© du Chapitre...</heading>
             </chapter>
             <chapter xml:id="cha_MUNQWr">
-                <num xml:id="akn_2yQOfD">Chapter I</num>
+                <num xml:id="akn_2yQOfD">Chapter II</num>
                 <heading xml:id="akn_u9YZEG">General provisions</heading>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_aljBSj" leos:origin="ec" xml:id="art_1">
                     <num leos:editable="false" leos:origin="ec" xml:id="art_1__num">Article 1</num>
@@ -411,11 +411,11 @@
                 </article>
             </chapter>
             <chapter leos:action="insert" leos:depth="1" leos:origin="ls" leos:softaction="add" leos:softactionroot="true" leos:softdate="2024-03-08T12:37:02.794+01:00" leos:softuser="REVTI Gautam(CNECT)" leos:title="REVTI Gautam : 2024-03-08T12:37:02.788+01:00" leos:uid="gautare" xml:id="__akn_chapter_yUautN">
-                <num xml:id="_akn_k6mkKE">Chapter #</num>
+                <num xml:id="_akn_k6mkKE">Chapter III</num>
                 <heading xml:id="_akn_AddtIq">Chapter heading...</heading>
             </chapter>
             <chapter xml:id="cha_HysnPu">
-                <num xml:id="akn_rnHisF">Chapter II</num>
+                <num xml:id="akn_rnHisF">Chapter IV</num>
                 <heading xml:id="akn_RWG2yz">European Union Customs Single Window Certificates Exchange System</heading>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_zknBOT" xml:id="akn_art_2YbqTL">
                     <num leos:editable="false" xml:id="akn_art_2YbqTL_D4fiap">Article 4</num>
@@ -600,7 +600,7 @@
                 </article>
             </chapter>
             <chapter xml:id="cha_YaW7nA">
-                <num xml:id="akn_XqViZx">Chapter III</num>
+                <num xml:id="akn_XqViZx">Chapter V</num>
                 <heading xml:id="akn_RGD2LO">National single window environments for customs</heading>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_XV6KSx" xml:id="akn_art_dMHd93">
                     <num leos:editable="false" leos:origin="ec" xml:id="akn_art_dMHd93_zsIeaG">Article 8</num>
@@ -676,7 +676,7 @@
                 </article>
             </chapter>
             <chapter xml:id="cha_Fee09f">
-                <num xml:id="akn_S4iR11">Chapter IV</num>
+                <num xml:id="akn_S4iR11">Chapter VI</num>
                 <heading xml:id="akn_1rVo8P">Digital cooperation - information exchange and other procedural rules</heading>
                 <section xml:id="sec_nlYayS">
                     <num xml:id="akn_zntRbe">Section 1</num>
@@ -955,7 +955,7 @@
                 </section>
             </chapter>
             <chapter xml:id="cha_eZzXw2">
-                <num xml:id="akn_8zLWYN">Chapter V</num>
+                <num xml:id="akn_8zLWYN">Chapter VII</num>
                 <heading xml:id="akn_J2fghH">Costs of EU CSW-CERTEX, work programme, and monitoring and reporting</heading>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_5vSnsU" xml:id="akn_art_ZQi0El">
                     <num leos:editable="false" xml:id="akn_art_ZQi0El_6QPM6i">Article 18</num>
@@ -1012,7 +1012,7 @@
                 </article>
             </chapter>
             <chapter xml:id="cha_SnsPsd">
-                <num xml:id="akn_348OfS">Chapter VI</num>
+                <num xml:id="akn_348OfS">Chapter VIII</num>
                 <heading xml:id="akn_DculZe">Procedures for adoption of implementing and delegated acts, amendments to Regulation (EU) No 952/2013 and final provisions</heading>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_6L6h0k" xml:id="akn_art_fTOjdP">
                     <num leos:editable="false" xml:id="akn_art_fTOjdP_O0SFyi">Article 21</num>

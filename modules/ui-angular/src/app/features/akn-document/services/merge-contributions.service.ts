@@ -90,6 +90,8 @@ export class MergeContributionsService {
   private contributionSelectionsBS = new BehaviorSubject<number>(0);
   private contributionSelectedBS = new BehaviorSubject<boolean>(false);
 
+  public HIGHER_ELTS = ['chapter' , 'akntitle', 'section', 'part'];
+
   constructor(
     private http: HttpClient,
     private pageModeService: PageModeService,
@@ -602,7 +604,11 @@ export class MergeContributionsService {
   }
 
   public getImpactedElements(element: HTMLElement): NodeList {
-    return element.querySelectorAll('.' + MERGE_CONTRIBUTION);
+    if (this.HIGHER_ELTS.includes(element.tagName.toLowerCase())) {
+      return element.querySelectorAll('num.' + MERGE_CONTRIBUTION + ',heading.' + MERGE_CONTRIBUTION);
+    } else {
+      return element.querySelectorAll('.' + MERGE_CONTRIBUTION);
+    }
   }
 
   public getImpactedElementsForUndo(element: HTMLElement): NodeList {

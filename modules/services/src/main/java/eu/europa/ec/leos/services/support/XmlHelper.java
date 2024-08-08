@@ -118,6 +118,7 @@ public class XmlHelper {
     public static final String BLOCK = "block";
     public static final String TLC_CONCEPT = "TLCConcept";
     public static final String EXPL_COUNCIL = "EXPL_COUNCIL";
+    public static final List<String> HIGHER_ELEMENTS = Arrays.asList(PART, TITLE, CHAPTER, SECTION);
 
     public static final String ID = "id";
     public static final String XMLID = "xml:id";

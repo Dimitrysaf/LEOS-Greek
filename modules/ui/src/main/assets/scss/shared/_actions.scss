@@ -231,6 +231,7 @@ $BLACK : #000000;
     %contributionAction {
         padding-right: 2px;
         font-size: small;
+        color: black;
         > img {
             border: none;
         }
@@ -260,9 +261,6 @@ $BLACK : #000000;
     %selectedContributionWrapper {
         background-color: #E1EFFE !important;
         border-color: #ADB4BB;
-        [leos\:uid] {
-            background-color: #E1EFFE !important;
-        }
     }
 
     [leos\:mergeAction]:not([leos\:selectedAction]) {
