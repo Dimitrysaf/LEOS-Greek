@@ -32,7 +32,7 @@ define(function mergeContributionExtensionModule(require) {
     var ACTION_DONE_CLASS = "contribution-wrapper-after-merge";
     var MOVE_FROM = "move_from", INSERT = "insert", DELETE = "delete", PARENT_AFFECTED = "parent_affected", UNDO = "UNDO"
         , PROCESSED = "PROCESSED", ACCEPT = "ACCEPT", ACCEPT_TC = "ACCEPT_TC";
-    var HIGHER_ELTS = ['chapter' , 'title', 'section', 'part'];
+    var HIGHER_ELTS = ['chapter' , 'akntitle', 'section', 'part'];
 
     var callback = (mutationList, observer) => {
         var $elements = $('.' + MERGE_CONTRIBUTION);
@@ -40,7 +40,7 @@ define(function mergeContributionExtensionModule(require) {
             var $element = $($elements[i]);
             var $actions = $element.next(MERGE_ACTION_WRAPPER);
             _setActionsPosition($element, $actions);
-       }
+        }
     };
     var wrapperElementsList;
 
@@ -81,6 +81,8 @@ define(function mergeContributionExtensionModule(require) {
                     } else {
                         _attachWrapperActionEvents(connector, $element);
                     }
+                } else if (HIGHER_ELTS.indexOf(UTILS.getElementTagName($element).toLowerCase()) !== -1) {
+                    _attachWrapperActionEvents(connector, $element);
                 }
                 if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== UTILS.NUM) {
                     $parent_element = $main_element.parents(MAIN_ELEMENT_SELECTOR);
@@ -163,6 +165,7 @@ define(function mergeContributionExtensionModule(require) {
 
         for (let i = 0; i < $wrappedElements.length; i++) {
             const $wrappedElement = $($wrappedElements[i]);
+
             const $wrappedParent = $wrappedElement.parents("." + MERGE_CONTRIBUTION);
             let $wrappedChildren = null;
             if (!!$wrappedParent && !!$wrappedParent.length > 0) {
@@ -207,14 +210,14 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function _attachWrapperActionEvents(connector, $element) {
-       if (!$element.hasClass(MERGE_CONTRIBUTION)) {
-           $element[0].classList.add(MERGE_CONTRIBUTION);
-           _attachActions(connector, $element);
-           _createClickActions(connector, $element);
-           let observer = new MutationObserver(callback);
-           $element[0].observer = observer;
-           observer.observe($element[0], { childList: true, subtree: true });
-       }
+        if (!$element.hasClass(MERGE_CONTRIBUTION)) {
+            $element[0].classList.add(MERGE_CONTRIBUTION);
+            _attachActions(connector, $element);
+            _createClickActions(connector, $element);
+            let observer = new MutationObserver(callback);
+            $element[0].observer = observer;
+            observer.observe($element[0], { childList: true, subtree: true });
+        }
     }
 
     function _createClickActions(connector, $element) {
@@ -233,10 +236,13 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function _attachActions(connector, element) {
-        let actions = _getActionButtons(connector, element);
-        actions.target = element;
-        element.actions = actions;
-        _showActionButtons(actions, element);
+        let actions = element.next(MERGE_ACTION_WRAPPER);
+        if (actions.length == 0) {
+            let actions = _getActionButtons(connector, element);
+            actions.target = element;
+            element.actions = actions;
+            _showActionButtons(actions, element);
+        }
     }
 
     function _getRemainingSpace($element, elementHeigh) {

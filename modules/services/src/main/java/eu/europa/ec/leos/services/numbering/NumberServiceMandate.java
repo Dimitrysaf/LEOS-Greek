@@ -164,4 +164,7 @@ public class NumberServiceMandate implements NumberService {
     public byte[] renumberHigherSubDivisions(byte[] xmlContent, List<TableOfContentItemVO> tableOfContentItemVOList) {
         return xmlContent;
     }
+
+    @Override
+    public byte[] renumberHigherSubDivisions(byte[] xmlContent, String language, String elementName, List<TocItem> tocItems) { return xmlContent; }
 }

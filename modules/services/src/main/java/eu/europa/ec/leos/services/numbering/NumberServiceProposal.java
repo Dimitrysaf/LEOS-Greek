@@ -41,11 +41,14 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
+import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChild;
+import static eu.europa.ec.leos.services.support.XercesUtils.getFirstChildType;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XercesUtils.replaceElement;
 import static eu.europa.ec.leos.services.support.XmlHelper.ARTICLE;
 import static eu.europa.ec.leos.services.support.XmlHelper.CHAPTER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
+import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.PART;
 import static eu.europa.ec.leos.services.support.XmlHelper.RECITAL;
 import static eu.europa.ec.leos.services.support.XmlHelper.SECTION;
@@ -171,6 +174,54 @@ public class NumberServiceProposal implements NumberService {
         xmlContent = renumberDocumentSubdivision(xmlContent, tableOfContentItemVOList, TITLE, false);
         xmlContent = renumberDocumentSubdivision(xmlContent, tableOfContentItemVOList, CHAPTER, false);
         xmlContent = renumberDocumentSubdivision(xmlContent, tableOfContentItemVOList, SECTION, false);
+        return xmlContent;
+    }
+
+    private boolean containsDigit(String input) {
+        return input.chars()
+                .anyMatch(Character::isDigit);
+    }
+
+    @Override
+    public byte[] renumberHigherSubDivisions(byte[] xmlContent, String language, String elementName, List<TocItem> tocItems) {
+        TocItem tocItem = getTocItemByName(tocItems, elementName);
+        NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
+        if (isAutoNumberingEnabled(tocItems, elementName, language)) {
+            Document document = createXercesDocument(xmlContent, false);
+            NodeList elements = document.getElementsByTagName(elementName);
+            if (elementName.equalsIgnoreCase(CHAPTER)) {
+                for (int i=0; i<elements.getLength(); i++) {
+                    Node chapter = elements.item(i);
+                    Node numberNode = getFirstChild(chapter, NUM);
+                    if (numberNode != null) {
+                        String number = numberNode.getTextContent();
+                        if (!number.contains("#")) {
+                            if (containsDigit(number)) {
+                                numberingType = NumberingType.HIGHER_ELEMENT_NUM;
+                            } else {
+                                numberingType = NumberingType.ROMAN_UPPER;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+            List<Node> nodeList = XercesUtils.getNodesAsList(elements);
+            List<Node> subDivParentNodeList = new ArrayList<>();
+            //from this list find parent and get child nodes list of same subdivision type and send that list to renumber
+            for (int i = 0; i < nodeList.size(); i++) {
+                Node parentNode = nodeList.get(i).getParentNode();
+                if (subDivParentNodeList.indexOf(parentNode) == -1) {
+                    subDivParentNodeList.add(parentNode);
+                    NodeList childNodes = parentNode.getChildNodes();
+                    List<Node> subdivsionNodeList = XercesUtils.getNodesAsList(childNodes).stream()
+                            .filter(node -> node.getNodeName().equals(elementName))
+                            .collect(Collectors.toList());
+                    numberProcessorHandler.renumberHighSubDiv(subdivsionNodeList, numberingType, language);
+                }
+            }
+            return nodeToByteArray(document);
+        }
         return xmlContent;
     }
 
