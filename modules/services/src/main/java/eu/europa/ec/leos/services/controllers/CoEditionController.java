@@ -41,8 +41,7 @@ import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 
-
-@Controller
+//@Controller
 public class CoEditionController {
 
     private static final Logger LOG = LoggerFactory.getLogger(CoEditionController.class);
