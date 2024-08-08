@@ -124,11 +124,9 @@
         <hamcrest.version>1.3</hamcrest.version>
         <mockito.version>2.7.22</mockito.version>
         <mathjax.version>2.7.0</mathjax.version>
-        <spring.version>5.3.31</spring.version>
-        <javax.websocket.version>1.1</javax.websocket.version>
+        <spring.version>5.3.37</spring.version>
         <spring-security.version>5.8.9</spring-security.version>
         <spring-data.version>Codd-SR3</spring-data.version>
-        <spring-boot.version>2.6.15</spring-boot.version>
         <hibernate-orm.version>4.2.10.Final</hibernate-orm.version><!--UPGRADE PENDING-->
         <auth0.version>3.2.0</auth0.version>
         <jboss-logging.version>3.3.0.Final</jboss-logging.version>
@@ -336,12 +334,6 @@
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.websocket</groupId>
-                <artifactId>javax.websocket-api</artifactId>
-                <version>${javax.websocket.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
