@@ -310,8 +310,8 @@ FROM milestone_v milv, document_milestone_list millis
 WHERE milv.milestone_id = millis.milestone_id;
 
 CREATE VIEW CONFIGURATION_V as
-SELECT conf.id||'_'||ver.id||'_'||con.id||'_'||cat.id unique_id, conf.ID, CONF.NAME, CONF.OBJECT_ID,
-       ver.config_id,cat.category_code, cat.category_desc, ver.version_label,ver.version_series_id,ver.version_type,ver.is_latest_major_version,ver.is_latest_version,ver.is_major_version,ver.is_version_series_checked_out,ver.audit_c_by,ver.audit_c_date,ver.audit_last_m_by,ver.audit_last_m_date,ver.is_immutable
+SELECT conf.id||'_'||ver.id||'_'||con.id||'_'||cat.id unique_id, ver.ID, CONF.NAME, CONF.OBJECT_ID,
+       conf.id config_id,cat.category_code, cat.category_desc, ver.version_label,ver.version_series_id,ver.version_type,ver.is_latest_major_version,ver.is_latest_version,ver.is_major_version,ver.is_version_series_checked_out,ver.audit_c_by,ver.audit_c_date,ver.audit_last_m_by,ver.audit_last_m_date,ver.is_immutable
         , con.content,con.content_stream_mime_type,con.content_stream_filename,con.content_stream_id,con.content_stream_length
 FROM config conf, config_version ver, config_content con, config_categories cat
 WHERE
@@ -384,6 +384,8 @@ CREATE UNIQUE INDEX CONFIGURATION_CATEGORIES_PK ON CONFIG_CATEGORIES (ID);
 CREATE UNIQUE INDEX CONFIG_VERSIONS_PK ON CONFIG_VERSION (ID);
 
 CREATE UNIQUE INDEX CONTENT_PK ON CONFIG_CONTENT (ID);
+CREATE UNIQUE INDEX CONFIG_CONTENT_VID ON CONFIG_CONTENT (VERSION_ID);
+
 
 CREATE UNIQUE INDEX DOCUMENT_METADATA_PK ON DOCUMENT (ID);
 
@@ -582,8 +584,6 @@ ALTER TABLE CONFIG_CATEGORIES MODIFY (AUDIT_C_DATE NOT NULL);
 ALTER TABLE CONFIG MODIFY (ID NOT NULL);
 
 ALTER TABLE CONFIG MODIFY (NAME NOT NULL);
-
-ALTER TABLE CONFIG MODIFY (OBJECT_ID NOT NULL);
 
 ALTER TABLE CONFIG MODIFY (AUDIT_C_BY NOT NULL);
 
