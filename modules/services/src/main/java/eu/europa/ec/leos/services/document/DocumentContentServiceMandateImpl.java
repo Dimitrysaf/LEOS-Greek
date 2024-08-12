@@ -27,6 +27,7 @@ import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.compare.processor.LeosPostDiffingProcessor;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import org.apache.commons.lang3.StringUtils;
@@ -52,9 +53,9 @@ public class DocumentContentServiceMandateImpl extends DocumentContentServiceImp
                                              MemorandumService memorandumService, ExplanatoryService explanatoryService,
                                              ProposalService proposalService, FinancialStatementService financialStatementService,
                                              XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
-            XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog, Provider<CollectionContextService> proposalContextProvider) {
+            XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog, Provider<CollectionContextService> proposalContextProvider,PackageService packageService) {
         super(transformationService, compareService, annexService, billService, memorandumService, explanatoryService, financialStatementService,
-                proposalService, xmlContentProcessor, xmlDocumentService, xmlNodeProcessor, xPathCatalog, proposalContextProvider);
+                proposalService, xmlContentProcessor, xmlDocumentService, xmlNodeProcessor, xPathCatalog, proposalContextProvider, packageService);
     }
 
     @Override
