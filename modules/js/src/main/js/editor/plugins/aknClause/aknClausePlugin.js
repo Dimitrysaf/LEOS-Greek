@@ -54,6 +54,12 @@ define(function aknClausePluginModule(require) {
                 akn : "leos:selectedoption",
                 html : "leos:selectedoption"
             }, {
+                akn : "data-akn-original-option",
+                html : "data-akn-original-option"
+            }, {
+                akn : "data-akn-action-alter",
+                html : "data-akn-action-alter"
+            }, {
                 html : "data-akn-name=clause"
             }, {
                 akn : "leos:softuser",

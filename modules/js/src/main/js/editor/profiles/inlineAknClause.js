@@ -34,6 +34,9 @@ define(function aknInlineClauseProfileModule(require) {
     plugins.push(require("plugins/leosFixNestedPs/leosFixNestedPsPlugin"));
     plugins.push(require("plugins/leosTextCaseChanger/leosTextCaseChangerPlugin"));
     plugins.push(require("plugins/leosPreventSelectAll/leosPreventSelectAllPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesInsPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/config/leosTrackChangesDelPlugin"));
+    plugins.push(require("plugins/leosTrackChanges/leosTrackChangesPlugin"));
 
     var pluginNames=[];
     var specificConfig={};
@@ -59,7 +62,7 @@ define(function aknInlineClauseProfileModule(require) {
         customConfig: "",
         // comma-separated list of plugins to be loaded
         plugins: "wysiwygarea,elementspath,undo,"
-                 + "button,dialog,dialogui",
+                 + "button,dialog,dialogui,contextmenu",
         // comma-separated list of toolbar button names that must not be rendered
         removeButtons: "TextColor",
         // comma-separated list of additional plugins to be loaded
