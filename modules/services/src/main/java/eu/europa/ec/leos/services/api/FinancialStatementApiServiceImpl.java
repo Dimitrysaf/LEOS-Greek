@@ -165,7 +165,7 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public DocumentConfigResponse getDocumentConfig(String documentRef) {
+    public DocumentConfigResponse getDocumentConfig(String documentRef, String clientContextToken) {
         return null;
     }
 

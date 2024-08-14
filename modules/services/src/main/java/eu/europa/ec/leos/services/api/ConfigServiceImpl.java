@@ -84,10 +84,10 @@ public class ConfigServiceImpl implements ConfigService {
         boolean showRevisionEnabled = Boolean.parseBoolean(applicationProperties.getProperty("leos.view.revision.milestone"));
         String contextRole = null;
         Profile profile = null;
-        if(StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
+        /*if(StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
             contextRole = tokenService.extractUserRoleFromToken(clientContextToken);
             profile = profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken));
-        }
+        }*/
         boolean leosSwitchLevelArticle = Boolean.parseBoolean(applicationProperties.getProperty("leos.switch.level.article"));
 
         appConfigResponse.setMappingUrl(mappingUrl);

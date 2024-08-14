@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -67,6 +68,8 @@ public class BillController {
     private static final Logger LOG = LoggerFactory.getLogger(BillController.class);
     private static final String ERROR_OCCURRED_WHILE_GETTING_DOWNLOADING_XML_VERSION = "Error occurred  while getting downloading xml version - {}";
     private static final String ERROR_OCCURRED_WHILE_DOWNLOADING_XML_VERSION = "Error occurred  while  downloading xml version";
+    private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
+
     @Autowired
     private BillApiService billApiService;
     @Autowired
@@ -526,10 +529,12 @@ public class BillController {
 
     @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef) {
+    public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef,
+                                                    HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
-            DocumentConfigResponse view = this.billApiService.getDocumentConfig(documentRef);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
+            DocumentConfigResponse view = this.billApiService.getDocumentConfig(documentRef, clientContextToken);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting document config", e);

@@ -388,10 +388,10 @@ public abstract class BillApiServiceImpl implements BillApiService {
     }
 
     @Override
-    public DocumentConfigResponse getDocumentConfig(String documentRef) {
+    public DocumentConfigResponse getDocumentConfig(String documentRef, String clientContextToken) {
         Bill bill = this.billService.findBillByRef(documentRef);
         StructureContext structure = structureContext.get();
-        return genericDocumentApiService.getDocumentConfig(bill, structure);
+        return genericDocumentApiService.getDocumentConfig(bill, structure, clientContextToken);
     }
 
     @Override

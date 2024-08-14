@@ -145,7 +145,7 @@ export abstract class DocumentActionsService {
       this.documentService.permissions$,
       this.pageModeService.pageMode$,
     ]).subscribe(([appConfig, config, permissions, pageMode]) => {
-      this.profile = appConfig.profile;
+      this.profile = config.profile;
       this.leosSwitchLevelArticle = appConfig.leosSwitchLevelArticle;
       this.documentConfig = config;
       this.pageMode = pageMode;

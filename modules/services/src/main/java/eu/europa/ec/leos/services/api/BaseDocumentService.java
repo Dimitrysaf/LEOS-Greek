@@ -100,7 +100,7 @@ public interface BaseDocumentService<T extends XmlDocument> {
 
     DocumentViewResponse saveAfterReplace(SaveAfterReplaceRequest event);
 
-    DocumentConfigResponse getDocumentConfig(String documentRef);
+    DocumentConfigResponse getDocumentConfig(String documentRef, String clientContextToken);
 
     String fetchUserGuidance(String documentRef);
 

@@ -28,6 +28,7 @@ import { Profile } from './shared/models/leos.model';
 import { Notification } from './shared/models/notification.model';
 import { CoEditionServiceWS } from './shared/services/coEdition.websocket.service';
 import { NotificationsService } from './shared/services/notifications.service';
+import {DocumentService} from "@/shared/services/document.service";
 
 @Component({
   selector: 'app-root',
@@ -72,6 +73,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private storage: AppLocalStorageService,
     private notificationsService: NotificationsService,
     private userService: UserService,
+    private documentService: DocumentService
   ) {
     this.isNotificationsShown$ = this.notificationsService.isShown$;
     this.i18nState = this.store.select(getI18nState);
@@ -91,8 +93,13 @@ export class AppComponent implements OnInit, OnDestroy {
 
     this.config.config.pipe(takeUntil(this.destroy$)).subscribe((config) => {
       this.headerTitleHtml = config.headerTitle;
-      this.profile = config.profile;
     });
+
+    this.documentService.documentConfig$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((config) => {
+        this.profile = config.profile;
+      });
 
     this.notificationsService.notifications$
       .pipe(takeUntil(this.destroy$))

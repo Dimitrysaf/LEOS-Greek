@@ -22,7 +22,6 @@ import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
-import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
@@ -62,14 +61,11 @@ import eu.europa.ec.leos.services.response.EditElementResponse;
 import eu.europa.ec.leos.services.search.SearchService;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
-import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.user.UserHelper;
-import eu.europa.ec.leos.services.utils.LanguageMapUtils;
-import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -112,6 +108,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper;
     RepositoryPropertiesMapper repositoryPropertiesMapper;
     TrackChangesContext trackChangesContext;
+    GenericDocumentApiService genericDocumentApiService;
 
     private Provider<CloneContext> cloneContext;
     private Provider<CollectionContextService> proposalContextProvider;
@@ -126,7 +123,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
             ComparisonDelegateAPI<Proposal> comparisonDelegate, SearchService searchService, MessageHelper messageHelper,
             ElementProcessor elementProcessor, PackageService packageService, XmlContentProcessor xmlContentProcessor,
             ExportService exportService, TemplateConfigurationService templateConfigurationService, LegService legService,
-            LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper,
+            LeosPermissionAuthorityMapHelper leosPermissionAuthorityMapHelper, GenericDocumentApiService genericDocumentApiService,
             RepositoryPropertiesMapper repositoryPropertiesMapper, TrackChangesContext trackChangesContext,
             Provider<CloneContext> cloneContext, Provider<BillContextService> billContextServiceProvider,
             Provider<StructureContext> structureContext, Provider<CollectionContextService> proposalContextProvider,
@@ -148,6 +145,7 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
         this.leosPermissionAuthorityMapHelper = leosPermissionAuthorityMapHelper;
         this.repositoryPropertiesMapper = repositoryPropertiesMapper;
         this.trackChangesContext = trackChangesContext;
+        this.genericDocumentApiService = genericDocumentApiService;
         this.cloneContext = cloneContext;
         this.billContextServiceProvider = billContextServiceProvider;
         this.structureContext = structureContext;
@@ -390,25 +388,10 @@ public class CoverPageApiServiceImpl implements CoverPageApiService {
     }
 
     @Override
-    public DocumentConfigResponse getDocumentConfig(String documentRef) {
+    public DocumentConfigResponse getDocumentConfig(String documentRef, String clientContextToken) {
         Proposal proposal = this.proposalService.findProposalByRef(documentRef);
-        if(proposal == null) {
-            return null;
-        }
-        StructureContext structureContext1 = structureContext.get();
-        structureContext1.useDocumentTemplate(
-                proposal.getMetadata().getOrError(() -> "Proposal metadata is required!").getDocTemplate());
-        List<TocItem> tocItems = structureContext1.getTocItems();
-        List<LeosMetadata> documentsMetadata = packageService.getDocumentsMetadata(
-                proposal.getMetadata().get().getRef());
-        String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), proposal.getMetadata().get().getLanguage());
-
-        return new DocumentConfigResponse(
-                documentsMetadata, null, tocItems, null, null,
-                StructureConfigUtils.getNumberingConfigsFromTocItem(null, tocItems, XmlHelper.POINT, proposal.getMetadata().get().getLanguage()),
-                getArticleTypesAttributes(tocItems), proposal.getMetadata().get().getRef(),
-                proposal.getMetadata().getOrNull(), structureContext1.getTocRules(),
-                proposal.isTrackChangesEnabled(), true, proposal.isClonedProposal(), langGroup, proposal.getMetadata().get().getLanguage());
+        StructureContext structure = structureContext.get();
+        return genericDocumentApiService.getDocumentConfig(proposal, structure, clientContextToken);
     }
 
     @Override

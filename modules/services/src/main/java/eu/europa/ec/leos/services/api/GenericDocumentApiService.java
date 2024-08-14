@@ -21,6 +21,7 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermission;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
+import eu.europa.ec.leos.security.TokenService;
 import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.delegates.ComparisonDelegateAPI;
 import eu.europa.ec.leos.services.document.DocumentContentService;
@@ -50,6 +51,7 @@ import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.structure.lang.LanguageGroupService;
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
+import eu.europa.ec.leos.services.structure.profile.ProfileService;
 import eu.europa.ec.leos.services.support.VersionsUtil;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.template.TemplateConfigurationService;
@@ -58,6 +60,7 @@ import eu.europa.ec.leos.services.user.UserService;
 import eu.europa.ec.leos.services.utils.LanguageMapUtils;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.services.validation.ValidationService;
+import eu.europa.ec.leos.vo.light.Profile;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
@@ -118,6 +121,8 @@ public class GenericDocumentApiService {
     private final UserService userService;
     private final LanguageGroupService languageGroupService;
     private final DocumentLanguageContext documentLanguageContext;
+    private final TokenService tokenService;
+    private final ProfileService profileService;
 
     private final Properties applicationProperties;
 
@@ -144,7 +149,9 @@ public class GenericDocumentApiService {
                                      @NotNull UserService userService,
                                      @NotNull Properties applicationProperties,
                                      @NotNull LanguageGroupService languageGroupService,
-                                     @NotNull DocumentLanguageContext documentLanguageContext) {
+                                     @NotNull DocumentLanguageContext documentLanguageContext,
+                                     @NotNull TokenService tokenService,
+                                     @NotNull ProfileService profileService) {
         this.leosRepository = Objects.requireNonNull(leosRepository);
         this.elementProcessor = Objects.requireNonNull(elementProcessor);
         this.xmlContentProcessor = Objects.requireNonNull(xmlContentProcessor);
@@ -168,6 +175,8 @@ public class GenericDocumentApiService {
         this.applicationProperties = applicationProperties;
         this.documentLanguageContext = documentLanguageContext;
         this.languageGroupService = languageGroupService;
+        this.tokenService = tokenService;
+        this.profileService = profileService;
     }
 
     public DocumentViewResponse getDocumentByRef(@NotNull String docRef) throws NotFoundException {
@@ -195,7 +204,8 @@ public class GenericDocumentApiService {
         return this.getStructureContext().getTocItems();
     }
 
-    public DocumentConfigResponse getDocumentConfig(@NotNull XmlDocument document, @NotNull StructureContext structure) {
+    public DocumentConfigResponse getDocumentConfig(@NotNull XmlDocument document, @NotNull StructureContext structure,
+                                                    String clientContextToken) {
         structure.useDocumentTemplate(this.getDocTemplate(document));
         this.populateCloneProposalMetadata(document);
         LeosMetadata documentMetadata = document.getMetadata().get();
@@ -206,14 +216,19 @@ public class GenericDocumentApiService {
         List<RefConfig> refConfigs = structure.getRefConfigs();
         Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray = StructureConfigUtils.getNumberingConfigsFromTocItem(numberConfigs, tocItems, XmlHelper.POINT, documentMetadata.getLanguage());
         Map<String, Attribute> articleTypesConfig = getArticleTypesAttributes(tocItems);
-        ProposalMetadata proposalMetadata = null;
-        boolean isClonedProposal = false;
         Proposal proposal = this.getDocProposal(document);
         // Note: proposal can be null in cases of leos light scenarios
-        proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
-        isClonedProposal = proposal != null && proposal.isClonedProposal();
+        ProposalMetadata proposalMetadata = proposal != null ? proposal.getMetadata().getOrNull() : null;
+        boolean isClonedProposal = proposal != null && proposal.isClonedProposal();
         languageGroupService.getLanguageMap();
         String langGroup = LanguageMapUtils.getLanguageGroup(LanguageMapHolder.getLanguageMap(), documentMetadata.getLanguage());
+        String contextRole = null;
+        Profile profile = null;
+        if(org.apache.commons.lang3.StringUtils.isNotBlank(clientContextToken) && tokenService.validateClientContextToken(clientContextToken)) {
+            contextRole = tokenService.extractUserRoleFromToken(clientContextToken);
+            profile = profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken),
+                    documentMetadata.getLanguage());
+        }
 
         return new DocumentConfigResponse(
                 documentsMetadataList,
@@ -230,14 +245,16 @@ public class GenericDocumentApiService {
                 true,
                 isClonedProposal,
                 langGroup,
-                documentMetadata.getLanguage()
+                documentMetadata.getLanguage(),
+                profile,
+                contextRole
         );
     }
 
     public DocumentConfigResponse getDocumentConfig(@NotNull String docRef) {
         XmlDocument document = this.findDocumentByRef(docRef);
         StructureContext structure = this.getStructureContext();
-        return getDocumentConfig(document, structure);
+        return getDocumentConfig(document, structure, null);
     }
 
     // ------------- VERSION METHODS

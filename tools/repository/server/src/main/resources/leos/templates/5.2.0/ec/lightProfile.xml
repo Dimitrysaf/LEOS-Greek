@@ -7,7 +7,7 @@
     <version>1.0.0</version>
 
     <profileList>
-        <profile>
+        <profile language="en">
             <name>DECISION_EDIT</name>
             <breadcrumb>true</breadcrumb>
             <tocEdition>true</tocEdition>
@@ -22,7 +22,22 @@
             <markAsDoneAvailable>false</markAsDoneAvailable>
         </profile>
 
-        <profile>
+        <profile language="default">
+            <name>DECISION_EDIT</name>
+            <breadcrumb>true</breadcrumb>
+            <tocEdition>false</tocEdition>
+            <internalReference>false</internalReference>
+            <authorialNote>false</authorialNote>
+            <showLoggedUser>false</showLoggedUser>
+            <trackChangesEnabled>false</trackChangesEnabled>
+            <closeDocument>false</closeDocument>
+            <callbackPresent>true</callbackPresent>
+            <annotations>true</annotations>
+            <importOJ>false</importOJ>
+            <markAsDoneAvailable>false</markAsDoneAvailable>
+        </profile>
+
+        <profile language="default">
             <name>DGT_EDIT</name>
             <breadcrumb>false</breadcrumb>
             <tocEdition>false</tocEdition>

@@ -492,10 +492,10 @@ public class AnnexApiServiceImpl implements AnnexApiService {
     }
 
     @Override
-    public DocumentConfigResponse getDocumentConfig(String documentRef) {
+    public DocumentConfigResponse getDocumentConfig(String documentRef, String clientContextToken) {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
         StructureContext structure = structureContext.get();
-        return genericDocumentApiService.getDocumentConfig(annex, structure);
+        return genericDocumentApiService.getDocumentConfig(annex, structure, clientContextToken);
     }
 
     @Override

@@ -46,12 +46,12 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Override
     @Cacheable(value = "lightProfile")
-    public Profile getProfile(String systemName) {
-        loadProfile(systemName);
+    public Profile getProfile(String systemName, String language) {
+        loadProfile(systemName, language);
         return profileDetailsMap.get(systemName);
     }
 
-    private void loadProfile(String systemName) {
+    private void loadProfile(String systemName, String language) {
         byte[] profileXmlFile = this.getProfileDocument();
         final Container container = loadProfileContainerFromFile(profileXmlFile);
 
@@ -61,8 +61,15 @@ public class ProfileServiceImpl implements ProfileService {
         profileDetails.setProfileVersion(container.getVersion());
         Profiles profiles = container.getProfileList();
 
-        Optional<Profile> profile = profiles.getProfiles().stream().filter(system ->
-                system.getName().value().equalsIgnoreCase(systemName)).findFirst();
+        Optional<Profile> profile = profiles.getProfiles().stream()
+                .filter(system -> {
+                  if(systemName.equalsIgnoreCase(system.getName().value())
+                          && (language.equalsIgnoreCase(system.getLanguage()) ||
+                          system.getLanguage().equalsIgnoreCase("default"))) {
+                      return true;
+                  }
+                  return false;
+                }).findFirst();
 
         profileDetailsMap.put(systemName, profile.get()); //cache it for the next call
     }

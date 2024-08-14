@@ -272,7 +272,6 @@ export class DocumentEditorComponent
     this.isSyncScrollEnabled$ = this.syncScrollingService.isSyncScrollEnabled$;
 
     this.config.config.pipe(takeUntil(this.destroy$)).subscribe((config) => {
-      this.profile = config.profile;
       this.connectedEntity = (
         config.user.connectedEntity ?? config.user.defaultEntity
       ).name;
@@ -358,6 +357,7 @@ export class DocumentEditorComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((config) => {
         this.documentConfig = config;
+        this.profile = this.documentConfig.profile;
         this.manageBreadCrumbsDocumentScreen();
       });
 

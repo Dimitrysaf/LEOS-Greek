@@ -375,10 +375,10 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
     }
 
     @Override
-    public DocumentConfigResponse getDocumentConfig(String documentRef) {
+    public DocumentConfigResponse getDocumentConfig(String documentRef, String clientContextToken) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         StructureContext structure = structureContext.get();
-        return genericDocumentApiService.getDocumentConfig(memorandum, structure);
+        return genericDocumentApiService.getDocumentConfig(memorandum, structure, clientContextToken);
     }
 
     @Override

@@ -36,6 +36,7 @@
             <xs:element name="importOJ" type="xs:boolean" default="true" minOccurs="0"/>
             <xs:element name="markAsDoneAvailable" type="xs:boolean" default="false" minOccurs="0"/>
         </xs:sequence>
+        <xs:attribute name="language" type="xs:string" use="required"/>
     </xs:complexType>
 
     <xs:simpleType name="systemName" final="restriction">
