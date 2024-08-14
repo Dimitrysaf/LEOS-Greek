@@ -230,6 +230,7 @@ define(function elementEditorModule(require) {
                     placeholder.style.height = ''; //reset the height to let editor grow
                 }
             };
+            localStorage.setItem(params.elementId, params.elementFragment);
             editor.setData(params.elementFragment, options);
 
             $("button.ui-datepicker-trigger").attr("disabled", true);

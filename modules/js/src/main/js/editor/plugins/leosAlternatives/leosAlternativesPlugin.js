@@ -87,8 +87,7 @@ define(function leosAlternativesPluginModule(require) {
         var editor = event.editor;
         var currentConfig = _getCurrentAltConfigFromAttributes(editor);
         var optionList = _getAlternativesConfiguration(currentConfig.optionListName);
-        var cmd;
-        
+
         optionList.list.forEach(function(option) {
             editor.ui.addButton(pluginName + option.index, {
                 label: "Alternative " + option.index,
@@ -99,25 +98,15 @@ define(function leosAlternativesPluginModule(require) {
                 var altCommand = editor.addCommand(pluginName + option.index, {
                     // when click over one of the Alternative tabs
                     exec: function(editor) {
-                        if(currentConfig.selectOptionIndex === option.index){
-                            _updateEditor(this, editor, optionList, option.index);
-                        } else {
-                            dialogCommand.exec();
-                            
-                            cmd = this;
-                            editor.on("confirmNewAlternative", function(event){
-                                _updateEditor(cmd, editor, optionList, option.index);
-                            });
-                        }
+                        dialogCommand.exec();
+                        editor.once("confirmNewAlternative", function(event){
+                            _updateEditor(editor, option.index);
+                        });
                     }
                 });
             }
         });
-        
-        editor.on('key', function(event) {
-            _unselectButton(event.editor);
-        });
-        
+
         if (optionList.list.length > 0) {
             editor.fire("refreshToolbar");
             var cmd = editor.getCommand(pluginName + currentConfig.selectOptionIndex);
@@ -125,12 +114,22 @@ define(function leosAlternativesPluginModule(require) {
                 cmd.setState(CKEDITOR.TRISTATE_ON);
             }
         }
-        
+
+        editor.on('key', function(event) {
+            _unselectButton(event.editor);
+        });
+
         editor.on('focus', function(event) {
+            var currentConfig = _getCurrentAltConfigFromAttributes(editor);
             var cmd = editor.getCommand(pluginName + currentConfig.selectOptionIndex);
             if (cmd) {
                 cmd.setState(CKEDITOR.TRISTATE_ON);
             }
+        });
+
+        editor.on('updateAlternateToolbarState', function (event) {
+            _updateRootEltAttributes(event.editor, event.data.index)
+            _updateButtonState(event.editor, event.data.index);
         });
     }
     
@@ -146,25 +145,30 @@ define(function leosAlternativesPluginModule(require) {
         });
     }
 
-    function _updateEditor(cmd, editor, optionList, index) {
+    function _updateEditor(editor, index) {
+        var currentConfig = _getCurrentAltConfigFromAttributes(editor);
+        var optionList = _getAlternativesConfiguration(currentConfig.optionListName);
         if (optionList) {
-            _updateContent(cmd, editor, optionList, index);
+            _updateContent(editor, optionList, index);
+        } else {
+            throw new Error("Could not get the alternatives configuration list");
         }
     }
 
-    function _updateContent(cmd, editor, optionList, index) {
-        var currentConfig = _getCurrentAltConfigFromAttributes(editor);
-        var option = optionList.list.find(listOfOption => listOfOption.index == index);
+    function _updateContent(editor, optionList, index) {
         var options = {
+            index: index,
+            optionList: optionList,
             callback: function() {
-                _updateRootEltAttributes(editor, currentConfig, index);
-                _updateButtonState(cmd, editor, optionList);
+                _updateRootEltAttributes(editor, index);
+                _updateButtonState(editor, index);
             }
         };
-        editor.setData(option.content.replace(/\n|\r/g), options);
+        editor.fire("handleTcAlternateClause", options);
     }
 
-    function _updateRootEltAttributes(editor, currentConfig, index) {
+    function _updateRootEltAttributes(editor, index) {
+        var currentConfig = _getCurrentAltConfigFromAttributes(editor);
         var rootElt = editor.element.getChild(0);
         if (!rootElt.hasAttribute("id")) {
             rootElt.setAttribute("id", currentConfig.rootEltId);
@@ -179,14 +183,16 @@ define(function leosAlternativesPluginModule(require) {
         rootElt.setAttribute("leos:optionlist", currentConfig.optionListName);
     }
 
-    function _updateButtonState(cmd, editor, optionList) {
+    function _updateButtonState(editor, index) {
+        var currentConfig = _getCurrentAltConfigFromAttributes(editor);
+        var optionList = _getAlternativesConfiguration(currentConfig.optionListName);
         optionList.list.forEach(function(option) {
             var currentCmd = editor.getCommand(pluginName + option.index);
             if (currentCmd) {
                 currentCmd.setState(CKEDITOR.TRISTATE_OFF);
             }
         });
-        cmd.setState(CKEDITOR.TRISTATE_ON);
+        editor.getCommand(pluginName + index).setState(CKEDITOR.TRISTATE_ON);
     }
 
     function _getOptionLists() {

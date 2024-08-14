@@ -155,6 +155,15 @@ define(function leosTrackChangesModule(require) {
             return tcAttributes;
         },
 
+        getTrackChangeAttributesForAlternative: function(editor, originalOption) {
+            var user = this.getUserAndId(editor);
+            var tcAttributes = {
+                "data-akn-action-alter": true,
+                "data-akn-original-option": originalOption
+            };
+            return tcAttributes;
+        },
+
         removeTrackChangesAttributes: function(element) {
             var tcAttributes = ["data-akn-action", "data-akn-uid", "title", "data-wsc-ignore-checking"];
             for (var attrName of tcAttributes) {
@@ -171,6 +180,13 @@ define(function leosTrackChangesModule(require) {
 
         removeTrackChangesAttributesForEnter: function(element) {
             var tcAttributes = ["data-akn-action-enter", "data-akn-uid-enter", "title-enter"];
+            for (var attrName of tcAttributes) {
+                element.removeAttribute(attrName);
+            }
+        },
+
+        removeTrackChangesAttributesForAlternative: function(element) {
+            var tcAttributes = ["data-akn-action-alter", "data-akn-original-option"];
             for (var attrName of tcAttributes) {
                 element.removeAttribute(attrName);
             }
@@ -203,6 +219,13 @@ define(function leosTrackChangesModule(require) {
 
         addTrackChangesAttributesForEnter: function(editor, element, action) {
             var tcAttributes = this.getTrackChangeAttributesForEnter(editor, action);
+            for (var attrName in tcAttributes) {
+                element.setAttribute(attrName, tcAttributes[attrName]);
+            }
+        },
+
+        addTrackChangesAttributesForAlternative: function(editor, element, originalOption) {
+            var tcAttributes = this.getTrackChangeAttributesForAlternative(editor, originalOption);
             for (var attrName in tcAttributes) {
                 element.setAttribute(attrName, tcAttributes[attrName]);
             }
@@ -713,8 +736,15 @@ define(function leosTrackChangesModule(require) {
                 element.remove();
             } else if (element.getAttribute(core.ACTION_ATTR) === core.INSERT_ACTION) {
                 element.remove();
-            } else if ((element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) && ($(element, editor.getData()).length > 0)) {
-                element.$.outerHTML = element.$.innerHTML;
+            } else if (element.getAttribute(core.ACTION_ATTR) === core.DELETE_ACTION) {
+                var parentDiv = element.getAscendant(el => el.getName && el.getName() === 'div' && el.getAttribute('data-akn-action-alter') === 'true');
+                if(parentDiv) {
+                    editor.fire('updateAlternateToolbarState', {index: parentDiv.getAttribute("data-akn-original-option")})
+                    core.removeTrackChangesAttributesForAlternative(parentDiv);
+                }
+                if($(element, editor.getData()).length > 0) {
+                    element.$.outerHTML = element.$.innerHTML;
+                }
             }
         },
 

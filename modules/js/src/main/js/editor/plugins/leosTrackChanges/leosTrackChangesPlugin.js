@@ -195,6 +195,44 @@ define(function leosTrackChangesPluginModule(require) {
                 actions.handleEnterInTrackChanges(event.editor);
             }, null, null, 100);
 
+            editor.on("handleTcAlternateClause", function (event) {
+                function changeOption(option, callback) {
+                    var currentElement = editor.element.$.firstChild;
+                    var currentIndex = currentElement.getAttribute("leos:selectedoption");
+                    if(!currentElement.hasAttribute("data-akn-action-alter")) {
+                        core.addTrackChangesAttributesForAlternative(editor, currentElement, currentIndex);
+                    }
+                    editor.getSelection().selectElement(new CKEDITOR.dom.element(currentElement));
+                    if (!core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
+                        style.apply(editor, deleteTcStyle);
+                    }
+                    var tempEle = editor.document.createElement('div');
+                    tempEle.$.innerHTML = option.content;
+                    actions.insertNewData(editor, tempEle.$.innerText);
+                    if(callback) {
+                        callback.call(editor);
+                    }
+                }
+
+                if (isTrackChangesEnabled) {
+                    var ckeditor = event.editor;
+                    var optionList = event.data.optionList;
+                    var callback = event.data.callback;
+                    var newIndex = event.data.index;
+                    var newOption = optionList.list.find(listOfOption => listOfOption.index == newIndex);
+
+                    var currentElement = ckeditor.element.$.firstChild;
+                    var trackChangeElements = $(currentElement).find("[data-akn-action]");
+                    if(trackChangeElements.length > 0) {
+                        trackChangeElements.each(function() {
+                            actions.rejectChange(ckeditor, new CKEDITOR.dom.element(this), numberModule);
+                        });
+                    }
+
+                    changeOption(newOption, callback);
+                }
+            });
+
             editor.on("handleTcIndent", function (event) {
                 if (isTrackChangesEnabled) {
                     var element = event.data.data;
