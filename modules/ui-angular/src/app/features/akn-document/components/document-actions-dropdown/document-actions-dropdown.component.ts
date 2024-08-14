@@ -135,7 +135,7 @@ export class DocumentActionsDropdownComponent implements OnInit, OnDestroy {
     this.documentConfig = config;
     const isClonedProposal = this.documentConfig?.clonedProposal;
     const isTCEnabled =
-      (!appConfig.profile || appConfig.profile.trackChangesEnabled) &&
+      (!config.profile || config.profile.trackChangesEnabled) &&
       this.documentConfig?.trackChangesEnabled;
 
     const isCN = process.env.NG_APP_LEOS_INSTANCE === 'cn';

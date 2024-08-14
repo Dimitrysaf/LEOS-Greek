@@ -432,10 +432,10 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
     }
 
     @Override
-    public DocumentConfigResponse getDocumentConfig(String documentRef) {
+    public DocumentConfigResponse getDocumentConfig(String documentRef, String clientContextToken) {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         StructureContext structure = structureContext.get();
-        return genericDocumentApiService.getDocumentConfig(explanatory, structure);
+        return genericDocumentApiService.getDocumentConfig(explanatory, structure, clientContextToken);
     }
 
     @Override

@@ -3,12 +3,13 @@ package eu.europa.ec.leos.services.response;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.light.Profile;
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
 import eu.europa.ec.leos.vo.structure.Attribute;
 import eu.europa.ec.leos.vo.structure.Level;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
-import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.structure.TocItemTypeName;
 
@@ -31,12 +32,14 @@ public class DocumentConfigResponse {
     private boolean isTrackChangesShowed;
     private boolean isClonedProposal;
     private String langGroup;
+    private Profile profile;
+    private String contextRole;
 
     public DocumentConfigResponse(List<LeosMetadata> documentsMetadata, List<NumberingConfig> numberingConfig, List<TocItem> tocItems,
                                   List<AlternateConfig> alternateConfigs, List<RefConfig> refConfigs, Map<TocItemTypeName, List<Level>> listNumberConfigJsonArray,
                                   Map<String, Attribute> articleTypesConfig, String internalRef, ProposalMetadata proposalMetadata,
                                   Map<TocItem, List<TocItem>> tocRules, boolean isTrackChangesEnabled, boolean isTrackChangesShowed,
-                                  boolean isClonedProposal, String langGroup, String language) {
+                                  boolean isClonedProposal, String langGroup, String language, Profile profile, String contextRole) {
         this.documentsMetadata = documentsMetadata;
         this.numberingConfig = numberingConfig;
         this.tocItems = tocItems;
@@ -51,6 +54,8 @@ public class DocumentConfigResponse {
         this.isTrackChangesShowed = isTrackChangesShowed;
         this.isClonedProposal = isClonedProposal;
         this.langGroup = langGroup;
+        this.profile = profile;
+        this.contextRole = contextRole;
     }
 
     public List<LeosMetadata> getDocumentsMetadata() {
@@ -176,5 +181,21 @@ public class DocumentConfigResponse {
 
     public void setLangGroup(String langGroup) {
         this.langGroup = langGroup;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public String getContextRole() {
+        return contextRole;
+    }
+
+    public void setContextRole(String contextRole) {
+        this.contextRole = contextRole;
     }
 }

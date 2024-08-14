@@ -6,6 +6,6 @@ public interface ProfileService {
 
     byte[] getProfileDocument();
 
-    Profile getProfile(String systemName);
+    Profile getProfile(String systemName, String language);
 
 }

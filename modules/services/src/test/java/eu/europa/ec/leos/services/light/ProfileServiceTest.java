@@ -38,7 +38,7 @@ public class ProfileServiceTest extends LeosTest {
     
     @Before
     public void init() {
-        systemName = "DECISION_EDIT";
+        systemName = "DGT_EDIT";
         byte[] bytesFile = getFileContent("/light/lightProfileTest.xml");
         Content content = mock(Content.class);
         Content.Source source = mock(Content.Source.class);
@@ -60,10 +60,11 @@ public class ProfileServiceTest extends LeosTest {
     @Test
     public void test_getProfile() {
         //Actual call
-        Profile profile = profileService.getProfile(systemName);
+        Profile profile = profileService.getProfile(systemName, "en");
         //Assertions
         assertEquals(systemName, profile.getName().value());
-        //assertEquals(true, profile.isBreadcrumb());
+        assertEquals("default", profile.getLanguage());
+        assertEquals(false, profile.isBreadcrumb().booleanValue());
     }
 
     public byte[] getFileContent(String fileName) {

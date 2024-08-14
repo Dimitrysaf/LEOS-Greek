@@ -43,6 +43,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
@@ -51,6 +52,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.encodeParam;
 @RequestMapping("/secured/memorandum/")
 public class MemorandumController {
     private static final Logger LOG = LoggerFactory.getLogger(MemorandumController.class);
+    private static  final String CLIENT_CONTEXT_PARAMETER = "Client-Context";
 
     @Autowired
     MemorandumApiService memorandumApiService;
@@ -512,10 +514,12 @@ public class MemorandumController {
 
     @GetMapping(value = "/{documentRef}/document-config", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef) {
+    public ResponseEntity<Object> getDocumentConfig(@PathVariable("documentRef") String documentRef,
+                                                    HttpServletRequest request) {
         try {
             documentRef = encodeParam(documentRef);
-            DocumentConfigResponse view = this.memorandumApiService.getDocumentConfig(documentRef);
+            String clientContextToken = request.getHeader(CLIENT_CONTEXT_PARAMETER);
+            DocumentConfigResponse view = this.memorandumApiService.getDocumentConfig(documentRef, clientContextToken);
             return ResponseEntity.ok().body(view);
         } catch (Exception e) {
             LOG.error("Error occurred  while getting document config  - " + e.getMessage());
