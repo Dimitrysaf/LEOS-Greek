@@ -1026,7 +1026,7 @@ export class DocumentEditorComponent
   }
 
   get showTocEditButton() {
-    return !this.profile || this.profile.tocEdition;
+    return (!this.profile || this.profile.tocEdition) && this.documentService.getUserPermissions()?.includes('CAN_UPDATE');
   }
 
   get showAnnotations() {
