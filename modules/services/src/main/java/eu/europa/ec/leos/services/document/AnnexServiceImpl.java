@@ -283,6 +283,15 @@ public abstract class AnnexServiceImpl implements AnnexService {
     }
 
     @Override
+    public Annex getAnnexByRef(String ref) {
+        LOG.trace("Finding Annex by ref... [ref=" + ref + "]");
+        Annex annex = annexRepository.getAnnexByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(annex.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(annex.getMetadata().get().getLanguage());
+        return annex;
+    }
+
+    @Override
     public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
         // TODO temporary call. paginated loading will be implemented in the future Story
         List<Annex> majorVersions = findAllMajors(docRef, pageIndex, pageSize);

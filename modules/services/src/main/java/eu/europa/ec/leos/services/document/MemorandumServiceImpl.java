@@ -242,7 +242,15 @@ public abstract class MemorandumServiceImpl implements MemorandumService {
         trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
         return memorandum;
     }
-    
+
+    @Override
+    public Memorandum getMemorandumByRef(String ref) {
+        LOG.trace("Finding Memorandum by ref... [ref=" + ref + "]");
+        Memorandum memorandum = memorandumRepository.getMemorandumByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(memorandum.isTrackChangesEnabled());
+        return memorandum;
+    }
+
     @Override
     public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
         List<Memorandum> majorVersions = findAllMajors(docRef, pageIndex, pageSize);

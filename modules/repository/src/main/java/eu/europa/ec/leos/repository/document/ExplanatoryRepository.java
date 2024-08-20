@@ -117,6 +117,14 @@ public interface ExplanatoryRepository {
     @PostAuthorize("hasPermission(returnObject, 'CAN_READ')")
     Explanatory findExplanatoryByRef(String ref);
 
+    /**
+     * Finds a [Explanatory] document with the specified characteristics.
+     *
+     * @param ref the reference metadata of the Explanatory document to retrieve.
+     * @return the found Explanatory document.
+     */
+    Explanatory getExplanatoryByRef(String ref);
+
     List<Explanatory> findAllMinorsForIntermediate(String docRef, String curr, int startIndex, int maxResults);
 
     int findAllMinorsCountForIntermediate(String docRef, String currIntVersion);

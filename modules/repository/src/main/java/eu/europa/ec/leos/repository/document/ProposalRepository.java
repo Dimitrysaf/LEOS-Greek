@@ -186,7 +186,6 @@ public interface ProposalRepository {
 
     Proposal findFirstVersion(String ref);
 
-
     /**
      * Only to be used internally to get the proposal document using ref.
      * @param ref

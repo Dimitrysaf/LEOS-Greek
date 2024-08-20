@@ -242,48 +242,61 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
 
     @Override
     public String getFeedbackAnnotationsFromVersionedReference(String versionedReference, String proposalRef,
-                                                boolean removeRevisionPrefix) throws Exception {
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
-        String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
-        String result = legService.getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
+                                                boolean removeRevisionPrefix) {
+        try {
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+            LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);
+            String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
+            String result = legService.getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
 
-        if (removeRevisionPrefix) {
-            result = result.replaceAll("revision-", "");
-        } else {
-            result = legService.removePermissionsStoredAnnotations(result);
+            if (removeRevisionPrefix) {
+                result = result.replaceAll("revision-", "");
+            } else {
+                result = legService.removePermissionsStoredAnnotations(result);
+            }
+            return result;
+        } catch (Exception e) {
+            return "";
         }
-        return result;
     }
 
     @Override
     public String getFeedbackAnnotationsFromVersionedReference(String versionedReference, String legFileName, String proposalRef,
-                                                               boolean removeRevisionPrefix) throws Exception {
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
-        LegDocument legDocument = this.legService.findLastContributionByVersionedReferenceAndName(leosPackage.getPath(), legFileName, versionedReference);
-        String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
-        String result = legService.getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
+                                                               boolean removeRevisionPrefix) {
+        try {
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposalRef, Proposal.class);
+            LegDocument legDocument = this.legService.findLastContributionByVersionedReferenceAndName(leosPackage.getPath(), legFileName, versionedReference);
+            String documentRef = versionedReference.substring(0, versionedReference.lastIndexOf(DOC_VERSION_SEPARATOR));
+            String result = legService.getFeedbackAnnotationsFromLeg(legDocument.getId(), documentRef, proposalRef);
 
-        if (removeRevisionPrefix) {
-            result = result.replaceAll("revision-", "");
-        } else {
-            result = legService.removePermissionsStoredAnnotations(result);
+            if (removeRevisionPrefix) {
+                result = result.replaceAll("revision-", "");
+            } else {
+                result = legService.removePermissionsStoredAnnotations(result);
+            }
+            return result;
+        } catch (Exception e) {
+            return "";
         }
-        return result;
     }
 
     @Override
     public String getFeedbackAnnotationsFromContribution(String legFileName, String documentRef, String proposalRef,
-                                                boolean removeRevisionPrefix) throws IOException {
-        LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
-        LegDocument legDoc = legService.findLastContribution(leosPackage.getPath(), legFileName);
-        String result = legService.getFeedbackAnnotationsFromLeg(legDoc.getId(), documentRef, proposalRef);
+                                                boolean removeRevisionPrefix) {
+        try {
+            LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
 
-        if (removeRevisionPrefix) {
-            result = result.replaceAll("revision-", "");
-        } else {
-            result = legService.removePermissionsStoredAnnotations(result);
+                LegDocument legDoc = legService.findLastContribution(leosPackage.getPath(), legFileName);
+                String result = legService.getFeedbackAnnotationsFromLeg(legDoc.getId(), documentRef, proposalRef);
+
+                if (removeRevisionPrefix) {
+                    result = result.replaceAll("revision-", "");
+                } else {
+                    result = legService.removePermissionsStoredAnnotations(result);
+                }
+                return result;
+        } catch (IOException e) {
+            return "";
         }
-        return result;
     }
 }

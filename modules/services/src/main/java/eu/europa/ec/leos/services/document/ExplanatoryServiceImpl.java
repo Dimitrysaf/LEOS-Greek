@@ -294,6 +294,15 @@ public class ExplanatoryServiceImpl implements ExplanatoryService {
     }
 
     @Override
+    public Explanatory getExplanatoryByRef(String ref) {
+        LOG.trace("Finding Explanatory by ref... [ref=" + ref + "]");
+        Explanatory explanatory = explanatoryRepository.getExplanatoryByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(explanatory.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(explanatory.getMetadata().get().getLanguage());
+        return explanatory;
+    }
+
+    @Override
     public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
         // TODO temporary call. paginated loading will be implemented in the future Story
         List<Explanatory> majorVersions = findAllMajors(docRef, pageIndex, pageSize);

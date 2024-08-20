@@ -143,7 +143,15 @@ public interface MemorandumRepository {
      */
     @PostAuthorize("hasPermission(returnObject, 'CAN_READ')")
     Memorandum findMemorandumByRef(String ref);
- 
+
+    /**
+     * Finds a [Memorandum] document with the specified characteristics.
+     *
+     * @param ref the reference metadata of the memorandum document to retrieve.
+     * @return the found memorandum document.
+     */
+    Memorandum getMemorandumByRef(String ref);
+
     List<Memorandum> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults);
     
     int findAllMinorsCountForIntermediate(String docRef, String currIntVersion);

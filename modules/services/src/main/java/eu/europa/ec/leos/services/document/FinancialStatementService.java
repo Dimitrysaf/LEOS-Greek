@@ -59,6 +59,8 @@ public interface FinancialStatementService {
 
     FinancialStatement findFinancialStatementByRef(String ref);
 
+    FinancialStatement getFinancialStatementByRef(String ref);
+
     List<VersionVO> getAllVersions(String id, String documentId, int pageIndex, int pageSize);
 
     List<FinancialStatement> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults);

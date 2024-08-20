@@ -53,7 +53,7 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
 
     @Override
     public List<LeosPermission> requestUserPermissions(String documentRef, LeosCategoryClass category) {
-        XmlDocument document = documentContentService.getDocumentByRef(documentRef, category);
+        XmlDocument document = documentContentService.findDocumentByRef(documentRef, category);
         return securityContext.getPermissions(document);
     }
 
@@ -65,7 +65,7 @@ public class AnnotateApiServiceImpl implements AnnotateApiService {
     @Override
     public AnnotateMetadata requestDocumentMetadata(String documentRef, LeosCategoryClass category) {
         AnnotateMetadata metadata = new AnnotateMetadata();
-        XmlDocument document = documentContentService.getDocumentByRef(documentRef, category);
+        XmlDocument document = documentContentService.findDocumentByRef(documentRef, category);
         metadata.setVersion(document.getVersionLabel());
         metadata.setId(document.getId());
         metadata.setTitle(document.getTitle());

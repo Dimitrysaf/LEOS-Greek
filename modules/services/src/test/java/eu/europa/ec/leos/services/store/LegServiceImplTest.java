@@ -22,6 +22,7 @@ import eu.europa.ec.leos.model.action.ContributionVO;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.Entity;
 import eu.europa.ec.leos.model.user.User;
+import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.document.ProposalRepository;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
@@ -194,7 +195,8 @@ public class LegServiceImplTest {
 
     @InjectMocks
     private ProposalService proposalService = spy(
-            new ProposalServiceProposalImpl(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor, packageRepository, xPathCatalog,
+            new ProposalServiceProposalImpl(proposalRepository, xmlNodeProcessor, xmlContentProcessor, xmlNodeConfigProcessor,
+                    packageRepository, xPathCatalog,
                     tableOfContentProcessor, messageHelper, trackChangesContext, documentLanguageContext));
 
     @InjectMocks

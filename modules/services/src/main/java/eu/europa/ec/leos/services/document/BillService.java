@@ -72,7 +72,9 @@ public interface BillService {
     List<String> getAncestorsIdsForElementId(Bill bill, List<String> elementIds);
 
     Bill findBillByRef(String ref);
-    
+
+    Bill getBillByRef(String ref);
+
     List<Bill> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults);
     
     int findAllMinorsCountForIntermediate(String docRef, String currIntVersion);

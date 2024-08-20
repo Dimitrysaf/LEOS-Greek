@@ -18,6 +18,7 @@ import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.BillMetadata;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.VersionVO;
@@ -307,7 +308,16 @@ public abstract class BillServiceImpl implements BillService {
         documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
-    
+
+    @Override
+    public Bill getBillByRef(String ref) {
+        LOG.trace("Finding Bill by ref... [ref=" + ref + "]");
+        Bill bill = billRepository.getBillByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
+        return bill;
+    }
+
     @Override
     public Bill saveTableOfContent(Bill bill, List<TableOfContentItemVO> tocList, String actionMsg, User user) {
         Validate.notNull(bill, "Bill is required");

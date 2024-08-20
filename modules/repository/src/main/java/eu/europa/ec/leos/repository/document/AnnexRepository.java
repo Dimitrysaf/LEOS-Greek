@@ -161,7 +161,15 @@ public interface AnnexRepository {
      */
     @PostAuthorize("hasPermission(returnObject, 'CAN_READ')")
     Annex findAnnexByRef(String ref);
-    
+
+    /**
+     * Finds a [Annex] document with the specified characteristics.
+     *
+     * @param ref the reference metadata of the annex document to retrieve.
+     * @return the found annex document.
+     */
+    Annex getAnnexByRef(String ref);
+
     List<Annex> findAllMinorsForIntermediate(String docRef, String curr, int startIndex, int maxResults);
     
     int findAllMinorsCountForIntermediate(String docRef, String currIntVersion);
