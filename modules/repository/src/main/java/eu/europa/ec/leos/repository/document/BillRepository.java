@@ -159,7 +159,15 @@ public interface BillRepository {
      */
     @PostAuthorize("hasPermission(returnObject, 'CAN_READ')")
     Bill findBillByRef(String ref);
-    
+
+    /**
+     * Finds a [Bill] document with the specified characteristics.
+     *
+     * @param ref the reference metadata of the bill document to retrieve.
+     * @return the found bill document.
+     */
+    Bill getBillByRef(String ref);
+
     List<Bill> findAllMinorsForIntermediate(String docRef, String curr, int startIndex, int maxResults);
 
     int findAllMinorsCountForIntermediate(String docRef, String currIntVersion);

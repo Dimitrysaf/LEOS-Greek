@@ -277,7 +277,7 @@ public class LegServiceImpl implements LegService {
     public List<LegDocumentVO> getLegDocumentDetailsByUserId(String userId, String proposalId, String legStatus) {
         List<LegDocumentVO> legDocumentVOs = new ArrayList<>();
         if(!StringUtils.isEmpty(proposalId)) {
-            Proposal proposal = proposalService.findProposalByRef(proposalId);
+            Proposal proposal = proposalService.getProposalByRef(proposalId);
             Optional<Collaborator> userAsCollaborator = proposal.getCollaborators().stream()
                     .filter(x -> x.getLogin().equalsIgnoreCase(userId)).findAny();
             if(userAsCollaborator.isPresent()) {

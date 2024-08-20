@@ -223,8 +223,8 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
         Proposal updatedProposal;
         LegDocument updatedLegDocument;
         try {
-            Proposal clonedProposal = proposalService.findProposalByRef(cloneProposalRef);
-            Proposal originalProposal = proposalService.findProposalByRef(clonedProposal.getClonedFrom());
+            Proposal clonedProposal = proposalService.getProposalByRef(cloneProposalRef);
+            Proposal originalProposal = proposalService.getProposalByRef(clonedProposal.getClonedFrom());
             LegDocument legDocument = legService.findLegDocumentById(cloneLegFileId);
             List<String> containedDocuments = legDocument.getContainedDocuments();
 

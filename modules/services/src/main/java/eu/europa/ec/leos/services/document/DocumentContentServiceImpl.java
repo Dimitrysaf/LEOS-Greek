@@ -528,6 +528,36 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         return document;
     }
 
+
+    @Override
+    public XmlDocument findDocumentByRef(String documentRef, LeosCategoryClass category) {
+        XmlDocument document;
+        switch (category) {
+            case BILL:
+                document = billService.getBillByRef(documentRef);
+                break;
+            case ANNEX:
+                document = annexService.getAnnexByRef(documentRef);
+                break;
+            case MEMORANDUM:
+                document = memorandumService.getMemorandumByRef(documentRef);
+                break;
+            case COUNCIL_EXPLANATORY:
+                document = explanatoryService.getExplanatoryByRef(documentRef);
+                break;
+            case PROPOSAL:
+            case COVERPAGE:
+                document = proposalService.getProposalByRef(documentRef);
+                break;
+            case STAT_FINANC_LEGIS:
+                document = financialStatementService.getFinancialStatementByRef(documentRef);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid document type");
+        }
+        return document;
+    }
+
     @Override
     public XmlDocument getDocumentById(String documentId, LeosCategoryClass category) {
         XmlDocument document;

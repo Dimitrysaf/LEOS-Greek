@@ -67,7 +67,9 @@ public interface AnnexService {
     Annex saveTableOfContent(Annex annex, List<TableOfContentItemVO> tocList, AnnexStructureType structureType, String actionMsg, User user);
     
     Annex findAnnexByRef(String ref);
-    
+
+    Annex getAnnexByRef(String ref);
+
     List<VersionVO> getAllVersions(String id, String documentId, int pageIndex, int pageSize);
     
     List<Annex> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults);

@@ -100,6 +100,12 @@ public class ExplanatoryRepositoryImpl implements ExplanatoryRepository {
     }
 
     @Override
+    public Explanatory getExplanatoryByRef(String ref) {
+        logger.debug("Finding Explanatory by ref... [ref=" + ref + "]");
+        return leosRepository.findDocumentByRef(ref, Explanatory.class);
+    }
+
+    @Override
     public List<Explanatory> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults) {
         logger.debug("Finding Explanatory versions between intermediates...");
         return leosRepository.findAllMinorsForIntermediate(Explanatory.class, docRef, currIntVersion, startIndex, maxResults);

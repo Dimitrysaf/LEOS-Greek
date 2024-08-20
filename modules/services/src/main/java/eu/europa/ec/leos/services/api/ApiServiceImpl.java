@@ -595,7 +595,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 case PROPOSAL: {
                     Proposal proposal = (Proposal) document;
                     if (proposalXmlContent == null) {
-                        proposal = this.proposalService.findProposalByRef(proposal.getMetadata().get().getRef());
+                        proposal = this.proposalService.getProposalByRef(proposal.getMetadata().get().getRef());
                         proposalXmlContent = proposal.getContent().exists(c -> c.getSource() != null)
                                 ? proposal.getContent().get().getSource().getBytes()
                                 : new byte[0];
@@ -1052,7 +1052,7 @@ public abstract class ApiServiceImpl implements ApiService {
 
     @Override
     public MilestoneViewResponse listMilestoneDocumentsFromVersionRef(String proposalRef, String versionedReference) throws Exception {
-        Proposal proposal = this.proposalService.findProposalByRef(proposalRef);
+        Proposal proposal = this.proposalService.getProposalByRef(proposalRef);
 
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(proposal.getMetadata().get().getRef(), Proposal.class);
         LegDocument legDocument = this.legService.findLastLegByVersionedReference(leosPackage.getPath(), versionedReference);

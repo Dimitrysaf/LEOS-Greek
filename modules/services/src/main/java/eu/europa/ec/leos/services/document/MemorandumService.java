@@ -63,7 +63,9 @@ public interface MemorandumService {
     Memorandum createVersion(String id, VersionType versionType, String comment);
 
     Memorandum findMemorandumByRef(String ref);
-    
+
+    Memorandum getMemorandumByRef(String ref);
+
     List<VersionVO> getAllVersions(String id, String documentId, int pageIndex, int pageSize);
     
     List<Memorandum> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults);

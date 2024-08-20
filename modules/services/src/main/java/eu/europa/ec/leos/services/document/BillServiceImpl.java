@@ -307,7 +307,16 @@ public abstract class BillServiceImpl implements BillService {
         documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         return bill;
     }
-    
+
+    @Override
+    public Bill getBillByRef(String ref) {
+        LOG.trace("Finding Bill by ref... [ref=" + ref + "]");
+        Bill bill = billRepository.getBillByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(bill.isTrackChangesEnabled());
+        documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
+        return bill;
+    }
+
     @Override
     public Bill saveTableOfContent(Bill bill, List<TableOfContentItemVO> tocList, String actionMsg, User user) {
         Validate.notNull(bill, "Bill is required");

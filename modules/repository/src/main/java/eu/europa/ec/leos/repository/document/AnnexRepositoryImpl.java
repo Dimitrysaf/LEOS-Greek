@@ -130,7 +130,13 @@ public abstract class AnnexRepositoryImpl implements AnnexRepository {
         logger.debug("Finding Annex by ref... [ref=" + ref + "]");
         return leosRepository.findDocumentByRef(ref, Annex.class);
     }
-    
+
+    @Override
+    public Annex getAnnexByRef(String ref) {
+        logger.debug("Finding Annex by ref... [ref=" + ref + "]");
+        return leosRepository.findDocumentByRef(ref, Annex.class);
+    }
+
     @Override
     public List<Annex> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults) {
         logger.debug("Finding Annex versions between intermediates...");

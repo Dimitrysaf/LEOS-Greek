@@ -125,6 +125,9 @@ public interface DocumentContentService {
 
     XmlDocument getDocumentByRef(String documentRef, LeosCategoryClass category);
 
+    // No check of access' permission using this method (Used to access annotations)
+    XmlDocument findDocumentByRef(String documentRef, LeosCategoryClass category);
+
     XmlDocument getDocumentById(String documentId, LeosCategoryClass category);
 
     XmlDocument updateDocument(XmlDocument document, byte[] resultXmlContent, String message);

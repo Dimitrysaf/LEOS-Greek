@@ -115,6 +115,12 @@ public class FinancialStatementRepositoryImpl implements FinancialStatementRepos
     }
 
     @Override
+    public FinancialStatement getFinancialStatementByRef(String ref) {
+        logger.debug("Finding FinancialStatement by ref... [ref=" + ref + "]");
+        return leosRepository.findDocumentByRef(ref, FinancialStatement.class);
+    }
+
+    @Override
     public List<FinancialStatement> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults) {
         logger.debug("Finding FinancialStatement versions between intermediates...");
         return leosRepository.findAllMinorsForIntermediate(FinancialStatement.class, docRef, currIntVersion, startIndex, maxResults);

@@ -117,6 +117,12 @@ public class BillRepositoryImpl implements BillRepository {
     }
 
     @Override
+    public Bill getBillByRef(String ref) {
+        logger.debug("Finding Bill by ref... [ref=" + ref + "]");
+        return leosRepository.findDocumentByRef(ref, Bill.class);
+    }
+
+    @Override
     public List<Bill> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults) {
         logger.debug("Finding Bill versions between intermediates...");
         return leosRepository.findAllMinorsForIntermediate(Bill.class, docRef, currIntVersion, startIndex, maxResults);

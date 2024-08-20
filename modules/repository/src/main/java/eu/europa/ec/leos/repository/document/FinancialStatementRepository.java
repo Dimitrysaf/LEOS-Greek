@@ -143,6 +143,14 @@ public interface FinancialStatementRepository {
     @PostAuthorize("hasPermission(returnObject, 'CAN_READ')")
     FinancialStatement findFinancialStatementByRef(String ref);
 
+    /**
+     * Finds a [FinancialStatement] document with the specified characteristics.
+     *
+     * @param ref the reference metadata of the FinancialStatement document to retrieve.
+     * @return the found FinancialStatement document.
+     */
+    FinancialStatement getFinancialStatementByRef(String ref);
+
     List<FinancialStatement> findAllMinorsForIntermediate(String docRef, String curr, int startIndex, int maxResults);
 
     int findAllMinorsCountForIntermediate(String docRef, String currIntVersion);

@@ -402,6 +402,14 @@ public class FinancialStatementServiceImpl implements FinancialStatementService 
     }
 
     @Override
+    public FinancialStatement getFinancialStatementByRef(String ref) {
+        LOG.trace("Finding FinancialStatement by ref... [ref=" + ref + "]");
+        FinancialStatement financialStatement = financialStatementRepository.getFinancialStatementByRef(ref);
+        trackChangesContext.setTrackChangesEnabled(financialStatement.isTrackChangesEnabled());
+        return financialStatement;
+    }
+
+    @Override
     public List<VersionVO> getAllVersions(String documentId, String docRef, int pageIndex, int pageSize) {
         // TODO temporary call. paginated loading will be implemented in the future Story
         List<FinancialStatement> majorVersions = findAllMajors(docRef, pageIndex, pageSize);

@@ -116,7 +116,13 @@ public class MemorandumRepositoryImpl implements MemorandumRepository {
         logger.debug("Finding Memorandum by ref... [ref=" + ref + "]");
         return leosRepository.findDocumentByRef(ref, Memorandum.class);
     }
-    
+
+    @Override
+    public Memorandum getMemorandumByRef(String ref) {
+        logger.debug("Finding Memorandum by ref... [ref=" + ref + "]");
+        return leosRepository.findDocumentByRef(ref, Memorandum.class);
+    }
+
     @Override
     public List<Memorandum> findAllMinorsForIntermediate(String docRef, String currIntVersion, int startIndex, int maxResults) {
         logger.debug("Finding Memorandum versions between intermediates...");
