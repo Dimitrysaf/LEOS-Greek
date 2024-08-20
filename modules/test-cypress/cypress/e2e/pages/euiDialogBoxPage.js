@@ -1,4 +1,4 @@
-class dialogBoxPage {
+class euiDialogBoxPage {
     elements = {
         dialogHeader: () => cy.get("div[role='dialog'] .eui-dialog__header"),
         deleteBtn: () => cy.get('button.eui-button.eui-button--danger'),
@@ -28,4 +28,4 @@ class dialogBoxPage {
         this.elements.dialogFooterCloseBtn().click();
     }
 }
-export default new dialogBoxPage();
+export default new euiDialogBoxPage();

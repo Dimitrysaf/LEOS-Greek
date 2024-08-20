@@ -1,7 +1,5 @@
 class internalReferenceWindow {
     elements = {
-        dialogTitle: () => cy.get('.cke_dialog_title'),
-        okBtn: () => cy.get('.cke_dialog_footer_buttons').contains('OK'),
         legalActTabPanel: () => cy.get("div[role='tabpanel'][name^='REG']"),
         //annexTabPanel: () => cy.get("div[role='tabpanel'][name^='ANNEX']"),
         bill: () => this.elements.legalActTabPanel().find('bill'),
@@ -10,10 +8,6 @@ class internalReferenceWindow {
         citationList: () => this.elements.navigationPane().contains('Citations').next("ul[role='group']"),
         recitalList: () => this.elements.navigationPane().contains('Recitals').next("ul[role='group']"),
         articleList: () => this.elements.navigationPane().contains('Enacting Terms').next("ul[role='group']")
-    }
-
-    clickOkBtn(){
-        this.elements.okBtn().click();
     }
 
     clickParagraphOfArticle(paragraphNumber){

@@ -1,5 +1,5 @@
 import { When, Then } from "cypress-cucumber-preprocessor/steps";
-import dialogBoxPage from "../pages/dialogBoxPage";
+import dialogBoxPage from "../pages/euiDialogBoxPage";
 import milestoneExplorer from "../pages/milestoneExplorer";
 
 Then(`user is on milestone explorer window`, () => {

@@ -1,14 +1,6 @@
 import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import internalReferenceWindow from "../pages/internalReferenceWindow";
 
-Then(`title of cke dialog box is {string}`, (title) => {
-    internalReferenceWindow.elements.dialogTitle().should('have.text', title);
-});
-
-When(`click on ok button in internal reference window`, () => {
-    internalReferenceWindow.clickOkBtn();
-});
-
 When(`click on {string} link in enacting terms on the left side of internal reference window`, (link) => {
     internalReferenceWindow.clickEnactingTermsArticleLink(link);
 });

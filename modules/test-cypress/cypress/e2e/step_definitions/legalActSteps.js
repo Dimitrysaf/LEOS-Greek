@@ -329,3 +329,40 @@ Then('{string} is showing as inserted in num of article {int} of bill', function
 Then('point {int} of list {int} of paragraph {int} of article {int} contains attribute {string} with value {string}', function (pointNumber, listNumber, paragraphNumber, articleNumber, attributeName, attributeValue) {
     legalActPage.getPointOfParagraphFromArticle(pointNumber, listNumber, paragraphNumber, articleNumber).should('have.attr', attributeName).and('equal', attributeValue);
 });
+
+Then('count of text {string} is {int} in citation {int}', function (text, count, citationNumber) {
+    legalActPage.getCitation(citationNumber).contains(text).should('have.length', count);
+});
+
+Then('citation {int} contains authorial note with marker {int} and text {string}', function (citationNumber, markerNumber, text) {
+    legalActPage.getAuthorialNoteWithMarkerNumberFromCitation(citationNumber, markerNumber).should('have.text', text);
+});
+
+When('click on authorial note with marker {int} in citation {int}', function (markerNumber, citationNumber) {
+    legalActPage.clickAuthorialNoteWithMarkerNumberFromCitation(markerNumber, citationNumber);
+});
+
+Then('recital {int} contains authorial note with marker {int} and text {string}', function (recitalNumber, markerNumber, text) {
+    legalActPage.getAuthorialNoteWithMarkerNumberFromRecital(recitalNumber, markerNumber).should('have.text', text);
+});
+
+When('click on authorial note with marker {int} in recital {int}', function (markerNumber, recitalNumber) {
+    legalActPage.clickAuthorialNoteWithMarkerNumberFromRecital(markerNumber, recitalNumber);
+});
+
+Then('paragraph {int} of article {int} contains {string}', function (paragraphNumber, articleNumber, text) {
+    legalActPage.getParagraphFromArticle(paragraphNumber, articleNumber).should('include.text', text);
+});
+
+Then('paragraph {int} of article {int} contains authorial note with marker {int} and text {string}', function (paragraphNumber, articleNumber, markerNumber, text) {
+    legalActPage.getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, articleNumber, markerNumber).should('have.text', text);
+});
+
+When('click on authorial note with marker {int} in paragraph {int} of article {int}', function (markerNumber, paragraphNumber, articleNumber) {
+    legalActPage.clickAuthorialNoteWithMarkerNumberFromParagraphOfArticle(markerNumber, paragraphNumber, articleNumber);
+});
+
+Then('content of subparagraph {int} of  of paragraph {int} of article {int} contains a table with {int} row and {int} column', function (subparagraphNumber, paragraphNumber, articleNumber, rowNumber, columnNumber) {
+    legalActPage.getRowFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('have.length', rowNumber);
+    legalActPage.getColumnFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('have.length', columnNumber);
+});

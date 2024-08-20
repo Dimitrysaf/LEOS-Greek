@@ -31,7 +31,7 @@ Feature: Track Changes Feature
     # Do changes in text
     When move the cursor position to offset 38 in paragraph 1 of article in edition mode
     And  click enter from keyboard in edition mode
-    When append "New paragraph" at offset 3 in numbered paragraph 2 of article when ck editor is open
+    When append "New paragraph" at offset 3 in numbered paragraph 2 of article in edition mode
     # Check result
     Then paragraph 2 of article has attribute "new"
     # Indent

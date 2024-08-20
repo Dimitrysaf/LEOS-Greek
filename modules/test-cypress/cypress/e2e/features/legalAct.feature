@@ -101,7 +101,7 @@ Feature: Legal Act Page Regression Features
         And  ribbon toolbar is displayed
         When mouseover and click on article 1
         Then ck editor window is displayed
-        When append " New Text " at offset 7 in numbered paragraph 1 of article when ck editor is open
+        When append " New Text " at offset 7 in numbered paragraph 1 of article in edition mode
         Then numbered paragraph 1 of article contains "Text... New Text" in edition mode
         When click save and close button of ck editor
         Then drafting rule violations dialog box displayed with message "Articles with a single paragraph cannot be numbered."
@@ -221,7 +221,7 @@ Feature: Legal Act Page Regression Features
         Then ck editor window is displayed
         When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click enter from keyboard in edition mode
-        When append " New Text " at offset 0 in numbered paragraph 2 of article when ck editor is open
+        When append " New Text " at offset 0 in numbered paragraph 2 of article in edition mode
         When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click enter from keyboard in edition mode
         And  add content "Point a" to li 2 with data-akn-element "paragraph" of article in edition mode
@@ -565,58 +565,58 @@ Feature: Legal Act Page Regression Features
         Then ck editor window is displayed
         When click at offset 59 of child 0 of citation in edition mode
         And  click on internal reference icon present in ck editor panel
-        Then title of cke dialog box is "Internal reference"
+        Then cke dialog window is displayed with title "Internal reference"
         When click on "Article 3 - Subject matter and scope 1.In order..." link in enacting terms on the left side of internal reference window
         And  click on point 2 of list 1 of paragraph 3 of article on the right side of internal reference window
-        And  click on ok button in internal reference window
+        And  click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then "Article 3(3), point (b)" is added as internal reference 1 of citation 2
         When mouseover and click on recital 1
         Then ck editor window is displayed
         When click on internal reference icon present in ck editor panel
-        Then title of cke dialog box is "Internal reference"
+        Then cke dialog window is displayed with title "Internal reference"
         When click on "Article 11 - Monitoring and reporting 1.Member ..." link in enacting terms on the left side of internal reference window
-        And  click on ok button in internal reference window
+        And  click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then "Article 11" is added as internal reference 1 of recital 1
         When mouseover and click on recital 2
         Then ck editor window is displayed
         When click on internal reference icon present in ck editor panel
-        Then title of cke dialog box is "Internal reference"
+        Then cke dialog window is displayed with title "Internal reference"
         When click on "Article 9 - Additional measures 1.Member States..." link in enacting terms on the left side of internal reference window
         And  click on point 2 of list 1 of paragraph 1 of article on the right side of internal reference window
-        And  click on ok button in internal reference window
+        And  click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then "Article 9(1), point (b)" is added as internal reference 1 of recital 2
         When mouseover and click on article 4
         Then ck editor window is displayed
         When click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
         When click on internal reference icon present in ck editor panel
-        Then title of cke dialog box is "Internal reference"
+        Then cke dialog window is displayed with title "Internal reference"
         When click on "Having regard to the proposal from the European..." link in citations on the left side of internal reference window
-        And  click on ok button in internal reference window
+        And  click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then "second citation" is added as internal reference 1 of point 1 of list 1 of paragraph 1 of article 4
         When mouseover and click on article 4
         Then ck editor window is displayed
         When click at offset 0 in li 8 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
         And  click on internal reference icon present in ck editor panel
-        Then title of cke dialog box is "Internal reference"
+        Then cke dialog window is displayed with title "Internal reference"
         When click on "(1) Recital...Article 11" link in recitals on the left side of internal reference window
-        And  click on ok button in internal reference window
+        And  click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then "Recital (1)" is added as internal reference 1 of point 8 of list 1 of paragraph 1 of article 4
         When mouseover and click on article 8
         Then ck editor window is displayed
         When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click enter from keyboard in edition mode
-        When append " New Text " at offset 0 in numbered paragraph 2 of article when ck editor is open
+        When append " New Text " at offset 0 in numbered paragraph 2 of article in edition mode
         When move the cursor position to offset 7 in paragraph 1 of article in edition mode
         And  click on internal reference icon present in ck editor panel
-        Then title of cke dialog box is "Internal reference"
+        Then cke dialog window is displayed with title "Internal reference"
         When click on "Article 11 - Monitoring and reporting 1.Member ..." link in enacting terms on the left side of internal reference window
         And  click on paragraph 2 of article on the right side of internal reference window
-        And  click on ok button in internal reference window
+        And  click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then "Article 11(2)" is added as internal reference 1 of paragraph 1 of article 8
         When click on internal reference link 1 of citation 2

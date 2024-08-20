@@ -11,7 +11,7 @@ class ckEditorWindow {
         pasteBtn: () => cy.get('.cke_button__paste'),
         subScriptBtn: () => cy.get('.cke_button__subscript'),
         superScriptBtn: () => cy.get('.cke_button__superscript'),
-        insertSpecialCharacterBtn: () => cy.get('.cke_button__specialchar'),
+        insertSpecialCharacterIcon: () => cy.get('.cke_button__specialchar'),
         showBlockBtn: () => cy.get('.cke_button__leosshowblocks'),
         sourceBtn: () => cy.get('.cke_button__sourcedialog'),
         internalReferenceIcon: () => cy.get('a.cke_button__leoscrossreference'),
@@ -20,8 +20,15 @@ class ckEditorWindow {
         decreaseIndentIcon: () => cy.get('.cke_button__outdent'),
         softEnterIcon: () => cy.get('.cke_button__leoshierarchicalelementshiftenterhandler'),
         addSubParagraphIcon: () => cy.get('.cke_button__leoshierarchicalelementsubparagraphafterlastpoint'),
+        insertFootNoteIcon: () => cy.get('.cke_button__authorialnotewidget'),
+        tableIcon: () => cy.get('.cke_button__table'),
+        mathIcon: () => cy.get('.cke_button__mathjax'),
+        boldIcon: () => cy.get('.cke_button__bold'),
+        italicIcon: () => cy.get('.cke_button__italic'),
+        changeTextCaseIcon: () => cy.get('.cke_button__transformtextswitcher'),
         ckEditorBtn: () => cy.get('a.cke_button'),
         docPurpose: () => this.elements.ckEditableInline().find("p[data-akn-name='docPurpose']"),
+        pTag: () => this.elements.ckEditableInline().find('p'),
         ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
         ckEditorDialogOkBtn: () => cy.get('.cke_dialog_ui_button_ok'),
     }
@@ -54,6 +61,10 @@ class ckEditorWindow {
         this.elements.ckEditableInline().type('{backspace}');
     }
 
+    clickSpaceBarFromKeyboardWhenCKEditorOpen() {
+        this.elements.ckEditableInline().type(' ');
+    }
+
     getCkEditableInlineElement() {
         return this.elements.ckEditableInline();
     }
@@ -67,16 +78,56 @@ class ckEditorWindow {
         this.elements.closeBtn().click();
     }
 
-    /*clickSaveBtn() {
-        this.elements.saveBtn().click();
-    }*/
-
     clickParagraphModeIcon() {
         this.elements.paragraphModeIcon().click().click();
     }
 
     clickIncreaseIndentIcon() {
         this.elements.increaseIndentIcon().click();
+    }
+
+    clickSubScriptIcon(){
+        this.elements.subScriptBtn().click();
+    }
+
+    clickSuperScriptIcon(){
+        this.elements.superScriptBtn().click();
+    }
+
+    clickUndoIcon(){
+        this.elements.undoBtn().click();
+    }
+
+    clickRedoIcon(){
+        this.elements.redoBtn().click();
+    }
+
+    clickInsertFootNoteIcon(){
+        this.elements.insertFootNoteIcon().click();
+    }
+
+    clickTableIcon(){
+        this.elements.tableIcon().click();
+    }
+
+    clickMathIcon(){
+        this.elements.mathIcon().click();
+    }
+
+    clickBoldIcon(){
+        this.elements.boldIcon().click();
+    }
+
+    clickItalicIcon(){
+        this.elements.italicIcon().click();
+    }
+
+    clickChangeTextCaseIcon(){
+        this.elements.changeTextCaseIcon().click();
+    }
+
+    clickInsertSpecialCharacterIcon(){
+        this.elements.insertSpecialCharacterIcon().click();
     }
 
     clickDecreaseIndentIcon() {
@@ -93,6 +144,14 @@ class ckEditorWindow {
 
     clickInternalReferenceIcon() {
         this.elements.internalReferenceIcon().click();
+    }
+
+    clickCopyIcon() {
+        this.elements.copyBtn().click();
+    }
+
+    clickCutIcon() {
+        this.elements.cutBtn().click();
     }
 
     appendInCkEditorLevel(text, pTagNumber) {
@@ -131,8 +190,16 @@ class ckEditorWindow {
         this.moveCursor(offset, "[data-akn-name=citation]", child);
     }
 
+    clickAtSpecificOffsetInChildOfRecital(offset, child) {
+        this.moveCursor(offset, "[data-akn-name=recital]", child);
+    }
+
     clickAtSpecificOffsetInParagraphOfArticle(offset, paragraphLi, paragraphDataAknElement) {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id));
+    }
+
+    clickAtSpecificOffsetInChildOfParagraphOfArticle(offset, child, paragraphLi, paragraphDataAknElement) {
+        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-element='" + paragraphDataAknElement + "']").eq(paragraphLi - 1).invoke('attr', 'id').then(id => this.moveCursor(offset, "#" + id, child));
     }
 
     moveCursorToSpecificOffsetInPointOfParagraphOfArticle(pointOffset, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
@@ -141,10 +208,6 @@ class ckEditorWindow {
 
     moveCursorToSpecificOffsetInPTagOfPointOfParagraphOfArticle(pointOffset, pTag, pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement) {
         this.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).find('p').eq(pTag - 1).invoke('attr', 'id').then(id => this.moveCursor(pointOffset, "#" + id));
-    }
-
-    appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber, child) {
-        this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.addContent(newContent, offset, "#" + id, child));
     }
 
     appendContentInParagraphOfArticle(newContent, offset, paragraphNumber, child) {
@@ -225,6 +288,18 @@ class ckEditorWindow {
 
     getHeadingOfLevel() {
         return this.elements.ckEditableInline().find("ol[data-akn-element='level']").find("li[data-akn-element='level']").find('h2 strong');
+    }
+
+    getAuthorialNoteWithMarkerNumber(markerNumber) {
+        return this.elements.pTag().find("span.authorialnote[marker='"+markerNumber+"']");
+    }
+
+    getTagElementFromParagraphOfArticle(paragraphNumber, tagName) {
+        return this.getParagraphElementOfArticle(paragraphNumber, 'paragraph').find(tagName);
+    }
+
+    getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, markerNumber) {
+        return this.getParagraphElementOfArticle(paragraphNumber, 'paragraph').find("span.authorialnote[marker='"+markerNumber+"']");
     }
 
     selectContent(offsetStart, offsetEnd, element) {
