@@ -237,7 +237,7 @@ public class MilestoneHelper {
                     Optional<String> rejectedAnnex = originalLegDocument.getContainedDocuments().stream().filter(
                             fileName -> fileName.contains(PROCESSED) && fileName.startsWith(originalEntryKey)).findFirst();
 
-                    if (!acceptedAnnex.isPresent()) {
+                    if (acceptedAnnex.isPresent()) {
                         docsDeletedMap.put(originalEntryKey.concat(ACCEPTED_DELETED), entry.getValue());
                     } else if (rejectedAnnex.isPresent()) {
                         //Add the processed annexes with the suffix "_processed"
@@ -257,7 +257,7 @@ public class MilestoneHelper {
                     //Add the processed docs with the suffix "_processed"
                     String processedAnnexFilename = docFilename.concat(PROCESSED);
                     docsDeletedMap.put(processedAnnexFilename, entry.getValue());
-                } else if (!acceptedDoc.isPresent()) {
+                } else if (acceptedDoc.isPresent()) {
                     String processedAnnexFilename = docFilename.concat(ACCEPTED_DELETED);
                     docsDeletedMap.put(processedAnnexFilename, entry.getValue());
                 } else {
