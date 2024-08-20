@@ -127,6 +127,16 @@ public class MetadataUtil {
         return false;
     }
 
+    private static boolean isMainDocumentFile(XmlFile xmlFile) {
+        final String fileName = xmlFile.getName();
+        return fileName.startsWith("main");
+    }
+
+    private static boolean isBillDocumentFile(XmlFile xmlFile) {
+        final String fileName = xmlFile.getName();
+        return fileName.startsWith("bill");
+    }
+
     public static XmlFile akn4euResponseToXmlFile(ApplyMetadataResponse response) throws MetadataUtilsException {
         try {
             XmlFile xmlFile = XmlUtil.newXmlFile();
@@ -812,19 +822,27 @@ public class MetadataUtil {
     public static void processInsertCote(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
         MetadataUtil.addInsertCoteToMetaReference(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToCoverPage(fieldInfo, xmlFile);
-        addInserCoteToFRBRWork(fieldInfo, xmlFile);
         MetadataUtil.addInsertCoteToDocumentFilename(fieldInfo, xmlFile);
     }
 
-    public static void addInsertCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        Node xmlNodeMeta = MetadataUtil.getXmlNodeMetaReferenceWithNameAttributeValue(xmlFile, "TLCReference", "identifier");
-        if (xmlNodeMeta == null) {
-            return;
+    private static void addInsertCoteToDocumentFilename(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
+    {
+        final String fileName = xmlFile.getName();
+        if (isMainDocumentFile(xmlFile)) {
+            final String[] splitFileName = fileName.split("-");
+            splitFileName[1] = prepareInsertCoteForFileName(fieldInfo);
+            xmlFile.setName(String.join("-", splitFileName));
         }
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, XMLID, fieldInfo.getId());
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, HREF, fieldInfo.getHref());
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, SHOWAS, fieldInfo.getDisplayValue());
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, SHORTFORM, fieldInfo.getShortValue());
+    }
+
+    private static String prepareInsertCoteForFileName(ReferenceFieldInfo fieldInfo) {
+        final String insertCote = fieldInfo.getDisplayValue();
+        return insertCote.replace(" ", "_");
+    }
+
+    public static void addInsertCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
+        if(isMainDocumentFile(xmlFile))
+            addTLCReference(fieldInfo, xmlFile, "identifier");
     }
 
     public static void addInsertCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
@@ -847,19 +865,10 @@ public class MetadataUtil {
         if (xmlNodeDocNumber == null) {
             return;
         }
+        XmlUtil.removeNodeAttributeValue(xmlNodeBlock, "class");
+        XmlUtil.removeNodeAttributeValue(xmlNodeDocNumber, "class");
         XmlUtil.setNodeAttributeValue(xmlNodeDocNumber, REFERSTO, fieldInfo.getId());
         xmlNodeDocNumber.setTextContent(fieldInfo.getDisplayValue());
-    }
-
-    public static void addInserCoteToFRBRWork(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        final Node frbrWork = xmlFile.getElementByName("FRBRWork");
-        if (frbrWork == null) {
-            return;
-        }
-        final Element frbRnumber = xmlFile.newElement("FRBRnumber");
-        XmlUtil.setNodeAttributeValue(frbRnumber, VALUE, fieldInfo.getDisplayValue());
-        XmlUtil.setNodeAttributeValue(frbRnumber, REFERSTO, fieldInfo.getId());
-        frbrWork.insertBefore(frbRnumber, XmlUtil.getChildNodeWithName(frbrWork, "FRBRprescriptive"));
     }
 
     public static void processDocumentFinal(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
@@ -874,7 +883,7 @@ public class MetadataUtil {
     private static void addFinalToFilename(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
     {
         final String fileName = xmlFile.getName();
-        if (fileName.startsWith("main")) {
+        if (isMainDocumentFile(xmlFile)) {
             final String[] splitFileName = fileName.split("-");
             final String newFileName = Arrays.stream(splitFileName).reduce("", (a, b) -> b.endsWith(".xml") ? a + "final-" + b : a + b + "-");
             xmlFile.setName(newFileName);
@@ -903,7 +912,8 @@ public class MetadataUtil {
         if (xmlNodeDocNumber == null) {
             return;
         }
-
+        XmlUtil.removeNodeAttributeValue(xmlNodeDocNumber, "class");
+        xmlNodeDocNumber.setTextContent(xmlNodeDocNumber.getTextContent() + " ");
         final Element inline = xmlFile.newElement("inline");
         XmlUtil.setNodeAttributeValue(inline, NAME, "version");
         inline.setTextContent(fieldInfo.getDisplayValue());
@@ -916,30 +926,23 @@ public class MetadataUtil {
         MetadataUtil.addInterinstitutionalCoteToPreface(fieldInfo, xmlFile);
     }
 
-    private static void addInsertCoteToDocumentFilename(ReferenceFieldInfo fieldInfo, XmlFile xmlFile)
-    {
-        final String fileName = xmlFile.getName();
-        if (fileName.startsWith("main")) {
-            final String[] splitFileName = fileName.split("-");
-            splitFileName[1] = prepareInsertCoteForFileName(fieldInfo);
-            xmlFile.setName(String.join("-", splitFileName));
-        }
-    }
-
-    private static String prepareInsertCoteForFileName(ReferenceFieldInfo fieldInfo) {
-        final String insertCote = fieldInfo.getDisplayValue();
-        return insertCote.replace(" ", "_");
-    }
-
     private static void addInterinstitutionalCoteToMetaReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
-        Node xmlNodeMeta = getXmlNodeMetaReferenceWithNameAttributeValue(xmlFile, "TLCReference", "procedureReference");
-        if (xmlNodeMeta == null) {
+        if(isMainDocumentFile(xmlFile) || isBillDocumentFile(xmlFile))
+            addTLCReference(fieldInfo, xmlFile, "procedureReference");
+    }
+
+    private static void addTLCReference(ReferenceFieldInfo fieldInfo, XmlFile xmlFile, String name) {
+        final Node references = xmlFile.getElementByName("references");
+        if (references == null)
             return;
-        }
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, XMLID, fieldInfo.getId());
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, HREF, fieldInfo.getHref());
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, SHOWAS, fieldInfo.getDisplayValue());
-        XmlUtil.setNodeAttributeValue(xmlNodeMeta, SHORTFORM, fieldInfo.getShortValue());
+
+        final Element tlcReference = xmlFile.newElement("TLCReference");
+        XmlUtil.setNodeAttributeValue(tlcReference, NAME, name);
+        XmlUtil.setNodeAttributeValue(tlcReference, XMLID, fieldInfo.getId());
+        XmlUtil.setNodeAttributeValue(tlcReference, HREF, fieldInfo.getHref());
+        XmlUtil.setNodeAttributeValue(tlcReference, SHOWAS, fieldInfo.getDisplayValue());
+        XmlUtil.setNodeAttributeValue(tlcReference, SHORTFORM, fieldInfo.getShortValue());
+        references.appendChild(tlcReference);
     }
 
     private static void addInterinstitutionalCoteToCoverPage(ReferenceFieldInfo fieldInfo, XmlFile xmlFile) {
@@ -968,7 +971,8 @@ public class MetadataUtil {
         if (xmlNodeDocketNumber == null) {
             return;
         }
-
+        XmlUtil.removeNodeAttributeValue(xmlNodeContainer, "class");
+        XmlUtil.removeNodeAttributeValue(xmlNodeDocketNumber, "class");
         XmlUtil.setNodeAttributeValue(xmlNodeDocketNumber, REFERSTO, fieldInfo.getId());
         xmlNodeDocketNumber.setTextContent(fieldInfo.getDisplayValue());
     }

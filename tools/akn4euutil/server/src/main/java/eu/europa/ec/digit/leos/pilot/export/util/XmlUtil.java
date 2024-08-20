@@ -252,6 +252,10 @@ public class XmlUtil {
         ((Element)node).setAttribute(attributeName, attributeValue);
     }
 
+    public static void removeNodeAttributeValue(Node node, String attributeName){
+        ((Element)node).removeAttribute(attributeName);
+    }
+
     public static Node getXmlChildNodeWithNameAttributeValue(Node xmlNode, String nameAttributeValue){
         return getXmlChildNodeWithAttributeValue(xmlNode, "name", nameAttributeValue);
     }
