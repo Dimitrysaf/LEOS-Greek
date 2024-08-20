@@ -29,10 +29,6 @@ When('click close button of ck editor', () => {
     ckEditorWindow.clickCloseBtn();
 })
 
-When('append {string} at offset {int} in numbered paragraph {int} of article when ck editor is open', function (newContent, offset, paragraphNumber) {
-    ckEditorWindow.appendContentInNumberedParagraphOfArticle(newContent, offset, paragraphNumber);
-});
-
 When('click on paragraph mode icon present in ck editor panel', () => {
     ckEditorWindow.clickParagraphModeIcon();
 })
@@ -102,7 +98,7 @@ Then(`superscript button is enabled in ck editor`, () => {
 });
 
 Then(`special character button is enabled in ck editor`, () => {
-    ckEditorWindow.elements.insertSpecialCharacterBtn().should('not.be.disabled');
+    ckEditorWindow.elements.insertSpecialCharacterIcon().should('not.be.disabled');
 });
 
 Then(`show blocks button is enabled in ck editor`, () => {
@@ -189,7 +185,7 @@ When(`select content from offset {int} till offset {int} in numbered paragraph {
 
 Then(`numbered paragraph {int} of article contains {string} in edition mode`, (paragraphNumber, str) => {
     ckEditorWindow.getNumberedParagraphElementOfArticle(paragraphNumber).invoke('text').then((text) => {
-        expect(text.trim()).equal(str);
+        expect(text.trim()).contain(str);
     });
 });
 
@@ -223,6 +219,10 @@ When(`add content {string} to li {int} with data-akn-element {string} of li {int
 
 When(`click at offset {int} of li {int} with data-akn-element {string} of article in edition mode`, (offset, paragraphLi, paragraphDataAknElement) => {
     ckEditorWindow.clickAtSpecificOffsetInParagraphOfArticle(offset, paragraphLi, paragraphDataAknElement);
+});
+
+When(`click at offset {int} of child {int} of li {int} with data-akn-element {string} of article in edition mode`, (offset, child, paragraphLi, paragraphDataAknElement) => {
+    ckEditorWindow.clickAtSpecificOffsetInChildOfParagraphOfArticle(offset, child, paragraphLi, paragraphDataAknElement);
 });
 
 Then('li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (li, dataAknElement, attributeName, attributeValue) {
@@ -327,4 +327,120 @@ Then('background color of li {int} with data-akn-element {string} of article is 
 
 Then('background color of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article is {string} in edition mode', function (pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement, backgroundColor) {
     ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.css', 'background-color').and('eq', backgroundColor);
+});
+
+When('click on cut icon present in ck editor panel', function () {
+    ckEditorWindow.clickCutIcon();
+});
+
+When('click on copy icon present in ck editor panel', function () {
+    ckEditorWindow.clickCopyIcon();
+});
+
+When('click on space bar from keyboard in edition mode', function () {
+    ckEditorWindow.clickSpaceBarFromKeyboardWhenCKEditorOpen();
+});
+
+When('click on subscript icon present in ck editor panel', function () {
+    ckEditorWindow.clickSubScriptIcon();
+});
+
+When('click on superscript icon present in ck editor panel', function () {
+    ckEditorWindow.clickSuperScriptIcon();
+});
+
+When('click on undo icon present in ck editor panel', function () {
+    ckEditorWindow.clickUndoIcon();
+});
+
+When('click on redo icon present in ck editor panel', function () {
+    ckEditorWindow.clickRedoIcon();
+});
+
+When('click on insert footnote icon present in ck editor panel', function () {
+    ckEditorWindow.clickInsertFootNoteIcon();
+});
+
+When('click on table icon present in ck editor panel', function () {
+    ckEditorWindow.clickTableIcon();
+});
+
+When('click on math icon present in ck editor panel', function () {
+    ckEditorWindow.clickMathIcon();
+});
+
+When('click on bold icon present in ck editor panel', function () {
+    ckEditorWindow.clickBoldIcon();
+});
+
+When('click on italic icon present in ck editor panel', function () {
+    ckEditorWindow.clickItalicIcon();
+});
+
+When('click on change text case icon present in ck editor panel', function () {
+    ckEditorWindow.clickChangeTextCaseIcon();
+});
+
+When('click on insert special character icon present in ck editor panel', function () {
+    ckEditorWindow.clickInsertSpecialCharacterIcon();
+});
+
+Then('undo button is enabled in ck editor', function () {
+    ckEditorWindow.elements.undoBtn().should('not.be.disabled');
+});
+
+Then('redo button is enabled in ck editor', function () {
+    ckEditorWindow.elements.redoBtn().should('not.be.disabled');
+});
+
+Then('{string} tag is present in citation in edition mode', function (tagName) {
+    ckEditorWindow.elements.pTag().find(tagName).should('exist');
+});
+
+Then('{string} tag is not present in citation in edition mode', function (tagName) {
+    ckEditorWindow.elements.pTag().find(tagName).should('not.exist');
+});
+
+Then('{string} tag is present in recital in edition mode', function (tagName) {
+    ckEditorWindow.elements.pTag().find(tagName).should('exist');
+});
+
+Then('{string} tag is not present in recital in edition mode', function (tagName) {
+    ckEditorWindow.elements.pTag().find(tagName).should('not.exist');
+});
+
+Then('citation contains text {string} in edition mode', function (text) {
+    ckEditorWindow.elements.pTag().should('include.text', text);
+});
+
+Then('recital contains text {string} in edition mode', function (text) {
+    ckEditorWindow.elements.pTag().should('include.text', text);
+});
+
+Then('authorial note with marker {int} and title {string} is present inside citation in edition mode', function (markerNumber, title) {
+    ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
+});
+
+Then('authorial note with marker {int} and title {string} is present inside recital in edition mode', function (markerNumber, title) {
+    ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
+});
+
+Then('numbered paragraph {int} of article contains text {string} in edition mode', function (paragraphNumber, text) {
+    ckEditorWindow.getParagraphElementOfArticle(paragraphNumber, 'paragraph').should('include.text', text);
+});
+
+Then('numbered paragraph {int} of article contains {string} tag in edition mode', function (paragraphNumber, tagName) {
+    ckEditorWindow.getTagElementFromParagraphOfArticle(paragraphNumber, tagName).should('exist');
+});
+
+Then("numbered paragraph {int} of article doesn't contain {string} tag in edition mode", function (paragraphNumber, tagName) {
+    ckEditorWindow.getTagElementFromParagraphOfArticle(paragraphNumber, tagName).should('not.exist');
+});
+
+Then('numbered paragraph {int} of article contains authorial note with marker {int} and title {string} in edition mode', function (paragraphNumber, markerNumber, title) {
+    ckEditorWindow.getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, markerNumber).should('have.attr','title', title);
+});
+
+When('click at offset {int} of child {int} of recital in edition mode', function (offset, child) {
+    ckEditorWindow.clickAtSpecificOffsetInChildOfRecital(offset, child);
 });

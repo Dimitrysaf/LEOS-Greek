@@ -1,6 +1,6 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import messageGrowl from "../pages/messageGrowl";
-import dialogBoxPage from "../pages/dialogBoxPage";
+import dialogBoxPage from "../pages/euiDialogBoxPage";
 import headerPage from "../pages/headerPage";
 
 And(`extract recent {string} file present in download folder`, (extension) => {
@@ -59,6 +59,3 @@ When(/^click on workspace button in breadcrumb item$/, function () {
 When(`click on home button`, () => {
     headerPage.clickHomeBtn();
 });
-
-// When(`recent pdf file present in downloads folder contains below words`, (datatable) => {
-// });

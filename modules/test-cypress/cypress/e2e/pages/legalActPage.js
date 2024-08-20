@@ -35,15 +35,15 @@ class legalActPage {
     }
 
     mouseHoverAndClickOnArticle(articleNumber) {
-        this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).realClick({ position: "top" }));
+        this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).realClick({ position: "topLeft" }));
     }
 
     mouseHoverAndClickOnCitation(citationNumber) {
-        cy.xpath("//citation[" + citationNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().realClick({ position: "topLeft" }));
+        cy.xpath("//citation[" + citationNumber + "]").realHover({ position: "top" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).realClick({ position: "topLeft" }));
     }
 
     mouseHoverAndClickOnRecital(recitalNumber) {
-        cy.xpath("//recital[" + recitalNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
+        cy.xpath("//recital[" + recitalNumber + "]").realHover({ position: "top" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).click({ force: true }));
     }
 
     getMRefTextFromCitation(mReferenceNumber,citationNumber){
@@ -209,6 +209,37 @@ class legalActPage {
     getContentOfSubParagraphRefersToListOfParagraphOfArticle(subparagraphRefersTo, listNumber, paragraphNumber, articleNumber){
         return this.getSubParagraphRefersToListOfParagraphOfArticle(subparagraphRefersTo, listNumber, paragraphNumber, articleNumber).find('content aknp');
     }
+
+    getAuthorialNoteWithMarkerNumberFromCitation(citationNumber, markerNumber) {
+        return this.getCitation(citationNumber).find("authorialnote[marker='"+markerNumber+"']");
+    }
+
+    clickAuthorialNoteWithMarkerNumberFromCitation(markerNumber, citationNumber) {
+        this.getAuthorialNoteWithMarkerNumberFromCitation(citationNumber, markerNumber).click();
+    }
+
+    getAuthorialNoteWithMarkerNumberFromRecital(recitalNumber, markerNumber) {
+        return this.getRecital(recitalNumber).find("authorialnote[marker='"+markerNumber+"']");
+    }
+
+    clickAuthorialNoteWithMarkerNumberFromRecital(markerNumber, recitalNumber) {
+        this.getAuthorialNoteWithMarkerNumberFromRecital(recitalNumber, markerNumber).click();
+    }
+
+    getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, articleNumber, markerNumber) {
+        return this.getParagraphFromArticle(paragraphNumber, articleNumber).find("authorialnote[marker='"+markerNumber+"']");
+    }
+
+    clickAuthorialNoteWithMarkerNumberFromParagraphOfArticle(markerNumber, paragraphNumber, articleNumber) {
+        this.getAuthorialNoteWithMarkerNumberFromParagraphOfArticle(paragraphNumber, articleNumber, markerNumber).click();
+    }
+
+    getRowFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber) {
+        return this.getSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).find('table tbody tr');
+    }
+
+    getColumnFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber) {
+        return this.getSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).find('table tbody tr').eq(0).find('td');
+    }
 }
 export default new legalActPage();
-import '@cypress/xpath';

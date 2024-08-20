@@ -1,6 +1,6 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import milestoneTab from "../pages/milestoneTab";
-import dialogBoxPage from "../pages/dialogBoxPage";
+import dialogBoxPage from "../pages/euiDialogBoxPage";
 
 When(`click on add button in milestones tab`, () => {
     milestoneTab.clickAddBtn();

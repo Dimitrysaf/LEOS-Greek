@@ -1,51 +1,51 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
-import dialogBoxPage from "../pages/dialogBoxPage";
+import euiDialogBoxPage from "../pages/euiDialogBoxPage";
 
 Then(`{string} dialog confirm box window is displayed`, (headerValue) => {
-    dialogBoxPage.elements.dialogHeader().should('have.text',headerValue);
+    euiDialogBoxPage.elements.dialogHeader().should('have.text',headerValue);
 });
 
 When(`click on ok button in dialog box window`, () => {
-    dialogBoxPage.clickAcceptBtn();
+    euiDialogBoxPage.clickAcceptBtn();
 });
 
 When(`click on confirm button in dialog box window`, () => {
-    dialogBoxPage.clickAcceptBtn();
+    euiDialogBoxPage.clickAcceptBtn();
 });
 
 When(`click on delete button in dialog box window`, () => {
-    dialogBoxPage.clickDeleteBtn();
+    euiDialogBoxPage.clickDeleteBtn();
 });
 
 When(`click on danger button in dialog box window`, () => {
-    dialogBoxPage.clickDangerButton();
+    euiDialogBoxPage.clickDangerButton();
 });
 
 Then(`dialog box body contains {string}`, (text) => {
-    dialogBoxPage.elements.dialogBody().should('include.text', text);
+    euiDialogBoxPage.elements.dialogBody().should('include.text', text);
 });
 
 When(`click on close button in dialog confirm box window`, () => {
-    dialogBoxPage.clickAcceptBtn();
+    euiDialogBoxPage.clickAcceptBtn();
 });
 
 Then(`{string} dialog box window is displayed`, (name) => {
-    dialogBoxPage.elements.headerTitle().should('be.visible');
-    dialogBoxPage.elements.headerTitle().should('have.text', name);
+    euiDialogBoxPage.elements.headerTitle().should('be.visible');
+    euiDialogBoxPage.elements.headerTitle().should('have.text', name);
 });
 
 And(`provide input {string} dialog box window`, (input) => {
-    dialogBoxPage.elements.input().clear().type(input);
+    euiDialogBoxPage.elements.input().clear().type(input);
 });
 
 And(`input value of dialog box window is {string}`, (input) => {
-    dialogBoxPage.elements.input().should('have.value', input);
+    euiDialogBoxPage.elements.input().should('have.value', input);
 });
 
 When(`click on save button in dialog input box window`, () => {
-    dialogBoxPage.clickAcceptBtn();
+    euiDialogBoxPage.clickAcceptBtn();
 });
 
 When('click on revert button in dialog box', function () {
-    dialogBoxPage.clickAcceptBtn();
+    euiDialogBoxPage.clickAcceptBtn();
 });
