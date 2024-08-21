@@ -231,10 +231,14 @@ export class CKEditorService {
       {
         instanceType: process.env.NG_APP_LEOS_INSTANCE,
         tocItemsJsonArray: leosState.tocItemsJsonArray,
-        tocEdition: leosState.tocEdition
+        tocEdition: leosState.tocEdition,
       },
       { rootElement },
     );
+
+    this.documentService.permissions$.pipe(take(1)).subscribe((perms) => {
+      this.actionManagerConnector.getState().permissions = perms;
+    });
 
     require(['extension/actionManagerExtension'], (actionManager) => {
       actionManager.init(this.actionManagerConnector);
