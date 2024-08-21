@@ -1,0 +1,117 @@
+<?xml-stylesheet type="text/css" href="renditions/html/css/annex.css"?>
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <doc name="ANNEX">
+        <meta>
+            <identification source="~COM">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:fileCUID value="cm02swx630004w088cwecaqqj"/>
+                        <akn4eu:docCUID value="cm02swu9q0001w088gdxufu8j"/>
+                    </preservation>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="true"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="en"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:akn4euVersion value="4.1.0.0"/>
+                        <akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                    </preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~COM">
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/ANNEX" name="docType" showAs="Annex" xml:id="ANNEX"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
+            </references>
+            <proprietary source="~COM">
+                <leos:templateVersion>4.1.0</leos:templateVersion>
+                <leos:docVersion>0.1.4</leos:docVersion>
+                <leos:template>SG-017</leos:template>
+                <leos:docTemplate>SG-017</leos:docTemplate>
+                <leos:docStage xml:id="_proprietary__docstage">-</leos:docStage>
+                <leos:docType xml:id="_proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType>
+                <leos:docPurpose xml:id="_proprietary__docpurpose">on ...</leos:docPurpose>
+                <leos:ref>ANNEX-cm02swx630004w088cwecaqqj-en</leos:ref>
+                <leos:objectId>32</leos:objectId>
+                <leos:annexIndex xml:id="_proprietary__annexIndex">1</leos:annexIndex>
+                <leos:annexNumber xml:id="_proprietary__annexNumber">Annex I</leos:annexNumber>
+                <leos:annexTitle xml:id="_proprietary__annexTitle"/>
+                <leos:clonedRef xml:id="_proprietary__clonedRef"/>
+            </proprietary>
+        </meta>
+        <preface xml:id="ecYSW3N4G25nZlCUZ">
+            <container name="headerOfAnnex" xml:id="ec3IPS7ljKf0euzMz">
+                <block name="num" xml:id="ecUZiabbm7K0mhoUU">Annex I</block>
+                <block name="heading" xml:id="ec42gdm7BVFA0w6Sb"/>
+            </container>
+        </preface>
+        <mainBody xml:id="eckZ8NENtFQH0IA9U">
+            <paragraph leos:depth="1" xml:id="ecBnsITIbU4iJGeFG">
+                <content xml:id="ecFuIRJiQw8xwpYg0">
+                    <p xml:id="ecAoL4M0DApiI6LwK">Text...</p>
+                </content>
+            </paragraph>
+            <paragraph leos:depth="1" xml:id="ecvSHbHOtVD7sj8g2">
+                <content xml:id="ec9IU4ZKyjlrBjf0L">
+                    <p xml:id="ecTg6tP5gte0Gvs9s">Text...</p>
+                </content>
+            </paragraph>
+            <level leos:depth="1" xml:id="ectq9z9zap7Zp0APz">
+                <num leos:editable="false" xml:id="ec1asvezCOlnuEOLV">1.</num>
+                <content xml:id="eccLVDplNjF3E6NAa">
+                    <p xml:id="eciNDsHK1gRhRcP3k">Text...</p>
+                </content>
+            </level>
+            <section leos:depth="1" xml:id="ecR8JQp3GOYu0g2J0">
+                <num xml:id="ecEOUFrVqyNnt5z9r">Section 1</num>
+                <heading xml:id="ecWyUFdWC8BTnzYkA">Section heading...</heading>
+            </section>
+            <level leos:depth="1" xml:id="ecN6GgTCJffKvkzd0">
+                <num xml:id="ecKejRRtchyknN8Py">2.</num>
+                <content xml:id="ecNQrYbuZFrE0dpe9">
+                    <p xml:id="ecVM76Iel61akYMIi">Text...</p>
+                </content>
+            </level>
+            <chapter leos:depth="2" xml:id="ecQs6xCVQ4pvu0L8V">
+                <num xml:id="ec4KZyytxMRehDtNW">Chapter 1</num>
+                <heading xml:id="ec0lKhHS4LOIc8lRH">Chapter heading...</heading>
+                <section leos:depth="2" xml:id="ecepcIqbrnBFTrq9e">
+                    <num xml:id="ecpyuIJ8Mt6WHtnEU">Section 1</num>
+                    <heading xml:id="ecQhopICp59ABBrcE">Section heading...</heading>
+                </section>
+            </chapter>
+            <level leos:depth="2" xml:id="ec2jvOjaBNhKUM9hb">
+                <num xml:id="ecVvdpiP66wqJa5OW">2.1.</num>
+                <content xml:id="ece65Pc96rsFRgKgu">
+                    <p xml:id="ec9YImVSaDSvGSiaF">Text...</p>
+                </content>
+            </level>
+            <level leos:depth="1" xml:id="ecYxBUS8KG1uQo0Wt">
+                <num xml:id="ecPw2dOOzexq0Ho8h">3.</num>
+                <content xml:id="ecl1GVH0sxfcRQgub">
+                    <p xml:id="ecJBW0aPKMF0pYYzl">Text...</p>
+                </content>
+            </level>
+            <paragraph leos:depth="1" xml:id="ecxWP5kPId3aJhP9I">
+                <content xml:id="ect6G6LiZSYo3fYrj">
+                    <p xml:id="eclLzrk4UtIUGmSpH">Text...</p>
+                </content>
+            </paragraph>
+        </mainBody>
+    </doc>
+</akomaNtoso>

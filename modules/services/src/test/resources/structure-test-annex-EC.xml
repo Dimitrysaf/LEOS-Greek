@@ -539,4 +539,20 @@
         </entry>
     </tocRules>
 
+    <documentRules>
+        <rule>
+            <description>Levels sequence cannot be broken by elements outside the exception list</description>
+            <type>sequence</type>
+            <tocItem>level</tocItem>
+            <scope>drop</scope>
+            <exception>
+                <tocItem>part</tocItem>
+                <tocItem>title</tocItem>
+                <tocItem>chapter</tocItem>
+                <tocItem>section</tocItem>
+            </exception>
+            <errorMessage>toc.level.only.higher.division.allowed.between</errorMessage>
+        </rule>
+    </documentRules>
+
 </structure>
