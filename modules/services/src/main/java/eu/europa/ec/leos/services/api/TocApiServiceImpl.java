@@ -27,8 +27,10 @@ import eu.europa.ec.leos.services.dto.response.NodeValidationResponse;
 import eu.europa.ec.leos.services.processor.content.TableOfContentHelper;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.vo.structure.DocumentRules;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
+import eu.europa.ec.leos.vo.toc.CheckDocumentRulesVO;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocDropResult;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -43,6 +45,7 @@ import org.w3c.dom.Node;
 import javax.inject.Provider;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.processor.content.TableOfContentProcessor.getTagValueFromTocItemVo;
 import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHelper.buildTableOfContentsItemVO;
@@ -51,8 +54,8 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getElementById;
 import static eu.europa.ec.leos.services.support.XmlHelper.CROSSHEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.DIVISION;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
-import static eu.europa.ec.leos.services.support.XmlHelper.LEVEL;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
+import static eu.europa.ec.leos.services.support.XmlHelper.MAIN_BODY;
 import static eu.europa.ec.leos.services.support.XmlHelper.POINT;
 import static eu.europa.ec.leos.services.support.XmlHelper.SOFT_MOVE_PLACEHOLDER_ID_PREFIX;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
@@ -109,21 +112,26 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 LOG.error("Invalid document type");
         }
         documentLanguageContext.setDocumentLanguage(language);
+
         TocDropResult result = validateDrop(request, xmlContent);
 
         final String srcItemType = TableOfContentHelper.getDisplayableTocItem(result.getSourceItem().getTocItem(), language, messageHelper);
-        if (result.getTargetItem() != null) {
+        if (result.getMessageKey().equals("toc.level.only.higher.division.allowed.between")) {
+            result.setSourceItem(null);
+            result.setTargetItem(null);
+        } else if (result.getTargetItem() != null) {
             final String targetItemType = TableOfContentHelper.getDisplayableTocItem(result.getTargetItem().getTocItem(), language, messageHelper);
             result.setMessageKey(messageHelper.getMessage(result.getMessageKey(), srcItemType, targetItemType));
         } else {
             result.setMessageKey(messageHelper.getMessage("toc.edit.window.drop.error.root.message", srcItemType));
         }
+
         return new NodeValidationResponse(result);
     }
 
     private TocDropResult validateDrop(NodeDropValidationRequest request, byte[] xmlContent) {
         Map<TocItem, List<TocItem>> tableOfContentRules = structureContextProvider.get().getTocRules();
-        Map<String, List<TocItem>> tableOfContentDocumentRules = structureContextProvider.get().getDocumentRules();
+        Map<String, DocumentRules.Rule> tableOfContentDocumentRules = structureContextProvider.get().getDocumentRules();
         List<TocItem> tocItems = structureContextProvider.get().getTocItems();
         List<NumberingConfig> numberingConfigs = structureContextProvider.get().getNumberingConfigs();
 
@@ -144,54 +152,90 @@ public abstract class TocApiServiceImpl implements TocApiService {
             validateAddingItemAsChildOrSibling(result, draggedTocItemVO, targetTocItemVO, tableOfContentRules,
                     parentTocItemVO, request.getPosition(), language);
         }
-        if (tableOfContentDocumentRules != null && !tableOfContentDocumentRules.isEmpty()) {
-            validateLevelStructure(result, tableOfContentDocumentRules, draggedTocItemVO, targetTocItemVO, xmlContent, request.getPosition());
-        }
+        validateLevelStructure(result, tableOfContentDocumentRules, draggedTocItemVO, targetTocItemVO, request.getPosition(), request.getTableOfContentItemVOs());
 
         return result;
     }
 
-    private boolean validateLevelStructure(final TocDropResult result, final Map<String, List<TocItem>> tableOfContentDocumentRules,
-            final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetTocItemVO, final byte[] xmlContent, final TocItemPosition position) {
-        // Only elements in exception list are accepted in between levels
-        List<TocItem> exceptionRules = tableOfContentDocumentRules.get(LEVEL + "-exception");
-        String stringContent = new String(xmlContent);
-        int positionOfTargetItem = stringContent.indexOf(targetTocItemVO.getId());
-        if (position.equals(TocItemPosition.BEFORE)) {
-            positionOfTargetItem = stringContent.lastIndexOf("<" + targetTocItemVO.getTocItem().getAknTag().value(), positionOfTargetItem);
-            positionOfTargetItem--;
-        }
-        int positionOfPreviousLevel = stringContent.lastIndexOf("<" + LEVEL, positionOfTargetItem);
-        int positionOfNextLevel = stringContent.indexOf("<" + LEVEL, positionOfTargetItem);
-        if (exceptionRules != null && !sourceItem.getTocItem().getAknTag().value().equals(LEVEL)) {
-            boolean isException = false;
-            for (TocItem rule: exceptionRules) {
-                if (rule.getAknTag().value().equals(sourceItem.getTocItem().getAknTag().value())) {
-                    isException = true;
-                }
-            }
-            if (!isException) {
-                if (positionOfPreviousLevel != -1 && positionOfNextLevel != -1) {
-                    result.setSuccess(false);
-                    result.setMessageKey("toc.paragraph.position.not.allowed.error.message");
-                    return false;
+    private void validateLevelStructure(final TocDropResult result, final Map<String, DocumentRules.Rule> tableOfContentDocumentRules,
+            final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetTocItemVO, final TocItemPosition position,
+            final List<TableOfContentItemVO> tableOfContentItemVOs) {
+
+        CheckDocumentRulesVO checkDocumentRulesVO = new CheckDocumentRulesVO();
+        if (tableOfContentDocumentRules != null && !tableOfContentDocumentRules.isEmpty()) {
+            for (String documentRulesKey: tableOfContentDocumentRules.keySet()) {
+                DocumentRules.Rule rule = tableOfContentDocumentRules.get(documentRulesKey);
+                for (TableOfContentItemVO tableOfContentItemVO : tableOfContentItemVOs) {
+                    if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(MAIN_BODY)) {
+                        this.checkLevelStructureInItem(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem, targetTocItemVO, position);
+                    }
                 }
             }
         }
-        // Should block when adding new levels and this would create a not allowed structure
-        List<TocItem> notAlloweRules = tableOfContentDocumentRules.get(LEVEL + "-not-allowed");
-        if (notAlloweRules != null && sourceItem.getTocItem().getAknTag().value().equals(LEVEL)) {
-            String previousPieceToCheck = positionOfPreviousLevel != -1 ? stringContent.substring(positionOfPreviousLevel, positionOfTargetItem+1) : "";
-            String nextPieceToCheck = positionOfNextLevel != -1 ? stringContent.substring(positionOfTargetItem, positionOfNextLevel+1) : "";
-            for (TocItem rule: notAlloweRules) {
-                if (previousPieceToCheck.contains("<" + rule.getAknTag().value()) || nextPieceToCheck.contains("<" + rule.getAknTag().value())) {
-                    result.setSuccess(false);
-                    result.setMessageKey("toc.level.position.not.allowed.error.message");
-                    return false;
-                }
-            }
+
+        if (!checkDocumentRulesVO.isValidStructure()) {
+            result.setSuccess(false);
+            result.setMessageKey(checkDocumentRulesVO.getMessageKey());
         }
-        return true;
+
+    }
+
+    private void checkLevelStructureInItem(DocumentRules.Rule rule, TableOfContentItemVO tableOfContentItemVOToCheck, CheckDocumentRulesVO checkDocumentRulesVO,
+            TableOfContentItemVO sourceItem, TableOfContentItemVO targetTocItemVO, TocItemPosition position) {
+
+        String aknElementName = rule.getTocItem().value();
+        List<String> exceptionElementsList = rule.getException().getTocItems().stream().map(element -> element.value()).collect(Collectors.toList());
+        exceptionElementsList.add(aknElementName);
+        if (!checkDocumentRulesVO.isFirstElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
+                && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
+            checkDocumentRulesVO.setFirstElementFound(true);
+        }
+        if (checkDocumentRulesVO.isFirstElementFound() && !exceptionElementsList.contains(sourceItem.getTocItem().getAknTag().value())
+                && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
+            checkDocumentRulesVO.setNotAllowedElementFound(true);
+        }
+        if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
+                && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
+            checkDocumentRulesVO.setValidStructure(false);
+        }
+
+        if (!checkDocumentRulesVO.isFirstElementFound() && tableOfContentItemVOToCheck.getTocItem().getAknTag().value().equals(aknElementName)) {
+            checkDocumentRulesVO.setFirstElementFound(true);
+        }
+        if (checkDocumentRulesVO.isFirstElementFound() && !exceptionElementsList.contains(tableOfContentItemVOToCheck.getTocItem().getAknTag().value())) {
+            checkDocumentRulesVO.setNotAllowedElementFound(true);
+        }
+        if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound()
+                && tableOfContentItemVOToCheck.getTocItem().getAknTag().value().equals(aknElementName)) {
+            checkDocumentRulesVO.setValidStructure(false);
+        }
+
+        boolean isAfter = position.equals(TocItemPosition.AFTER) || position.equals(TocItemPosition.AS_CHILDREN);
+        if (!checkDocumentRulesVO.isFirstElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
+                && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId())
+                && isAfter) {
+            checkDocumentRulesVO.setFirstElementFound(true);
+        }
+        if (checkDocumentRulesVO.isFirstElementFound() && !exceptionElementsList.contains(sourceItem.getTocItem().getAknTag().value())
+                && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId())
+                && isAfter) {
+            checkDocumentRulesVO.setNotAllowedElementFound(true);
+        }
+        if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
+                && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId())
+                && isAfter) {
+            checkDocumentRulesVO.setValidStructure(false);
+        }
+
+        if (!checkDocumentRulesVO.isValidStructure()) {
+            checkDocumentRulesVO.setMessageKey(rule.getErrorMessage());
+            return;
+        }
+
+        for (TableOfContentItemVO tableOfContentItemVO: tableOfContentItemVOToCheck.getChildItems()) {
+            this.checkLevelStructureInItem(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem, targetTocItemVO, position);
+        }
+
     }
 
     private static TableOfContentItemVO getTableOfContentItemVO(String nodeId, String nodeName, List<TocItem> tocItems,
@@ -229,17 +273,22 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
         TocItem targetTocItem = targetItem.getTocItem();
         List<TocItem> targetTocItems = tableOfContentRules.get(targetTocItem);
+        boolean isTocItemSibling;
         if (isSourceDivision(sourceItem) || isCrossheading(sourceItem) || isDroppedOnPointOrIndent(sourceItem, targetItem) || getTagValueFromTocItemVo(sourceItem).
                 equals(getTagValueFromTocItemVo(targetItem))) {
-            TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, true);
-            return validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position, language);
+            isTocItemSibling = true;
         } else if (CollectionUtils.isNotEmpty(targetTocItems) && targetTocItems.contains(sourceItem.getTocItem())) {
             //If target item type is root, source item will be added as child, else validate dropping item at dragged location
-            TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, false);
-            return targetTocItem.isRoot() || validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position, language);
-        } else { // If child elements not allowed in target validate adding it to its parent
-            return validateAddingItemAsSibling(result, sourceItem, targetItem, tableOfContentRules, parentItem, position, language);
+            if (targetTocItem.isRoot()) {
+                return true;
+            }
+            isTocItemSibling = false;
+        } else {
+            // If child elements not allowed in target validate adding it to its parent
+            isTocItemSibling = true;
         }
+        TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, isTocItemSibling);
+        return validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position, language);
     }
 
     protected TableOfContentItemVO getActualTargetItem(final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem, final TableOfContentItemVO parentItem,
@@ -277,13 +326,6 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private boolean isSourceDivision(TableOfContentItemVO sourceItem) {
         String sourceTagValue = getTagValueFromTocItemVo(sourceItem);
         return sourceTagValue.equals(DIVISION);
-    }
-
-    protected boolean validateAddingItemAsSibling(final TocDropResult result, final TableOfContentItemVO sourceItem,
-            final TableOfContentItemVO targetItem, final Map<TocItem, List<TocItem>> tableOfContentRules, final TableOfContentItemVO parentItem,
-            final TocItemPosition position, String language) {
-        TableOfContentItemVO actualTargetItem = getActualTargetItem(sourceItem, targetItem, parentItem, position, true);
-        return validateAddingToActualTargetItem(result, sourceItem, targetItem, tableOfContentRules, actualTargetItem, position, language);
     }
 
     protected boolean validateAddingToActualTargetItem(final TocDropResult result, final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetItem,

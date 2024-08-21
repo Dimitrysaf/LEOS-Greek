@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.structure;
 
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
+import eu.europa.ec.leos.vo.structure.DocumentRules;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -14,7 +15,7 @@ public interface StructureService {
     
     Map<TocItem, List<TocItem>> getTocRules(String docTemplate);
 
-    Map<String, List<TocItem>> getDocumentRules(String docTemplate);
+    Map<String, DocumentRules.Rule> getDocumentRules(String docTemplate);
     
     List<NumberingConfig> getNumberingConfigs(String docTemplate);
 

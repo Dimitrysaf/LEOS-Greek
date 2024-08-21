@@ -19,6 +19,7 @@ import {
   isSourceDivision,
 } from '@/shared/utils/toc.utils';
 import { isTocItemsEqual } from '@/shared/utils/tocRules.utils';
+import {cloneDeep} from "lodash-es";
 
 Injectable();
 
@@ -56,6 +57,7 @@ export abstract class ValidateTocService {
     isAdd: boolean = false,
   ) {
     this.requestNodeDropValidation(
+      treeData,
       draggedNodeId,
       draggedNodeTagName,
       targetNodeId,
@@ -251,7 +253,17 @@ export abstract class ValidateTocService {
     position: string,
   );
 
+  private prepareTocForSave(node: TableOfContentItemVO[]) {
+    for (const n of node) {
+      n['childItemsView'] = [];
+      if (n.childItems && n.childItems.length > 0) {
+        this.prepareTocForSave(n.childItems);
+      }
+    }
+  }
+
   private requestNodeDropValidation(
+    treeData: TableOfContentItemVO[],
     draggedNodeId: string[],
     draggedNodeTagName: string,
     targetNodeId: string,
@@ -268,10 +280,12 @@ export abstract class ValidateTocService {
     if (targetNodeTagName === CROSSHEADING) {
       targetNodeTagName = 'crossheading';
     }
-
+    const toc = cloneDeep(treeData);
+    this.prepareTocForSave(toc);
     return this.http.post<NodeValidationResponse>(
       `${apiBaseUrl}/secured/toc/${documentRef}/validate-node-drop`,
       {
+        tableOfContentItemVOs: toc,
         draggedNodeId,
         draggedNodeTagName,
         targetNodeId,

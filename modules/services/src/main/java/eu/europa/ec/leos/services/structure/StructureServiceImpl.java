@@ -63,7 +63,7 @@ public class StructureServiceImpl implements StructureService {
 
     @Override
     @Cacheable(value = "tocStructureDocumentRulesMap")
-    public Map<String, List<TocItem>> getDocumentRules(String docTemplate) {
+    public Map<String, DocumentRules.Rule> getDocumentRules(String docTemplate) {
         loadTocStructure(docTemplate);
         return tocStructureMap.get(docTemplate).getDocumentRules();
     }
@@ -173,21 +173,12 @@ public class StructureServiceImpl implements StructureService {
         return tocRules;
     }
 
-    private Map<String, List<TocItem>> buildProposalDocumentRules(Structure structure, List<TocItem> tocItems) {
-        Map<String, List<TocItem>> documentRules = new HashMap<>();
+    private Map<String, DocumentRules.Rule> buildProposalDocumentRules(Structure structure, List<TocItem> tocItems) {
+        Map<String, DocumentRules.Rule> documentRules = new HashMap<>();
         if(structure.getDocumentRules() != null) {
             for (DocumentRules.Rule rule : structure.getDocumentRules().getRules()) {
                 String itemName = rule.getTocItem().value();
-                List<TocItem> exceptionList = new ArrayList<>();
-                for (AknTag listTocName : rule.getException().getTocItems()) {
-                    exceptionList.addAll(getTocItemsByName(tocItems, listTocName.value()));
-                }
-                documentRules.put(itemName + "-exception", exceptionList);
-                List<TocItem> notAllowedList = new ArrayList<>();
-                for (AknTag listTocName : rule.getNotAllowed().getTocItems()) {
-                    notAllowedList.addAll(getTocItemsByName(tocItems, listTocName.value()));
-                }
-                documentRules.put(itemName + "-not-allowed", notAllowedList);
+                documentRules.put(itemName, rule);
             }
         }
         return documentRules;

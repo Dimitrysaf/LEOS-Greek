@@ -315,7 +315,6 @@
                         <xs:element name="tocItem" type="aknTag"/>
                         <xs:element name="scope" type="xs:string"/>
                         <xs:element name="exception" minOccurs="0" type="tocIdList"/>
-                        <xs:element name="notAllowed" minOccurs="0" type="tocIdList"/>
                         <xs:element name="errorMessage" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>

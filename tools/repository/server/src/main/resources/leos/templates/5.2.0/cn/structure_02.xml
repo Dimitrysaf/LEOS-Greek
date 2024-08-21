@@ -817,10 +817,7 @@
                 <tocItem>chapter</tocItem>
                 <tocItem>section</tocItem>
             </exception>
-            <notAllowed>
-                <tocItem>paragraph</tocItem>
-            </notAllowed>
-            <errorMessage>toc.level.position.not.allowed.error.message</errorMessage>
+            <errorMessage>toc.level.only.higher.division.allowed.between</errorMessage>
         </rule>
     </documentRules>
 
