@@ -6,7 +6,7 @@ export type ActionManagerConnectorState = LeosJavaScriptExtensionState & {
   /* set in `ActionManagerExtension.java` */
   instanceType: string; // ec|cn|os
   tocItemsJsonArray: string; // json
-  permissions?: Permission[];
+  hasUpdatePermission?: boolean;
   isAngularUI?: boolean;
   tocEdition?: boolean;
 };

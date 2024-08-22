@@ -231,6 +231,7 @@ export class DocumentService {
   private refreshAnnotateCall?: () => void;
   private currentDocumentRef: string;
   private currentConfig: DocumentConfig;
+  private checkUpdatePermission: boolean;
 
   constructor(
     private http: HttpClient,
@@ -373,6 +374,13 @@ export class DocumentService {
     this.isEditorOpen$ = this.isEditorOpenBS.asObservable();
     this.getElementContent$ = this.getElementContentBS.asObservable();
     this.updateElementContent$ = this.updateElementContentBS.asObservable();
+  }
+
+  hasUpdatePermission() {
+    this.permissions$.pipe(take(1)).subscribe((permissions) => {
+      this.checkUpdatePermission = permissions.includes('CAN_UPDATE');
+    })
+    return this.checkUpdatePermission;
   }
 
   clearDocumentState() {

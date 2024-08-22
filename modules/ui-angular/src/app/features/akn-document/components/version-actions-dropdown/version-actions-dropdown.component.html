@@ -17,6 +17,7 @@
       </button>
       <button
         euiDropdownItem
+        *ngIf="canRevertVersion"
         (click)="onVersionRevert(version.documentId, version.versionNumber)"
       >
         {{ 'page.editor.versions.actions.revert' | translate }}
