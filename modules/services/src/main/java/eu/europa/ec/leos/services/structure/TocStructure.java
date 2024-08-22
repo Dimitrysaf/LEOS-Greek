@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.structure;
 
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
+import eu.europa.ec.leos.vo.structure.DocumentRules;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -16,7 +17,7 @@ public class TocStructure {
     
     private List<TocItem> tocItems;
     private Map<TocItem, List<TocItem>> tocRules = new HashMap<>();
-    private Map<String, List<TocItem>> documentRules = new HashMap<>();
+    private Map<String, DocumentRules.Rule> documentRules = new HashMap<>();
     private List<NumberingConfig> numberingConfigs;
     private List<AlternateConfig> alternateConfigs;
     private List<RefConfig> refConfigs;
@@ -36,11 +37,11 @@ public class TocStructure {
         return tocRules;
     }
 
-    public Map<String, List<TocItem>> getDocumentRules() {
+    public Map<String, DocumentRules.Rule> getDocumentRules() {
         return documentRules;
     }
 
-    public void setDocumentRules(Map<String, List<TocItem>> documentRules) {
+    public void setDocumentRules(Map<String, DocumentRules.Rule> documentRules) {
         this.documentRules = documentRules;
     }
     

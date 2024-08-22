@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.structure;
 
 import eu.europa.ec.leos.vo.structure.AlternateConfig;
+import eu.europa.ec.leos.vo.structure.DocumentRules;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
 import eu.europa.ec.leos.vo.structure.RefConfig;
 import eu.europa.ec.leos.vo.structure.TocItem;
@@ -44,7 +45,7 @@ public class StructureContext {
         return structureService.getTocRules(docTemplate);
     }
 
-    public Map<String, List<TocItem>> getDocumentRules() {
+    public Map<String, DocumentRules.Rule> getDocumentRules() {
         Validate.notNull(docTemplate, "Document template is required!");
         LOG.trace("Retrieving document rules configuration...");
         return structureService.getDocumentRules(docTemplate);

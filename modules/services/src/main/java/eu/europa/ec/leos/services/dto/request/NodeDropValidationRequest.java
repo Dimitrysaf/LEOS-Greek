@@ -1,6 +1,7 @@
 package eu.europa.ec.leos.services.dto.request;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
+import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.toc.TocItemPosition;
 
 import java.io.Serializable;
@@ -16,6 +17,15 @@ public class NodeDropValidationRequest implements Serializable {
     private TocItemPosition position;
     private LeosCategory documentType;
     private String documentRef;
+    private List<TableOfContentItemVO> tableOfContentItemVOs;
+
+    public List<TableOfContentItemVO> getTableOfContentItemVOs() {
+        return tableOfContentItemVOs;
+    }
+
+    public void setTableOfContentItemVOs(List<TableOfContentItemVO> tableOfContentItemVOs) {
+        this.tableOfContentItemVOs = tableOfContentItemVOs;
+    }
 
     public List<String> getDraggedNodeId() {
         return draggedNodeId;
