@@ -65,6 +65,8 @@ import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.structure.StructureContext;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
+import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
@@ -79,11 +81,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
 
 import javax.inject.Provider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -96,6 +100,7 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_DOC_EXT;
 import static eu.europa.ec.leos.services.support.XmlHelper.validateBasePath;
 import static eu.europa.ec.leos.services.support.XmlHelper.validatePath;
@@ -260,7 +265,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     @Override
     public DocumentViewResponse compareAndShowRevision(String contextPath,
                                                        String documentRef,
-                                                       String contributionsVersionRef, String legFileName) throws IOException {
+                                                       String contributionsVersionRef, String legFileName) throws Exception {
         XmlDocument document = this.findDocumentByRef(documentRef);
         Class<? extends XmlDocument> docClass = LeosCategoryClass.getClass(document.getCategory());
         XmlDocument contributionVersion = Optional.ofNullable(this.contributionService.findVersionByVersionedReference(contributionsVersionRef, docClass))
@@ -268,7 +273,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         XmlDocument originalVersion = Optional.ofNullable(this.leosRepository.findFirstVersion(docClass, contributionVersion.getMetadata().get().getRef()))
                 .orElseThrow(() -> new RuntimeException(String.format("First version not found for document %s", documentRef)));
         LeosPackage leosPackage = this.leosRepository.findPackageByDocumentId(originalVersion.getId());
-        LegDocument legDocument = packageService.findDocumentByPackagePathAndName(leosPackage.getPath(), legFileName, LegDocument.class);
+        LegDocument legDocument = this.legService.findLastContributionByVersionedReferenceAndName(leosPackage.getPath(), legFileName, contributionsVersionRef);
         Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().
                 getSource().getBytes());
         byte[] contributionContent = (byte[]) legContent.get(contributionVersion.getName());
@@ -277,8 +282,10 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         String contributionHtml = documentContentService.getDocumentForContributionAsHtml(
                 contributionContent, contextPath,
                 securityContext.getPermissions(contributionVersion));
-
-
+        if (document.getMetadata().get().getCategory().equals(STAT_FINANC_LEGIS)) {
+            Document doc = XercesUtils.createXercesDocument(contributionHtml.getBytes(StandardCharsets.UTF_8));
+            contributionHtml = new String(LeosXercesUtils.wrapWithPageOrientationDivs(doc), UTF_8);
+        }
         cloneContext.setContribution(Boolean.TRUE);
         final String temporaryAnnotationsId = this.storeRevisionAnnotationsTemporary(contributionVersion.getMetadata().get().getRef(), legFileName, contributionsVersionRef);
         final String temporaryDocument = contributionVersion.getName().replace(".xml", "");
@@ -334,7 +341,7 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     public MergeContributionResponse mergeContribution(@NotNull String documentRef,
-                                                       @NotNull ApplyContributionsRequest request) throws NotFoundException, IOException {
+                                                       @NotNull ApplyContributionsRequest request) throws Exception {
         XmlDocument document = this.findDocumentByRef(documentRef);
         MergeContributionResponse mergeResult = new MergeContributionResponse(true, document.getContent().get().getSource().getBytes());
         Class docClass = LeosCategoryClass.getClass(document.getCategory());
@@ -358,11 +365,13 @@ public class ContributionApiServiceImpl implements ContributionApiService {
             List<InternalRefMap> intRefMap = getInternalRefMaps(request, document, xmlClonedContent);
             mergeResult = mergeContributionService.updateDocumentWithContributions(request, document, tocItemList, intRefMap);
             byte[] xmlContent = mergeResult.getMergedContent();
-            xmlContent = this.numberService.renumberArticles(xmlContent, false);
-            xmlContent = this.numberService.renumberRecitals(xmlContent);
-            xmlContent = this.numberService.renumberLevel(xmlContent);
-            xmlContent = this.numberService.renumberParagraph(xmlContent);
-            xmlContent = this.numberService.renumberDivisions(xmlContent);
+            if (!document.getMetadata().get().getCategory().equals(LeosCategory.MEMORANDUM) && !document.getMetadata().get().getCategory().equals(STAT_FINANC_LEGIS)) {
+                xmlContent = this.numberService.renumberArticles(xmlContent, false);
+                xmlContent = this.numberService.renumberRecitals(xmlContent);
+                xmlContent = this.numberService.renumberLevel(xmlContent);
+                xmlContent = this.numberService.renumberParagraph(xmlContent);
+                xmlContent = this.numberService.renumberDivisions(xmlContent);
+            }
             xmlContent = this.xmlContentProcessor.doXMLPostProcessing(xmlContent);
             document = this.leosRepository.updateDocument(
                     document.getId(),

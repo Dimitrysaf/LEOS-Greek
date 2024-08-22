@@ -300,6 +300,14 @@ Then('{string} is showing as soft move label in num of article {int} of bill', f
     legalActPage.getNumTagOfArticle(articleNumber).find('span.leos-soft-move-label').should('include.text', softLabel);
 });
 
+Then('{string} is showing as strikethrough in num of chapter {int} of bill', function (label, chapterNumber) {
+    legalActPage.getChapter(chapterNumber).should('have.attr', 'leos:action', 'delete').find('num').should('have.text', label).should('have.attr', 'id').and('contain', 'moved');
+});
+
+Then('{string} is showing as soft move label in num of chapter {int} of bill', function (softLabel, chapterNumber) {
+    legalActPage.getNumTagOfChapter(chapterNumber).find('span.leos-soft-move-label').should('include.text', softLabel);
+});
+
 Then('heading tag is not present for article {int} of bill', function (articleNumber) {
     legalActPage.getHeadingFromArticle(articleNumber).should('not.exist');
 });
@@ -326,6 +334,17 @@ Then('paragraph tag is present for article {int} of bill', function (articleNumb
 
 Then('{string} is showing as inserted in num of article {int} of bill', function (label, articleNumber) {
     legalActPage.getNumTagOfArticle(articleNumber).should('have.attr', 'leos:action', 'insert')
+        .should(($el) => {
+            const ownText = Cypress._.filter($el[0].childNodes, {
+                nodeType: Node.TEXT_NODE,
+            }).map((el) => el.textContent.trim()).filter(Boolean).join(' ');
+            expect(ownText, 'own text').to.equal(label)
+        })
+});
+
+
+Then('{string} is showing as inserted in num of chapter {int} of bill', function (label, chapterNumber) {
+    legalActPage.getNumTagOfChapter(chapterNumber).should('have.attr', 'leos:action', 'insert')
         .should(($el) => {
             const ownText = Cypress._.filter($el[0].childNodes, {
                 nodeType: Node.TEXT_NODE,

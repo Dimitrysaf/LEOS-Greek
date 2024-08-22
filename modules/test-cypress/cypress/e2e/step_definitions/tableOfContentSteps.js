@@ -29,6 +29,10 @@ When(`click on versions pane accordion`, () => {
     tableOfContent.clickVersionsPaneButton();
 });
 
+When(`click on contributions pane accordion`, () => {
+    tableOfContent.clickContributionsPaneButton();
+});
+
 Then(`compare versions button is displayed in versions pane section`, () => {
     tableOfContent.elements.compareBtn().should('be.visible');
 });
@@ -200,4 +204,12 @@ Then('only below options are displayed in dropdown content', function (datatable
 
 Then('subversion {int} of recent changes version card contains {string}', function (subVersionNumber,subVersionText) {
     tableOfContent.getSubVersion(subVersionNumber).should('include.text', subVersionText);
+});
+
+When(`click on contributions pane accordion`, () => {
+    tableOfContent.clickContributionsPaneButton();
+});
+
+When(`click on first contribution`, () => {
+    tableOfContent.clickFirstContribution();
 });

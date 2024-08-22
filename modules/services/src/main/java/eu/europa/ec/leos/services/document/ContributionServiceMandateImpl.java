@@ -29,7 +29,7 @@ public class ContributionServiceMandateImpl implements ContributionService {
     }
 
     @Override
-    public void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName, byte[] xmlContent) {
+    public void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName, String versionedReference, byte[] xmlContent)  throws Exception {
     }
 
     @Override

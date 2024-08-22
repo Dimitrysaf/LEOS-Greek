@@ -39,6 +39,8 @@ define(function leosUtilsModule(require) {
     var HEADING = "heading";
     var NUM = "num";
     var PARAGRAPH = "paragraph";
+    var BLOCKCONTAINER = "blockcontainer";
+    var LEVEL = "level";
     var ID = "id";
     var KEYS = {
         "KEY_DELETE": 8,
@@ -358,5 +360,7 @@ define(function leosUtilsModule(require) {
         NUM: NUM,
         ID: ID,
         HEADING: HEADING,
+        BLOCKCONTAINER: BLOCKCONTAINER,
+        LEVEL: LEVEL,
     };
 });

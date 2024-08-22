@@ -209,7 +209,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingAddChapterElementTC() throws IOException {
+    public void testMergingAddChapterElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -227,7 +227,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoAddChapterElementTC() throws IOException {
+    public void testUndoAddChapterElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_addChapter.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -252,7 +252,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveCitationElementTC() throws IOException {
+    public void testMergingMoveCitationElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -270,7 +270,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveCitationElementTC() throws IOException {
+    public void testUndoMoveCitationElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveCitation.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -295,7 +295,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveCitationElementPrefixTC() throws IOException {
+    public void testMergingMoveCitationElementPrefixTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -313,7 +313,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveCitationElementPrefixTC() throws IOException {
+    public void testUndoMoveCitationElementPrefixTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveCitation.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -338,7 +338,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveRecitalElementTC() throws IOException {
+    public void testMergingMoveRecitalElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -356,7 +356,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveRecitalElementTC() throws IOException {
+    public void testUndoMoveRecitalElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveRecital.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -381,7 +381,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveRecitalElementPrefixTC() throws IOException {
+    public void testMergingMoveRecitalElementPrefixTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -399,7 +399,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveRecitalElementPrefixTC() throws IOException {
+    public void testUndoMoveRecitalElementPrefixTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveRecital.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -424,7 +424,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveArticleElementTC() throws IOException {
+    public void testMergingMoveArticleElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -442,7 +442,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveArticleElementTC() throws IOException {
+    public void testUndoMoveArticleElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticle.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -467,7 +467,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveArticleElementPrefixTC() throws IOException {
+    public void testMergingMoveArticleElementPrefixTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -485,7 +485,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveArticleElementPrefixTC() throws IOException {
+    public void testUndoMoveArticleElementPrefixTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticle.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -510,7 +510,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdatesArticleElementTC() throws IOException {
+    public void testMergingUpdatesArticleElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -528,7 +528,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticleElementTC() throws IOException {
+    public void testUndoUpdateArticleElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -553,7 +553,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdatesArticle2ElementTC() throws IOException {
+    public void testMergingUpdatesArticle2ElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -571,7 +571,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticle2ElementTC() throws IOException {
+    public void testUndoUpdateArticle2ElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle2.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -596,7 +596,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingRemoveArticleElementTC() throws IOException {
+    public void testMergingRemoveArticleElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -614,7 +614,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoRemoveArticleElementTC() throws IOException {
+    public void testUndoRemoveArticleElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_deleteArticle.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -639,7 +639,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdateHeadingElementTC() throws IOException {
+    public void testMergingUpdateHeadingElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -657,7 +657,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateHeadingElementTC() throws IOException {
+    public void testUndoUpdateHeadingElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateHeading.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -682,7 +682,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdatesArticle3ElementTC() throws IOException {
+    public void testMergingUpdatesArticle3ElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -700,7 +700,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticle3ElementTC() throws IOException {
+    public void testUndoUpdateArticle3ElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle3.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -725,7 +725,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdatesArticle4ElementTC() throws IOException {
+    public void testMergingUpdatesArticle4ElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -743,7 +743,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticle4ElementTC() throws IOException {
+    public void testUndoUpdateArticle4ElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle4.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -768,7 +768,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingAddParagraphElementTC() throws IOException {
+    public void testMergingAddParagraphElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -786,7 +786,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoAddParagraphElementTC() throws IOException {
+    public void testUndoAddParagraphElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_addParagraph.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -811,7 +811,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingAddArticleElementTC() throws IOException {
+    public void testMergingAddArticleElementTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -829,7 +829,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoAddArticleElementTC() throws IOException {
+    public void testUndoAddArticleElementTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_addArticle.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -854,7 +854,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingAddChapterElementWithoutTC() throws IOException {
+    public void testMergingAddChapterElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -872,7 +872,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoAddChapterElementWithoutTC() throws IOException {
+    public void testUndoAddChapterElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_addChapterWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -897,7 +897,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveCitationElementWithoutTC() throws IOException {
+    public void testMergingMoveCitationElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -915,7 +915,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveCitationElementWithoutTC() throws IOException {
+    public void testUndoMoveCitationElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveCitationWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -940,7 +940,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveCitationElementPrefixWithoutTC() throws IOException {
+    public void testMergingMoveCitationElementPrefixWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -958,7 +958,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveCitationElementPrefixWithoutTC() throws IOException {
+    public void testUndoMoveCitationElementPrefixWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveCitationWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -983,7 +983,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveRecitalElementWithoutTC() throws IOException {
+    public void testMergingMoveRecitalElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1001,7 +1001,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveRecitalElementWithoutTC() throws IOException {
+    public void testUndoMoveRecitalElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveRecitalWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1026,7 +1026,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveRecitalElementPrefixWithoutTC() throws IOException {
+    public void testMergingMoveRecitalElementPrefixWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1044,7 +1044,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveRecitalElementPrefixWithoutTC() throws IOException {
+    public void testUndoMoveRecitalElementPrefixWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveRecitalWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1069,7 +1069,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveArticleElementWithoutTC() throws IOException {
+    public void testMergingMoveArticleElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1087,7 +1087,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveArticleElementWithoutTC() throws IOException {
+    public void testUndoMoveArticleElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticleWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1112,7 +1112,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingMoveArticleElementPrefixWithoutTC() throws IOException {
+    public void testMergingMoveArticleElementPrefixWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1130,7 +1130,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoMoveArticleElementPrefixWithoutTC() throws IOException {
+    public void testUndoMoveArticleElementPrefixWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticleWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1155,7 +1155,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdatesArticleElementWithoutTC() throws IOException {
+    public void testMergingUpdatesArticleElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1173,7 +1173,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticleElementWithoutTC() throws IOException {
+    public void testUndoUpdateArticleElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticleWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1198,7 +1198,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdatesArticle2ElementWithoutTC() throws IOException {
+    public void testMergingUpdatesArticle2ElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1216,7 +1216,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticle2ElementWithoutTC() throws IOException {
+    public void testUndoUpdateArticle2ElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle2WithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1241,7 +1241,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingRemoveArticleElementWithoutTC() throws IOException {
+    public void testMergingRemoveArticleElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1259,7 +1259,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoRemoveArticleElementWithoutTC() throws IOException {
+    public void testUndoRemoveArticleElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_deleteArticleWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1284,7 +1284,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdateHeadingElementWithoutTC() throws IOException {
+    public void testMergingUpdateHeadingElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1302,7 +1302,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateHeadingElementWithoutTC() throws IOException {
+    public void testUndoUpdateHeadingElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateHeadingWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1327,7 +1327,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdatesArticle3ElementWithoutTC() throws IOException {
+    public void testMergingUpdatesArticle3ElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1345,7 +1345,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticle3ElementWithoutTC() throws IOException {
+    public void testUndoUpdateArticle3ElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle3WithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1370,7 +1370,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdatesArticle4ElementWithoutTC() throws IOException {
+    public void testMergingUpdatesArticle4ElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1388,7 +1388,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticle4ElementWithoutTC() throws IOException {
+    public void testUndoUpdateArticle4ElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle4WithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1413,7 +1413,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingAddParagraphElementWithoutTC() throws IOException {
+    public void testMergingAddParagraphElementWithoutTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1431,7 +1431,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoAddParagraphElementWithoutTC() throws IOException {
+    public void testUndoAddParagraphElementWithoutTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_addParagraphWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1457,7 +1457,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
 
 
     @Test
-    public void testMergingAddArticleElement() throws IOException {
+    public void testMergingAddArticleElement() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1475,7 +1475,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoAddArticleElement() throws IOException {
+    public void testUndoAddArticleElement() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_addArticleWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1500,7 +1500,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testMergingUpdateArticleWithDeletedListTC() throws IOException {
+    public void testMergingUpdateArticleWithDeletedListTC() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1518,7 +1518,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticleWithDeletedListTC() throws IOException {
+    public void testUndoUpdateArticleWithDeletedListTC() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticleWithDeletedList.xml");
         Content content = new ContentImpl("billMergeTest2.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));
@@ -1544,7 +1544,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
 
 
     @Test
-    public void testMergingUpdateArticleWithDeletedList() throws IOException {
+    public void testMergingUpdateArticleWithDeletedList() throws Exception {
         ApplyContributionsRequest request = new ApplyContributionsRequest();
         request.setAcceptAllContributions(false);
         MergeActionVO mergeActionVO = new MergeActionVO();
@@ -1562,7 +1562,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     }
 
     @Test
-    public void testUndoUpdateArticleWithDeletedList() throws IOException {
+    public void testUndoUpdateArticleWithDeletedList() throws Exception {
         byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticleWithDeletedListWithoutTC.xml");
         Content content = new ContentImpl("billMergeTest2.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(mergedContent)));

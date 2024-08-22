@@ -1344,7 +1344,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     }
 
     @Subscribe
-    public void acceptSelectedContributions(ApplyContributionsRequestEvent event) throws IOException {
+    public void acceptSelectedContributions(ApplyContributionsRequestEvent event) throws Exception {
         if (event.getMergeActionVOS() == null || event.getMergeActionVOS().isEmpty()) {
             // Nothing to be done
             eventBus.post(new NotificationEvent(Type.INFO,

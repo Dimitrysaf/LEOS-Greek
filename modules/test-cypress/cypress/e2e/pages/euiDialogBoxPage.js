@@ -6,6 +6,7 @@ class euiDialogBoxPage {
         dialogBody: () => cy.get('div.eui-dialog__body-content'),
         dialogFooterCloseBtn: () => cy.get('eui-dialog-footer button').contains('Close'),
         headerTitle: () => cy.get("div[role='dialog'] .eui-dialog__header-title"),
+        confirmBtn: () => cy.contains('Confirm'),
         input: () => cy.get('input.eui-input-text')
     }
     
@@ -26,6 +27,10 @@ class euiDialogBoxPage {
 
     clickCloseBtn(){
         this.elements.dialogFooterCloseBtn().click();
+    }
+    
+    clickConfirmBtn() {
+        this.elements.confirmBtn().click();
     }
 }
 export default new euiDialogBoxPage();
