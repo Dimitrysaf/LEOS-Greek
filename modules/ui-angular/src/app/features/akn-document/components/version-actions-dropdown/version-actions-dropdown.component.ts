@@ -32,6 +32,7 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   versionModalText: string;
   versionToRevert = '';
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
+  canRevertVersion: boolean;
 
   private removeEventListener?: () => void;
 
@@ -46,6 +47,11 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.interceptClicks(this.elementRef.nativeElement);
     this.disabled = this.version.mostRecentVersion;
+    this.findUpdatePermission();
+  }
+
+  findUpdatePermission() {
+    this.canRevertVersion = this.doc.hasUpdatePermission();
   }
 
   ngOnDestroy(): void {

@@ -588,7 +588,7 @@ define(function actionManagerExtensionModule(require) {
 
         let template = ['<div class="leos-actions Vaadin-Icons">']; //FIXME: we can directly create elements
 
-        if(connector.getState().permissions.includes('CAN_UPDATE')) {
+        if(connector.getState().hasUpdatePermission) {
             if (insertBeforeAndAfter && connector.getState().tocEdition) {
                 template.push(`<span data-widget-type="insert.before" title="Insert ${type} before">&#xe622</span>`);
             }

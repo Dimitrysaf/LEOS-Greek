@@ -236,9 +236,7 @@ export class CKEditorService {
       { rootElement },
     );
 
-    this.documentService.permissions$.pipe(take(1)).subscribe((perms) => {
-      this.actionManagerConnector.getState().permissions = perms;
-    });
+    this.actionManagerConnector.getState().hasUpdatePermission = this.documentService.hasUpdatePermission();
 
     require(['extension/actionManagerExtension'], (actionManager) => {
       actionManager.init(this.actionManagerConnector);
