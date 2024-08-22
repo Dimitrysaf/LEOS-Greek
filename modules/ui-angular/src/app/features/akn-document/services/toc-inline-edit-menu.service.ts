@@ -619,7 +619,7 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
       nodeTargetParent,
       position,
     );
-    //this.setIsGoingToMove(false, null);
+    this.setIsGoingToMove(false, null);
   }
 
   private validateAndMove(

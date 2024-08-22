@@ -1,10 +1,12 @@
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
 import { LeosJavaScriptExtensionState } from '@/features/leos-legacy/models';
+import {Permission} from "@/shared";
 
 export type ActionManagerConnectorState = LeosJavaScriptExtensionState & {
   /* set in `ActionManagerExtension.java` */
   instanceType: string; // ec|cn|os
   tocItemsJsonArray: string; // json
+  permissions?: Permission[];
   isAngularUI?: boolean;
   tocEdition?: boolean;
 };
