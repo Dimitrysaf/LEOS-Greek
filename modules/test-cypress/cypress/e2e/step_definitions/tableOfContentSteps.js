@@ -178,3 +178,26 @@ When('{string} is showing as soft move title in navigation pane', function (titl
 When('{string} is showing as soft move label with soft move title {string} in navigation pane', function (label, title) {
     tableOfContent.elements.nodeLabel().find('span.leos-soft-move-title').should('include.text', title).siblings('span.leos-soft-move-label').should('include.text', label).should('be.visible');
 });
+
+Then('toc editing button is not present', function () {
+    tableOfContent.elements.editBtn().should('not.exist');
+});
+
+Then('only below options are displayed in dropdown content', function (datatable) {
+    const actualOptionList = [];
+    datatable.hashes().forEach((element) => {
+        actualOptionList.push(element.dropdownContent);
+    });
+    tableOfContent.elements.dropdownItemContentTextList()
+        .then(($els) => {
+            return (
+                Cypress.$.makeArray($els)
+                    .map((el) => el.innerText.trim())
+            )
+        })
+        .should('deep.equal', actualOptionList)
+});
+
+Then('subversion {int} of recent changes version card contains {string}', function (subVersionNumber,subVersionText) {
+    tableOfContent.getSubVersion(subVersionNumber).should('include.text', subVersionText);
+});

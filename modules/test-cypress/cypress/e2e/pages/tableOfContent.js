@@ -23,12 +23,15 @@ class tableOfContent {
         cardTitle: () => this.elements.versionPaneCard().find('eui-card-header-title'),
         recentChangesCard: () => this.elements.cardTitle().contains('Recent changes').closest('eui-card.version-panes'),
         cardContentOfRecentChanges: () => this.elements.recentChangesCard().find('eui-card-content'),
-        subVersionTitle: () => this.elements.cardContentOfRecentChanges().find('div.subversion .title'),
+        subVersion: () => this.elements.cardContentOfRecentChanges().find('div.subversion'),
+        subVersionTitle: () => this.elements.subVersion().find('.title'),
         nodeLabel: () => cy.get(".mat-tree-node div.label[id^='node-label']"),
         preambleLink: () => this.elements.nestedTreeNode().find('#node-label-_preamble').closest('div.mat-tree-node'),
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
         labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node'),
-        revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version')
+        revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version'),
+        dropdownContent: () => cy.get('eui-dropdown-content .eui-u-flex-align-items-start'),
+        dropdownItemContentTextList: () => this.elements.dropdownContent().find('button .eui-dropdown-item__content-text')
     }
     
     clickEditBtn(){
@@ -92,9 +95,9 @@ class tableOfContent {
         this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-forward']").click();
     }
 
-    getElementList(){
+/*    getElementList(){
         return this.elements.elementList();
-    }
+    }*/
 
     getLabelExtended(){
         return this.elements.labelExtended();
@@ -110,6 +113,10 @@ class tableOfContent {
 
     getNodeLabelText(label){
         return this.elements.nodeLabel().contains(label);
+    }
+
+    getSubVersion(subVersionNumber) {
+        return this.elements.subVersion().eq(subVersionNumber-1);
     }
 }
 export default new tableOfContent();
