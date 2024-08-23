@@ -241,5 +241,21 @@ class legalActPage {
     getColumnFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber) {
         return this.getSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).find('table tbody tr').eq(0).find('td');
     }
+
+    clickInsertAfterIconOfCitation(citationNumber) {
+        this.getCitation(citationNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }));
+    }
+
+    clickInsertBeforeIconOfRecital(recitalNumber) {
+        this.getRecital(recitalNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.before']").click({ force: true }));
+    }
+
+    getLeosActionsIconOfCitation(citationNumber){
+        return this.getCitation(citationNumber).siblings('.leos-actions.Vaadin-Icons .leos-actions-icon');
+    }
+
+    getLeosActionsIconOfRecital(recitalNumber){
+        return this.getRecital(recitalNumber).siblings('.leos-actions.Vaadin-Icons .leos-actions-icon');
+    }
 }
 export default new legalActPage();

@@ -5,7 +5,8 @@ class collaboratorsTab {
         inputName: () => cy.get('#bodyTemplatePortalId .eui-autocomplete__input-container input'),
         addUsersBtn: () => cy.get('button').contains('Add users'),
         collaboratorsTable: () => this.elements.appProposalCollaborators().find('table'),
-        userList: () => cy.get("div[role='listbox'] eui-autocomplete-option")
+        userList: () => cy.get("div[role='listbox'] eui-autocomplete-option"),
+        role: () => cy.get('#role')
     }
 
     clickAddBtn(){
@@ -30,6 +31,10 @@ class collaboratorsTab {
 
     clickUser(row) {
         this.elements.userList().eq(row-1).click();
+    }
+
+    selectRole(role){
+        return this.elements.role().select(role);
     }
 }
 export default new collaboratorsTab();

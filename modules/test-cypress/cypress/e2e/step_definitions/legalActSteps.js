@@ -202,6 +202,14 @@ When(`click on edit icon of citation {int}`, (citationNumber) => {
     legalActPage.clickEditIconOfCitation(citationNumber);
 });
 
+When('click on insert after icon of citation {int}', function (citationNumber) {
+    legalActPage.clickInsertAfterIconOfCitation(citationNumber);
+});
+
+When('click on insert before icon of recital {int}', function (recitalNumber) {
+    legalActPage.clickInsertBeforeIconOfRecital(recitalNumber);
+});
+
 Then(`{string} is added as internal reference {int} of citation {int}`, (text, mReferenceNumber, citationNumber) => {
     legalActPage.getMRefTextFromCitation(mReferenceNumber, citationNumber).should('have.text', text);
 });
@@ -365,4 +373,12 @@ When('click on authorial note with marker {int} in paragraph {int} of article {i
 Then('content of subparagraph {int} of  of paragraph {int} of article {int} contains a table with {int} row and {int} column', function (subparagraphNumber, paragraphNumber, articleNumber, rowNumber, columnNumber) {
     legalActPage.getRowFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('have.length', rowNumber);
     legalActPage.getColumnFromTableOfSubparagraphOfParagraphFromArticle(subparagraphNumber, paragraphNumber, articleNumber).should('have.length', columnNumber);
+});
+
+Then('show all action menu is not present for citation {int}', function (citationNumber) {
+    legalActPage.getLeosActionsIconOfCitation(citationNumber).should('not.exist');
+});
+
+Then('show all action menu is not present for recital {int}', function (recitalNumber) {
+    legalActPage.getLeosActionsIconOfRecital(recitalNumber).should('not.exist');
 });

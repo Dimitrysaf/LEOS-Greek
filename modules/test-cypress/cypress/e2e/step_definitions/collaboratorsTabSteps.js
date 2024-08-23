@@ -1,4 +1,4 @@
-import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
+import { When, Then } from "cypress-cucumber-preprocessor/steps";
 import collaboratorsTab from "../pages/collaboratorsTab";
 
 When(/^click on add button in collaborators tab$/, function () {
@@ -23,4 +23,8 @@ Then('{string} is displayed in row {int} of column role of collaborators tab', f
 
 When('click on row {int} from the user list in name field of add users window', function (row) {
     collaboratorsTab.clickUser(row);
+});
+
+When('select role with value {string} in add users window', function (role) {
+    collaboratorsTab.selectRole(role).should('have.value', role);
 });
