@@ -6,6 +6,7 @@ public class CheckDocumentRulesVO {
     private boolean notAllowedElementFound;
     private boolean validStructure;
     private String messageKey;
+    private TableOfContentItemVO realSourceItemVO;
 
     public CheckDocumentRulesVO() {
         this.firstElementFound = false;
@@ -44,6 +45,14 @@ public class CheckDocumentRulesVO {
 
     public void setMessageKey(String messageKey) {
         this.messageKey = messageKey;
+    }
+
+    public TableOfContentItemVO getRealSourceItemVO() {
+        return realSourceItemVO;
+    }
+
+    public void setRealSourceItemVO(TableOfContentItemVO realSourceItemVO) {
+        this.realSourceItemVO = realSourceItemVO;
     }
 
 }

@@ -152,21 +152,34 @@ public abstract class TocApiServiceImpl implements TocApiService {
             validateAddingItemAsChildOrSibling(result, draggedTocItemVO, targetTocItemVO, tableOfContentRules,
                     parentTocItemVO, request.getPosition(), language);
         }
-        validateLevelStructure(result, tableOfContentDocumentRules, draggedTocItemVO, targetTocItemVO, request.getPosition(), request.getTableOfContentItemVOs());
+        validateDocumentRules(result, tableOfContentDocumentRules, draggedTocItemVO, targetTocItemVO, request.getPosition(), request.getTableOfContentItemVOs());
 
         return result;
     }
 
-    private void validateLevelStructure(final TocDropResult result, final Map<String, DocumentRules.Rule> tableOfContentDocumentRules,
-            final TableOfContentItemVO sourceItem, final TableOfContentItemVO targetTocItemVO, final TocItemPosition position,
+    private void validateDocumentRules(final TocDropResult result, final Map<String, DocumentRules.Rule> tableOfContentDocumentRules,
+            TableOfContentItemVO sourceItem, final TableOfContentItemVO targetTocItemVO, final TocItemPosition position,
             final List<TableOfContentItemVO> tableOfContentItemVOs) {
 
         CheckDocumentRulesVO checkDocumentRulesVO = new CheckDocumentRulesVO();
+
+        // This is a recursive call that will add the realSourceItemVO in checkDocumentRulesVO
+        for (TableOfContentItemVO tableOfContentItemVO : tableOfContentItemVOs) {
+            if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(MAIN_BODY)) {
+                // This is a recursive call that will add data in checkDocumentRulesVO
+                this.getRealSourceItemVO(tableOfContentItemVO, sourceItem, checkDocumentRulesVO);
+            }
+        }
+        if (checkDocumentRulesVO.getRealSourceItemVO() != null) {
+            sourceItem = checkDocumentRulesVO.getRealSourceItemVO();
+        }
+
         if (tableOfContentDocumentRules != null && !tableOfContentDocumentRules.isEmpty()) {
             for (String documentRulesKey: tableOfContentDocumentRules.keySet()) {
                 DocumentRules.Rule rule = tableOfContentDocumentRules.get(documentRulesKey);
                 for (TableOfContentItemVO tableOfContentItemVO : tableOfContentItemVOs) {
                     if (tableOfContentItemVO.getTocItem().getAknTag().value().equals(MAIN_BODY)) {
+                        // This is a recursive call that will add data in checkDocumentRulesVO
                         this.checkLevelStructureInItem(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem, targetTocItemVO, position);
                     }
                 }
@@ -180,12 +193,23 @@ public abstract class TocApiServiceImpl implements TocApiService {
 
     }
 
+    private void getRealSourceItemVO(TableOfContentItemVO tableOfContentItemVOToCheck, TableOfContentItemVO sourceItem, CheckDocumentRulesVO checkDocumentRulesVO) {
+        for (TableOfContentItemVO tableOfContentItemVO : tableOfContentItemVOToCheck.getChildItems()) {
+            if (tableOfContentItemVO.getId().equals(sourceItem.getId())) {
+                checkDocumentRulesVO.setRealSourceItemVO(tableOfContentItemVO);
+                return;
+            }
+            this.getRealSourceItemVO(tableOfContentItemVO, sourceItem, checkDocumentRulesVO);
+        }
+    }
+
     private void checkLevelStructureInItem(DocumentRules.Rule rule, TableOfContentItemVO tableOfContentItemVOToCheck, CheckDocumentRulesVO checkDocumentRulesVO,
             TableOfContentItemVO sourceItem, TableOfContentItemVO targetTocItemVO, TocItemPosition position) {
 
         String aknElementName = rule.getTocItem().value();
         List<String> exceptionElementsList = rule.getException().getTocItems().stream().map(element -> element.value()).collect(Collectors.toList());
         exceptionElementsList.add(aknElementName);
+
         if (!checkDocumentRulesVO.isFirstElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
             checkDocumentRulesVO.setFirstElementFound(true);
@@ -197,6 +221,11 @@ public abstract class TocApiServiceImpl implements TocApiService {
         if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
             checkDocumentRulesVO.setValidStructure(false);
+        }
+        if (tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
+            for (TableOfContentItemVO tableOfContentItemVO: sourceItem.getChildItems()) {
+                this.checkLevelStructureInItem(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem, targetTocItemVO, position);
+            }
         }
 
         if (!checkDocumentRulesVO.isFirstElementFound() && tableOfContentItemVOToCheck.getTocItem().getAknTag().value().equals(aknElementName)) {
@@ -225,6 +254,11 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId())
                 && isAfter) {
             checkDocumentRulesVO.setValidStructure(false);
+        }
+        if (tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.AFTER)) {
+            for (TableOfContentItemVO tableOfContentItemVO: sourceItem.getChildItems()) {
+                this.checkLevelStructureInItem(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem, targetTocItemVO, position);
+            }
         }
 
         if (!checkDocumentRulesVO.isValidStructure()) {
