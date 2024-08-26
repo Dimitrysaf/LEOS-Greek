@@ -14,15 +14,19 @@
 package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
+import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class LeosDocumentServiceImpl implements LeosDocumentService {
+    private static final Logger LOG = LoggerFactory.getLogger(LeosLegDocumentServiceImpl.class);
 
     private final LeosLegDocumentService leosLegDocumentService;
     private final XmlDocumentService xmlDocumentService;
@@ -56,7 +60,12 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
     }
 
     public byte[] updateWithTranslations(LeosConvertDocumentInput convertDocumentInput) {
-        return leosLegDocumentService.updateWithTranslations(convertDocumentInput);
+        LeosConvertDocumentInput renditionInput = createDocumentInput(convertDocumentInput.getTranslationsFile(),
+                null,
+                false
+        );
+        LeosRenditionOutput renditionOutput = xmlDocumentService.xmlToHtmlRendition(renditionInput);
+        return leosLegDocumentService.updateWithTranslations(convertDocumentInput, renditionOutput);
     }
 
     public byte[] applyMetadata(MultipartFile inputFile) {

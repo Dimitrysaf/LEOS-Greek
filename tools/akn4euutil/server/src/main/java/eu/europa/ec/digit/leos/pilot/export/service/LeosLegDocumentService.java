@@ -14,7 +14,8 @@
 package eu.europa.ec.digit.leos.pilot.export.service;
 
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
+import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 
 public interface LeosLegDocumentService {
-    byte[] updateWithTranslations(LeosConvertDocumentInput convertDocumentInput);
+    byte[] updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, LeosRenditionOutput renditionOutput);
 }
