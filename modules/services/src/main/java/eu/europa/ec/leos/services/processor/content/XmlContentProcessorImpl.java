@@ -242,7 +242,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 }
             }
         }
-        if(!node.hasChildNodes()) {
+        if(!node.hasChildNodes() && !node.getNodeName().equals("documentRef")) {
             XercesUtils.deleteElement(node);
             return true;
         }
