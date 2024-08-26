@@ -126,6 +126,15 @@
                     <p xml:id="ecJBW0aPKMF0pYYzl">Text...</p>
                 </content>
             </level>
+            <section leos:depth="1" xml:id="ecZOO1npqgWzLuA3G">
+                <num xml:id="ec6YtL1P4sbhQvbZa">Section 1</num>
+                <heading xml:id="ecOto7pmifmpq5kDS">Section heading...</heading>
+                <paragraph leos:depth="1" xml:id="ecDWTOBYD2DlTy80k">
+                    <content xml:id="ecmzj7wyJrGSapOQo">
+                        <p xml:id="ecbKcIOCK7GhoroSo">Text...</p>
+                    </content>
+                </paragraph>
+            </section>
             <paragraph leos:depth="1" xml:id="ecxWP5kPId3aJhP9I">
                 <content xml:id="ect6G6LiZSYo3fYrj">
                     <p xml:id="eclLzrk4UtIUGmSpH">Text...</p>

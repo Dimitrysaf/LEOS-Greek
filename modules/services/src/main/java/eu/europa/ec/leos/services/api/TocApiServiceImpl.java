@@ -206,6 +206,10 @@ public abstract class TocApiServiceImpl implements TocApiService {
     private void checkLevelStructureInItem(DocumentRules.Rule rule, TableOfContentItemVO tableOfContentItemVOToCheck, CheckDocumentRulesVO checkDocumentRulesVO,
             TableOfContentItemVO sourceItem, TableOfContentItemVO targetTocItemVO, TocItemPosition position) {
 
+        if (!checkDocumentRulesVO.isValidStructure()) {
+            return;
+        }
+
         String aknElementName = rule.getTocItem().value();
         List<String> exceptionElementsList = rule.getException().getTocItems().stream().map(element -> element.value()).collect(Collectors.toList());
         exceptionElementsList.add(aknElementName);
@@ -221,6 +225,8 @@ public abstract class TocApiServiceImpl implements TocApiService {
         if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound() && sourceItem.getTocItem().getAknTag().value().equals(aknElementName)
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
             checkDocumentRulesVO.setValidStructure(false);
+            checkDocumentRulesVO.setMessageKey(rule.getErrorMessage());
+            return;
         }
         if (tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.BEFORE)) {
             for (TableOfContentItemVO tableOfContentItemVO: sourceItem.getChildItems()) {
@@ -237,6 +243,12 @@ public abstract class TocApiServiceImpl implements TocApiService {
         if (checkDocumentRulesVO.isFirstElementFound() && checkDocumentRulesVO.isNotAllowedElementFound()
                 && tableOfContentItemVOToCheck.getTocItem().getAknTag().value().equals(aknElementName)) {
             checkDocumentRulesVO.setValidStructure(false);
+            checkDocumentRulesVO.setMessageKey(rule.getErrorMessage());
+            return;
+        }
+
+        for (TableOfContentItemVO tableOfContentItemVO: tableOfContentItemVOToCheck.getChildItems()) {
+            this.checkLevelStructureInItem(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem, targetTocItemVO, position);
         }
 
         boolean isAfter = position.equals(TocItemPosition.AFTER) || position.equals(TocItemPosition.AS_CHILDREN);
@@ -254,20 +266,13 @@ public abstract class TocApiServiceImpl implements TocApiService {
                 && tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId())
                 && isAfter) {
             checkDocumentRulesVO.setValidStructure(false);
+            checkDocumentRulesVO.setMessageKey(rule.getErrorMessage());
+            return;
         }
         if (tableOfContentItemVOToCheck.getId().equals(targetTocItemVO.getId()) && position.equals(TocItemPosition.AFTER)) {
             for (TableOfContentItemVO tableOfContentItemVO: sourceItem.getChildItems()) {
                 this.checkLevelStructureInItem(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem, targetTocItemVO, position);
             }
-        }
-
-        if (!checkDocumentRulesVO.isValidStructure()) {
-            checkDocumentRulesVO.setMessageKey(rule.getErrorMessage());
-            return;
-        }
-
-        for (TableOfContentItemVO tableOfContentItemVO: tableOfContentItemVOToCheck.getChildItems()) {
-            this.checkLevelStructureInItem(rule, tableOfContentItemVO, checkDocumentRulesVO, sourceItem, targetTocItemVO, position);
         }
 
     }
