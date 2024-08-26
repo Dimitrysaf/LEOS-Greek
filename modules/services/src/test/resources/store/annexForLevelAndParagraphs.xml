@@ -71,6 +71,25 @@
                     <p xml:id="ecTg6tP5gte0Gvs9s">Text...</p>
                 </content>
             </paragraph>
+            <section leos:depth="1" xml:id="ecfcuY33QDVSdpahh">
+                <num xml:id="ecD8bshORZtY1trkV">Section 1</num>
+                <heading xml:id="ec1AyE3vjpCEzpcuF">Section heading...</heading>
+                <paragraph leos:depth="1" xml:id="ecRlneMlpSvKIRnnT">
+                    <content xml:id="ecuffuh9EMQvARMBG">
+                        <p xml:id="ec2wiBFW0w9uYP8Y9">Text...</p>
+                    </content>
+                </paragraph>
+            </section>
+            <section leos:depth="1" xml:id="ec2T4Rali2vdE9oht">
+                <num xml:id="ecmtnNQ66fP8HSCWi">Section 2</num>
+                <heading xml:id="ect45wL0NIS82UTdg">Section heading...</heading>
+                <level leos:depth="1" xml:id="ecR02AW5nOdht0KW9">
+                    <num leos:editable="false" xml:id="ecJSkNgMu1H0MVlGG">1.</num>
+                    <content xml:id="ecoQlg5HcaBTBWbN9">
+                        <p xml:id="ecefpGg8q9Vuk4mtl">Text...</p>
+                    </content>
+                </level>
+            </section>
             <level leos:depth="1" xml:id="ectq9z9zap7Zp0APz">
                 <num leos:editable="false" xml:id="ec1asvezCOlnuEOLV">1.</num>
                 <content xml:id="eccLVDplNjF3E6NAa">
