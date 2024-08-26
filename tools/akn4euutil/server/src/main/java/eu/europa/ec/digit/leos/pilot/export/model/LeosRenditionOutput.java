@@ -11,13 +11,29 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.digit.leos.pilot.export.service;
+package eu.europa.ec.digit.leos.pilot.export.model;
 
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
+public class LeosRenditionOutput {
 
-public interface XmlDocumentService {
-    byte[] xmlToHtmlPackage(LeosConvertDocumentInput convertDocumentInput);
+    private byte[] rendition;
+    private byte[] styleSheetOutput;
+    private String styleSheetName;
 
-    LeosRenditionOutput xmlToHtmlRendition(LeosConvertDocumentInput convertDocumentInput);
+    public LeosRenditionOutput(byte[] rendition, byte[] styleSheetOutput, String styleSheetName) {
+        this.rendition = rendition;
+        this.styleSheetOutput = styleSheetOutput;
+        this.styleSheetName = styleSheetName;
+    }
+
+    public byte[] getRendition() {
+        return rendition;
+    }
+
+    public byte[] getStyleSheetOutput() {
+        return styleSheetOutput;
+    }
+
+    public String getStyleSheetName() {
+        return styleSheetName;
+    }
 }

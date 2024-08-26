@@ -13,7 +13,7 @@
  */
 package eu.europa.ec.digit.leos.pilot.export.util;
 
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
+import org.springframework.web.multipart.MultipartFile;
 
 public class ConvertUtil {
 
@@ -37,8 +37,8 @@ public class ConvertUtil {
         }
     }
 
-    public static String getFilename(LeosConvertDocumentInput convertDocumentInput, String suffix) {
-        String s = convertDocumentInput.getInputFile().getOriginalFilename();
+    public static String getFilename(MultipartFile file, String suffix) {
+        String s = file.getOriginalFilename();
         if (s != null) {
             return replaceSuffix(s, suffix);
         } else {

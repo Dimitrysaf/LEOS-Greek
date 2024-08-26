@@ -17,6 +17,7 @@ import eu.europa.ec.digit.leos.pilot.export.exception.TemplateEngineException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.exception.XmlUtilException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
+import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.TemplateEngineService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil;
@@ -48,10 +49,50 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     private final String REF_NODE = "leos:ref";
     private final String coverPage= "coverPage";
 
+    public static final String PROPOSAL_FILE = "main";
+    public static final String ANNEX_FILE_PREFIX = "ANNEX";
+    public static final String REG_FILE_PREFIX = "REG";
+    public static final String DIR_FILE_PREFIX = "DIR";
+    public static final String DEC_FILE_PREFIX = "DEC";
+    public static final String MEMORANDUM_FILE_PREFIX = "EXPL_MEMORANDUM";
+    public static final String STAT_FINANC_LEGIS_FILE_PREFIX = "STAT_FINANC_LEGIS";
+
     public XmlDocumentServiceImpl(TemplateEngineService templateEngineService) {
         this.templateEngineService = templateEngineService;
     }
 
+    @Override
+    public LeosRenditionOutput xmlToHtmlRendition(LeosConvertDocumentInput convertDocumentInput) {
+        try {
+            String styleSheetFileName =  getStyleSheetName(convertDocumentInput);
+            String cssFileName = getCssFileName(styleSheetFileName);
+            String styleSheet = CSS_PATH + cssFileName;
+            byte[] htmlOutput = templateEngineService.xmlToHtml(convertDocumentInput, cssFileName, coverPage);
+            return new LeosRenditionOutput(htmlOutput, new byte[0], styleSheet);
+        } catch (TemplateEngineException e) {
+            LOG.error("Error calling template engine", e);
+            throw new XmlDocumentException("Error calling template engine", e);
+        }
+    }
+
+    private String getCssFileName(String styleSheetFileName) {
+        String cssFileName = null;
+        if (styleSheetFileName.startsWith(MEMORANDUM_FILE_PREFIX)) {
+            cssFileName = "memorandum.css";
+        } else if (styleSheetFileName.startsWith(REG_FILE_PREFIX) || styleSheetFileName.startsWith(DEC_FILE_PREFIX)
+        || styleSheetFileName.startsWith(DIR_FILE_PREFIX)) {
+            cssFileName = "bill.css";
+        } else if (styleSheetFileName.startsWith(STAT_FINANC_LEGIS_FILE_PREFIX)) {
+            cssFileName = "stat_financ_legis.css";
+        } else if (styleSheetFileName.startsWith(ANNEX_FILE_PREFIX)) {
+            cssFileName = "annex.css";
+        } else if (styleSheetFileName.startsWith(PROPOSAL_FILE)) {
+            cssFileName = "coverpage.css";
+        }
+        return cssFileName;
+    }
+
+    @Override
     public byte[] xmlToHtmlPackage(LeosConvertDocumentInput convertDocumentInput) {
         try {
             Map<String, Object> contentToZip = new HashMap<String, Object>();
@@ -63,7 +104,7 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
             byte[] styleSheetOutput = StreamUtils.copyToByteArray(styleSheetInputStream);
             byte[] htmlOutput = templateEngineService.xmlToHtml(convertDocumentInput, styleSheetFileName, coverPage);
             addCoverPageStyleSheet(contentToZip);
-            contentToZip.put(ConvertUtil.getFilename(convertDocumentInput, "html"), htmlOutput);
+            contentToZip.put(ConvertUtil.getFilename(convertDocumentInput.getInputFile(), "html"), htmlOutput);
             contentToZip.put(styleSheet, styleSheetOutput);
             return ZipUtil.zipByteArray(contentToZip);
         } catch (IOException e) {
@@ -116,7 +157,6 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
         }
         Node refNode = xmlFile.getElementByName(REF_NODE);
         String refValue = refNode.getTextContent();
-        String fileName = refValue.substring(0, refValue.indexOf("_"));
-        return fileName + CSS_EXT;
+        return refValue + CSS_EXT;
     }
 }
