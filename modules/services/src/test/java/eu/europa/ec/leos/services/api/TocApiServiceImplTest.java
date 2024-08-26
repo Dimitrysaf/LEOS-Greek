@@ -298,4 +298,100 @@ public class TocApiServiceImplTest extends LeosTest {
 
     }
 
+    @Test
+    public void testAddingLevelAfterParagraphInsideSection() {
+
+        NodeDropValidationRequest request = new NodeDropValidationRequest();
+        request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
+        request.setDocumentType(LeosCategory.ANNEX);
+        List<String> draggedNodeIds = new ArrayList<>();
+        draggedNodeIds.add("_d4haocm");
+        request.setDraggedNodeId(draggedNodeIds);
+        request.setDraggedNodeTagName("LEVEL");
+        request.setTargetNodeId("ecDWTOBYD2DlTy80k");
+        request.setTargetNodeTagName("PARAGRAPH");
+        request.setParentNodeId("eckZ8NENtFQH0IA9U");
+        request.setParentNodeTagName("MAIN_BODY");
+        request.setPosition(TocItemPosition.AFTER);
+
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        request.setTableOfContentItemVOs(tocList);
+
+        NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
+        assertFalse(nodeValidationResponse.getResult().isSuccess());
+
+    }
+
+    @Test
+    public void testAddingLevelAfterSectionWithParagraphInside() {
+
+        NodeDropValidationRequest request = new NodeDropValidationRequest();
+        request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
+        request.setDocumentType(LeosCategory.ANNEX);
+        List<String> draggedNodeIds = new ArrayList<>();
+        draggedNodeIds.add("_d4haocm");
+        request.setDraggedNodeId(draggedNodeIds);
+        request.setDraggedNodeTagName("LEVEL");
+        request.setTargetNodeId("ecZOO1npqgWzLuA3G");
+        request.setTargetNodeTagName("SECTION");
+        request.setParentNodeId("eckZ8NENtFQH0IA9U");
+        request.setParentNodeTagName("MAIN_BODY");
+        request.setPosition(TocItemPosition.AFTER);
+
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        request.setTableOfContentItemVOs(tocList);
+
+        NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
+        assertFalse(nodeValidationResponse.getResult().isSuccess());
+
+    }
+
+    @Test
+    public void testAddingLevelBeforeLastParagraph() {
+
+        NodeDropValidationRequest request = new NodeDropValidationRequest();
+        request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
+        request.setDocumentType(LeosCategory.ANNEX);
+        List<String> draggedNodeIds = new ArrayList<>();
+        draggedNodeIds.add("_d4haocm");
+        request.setDraggedNodeId(draggedNodeIds);
+        request.setDraggedNodeTagName("LEVEL");
+        request.setTargetNodeId("ecxWP5kPId3aJhP9I");
+        request.setTargetNodeTagName("PARAGRAPH");
+        request.setParentNodeId("eckZ8NENtFQH0IA9U");
+        request.setParentNodeTagName("MAIN_BODY");
+        request.setPosition(TocItemPosition.BEFORE);
+
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        request.setTableOfContentItemVOs(tocList);
+
+        NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
+        assertFalse(nodeValidationResponse.getResult().isSuccess());
+
+    }
+
+    @Test
+    public void testAddingLevelAfterLastParagraph() {
+
+        NodeDropValidationRequest request = new NodeDropValidationRequest();
+        request.setDocumentRef("ANNEX-cm02swx630004w088cwecaqqj-en");
+        request.setDocumentType(LeosCategory.ANNEX);
+        List<String> draggedNodeIds = new ArrayList<>();
+        draggedNodeIds.add("_d4haocm");
+        request.setDraggedNodeId(draggedNodeIds);
+        request.setDraggedNodeTagName("LEVEL");
+        request.setTargetNodeId("ecxWP5kPId3aJhP9I");
+        request.setTargetNodeTagName("PARAGRAPH");
+        request.setParentNodeId("eckZ8NENtFQH0IA9U");
+        request.setParentNodeTagName("MAIN_BODY");
+        request.setPosition(TocItemPosition.AFTER);
+
+        List<TableOfContentItemVO> tocList = tableOfContentProcessor.buildTableOfContent(DOC, xmlContent, TocMode.NOT_SIMPLIFIED);
+        request.setTableOfContentItemVOs(tocList);
+
+        NodeValidationResponse nodeValidationResponse = proposalTocApiServiceImpl.nodeValidationDrop(request);
+        assertFalse(nodeValidationResponse.getResult().isSuccess());
+
+    }
+
 }
