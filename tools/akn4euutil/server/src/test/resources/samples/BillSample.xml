@@ -44,7 +44,7 @@
                 <leos:docVersion>0.1.0</leos:docVersion>
                 <leos:template>SJ-023</leos:template>
                 <leos:docTemplate>BL-023</leos:docTemplate>
-            <leos:docPurpose xml:id="proprietary__docpurpose">on TEST1</leos:docPurpose><leos:docStage xml:id="proprietary__docstage">Proposal for a</leos:docStage><leos:ref>bill_ckg190ekz0003951637s0d2l8</leos:ref><leos:docType xml:id="proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType><leos:objectId>4d81ab7291dccd7b025740670f617035bdbf273d</leos:objectId></proprietary>
+            <leos:docPurpose xml:id="proprietary__docpurpose">on TEST1</leos:docPurpose><leos:docStage xml:id="proprietary__docstage">Proposal for a</leos:docStage><leos:ref>REG-ckg190ekz0003951637s0d2l8</leos:ref><leos:docType xml:id="proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType><leos:objectId>4d81ab7291dccd7b025740670f617035bdbf273d</leos:objectId></proprietary>
         </meta>
         <coverPage xml:id="coverpage">
             <container name="logo" xml:id="coverpage__container_1">

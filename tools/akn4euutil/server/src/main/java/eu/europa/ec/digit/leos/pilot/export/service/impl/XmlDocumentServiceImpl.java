@@ -99,10 +99,11 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
             String coverPage = prepareCoverPage(convertDocumentInput);
 
             String styleSheetFileName =  getStyleSheetName(convertDocumentInput);
-            String styleSheet = CSS_PATH + styleSheetFileName;
+            String cssFileName = getCssFileName(styleSheetFileName);
+            String styleSheet = CSS_PATH + cssFileName;
             InputStream styleSheetInputStream = new ClassPathResource(styleSheet).getInputStream();
             byte[] styleSheetOutput = StreamUtils.copyToByteArray(styleSheetInputStream);
-            byte[] htmlOutput = templateEngineService.xmlToHtml(convertDocumentInput, styleSheetFileName, coverPage);
+            byte[] htmlOutput = templateEngineService.xmlToHtml(convertDocumentInput, cssFileName, coverPage);
             addCoverPageStyleSheet(contentToZip);
             contentToZip.put(ConvertUtil.getFilename(convertDocumentInput.getInputFile(), "html"), htmlOutput);
             contentToZip.put(styleSheet, styleSheetOutput);
