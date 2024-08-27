@@ -6,7 +6,7 @@ import {DomSanitizer} from "@angular/platform-browser";
 import {EuiDialogConfig, EuiDialogService} from "@eui/components/eui-dialog";
 import { EuiAppShellService, EuiGrowlService } from '@eui/core';
 import { TranslateService } from '@ngx-translate/core';
-import {BehaviorSubject, filter, map, Observable, Subject, tap} from 'rxjs';
+import {BehaviorSubject, combineLatest, distinctUntilChanged, filter, map, Observable, Subject, tap} from 'rxjs';
 
 import {
   PageMode,
@@ -134,12 +134,19 @@ export class MergeContributionsService {
       }),
     );
 
-    this.documentService.documentRefAndCategory$
-      .pipe(
-        filter((documentOptions) => documentOptions.category !== 'coverpage'),
-        map((docOptions) => {
+    combineLatest(
+      [this.documentService.documentConfig$,
+      this.documentService.documentRefAndCategory$]
+    ).pipe(
+        distinctUntilChanged(),
+        filter(([config, documentOptions]) => documentOptions.category !== 'coverpage'),
+        map(([config, docOptions]) => {
           this.documentRef = docOptions.ref;
           this.documentType = docOptions.category;
+          this.documentService.annexDocNumber =
+            config.documentsMetadata
+              .filter((d) => d.category === 'ANNEX')
+              .findIndex((d) => d.ref === this.documentRef) + 1;
           this.getContributions();
         }),
       )
