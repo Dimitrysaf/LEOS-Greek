@@ -278,7 +278,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
 
     @Override
     public String getDocumentForContributionAsHtml(byte[] content, String contextPath, List<LeosPermission> permissions) {
-        return getDocumentForContributionAsHtml(content, contextPath, permissions, false);
+        return getDocumentForContributionAsHtml(content, contextPath, permissions, true);
     }
 
     @Override
