@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.document;
 import com.google.common.base.Strings;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategoryClass;
+import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Annex;
 import eu.europa.ec.leos.domain.repository.document.Bill;
@@ -33,6 +34,7 @@ import eu.europa.ec.leos.services.collection.document.ContextActionService;
 import eu.europa.ec.leos.services.compare.ContentComparatorService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.processor.node.XmlNodeProcessor;
+import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.XmlDocumentService;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
 import eu.europa.ec.leos.services.support.XPathCatalog;
@@ -75,14 +77,15 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
     protected XmlNodeProcessor xmlNodeProcessor;
     protected final XPathCatalog xPathCatalog;
     private Provider<CollectionContextService> proposalContextProvider;
-
+    private PackageService packageService;
     @Autowired
     public DocumentContentServiceImpl(TransformationService transformationService,
                                       ContentComparatorService compareService, AnnexService annexService,
                                       BillService billService, MemorandumService memorandumService, ExplanatoryService explanatoryService,
                                       FinancialStatementService financialStatementService, ProposalService proposalService,
                                       XmlContentProcessor xmlContentProcessor, XmlDocumentService xmlDocumentService,
-                                        XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog, Provider<CollectionContextService> proposalContextProvider) {
+                                        XmlNodeProcessor xmlNodeProcessor, XPathCatalog xPathCatalog, Provider<CollectionContextService> proposalContextProvider,
+                                      PackageService packageService) {
         this.transformationService = transformationService;
         this.compareService = compareService;
         this.annexService = annexService;
@@ -96,6 +99,7 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         this.xPathCatalog = xPathCatalog;
         this.financialStatementService = financialStatementService;
         this.proposalContextProvider = proposalContextProvider;
+        this.packageService = packageService;
     }
 
     protected boolean isComparisonRequired(XmlDocument xmlDocument, SecurityContext securityContext) {
@@ -614,6 +618,9 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         }
         try {
             document = updateInternalReferencesAsync(document, LeosCategoryClass.caseInsensitiveValueOf(document.getCategory().name()));
+            if(!document.getCategory().equals(LeosCategoryClass.PROPOSAL)) {
+                updateProposalAsync(document, message);
+            }
         } catch (Exception e) {
             LOG.error("Error while updating internal references", e);
         }
@@ -648,5 +655,29 @@ public abstract class DocumentContentServiceImpl implements DocumentContentServi
         context.useActionMessage(ContextActionService.METADATA_UPDATED, message);
         context.useActionComment(message);
         context.executeUpdateDocumentsAssociatedToProposal();
+    }
+
+    public void updateProposalAsync(XmlDocument document, String message) {
+        Proposal proposal = getProposalFromPackage(document);
+        // Note: proposal can be null in cases of leos light scenarios
+        if(proposal != null) {
+            contextExecuteUpdateProposalAsync(proposal, message);
+        }
+    }
+
+    public void contextExecuteUpdateProposalAsync(Proposal proposal, String message) {
+        CollectionContextService context = proposalContextProvider.get();
+        context.useChildDocument(proposal.getMetadata().get().getRef());
+        context.useActionComment(message);
+        context.executeUpdateProposalAsync();
+    }
+
+    public Proposal getProposalFromPackage(XmlDocument document) {
+        Proposal proposal = null;
+        if (document != null) {
+            LeosPackage leosPackage = this.packageService.findPackageByDocumentRef(document.getMetadata().get().getRef(), document.getClass());
+            proposal = this.proposalService.findProposalByPackagePath(leosPackage.getPath());
+        }
+        return proposal;
     }
 }

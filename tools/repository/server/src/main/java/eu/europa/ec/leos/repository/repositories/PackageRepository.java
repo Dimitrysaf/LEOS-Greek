@@ -54,7 +54,13 @@ public interface PackageRepository extends JpaRepository<Package, BigDecimal> {
             "  FROM (\n" +
             "SELECT package_id, id, max(audit_last_m_date) audit_last_m_date\n" +
             "  FROM DOCUMENT d \n" +
-            " WHERE AUDIT_LAST_M_BY = ?1  \n" +
+
+            // take into consideration the collaborators
+            "  WHERE package_id in  \n" +
+            "           (select distinct pk.package_id from PACKAGE_COLLABORATORS pk   \n" +
+            "            join COLLABORATORS clb on clb.id = pk.collaborator_id   \n" +
+            "            where clb.collaborator_name = ?1)   \n" +
+
             " GROUP BY package_id, id) docs\n" +
             "LEFT OUTER JOIN (select document_id, max(dc.AUDIT_LAST_M_DATE) last_date\n" +
             "  from DOCUMENT_CONTENT dc, DOCUMENT_VERSION dv\n" +
