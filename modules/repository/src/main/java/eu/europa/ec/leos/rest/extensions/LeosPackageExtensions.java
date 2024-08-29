@@ -21,6 +21,9 @@ public class LeosPackageExtensions {
 
     public static LeosPackage toLeosPackage(Package pkg) {
         String[] pathNames = pkg.getName().split("/");
+        if (pkg.getTranslated() == null) {
+            pkg.setTranslated(false);
+        }
         return new LeosPackage(pkg.getId(), pathNames[pathNames.length - 1], pkg.getName(), pkg.getLanguage(), pkg.getTranslated());
     }
 
