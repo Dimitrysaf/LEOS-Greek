@@ -745,6 +745,10 @@ define(function leosTrackChangesPluginModule(require) {
                                 var parentElement = mutation.target.parentElement;
                                 var targetTextNode = new CKEDITOR.dom.text(mutation.target);
                                 editor.getSelection().selectElement(targetTextNode);
+                                var textNode = targetTextNode.$;
+                                var textContent = textNode.data;
+                                var updatedText = textContent.replace(/\u00A0/g, ' ');
+                                textNode.replaceData(0, textContent.length, updatedText);
                                 if (!core.isInsideTrackChangeElement(editor)) {
                                     if (mutation.oldValue) {
                                         var diffPos = findFirstDiffPos(mutation.oldValue, mutation.target.data, spellCheckerReplacementText);
