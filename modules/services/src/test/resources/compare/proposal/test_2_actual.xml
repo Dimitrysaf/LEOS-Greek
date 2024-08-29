@@ -81,7 +81,7 @@
                     </content>
                 </paragraph>
             </article>
-            <article id="_art_definitions" leos:autonumbering="true" leos:initial-num="Article 2" refersTo="~_ART_DEF">
+            <article id="_art_definitions" leos:autonumbering="true" leos:initial-num="Article 2" refersTo="~ART_DEF">
                 <num id="_art_definitions__num">Article 2</num>
                 <heading id="_art_definitions_heading">Definitions</heading>
                 <paragraph id="_art_definitions__para_1">
