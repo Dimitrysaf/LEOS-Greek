@@ -19,13 +19,13 @@ public interface ContributionApiService {
 
     List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex);
 
-    DocumentViewResponse compareAndShowRevision(String contextPath, String documentRef, String contributionsVersionRef, String legFileName) throws IOException;
+    DocumentViewResponse compareAndShowRevision(String contextPath, String documentRef, String contributionsVersionRef, String legFileName) throws Exception;
 
     void declineContribution(String contributionVersionRef);
 
     void markContributionAsProcessed(String contributionVersionRef);
 
-    MergeContributionResponse mergeContribution(String documentRef, ApplyContributionsRequest request) throws IOException;
+    MergeContributionResponse mergeContribution(String documentRef, ApplyContributionsRequest request) throws Exception;
 
     void sendFeedback(String proposalRef, String documentRef, String legFileName);
     

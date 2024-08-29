@@ -66,7 +66,7 @@ public class MergeContributionHelper {
         this.eventBus = eventBus;
     }
 
-    public byte[] updateDocumentWithContributions(ApplyContributionsRequestEvent event, XmlDocument xmlDocument, List<TocItem> tocItemList, List<InternalRefMap> intRefMap) throws IOException {
+    public byte[] updateDocumentWithContributions(ApplyContributionsRequestEvent event, XmlDocument xmlDocument, List<TocItem> tocItemList, List<InternalRefMap> intRefMap) throws Exception {
 
         byte[] xmlContent = xmlDocument.getContent().get().getSource().getBytes();
         byte[] contributionXmlContent = null;
@@ -223,7 +223,7 @@ public class MergeContributionHelper {
         return xmlContent;
     }
 
-    private byte[] executeContributionAction(MergeActionVO mergeActionVO) throws IOException {
+    private byte[] executeContributionAction(MergeActionVO mergeActionVO) throws Exception {
         String mergeActionMsg;
         String mergeActionNotificationKey = null;
         byte[] updatedXmlContent = mergeActionVO.getContributionVO().getXmlContent();
@@ -280,7 +280,7 @@ public class MergeContributionHelper {
         }
         contributionService.updateContributionMergeActions(mergeActionVO.getContributionVO().
                         getDocumentId(), mergeActionVO.getContributionVO().getLegFileName(), mergeActionVO.getContributionVO().getDocumentName(),
-                updatedXmlContent);
+                mergeActionVO.getContributionVO().getVersionedReference(), updatedXmlContent);
 
         eventBus.post(new NotificationEvent(NotificationEvent.Type.INFO, mergeActionNotificationKey));
         return updatedXmlContent;

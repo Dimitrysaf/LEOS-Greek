@@ -118,7 +118,7 @@ public class ContributionControllerTest {
     }
 
     @Test
-    public void test_viewMergePane() throws IOException {
+    public void test_viewMergePane() throws Exception {
         String TEST_CONTEXT_PATH = "/test-content-path";
         String TEST_DOCUMENT_REF = "documentRef";
         String TEST_DOCUMENT_TYPE = "documentType";
@@ -155,7 +155,7 @@ public class ContributionControllerTest {
     }
 
     @Test
-    public void test_mergeContribution() throws IOException {
+    public void test_mergeContribution() throws Exception {
         String TEST_DOCUMENT_REF = "documentRef";
         String TEST_DOCUMENT_CONTENT = "test content";
         ApplyContributionsRequest TEST_REQUEST = new ApplyContributionsRequest();

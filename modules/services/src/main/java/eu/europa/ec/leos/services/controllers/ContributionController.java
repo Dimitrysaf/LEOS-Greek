@@ -80,7 +80,7 @@ public class ContributionController {
                                                               @PathVariable("documentRef") String documentRef,
                                                               @PathVariable("documentType") String documentType,
                                                               @RequestParam String contributionVersionRef,
-                                                              @RequestParam String legFileName) throws IOException {
+                                                              @RequestParam String legFileName) throws Exception {
         documentRef = encodeParam(documentRef);
         contributionVersionRef = encodeParam(contributionVersionRef);
         legFileName = encodeParam(legFileName);
@@ -103,7 +103,7 @@ public class ContributionController {
     @PostMapping(value = "/merge-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<MergeContributionResponse> mergeContribution(@PathVariable("documentRef") String documentRef,
-                                                                       @RequestBody ApplyContributionsRequest applyContributionsRequest) throws IOException {
+                                                                       @RequestBody ApplyContributionsRequest applyContributionsRequest) throws Exception {
         documentRef = encodeParam(documentRef);
         MergeContributionResponse mergeResult = this.contributionApiService.mergeContribution(documentRef, applyContributionsRequest);
         return ResponseEntity.ok(mergeResult);

@@ -421,6 +421,7 @@
   "page.editor.contribution.view.actions.close-view": "Fermer la vue de fusion",
   "page.editor.contribution-item.updated-by": "{{ updatedOn }} {{ updatedBy }}",
   "page.editor.contribution-item.version": "Version: {{ version }}",
+  "page.editor.contribution-item.feedback.tooltip": "Quelques commentaires n'ont pas été envoyés en retour pour cette contribution, cliquer sur le bouton 'Envoyer un retour'",
   "page.editor.contribution.view.mark-contribution-as-processed.modal-title": "Traiter la révision",
   "page.editor.contribution.view.mark-contribution-as-processed.modal-text": "La révision va être marquée comme traitée",
   "page.editor.contribution.view.merge-contributions.accept-all.modal-title": "Toutes les contributions",

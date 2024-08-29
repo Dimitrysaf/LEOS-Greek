@@ -34,6 +34,14 @@ class legalActPage {
         return this.getArticle(articleNumber).find('num');
     }
 
+    getChapter(chapterNumber) {
+        return cy.get('chapter').eq(chapterNumber-1);
+    }
+
+    getNumTagOfChapter(chapterNumber) {
+        return this.getChapter(chapterNumber).find('num');
+    }
+
     mouseHoverAndClickOnArticle(articleNumber) {
         this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).realClick({ position: "topLeft" }));
     }

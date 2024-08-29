@@ -49,3 +49,7 @@ When(`click on save button in dialog input box window`, () => {
 When('click on revert button in dialog box', function () {
     euiDialogBoxPage.clickAcceptBtn();
 });
+
+When(`click on confirm button`, function () {
+    euiDialogBoxPage.clickConfirmBtn();
+});

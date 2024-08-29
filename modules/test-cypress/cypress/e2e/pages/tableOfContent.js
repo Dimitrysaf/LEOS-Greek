@@ -5,6 +5,7 @@ class tableOfContent {
         saveCloseBtn: () => cy.get("button img[src='assets/images/toc-save-close.png']"),
         cancelBtn: () => cy.get("*[icon='eui-close']"),
         menuOptions: () => cy.get('div.eui-list-item__container span'),
+        contributionsPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').eq(2).find('.eui-fieldset__header button'),
         versionsPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').eq(1).find('.eui-fieldset__header button'),
         navigationPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').first().find('.eui-fieldset__header button'),
         navigationPaneExpanded: () => cy.get("button[aria-label='Collapse Navigation Pane']"),
@@ -25,15 +26,25 @@ class tableOfContent {
         cardContentOfRecentChanges: () => this.elements.recentChangesCard().find('eui-card-content'),
         subVersion: () => this.elements.cardContentOfRecentChanges().find('div.subversion'),
         subVersionTitle: () => this.elements.subVersion().find('.title'),
-        nodeLabel: () => cy.get(".mat-tree-node div.label[id^='node-label']"),
+        nodeLabel: () => cy.get(".mat-tree-node div.label[id^='node-label'], .mat-tree-node div.label-extended[id^='node-label']"),
         preambleLink: () => this.elements.nestedTreeNode().find('#node-label-_preamble').closest('div.mat-tree-node'),
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
         labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node'),
         revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version'),
         dropdownContent: () => cy.get('eui-dropdown-content .eui-u-flex-align-items-start'),
-        dropdownItemContentTextList: () => this.elements.dropdownContent().find('button .eui-dropdown-item__content-text')
+        dropdownItemContentTextList: () => this.elements.dropdownContent().find('button .eui-dropdown-item__content-text'),
+        contributionsPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').eq(2).find('.eui-fieldset__header button'),
+        contributionCard: () => cy.get('eui-card.revisions-pane').eq(0),
     }
-    
+     
+    clickContributionsPaneButton(){
+        this.elements.contributionsPaneAccordion().click();
+    }
+ 
+    clickFirstContribution(){
+        this.elements.contributionCard().click();
+    }
+
     clickEditBtn(){
         this.elements.editBtn().click();
         cy.wait(500);
@@ -57,6 +68,10 @@ class tableOfContent {
 
     clickNavigationPaneAccordian(){
         this.elements.navigationPaneAccordion().click();
+    }
+
+    clickContributionsPaneButton(){
+        this.elements.contributionsPaneAccordion().click();
     }
 
     clickFirstNestedTreeNode(){

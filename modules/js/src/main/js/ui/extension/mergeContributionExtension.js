@@ -330,6 +330,8 @@ define(function mergeContributionExtensionModule(require) {
         wrappedEltsList.push(UTILS.NUM);
         wrappedEltsList.push(UTILS.PARAGRAPH);
         wrappedEltsList.push(UTILS.HEADING);
+        wrappedEltsList.push(UTILS.BLOCKCONTAINER);
+        wrappedEltsList.push(UTILS.LEVEL);
         MAIN_ELEMENT_SELECTOR = wrappedEltsList.join(',');
         _registerActionTriggers(connector);
     }

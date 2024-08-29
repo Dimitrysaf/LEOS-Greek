@@ -380,6 +380,7 @@ export class MergeContributionsService {
             isGrowlSticky: false,
             position: 'bottom-right',
           });
+          this.emptyMergeActionList();
         },
       });
   }

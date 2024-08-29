@@ -285,14 +285,12 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     }
 
     @Override
-    public void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName,
-                                               byte[] xmlContent)
-            throws IOException {
+    public void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName, String versionedReference,
+                                               byte[] xmlContent) throws Exception {
         //TODO: change to findPackageByDocumentRef
         LeosPackage clonedPackage = packageService.findPackageByDocumentId(cloneDocumentId);
         if (clonedPackage != null) {
-            LegDocument legDocument = packageService.findDocumentByPackagePathAndName(clonedPackage.getPath(), legFileName,
-                    LegDocument.class);
+            LegDocument legDocument = legService.findLastContributionByVersionedReferenceAndName(clonedPackage.getPath(), legFileName, versionedReference);
             Map<String, Object> legContent = ZipPackageUtil.unzipByteArray(legDocument.getContent().get().
                     getSource().getBytes());
             legContent.put(documentName, xmlContent);

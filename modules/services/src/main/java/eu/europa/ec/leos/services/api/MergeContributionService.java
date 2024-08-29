@@ -39,6 +39,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static eu.europa.ec.leos.services.dto.request.MergeActionVO.ElementState;
+import static eu.europa.ec.leos.services.dto.request.MergeActionVO.ElementState.ADD;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsLastChildOfNode;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
@@ -112,6 +113,7 @@ import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemBy
 public class MergeContributionService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MergeContributionService.class);
+    private static final String AKN = "akn";
 
     private final XmlContentProcessor xmlContentProcessor;
     private final ContributionService contributionService;
@@ -141,7 +143,7 @@ public class MergeContributionService {
     public MergeContributionResponse updateDocumentWithContributions(ApplyContributionsRequest request,
                                                                      XmlDocument xmlDocument,
                                                                      List<TocItem> tocItemsList,
-                                                                     List<InternalRefMap> intRefMap) throws IOException {
+                                                                     List<InternalRefMap> intRefMap) throws Exception {
         this.tocItemsList = tocItemsList;
         updatedMainElements();
         mergingCompletelySuccessfull = true;
@@ -175,6 +177,16 @@ public class MergeContributionService {
                         mergeActionVO.getElementState(),
                         intRefMap,
                         mergeActionVO.isWithTrackChanges());
+                if (HIGHER_ELEMENTS.contains(mergeActionVO.getElementTagName().replace(AKN, "")) && MergeActionVO.ElementState.DELETE.equals(mergeActionVO.getElementState())) {
+                    String language = documentLanguageContext.getDocumentLanguage();
+                    xmlContent = this.numberService.renumberHigherSubDivisions(xmlContent, language, mergeActionVO.getElementTagName().replace(AKN, ""), this.tocItemsList);
+                }
+            } else {
+                if (ElementState.MOVE.equals(mergeActionVO.getElementState())) {
+                    String cleanedElementId = removesPrefixFromElementId(mergeActionVO.getElementId());
+                    impactedElements.add(mergeActionVO.getElementId().startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX) ? cleanedElementId :
+                            SOFT_MOVE_PLACEHOLDER_ID_PREFIX + cleanedElementId);
+                }
             }
             // Sets "mergeAction" attribute on contribution elements where merging has been done
             updateActionOnImpactedElements(contributionDocument, mergeActionVO.getAction().name(), mergeActionVO.getElementId());
@@ -193,6 +205,16 @@ public class MergeContributionService {
                             mergeActionVO.getElementId(),
                             mergeActionVO.getElementState(),
                             intRefMap);
+                    if (HIGHER_ELEMENTS.contains(mergeActionVO.getElementTagName().replace(AKN, "")) && MergeActionVO.ElementState.ADD.equals(mergeActionVO.getElementState())) {
+                        String language = documentLanguageContext.getDocumentLanguage();
+                        xmlContent = this.numberService.renumberHigherSubDivisions(xmlContent, language, mergeActionVO.getElementTagName().replace(AKN, ""), this.tocItemsList);
+                    }
+                } else {
+                    if (ElementState.MOVE.equals(mergeActionVO.getElementState())) {
+                        String cleanedElementId = removesPrefixFromElementId(mergeActionVO.getElementId());
+                        impactedElements.add(mergeActionVO.getElementId().startsWith(SOFT_MOVE_PLACEHOLDER_ID_PREFIX) ? cleanedElementId :
+                                SOFT_MOVE_PLACEHOLDER_ID_PREFIX + cleanedElementId);
+                    }
                 }
                 // Removes "mergeAction" attribute on contribution elements where merging has been undone
                 removeActionOnImpactedElement(contributionDocument, mergeActionVO.getElementId());
@@ -208,10 +230,10 @@ public class MergeContributionService {
         return new MergeContributionResponse(this.mergingCompletelySuccessfull, xmlContent);
     }
 
-    private void executeContributionAction(MergeActionVO mergeActionVO, byte[] updatedXmlContent) throws IOException {
+    private void executeContributionAction(MergeActionVO mergeActionVO, byte[] updatedXmlContent) throws Exception {
         contributionService.updateContributionMergeActions(mergeActionVO.getContributionVO().
                         getDocumentId(), mergeActionVO.getContributionVO().getLegFileName(),
-                mergeActionVO.getContributionVO().getDocumentName(),
+                mergeActionVO.getContributionVO().getDocumentName(), mergeActionVO.getContributionVO().getVersionedReference(),
                 updatedXmlContent);
     }
 
@@ -237,6 +259,9 @@ public class MergeContributionService {
                                                      boolean withTrackChanges) {
         elementId = removesMovedPrefixFromElementId(elementId);
         Node contributionNode = XercesUtils.getElementById(contribution.getXmlContent(), elementId);
+        if (contributionNode == null) {
+            return xmlContent;
+        }
         int countNonEmptyTextNodes = countNonEmptyTextNodesInAllDescendants(contributionNode);
         String cleanedElementId = removesPrefixFromElementId(elementId);
 
@@ -262,7 +287,7 @@ public class MergeContributionService {
                 xmlContent = renumberFragment(xmlContent,  cleanedElementId);
             }
             impactedElements.add(getId(contributionNode));
-        } else if (ElementState.ADD.equals(elementState)) {
+        } else if (ADD.equals(elementState)) {
             newFragment = updateInternalReferences(newFragment, intRefMap);
             xmlContent = mergeInsertedEltInXml(xmlContent, contribution.getXmlContent(), newFragment, cleanedElementId,
                     true);
@@ -404,7 +429,7 @@ public class MergeContributionService {
                     replaceElement(insElt, getContentNodeAsXmlFragment(insElt));
                     i--;
                 }
-                checkNum(realInsElt, null, ElementState.ADD, withTrackChanges);
+                checkNum(realInsElt, null, ADD, withTrackChanges);
                 mergeInsertedEltInsideNode(relatedParentOriginalNode, realInsElt, nodeToString(realInsElt), withTrackChanges, elementId);
                 impactedElements.add(getId(realInsElt));
             }
@@ -497,7 +522,7 @@ public class MergeContributionService {
                     if (!withTrackChanges) {
                         resolveTrackChange(moveFromElt, true);
                     }
-                    checkNum(elementInOriginalContent, null, ElementState.ADD, withTrackChanges);
+                    checkNum(elementInOriginalContent, null, ADD, withTrackChanges);
                     mergeInsertedEltInsideNode(relatedParentOriginalNode, moveFromElt, nodeToString(elementInOriginalContent), withTrackChanges, elementId);
                     if (withTrackChanges) {
                         originalMovedNode = XercesUtils.getFirstElementByXPath(relatedParentOriginalNode, "//*[@" + XMLID + " = '" + elementId + "']//*[@" + XMLID +
@@ -555,7 +580,7 @@ public class MergeContributionService {
                                 "//*[@" + XMLID + " = '" + moveFromId + "']");
                 if (contributionMovedNodeInside == null) {
                     xmlContent = xmlContentProcessor.removeElementById(xmlContent, moveFromId, false);
-                    checkNum(elementInOriginalContent, null, ElementState.ADD, withTrackChanges);
+                    checkNum(elementInOriginalContent, null, ADD, withTrackChanges);
                     xmlContent = mergeInsertedEltInXml(xmlContent, contributionXmlContent, nodeToString(elementInOriginalContent), moveFromId,
                             withTrackChanges);
                     if (withTrackChanges) {
@@ -584,7 +609,7 @@ public class MergeContributionService {
         for (int i = 0; i < addedElts.getLength(); i++) {
             Node addedElt = addedElts.item(i);
             if (!addedElt.getNodeName().equals(NUM) && !XercesUtils.hasAttribute(addedElt, LEOS_SOFT_MOVE_FROM)) {
-                checkNum(addedElt, null, ElementState.ADD, withTrackChanges);
+                checkNum(addedElt, null, ADD, withTrackChanges);
                 mergeInsertedEltInsideNode(relatedParentOriginalNode, addedElt, nodeToString(addedElt), withTrackChanges, elementId);
                 impactedElements.add(getId(addedElt));
             }
@@ -789,6 +814,9 @@ public class MergeContributionService {
                                                     ElementState elementState, List<InternalRefMap> intRefMap) {
         elementId = removesMovedPrefixFromElementId(elementId);
         Node contributionNode = XercesUtils.getElementById(contribution.getXmlContent(), elementId);
+        if (contributionNode == null) {
+            return xmlContent;
+        }
 
         String cleanedElementId = removesPrefixFromElementId(elementId);
 
@@ -812,7 +840,7 @@ public class MergeContributionService {
             xmlContent = xmlContentProcessor.restoreNumElementOnIntermediateNodes(xmlContent, cleanedElementId, null, contributionNode.getNodeName());
             xmlContent = renumberFragment(xmlContent, cleanedElementId);
             impactedElements.add(elementId);
-        } else if (ElementState.ADD.equals(elementState)) {
+        } else if (ADD.equals(elementState)) {
             xmlContent = xmlContentProcessor.restoreNumElementOnIntermediateNodes(xmlContent, cleanedElementId, null, contributionNode.getNodeName());
             xmlContent = xmlContentProcessor.removeElementById(xmlContent, cleanedElementId, false);
             impactedElements.add(elementId);
@@ -1013,8 +1041,8 @@ public class MergeContributionService {
                 String contentToBeAdded = getContentNodeAsXmlFragment(nodeToBeAddedAgain);
 
                 // Avoid adding it again (already undone)
-                if (nextContent.startsWith(contentToBeAdded) || nextContent.trim().startsWith(contentToBeAdded)
-                        || prevContent.endsWith(contentToBeAdded) || prevContent.trim().endsWith(contentToBeAdded)) {
+                if ((nextContent != null && (nextContent.startsWith(contentToBeAdded) || nextContent.trim().startsWith(contentToBeAdded)))
+                        || (prevContent != null && (prevContent.endsWith(contentToBeAdded) || prevContent.trim().endsWith(contentToBeAdded)))) {
                     return;
                 }
 
@@ -1289,9 +1317,11 @@ public class MergeContributionService {
     }
 
     private void updateActionOnImpactedElements(Node doc, String action, String elementId) {
-        setActionAttribute(doc, elementId, action);
-        for (String impactedId : impactedElements) {
-            setActionAttribute(doc, impactedId, action);
+        if (doc != null) {
+            setActionAttribute(doc, elementId, action);
+            for (String impactedId : impactedElements) {
+                setActionAttribute(doc, impactedId, action);
+            }
         }
     }
 
@@ -1315,10 +1345,12 @@ public class MergeContributionService {
 
     private void removeActionOnImpactedElement(Node doc, String elementId) {
         Node contributionNode = XercesUtils.getElementById(doc, elementId);
-        resetAction(contributionNode);
-        for (String impactedId : impactedElements) {
-            Node impactedNode = XercesUtils.getElementById(doc, impactedId);
-            resetAction(impactedNode);
+        if (contributionNode != null) {
+            resetAction(contributionNode);
+            for (String impactedId : impactedElements) {
+                Node impactedNode = XercesUtils.getElementById(doc, impactedId);
+                resetAction(impactedNode);
+            }
         }
     }
 
@@ -1760,7 +1792,7 @@ public class MergeContributionService {
                     if (!XercesUtils.hasAttribute(refNode, LEOS_ACTION_ATTR) && !XercesUtils.hasAttribute(refNode, LEOS_SOFT_ACTION_ATTR)) {
                         addAttribute(refNode, LEOS_AUTO_NUM_OVERWRITE, "true");
                     }
-                } else if (ElementState.ADD.equals(mergeAction)) {
+                } else if (ADD.equals(mergeAction)) {
                     Node refInsNode = getFirstChild(numNode, "ins");
                     if (refInsNode != null) {
                         String oldNumLabel = numNode.getTextContent().trim();

@@ -44,6 +44,7 @@ Then(`{string} is showing under title column of row {int} of milestones table`, 
 
 Then(`{string} is showing under status column of row {int} of milestones table`, (status, rowNumber) => {
     milestoneTab.getCellFromMilestoneTableBody(rowNumber,4).should('include.text', status);
+
 });
 
 When(`click on three dots under actions column of row {int} of milestones table`, (rowNumber) => {

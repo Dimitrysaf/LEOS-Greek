@@ -16,8 +16,8 @@ public interface ContributionService {
     Result<?> updateContributionStatusAfterContributionDone(String cloneProposalRef, String cloneLegFileId,
                                                             CloneProposalMetadataVO cloneProposalMetadataVO);
 
-    void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName,
-                                        byte[] xmlContent) throws IOException;
+    void updateContributionMergeActions(String cloneDocumentId, String legFileName, String documentName, String versionedReference,
+                                        byte[] xmlContent) throws Exception;
 
     <T extends LeosDocument> T findVersionByVersionedReference(String versionedReference, Class<T> filterType);
 }
