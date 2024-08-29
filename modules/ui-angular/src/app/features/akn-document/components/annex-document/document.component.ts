@@ -119,32 +119,10 @@ export class DocumentComponent
     }
   }
 
+  ng
+
   ngOnInit(): void {
-    // handle case Memorandum for CN which is required to be readOnly
-    if (
-      this.readonly &&
-      this.environmentService.isCouncil() &&
-      this.documentType === 'memorandum'
-    ) {
-      this.documentService.documentView$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((documentView) => {
-          if (documentView && !this.contributionView) {
-            this.loadDocument(documentView.editableXml);
-          }
-          this.ckeditorService.initUserGuidanceStandalone();
-        });
-    }
-
     if (!this.readonly) {
-      this.documentService.documentView$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((documentView) => {
-          if (documentView && !this.contributionView) {
-            this.loadDocument(documentView.editableXml);
-          }
-        });
-
       this.documentService.refreshView$
         .pipe(takeUntil(this.destroy$))
         .subscribe((documentView) => {
@@ -222,6 +200,31 @@ export class DocumentComponent
   }
 
   ngAfterViewInit(): void {
+    // handle case Memorandum for CN which is required to be readOnly
+    if (
+      this.readonly &&
+      this.environmentService.isCouncil() &&
+      this.documentType === 'memorandum'
+    ) {
+      this.documentService.documentView$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((documentView) => {
+          if (documentView && !this.contributionView) {
+            this.loadDocument(documentView.editableXml);
+          }
+          this.ckeditorService.initUserGuidanceStandalone();
+        });
+    }
+
+    if (!this.readonly) {
+      this.documentService.documentView$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((documentView) => {
+          if (documentView && !this.contributionView) {
+            this.loadDocument(documentView.editableXml);
+          }
+        });
+    }
     this.documentService.setDidDocumentLoadAndRender(true);
     if (!this.readonly) {
       this.interceptAndProcessBookmarkLink();
