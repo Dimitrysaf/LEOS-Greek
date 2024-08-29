@@ -741,6 +741,9 @@ define(function leosTrackChangesModule(require) {
                 if(parentDiv) {
                     editor.fire('updateAlternateToolbarState', {index: parentDiv.getAttribute("data-akn-original-option")})
                     core.removeTrackChangesAttributesForAlternative(parentDiv);
+                } else if(element.getAttribute('data-wsc-ignore-checking') === 'true') {
+                    element.remove();
+                    return;
                 }
                 if($(element, editor.getData()).length > 0) {
                     element.$.outerHTML = element.$.innerHTML;
