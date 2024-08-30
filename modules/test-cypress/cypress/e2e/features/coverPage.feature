@@ -7,18 +7,18 @@ Feature: cover page Regression Features
     Background:
         Given navigate to edit drafting application with "User1"
         Then user is on home page
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
         And  provide document title "Automation Cover Page Testing" in create document page
         And  click on create button
-        Then user is on proposal viewer page
+        Then user is on act viewer page
 
     @coverPage @local
     Scenario: edition of title in cover page 
-        And  title of the proposal contains "Automation Cover Page Testing" keyword
-        When click on legal act link present in proposal viewer page
+        And  title of the act contains "Automation Cover Page Testing" keyword
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
@@ -31,8 +31,8 @@ Feature: cover page Regression Features
         And  "No changes after last version" subtitle is displayed under recent changes version card
         And  last version card header title contains "Version 0.1.0 - Document created"
         When click on close button present in legal act page
-        Then user is on proposal viewer page
-        When click on cover page link present in proposal viewer page
+        Then user is on act viewer page
+        When click on cover page link present in act viewer page
         Then user is on cover page
         And  annotation side bar is present
         When click on versions pane accordion
@@ -69,9 +69,9 @@ Feature: cover page Regression Features
         And  last subversion of recent changes version card contains "0.1.1Document title updated"
         And  last version card header title contains "Version 0.1.0 - Document created"
         When click on close button present in cover page
-        Then user is on proposal viewer page
-        And  title of the proposal contains "Automation Testing Cover Page" keyword
-        When click on legal act link present in proposal viewer page
+        Then user is on act viewer page
+        And  title of the act contains "Automation Testing Cover Page" keyword
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed

@@ -1,4 +1,4 @@
-class createProposalPage {
+class createActPage {
     elements = {
         nextBtn: () => cy.contains('Next'),
         collapseAllBtn: () => cy.get("button[title='Collapse All']"),
@@ -25,4 +25,4 @@ class createProposalPage {
         this.elements.createBtn().click();
     }
 }
-export default new createProposalPage();
+export default new createActPage();

@@ -8,17 +8,17 @@ Feature: CK Editor Regression Features
     Scenario: testing of different ck editor plugin in citation, recital and articles
         Given navigate to edit drafting application with "User1"
         Then user is on home page
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         And  collapse all button is displayed in create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
         And  provide document title "ck editor scenarios" in create document page
         And  click on create button
-        Then user is on proposal viewer page
+        Then user is on act viewer page
         When click on add button in annexes section
-        Then total number of annexes present in proposal viewer page is 1
-        When click on legal act link present in proposal viewer page
+        Then total number of annexes present in act viewer page is 1
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
