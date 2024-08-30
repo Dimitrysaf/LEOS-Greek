@@ -24,6 +24,10 @@ When('mouseover and click on level {int}', levelNumber => {
     annexPage.mouseHoverAndClickOnLevel(levelNumber);
 })
 
+When('mouseover and click on paragraph {int}', function (paragraphNumber) {
+    annexPage.mouseHoverAndClickOnParagraph(paragraphNumber);
+});
+
 Then(`total number of level is {int}`, (count) => {
     annexPage.elements.level().should('have.length', count);
 });

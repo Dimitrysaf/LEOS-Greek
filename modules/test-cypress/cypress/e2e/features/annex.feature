@@ -149,3 +149,73 @@ Feature: Annex Page Regression Features
         Then total number of annexes present in proposal viewer page is 2
 #        And  title of annex 1 contains "Annex 2"
 #        And  title of annex 2 contains "Annex 3"
+
+    @paragraphLevelValidation @local
+    Scenario: issues/1920 AKN4EU 4.1.1 : A paragraph cannot have as nearest preceding sibling a level
+        When click on create proposal button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "paragraph level validation" in create document page
+        And  click on create button
+        Then user is on proposal viewer page
+        When click on add button in annexes section
+        Then total number of annexes present in proposal viewer page is 1
+        When click on annex 1 link
+        Then user is on annex page
+        And  ribbon toolbar is displayed
+        And  annotation side bar is present
+        When click on toc edit button
+        Then cancel button is displayed and enabled in navigation pane
+        When drag element "Paragraph" from element tree list and drop before node label "1.1. Text..." in navigation pane
+        Then error message "Only higher division are allowed in between points" is displayed in navigation pane
+        And  error message disappears from table of content
+        When drag element "Section" from element tree list and drop before node label "1.1. Text..." in navigation pane
+        Then success message "Section has been added successfully!" is displayed in navigation pane
+        And  success message disappears from table of content
+        When drag element "Paragraph" from element tree list and drop as child of node label "Section # Section heading..." in navigation pane
+        Then error message "Only higher division are allowed in between points" is displayed in navigation pane
+        And  error message disappears from table of content
+        When drag element "Point 1." from element tree list and drop as child of node label "Section # Section heading..." in navigation pane
+        Then success message "Level has been added successfully!" is displayed in navigation pane
+        And  success message disappears from table of content
+        When drag element "Paragraph" from element tree list and drop before node label "1. Text..." in navigation pane
+        Then success message "Paragraph has been added successfully!" is displayed in navigation pane
+        And  success message disappears from table of content
+        When drag element "Paragraph" from element tree list and drop after node label "2. Text..." in navigation pane
+        Then success message "Paragraph has been added successfully!" is displayed in navigation pane
+        And  success message disappears from table of content
+        When click on save and close button in navigation pane
+        Then toc editing button is displayed and enabled
+        When mouseover and click on paragraph 1
+        Then ck editor window is displayed
+        When add "paragraph1" at offset 0 in paragraph in edition mode
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        When mouseover and click on paragraph 2
+        Then ck editor window is displayed
+        When add "paragraph2" at offset 0 in paragraph in edition mode
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        When click on toc edit button
+        Then cancel button is displayed and enabled in navigation pane
+        When drag element "Point 1." from element tree list and drop before node label "paragraph1" in navigation pane
+        Then error message "Only higher division are allowed in between points" is displayed in navigation pane
+        And  error message disappears from table of content
+        When drag element "Point 1." from element tree list and drop after node label "paragraph2" in navigation pane
+        Then error message "Only higher division are allowed in between points" is displayed in navigation pane
+        And  error message disappears from table of content
+        When drag element "Section" from element tree list and drop before node label "1. Text..." in navigation pane
+        Then success message "Section has been added successfully!" is displayed in navigation pane
+        And  success message disappears from table of content
+        When drag element "Paragraph" from element tree list and drop as child of node label "Section # Section heading..." in navigation pane
+        Then success message "Paragraph has been added successfully!" is displayed in navigation pane
+        And  success message disappears from table of content
+        When drag element "Point 1." from element tree list and drop before node label "Section # Section heading..." in navigation pane
+        Then error message "Only higher division are allowed in between points" is displayed in navigation pane
+        And  error message disappears from table of content
+        When drag element "Point 1." from element tree list and drop as child of node label "Section # Section heading..." in navigation pane
+        Then success message "Level has been added successfully!" is displayed in navigation pane
+        And  success message disappears from table of content
+        When click on save and close button in navigation pane
+        Then toc editing button is displayed and enabled

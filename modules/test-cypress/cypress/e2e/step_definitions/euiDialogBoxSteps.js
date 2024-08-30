@@ -50,6 +50,6 @@ When('click on revert button in dialog box', function () {
     euiDialogBoxPage.clickAcceptBtn();
 });
 
-When(`click on confirm button`, function () {
+And(`click on confirm button in dialog confirm box window`, function () {
     euiDialogBoxPage.clickConfirmBtn();
 });

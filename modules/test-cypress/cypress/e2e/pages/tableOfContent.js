@@ -33,16 +33,18 @@ class tableOfContent {
         revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version'),
         dropdownContent: () => cy.get('eui-dropdown-content .eui-u-flex-align-items-start'),
         dropdownItemContentTextList: () => this.elements.dropdownContent().find('button .eui-dropdown-item__content-text'),
-        contributionsPaneAccordion: () => cy.get('eui-page-column-body eui-fieldset').eq(2).find('.eui-fieldset__header button'),
         contributionCard: () => cy.get('eui-card.revisions-pane').eq(0),
+        euiLabelSuccess: () => cy.get('span.eui-label--success'),
+        euiLabelDanger: () => cy.get('span.eui-label--danger')
     }
-     
+
     clickContributionsPaneButton(){
         this.elements.contributionsPaneAccordion().click();
     }
- 
+
     clickFirstContribution(){
         this.elements.contributionCard().click();
+
     }
 
     clickEditBtn(){
@@ -68,10 +70,6 @@ class tableOfContent {
 
     clickNavigationPaneAccordian(){
         this.elements.navigationPaneAccordion().click();
-    }
-
-    clickContributionsPaneButton(){
-        this.elements.contributionsPaneAccordion().click();
     }
 
     clickFirstNestedTreeNode(){
@@ -110,10 +108,6 @@ class tableOfContent {
         this.elements.preambleLink().find("eui-icon-svg[icon='eui-chevron-forward']").click();
     }
 
-/*    getElementList(){
-        return this.elements.elementList();
-    }*/
-
     getLabelExtended(){
         return this.elements.labelExtended();
     }
@@ -128,6 +122,10 @@ class tableOfContent {
 
     getNodeLabelText(label){
         return this.elements.nodeLabel().contains(label);
+    }
+
+    getCloseLiOfNodeLabel(label){
+        return this.elements.nodeLabel().contains(label).closest('li');
     }
 
     getSubVersion(subVersionNumber) {

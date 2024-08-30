@@ -369,7 +369,7 @@ Feature: Track Changes Feature
     Then ck editor window is not displayed
     When click on toc edit button
     Then cancel button is displayed and enabled in navigation pane
-    When drag element "Article" from element tree list and drop to node label "Article 2 - Article heading... Unnumbered paragraphs with 2 paragraphs." in navigation pane
+    When drag element "Article" from element tree list and drop before node label "Article 2 - Article heading... Unnumbered paragraphs with 2 paragraphs." in navigation pane
     Then enacting terms contains node label "Article # - Article heading... Text..." and showing as bold
     When click on save and close button in navigation pane
     Then toc editing button is displayed and enabled
@@ -476,7 +476,7 @@ Feature: Track Changes Feature
     Then ck editor window is not displayed
     When click on toc edit button
     Then cancel button is displayed and enabled in navigation pane
-    When drag element "Article" from element tree list and drop to node label "Article 2 - Article heading... Unnumbered paragraphs with 2 paragraphs." in navigation pane
+    When drag element "Article" from element tree list and drop before node label "Article 2 - Article heading... Unnumbered paragraphs with 2 paragraphs." in navigation pane
     Then enacting terms contains node label "Article # - Article heading... Text..." and showing as bold
     When click on save and close button in navigation pane
     Then toc editing button is displayed and enabled
