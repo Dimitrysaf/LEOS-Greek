@@ -1,6 +1,4 @@
-import { cloneDeep, drop, remove, round } from 'lodash-es';
-
-import { TableOfContentService } from '@/features/akn-document/services/table-of-content.service';
+import { cloneDeep } from 'lodash-es';
 
 import {
   ADD,
@@ -572,7 +570,7 @@ const flattened = (node: TableOfContentItemVO): TableOfContentItemVO[] => {
   return [node, ...childItemsFlat];
 };
 
-export const updateDepthOfTocItems = (list: TableOfContentItemVO[]) => {
+export const updateDepthOfTocItems = (list: TableOfContentItemVO[], isCouncil) => {
   const tocItems = list
     .flatMap((l) => flattened(l))
     .filter(
@@ -582,15 +580,30 @@ export const updateDepthOfTocItems = (list: TableOfContentItemVO[]) => {
   for (let index = 0; index < tocItems.length; index++) {
     const item = tocItems.at(index);
     if (index !== 0) {
-      const previousDepth = tocItems.at(index - 1).itemDepth;
+      let i = 0;
       let depth = item.itemDepth;
+      let previousDepth = item.itemDepth;
+      do {
+        i++;
+        if (index < i) {
+          previousDepth = 0;
+        } else {
+          previousDepth = tocItems.at(index - i).itemDepth;
+        }
+      } while (index >= i && (isDeletedItem(tocItems.at(index - i)) || isMoveToItem(tocItems.at(index - i))))
       if (depth - previousDepth > 1) {
         depth = previousDepth + 1;
       }
-      const numOrigin = item.originNumAttr;
-      if (numOrigin == null || numOrigin === CN) {
+      if (isCouncil) {
+        const numOrigin = item.originNumAttr;
+        if (numOrigin == null || numOrigin === CN) {
+          item.itemDepth = depth;
+        }
+      } else {
         item.itemDepth = depth;
       }
+    } else {
+      item.itemDepth = 1;
     }
   }
 };

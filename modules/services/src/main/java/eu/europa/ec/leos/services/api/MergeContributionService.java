@@ -279,12 +279,17 @@ public class MergeContributionService {
 
         // Processes main element
         if (ElementState.DELETE.equals(elementState)) {
-            xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(contributionNode), cleanedElementId);
-            if (!withTrackChanges) {
-                xmlContent = xmlContentProcessor.applyDeleteActionOnElement(xmlContent, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + cleanedElementId, true);
-                xmlContent = renumberFragment(xmlContent,  SOFT_DELETE_PLACEHOLDER_ID_PREFIX + cleanedElementId);
+            Node originalNode = XercesUtils.getElementById(xmlContent, cleanedElementId);
+            if (originalNode == null) {
+                this.mergingCompletelySuccessfull = false;
             } else {
-                xmlContent = renumberFragment(xmlContent,  cleanedElementId);
+                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, nodeToString(contributionNode), cleanedElementId);
+                if (!withTrackChanges) {
+                    xmlContent = xmlContentProcessor.applyDeleteActionOnElement(xmlContent, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + cleanedElementId, true);
+                    xmlContent = renumberFragment(xmlContent, SOFT_DELETE_PLACEHOLDER_ID_PREFIX + cleanedElementId);
+                } else {
+                    xmlContent = renumberFragment(xmlContent, cleanedElementId);
+                }
             }
             impactedElements.add(getId(contributionNode));
         } else if (ADD.equals(elementState)) {
@@ -297,29 +302,34 @@ public class MergeContributionService {
             xmlContent = renumberFragment(xmlContent,  cleanedElementId);
             impactedElements.add(getId(contributionNode));
         } else if (ElementState.MOVE.equals(elementState)) {
-            newFragment = updateInternalReferences(newFragment, intRefMap);
-            xmlContent = xmlContentProcessor.removeElementById(xmlContent, SOFT_MOVE_PLACEHOLDER_ID_PREFIX + cleanedElementId, false);
-            Node contributionRemovedNode = XercesUtils.getElementById(contribution.getXmlContent(), SOFT_MOVE_PLACEHOLDER_ID_PREFIX + cleanedElementId);
-            if (contributionRemovedNode != null) {
-                xmlContent = xmlContentProcessor.replaceElementById(xmlContent, XercesUtils.nodeToString(contributionRemovedNode), cleanedElementId);
-                xmlContent = copyTrackChangesForMovedElement(xmlContent, contributionRemovedNode, cleanedElementId, SoftActionType.MOVE_TO);
-            }
-            xmlContent = xmlContentProcessor.removeElementById(xmlContent, cleanedElementId, false);
-            xmlContent = this.mergeInsertedEltInXml(xmlContent,
-                    contribution.getXmlContent(),
-                    newFragment,
-                    cleanedElementId,
-                    true);
-            Node contributionAddedNode = XercesUtils.getElementById(contribution.getXmlContent(), cleanedElementId);
-            if (contributionAddedNode != null) {
-                xmlContent = copyTrackChangesForMovedElement(xmlContent, contributionAddedNode, cleanedElementId, SoftActionType.MOVE_FROM);
-            }
-            if (!withTrackChanges) {
-                xmlContent = xmlContentProcessor.applyMoveActionOnElement(xmlContent, cleanedElementId, true);
-                xmlContent = renumberFragment(xmlContent,  cleanedElementId);
+            Node originalNode = XercesUtils.getElementById(xmlContent, cleanedElementId);
+            if (originalNode == null) {
+                this.mergingCompletelySuccessfull = false;
             } else {
-                xmlContent = renumberFragment(xmlContent,  SOFT_MOVE_PLACEHOLDER_ID_PREFIX + cleanedElementId);
-                xmlContent = renumberFragment(xmlContent,  cleanedElementId);
+                newFragment = updateInternalReferences(newFragment, intRefMap);
+                xmlContent = xmlContentProcessor.removeElementById(xmlContent, SOFT_MOVE_PLACEHOLDER_ID_PREFIX + cleanedElementId, false);
+                Node contributionRemovedNode = XercesUtils.getElementById(contribution.getXmlContent(), SOFT_MOVE_PLACEHOLDER_ID_PREFIX + cleanedElementId);
+                if (contributionRemovedNode != null) {
+                    xmlContent = xmlContentProcessor.replaceElementById(xmlContent, XercesUtils.nodeToString(contributionRemovedNode), cleanedElementId);
+                    xmlContent = copyTrackChangesForMovedElement(xmlContent, contributionRemovedNode, cleanedElementId, SoftActionType.MOVE_TO);
+                }
+                xmlContent = xmlContentProcessor.removeElementById(xmlContent, cleanedElementId, false);
+                xmlContent = this.mergeInsertedEltInXml(xmlContent,
+                        contribution.getXmlContent(),
+                        newFragment,
+                        cleanedElementId,
+                        true);
+                Node contributionAddedNode = XercesUtils.getElementById(contribution.getXmlContent(), cleanedElementId);
+                if (contributionAddedNode != null) {
+                    xmlContent = copyTrackChangesForMovedElement(xmlContent, contributionAddedNode, cleanedElementId, SoftActionType.MOVE_FROM);
+                }
+                if (!withTrackChanges) {
+                    xmlContent = xmlContentProcessor.applyMoveActionOnElement(xmlContent, cleanedElementId, true);
+                    xmlContent = renumberFragment(xmlContent, cleanedElementId);
+                } else {
+                    xmlContent = renumberFragment(xmlContent, SOFT_MOVE_PLACEHOLDER_ID_PREFIX + cleanedElementId);
+                    xmlContent = renumberFragment(xmlContent, cleanedElementId);
+                }
             }
             impactedElements.add(SOFT_MOVE_PLACEHOLDER_ID_PREFIX + cleanedElementId);
             impactedElements.add(cleanedElementId);

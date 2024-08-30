@@ -64,7 +64,7 @@ import { LeosLightService } from '@/shared/services/leos-light.service';
 import { LoadingService } from '@/shared/services/loading.service';
 import {ProposalMilestonesService} from "@/shared/services/proposal-milestones.service";
 import { capitalizeFirstLetter } from '@/shared/utils/string.utils';
-import { findNodeById, getNumberingTypeByLanguage } from '@/shared/utils/toc.utils';
+import {findNodeById, getNumberingTypeByLanguage, updateDepthOfTocItems} from '@/shared/utils/toc.utils';
 
 import { BlockDocumentEditorService } from '../../services/block-document-editor.service';
 import { CKEditorService } from '../../services/ckeditor.service';
@@ -867,6 +867,7 @@ export class DocumentEditorComponent
   }
 
   private prepareTocForSave(node: TableOfContentItemVO[]) {
+    updateDepthOfTocItems(node, this.environmentService.isCouncil());
     for (const n of node) {
       n['childItemsView'] = [];
       if (n.childItems && n.childItems.length > 0) {
