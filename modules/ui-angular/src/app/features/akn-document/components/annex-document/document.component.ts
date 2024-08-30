@@ -307,7 +307,7 @@ export class DocumentComponent
     if (!akomantosoEl) return xml;
     if (this.documentType !== 'coverPage' && akomantosoEl) {
       akomantosoEl
-        .querySelectorAll('meta, coverPage')
+        .querySelectorAll('meta')
         .forEach((el) => el.remove());
 
       akomantosoEl.querySelectorAll('docPurpose').forEach((el) => {
