@@ -151,7 +151,7 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" refersTo="~_ART_DEF" xml:id="impXart_1_oq32hU">
+            <article leos:deletable="true" leos:editable="true" refersTo="~ART_DEF" xml:id="impXart_1_oq32hU">
                 <num xml:id="impXart_1_oq32hU_49C8tA">Article 3</num>
                 <heading xml:id="impXart_1_oq32hU_eSOav2">Subject-matter</heading>
                 <paragraph xml:id="impXart_1_oq32hU_RSJBbP">
@@ -224,7 +224,7 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" refersTo="~_ART_DEF" xml:id="impXart_2_YmXngT">
+            <article leos:deletable="true" leos:editable="true" refersTo="~ART_DEF" xml:id="impXart_2_YmXngT">
                 <num xml:id="impXart_2_YmXngT_DIKPSV">Article 4</num>
                 <heading xml:id="impXart_2_YmXngT_aWTyto">Definitions</heading>
                 <paragraph xml:id="impXart_2_YmXngT_zTeucd">
@@ -731,7 +731,7 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" refersTo="~_ART_DEF" xml:id="impXart_9_nddbeG">
+            <article leos:deletable="true" leos:editable="true" refersTo="~ART_DEF" xml:id="impXart_9_nddbeG">
                 <num xml:id="impXart_9_nddbeG_mZqTvi">Article 11</num>
                 <heading xml:id="impXart_9_nddbeG_Flhjk3">Thematic objectives</heading>
                 <paragraph xml:id="impXart_9_nddbeG_3d19uh">
@@ -5833,7 +5833,7 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" refersTo="~_ART_DEF" xml:id="impXart_95_Wx7Hgm">
+            <article leos:deletable="true" leos:editable="true" refersTo="~ART_DEF" xml:id="impXart_95_Wx7Hgm">
                 <num xml:id="impXart_95_Wx7Hgm_2AmRIl">Article 97</num>
                 <heading xml:id="impXart_95_Wx7Hgm_gKiFdL">Additionality</heading>
                 <paragraph xml:id="impXart_95_Wx7Hgm_ObcFNP">

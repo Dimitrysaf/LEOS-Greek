@@ -150,7 +150,7 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:deletable="true" leos:editable="true" refersTo="~_ART_DEF" xml:id="impXart_1_WGq7yd">
+            <article leos:deletable="true" leos:editable="true" refersTo="~ART_DEF" xml:id="impXart_1_WGq7yd">
                 <num xml:id="impXart_1_WGq7yd_QZPE0t">Article 3</num>
                 <heading xml:id="impXart_1_WGq7yd_NtIYt5">Subject-matter</heading>
                 <paragraph xml:id="impXart_1_WGq7yd_tswlxi">

@@ -99,7 +99,7 @@ define(function leosPluginUtilsModule(require) {
     var REG_EXP_FOR_UNICODE_ZERO_WIDTH_SPACE_IN_HEX = /\u200B/g;
 
     var COUNCIL_INSTANCE = "COUNCIL";
-    var ART_DEF = "~_ART_DEF";
+    var ART_DEF = "~ART_DEF";
     var SPAN_ATTRIBUTES = ['style', 'tabindex', 'contenteditable', 'data-cke-widget-wrapper', 'data-cke-filter', 'data-cke-display-name', 'data-cke-widget-id', 'role', 'aria-label', 'data-akn-action', 'data-akn-action-number'];
     function _hasTextOrBogusAsNextSibling(element){
         return (element instanceof CKEDITOR.dom.element) && element.hasNext()

@@ -429,7 +429,7 @@ SET @str1 = '<?xml version="1.0" encoding="UTF-8"?>
                     <name>DEFINITION</name>
                     <attribute>
                         <attributeName>refersTo</attributeName>
-                        <attributeValue>~_ART_DEF</attributeValue>
+                        <attributeValue>~ART_DEF</attributeValue>
                     </attribute>
                     <subElementNumberingConfigs>
                         <subElementNumberingConfig>
@@ -1738,7 +1738,7 @@ SET @str1 = '<?xml version="1.0" encoding="UTF-8"?>
                     <name>DEFINITION</name>
                     <attribute>
                         <attributeName>refersTo</attributeName>
-                        <attributeValue>~_ART_DEF</attributeValue>
+                        <attributeValue>~ART_DEF</attributeValue>
                     </attribute>
                     <subElementNumberingConfigs>
                         <subElementNumberingConfig>
@@ -3925,7 +3925,7 @@ SET @str1 = '<?xml version="1.0" encoding="UTF-8"?>
                     </content>
                 </paragraph>
             </article>
-            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~_ART_DEF">
+            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~ART_DEF">
                 <num xml:id="_art_definitions__num" leos:editable="false">Article 2</num>
                 <heading xml:id="_art_definitions_heading">Definitions</heading>
                 <paragraph xml:id="_art_definitions__para_1">
@@ -4078,7 +4078,7 @@ SET @str1 = '<?xml version="1.0" encoding="UTF-8"?>
                     </content>
                 </paragraph>
             </article>
-            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~_ART_DEF">
+            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~ART_DEF">
                 <num xml:id="_art_definitions__num" leos:editable="false">Article 2</num>
                 <heading xml:id="_art_definitions_heading">Definitions</heading>
                 <paragraph xml:id="_art_definitions__para_1">
@@ -4242,7 +4242,7 @@ SET @str1 = '<?xml version="1.0" encoding="UTF-8"?>
                     </content>
                 </paragraph>
             </article>
-            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~_ART_DEF">
+            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~ART_DEF">
                 <num xml:id="_art_definitions__num" leos:editable="false">Article 2</num>
                 <heading xml:id="_art_definitions_heading">Definitions</heading>
                 <paragraph xml:id="_art_definitions__para_1">
@@ -4489,7 +4489,7 @@ SET @str1 = '<?xml version="1.0" encoding="UTF-8"?>
                     </content>
                 </paragraph>
             </article>
-            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~_ART_DEF">
+            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~ART_DEF">
                 <num xml:id="_art_definitions__num" leos:editable="false">Article 2</num>
                 <heading xml:id="_art_definitions_heading">Definitions</heading>
                 <paragraph xml:id="_art_definitions__para_1">
@@ -4671,7 +4671,7 @@ SET @str1 = '<?xml version="1.0" encoding="UTF-8"?>
                     </content>
                 </paragraph>
             </article>
-            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~_ART_DEF">
+            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~ART_DEF">
                 <num xml:id="_art_definitions__num" leos:editable="false">Article 2</num>
                 <heading xml:id="_art_definitions_heading">Definitions</heading>
                 <paragraph xml:id="_art_definitions__para_1">
@@ -10418,7 +10418,7 @@ SET @str1 = '<?xml version="1.0" encoding="UTF-8"?>
                     </content>
                 </paragraph>
             </article>
-            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~_ART_DEF">
+            <article xml:id="_art_definitions" leos:editable="true" leos:deletable="true" leos:autonumbering="true" refersTo="~ART_DEF">
                 <num xml:id="_art_definitions__num" leos:editable="false">Article 2</num>
                 <heading xml:id="_art_definitions_heading">Definitions</heading>
                 <paragraph xml:id="_art_definitions__para_1">

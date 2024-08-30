@@ -57,7 +57,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//article[refersto='~_ART_DEF']/heading",
+          "destinationPath": "//article[refersto='~ART_DEF']/heading",
           "position": "AFTER-WRAPPER"
         }
       ],

@@ -416,7 +416,7 @@
                     <name>DEFINITION</name>
                     <attribute>
                         <attributeName>refersTo</attributeName>
-                        <attributeValue>~_ART_DEF</attributeValue>
+                        <attributeValue>~ART_DEF</attributeValue>
                     </attribute>
                     <subElementNumberingConfigs>
                         <subElementNumberingConfig>

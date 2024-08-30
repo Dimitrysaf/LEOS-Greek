@@ -129,7 +129,7 @@
                     </content>
                 </paragraph>
             </article>
-            <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" refersTo="~_ART_DEF" xml:id="_art_definitions">
+            <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" refersTo="~ART_DEF" xml:id="_art_definitions">
                 <num leos:editable="false" xml:id="_art_definitions__num">Article 2</num>
                 <heading xml:id="_art_definitions_heading">Definitions</heading>
                 <paragraph xml:id="_art_definitions__para_1">
