@@ -327,6 +327,7 @@
   "page.editor.close-compare-view-button.tooltip": "Fermer la vue de comparaison",
   "page.editor.create-note-button.tooltip": "Nouvelle note de document",
   "page.editor.validate-email-sent": "Vous recevrez un email sous peu avec le résultat de la validation à {{userEmail}}",
+  "page.editor.export-version-email-sent-download": "Vous recevrez peut-être sous peu un e-mail avec le fichier {{fileType}} à {{userEmail}}<br> ou le fichier sera téléchargé dans quelques instants.",
   "page.editor.export-email-sent": "Vous recevrez un email sous peu avec le(s) fichier(s) {{fileType}} à {{userEmail}}",
   "page.editor.export-version-email-sent": "Vous recevrez un email sous peu avec le(s) fichier(s) à {{userEmail}}",
   "page.editor.export-econsilium-success": "Le document a été exporté. Vous pouvez le trouver sur la page <em>Visionneuse de propositions</em>, sous l'onglet <em>Exportations</em>.",

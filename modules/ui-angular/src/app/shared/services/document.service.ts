@@ -429,6 +429,7 @@ export class DocumentService {
         },
       )
       .subscribe((resp) => this.handleDownloadResponse(resp));
+    this.notifyExportEmailSent();
   }
 
   downloadCleanVersion() {
@@ -1518,9 +1519,7 @@ export class DocumentService {
 
   private handleDownloadResponse(resp: HttpResponse<Blob>) {
     const blob = resp.body;
-    if (blob.size === 0) {
-      this.notifyExportEmailSent();
-    } else {
+    if (blob.size !== 0) {
       const cd = parseContentDisposition(
         resp.headers.get('Content-Disposition'),
       );
@@ -1534,7 +1533,7 @@ export class DocumentService {
       const userEmail = c.user.email;
       const fileType = 'Pdf';
       this.translate
-        .get('page.editor.export-version-email-sent', { fileType, userEmail })
+        .get('page.editor.export-version-email-sent-download', { fileType, userEmail })
         .subscribe((message) => {
           this.growlService.growl({
             severity: 'info',
