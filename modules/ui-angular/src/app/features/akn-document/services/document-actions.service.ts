@@ -1035,12 +1035,9 @@ export abstract class DocumentActionsService {
   }
 
   private showCleanVersion() {
-    return (
-      (!this.isMandateMemorandum() &&
+    return (!this.isMandateMemorandum() &&
         !this.isMandateExplanatory() &&
-        this.isCN()) ||
-      this.isClonedProposal()
-    );
+        this.isCN());
   }
 
   private canAcceptTrackChanges() {
