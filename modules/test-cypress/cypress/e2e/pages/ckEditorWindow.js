@@ -246,12 +246,20 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find("article ol li[data-akn-name='aknNumberedParagraph'][data-akn-num='" + paragraphNumber + ".']").invoke('attr', 'id').then(id => this.pressSpecialKey(key, offset, "#" + id, child, times));
     }
 
+    addContentInParagraph(newContent, offset) {
+        this.addContent(newContent, offset, "[data-akn-name=aknNumberedParagraph]");
+    }
+
     addContentInCitation(newContent, offset) {
         this.addContent(newContent, offset, "[data-akn-name=citation]");
     }
 
     addContentInRecital(newContent, offset) {
         this.addContent(newContent, offset, "[data-akn-name=recital]");
+    }
+
+    selectContentInParagraph(offsetStart, offsetEnd) {
+        this.selectContent(offsetStart, offsetEnd, "[data-akn-name=aknNumberedParagraph]");
     }
 
     selectContentInCitation(offsetStart, offsetEnd) {

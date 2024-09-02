@@ -144,19 +144,39 @@ When('drag node label {string} and drop to node label {string} in navigation pan
         .trigger("mousedown", {button: 0, force: true})
         .trigger("mousemove", 0, 10, {force: true})
         .wait(200);
-    tableOfContent.getNodeLabelText(dropLabel).trigger("mousemove", {force: true})
-        .wait(200)
-        .trigger("mouseup", {force: true});
+    tableOfContent.getNodeLabelText(dropLabel).trigger("mousemove", {force: true}).trigger("mouseup", {force: true});
 });
 
-When('drag element {string} from element tree list and drop to node label {string} in navigation pane', function (dragElement, dropLabel) {
+When('drag node label {string} and drop before node label {string} in navigation pane', function (dragLabel, dropLabel) {
+    tableOfContent.getNodeLabelText(dragLabel)
+        .trigger("mousedown", {button: 0, force: true})
+        .trigger("mousemove", 0, 10, {force: true})
+        .wait(200);
+    tableOfContent.getNodeLabelText(dropLabel).trigger("mousemove", {force: true}).trigger("mouseup", {force: true});
+});
+
+When('drag element {string} from element tree list and drop before node label {string} in navigation pane', function (dragElement, dropLabel) {
     tableOfContent.elements.elementList().contains(dragElement)
         .trigger("mousedown", {button: 0, force: true})
         .trigger("mousemove", 0, 10, {force: true})
         .wait(200);
-    tableOfContent.getNodeLabelText(dropLabel).trigger("mousemove", {force: true})
-        .wait(200)
-        .trigger("mouseup", {force: true});
+    tableOfContent.getCloseLiOfNodeLabel(dropLabel).trigger("mousemove", {force: true}).trigger("mouseup", {force: true});
+});
+
+When('drag element {string} from element tree list and drop after node label {string} in navigation pane', function (dragElement, dropLabel) {
+    tableOfContent.elements.elementList().contains(dragElement)
+        .trigger("mousedown", {button: 0, force: true})
+        .trigger("mousemove", 0, 10, {force: true})
+        .wait(200);
+    tableOfContent.getCloseLiOfNodeLabel(dropLabel).trigger("mousemove", "bottom", {force: true}).trigger("mouseup", {force: true});
+});
+
+When('drag element {string} from element tree list and drop as child of node label {string} in navigation pane', function (dragElement, dropLabel) {
+    tableOfContent.elements.elementList().contains(dragElement)
+        .trigger("mousedown", {button: 0, force: true})
+        .trigger("mousemove", 0, 10, {force: true})
+        .wait(200);
+    tableOfContent.getCloseLiOfNodeLabel(dropLabel).trigger("mousemove", "bottom", {force: true}).trigger("mouseup", {force: true});
 });
 
 Then('enacting terms contains node label {string} and showing as bold', function (label) {
@@ -204,6 +224,22 @@ Then('only below options are displayed in dropdown content', function (datatable
 
 Then('subversion {int} of recent changes version card contains {string}', function (subVersionNumber,subVersionText) {
     tableOfContent.getSubVersion(subVersionNumber).should('include.text', subVersionText);
+});
+
+Then('success message {string} is displayed in navigation pane', function (message) {
+    tableOfContent.elements.euiLabelSuccess().should('include.text', message);
+});
+
+Then('error message {string} is displayed in navigation pane', function (message) {
+    tableOfContent.elements.euiLabelDanger().should('include.text', message);
+});
+
+Then('success message disappears from table of content', function () {
+    tableOfContent.elements.euiLabelSuccess().should('not.exist');
+});
+
+Then('error message disappears from table of content', function () {
+    tableOfContent.elements.euiLabelDanger().should('not.be.visible');
 });
 
 When(`click on contributions pane accordion`, () => {

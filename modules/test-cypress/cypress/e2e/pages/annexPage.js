@@ -16,15 +16,19 @@ class annexPage {
     }
 
     clickEditIconOfLevel(levelNumber) {
-        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(5000).find("span[data-widget-type='edit']").click({force:true}));
+        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='edit']").click({force:true}));
     }
 
     clickInsertBeforeIconOfLevel(levelNumber) {
-        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(5000).find("span[data-widget-type='insert.before']").click({force:true}));
+        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='insert.before']").click({force:true}));
     }
 
     clickDeleteIconOfLevel(levelNumber) {
-        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(5000).find("span[data-widget-type='delete']").click({force:true}));
+        cy.xpath("//level[" + levelNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().next('div.leos-actions').realHover().wait(1000).find("span[data-widget-type='delete']").click({force:true}));
+    }
+
+    mouseHoverAndClickOnParagraph(paragraphNumber) {
+        cy.xpath("//paragraph[" + paragraphNumber + "]").realHover().invoke('attr', 'id').then(id => cy.get("#" + id).realHover().click({ force: true }));
     }
 
     getContentOfAnnex(levelNumber) {

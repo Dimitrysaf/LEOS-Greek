@@ -159,6 +159,10 @@ When('move the cursor position to offset {int} in paragraph {int} of article in 
     ckEditorWindow.moveCursorToSpecificOffsetInParagraphOfArticle(offset, paragraphNumber);
 });
 
+When('select content from offset {int} till offset {int} in paragraph in edition mode', function (offsetStart, offsetEnd) {
+    ckEditorWindow.selectContentInParagraph(offsetStart, offsetEnd);
+});
+
 When('add {string} at offset {int} in citation in edition mode', function (newContent, offset) {
     ckEditorWindow.addContentInCitation(newContent, offset);
 });
@@ -443,4 +447,8 @@ Then('numbered paragraph {int} of article contains authorial note with marker {i
 
 When('click at offset {int} of child {int} of recital in edition mode', function (offset, child) {
     ckEditorWindow.clickAtSpecificOffsetInChildOfRecital(offset, child);
+});
+
+When('add {string} at offset {int} in paragraph in edition mode', function (newContent, offset) {
+    ckEditorWindow.addContentInParagraph(newContent, offset);
 });

@@ -69,6 +69,12 @@ module.exports = defineConfig({
           )
           return result;
         }
+      });
+      on('task', {
+        log(message) {
+          console.log(message)
+          return null
+        },
       })
     },
     experimentalStudio: true,

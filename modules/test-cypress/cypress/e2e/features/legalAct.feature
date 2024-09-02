@@ -152,7 +152,7 @@ Feature: Legal Act Page Regression Features
             | Chapter     |
             | Section     |
             | Article     |
-        When drag element "Article" from element tree list and drop to node label "Article 2 - Definitions Text..." in navigation pane
+        When drag element "Article" from element tree list and drop before node label "Article 2 - Definitions Text..." in navigation pane
         Then enacting terms contains node label "Article # - Article heading... Text..." and showing as bold
         When click on save and close button in navigation pane
         Then toc editing button is displayed and enabled
