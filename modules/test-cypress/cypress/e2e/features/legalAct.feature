@@ -360,7 +360,7 @@ Feature: Legal Act Page Regression Features
         And  click on three vertical dots for the element contains text "Article 1" in toc
         And  mouseover on change type category
         Then regular option is selected in change type category
-        When  click on definition option in change type category
+        When click on definition option in change type category
         Then "Conversion not allowed!" dialog confirm box window is displayed
         And  dialog box body contains "Not allowed to convert article to DEFINITION, because the current depth of 4 is exceeding the maximum allowed depth level of 3."
         When click on close button in dialog confirm box window
@@ -397,7 +397,6 @@ Feature: Legal Act Page Regression Features
         And  click on save and close button in navigation pane
         Then toc editing button is displayed and enabled
         And  heading of article 2 contains "Definitions"
-        #And  num tag of paragraph 1 of article 2 contains "1."
         And  paragraph 1 of article 2 doesn't contain num tag
         And  content of subparagraph 1 of list 1 of paragraph 1 of article 2 contains "Text..."
         And  num tag of point 1 of list 1 of paragraph 1 of article 2 contains "(1)"
@@ -423,46 +422,52 @@ Feature: Legal Act Page Regression Features
         When click enter from keyboard in edition mode
         And  add content "point 1" to li 3 with data-akn-element "paragraph" of article in edition mode
         And  click on increase indent icon present in ck editor panel
-        And  click enter from keyboard in edition mode
+        Then li 1 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "(1)" in edition mode
+        When click enter from keyboard in edition mode
         And  add content "point 2" to li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
-        And  click enter from keyboard in edition mode
+        Then li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "(2)" in edition mode
+        When click enter from keyboard in edition mode
         And  add content "point a" to li 3 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
         And  click on increase indent icon present in ck editor panel
-        And  click enter from keyboard in edition mode
+        Then li 1 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "(a)" in edition mode
+        When click enter from keyboard in edition mode
         And  add content "point b" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
-        And  click enter from keyboard in edition mode
+        Then li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "(b)" in edition mode
+        When click enter from keyboard in edition mode
         And  add content "point i" to li 3 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
         And  click on increase indent icon present in ck editor panel
         Then increase indent icon is disabled in ck editor
+        And  li 1 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "(i)" in edition mode
         When click enter from keyboard in edition mode
         And  add content "point ii" to li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article in edition mode
-        And  click save and close button of ck editor
+        Then li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "point" of li 2 with data-akn-element "paragraph" of article contains attribute "data-akn-num" with value "(ii)" in edition mode
+        When click save and close button of ck editor
         Then ck editor window is not displayed
         And  article 3 doesn't contain indent tag
-#        When click on toc edit button
-#        And  click on three vertical dots for the element contains text "Article 3" in toc
-#        And  mouseover on change type category
-#        Then definition option is selected in change type category
-#        When click on regular option in change type category
-#        And  click on save and close button in navigation pane
-#        Then toc editing button is displayed and enabled
-#        And  article 3 doesn't contain indent tag
-#        #issues/1816 And  heading of article 3 contains "Article heading..."
-#        And  paragraph 1 of article 3 doesn't contain num tag
-#        And  content of paragraph 1 of article 3 contains "Text..."
-#        And  content of subparagraph 1 of list 1 of paragraph 2 of article 3 contains "paragraph 2"
-#        And  num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(1)"
-#        And  content of point 1 of list 1 of paragraph 2 of article 3 contains "point 1"
-#        And  num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
-#        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point 2"
-#        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(a)"
-#        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point a"
-#        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(b)"
-#        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point b"
-#        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(i)"
-#        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point i"
-#        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(ii)"
-#        And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point ii"
+        When click on toc edit button
+        And  click on three vertical dots for the element contains text "Article 3" in toc
+        And  mouseover on change type category
+        Then definition option is selected in change type category
+        When click on regular option in change type category
+        And  click on save and close button in navigation pane
+        Then toc editing button is displayed and enabled
+        And  article 3 doesn't contain indent tag
+#        And  heading of article 3 contains "Article heading..."
+        And  paragraph 1 of article 3 doesn't contain num tag
+        And  content of paragraph 1 of article 3 contains "Text..."
+        And  content of subparagraph 1 of list 1 of paragraph 2 of article 3 contains "paragraph 2"
+        And  num tag of point 1 of list 1 of paragraph 2 of article 3 contains "(a)"
+        And  content of point 1 of list 1 of paragraph 2 of article 3 contains "point 1"
+        And  num tag of point 2 of list 1 of paragraph 2 of article 3 contains "(b)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point 2"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(i)"
+        And  content of point 1 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point a"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(ii)"
+        And  content of subparagraph 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point b"
+        And  num tag of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(1)"
+        And  content of point 1 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point i"
+        And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
+        And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point ii"
 
 #    @importOfficeJournal @local
 #    Scenario: import from office journal

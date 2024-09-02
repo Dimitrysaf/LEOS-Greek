@@ -325,6 +325,14 @@ And('li {int} with data-akn-element {string} of li {int} with data-akn-element {
     ckEditorWindow.getPointOfParagraphOfArticle(pointLi, pointDataAknElement, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName, attributeValue);
 });
 
+Then('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (pointLiSecondLayer, pointDataAknElementSecondLayer, pointLiFirstLayer, pointDataAknElementFirstLayer, paragraphLi, paragraphDataAknElement, attributeName, attributeValue) {
+    ckEditorWindow.getSecondLevelPointOfParagraphOfArticle(pointLiSecondLayer, pointDataAknElementSecondLayer, pointLiFirstLayer, pointDataAknElementFirstLayer, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName, attributeValue);
+});
+
+Then('li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of li {int} with data-akn-element {string} of article contains attribute {string} with value {string} in edition mode', function (pointLiThirdLayer, pointDataAknElementThirdLayer, pointLiSecondLayer, pointDataAknElementSecondLayer, pointLiFirstLayer, pointDataAknElementFirstLayer, paragraphLi, paragraphDataAknElement, attributeName, attributeValue) {
+    ckEditorWindow.getThirdLevelPointOfParagraphOfArticle(pointLiThirdLayer, pointDataAknElementThirdLayer, pointLiSecondLayer, pointDataAknElementSecondLayer, pointLiFirstLayer, pointDataAknElementFirstLayer, paragraphLi, paragraphDataAknElement).should('have.attr', attributeName, attributeValue);
+});
+
 Then('background color of li {int} with data-akn-element {string} of article is {string} in edition mode', function (paragraphLi, paragraphDataAknElement, backgroundColor) {
     ckEditorWindow.getParagraphElementOfArticle(paragraphLi, paragraphDataAknElement).should('have.css', 'background-color').and('eq', backgroundColor);
 });
