@@ -28,20 +28,14 @@
     <div class="eui-u-p-absolute export-accept-reject-div">
       <div *ngIf="shouldDisplayButtons()" class="accept-reject-div" style="margin-right: 50px;">
         <button euiButton euiSizeS euiPrimary
-                [euiDisabled]="documents[this.activeTabIndex].state === 'Accepted_Added'
-                || documents[this.activeTabIndex].state === 'Accepted_Deleted'
-                || documents[this.activeTabIndex].state === 'Rejected_Added'
-                || documents[this.activeTabIndex].state === 'Rejected_Deleted'"
+                [euiDisabled]="shouldDisableButtons()"
                 class="accept-reject-button"
                 (click)="this.handleAcceptReject(documents[this.activeTabIndex], true)"
         >
           {{ 'page.collection.milestone-view-dialog.accept-button' | translate }}
         </button>
         <button euiButton euiSizeS euiPrimary
-                [euiDisabled]="documents[this.activeTabIndex].state === 'Accepted_Added'
-                || documents[this.activeTabIndex].state === 'Accepted_Deleted'
-                || documents[this.activeTabIndex].state === 'Rejected_Added'
-                || documents[this.activeTabIndex].state === 'Rejected_Deleted'"
+                [euiDisabled]="shouldDisableButtons()"
                 class="accept-reject-button"
                 (click)="handleAcceptReject(documents[this.activeTabIndex], false)">
           {{ 'page.collection.milestone-view-dialog.reject-button' | translate }}
@@ -59,11 +53,11 @@
     <eui-tabs *ngIf="isOpened" (tabSelect)="onTabSelected($event)">
       <eui-tab *ngFor="let doc of documents; let tabIndex = index"
                hasBackgroundFilled
-               [euiPrimary]="(doc.state === 'Accepted_Deleted' || doc.state === 'Accepted_Added') && !this.parentClonedProposal"
-               [euiSecondary]="(doc.state === 'Rejected_Deleted' || doc.state === 'Rejected_Added') && !this.parentClonedProposal"
-               [euiSuccess]="(doc.state === 'Added' || doc.state === 'Accepted_Added' || doc.state === 'Rejected_Added') && !this.parentClonedProposal"
-               [euiWarning]="doc.state === 'Modified' && !this.parentClonedProposal"
-               [euiDanger]="(doc.state === 'Deleted' || doc.state === 'Accepted_Deleted' || doc.state === 'Rejected_Deleted') && !this.parentClonedProposal"
+               [euiPrimary]="(doc.state === 'Accepted_Deleted' || doc.state === 'Accepted_Added')"
+               [euiSecondary]="(doc.state === 'Rejected_Deleted' || doc.state === 'Rejected_Added')"
+               [euiSuccess]="(doc.state === 'Added' || doc.state === 'Accepted_Added' || doc.state === 'Rejected_Added')"
+               [euiWarning]="doc.state === 'Modified'"
+               [euiDanger]="(doc.state === 'Deleted' || doc.state === 'Accepted_Deleted' || doc.state === 'Rejected_Deleted')"
                [euiAccent]="doc.selected === true"
           >
         <eui-tab-label>

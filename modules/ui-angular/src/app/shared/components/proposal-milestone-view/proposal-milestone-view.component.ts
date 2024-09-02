@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {EuiDialogComponent, EuiDialogService} from '@eui/components/eui-dialog';
 import {TranslateService} from '@ngx-translate/core';
-import {Subject} from 'rxjs';
+import {combineLatest, Subject, takeUntil} from 'rxjs';
 
 import {
   Milestone, MilestoneStatus,
@@ -26,6 +26,8 @@ import {DocumentService} from '@/shared/services/document.service';
 import {ProposalMilestonesService} from '@/shared/services/proposal-milestones.service';
 import {ConfirmDeleteDialogComponent} from "@/shared/components/confirm-delete-dialog/confirm-delete-dialog.component";
 import {EuiGrowlService} from "@eui/core";
+import {Permission} from "@/shared";
+import {ProposalDetailsService} from "@/features/proposal-view/services/proposal-details.service";
 
 type MilestoneDocument = {
   ref: string;
@@ -75,6 +77,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
   isOpened = false;
 
   documents: MilestoneDocument[] = [];
+  permissions: Permission[] = [];
   containerId = 'view-container-id';
   activeTabIndex: number;
   tmpSelectedTab: number;
@@ -100,7 +103,12 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     public translateService: TranslateService,
     private appShell: EuiGrowlService,
     private dialogService: EuiDialogService,
+    private proposalDetailsService: ProposalDetailsService,
   ) {
+    if (this.proposalDetailsService) {
+      this.proposalDetailsService.permissions$
+        .subscribe((perms) => (this.permissions = perms));
+    }
   }
 
   ngOnInit(): void {
@@ -247,7 +255,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.showPdfExport = response.pdfRenditionsPresent;
     this.contributionChanged = response.contributionChanged;
     this.documents = response.documents
-      .filter((x) => !hiddenCategories.includes(x.leosCategory) && (!this.parentClonedProposal || x.contentStatus !== 'Deleted'))
+      .filter((x) => !hiddenCategories.includes(x.leosCategory))
       .sort(this.tabOrderComparator)
       .map((x) => this.viewToDoc(x));
     this.setActiveTab(0);
@@ -339,6 +347,14 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       (doc.state === 'Added' || doc.state === 'Deleted'
         || doc.state === 'Rejected_Deleted'
         || doc.state === 'Rejected_Added' || doc.state === 'Accepted_Added' || doc.state === 'Accepted_Deleted');
+  }
+
+  shouldDisableButtons(): boolean {
+    const doc = this.documents[this.activeTabIndex];
+    return !this.permissions.includes('CAN_UPDATE') || (doc.state === 'Accepted_Added'
+    || doc.state === 'Accepted_Deleted'
+    || doc.state === 'Rejected_Added'
+    || doc.state === 'Rejected_Deleted');
   }
 
   evaluateState(state: string): boolean {
