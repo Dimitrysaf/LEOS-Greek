@@ -63,6 +63,10 @@ public class LeosDocumentApiController {
     @ResponseBody
     public ResponseEntity<Object> updateWithTranslations(@RequestParam MultipartFile inputFile,
                                                          @RequestParam MultipartFile translationsFile) {
+
+        if (translationsFile.isEmpty() || !translationsFile.getContentType().equalsIgnoreCase("application/zip")) {
+            return ResponseEntity.badRequest().body("The translations file must be a .zip file.");
+        }
         try {
             final LeosConvertDocumentInput convertDocumentInput = leosDocumentService.createDocumentInput(
                     inputFile,

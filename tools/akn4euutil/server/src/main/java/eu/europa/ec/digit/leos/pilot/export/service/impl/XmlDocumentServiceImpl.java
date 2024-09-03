@@ -68,7 +68,9 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
             String cssFileName = getCssFileName(styleSheetFileName);
             String styleSheet = CSS_PATH + cssFileName;
             byte[] htmlOutput = templateEngineService.xmlToHtml(convertDocumentInput, cssFileName, coverPage);
-            return new LeosRenditionOutput(htmlOutput, new byte[0], styleSheet);
+            String renditionFilename = convertDocumentInput.getInputFile().getOriginalFilename().substring(0,
+                    convertDocumentInput.getInputFile().getOriginalFilename().lastIndexOf('.'));
+            return new LeosRenditionOutput(htmlOutput, renditionFilename, new byte[0], styleSheet);
         } catch (TemplateEngineException e) {
             LOG.error("Error calling template engine", e);
             throw new XmlDocumentException("Error calling template engine", e);
