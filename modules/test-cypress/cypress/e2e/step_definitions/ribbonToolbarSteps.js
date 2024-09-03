@@ -64,3 +64,7 @@ Then(/^see track changes is enabled$/, function () {
 Then(/^see track changes is disabled$/, function () {
     ribbonToolbar.elements.seeTrackChangesToggleBtn().should('have.class', 'eui-slide-toggle__container--disabled');
 });
+
+Then(/^show clean version button is not present in ribbon toolbar$/, function () {
+    ribbonToolbar.elements.showCleanVersionBtn().should('not.exist');
+});

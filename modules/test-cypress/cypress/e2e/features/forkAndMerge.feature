@@ -68,6 +68,7 @@ Feature: fork and merge features
     And  enable track changes is disabled
     And  see track changes toggle bar is on in ribbon toolbar
     And  see track changes is enabled
+    And  show clean version button is not present in ribbon toolbar
     When mouseover and click on article 1
     Then ck editor window is displayed
     And  enable track changes is disabled
