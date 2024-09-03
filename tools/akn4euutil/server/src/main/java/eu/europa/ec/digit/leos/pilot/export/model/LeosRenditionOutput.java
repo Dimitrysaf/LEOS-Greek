@@ -16,17 +16,23 @@ package eu.europa.ec.digit.leos.pilot.export.model;
 public class LeosRenditionOutput {
 
     private byte[] rendition;
+    private String renditionFilename;
     private byte[] styleSheetOutput;
     private String styleSheetName;
 
-    public LeosRenditionOutput(byte[] rendition, byte[] styleSheetOutput, String styleSheetName) {
+    public LeosRenditionOutput(byte[] rendition, String renditionFilename, byte[] styleSheetOutput, String styleSheetName) {
         this.rendition = rendition;
+        this.renditionFilename = renditionFilename;
         this.styleSheetOutput = styleSheetOutput;
         this.styleSheetName = styleSheetName;
     }
 
     public byte[] getRendition() {
         return rendition;
+    }
+
+    public String getRenditionFilename() {
+        return renditionFilename;
     }
 
     public byte[] getStyleSheetOutput() {

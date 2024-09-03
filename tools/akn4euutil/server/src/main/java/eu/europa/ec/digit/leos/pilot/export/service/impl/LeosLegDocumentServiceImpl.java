@@ -23,28 +23,53 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
 
 @Service
 public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosLegDocumentServiceImpl.class);
     private static final String HTML_RENDITION = "renditions/html/";
+    private static final String XML_EXT = ".xml";
+    private static final String CSS_EXT = ".css";
 
     public LeosLegDocumentServiceImpl() {
     }
 
-    public byte[] updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, LeosRenditionOutput renditionOutput) {
+    public byte[] updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, List<LeosRenditionOutput> renditionOutputs) {
         try {
             Map<String, Object> contentToZip = ZipUtil.unzipByteArray(convertDocumentInput.getInputFile().getBytes());
-            contentToZip.put(convertDocumentInput.getTranslationsFile().getOriginalFilename(),
-                    convertDocumentInput.getTranslationsFile().getBytes());
-            String filename = convertDocumentInput.getTranslationsFile().getOriginalFilename().substring(0,
-                    convertDocumentInput.getTranslationsFile().getOriginalFilename().lastIndexOf('.'));
-            String htmlName = HTML_RENDITION + filename + ".html";
-            contentToZip.put(htmlName, renditionOutput.getRendition());
+            Map<String, Object> translationMap = ZipUtil.unzipByteArray(convertDocumentInput.getTranslationsFile().getBytes());
+            Map<String, Object> updatedContentToZip = new HashMap<>();
+            Map<String, Object> cssContentToZip = new HashMap<>();
+
+            for (String contentKey : contentToZip.keySet()) {
+                if(contentKey.endsWith(XML_EXT)) {
+                    String baseKey = contentKey.substring(0, contentKey.lastIndexOf('-'));
+
+                    translationMap.keySet().stream()
+                            .filter(translationKey -> translationKey.startsWith(baseKey))
+                            .findFirst()
+                            .ifPresent(translationKey -> {
+                                updatedContentToZip.put(translationKey, translationMap.get(translationKey));
+                            });
+                } else if(contentKey.endsWith(CSS_EXT)) {
+                    cssContentToZip.put(contentKey, contentToZip.get(contentKey));
+                }
+            }
+            contentToZip.clear();
+            contentToZip.putAll(updatedContentToZip);
+
+            renditionOutputs.forEach(output -> {
+                String htmlName = HTML_RENDITION + output.getRenditionFilename() + ".html";
+                contentToZip.put(htmlName, output.getRendition());
+            });
+            cssContentToZip.keySet().stream().forEach(cssContentKey -> {
+                contentToZip.put(cssContentKey, cssContentToZip.get(cssContentKey));
+            });
+
             return ZipUtil.zipByteArray(contentToZip);
         } catch (IOException e) {
             LOG.info("Issue converting document", e);

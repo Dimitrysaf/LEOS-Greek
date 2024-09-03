@@ -16,6 +16,8 @@ package eu.europa.ec.digit.leos.pilot.export.service;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 
+import java.util.List;
+
 public interface LeosLegDocumentService {
-    byte[] updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, LeosRenditionOutput renditionOutput);
+    byte[] updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, List<LeosRenditionOutput> renditionOutputs);
 }
