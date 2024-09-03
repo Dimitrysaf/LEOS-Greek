@@ -595,7 +595,7 @@
                 </article>
             </chapter>
             <article leos:listIdAttr="_akn_article_VeHpJu" leos:origin="ec" xml:id="_bill__akn_article_2kQl24">
-                <num leos:editable="false" xml:id="_bill__akn_article_2kQl24_E8YJo6">#</num>
+                <num leos:editable="false" leos:origin="ec" xml:id="_bill__akn_article_2kQl24_E8YJo6">#</num>
                 <heading xml:id="_bill__akn_article_2kQl24_3au8VH">Article heading...</heading>
                 <paragraph leos:origin="ec" xml:id="_bill__akn_article_2kQl24-par1">
                     <num xml:id="_bill__akn_article_2kQl24_mRCeYY">1.</num>
