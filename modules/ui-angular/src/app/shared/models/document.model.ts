@@ -28,6 +28,7 @@ export interface Document {
   cloneProposalMetadataVO: ClonedProposalMetadata | null;
   category: DocumentType; //??
   translatedProposals: Document[];
+  lfds: string;
 }
 
 /** AKA `MetadataVO` in Java code */

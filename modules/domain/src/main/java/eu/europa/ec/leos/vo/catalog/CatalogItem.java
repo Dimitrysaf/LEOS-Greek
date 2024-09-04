@@ -22,7 +22,8 @@ public class CatalogItem {
 
     public enum ItemType {
         CATEGORY,
-        TEMPLATE
+        TEMPLATE,
+        DOCUMENT
     }
 
     private ItemType type;
@@ -31,7 +32,8 @@ public class CatalogItem {
     private Boolean hidden;
     private String key;
     private String category;
-
+    private Boolean mandatory;
+    private Boolean defaultDocument;
     private Map<String, String> nameMap;
     private Map<String, String> descMap;
     private Map<String, String> langMap;
@@ -97,4 +99,21 @@ public class CatalogItem {
     public void setCategory(String category) {
         this.category = category;
     }
+
+    public Boolean isMandatory() {
+        return mandatory;
+    }
+
+    public void setMandatory(Boolean mandatory) {
+        this.mandatory = mandatory;
+    }
+
+    public Boolean isDefaultDocument() {
+        return defaultDocument;
+    }
+
+    public void setDefaultDocument(Boolean defaultDocument) {
+        this.defaultDocument = defaultDocument;
+    }
+
 }

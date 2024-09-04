@@ -123,10 +123,10 @@ export class ProposalCreateTemplateSelectorComponent
     const selectedNode = event.selection[0];
     if (
       selectedNode &&
-      this.templates.has(selectedNode.node.treeContentBlock.id)
+      this.templates.has(selectedNode.node.treeContentBlock.key)
     ) {
       this.setTemplate(
-        this.templates.get(selectedNode.node.treeContentBlock.id),
+        this.templates.get(selectedNode.node.treeContentBlock.key),
       );
       // if (isDoubleClicked) {
       //   this.navigationClick.emit();
@@ -148,7 +148,7 @@ export class ProposalCreateTemplateSelectorComponent
       item.type === 'CATEGORY' ? item.items.flatMap(getChildTemplates) : [item];
     const templates = catalogItems.flatMap(getChildTemplates);
     return templates.reduce(
-      (map, item) => map.set(item.id, item),
+      (map, item) => map.set(item.key, item),
       new Map<string, CatalogItem>(),
     );
   }
@@ -159,7 +159,7 @@ export class ProposalCreateTemplateSelectorComponent
   }
 
   private catalogItemToTreeItem(item: CatalogItem): TreeItemModel {
-    const { id, names, type, enabled, items, hidden } = item;
+    const { id, key, names, type, enabled, items, hidden } = item;
     const label = this.proposalService.getTranslation(names);
     const iconClass =
       type === 'CATEGORY' ? iconClassCategory : iconClassTemplate;
@@ -178,6 +178,7 @@ export class ProposalCreateTemplateSelectorComponent
       selectable: isTemplate,
       treeContentBlock: {
         id,
+        key,
         label,
         disabled,
         iconSvgName: iconClass,

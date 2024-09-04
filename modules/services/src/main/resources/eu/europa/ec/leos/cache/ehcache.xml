@@ -170,6 +170,14 @@
            timeToLiveSeconds="3600"
            memoryStoreEvictionPolicy="LFU"/>
 
+    <cache name="configCache"
+           eternal="false"
+           maxElementsInMemory="50"
+           overflowToDisk="false"
+           timeToIdleSeconds="600"
+           timeToLiveSeconds="3600"
+           memoryStoreEvictionPolicy="LFU"/>
+
     <cache name="documentByIdCache"
            eternal="false"
            maxElementsInMemory="50"

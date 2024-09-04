@@ -42,13 +42,16 @@ import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
 import eu.europa.ec.leos.services.support.url.CollectionIdsAndUrlsHolder;
 import eu.europa.ec.leos.services.support.url.CollectionUrlBuilder;
+import eu.europa.ec.leos.vo.catalog.CatalogItem;
 import io.atlassian.fugue.Option;
 import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Provider;
+import java.io.IOException;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +68,11 @@ public abstract class CollectionContextService {
     private static final String PROPOSAL_PROCEDURE_TYPE_IS_REQUIRED = "Proposal procedure type is required!";
     private static final String PROPOSAL_ACT_TYPE_IS_REQUIRED = "Proposal act type is required!";
     private static final String PROPOSAL_METADATA_IS_REQUIRED = "Proposal metadata is required!";
+    protected static final String TEMPLATE = "template";
+    protected static final String ACT_TYPE = "actType";
+    protected static final String PROCEDURE_TYPE = "procedureType";
+    protected static final String DOCUMENT_TEMPLATES = "documentTemplates";
+    protected static final String MANDATORY = "mandatory";
 
     protected final MessageHelper messageHelper;
     protected final ExplanatoryService explanatoryService;
@@ -75,7 +83,7 @@ public abstract class CollectionContextService {
     protected final Provider<MemorandumContextService> memorandumContextProvider;
     protected final Provider<BillContextService> billContextProvider;
     protected final Provider<ExplanatoryContextService> explanatoryContextProvider;
-    private final Provider<FinancialStatementContextService> financialStatementContextProvider;
+    protected final Provider<FinancialStatementContextService> financialStatementContextProvider;
     private SecurityContext securityContext;
     protected final Map<LeosCategory, XmlDocument> categoryTemplateMap;
     protected final Map<ContextActionService, String> actionMsgMap;
@@ -98,6 +106,7 @@ public abstract class CollectionContextService {
     protected LeosPackage leosPackage = null;
     protected String language;
     protected boolean translated = false;
+    protected String templateKey;
 
     CollectionContextService(TemplateService templateService, PackageService packageService, ProposalService proposalService,
                              CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider,
@@ -173,6 +182,11 @@ public abstract class CollectionContextService {
     public void useEeaRelevance(boolean eeaRelevance) {
         LOG.trace("Using Proposal eeaRelevance... [eeaRelevance={}]", eeaRelevance);
         this.eeaRelevance = eeaRelevance;
+    }
+
+    public void useTemplateKey(String templateKey) {
+        LOG.trace("Using Proposal templateKey... [templateKey={}]", templateKey);
+        this.templateKey = templateKey;
     }
 
     public void useDocument(DocumentVO document) {
@@ -419,6 +433,21 @@ public abstract class CollectionContextService {
         this.packageService.useTranslated(this.translated);
         LeosPackage leosPckg = packageService.createPackage();
 
+        List<CatalogItem> catalogItems;
+        Map<String, String> templatePropertiesMap = new HashMap<>();
+        try {
+            catalogItems = templateService.getTemplatesCatalog();
+            getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);
+        } catch (IOException e) {
+            LOG.error("Error occurred while retrieving catalog items " + e.getMessage());
+        }
+
+        String template = templatePropertiesMap.get(DOCUMENT_TEMPLATES);
+        String[] templates = (template != null) ? template.split(";") : new String[0];
+        for (String name : templates) {
+            this.useTemplate(name);
+        }
+
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
 
@@ -619,6 +648,43 @@ public abstract class CollectionContextService {
         Proposal prpsl = proposalService.findProposalByPackagePath(leosPackage.getPath());
         prpsl = proposalService.removeComponentRef(prpsl, explanatory.getName());
         proposalService.updateProposal(prpsl.getId(), prpsl.getContent().get().getSource().getBytes());
+    }
+
+    protected Map<String, String> getTemplateProperties(Map<String, String> tp, List<CatalogItem> catalogItems, String templateId, boolean isGetChildren) {
+        CatalogItem matchingItem = catalogItems.stream()
+                .filter(item -> item.getKey() != null && item.getKey().equalsIgnoreCase(templateId))
+                .findFirst()
+                .orElse(null);
+
+        if (matchingItem != null) {
+            tp.put(TEMPLATE, matchingItem.getKey());
+            tp = getTemplateProperties(tp, matchingItem.getItems(), templateId, true);
+            return tp;
+        }
+
+        boolean skipItr = false;
+        for (CatalogItem item : catalogItems) {
+            tp = getTemplateProperties(tp, item.getItems(), templateId, isGetChildren);
+            if (tp.containsKey(TEMPLATE) && item.isEnabled() &&
+                    ( (item.isMandatory() != null && item.isMandatory()) || (item.isDefaultDocument() != null && item.isDefaultDocument()) )) {
+                if (!tp.containsKey(DOCUMENT_TEMPLATES)) {
+                    tp.put(DOCUMENT_TEMPLATES, "");
+                } else if (tp.containsKey(DOCUMENT_TEMPLATES) && !tp.get(DOCUMENT_TEMPLATES).isEmpty()) {
+                    tp.put(DOCUMENT_TEMPLATES, tp.get(DOCUMENT_TEMPLATES) + ";");
+                }
+                tp.put(DOCUMENT_TEMPLATES, tp.get(DOCUMENT_TEMPLATES) + item.getId());
+            } else if (tp.containsKey(TEMPLATE) && !tp.containsKey(ACT_TYPE) && !isGetChildren) {
+                tp.put(ACT_TYPE, item.getKey());
+                skipItr = true;
+            } else if (tp.containsKey(TEMPLATE) && tp.containsKey(ACT_TYPE) && !tp.containsKey(PROCEDURE_TYPE) && !isGetChildren) {
+                tp.put(PROCEDURE_TYPE, item.getKey());
+                skipItr = true;
+            }
+            if(skipItr) {
+                break;
+            }
+        }
+        return tp;
     }
 
     @SuppressWarnings("unchecked")

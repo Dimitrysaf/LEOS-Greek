@@ -683,6 +683,11 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     }
 
     @Override
+    public LeosDocument findConfigByName(String name) {
+        return null;
+    }
+
+    @Override
     public Map<String, Object> findDocumentMetadataByRef(String ref, Class type) {
         return null;
     }

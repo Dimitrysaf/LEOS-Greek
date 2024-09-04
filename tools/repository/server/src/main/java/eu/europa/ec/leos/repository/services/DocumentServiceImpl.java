@@ -673,7 +673,7 @@ public class DocumentServiceImpl implements DocumentService {
         return xmlDocs;
     }
 
-    public Optional<LeosDocument> findDocumentByRef(final String ref, String category) {
+    public Optional<LeosDocument> findDocumentByRef(final String ref, String category, boolean withContent) {
         Validate.notNull(category, "Method findDocumentByRef: document category should not be null");
         switch (category) {
             case "CONFIG":
@@ -681,7 +681,7 @@ public class DocumentServiceImpl implements DocumentService {
             case "TEMPLATE":
             case "LIGHT_PROFILE":
                 try {
-                    return Optional.of(findTemplateByName(ref));
+                    return Optional.of(findTemplateByName(ref, withContent));
                 } catch (RepositoryException e) {
                     return Optional.empty();
                 }
@@ -899,7 +899,12 @@ public class DocumentServiceImpl implements DocumentService {
 
     public LeosDocument findTemplateByName(String name) throws RepositoryException {
         LOG.info("Find template by name: name={}", name);
-        List<LeosDocument> docs = configService.findConfigByName(name);
+        return this.findTemplateByName(name, true);
+    }
+
+    public LeosDocument findTemplateByName(String name, boolean withContent) throws RepositoryException {
+        LOG.info("Find template by name: name={}, withContent={}", name, withContent);
+        List<LeosDocument> docs = configService.findConfigByName(name, withContent);
         if (docs.isEmpty()) {
             throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, "Template " + name + " not found");
         } else {

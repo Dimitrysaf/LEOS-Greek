@@ -16,6 +16,7 @@ package eu.europa.ec.leos.services.document;
 
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
@@ -115,4 +116,7 @@ public interface ProposalService {
     Proposal getProposalByRef(String ref);
 
     String getOriginalMilestoneName(String docName, byte[] xmlContent);
+
+    LeosDocument findConfigByName(String name);
+
 }

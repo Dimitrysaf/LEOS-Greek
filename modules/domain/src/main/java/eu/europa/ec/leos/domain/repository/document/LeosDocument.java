@@ -20,6 +20,8 @@ public abstract class LeosDocument implements Auditable, Versionable {
     private final AuditData auditData;
     private final VersionData versionData;
 
+    private String lfds;
+
     protected LeosDocument(LeosCategory category, String id, String name, String createdBy, Instant creationInstant,
                            String lastModifiedBy, Instant lastModificationInstant, String versionSeriesId,
                            String cmisVersionLabel, String versionLabel, String versionComment, VersionType versionType,
@@ -30,6 +32,19 @@ public abstract class LeosDocument implements Auditable, Versionable {
         this.id = id;
         this.name = name;
         this.content = content;
+    }
+
+    protected LeosDocument(LeosCategory category, String id, String name, String createdBy, Instant creationInstant,
+            String lastModifiedBy, Instant lastModificationInstant, String versionSeriesId,
+            String cmisVersionLabel, String versionLabel, String versionComment, VersionType versionType,
+            boolean isLatestVersion, Option<Content> content, String lfds) {
+        this.auditData = new AuditData(createdBy, creationInstant, lastModifiedBy, lastModificationInstant);
+        this.versionData = new VersionData(versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion);
+        this.category = category;
+        this.id = id;
+        this.name = name;
+        this.content = content;
+        this.lfds = lfds;
     }
 
     public LeosCategory getCategory() {
@@ -86,6 +101,14 @@ public abstract class LeosDocument implements Auditable, Versionable {
 
     public VersionType getVersionType() {
         return versionData.getVersionType();
+    }
+
+    public String getLfds() {
+        return lfds;
+    }
+
+    public void setLfds(String lfds) {
+        this.lfds = lfds;
     }
 
 }

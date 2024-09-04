@@ -70,7 +70,7 @@ public class WorkspaceApiController {
         CreateCollectionResult createCollectionResult;
         try {
             createCollectionResult = apiService.createProposal(request.getTemplateId(), request.getTemplateName(),
-                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance());
+                    request.getLangCode(), request.getDocPurpose(), request.isEeaRelevance(), request.getKey());
             return new ResponseEntity<>(createCollectionResult, HttpStatus.OK);
         } catch (CreateCollectionException ex) {
             LOG.error("Error occurred while creating proposal " + ex.getMessage());

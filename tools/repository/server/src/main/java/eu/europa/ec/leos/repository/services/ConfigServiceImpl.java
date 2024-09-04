@@ -42,9 +42,11 @@ public class ConfigServiceImpl implements ConfigService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
+    public List<LeosDocument> findConfigByName(final String name, final boolean withContent) throws RepositoryException {
         Optional<Config> hasDoc = configRepository.findConfigByName(name);
-        if (hasDoc.isPresent()) {
+        if (hasDoc.isPresent() && !withContent) {
+            return Arrays.asList(ConversionUtils.buildConfigDocument(hasDoc.get()));
+        } else if (hasDoc.isPresent()) {
             ConfigVersion version = configVersionRepository.findLastConfigVersionByConfigId(hasDoc.get().getId());
             if (version == null) {
                 throw new RepositoryException(RepositoryException.RepositoryExceptionCode.DB_NOT_FOUND, ConfigVersion.class.getName());
@@ -57,6 +59,10 @@ public class ConfigServiceImpl implements ConfigService {
         } else {
             return Arrays.asList();
         }
+    }
+
+    public List<LeosDocument> findConfigByName(final String name) throws RepositoryException {
+        return this.findConfigByName(name, true);
     }
 
     public LeosDocument findConfigById(final String id) throws RepositoryException {

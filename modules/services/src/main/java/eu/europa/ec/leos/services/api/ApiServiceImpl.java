@@ -257,13 +257,14 @@ public abstract class ApiServiceImpl implements ApiService {
 
     @Override
     public CreateCollectionResult createProposal(String templateId, String templateName, String langCode,
-                                                 String docPurpose, boolean eeaRelevance) throws CreateCollectionException {
+                                                 String docPurpose, boolean eeaRelevance, String templateKey) throws CreateCollectionException {
         DocumentVO documentVO = new DocumentVO(LeosCategory.PROPOSAL);
         documentVO.getMetadata().setDocTemplate(templateId);
         documentVO.getMetadata().setTemplateName(templateName);
         documentVO.getMetadata().setLanguage(langCode);
         documentVO.getMetadata().setDocPurpose(docPurpose);
         documentVO.getMetadata().setEeaRelevance(eeaRelevance);
+        documentVO.getMetadata().setTemplate(templateKey);
         return createCollectionService.createCollection(documentVO);
     }
 
@@ -518,8 +519,10 @@ public abstract class ApiServiceImpl implements ApiService {
         boolean isClonedProposal = false;
         Set<String> docVersionSeriesIds = new HashSet<>();
         String proposalVersionSeriesId = null;
+        String lfds = null;
         if (proposalRef != null) {
             proposal = this.proposalService.findProposalByRef(proposalRef);
+            lfds = this.proposalService.findConfigByName(proposal.getMetadata().get().getDocTemplate() + "-CONF").getLfds();
             if (LOG.isTraceEnabled())
                 LOG.trace(proposal.toString());
         }
@@ -540,6 +543,7 @@ public abstract class ApiServiceImpl implements ApiService {
                 FavouritePackageResponse favouritePackageResponse = packageService.getFavouritePackage(proposalRef, userId);
                 legDocuments.sort(Comparator.comparing(LegDocument::getLastModificationInstant).reversed());
                 DocumentVO proposalVO = this.createViewObject(documents, proposalXmlContent, favouritePackageResponse.isFavourite());
+                proposalVO.setLfds(lfds);
                 List<LinkedPackage> linkedPackageList = packageService.findLinkedPackagesByPackageId(leosPackage.getId());
                 if (linkedPackageList != null && linkedPackageList.size() > 0) {
                     List<DocumentVO> translatedDocList = new ArrayList<>();

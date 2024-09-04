@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
@@ -308,6 +309,13 @@ public abstract class ProposalServiceImpl implements ProposalService {
         Proposal proposal = proposalRepository.findProposalByRef(ref);
         trackChangesContext.setTrackChangesEnabled(proposal.isTrackChangesEnabled());
         return proposal;
+    }
+
+    @Override
+    public LeosDocument findConfigByName(String name) {
+        LOG.trace("Finding Config by name... [name=" + name + "]");
+        LeosDocument config = proposalRepository.findConfigByName(name);
+        return config;
     }
 
     @Override

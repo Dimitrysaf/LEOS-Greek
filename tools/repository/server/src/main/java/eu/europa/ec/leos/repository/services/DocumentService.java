@@ -68,7 +68,7 @@ public interface DocumentService {
 
     List<LeosDocument> findDocumentsByUserId(final String userName, final String role, String category);
 
-    Optional<LeosDocument> findDocumentByRef(final String ref, String category);
+    Optional<LeosDocument> findDocumentByRef(final String ref, String category, boolean withContent);
 
     List<LeosDocument> findDocumentsByStatus(final String status);
 

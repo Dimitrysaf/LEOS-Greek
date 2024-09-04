@@ -17,6 +17,7 @@ import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.Bill;
+import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
 import eu.europa.ec.leos.domain.repository.document.Memorandum;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
@@ -30,6 +31,7 @@ import eu.europa.ec.leos.services.collection.document.ExplanatoryContextService;
 import eu.europa.ec.leos.services.collection.document.FinancialStatementContextService;
 import eu.europa.ec.leos.services.collection.document.MemorandumContextService;
 import eu.europa.ec.leos.services.document.ExplanatoryService;
+import eu.europa.ec.leos.services.document.FinancialStatementService;
 import eu.europa.ec.leos.services.document.ProposalService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.store.TemplateService;
@@ -51,14 +53,12 @@ import java.util.Map;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.BILL;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.MEMORANDUM;
 import static eu.europa.ec.leos.domain.repository.LeosCategory.PROPOSAL;
+import static eu.europa.ec.leos.domain.repository.LeosCategory.STAT_FINANC_LEGIS;
 
 @Service
 @Instance(instances = {InstanceType.OS, InstanceType.COMMISSION})
 public class CollectionContextProposalService extends CollectionContextService {
     private static final Logger LOG = LoggerFactory.getLogger(CollectionContextProposalService.class);
-    private static final String TEMPLATE = "template";
-    private static final String ACT_TYPE = "actType";
-    private static final String PROCEDURE_TYPE = "procedureType";
 
     CollectionContextProposalService(TemplateService templateService, PackageService packageService, ProposalService proposalService, CollectionUrlBuilder urlBuilder, Provider<MemorandumContextService> memorandumContextProvider, Provider<BillContextService> billContextProvider, SecurityContext securityContext, Provider<ExplanatoryContextService> explanatoryContextProvider, Provider<FinancialStatementContextService> financialStatementContextProvider, ExplanatoryService explanatoryService, MessageHelper messageHelper) {
         super(templateService, packageService, proposalService, urlBuilder, memorandumContextProvider, billContextProvider, securityContext, explanatoryContextProvider, financialStatementContextProvider, explanatoryService, messageHelper);
@@ -71,21 +71,27 @@ public class CollectionContextProposalService extends CollectionContextService {
         this.packageService.useLanguage(this.language);
         this.packageService.useTranslated(this.translated);
         LeosPackage leosPackage = this.packageService.createPackage();
+
         List<CatalogItem> catalogItems;
         Map<String, String> templatePropertiesMap = new HashMap<>();
+        try {
+            catalogItems = templateService.getTemplatesCatalog();
+            getTemplateProperties(templatePropertiesMap, catalogItems, templateKey, false);
+        } catch (IOException e) {
+            LOG.error("Error occurred while retrieving catalog items " + e.getMessage());
+        }
+
+        String template = templatePropertiesMap.get(DOCUMENT_TEMPLATES);
+        String[] templates = (template != null) ? template.split(";") : new String[0];
+        for (String name : templates) {
+            this.useTemplate(name);
+        }
 
         Proposal proposalTemplate = cast(categoryTemplateMap.get(PROPOSAL));
         Validate.notNull(proposalTemplate, "Proposal template is required!");
 
         Option<ProposalMetadata> metadataOption = proposalTemplate.getMetadata();
         Validate.isTrue(metadataOption.isDefined(), "Proposal metadata is required!");
-
-        try {
-            catalogItems = templateService.getTemplatesCatalog();
-            getTemplateProperties(templatePropertiesMap, catalogItems, metadataOption.get().getTemplate());
-        } catch (IOException e) {
-            LOG.error("Error occurred while retrieving catalog items " + e.getMessage());
-        }
 
         Validate.notNull(purpose, "Proposal purpose is required!");
         ProposalMetadata metadata = metadataOption.get()
@@ -112,6 +118,22 @@ public class CollectionContextProposalService extends CollectionContextService {
             proposal = proposalService.addComponentRef(proposal, memorandum.getName(), LeosCategory.MEMORANDUM);
         }
 
+        if (cast(categoryTemplateMap.get(STAT_FINANC_LEGIS)) != null) {
+            FinancialStatementContextService financialStatementContext = financialStatementContextProvider.get();
+            financialStatementContext.usePackage(leosPackage);
+            String financialStatementTemplate = categoryTemplateMap.get(STAT_FINANC_LEGIS).getName();
+            financialStatementContext.useDocTemplate(financialStatementTemplate);
+            financialStatementContext.useTitle(messageHelper.getMessage("document.default.financial.statement.title.default." + financialStatementTemplate));
+            financialStatementContext.usePurpose(purpose);
+            financialStatementContext.useActionMessageMap(actionMsgMap);
+            financialStatementContext.useType(metadata.getType());
+            financialStatementContext.usePackageTemplate(metadata.getTemplate());
+            financialStatementContext.usePackageRef(proposal.getMetadata().get().getRef());
+            financialStatementContext.useCollaborators(proposal.getCollaborators());
+            FinancialStatement financialStatement = financialStatementContext.executeCreateFinancialStatement();
+            proposal = proposalService.addComponentRef(proposal, financialStatement.getName(), LeosCategory.STAT_FINANC_LEGIS);
+        }
+
         BillContextService billContext = billContextProvider.get();
         billContext.usePackage(leosPackage);
         billContext.useTemplate(cast(categoryTemplateMap.get(BILL)));
@@ -121,34 +143,7 @@ public class CollectionContextProposalService extends CollectionContextService {
         Bill bill = billContext.executeCreateBill();
         proposalService.addComponentRef(proposal, bill.getName(), LeosCategory.BILL);
         return proposalService.createVersion(proposal.getId(), VersionType.INTERMEDIATE, actionMsgMap.get(ContextActionService.DOCUMENT_CREATED));
-    }
 
-    private Map<String, String> getTemplateProperties(Map<String, String> tp, List<CatalogItem> catalogItems, String templateId) {
-        CatalogItem matchingItem = catalogItems.stream()
-                .filter(item -> item.getKey().equalsIgnoreCase(templateId))
-                .findFirst()
-                .orElse(null);
-
-        if (matchingItem != null) {
-            tp.put(TEMPLATE, matchingItem.getKey());
-            return tp;
-        }
-
-        boolean skipItr = false;
-        for (CatalogItem item : catalogItems) {
-            tp = getTemplateProperties(tp, item.getItems(), templateId);
-            if (tp.containsKey(TEMPLATE) && !tp.containsKey(ACT_TYPE)) {
-                tp.put(ACT_TYPE, item.getKey());
-                skipItr = true;
-            } else if (tp.containsKey(TEMPLATE) && tp.containsKey(ACT_TYPE) && !tp.containsKey(PROCEDURE_TYPE)) {
-                tp.put(PROCEDURE_TYPE, item.getKey());
-                skipItr = true;
-            }
-            if(skipItr) {
-                break;
-            }
-        }
-        return tp;
     }
 
     @Override

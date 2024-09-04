@@ -91,7 +91,7 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
       this.cdr.detectChanges();
     }, 0);
   }
-  
+
   handleSelectTemplate(template: CatalogItem | null) {
     this.selectedTemplate = template;
     this.updateTemplateAndLanguage();
@@ -249,9 +249,9 @@ export class ProposalUploadWizardComponent implements OnInit, OnDestroy {
   }
 
   private getDataForCreate(): CreateProposalBody {
-    const { templateId, templateName, langCode, docPurpose, eeaRelevance } =
+    const { templateId, templateName, langCode, docPurpose, eeaRelevance, key } =
       this.uploadForm.getRawValue();
-    return { templateId, templateName, langCode, docPurpose, eeaRelevance };
+    return { templateId, templateName, langCode, docPurpose, eeaRelevance, key };
   }
 
   private validateLegFile() {

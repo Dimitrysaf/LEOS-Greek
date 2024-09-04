@@ -29,6 +29,7 @@ export type CreateProposalBody = {
   langCode: string;
   docPurpose: string;
   eeaRelevance: boolean;
+  key: string;
 };
 
 export interface CreateExplanatoryDocument {

@@ -246,7 +246,7 @@
             <div
                     class="eui-u-flex eui-u-pb-m"
                     style="border-bottom: 1px solid var(--eui-base-color-grey-15)"
-                    *ngIf="!documentCard.euiCollapsed"
+                    *ngIf="!documentCard.euiCollapsed && proposal.lfds !== 'FORBIDDEN'"
             >
                 <div class="eui-u-flex-grow">
                     <div class="eui-u-display-flex eui-u-flex-row">
@@ -300,7 +300,7 @@
                     </button>
                 </ng-container>
                 <ng-container
-                        *ngIf="financialStatement && permissions.includes('CAN_UPDATE')"
+                        *ngIf="financialStatement && permissions.includes('CAN_UPDATE') && proposal.lfds !== 'MANDATORY'"
                 >
                     <button
                             class="eui-u-ml-l"
