@@ -85,6 +85,8 @@ class TemplateServiceImpl implements TemplateService {
         xstream.useAttributeFor(CatalogItem.class, "enabled");
         xstream.useAttributeFor(CatalogItem.class, "hidden");
         xstream.useAttributeFor(CatalogItem.class, "key");
+        xstream.useAttributeFor(CatalogItem.class, "mandatory");
+        xstream.aliasAttribute(CatalogItem.class, "defaultDocument", "default");
         xstream.aliasField("names", CatalogItem.class, "nameMap");
         xstream.registerLocalConverter(CatalogItem.class, "nameMap", new NameMapConverter());
         xstream.aliasField("descriptions", CatalogItem.class, "descMap");
@@ -117,7 +119,7 @@ class TemplateServiceImpl implements TemplateService {
     public String getTemplateName(List<CatalogItem> catalogItems, String name, String language) {
         String templateName = "";
         for (CatalogItem item : catalogItems) {
-            if (item.getId().contains(name)) {
+            if (item.getId() != null && item.getId().contains(name)) {
                 return item.getName(language);
             } else {
                 templateName = getTemplateName(item.getItems(), name, language);
@@ -137,7 +139,7 @@ class TemplateServiceImpl implements TemplateService {
     private CatalogItem getTemplateItem(List<CatalogItem> catalogItems, String name) {
         CatalogItem templateItem = null;
         for (CatalogItem item : catalogItems) {
-            if (item.getId().contains(name)) {
+            if (item.getId() != null && item.getId().contains(name)) {
                 return item;
             } else {
                 templateItem = getTemplateItem(item.getItems(), name);

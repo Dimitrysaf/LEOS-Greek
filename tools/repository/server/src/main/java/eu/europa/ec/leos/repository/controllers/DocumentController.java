@@ -211,8 +211,9 @@ public class DocumentController {
             @ApiResponse(responseCode = "200", description = "Documents Found", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<LeosDocument> findDocumentsByRef(@PathVariable("docRef") String ref,
-                                                            @RequestParam("category") String category) {
-        LeosDocument xmlDoc = documentService.findDocumentByRef(ref, category).orElse(null);
+                                                            @RequestParam("category") String category,
+                                                            @RequestParam(value = "withContent", defaultValue = "true") boolean withContent) {
+        LeosDocument xmlDoc = documentService.findDocumentByRef(ref, category, withContent).orElse(null);
         return ResponseEntity.ok(xmlDoc);
     }
 

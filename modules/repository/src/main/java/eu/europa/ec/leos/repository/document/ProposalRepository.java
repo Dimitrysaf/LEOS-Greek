@@ -15,6 +15,7 @@ package eu.europa.ec.leos.repository.document;
 
 
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.domain.repository.metadata.ProposalMetadata;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
@@ -192,4 +193,7 @@ public interface ProposalRepository {
      * @return
      */
     Proposal getProposalByRef(String ref);
+
+    LeosDocument findConfigByName(String name);
+
 }

@@ -235,6 +235,10 @@ public class ConversionUtils {
         return new LeosDocument(config, configContent);
     }
 
+    public static LeosDocument buildConfigDocument(Config config) {
+        return new LeosDocument(config);
+    }
+
     public static Package buildPackage(eu.europa.ec.leos.repository.entities.Package pkg,
                                               CollaboratorsService collaboratorsService) {
         if (pkg != null) {

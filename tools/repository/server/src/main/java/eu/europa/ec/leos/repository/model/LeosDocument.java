@@ -71,6 +71,8 @@ public class LeosDocument {
 
     private Map<String, Object> metadata = new HashMap<>();
 
+    private String lfds;
+
     public LeosDocument() {}
 
     public LeosDocument(DocumentV doc, List<Collaborator> collaborators, List<DocumentPropertyValues> otherMetadata) {
@@ -171,6 +173,19 @@ public class LeosDocument {
             this.metadata.put("language", doc.getLanguage());
 
             this.setVersionLabel(configContent.getVersionId().getVersionLabel());
+            this.setLfds(doc.getLfds());
+        }
+    }
+
+    public LeosDocument(Config doc) {
+        if (doc != null) {
+            this.setCreatedBy(doc.getAuditCBy());
+            this.setCreatedOn(Date.from(doc.getAuditCDate().atZone(ZoneId.systemDefault()).toInstant()));
+            this.name = doc.getName();
+            this.ref = doc.getName();
+            this.category = doc.getConfigCategory().getCategoryCode();
+            this.metadata.put("language", doc.getLanguage());
+            this.lfds = doc.getLfds();
         }
     }
 
@@ -402,6 +417,14 @@ public class LeosDocument {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public String getLfds() {
+        return lfds;
+    }
+
+    public void setLfds(String lfds) {
+        this.lfds = lfds;
     }
 
     @Override

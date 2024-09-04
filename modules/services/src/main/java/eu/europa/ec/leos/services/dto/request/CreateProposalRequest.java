@@ -7,6 +7,7 @@ public class CreateProposalRequest {
     private String langCode;
     private String docPurpose;
     private boolean eeaRelevance;
+    private String key;
 
     public String getTemplateId() {
         return templateId;
@@ -48,6 +49,14 @@ public class CreateProposalRequest {
         this.eeaRelevance = eeaRelevance;
     }
 
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
     @Override
     public String toString() {
         return "ProposalRequest{" +
@@ -56,6 +65,8 @@ public class CreateProposalRequest {
                 ", langCode='" + langCode + '\'' +
                 ", docPurpose='" + docPurpose + '\'' +
                 ", eeaRelevance=" + eeaRelevance +
+                ", key=" + key +
                 '}';
     }
+
 }

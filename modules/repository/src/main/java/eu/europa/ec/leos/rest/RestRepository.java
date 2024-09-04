@@ -306,6 +306,13 @@ public class RestRepository extends AbstractRestClient {
         return resp;
     }
 
+    LeosDocument findConfigByName(final String name) {
+        LOGGER.trace("Finding config by name... [name={}]", name);
+        String url = getUrl(leosRestFindDocumentbyRefURI + "?category={category}");
+        LeosDocument resp = getEntity(url, LeosDocument.class, name, "TEMPLATE");
+        return resp;
+    }
+
     LeosDocumentList findDocumentsByStatus(LeosLegStatus status) {
         String url = getUrl(leosRestFindDocumentsByStatusURI);
         LeosDocumentList resp = getEntity(url, LeosDocumentList.class, status);

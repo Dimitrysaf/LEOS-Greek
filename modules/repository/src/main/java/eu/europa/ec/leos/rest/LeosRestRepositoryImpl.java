@@ -20,6 +20,7 @@ import eu.europa.ec.leos.domain.repository.LeosExportStatus;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.LeosPackage;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.repository.document.ConfigDocument;
 import eu.europa.ec.leos.domain.repository.document.ExportDocument;
 import eu.europa.ec.leos.domain.repository.document.LegDocument;
 import eu.europa.ec.leos.domain.repository.document.LeosDocument;
@@ -803,6 +804,16 @@ public class LeosRestRepositoryImpl implements LeosRepository {
         LeosCategory category = (LeosCategory) CollectionUtils.get(categories, 0);
         eu.europa.ec.leos.rest.support.model.LeosDocument doc = repository.findDocumentByRef(ref, String.valueOf(category));
         return doc.getMetadata();
+    }
+
+    @Override
+    @PerformanceLogger
+    @Cacheable(value = "configCache", key ="#name", condition = "#root.target.cacheEnabled")
+    public LeosDocument findConfigByName(String name) {
+        logger.trace("Finding config with name... [name=" + name + ']');
+        eu.europa.ec.leos.rest.support.model.LeosDocument config = repository.findConfigByName(name);
+        return toLeosDocument(config, ConfigDocument.class, false)
+                .orElseThrow(() -> new IllegalStateException("Error occurred retrieving config! [=" + name + ']'));
     }
 
     @Override

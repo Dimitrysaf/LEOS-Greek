@@ -44,7 +44,7 @@ public interface ApiService {
     List<CatalogItem> getTemplates() throws IOException;
 
     CreateCollectionResult createProposal(String templateId, String templateName, String langCode, String docPurpose,
-                                          boolean eeaRelevance) throws CreateCollectionException;
+                                          boolean eeaRelevance, String template) throws CreateCollectionException;
 
     CreateCollectionResult uploadProposal(File legDocument) throws CreateCollectionException;
 

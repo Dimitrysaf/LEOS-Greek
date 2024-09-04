@@ -56,6 +56,7 @@ public class DocumentVO {
 
     private CloneProposalMetadataVO cloneProposalMetadataVO;
     private Boolean favourite;
+    private String lfds;
 
     public DocumentVO(XmlDocument xmlDocument) {
         if (xmlDocument != null) {
@@ -471,4 +472,13 @@ public class DocumentVO {
     public void setTranslatedProposal(List<DocumentVO> translatedProposals) {
         this.translatedProposals = translatedProposals;
     }
+
+    public String getLfds() {
+        return lfds;
+    }
+
+    public void setLfds(String lfds) {
+        this.lfds = lfds;
+    }
+
 }

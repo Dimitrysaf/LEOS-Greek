@@ -87,6 +87,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
     const template = this.selectedTemplate;
     const langCode = this.selectedLanguage;
     if (template && langCode) {
+      const key = template.key;
       const templateName = this.proposalService.getTranslation(
         template.names,
         langCode,
@@ -100,6 +101,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         templateName,
         langCode,
         documentLanguage,
+        key
       });
       this.isNavigationAllowed = true;
     } else {
@@ -108,6 +110,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         templateName: '',
         langCode: '',
         documentLanguage: '',
+        key: ''
       });
       this.isNavigationAllowed = false;
     }
@@ -165,7 +168,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
   }
 
   private getDataForCreate(): CreateProposalBody {
-    const { templateId, templateName, langCode, docPurpose, eeaRelevance } =
+    const { templateId, templateName, langCode, docPurpose, eeaRelevance, key } =
       this.createForm.getRawValue();
     return {
       templateId,
@@ -173,6 +176,7 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
       langCode,
       docPurpose: docPurpose.trim(),
       eeaRelevance,
+      key
     };
   }
 
@@ -198,6 +202,10 @@ export class ProposalCreateWizardComponent implements OnInit, OnDestroy {
         },
       ),
       templateId: new FormControl(
+        { value: '', disabled: true },
+        { validators: Validators.required },
+      ),
+      key: new FormControl(
         { value: '', disabled: true },
         { validators: Validators.required },
       ),

@@ -36,7 +36,7 @@
                         <description lang="EN">Regulation to be adopted by the European Parliament and the Council</description>
                         <description lang="FR">Règlement à adopter conjointement par le Parlement Européen et le Conseil</description>
                     </descriptions>
-                    <item type="TEMPLATE" id="PR-023;EM-LP01;BL-023" enabled="true" key="SJ-023">
+                    <item type="TEMPLATE" enabled="true" key="SJ-023">
                         <names>
                             <name lang="EN">SJ-023 - Proposal for a Regulation of the European Parliament and of the Council</name>
                             <name lang="FR">SJ-023 - Proposition de règlement du Parlement européen et du Conseil</name>
@@ -49,30 +49,45 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="SG-017" enabled="true" key="SG-017">
+                        <item type="TEMPLATE" id="PR-023" enabled="true" mandatory="true">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">PR-023 - ....</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">...</description>
                             </descriptions>
-                        </item>
-						<item type="TEMPLATE" id="SG-018" enabled="true" key="SG-018">
-							<names>
-								<name lang="EN">SG-018 - Annex to a proposal / to another proposal
-								</name>
-							</names>
-							<descriptions>
-								<description lang="EN">Annex to a proposal / to another	proposal (COM/JOIN)</description>
-							</descriptions>
-						</item>
-                        <item type="TEMPLATE" id="CP-036" enabled="false" key="CP-036">
-                            <names>
-                                <name lang="EN">CP-036 - Annex to a proposal / to another proposal</name>
-                            </names>
-                            <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
-                            </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-023" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-023 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
                         </item>
                     </item>
                 </item>
@@ -85,7 +100,7 @@
                         <description lang="EN">Directive to be adopted by the European Parliament and the Council</description>
                         <description lang="FR">Directive à adopter conjointement par le Parlement Européen et le Conseil</description>
                     </descriptions>
-                    <item type="TEMPLATE" id="PR-024;EM-LP01;BL-024" enabled="true" key="SJ-024">
+                    <item type="TEMPLATE" enabled="true" key="SJ-024">
                         <names>
                             <name lang="EN">SJ-024 - Proposal for a Directive of the European Parliament and of the Council</name>
                             <name lang="FR">SJ-024 - Proposition de directive du Parlement européen et du Conseil</name>
@@ -98,24 +113,46 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="SG-017" enabled="true" key="SG-017">
+                        <item type="TEMPLATE" id="PR-024" enabled="true" mandatory="true">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">PR-024 - ....</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">...</description>
                             </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-024" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-024 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
                         </item>
-						<item type="TEMPLATE" id="SG-018" enabled="true" key="SG-018">
-							<names>
-								<name lang="EN">SG-018 - Annex to a proposal / to another proposal
-								</name>
-							</names>
-							<descriptions>
-								<description lang="EN">Annex to a proposal / to another	proposal (COM/JOIN)</description>
-							</descriptions>
-						</item>
-                        
                     </item>
                 </item>
                 <item type="CATEGORY" id="c1.1.1.3" enabled="true" key="DECISION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL">
@@ -131,7 +168,7 @@
                         <language lang="EN">English</language>
                         <language lang="FR">Français</language>
                     </languages>
-                    <item type="TEMPLATE" id="PR-025;EM-LP01;BL-025" enabled="true" key="SJ-025">
+                    <item type="TEMPLATE" enabled="true" key="SJ-025">
                         <names>
                             <name lang="EN">SJ-025 - Proposal for a Decision of the European Parliament and of the Council</name>
                             <name lang="FR">SJ-025 - Proposition de décision du Parlement européen et du Conseil</name>
@@ -144,26 +181,48 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="SG-017" enabled="true" key="SG-017">
+                        <item type="TEMPLATE" id="PR-025" enabled="true" mandatory="true">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">PR-025 - ....</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">...</description>
                             </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-025" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-025 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
                         </item>
-						<item type="TEMPLATE" id="SG-018" enabled="true" key="SG-018">
-							<names>
-								<name lang="EN">SG-018 - Annex to a proposal / to another proposal
-								</name>
-							</names>
-							<descriptions>
-								<description lang="EN">Annex to a proposal / to another	proposal (COM/JOIN)</description>
-							</descriptions>
-						</item>
-                        
                     </item>
-                    <item type="TEMPLATE" id="PR-026;EM-LP01;BL-026" enabled="true" key="SJ-026">
+                    <item type="TEMPLATE" enabled="true" key="SJ-026">
                         <names>
                             <name lang="EN">SJ-026 - Proposal for a Decision of the European Parliament and of the Council (without addressees)</name>
                             <name lang="FR">SJ-026 - Proposition de décision du Parlement européen et du Conseil (sans destinataires)</name>
@@ -176,24 +235,46 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="SG-017" enabled="true" key="SG-017">
+                        <item type="TEMPLATE" id="PR-026" enabled="true" mandatory="true">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">PR-026 - ....</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">...</description>
                             </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-026" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-026 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
                         </item>
-						<item type="TEMPLATE" id="SG-018" enabled="true" key="SG-018">
-							<names>
-								<name lang="EN">SG-018 - Annex to a proposal / to another proposal
-								</name>
-							</names>
-							<descriptions>
-								<description lang="EN">Annex to a proposal / to another	proposal (COM/JOIN)</description>
-							</descriptions>
-						</item>
-                        
                     </item>
                 </item>
             </item>
@@ -239,7 +320,7 @@
                         <language lang="EN">English</language>
                         <language lang="FR">Français</language>
                     </languages>
-                    <item type="TEMPLATE" id="PR-019;EM-LP01;BL-019" enabled="true" key="SJ-019">
+                    <item type="TEMPLATE" enabled="true" key="SJ-019">
                         <names>
                             <name lang="EN">SJ-019 - Proposal for a Council Decision</name>
                             <name lang="FR">SJ-019 - Proposition de décision du Conseil</name>
@@ -252,30 +333,45 @@
                             <language lang="EN">English</language>
                             <!--<language lang="FR">Français</language>-->
                         </languages>
-                        <item type="TEMPLATE" id="SG-017" enabled="true" key="SG-017">
+                        <item type="TEMPLATE" id="PR-019" enabled="true" mandatory="true">
                             <names>
-                                <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                <name lang="EN">PR-019 - ....</name>
                             </names>
                             <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                <description lang="EN">...</description>
                             </descriptions>
-                        </item>
-						<item type="TEMPLATE" id="SG-018" enabled="true" key="SG-018">
-							<names>
-								<name lang="EN">SG-018 - Annex to a proposal / to another proposal
-								</name>
-							</names>
-							<descriptions>
-								<description lang="EN">Annex to a proposal / to another	proposal (COM/JOIN)</description>
-							</descriptions>
-						</item>
-                        <item type="TEMPLATE" id="CP-036" enabled="false" key="CP-036">
-                            <names>
-                                <name lang="EN">CP-036 - Annex to a proposal / to another proposal</name>
-                            </names>
-                            <descriptions>
-                                <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
-                            </descriptions>
+                            <item type="DOCUMENT" id="EM-LP01" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">EM-LP01 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
+                            <item type="DOCUMENT" id="BL-019" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">BL-019 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                                <item type="DOCUMENT" id="SG-017" enabled="true" mandatory="false" default="false">
+                                    <names>
+                                        <name lang="EN">SG-017 - Annex to a proposal / to another proposal</name>
+                                    </names>
+                                    <descriptions>
+                                        <description lang="EN">Annex to a proposal / to another proposal (COM/JOIN)</description>
+                                    </descriptions>
+                                </item>
+                            </item>
+                            <item type="DOCUMENT" id="FS-001" enabled="true" mandatory="true" default="true">
+                                <names>
+                                    <name lang="EN">FS-001 - ....</name>
+                                </names>
+                                <descriptions>
+                                    <description lang="EN">...</description>
+                                </descriptions>
+                            </item>
                         </item>
                     </item>
                 </item>

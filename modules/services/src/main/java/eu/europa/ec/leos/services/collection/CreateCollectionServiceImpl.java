@@ -116,17 +116,13 @@ public class CreateCollectionServiceImpl implements CreateCollectionService {
         CollectionIdsAndUrlsHolder idsAndUrlsHolder = new CollectionIdsAndUrlsHolder();
         if (LeosCategory.PROPOSAL.equals(documentVO.getCategory())) {
             CollectionContextService context = proposalContextProvider.get();
-            String template = documentVO.getMetadata().getDocTemplate();
-            String[] templates = (template != null) ? template.split(";") : new String[0];
-            for (String name : templates) {
-                context.useTemplate(name);
-            }
             context.usePurpose(documentVO.getMetadata().getDocPurpose());
             context.useEeaRelevance(documentVO.getMetadata().getEeaRelevance());
             context.useActionMessage(ContextActionService.METADATA_UPDATED, messageHelper.getMessage("operation.metadata.updated"));
             context.useActionMessage(ContextActionService.DOCUMENT_CREATED, messageHelper.getMessage("operation.document.created"));
             context.useLanguage(documentVO.getMetadata().getLanguage());
             context.useTranslated(false);
+            context.useTemplateKey(documentVO.getMetadata().getTemplate());
             //create proposal
             Proposal proposal = context.executeCreateProposal();
 

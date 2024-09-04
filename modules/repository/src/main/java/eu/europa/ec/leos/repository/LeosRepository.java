@@ -405,4 +405,6 @@ public interface LeosRepository {
 
     String configNotificationsFetch();
 
+    LeosDocument findConfigByName(String name);
+
 }

@@ -16,6 +16,7 @@ package eu.europa.ec.leos.repository.document;
 import java.util.List;
 import java.util.Map;
 
+import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -185,4 +186,11 @@ public class ProposalRepositoryImpl implements ProposalRepository {
         logger.debug("Finding Proposal by ref... [ref=" + ref + "]");
         return leosRepository.findDocumentByRef(ref, Proposal.class);
     }
+
+    @Override
+    public LeosDocument findConfigByName(String name) {
+        logger.debug("Finding Config by name... [name=" + name + "]");
+        return leosRepository.findConfigByName(name);
+    }
+
 }

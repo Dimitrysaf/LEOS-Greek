@@ -45,6 +45,8 @@ public class LeosDocument {
 
     private String category;
 
+    private String lfds;
+
     private Map<String, Object> metadata = new HashMap<>();
 
     public LeosDocument() {}
@@ -205,6 +207,14 @@ public class LeosDocument {
 
     public String getName() {
         return name;
+    }
+
+    public String getLfds() {
+        return lfds;
+    }
+
+    public void setLfds(String lfds) {
+        this.lfds = lfds;
     }
 
 }
