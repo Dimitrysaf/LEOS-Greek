@@ -55,6 +55,7 @@ import {
   isUndeletableItem,
   updateDepthOfTocItems,
 } from '@/shared/utils/toc.utils';
+import {EnvironmentService} from "@/shared/services/enviroment.service";
 
 const TYPING_TIME = 500;
 const OPEN_TAG = '<';
@@ -127,6 +128,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     private fb: FormBuilder,
     private sanitizer: DomSanitizer,
     private tocService: TableOfContentService,
+    private envService: EnvironmentService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -502,7 +504,7 @@ export class TocEditorComponent implements OnInit, OnChanges {
     this.selectedNode.style = value;
     this.active_division_style = value;
     this.selectedNode.autoNumOverwritten = false;
-    updateDepthOfTocItems(this.selectedNode.childItems);
+    updateDepthOfTocItems(this.selectedNode.childItems, this.envService.isCouncil());
     this.selectedNode.number = HASH_NUM_VALUE;
     this.handleNodeChanges(this.toc);
   }

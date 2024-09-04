@@ -282,7 +282,7 @@ export class TocInlineEditMenuMandateService extends TocInlineEditMenuService {
     selectedNode.style = value;
     this.active_division_style = value;
     selectedNode.autoNumOverwritten = false;
-    updateDepthOfTocItems(selectedNode.childItems);
+    updateDepthOfTocItems(selectedNode.childItems, true);
     selectedNode.number = HASH_NUM_VALUE;
     this.tocEditService.handleNodeChanges(toc);
   }
