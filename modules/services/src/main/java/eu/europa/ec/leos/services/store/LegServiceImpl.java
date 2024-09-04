@@ -1349,12 +1349,13 @@ public class LegServiceImpl implements LegService {
             return;
         }
         byte[] coverPageContent = xmlContentProcessor.getCoverPageContentForRendition(proposalContent);
+        String trackChangeCSS = createTrackChangesCss(coverPageContent, proposal.getId());
         addResourceToZipContent(contentToZip, coverPageStyleSheet, STYLES_SOURCE_PATH, STYLE_DEST_DIR);
         RenderedDocument htmlDocument = new RenderedDocument();
         htmlDocument.setContent(new ByteArrayInputStream(coverPageContent));
         htmlDocument.setStyleSheetName(styleSheetName);
         String htmlName = HTML_RENDITION + XmlNodeConfigProcessor.DOC_REF_COVER + ".html";
-        contentToZip.put(htmlName, htmlRenditionProcessor.processCoverPage(htmlDocument).getBytes(UTF_8));
+        contentToZip.put(htmlName, htmlRenditionProcessor.processCoverPage(htmlDocument, trackChangeCSS).getBytes(UTF_8));
 
         structureContextProvider.get().useDocumentTemplate(proposal.getMetadata().get().getDocTemplate());
         final String coverPageTocJson = getTocAsJson(proposalService.getCoverPageTableOfContent(proposal, TocMode.SIMPLIFIED_CLEAN));
