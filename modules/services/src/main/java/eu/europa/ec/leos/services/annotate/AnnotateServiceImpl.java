@@ -62,6 +62,7 @@ public class AnnotateServiceImpl implements AnnotateService {
                 .queryParam("offset", 0)
                 .queryParam("order", "asc")
                 .queryParam("sort", "created")
+                .queryParam("metadatasets", "[{\"status\":[\"ALL\"]}]")
                 .queryParam("uri", "uri://LEOS/" + legFileName + "/revision-" + docName).build().encode().toUri();
 
         try {

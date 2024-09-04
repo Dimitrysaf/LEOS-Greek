@@ -1893,7 +1893,7 @@ public class LegServiceImpl implements LegService {
         LOG.debug("Processing " + rootNode.size() + " annotations");
         List<JsonNode> modifiedList = new ArrayList<JsonNode>();
         itr.forEachRemaining(node -> {
-            if (!exportOptions.isWithSuggestions() && node.findValue("tags").get(0).textValue().equalsIgnoreCase(SUGGESTION)) {
+            if (!exportOptions.isWithSuggestions() && node.findValue("tags").get(0) != null && node.findValue("tags").get(0).textValue().equalsIgnoreCase(SUGGESTION)) {
                 // Skip suggestions
                 return;
             }
