@@ -409,7 +409,7 @@
                     </paragraph>
                 </article>
             </chapter><chapter leos:depth="1" leos:origin="ec" xml:id="__akn_chapter_yUautN">
-            <num xml:id="_akn_k6mkKE">Chapter III</num>
+            <num leos:origin="ec" xml:id="_akn_k6mkKE">Chapter III</num>
             <heading xml:id="_akn_AddtIq">Chapter heading...</heading>
         </chapter>
             <chapter xml:id="cha_HysnPu">
