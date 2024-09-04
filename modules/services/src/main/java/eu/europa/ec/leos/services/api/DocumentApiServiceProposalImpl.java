@@ -87,7 +87,7 @@ public class DocumentApiServiceProposalImpl extends DocumentApiServiceImpl {
             return new DownloadVersionResponse(jobFileName, byteArray);
         } catch (Exception e) {
             LOG.error("Unexpected error occurred while using ExportService", e);
-            throw new ExportException(messageHelper.getMessage("export.package.error.message"));
+            throw new ExportException(messageHelper.getMessage("export.package.error.message.contact"));
         }
     }
 
