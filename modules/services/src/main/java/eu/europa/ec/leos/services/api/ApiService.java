@@ -95,7 +95,7 @@ public interface ApiService {
     LegDocument addLegDocument(String packageName, String legFileName, List<String> milestoneComments, byte[] content,
             LeosLegStatus status, List<String> containedDocuments) throws  Exception;
 
-    MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName, String legFileId) throws IOException;
+    MilestoneViewResponse listMilestoneDocuments(String proposalRef, String legFileName, String legFileId) throws Exception;
 
     MilestoneViewResponse listMilestoneDocumentsFromVersionRef(String proposalRef, String versionedReference) throws Exception;
 
