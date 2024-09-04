@@ -62,6 +62,7 @@ import eu.europa.ec.leos.services.export.ExportVersions;
 import eu.europa.ec.leos.services.export.FileHelper;
 import eu.europa.ec.leos.services.importoj.ImportService;
 import eu.europa.ec.leos.services.label.ReferenceLabelService;
+import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.BillProcessor;
 import eu.europa.ec.leos.services.processor.ElementProcessor;
 import eu.europa.ec.leos.services.processor.TrackChangesProcessor;
@@ -160,6 +161,8 @@ public abstract class BillApiServiceImpl implements BillApiService {
     TransformationService transformationService;
     @Autowired
     LegService legService;
+    @Autowired
+    NumberService numberService;
     @Autowired
     GenericDocumentApiService genericDocumentApiService;
     @Autowired
@@ -412,6 +415,10 @@ public abstract class BillApiServiceImpl implements BillApiService {
         this.populateCloneProposalMetadata(bill);
         documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         byte[] newXmlContent = trackChangesProcessor.acceptChange(bill, elementId, trackChangeAction);
+        this.structureContext.get().useDocumentTemplate(bill.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
+        List<TocItem> tocItemsList = this.structureContext.get().getTocItems();
+        String language = documentLanguageContext.getDocumentLanguage();
+        newXmlContent = this.numberService.renumberHigherSubDivisions(newXmlContent, language, elementTagName, tocItemsList);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
 
         final String updatedLabel = generateLabel(elementId, bill);
@@ -432,6 +439,10 @@ public abstract class BillApiServiceImpl implements BillApiService {
         this.populateCloneProposalMetadata(bill);
         documentLanguageContext.setDocumentLanguage(bill.getMetadata().get().getLanguage());
         byte[] newXmlContent = trackChangesProcessor.rejectChange(bill, elementId, trackChangeAction);
+        this.structureContext.get().useDocumentTemplate(bill.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
+        List<TocItem> tocItemsList = this.structureContext.get().getTocItems();
+        String language = documentLanguageContext.getDocumentLanguage();
+        newXmlContent = this.numberService.renumberHigherSubDivisions(newXmlContent, language, elementTagName, tocItemsList);
         newXmlContent = billProcessor.renumberingAndPostProcessing(newXmlContent);
 
         final String updatedLabel = generateLabel(elementId, bill);
