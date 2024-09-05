@@ -43,7 +43,7 @@ Then('the response status code should be 200 or match failure conditions', () =>
         } else if(response.status === 404) {
             // Handle failure conditions
             expect(response.status).to.eq(404);
-            expect(responseBody).to.include('Original proposal not found for the uploaded translated version');
+            expect(responseBody).to.include('Original act not found for the uploaded translated version');
         } else {
             // Handle failure conditions
             expect(response.status).to.eq(500);

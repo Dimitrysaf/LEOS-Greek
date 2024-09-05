@@ -89,7 +89,7 @@ Feature: Track Changes Feature
       | ins  | "B"                  |
       | text | "umbered paragraph." |
 
-  @trackChangesFromRules @local
+  @trackChangesFromRules @local @focus
   # Page with information: https://citnet.tech.ec.europa.eu/CITnet/confluence/pages/viewpage.action?spaceKey=LEOS&title=Leos+-+Track+changes
   # This test will cover: track changes scenarios 1 to 10
   Scenario: Track changes for rules in confluence
@@ -234,7 +234,7 @@ Feature: Track Changes Feature
     When click on view all acts button
     Then user is on repository browser page
     # Open first act
-    When open first act
+    When click on act 1
     Then user is on act viewer page
     # Enter in Legal Act
     When click on legal act link present in act viewer page

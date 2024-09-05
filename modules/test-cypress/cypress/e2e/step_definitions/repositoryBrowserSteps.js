@@ -14,10 +14,6 @@ When(`click on upload button`, () => {
     repositoryBrowserPage.clickUploadBtn();
 });
 
-When(`open first proposal`, () => {
-    repositoryBrowserPage.openFirstProposal();
-});
-
 When('click on act {int}', (proposalIndex) => {
     repositoryBrowserPage.clickOnNthProposal(proposalIndex);
 });
