@@ -3,7 +3,7 @@ import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { getI18nState } from '@eui/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, keys } from 'lodash-es';
 import {BehaviorSubject, combineLatest, filter, Observable, Subject, take, takeUntil} from 'rxjs';
 
 import {
@@ -507,10 +507,27 @@ export abstract class TocInlineEditMenuService implements OnDestroy {
   private isDeleteButtonDisabled(node: TableOfContentItemVO) {
     const toc = this.tocService.getCurrentToc();
     const deletedItem = isDeletedItem(node) || isMoveToItem(node);
-    return (
+    let isDeleteDisabled = (
       node.tocItem.deletable &&
       (deletedItem ? isUndeletableItem(toc, node) : isDeletableItem(toc, node))
     );
+    isDeleteDisabled &&= !this.isNodeCoEdited(node);
+    return  isDeleteDisabled ;
+
+  }
+
+  private isNodeCoEdited(node: TableOfContentItemVO){
+    let result = keys(this.coEditionForDocumentId).includes(node.id);
+    if(!result){
+      result =  keys(this.coEditionForDocumentId).some(
+        (key) =>
+          !document.querySelector(`[data-id="${key}"]`)
+          && !!document.querySelector(`#${node.id}`)
+          && Array.from(document.querySelector(`#${node.id}`).children)
+            .some((child) => child.matches(`#${key}`) )
+      );
+    }
+    return result;
   }
 
   private getDeleteButtonLabel(node: TableOfContentItemVO) {
