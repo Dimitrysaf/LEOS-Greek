@@ -8,15 +8,15 @@ Feature: Legal Act Page Regression Features
     Scenario: Add and removal of text in citation and recital element in legal Act
         Given navigate to edit drafting application with "User1"
         Then user is on home page
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         And  collapse all button is displayed in create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
         And  provide document title "Automation testing citation and recital scenarios" in create document page
         And  click on create button
-        Then user is on proposal viewer page
-        When click on legal act link present in proposal viewer page
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
@@ -44,22 +44,22 @@ Feature: Legal Act Page Regression Features
         And  recital 2 contains "New Text"
         And  recital 2 doesn't contain "Recital"
         When click on close button present in legal act page
-        Then user is on proposal viewer page
-        When click on close button on proposal viewer page
+        Then user is on act viewer page
+        When click on close button on act viewer page
         Then user is on repository browser page
 
     @splittingParagraphInArticle @local
     Scenario: append text in existing paragraph and make same paragraph into two inside article
         Given navigate to edit drafting application with "User1"
         Then user is on home page
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
         And  provide document title "Automation testing article ck editor scenario" in create document page
         And  click on create button
-        Then user is on proposal viewer page
-        When click on legal act link present in proposal viewer page
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
@@ -82,7 +82,7 @@ Feature: Legal Act Page Regression Features
         And  content of paragraph 2 of article 1 contains "New Text"
         And  content of paragraph 3 of article 1 contains "Text..."
         When click on close button present in legal act page
-        Then user is on proposal viewer page
+        Then user is on act viewer page
 
     @articleWithSingleNumberedParagraph @local
     Scenario: Article with single paragraph cannot be numbered
@@ -94,8 +94,8 @@ Feature: Legal Act Page Regression Features
         Then active upload window label contains "Document metadata"
         And  document title input field is displayed
         When click on create button in upload document page
-        Then user is on proposal viewer page
-        When click on legal act link present in proposal viewer page
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
@@ -135,8 +135,8 @@ Feature: Legal Act Page Regression Features
         Then active upload window label contains "Document metadata"
         And  document title input field is displayed
         When click on create button in upload document page
-        Then user is on proposal viewer page
-        When click on legal act link present in proposal viewer page
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
@@ -189,8 +189,8 @@ Feature: Legal Act Page Regression Features
         Then active upload window label contains "Document metadata"
         And  document title input field is displayed
         When click on create button in upload document page
-        Then user is on proposal viewer page
-        When click on legal act link present in proposal viewer page
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
@@ -241,14 +241,14 @@ Feature: Legal Act Page Regression Features
 #    Scenario: changing article from numbered to unnumbered with List creates an empty paragraph
 #        Given navigate to edit drafting application with "User1"
 #        Then user is on home page
-#        When click on create proposal button
+#        When click on Create act button
 #        Then user is on create new legislative document window
 #        When click on template "SJ-023" in create new legislative document window
 #        When click on next button in create document page
 #        And  provide document title "Automation Article Testing" in create document page
 #        And  click on create button
-#        Then user is on proposal viewer page
-#        When click on legal act link present in proposal viewer page
+#        Then user is on act viewer page
+#        When click on legal act link present in act viewer page
 #        Then user is on legal act page
 #        And  annotation side bar is present
 #        And  ribbon toolbar is displayed
@@ -295,15 +295,15 @@ Feature: Legal Act Page Regression Features
     Scenario: definition article should have maximum three depth
         Given navigate to edit drafting application with "User1"
         Then user is on home page
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
         And  provide document title "Automation Testing Definition Article" in create document page
         And  click on create button
-        Then user is on proposal viewer page
-        And  title of the proposal contains "Automation Testing Definition Article" keyword
-        When click on legal act link present in proposal viewer page
+        Then user is on act viewer page
+        And  title of the act contains "Automation Testing Definition Article" keyword
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         When click on insert after icon of article 1
@@ -473,14 +473,14 @@ Feature: Legal Act Page Regression Features
 #    Scenario: import from office journal
 #        Given navigate to edit drafting application with "User1"
 #        Then user is on home page
-#        When click on create proposal button
+#        When click on Create act button
 #        Then user is on create new legislative document window
 #        When click on template "SJ-023" in create new legislative document window
 #        When click on next button in create document page
 #        And  provide document title "Automation import OJ Testing" in create document page
 #        And  click on create button
-#        Then user is on proposal viewer page
-#        When click on legal act link present in proposal viewer page
+#        Then user is on act viewer page
+#        When click on legal act link present in act viewer page
 #        Then user is on legal act page
 #        And  annotation side bar is present
 #        And  ribbon toolbar is displayed
@@ -559,9 +559,9 @@ Feature: Legal Act Page Regression Features
         Then active upload window label contains "Document metadata"
         And  document title input field is displayed
         When click on create button in upload document page
-        Then user is on proposal viewer page
-        Then title of the proposal contains "Automation.....internal references....." keyword
-        When click on legal act link present in proposal viewer page
+        Then user is on act viewer page
+        Then title of the act contains "Automation.....internal references....." keyword
+        When click on legal act link present in act viewer page
         Then user is on legal act page
         And  annotation side bar is present
         And  ribbon toolbar is displayed
@@ -598,7 +598,7 @@ Feature: Legal Act Page Regression Features
         When click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
         When click on internal reference icon present in ck editor panel
         Then cke dialog window is displayed with title "Internal reference"
-        When click on "Having regard to the proposal from the European..." link in citations on the left side of internal reference window
+        When click on "Having regard to the act from the European..." link in citations on the left side of internal reference window
         And  click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then "second citation" is added as internal reference 1 of point 1 of list 1 of paragraph 1 of article 4

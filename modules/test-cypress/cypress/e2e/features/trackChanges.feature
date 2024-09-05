@@ -16,9 +16,9 @@ Feature: Track Changes Feature
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
-    Then user is on proposal viewer page
+    Then user is on act viewer page
     # Enter in Legal Act+
-    When click on legal act link present in proposal viewer page
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is displayed
@@ -55,8 +55,8 @@ Feature: Track Changes Feature
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
-    Then user is on proposal viewer page
-    When click on legal act link present in proposal viewer page
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is displayed
@@ -103,8 +103,8 @@ Feature: Track Changes Feature
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
-    Then user is on proposal viewer page
-    When click on collaborators tab in proposal view page
+    Then user is on act viewer page
+    When click on collaborators tab in act view page
     And  click on add button in collaborators tab
     Then user is on "Add users" window
     When provide input "demo" in name field of add users window
@@ -112,9 +112,9 @@ Feature: Track Changes Feature
     And  click on add users button
     Then "DEMO Demo" is displayed in row 2 of column name of collaborators tab
     And  "Author" is displayed in row 2 of column role of collaborators tab
-    When click on drafts tab in proposal view page
+    When click on drafts tab in act view page
     # Enter in Legal Act
-    When click on legal act link present in proposal viewer page
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is displayed
@@ -233,11 +233,11 @@ Feature: Track Changes Feature
     Then user is on home page
     When click on view all acts button
     Then user is on repository browser page
-    # Open first proposal
-    When open first proposal
-    Then user is on proposal viewer page
+    # Open first act
+    When open first act
+    Then user is on act viewer page
     # Enter in Legal Act
-    When click on legal act link present in proposal viewer page
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is displayed
@@ -309,8 +309,8 @@ Feature: Track Changes Feature
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
-    Then user is on proposal viewer page
-    When click on legal act link present in proposal viewer page
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is displayed
