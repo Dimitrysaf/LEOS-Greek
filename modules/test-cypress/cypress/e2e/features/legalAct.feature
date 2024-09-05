@@ -598,7 +598,7 @@ Feature: Legal Act Page Regression Features
         When click at offset 0 in li 1 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
         When click on internal reference icon present in ck editor panel
         Then cke dialog window is displayed with title "Internal reference"
-        When click on "Having regard to the act from the European..." link in citations on the left side of internal reference window
+        When click on "Having regard to the proposal from the European..." link in citations on the left side of internal reference window
         And  click on ok button in cke dialog window
         And  click save and close button of ck editor
         Then "second citation" is added as internal reference 1 of point 1 of list 1 of paragraph 1 of article 4
