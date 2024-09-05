@@ -244,10 +244,9 @@ export class MergeContributionsService {
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-    const queryString = `?annexIndex=${this.documentService.annexDocNumber}`;
     return this.http
       .get<ContributionVO[]>(
-        `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}${queryString}`,
+        `${apiBaseUrl}/secured/contribution/list-contributions/${documentRef}/${documentType}`,
       )
       .subscribe((contributions) => {
         const contributionsAfterGreyedOut =

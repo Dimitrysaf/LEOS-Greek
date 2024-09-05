@@ -116,7 +116,7 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
     }
 
     @Override
-    public <T extends XmlDocument> List<ContributionVO> getDocumentContributions(String documentRef, int annexIndex, Class<T> filterType) {
+    public <T extends XmlDocument> List<ContributionVO> getDocumentContributions(String documentRef, Class<T> filterType) {
         List<ContributionLegDocumentVO<T>> documentVersions = new ArrayList<>();
         LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, filterType);
         Proposal proposal = proposalService.findProposalByPackagePath(leosPackage.getPath());
@@ -149,9 +149,10 @@ public class ContributionServiceProposalImpl<T> implements ContributionService {
                         .filter(containedFile -> containedFile.startsWith(ANNEX_DOC_TYPE + "-"));
                 filesToFind.forEach(annexVersionAndName -> {
                     Annex annex = (Annex) findVersionByVersionedReference(annexVersionAndName, filterType);
-                    if (annex != null && annex.getMetadata().get().getIndex() == annexIndex) {
-                        String annexName = annex.getName();
-                        byte[] annexContent = (byte[]) legContent.get(annexName);
+                    String annexName = annex.getName();
+                    byte[] annexContent = (byte[]) legContent.get(annexName);
+                    if (annex != null && annex.getMetadata().isDefined() && annex.getMetadata().get().getClonedRef() != null
+                            && annex.getMetadata().get().getClonedRef().equals(documentRef)) {
                         ContributionLegDocumentVO<Annex> annexContributionLegDocumentVO = new ContributionLegDocumentVO<>(clonedProposal.getOriginRef(), annex,
                                 annexContent, legName, annexName, proposalRef);
                         documentVersions.add((ContributionLegDocumentVO<T>) annexContributionLegDocumentVO);

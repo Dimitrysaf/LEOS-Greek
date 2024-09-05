@@ -271,7 +271,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         // DO THE ACTUAL CALL
         annexPresenter.enter();
 
-        verify(annexService, times(4)).findAnnexByRef(docRef);
+        verify(annexService, times(3)).findAnnexByRef(docRef);
         verify(annexService).getTableOfContent(annex, TocMode.SIMPLIFIED);
         verify(userHelper).getUser("login");
 
@@ -294,7 +294,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(annexScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(annexScreen).setStructureChangeMenuItem();
         verify(annexService).getAllVersions(docId, docRef, 0, 9999);
-        verify(contributionService).getDocumentContributions(docRef, 1, Annex.class);
+        verify(contributionService).getDocumentContributions(docRef, Annex.class);
         verify(annexScreen).setDataFunctions(any(), any(), any(), any(), any(), any(), any(), any(), any());
         verify(annexScreen).setLiveDiffingRequired(anyBoolean());
         verifyNoMoreInteractions(userHelper, annexService, documentContentService, annexScreen);
@@ -358,7 +358,7 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         // DO THE ACTUAL CALL
         annexPresenter.enter();
 
-        verify(annexService, times(4)).findAnnexByRef(docRef);
+        verify(annexService, times(3)).findAnnexByRef(docRef);
         verify(annexService).getTableOfContent(annex, TocMode.SIMPLIFIED);
         verify(userHelper).getUser("login");
 
@@ -381,10 +381,10 @@ public class AnnexPresenterTest extends LeosPresenterTest {
         verify(annexScreen).initAnnotations(argThat(org.hamcrest.Matchers.hasProperty("id",equalTo(annexVO.getId()))), any(), any());
         verify(annexScreen).updateUserCoEditionInfo(coEditionVos, PRESENTER_ID);
         verify(annexScreen).setStructureChangeMenuItem();
-        verify(contributionService).getDocumentContributions(docRef, 1, Annex.class);
+        verify(contributionService).getDocumentContributions(docRef, Annex.class);
         verify(annexScreen).setDataFunctions(any(), any(), any(), any(), any(), any(), any(), any(), any());
         verify(annexService).getAllVersions(docId, docRef, 0, 9999);
-        verify(cloneContext, Mockito.times(8)).setCloneProposalMetadataVO(any());
+        verify(cloneContext, Mockito.times(7)).setCloneProposalMetadataVO(any());
         verify(annexScreen).setDocumentVersionInfo(any());
         verify(annexScreen).initTrackChanges(any());
         verify(annexScreen).setLiveDiffingRequired(anyBoolean());

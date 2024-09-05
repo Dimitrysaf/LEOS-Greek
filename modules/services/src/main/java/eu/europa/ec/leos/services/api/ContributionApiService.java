@@ -17,7 +17,7 @@ public interface ContributionApiService {
 
     Result<?> updateClonedProposalRevisionStatus(String proposalRef, String legFileId);
 
-    List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex);
+    List<ContributionVO> listContributionsForDocument(String documentRef);
 
     DocumentViewResponse compareAndShowRevision(String contextPath, String documentRef, String contributionsVersionRef, String legFileName) throws Exception;
 

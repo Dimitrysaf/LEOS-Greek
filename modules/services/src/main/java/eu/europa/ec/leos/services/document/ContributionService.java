@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface ContributionService {
 
-    <T extends XmlDocument> List<ContributionVO> getDocumentContributions(String documentId, int annexIndex, Class<T> filterType);
+    <T extends XmlDocument> List<ContributionVO> getDocumentContributions(String documentId, Class<T> filterType);
 
     Result<?> updateContributionStatusAfterContributionDone(String cloneProposalRef, String cloneLegFileId,
                                                             CloneProposalMetadataVO cloneProposalMetadataVO);

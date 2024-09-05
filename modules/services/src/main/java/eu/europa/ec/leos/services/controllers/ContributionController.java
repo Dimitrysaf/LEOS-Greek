@@ -67,10 +67,9 @@ public class ContributionController {
     @GetMapping(value = "/list-contributions/{documentRef}/{documentType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<Object> listContributionsForDocument(@PathVariable("documentRef") String documentRef,
-                                                               @PathVariable("documentType") String documentType,
-                                                               @RequestParam Integer annexIndex) {
+                                                               @PathVariable("documentType") String documentType) {
         documentRef = encodeParam(documentRef);
-        List<ContributionVO> contributions = this.contributionApiService.listContributionsForDocument(documentRef, annexIndex);
+        List<ContributionVO> contributions = this.contributionApiService.listContributionsForDocument(documentRef);
         return new ResponseEntity<>(contributions, HttpStatus.OK);
     }
 

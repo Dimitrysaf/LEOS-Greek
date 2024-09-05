@@ -257,9 +257,9 @@ public class ContributionApiServiceImpl implements ContributionApiService {
     }
 
     @Override
-    public List<ContributionVO> listContributionsForDocument(String documentRef, Integer annexIndex) {
+    public List<ContributionVO> listContributionsForDocument(String documentRef) {
         Class docClass = LeosCategoryClass.getClass(this.findDocumentByRef(documentRef).getCategory());
-        return this.contributionService.getDocumentContributions(documentRef, annexIndex, docClass);
+        return this.contributionService.getDocumentContributions(documentRef, docClass);
     }
 
     @Override
