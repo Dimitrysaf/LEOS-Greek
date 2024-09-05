@@ -19,8 +19,6 @@ Feature: financial statement page regression features
     Then user is on act viewer page
     And  title of the act contains "Automation Testing FS" keyword
     When click on add button in annexes section
-    Then total number of annexes present in proposal viewer page is 1
-    When click on milestones tab in proposal view page
     Then total number of annexes present in act viewer page is 1
     When click on milestones tab in act view page
     And  click on add button in milestones tab
