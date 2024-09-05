@@ -421,7 +421,7 @@
   "page.editor.contribution.view.actions.close-view": "Close merge view",
   "page.editor.contribution-item.updated-by": "{{ updatedOn }} {{ updatedBy }}",
   "page.editor.contribution-item.version": "Version: {{ version }}",
-  "page.editor.contribution-item.feedback.tooltip": "Some comments on this contribution were not be sent as feedback, click on 'Send feedback' to do so",
+  "page.editor.contribution-item.feedback.tooltip": "Feedback exists for this contribution as comments. Click on 'Send feedback' to finish the task",
   "page.editor.contribution.view.mark-contribution-as-processed.modal-title": "Process revision",
   "page.editor.contribution.view.mark-contribution-as-processed.modal-text": "The revision will be marked as processed",
   "page.editor.contribution.view.merge-contributions.accept-all.modal-title": "All Contribution",
