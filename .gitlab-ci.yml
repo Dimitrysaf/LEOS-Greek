@@ -37,12 +37,12 @@ java-build:
       - "**/target"
       - "**/package-lock.json"
       - "**/yarn.lock"
-  cache:
-    paths:
-      - $CI_PROJECT_DIR/.m2
-      - $CI_PROJECT_DIR/.yarn
-      - $CI_PROJECT_DIR/.npm
-    policy: pull-push
+#  cache:
+#    paths:
+#      - $CI_PROJECT_DIR/.m2
+#      - $CI_PROJECT_DIR/.yarn
+#      - $CI_PROJECT_DIR/.npm
+#    policy: pull-push
   rules:
     - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     - if: $CI_PIPELINE_SOURCE == "web"

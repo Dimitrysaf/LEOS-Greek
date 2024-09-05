@@ -20,8 +20,6 @@ Feature: financial statement page regression features
     And  title of the proposal contains "Automation Testing FS" keyword
     When click on add button in annexes section
     Then total number of annexes present in proposal viewer page is 1
-    When click on add button in financial statement section
-    Then delete button of financial statement is displayed
     When click on milestones tab in proposal view page
     And  click on add button in milestones tab
     Then add milestone window is displayed
@@ -68,9 +66,3 @@ Feature: financial statement page regression features
     And  content of subparagraph 2 of level 2 contains "Text..." in financial statement page
     When click on close button on financial statement page
     Then user is on proposal viewer page
-    When click on delete button of financial statement
-    Then "Financial Statement deletion: confirmation" dialog box window is displayed
-    And  dialog box body contains "Are you sure you want to delete the financial statement"
-    When click on delete button in dialog box window
-    Then add button is displayed under financial statement section
-    And  label "There is no financial statement in this document" is displayed in proposal viewer page

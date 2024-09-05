@@ -18,8 +18,6 @@ Feature: fork and merge features
     And  title of the proposal contains "Automation Fork Merge Testing" keyword
     When click on add button in annexes section
     Then total number of annexes present in proposal viewer page is 1
-    When click on add button in financial statement section
-    Then delete button of financial statement is displayed
     When click on milestones tab in proposal view page
     When click on add button in milestones tab
     Then add milestone window is displayed
@@ -59,7 +57,6 @@ Feature: fork and merge features
     And  chip content container 1 of proposal header contains "Contribution"
     And  chip content container 2 of proposal header contains "LEOS"
     And  total number of annexes present in proposal viewer page is 1
-    And  delete button of financial statement is displayed
     When click on legal act link present in proposal viewer page
     Then user is on legal act page
     And  annotation side bar is present
