@@ -445,6 +445,7 @@ export class DocumentService {
         },
       )
       .subscribe((resp) => this.handleDownloadResponse(resp));
+    this.notifyExportEmailSent();
   }
 
   toggleTrackChangesEnabled(trackChangedEnabled) {
@@ -567,6 +568,7 @@ export class DocumentService {
         },
       )
       .subscribe((resp) => this.handleDownloadResponse(resp));
+    this.notifyExportEmailSent();
   }
 
   compareDocumentsExportAsPdf(
@@ -588,6 +590,7 @@ export class DocumentService {
         },
       )
       .subscribe((resp: any) => this.handleDownloadResponse(resp));
+    this.notifyExportEmailSent();
   }
 
   compareDocumentsDownloadXML(
@@ -613,6 +616,7 @@ export class DocumentService {
         },
       )
       .subscribe((resp) => this.handleDownloadResponse(resp));
+    this.notifyExportEmailSent();
   }
 
   compareDocumentsDownloadPDF(
@@ -634,6 +638,7 @@ export class DocumentService {
         },
       )
       .subscribe((resp: any) => this.handleDownloadResponse(resp));
+    this.notifyExportEmailSent();
   }
 
   reloadDocument() {
