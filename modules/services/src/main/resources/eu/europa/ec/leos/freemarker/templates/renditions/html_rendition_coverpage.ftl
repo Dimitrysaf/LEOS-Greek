@@ -26,6 +26,9 @@
 
 <html>
 <head>
+    <#if trackchanges_css??>
+        ${trackchanges_css}
+    </#if>
     <meta charset="UTF-8"/>
     <link href="css/${styleSheetName}" rel="stylesheet" type="text/css" />
 

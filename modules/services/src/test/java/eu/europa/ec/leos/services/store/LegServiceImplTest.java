@@ -534,7 +534,7 @@ public class LegServiceImplTest {
         when(htmlRenditionProcessor.processTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processJsTemplate(any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processTocTemplate(any(), any(), any())).thenReturn(StringUtils.EMPTY);
-        when(htmlRenditionProcessor.processCoverPage(any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processCoverPage(any(), any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processCoverPageTocTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
         when(annotateService.getAnnotations(any(), any())).thenReturn(StringUtils.EMPTY);
         when(documentContentService.isCoverPageExists(any())).thenReturn(true);
@@ -574,7 +574,7 @@ public class LegServiceImplTest {
         when(htmlRenditionProcessor.processTemplate(any(), any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processJsTemplate(any())).thenReturn(StringUtils.EMPTY);
         when(htmlRenditionProcessor.processTocTemplate(any(), any(), any())).thenReturn(StringUtils.EMPTY);
-        when(htmlRenditionProcessor.processCoverPage(any())).thenReturn(StringUtils.EMPTY);
+        when(htmlRenditionProcessor.processCoverPage(any(), any())).thenReturn(StringUtils.EMPTY);
 
         // Expected
         String hrefMemorandon = "memorandum_ckn9773is000ywn567lsopipc.xml";

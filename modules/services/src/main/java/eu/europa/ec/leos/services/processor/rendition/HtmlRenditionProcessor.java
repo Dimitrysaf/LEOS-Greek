@@ -38,13 +38,14 @@ public class HtmlRenditionProcessor {
         return processTocTemplate(document, null, trackchangesCss);
     }
 
-    public String processCoverPage(RenderedDocument document) {
+    public String processCoverPage(RenderedDocument document,  String trackchangesCss) {
         try{
             final Template template = getTemplate(coverPageRenditionTemplate);
             final NodeModel nodeModel = XmlNodeModelHandler.parseXmlStream(document.getContent());
             final Map root = new HashMap<String, Object>();
             root.put("styleSheetName", document.getStyleSheetName());
             root.put("cover_data", nodeModel);
+            root.put("trackchanges_css", trackchangesCss);
             return process(template, root);
         } catch (Exception exception) {
             throw new RuntimeException(exception.getMessage());
