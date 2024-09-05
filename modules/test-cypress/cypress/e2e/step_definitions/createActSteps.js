@@ -1,27 +1,27 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 require('@cypress/xpath');
-import createProposalPage from "../pages/createProposalPage";
+import createActPage from "../pages/createActPage";
 
 Then('user is on create new legislative document window', () => {
-    createProposalPage.elements.dialogHeader().should('be.visible');
+    createActPage.elements.dialogHeader().should('be.visible');
 })
  
 When('click on template {string} in create new legislative document window', (templateName) => {
-    createProposalPage.clickTemplateByName(templateName);
+    createActPage.clickTemplateByName(templateName);
 })
 
 When('click on next button in create document page', () => {
-    createProposalPage.clickNextBtn();
+    createActPage.clickNextBtn();
 })
 
 And('provide document title {string} in create document page', (title) => {
-    createProposalPage.enterProposalTitle(title);
+    createActPage.enterProposalTitle(title);
 })
 
 And('click on create button', () => {
-    createProposalPage.clickCreateBtn();
+    createActPage.clickCreateBtn();
 })
 
 Then(/^collapse all button is displayed in create new legislative document window$/, function () {
-    createProposalPage.elements.collapseAllBtn().should('be.visible');
+    createActPage.elements.collapseAllBtn().should('be.visible');
 });

@@ -10,18 +10,18 @@ Feature: milestone section regression features
 
     @validateMilestoneExplorer @local
     Scenario: validate milestone explorer
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
         And  provide document title "Automation Testing Validate PDF in MileStone Explorer" in create document page
         And  click on create button
-        Then user is on proposal viewer page
+        Then user is on act viewer page
         When click on add button in annexes section
-        Then total number of annexes present in proposal viewer page is 1
+        Then total number of annexes present in act viewer page is 1
         When click on add button in annexes section
-        Then total number of annexes present in proposal viewer page is 2
-        When click on milestones tab in proposal view page
+        Then total number of annexes present in act viewer page is 2
+        When click on milestones tab in act view page
         And  click on add button in milestones tab
         Then add milestone window is displayed
         When click on milestone type dropdown
@@ -36,10 +36,10 @@ Feature: milestone section regression features
         And  content of milestone title textbox is "Revision after Interservice Consultation"
         When click on milestone type dropdown
         When click on option "Other" from milestone type dropdown
-        And  type "Commission proposal" in milestone title textBox
+        And  type "Commission act" in milestone title textBox
         When click on create milestone button
         Then successful message contains "Milestone created"
-        And  "Commission proposal" is showing under title column of row 1 of milestones table
+        And  "Commission act" is showing under title column of row 1 of milestones table
         And  "File ready" is showing under status column of row 1 of milestones table
         When click on three dots under actions column of row 1 of milestones table
         Then below options are displayed under milestone actions
@@ -58,27 +58,27 @@ Feature: milestone section regression features
             | Annex 2  [1.0.0]                |
 
         When click on close button in milestone explorer view
-        Then user is on proposal viewer page
+        Then user is on act viewer page
 
     @exportBtnInMilestoneExplorer @nonlocal
     Scenario: navigate to legal act page
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
         And  provide document title "Automation testing article ck editor scenario" in create document page
         And  click on create button
-        Then user is on proposal viewer page
-        When click on milestones tab in proposal view page
+        Then user is on act viewer page
+        When click on milestones tab in act view page
         And  click on add button in milestones tab
         Then add milestone window is displayed
         When click on milestone type dropdown
         Then "For Interservice Consultation" option is selected by default
         When click on option "Other" from milestone type dropdown
-        And  type "Commission proposal" in milestone title textBox
+        And  type "Commission act" in milestone title textBox
         When click on create milestone button
         Then successful message contains "Milestone created"
-        And  "Commission proposal" is showing under title column of row 1 of milestones table
+        And  "Commission act" is showing under title column of row 1 of milestones table
         And  "In Preparation" is showing under status column of row 1 of milestones table
         And  successful message contains "Milestone status has been updated"
         And  "File ready" is showing under status column of row 1 of milestones table
@@ -109,4 +109,4 @@ Feature: milestone section regression features
 #             | ANNEX I                                                                                 |
 #             | ANNEX II                                                                                |
         When click on close button in milestone explorer view
-        Then user is on proposal viewer page
+        Then user is on act viewer page

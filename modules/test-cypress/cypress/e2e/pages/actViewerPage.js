@@ -1,4 +1,4 @@
-class proposalViewerPage {
+class actViewerPage {
     elements = {
         proposalTitle: () => cy.get('app-proposal-header h1'),
         //favouriteIconBtn: () => cy.get('eui-icon.eui-icon--size-l'),
@@ -116,6 +116,6 @@ class proposalViewerPage {
         this.elements.collaboratorsTab().click();
     }
 }
-export default new proposalViewerPage();
+export default new actViewerPage();
 
 import '@cypress/xpath';

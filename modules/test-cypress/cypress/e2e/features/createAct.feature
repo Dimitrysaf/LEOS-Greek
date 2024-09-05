@@ -1,22 +1,22 @@
 #Author: Satyabrata Das
-#Keywords Summary : Testing different functionalities related to create proposal in drafting instance
+#Keywords Summary : Testing different functionalities related to create act in drafting instance
 
 @createProposalScenarios
-Feature: create proposal regression features
+Feature: create act regression features
 
     @createProposalByUploadingAndDownloadingLegFile @local
-    Scenario Outline: user is able to create the proposal using different templates successfully
+    Scenario Outline: user is able to create the act using different templates successfully
         Given navigate to edit drafting application with "User1"
         Then user is on home page
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         When click on template "<templateProposal>" in create new legislative document window
         When click on next button in create document page
         And  provide document title "<oldProposalName>" in create document page
         And  click on create button
-        Then user is on proposal viewer page
+        Then user is on act viewer page
         When click on add button in annexes section
-        Then total number of annexes present in proposal viewer page is 1
+        Then total number of annexes present in act viewer page is 1
         When click on actions button
         And  click on download button
         And  extract recent "zip" file present in download folder
@@ -29,10 +29,10 @@ Feature: create proposal regression features
         And  document title input field is displayed
         When provide document title "<NewProposalName>" in upload document page
         When click on create button in upload document page
-        Then user is on proposal viewer page
-        And  title of the proposal contains "<NewProposalName>" keyword
-        And  total number of annexes present in proposal viewer page is 1
-        When click on close button on proposal viewer page
+        Then user is on act viewer page
+        And  title of the act contains "<NewProposalName>" keyword
+        And  total number of annexes present in act viewer page is 1
+        When click on close button on act viewer page
         Then user is on repository browser page
         Examples:
             | templateProposal | oldProposalName              | NewProposalName              |

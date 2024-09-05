@@ -5,18 +5,22 @@
 Feature: fork and merge features
 
   @nonSupportUserAccessToCloneProposal @local
-  Scenario: test fork and merge of a proposal
+  Scenario: test fork and merge of a act
     Given navigate to edit drafting application with "User1"
     Then user is on home page
-    When click on create proposal button
+    When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
     And  provide document title "Automation Fork Merge Testing" in create document page
     And  click on create button
-    Then user is on proposal viewer page
-    And  title of the proposal contains "Automation Fork Merge Testing" keyword
+    Then user is on act viewer page
+    And  title of the act contains "Automation Fork Merge Testing" keyword
     When click on add button in annexes section
+    Then total number of annexes present in act viewer page is 1
+    When click on add button in financial statement section
+    Then delete button of financial statement is displayed
+    When click on milestones tab in act view page
     Then total number of annexes present in proposal viewer page is 1
     When click on milestones tab in proposal view page
     When click on add button in milestones tab
@@ -25,10 +29,10 @@ Feature: fork and merge features
     Then "For Interservice Consultation" option is selected by default
     Then milestone title textBox is disabled
     When click on option "Other" from milestone type dropdown
-    And  type "Commission proposal" in milestone title textBox
+    And  type "Commission act" in milestone title textBox
     When click on create milestone button
     Then successful message contains "Milestone created"
-    And  "Commission proposal" is showing under title column of row 1 of milestones table
+    And  "Commission act" is showing under title column of row 1 of milestones table
     And  "File ready" is showing under status column of row 1 of milestones table
     When click on three dots under actions column of row 1 of milestones table
     Then below options are displayed under milestone actions
@@ -50,14 +54,14 @@ Feature: fork and merge features
     Then  user is on home page
     When  click on view all acts button
     Then  user is on repository browser page
-    And  name of proposal 1 contains "Automation Fork Merge Testing"
-    And  contribution status of proposal 1 contains "Sent for contribution"
-    When click on proposal 1
-    Then user is on proposal viewer page
-    And  chip content container 1 of proposal header contains "Contribution"
-    And  chip content container 2 of proposal header contains "LEOS"
-    And  total number of annexes present in proposal viewer page is 1
-    When click on legal act link present in proposal viewer page
+    And  name of act 1 contains "Automation Fork Merge Testing"
+    And  contribution status of act 1 contains "Sent for contribution"
+    When click on act 1
+    Then user is on act viewer page
+    And  chip content container 1 of act header contains "Contribution"
+    And  chip content container 2 of act header contains "LEOS"
+    And  total number of annexes present in act viewer page is 1
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  ribbon toolbar is displayed
@@ -85,10 +89,10 @@ Feature: fork and merge features
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
-    Then user is on proposal viewer page
+    Then user is on act viewer page
     When click on add button in annexes section
-    Then total number of annexes present in proposal viewer page is 1
-    When click on milestones tab in proposal view page
+    Then total number of annexes present in act viewer page is 1
+    When click on milestones tab in act view page
     When click on add button in milestones tab
     And  click on create milestone button
     Then successful message contains "Milestone created"
@@ -102,11 +106,11 @@ Feature: fork and merge features
     Then successful message contains "Copy sent for contribution"
     When click on workspace button in breadcrumb item
     Then user is on repository browser page
-    When click on proposal 2
-    Then user is on proposal viewer page
-    And  chip content container 1 of proposal header contains "Contribution"
-    And  chip content container 2 of proposal header contains "LEOS"
-    When click on legal act link present in proposal viewer page
+    When click on act 2
+    Then user is on act viewer page
+    And  chip content container 1 of act header contains "Contribution"
+    And  chip content container 2 of act header contains "LEOS"
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  enable track changes toggle bar is on in ribbon toolbar
@@ -214,8 +218,8 @@ Feature: fork and merge features
     Then active upload window label contains "Document metadata"
     And  document title input field is displayed
     When click on create button in upload document page
-    Then user is on proposal viewer page
-    When click on milestones tab in proposal view page
+    Then user is on act viewer page
+    When click on milestones tab in act view page
     When click on add button in milestones tab
     And  click on create milestone button
     Then successful message contains "Milestone created"
@@ -229,11 +233,11 @@ Feature: fork and merge features
     Then successful message contains "Copy sent for contribution"
     When click on workspace button in breadcrumb item
     Then user is on repository browser page
-    When click on proposal 2
-    Then user is on proposal viewer page
-    And  chip content container 1 of proposal header contains "Contribution"
-    And  chip content container 2 of proposal header contains "LEOS"
-    When click on legal act link present in proposal viewer page
+    When click on act 2
+    Then user is on act viewer page
+    And  chip content container 1 of act header contains "Contribution"
+    And  chip content container 2 of act header contains "LEOS"
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     And  enable track changes toggle bar is on in ribbon toolbar
@@ -270,8 +274,8 @@ Feature: fork and merge features
     And "Chapter 3" is showing as inserted in num of chapter 3 of bill
     And "MOVED from Chapter 1" is showing as soft move label in num of chapter 3 of bill
     When click on close button present in legal act page
-    Then user is on proposal viewer page
-    When click on milestones tab in proposal view page
+    Then user is on act viewer page
+    When click on milestones tab in act view page
     When click on add button in milestones tab
     And  click on create milestone button
     Then successful message contains "Contribution from Legal Service has been created"
@@ -282,9 +286,9 @@ Feature: fork and merge features
     Then successful message contains "Contribution sent"
     When click on workspace button in breadcrumb item
     Then user is on repository browser page
-    When click on proposal 1
-    Then user is on proposal viewer page
-    When click on legal act link present in proposal viewer page
+    When click on act 1
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  annotation side bar is present
     When click on contributions pane accordion

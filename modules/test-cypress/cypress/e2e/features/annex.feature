@@ -10,42 +10,42 @@ Feature: Annex Page Regression Features
 
     @annexOperations @local
     Scenario: create, delete of annexes and edit of text inside annex
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
         And  provide document title "Automation Annex Numbering Testing" in create document page
         And  click on create button
-        Then user is on proposal viewer page
+        Then user is on act viewer page
         And  cover page link is present
         And  explanatory memorandum link is present
         And  legal act link is present
         And  annexes section is present
         And  there is no annex in annexes section
         When click on add button in annexes section
-        Then total number of annexes present in proposal viewer page is 1
+        Then total number of annexes present in act viewer page is 1
         When click on annex 1 link
         Then annotation side bar is present
         And  user is on annex page
         And  annex title is "Annex"
         When click on close button present in annex page
-        Then user is on proposal viewer page
+        Then user is on act viewer page
         When click on add button in annexes section
-        Then total number of annexes present in proposal viewer page is 2
+        Then total number of annexes present in act viewer page is 2
         When click on annex 1 link
         Then annotation side bar is present
         And  user is on annex page
         And  annex title is "Annex I"
         When click on close button present in annex page
-        Then user is on proposal viewer page
+        Then user is on act viewer page
         When click on annex 2 link
         Then annotation side bar is present
         And  user is on annex page
         And  annex title is "Annex II"
         When click on close button present in annex page
-        Then user is on proposal viewer page
+        Then user is on act viewer page
         When click on add button in annexes section
-        Then total number of annexes present in proposal viewer page is 3
+        Then total number of annexes present in act viewer page is 3
 #        When click on action icon of annex 1
 #        And  click on change title button
 #        Then "Edit title" dialog box window is displayed
@@ -141,26 +141,26 @@ Feature: Annex Page Regression Features
         And  content of paragraph 3 of article 1 contains "Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc"
         ###################################### END ## LEOS-5980 ####################################
         When click on close button present in annex page
-        Then user is on proposal viewer page
+        Then user is on act viewer page
         When click on action icon of annex 1
         And  click on delete button in action menu
         Then "Annex deletion confirm" dialog confirm box window is displayed
         When click on danger button in dialog box window
-        Then total number of annexes present in proposal viewer page is 2
+        Then total number of annexes present in act viewer page is 2
 #        And  title of annex 1 contains "Annex 2"
 #        And  title of annex 2 contains "Annex 3"
 
     @paragraphLevelValidation @local
     Scenario: issues/1920 AKN4EU 4.1.1 : A paragraph cannot have as nearest preceding sibling a level
-        When click on create proposal button
+        When click on Create act button
         Then user is on create new legislative document window
         When click on template "SJ-023" in create new legislative document window
         When click on next button in create document page
         And  provide document title "paragraph level validation" in create document page
         And  click on create button
-        Then user is on proposal viewer page
+        Then user is on act viewer page
         When click on add button in annexes section
-        Then total number of annexes present in proposal viewer page is 1
+        Then total number of annexes present in act viewer page is 1
         When click on annex 1 link
         Then user is on annex page
         And  ribbon toolbar is displayed
