@@ -49,10 +49,11 @@ Feature: proposal viewer page Regression Features
         And  extract recent "zip" file present in download folder
         And  extract recent "leg" file present in download folder
         Then xml files having separator "-" present in download folder contain below names
-            | fileName        |
-            | ANNEX           |
-            | ANNEX           |
-            | EXPL_MEMORANDUM |
-            | main            |
-            | REG             |
+            | fileName          |
+            | STAT_FINANC_LEGIS |
+            | ANNEX             |
+            | ANNEX             |
+            | EXPL_MEMORANDUM   |
+            | main              |
+            | REG               |
 

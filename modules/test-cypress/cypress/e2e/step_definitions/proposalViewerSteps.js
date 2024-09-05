@@ -87,7 +87,7 @@ When(`click on explanatory memorandum link present in proposal viewer page`, fun
     proposalViewerPage.clickExpMemoLink();
 });
 
-When(`click on add button in financial statement section`, function () {
+/*When(`click on add button in financial statement section`, function () {
     proposalViewerPage.clickAddFinancialStatementBtn();
 });
 
@@ -97,7 +97,7 @@ Then(`delete button of financial statement is displayed`, function () {
 
 Then(`add button is displayed under financial statement section`, function () {
     proposalViewerPage.elements.addFinancialStatementBtn().should('be.visible');
-});
+});*/
 
 When(`click on delete button of financial statement`, function () {
     proposalViewerPage.clickDeleteFinancialStatementBtn();
