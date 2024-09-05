@@ -18,7 +18,7 @@ import java.util.List;
 public class ContributionServiceMandateImpl implements ContributionService {
 
     @Override
-    public <T extends XmlDocument> List<ContributionVO> getDocumentContributions(String documentId, int annexIndex, Class<T> filterType) {
+    public <T extends XmlDocument> List<ContributionVO> getDocumentContributions(String documentId, Class<T> filterType) {
         return Arrays.asList();
     }
 

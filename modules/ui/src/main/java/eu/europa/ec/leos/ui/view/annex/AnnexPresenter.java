@@ -488,7 +488,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
     private void populateVersionsData(Annex annex) {
         DocumentVO annexVO = createAnnexVO(annex);
         final List<VersionVO> allVersions = getVersionVOS();
-        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, getDocument().getMetadata().get().getIndex(), Annex.class);
+        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, Annex.class);
         annexScreen.setDataFunctions(
                 annexVO,
                 allVersions,
@@ -1326,7 +1326,7 @@ class AnnexPresenter extends AbstractLeosPresenter {
         Map<String, Object> properties = new HashMap<>();
         properties.put(repositoryPropertiesMapper.getId(RepositoryProperties.CONTRIBUTION_STATUS), ContributionVO.ContributionStatus.CONTRIBUTION_DONE.getValue());
         annexService.updateAnnex(revision.getMetadata().get().getRef(), revision.getId(), properties, false);
-        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, getDocument().getMetadata().get().getIndex(), Annex.class);
+        final List<ContributionVO> allContributions = contributionService.getDocumentContributions(documentRef, Annex.class);
         annexScreen.populateContributions(allContributions);
         eventBus.post(new RefreshDocumentEvent());
         eventBus.post(new NotificationEvent(Type.INFO, msgKey));

@@ -1265,7 +1265,7 @@ public abstract class ApiServiceImpl implements ApiService {
                             }
                         }
                     }
-                    if (isModifiedXmlContent(xmlContent)) {
+                    if (isModifiedXmlContent(xmlContent) && milestoneView.getContentStatus() == null) {
                         milestoneView.setContentStatus("Modified");
                     }
                 }

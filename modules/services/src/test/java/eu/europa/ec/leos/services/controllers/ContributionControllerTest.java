@@ -107,12 +107,12 @@ public class ContributionControllerTest {
 
     @Test
     public void listContributionsForDocument() {
-        when(contributionApiService.listContributionsForDocument(DOCUMENT_REF, 0)).thenReturn(new ArrayList<>());
+        when(contributionApiService.listContributionsForDocument(DOCUMENT_REF)).thenReturn(new ArrayList<>());
 
-        ResponseEntity<Object> response = contributionController.listContributionsForDocument(DOCUMENT_REF, "ANNEX", 0);
+        ResponseEntity<Object> response = contributionController.listContributionsForDocument(DOCUMENT_REF, "ANNEX");
 
         //verify that the service has been called with the correct params
-        verify(contributionApiService, times(1)).listContributionsForDocument(DOCUMENT_REF, 0);
+        verify(contributionApiService, times(1)).listContributionsForDocument(DOCUMENT_REF);
         
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
