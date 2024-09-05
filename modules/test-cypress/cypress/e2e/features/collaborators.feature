@@ -8,14 +8,14 @@ Feature: collaborator section regression features
   Scenario: User with reviewer role should not edit TOC or action menu
     Given navigate to edit drafting application with "User1"
     Then user is on home page
-    When click on create proposal button
+    When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
     And  provide document title "Reviewer role access testing" in create document page
     And  click on create button
-    Then user is on proposal viewer page
-    When click on legal act link present in proposal viewer page
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
     Then user is on legal act page
     And  toc editing button is displayed and enabled
     And  ribbon toolbar is displayed
@@ -30,8 +30,8 @@ Feature: collaborator section regression features
       | Revert to this version |
       | Export this version    |
     When click on close button present in legal act page
-    Then user is on proposal viewer page
-    When click on collaborators tab in proposal view page
+    Then user is on act viewer page
+    When click on collaborators tab in act view page
     Then active tab name is "Collaborators"
     When click on add button in collaborators tab
     Then user is on "Add users" window
@@ -45,10 +45,10 @@ Feature: collaborator section regression features
     Then  user is on home page
     When  click on view all acts button
     Then  user is on repository browser page
-    And   name of proposal 1 contains "Reviewer role access testing"
-    When  click on proposal 1
-    Then  user is on proposal viewer page
-    When  click on legal act link present in proposal viewer page
+    And   name of act 1 contains "Reviewer role access testing"
+    When  click on act 1
+    Then  user is on act viewer page
+    When  click on legal act link present in act viewer page
     Then  user is on legal act page
     And   ribbon toolbar is displayed
     And   toc editing button is not present

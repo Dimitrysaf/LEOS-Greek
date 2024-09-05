@@ -1,7 +1,7 @@
 import {Given, Then } from "cypress-cucumber-preprocessor/steps";
 import FormData from 'form-data';
 
-Given('Send a POST request to import proposal', () => {
+Given('Send a POST request to import act', () => {
     let url, bearerToken;
     if(Cypress.env('CE_ENV').includes('@local')) {
         url = Cypress.env('localImportProposalApiUrl');
@@ -43,7 +43,7 @@ Then('the response status code should be 200 or match failure conditions', () =>
         } else if(response.status === 404) {
             // Handle failure conditions
             expect(response.status).to.eq(404);
-            expect(responseBody).to.include('Original proposal not found for the uploaded translated version');
+            expect(responseBody).to.include('Original act not found for the uploaded translated version');
         } else {
             // Handle failure conditions
             expect(response.status).to.eq(500);

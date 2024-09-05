@@ -6,7 +6,7 @@ Then('user is on repository browser page', () => {
     headerPage.getCurrentPageName().should("have.text", "Workspace");
 })
 
-When('click on create proposal button', () => {
+When('click on Create act button', () => {
     repositoryBrowserPage.clickCreateProposalBtn();
 })
 
@@ -14,11 +14,7 @@ When(`click on upload button`, () => {
     repositoryBrowserPage.clickUploadBtn();
 });
 
-When(`open first proposal`, () => {
-    repositoryBrowserPage.openFirstProposal();
-});
-
-When('click on proposal {int}', (proposalIndex) => {
+When('click on act {int}', (proposalIndex) => {
     repositoryBrowserPage.clickOnNthProposal(proposalIndex);
 });
 
@@ -26,10 +22,10 @@ When(`upload button is not present`, () => {
     repositoryBrowserPage.elements.uploadBtn().should('not.exist');
 });
 
-Then('name of proposal {int} contains {string}', (proposalIndex, name) => {
+Then('name of act {int} contains {string}', (proposalIndex, name) => {
     repositoryBrowserPage.getNameOfProposal(proposalIndex).should('include.text', name);
 });
 
-Then('contribution status of proposal {int} contains {string}', (proposalIndex, status) => {
+Then('contribution status of act {int} contains {string}', (proposalIndex, status) => {
     repositoryBrowserPage.getRightContentOfProposal(proposalIndex).should('include.text', status)
 });

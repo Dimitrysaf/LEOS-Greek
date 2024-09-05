@@ -10,17 +10,17 @@ Feature: financial statement page regression features
 
   @addAndDeleteFinancialStatement @local
   Scenario: add section for financial statement document on Proposal Screen
-    When click on create proposal button
+    When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
     And  provide document title "Automation Testing FS" in create document page
     And  click on create button
-    Then user is on proposal viewer page
-    And  title of the proposal contains "Automation Testing FS" keyword
+    Then user is on act viewer page
+    And  title of the act contains "Automation Testing FS" keyword
     When click on add button in annexes section
-    Then total number of annexes present in proposal viewer page is 1
-    When click on milestones tab in proposal view page
+    Then total number of annexes present in act viewer page is 1
+    When click on milestones tab in act view page
     And  click on add button in milestones tab
     Then add milestone window is displayed
     When click on create milestone button
@@ -37,10 +37,10 @@ Feature: financial statement page regression features
       | Financial Statement  [1.0.0]    |
       | Annex 1  [1.0.0]                |
     When click on close button in milestone explorer view
-    Then user is on proposal viewer page
-    When click on drafts tab in proposal view page
+    Then user is on act viewer page
+    When click on drafts tab in act view page
     Then active tab name is "Drafts"
-    When click on financial statement link present in proposal viewer page
+    When click on financial statement link present in act viewer page
     Then user is on financial statement page
     And  doctype is "LEGISLATIVE FINANCIAL STATEMENT"
     And  annotation side bar is present
@@ -65,4 +65,4 @@ Feature: financial statement page regression features
     And  content of subparagraph 1 of level 2 contains "text" in financial statement page
     And  content of subparagraph 2 of level 2 contains "Text..." in financial statement page
     When click on close button on financial statement page
-    Then user is on proposal viewer page
+    Then user is on act viewer page

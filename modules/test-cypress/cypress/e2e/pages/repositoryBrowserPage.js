@@ -2,8 +2,8 @@ class repositoryBrowserPage {
     elements = {
         proposalTable: () => cy.get('app-proposal-item'),
         proposalLink: () => this.elements.proposalTable().find('a'),
-        createProposalBtn: () => cy.contains('Create Proposal'),
-        uploadBtn: () => cy.contains('Upload'),
+        createProposalBtn: () => cy.contains('Create act'),
+        uploadBtn: () => cy.contains('Upload act'),
         searchFilterInputBtn: () => cy.get("input[placeholder='Search for a proposal']"),
     }
 
@@ -22,7 +22,7 @@ class repositoryBrowserPage {
 
     clickOnNthProposal(proposalIndex) {
         this.elements.proposalLink().each(($ele, index) => {
-            if (index == proposalIndex-1) {
+            if (index === proposalIndex-1) {
                 cy.wrap($ele).click();
                 cy.wait(500);
             }

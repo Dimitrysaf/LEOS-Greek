@@ -10,14 +10,14 @@ Feature: explanatory memorandum page regression features
 
   @basicExpMemoScenario @local
   Scenario: edition of elements in explanatory memorandum
-    When click on create proposal button
+    When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
     And  provide document title "Automation Exp Memo Testing" in create document page
     And  click on create button
-    Then user is on proposal viewer page
-    When click on explanatory memorandum link present in proposal viewer page
+    Then user is on act viewer page
+    When click on explanatory memorandum link present in act viewer page
     Then user is on explanatory memorandum page
     And  annotation side bar is present
     And  ribbon toolbar is displayed
@@ -54,4 +54,4 @@ Feature: explanatory memorandum page regression features
     When click on see user guidance toggle bar
     Then user guidance is not present in the explanatory document container
     When click on close button on explanatory memorandum page
-    Then user is on proposal viewer page
+    Then user is on act viewer page
