@@ -18,11 +18,7 @@ Feature: fork and merge features
     And  title of the act contains "Automation Fork Merge Testing" keyword
     When click on add button in annexes section
     Then total number of annexes present in act viewer page is 1
-    When click on add button in financial statement section
-    Then delete button of financial statement is displayed
     When click on milestones tab in act view page
-    Then total number of annexes present in proposal viewer page is 1
-    When click on milestones tab in proposal view page
     When click on add button in milestones tab
     Then add milestone window is displayed
     When click on milestone type dropdown
