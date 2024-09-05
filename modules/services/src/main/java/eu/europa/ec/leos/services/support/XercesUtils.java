@@ -54,6 +54,9 @@ import static eu.europa.ec.leos.services.support.XmlHelper.INLINE;
 import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_DELETE;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
@@ -698,6 +701,18 @@ public class XercesUtils {
     public static boolean isSoftChanged(Node node, SoftActionType softActionType) {
         SoftActionType attrValue = getAttributeForSoftAction(node, LEOS_SOFT_ACTION_ATTR);
         return attrValue != null && attrValue.equals(softActionType);
+    }
+
+    public static boolean isTCDeleted(Node node) {
+        return XercesUtils.hasAttribute(node, LEOS_ACTION_ATTR) && XercesUtils.getAttributeValue(node, LEOS_ACTION_ATTR).equals(LEOS_TC_DELETE_ACTION);
+    }
+
+    public static boolean isSoftDeleted(Node node) {
+        return XercesUtils.hasAttribute(node, LEOS_SOFT_ACTION_ATTR) && XercesUtils.getAttributeValue(node, LEOS_SOFT_ACTION_ATTR).equals(LEOS_SOFT_ACTION_DELETE);
+    }
+
+    public static boolean isSoftMovedTo(Node node) {
+        return XercesUtils.hasAttribute(node, LEOS_SOFT_MOVE_TO);
     }
 
     public static boolean checkAttributeValue(Node node, String attribute, String attributeValue) {

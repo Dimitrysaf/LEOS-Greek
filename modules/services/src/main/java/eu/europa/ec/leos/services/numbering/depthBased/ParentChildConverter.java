@@ -65,15 +65,48 @@ public class ParentChildConverter {
             if (i == 0) {
                 lastNode = nodeList.get(i);
             }
-            lastNode = findChildrenForNode(basedOnDepthList, nodeList, lastNode);
+            if (isNodeRemoved(lastNode)) {
+                // A deleted node cannot be parent
+                ParentChildNode prevLastNode = lastNode;
+                if (!nodeList.isEmpty()) {
+                    if (i == 0) {
+                        addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
+                        nodeList.remove(0);
+                        i++;
+                    }
+                    lastNode = nodeList.remove(0);
+                    if (lastNode.getDepth() > prevLastNode.getDepth() || isNodeRemoved(lastNode)) {
+                        addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
+                        lastNode.setDepth(prevLastNode.getDepth() != null ? prevLastNode.getDepth() : 1);
+                        XercesUtils.addAttribute(lastNode.getNode(), LEOS_DEPTH_ATTR, String.valueOf(lastNode.getDepth()));
+                    } else if (!nodeList.isEmpty()) {
+                        if (lastNode.getDepth() == prevLastNode.getDepth()) {
+                            addSiblingOrInRoot(basedOnDepthList, prevLastNode, lastNode);
+                        } else {
+                            addChildAtDepth(basedOnDepthList, lastNode);
+                        }
+                        // As we treat it here, we have to skip one
+                        i++;
+                        lastNode = findChildrenForNode(basedOnDepthList, nodeList, lastNode);
+                    }
+                }
+            } else {
+                lastNode = findChildrenForNode(basedOnDepthList, nodeList, lastNode);
+            }
         }
         return basedOnDepthList;
+    }
+
+    private static boolean isNodeRemoved(ParentChildNode node) {
+        return XercesUtils.isTCDeleted(node.getNode())
+                || XercesUtils.isSoftMovedTo(node.getNode());
     }
 
     private static ParentChildNode findChildrenForNode(List<ParentChildNode> basedOnDepthList, List<ParentChildNode> nodeList, ParentChildNode lastNode) {
         ParentChildNode node = nodeList.remove(0);
         LOG.trace("-> NODE: [ {} ] --- LASTNODE: [ {} ]", node, lastNode);
         int lastDepth = (lastNode.getDepth() != null) ? lastNode.getDepth() : 1;
+
         int depth = (node.getDepth() != null) ? node.getDepth() : 1;
         if (depth - lastDepth == 1) {
 //            LOG.trace("Added [ {} ] as child of [ {} ]", node, lastNode);
@@ -102,6 +135,9 @@ public class ParentChildConverter {
                 .collect(Collectors.toList());
         if (flatNodeList.size() == 0) {
             //throw new IllegalStateException("No element found with depth: " + depthNode);
+            XercesUtils.addAttribute(node.getNode(), LEOS_DEPTH_ATTR, String.valueOf(1));
+            node.setDepth(1);
+            addSiblingOrInRoot(nodeList, null, node);
             return;
         }
         ParentChildNode lastOfSameDepth = flatNodeList.get(flatNodeList.size() - 1);
@@ -110,7 +146,7 @@ public class ParentChildConverter {
     }
 
     private static void addSiblingOrInRoot(List<ParentChildNode> rv, ParentChildNode lastNode, ParentChildNode node) {
-        if (lastNode.getParent() != null) {
+        if (lastNode !=null && lastNode.getParent() != null) {
             LOG.trace("Added [ {} ] as sibling of [ {} ]", node, lastNode);
             lastNode.addSibling(node);
         } else {
