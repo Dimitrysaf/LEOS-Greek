@@ -46,6 +46,7 @@ import eu.europa.ec.leos.domain.vo.MilestonesVO;
 import eu.europa.ec.leos.domain.vo.ValidationVO;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.integration.rest.UserJSON;
+import eu.europa.ec.leos.model.xml.Element;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMap;
 import eu.europa.ec.leos.security.SecurityContext;
@@ -109,6 +110,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -128,6 +130,8 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_ADDED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.ACCEPTED_DELETED;
 import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
+import static eu.europa.ec.leos.services.support.XmlHelper.PREFACE;
+import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 
 @Service
 public abstract class ApiServiceImpl implements ApiService {
@@ -1075,9 +1079,15 @@ public abstract class ApiServiceImpl implements ApiService {
     }
 
     private boolean isModifiedXmlContent(String xmlContent) {
-        Pattern pattern = Pattern.compile("leos:softaction=\"|</ins>|</del>",
+        List<Element> preface = xmlContentProcessor.getElementsByTagName(xmlContent.getBytes(StandardCharsets.UTF_8), Arrays.asList(PREFACE), true);
+        String xmlContentWithoutPreface = xmlContent;
+        if (!preface.isEmpty()) {
+            xmlContentWithoutPreface = new String(xmlContentProcessor.removeElementById(xmlContent.getBytes(StandardCharsets.UTF_8),
+                preface.get(0).getElementId(), false), UTF_8);
+        }
+        Pattern pattern = Pattern.compile("leos:action=\"|leos:softaction=\"|</ins>|</del>",
                 Pattern.CASE_INSENSITIVE | Pattern.MULTILINE);
-        Matcher matcher = pattern.matcher(xmlContent);
+        Matcher matcher = pattern.matcher(xmlContentWithoutPreface);
         return matcher.find();
     }
 
@@ -1224,6 +1234,9 @@ public abstract class ApiServiceImpl implements ApiService {
                 if (isCoverPage) {
                     milestoneView.setLeosCategory(LeosCategory.COVERPAGE);
                     tocFile = "coverPage_toc.js";
+                    if (isModifiedXmlContent(xmlContent) && milestoneView.getContentStatus() == null) {
+                        milestoneView.setContentStatus("Modified");
+                    }
                 } else {
                     tocFile = contentFileName + TOC_JS;
                     LeosCategory category = xmlContentProcessor.identifyCategory(key,
