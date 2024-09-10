@@ -496,11 +496,12 @@ define(function elementEditorModule(require) {
 
     function _isArticleWithOneNumberedParagraph(elementId, editor) {
         var element$ = $("#" + elementId);
-        if(element$.attr(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.ARTICLE) {
+        if (element$.attr(leosPluginUtils.DATA_AKN_NAME) === leosPluginUtils.ARTICLE) {
             var orderedList$ = element$.children(leosPluginUtils.ORDER_LIST_ELEMENT);
-            if(orderedList$.length === 1) {
+            if (orderedList$.length === 1) {
                 var listItem$ = orderedList$.children(leosPluginUtils.LIST_ELEMENT);
-                if(listItem$.length === 1 && listItem$.attr(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH && listItem$.attr(leosPluginUtils.DATA_AKN_NUM)) {
+                if ((listItem$.length === 1 && listItem$.attr(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH && listItem$.attr(leosPluginUtils.DATA_AKN_NUM))
+                    || _checkForEmptyParagraphs(listItem$)) {
                     pluginTools.addDialog(leosOneParaArticleDialog.dialogName, leosOneParaArticleDialog.initializeDialog);
                     var dialogCommand = editor.addCommand(leosOneParaArticleDialog.dialogName, new CKEDITOR.dialogCommand(leosOneParaArticleDialog.dialogName));
                     dialogCommand.exec();
@@ -509,6 +510,18 @@ define(function elementEditorModule(require) {
             }
         }
         return false;
+    }
+
+    function _checkForEmptyParagraphs(listItem$) {
+        var countOfNonEmptyPara = 0;
+        for (var i = 0; i < listItem$.length; i++) {
+            var paragraph = listItem$.get(i);
+            var paraSubElementCount = paragraph.children.length;
+            if (!(paraSubElementCount === 1 && paragraph.children[0].tagName === 'BR')) {
+                countOfNonEmptyPara++;
+            }
+        }
+        return !(countOfNonEmptyPara > 1);
     }
 
     function _isEmptyContentInElement(elementId) {
