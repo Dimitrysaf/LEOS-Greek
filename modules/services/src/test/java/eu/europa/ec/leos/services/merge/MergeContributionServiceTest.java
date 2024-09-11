@@ -1530,7 +1530,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(true);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithUpdatedArticleAndDeletedList.xml");
-        this.contribution.setXmlContent(contributionUpdatedXml);
+        this.contribution2.setXmlContent(contributionUpdatedXml);
         mergeActionVO.setContributionVO(this.contribution2);
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
@@ -1574,7 +1574,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementTagName("article");
         mergeActionVO.setWithTrackChanges(false);
         byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithUpdatedArticleAndDeletedList.xml");
-        this.contribution.setXmlContent(contributionUpdatedXml);
+        this.contribution2.setXmlContent(contributionUpdatedXml);
         mergeActionVO.setContributionVO(this.contribution2);
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);

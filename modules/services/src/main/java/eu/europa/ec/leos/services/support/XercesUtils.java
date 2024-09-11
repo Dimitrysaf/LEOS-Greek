@@ -40,6 +40,7 @@ import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_N
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_URI;
+import static eu.europa.ec.leos.services.support.XercesUtils.getContentNodeAsXmlFragment;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_END_TAG;
@@ -72,6 +73,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.convertStringDateToCalendar;
 import static eu.europa.ec.leos.services.support.XmlHelper.findString;
+import static eu.europa.ec.leos.services.support.XmlHelper.getOpeningTag;
 import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
 import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
@@ -437,6 +439,27 @@ public class XercesUtils {
             node.getParentNode().insertBefore(child, node);
         }
         node.getParentNode().removeChild(node);
+    }
+
+    public static void replaceNodeContent(Node node, String newContentInsideNode) {
+        Validate.notNull(node, "Node cannot be null!");
+        String startTagContent = "<" + node.getNodeName();
+        String endTagContent = "</" + node.getNodeName() + ">";
+        for (int i = 0; i < node.getAttributes().getLength(); i++) {
+            Node attr = node.getAttributes().item(i);
+            startTagContent += " " + attr.getNodeName() + "=\"" + attr.getNodeValue() + "\"";
+        }
+        startTagContent += ">";
+        Node nodeWithNewContent = createNodeFromXmlFragment(node.getOwnerDocument(), (startTagContent + newContentInsideNode + endTagContent).getBytes(UTF_8), false);
+        addSibling(nodeWithNewContent, node, false);
+        deleteElement(node);
+    }
+
+    public static void appendToNodeContent(Node node, String contentToAppend, boolean before) {
+        Validate.notNull(node, "Node cannot be null!");
+        String nodeContent = getContentNodeAsXmlFragment(node);
+        nodeContent = before ? contentToAppend + nodeContent : nodeContent + contentToAppend;
+        replaceNodeContent(node, nodeContent);
     }
 
     public static Node replaceElement(Node newNode, Node oldNode) {

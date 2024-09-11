@@ -34,6 +34,7 @@ import {
 } from "@/shared/constants/fork-merge.constants";
 import {MergeContributionResponse} from "@/shared/models/merge-contribution-response.model";
 import {ZoombarService} from "@/shared/services/zoombar.service";
+import {LoadingService} from "@/shared/services/loading.service";
 
 @Injectable({
   providedIn: 'root',
@@ -104,6 +105,7 @@ export class MergeContributionsService {
     private translateService: TranslateService,
     private growlService: EuiGrowlService,
     protected domSanitizer: DomSanitizer,
+    private loadingService: LoadingService,
     @Inject(DOCUMENT) private document: Document,
   ) {
     this.undo$ = this.undoBS.asObservable();
@@ -148,6 +150,7 @@ export class MergeContributionsService {
               .filter((d) => d.category === 'ANNEX')
               .findIndex((d) => d.ref === this.documentRef) + 1;
           this.getContributions();
+          this.loadingService.setLoading(false);
         }),
       )
       .subscribe();
@@ -325,7 +328,7 @@ export class MergeContributionsService {
     const documentRef = this.documentRef;
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
-
+    this.loadingService.setLoading(true);
     this.http
       .post<MergeContributionResponse>(
         `${apiBaseUrl}/secured/contribution/merge-contributions/${documentRef}/${documentType}`,
@@ -380,6 +383,7 @@ export class MergeContributionsService {
             position: 'bottom-right',
           });
           this.emptyMergeActionList();
+          this.loadingService.setLoading(false);
         },
       });
   }
