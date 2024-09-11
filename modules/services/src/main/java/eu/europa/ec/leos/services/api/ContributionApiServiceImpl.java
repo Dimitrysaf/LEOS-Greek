@@ -454,7 +454,12 @@ public class ContributionApiServiceImpl implements ContributionApiService {
         StringBuilder proposalTitle = new StringBuilder(proposalMetadata.getStage()).append(" ");
         proposalTitle.append(proposalMetadata.getType()).append(" ");
         proposalTitle.append(proposalMetadata.getPurpose()).append(" ");
-        return proposalTitle.toString();
+
+        String title = proposalTitle.toString();
+        // replace the del and ins tags as they were being accepted
+        title = title.replaceAll("<del[^>]*?>[\\s\\S]*?<\\/del>", "");
+        title = title.replaceAll("<\\/?ins[^>]*?>", "");
+        return title;
     }
 
     @Override
