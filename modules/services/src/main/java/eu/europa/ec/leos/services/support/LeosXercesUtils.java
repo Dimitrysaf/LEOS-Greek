@@ -35,7 +35,9 @@ public class LeosXercesUtils {
         if (numNode != null) {
             Node delNode = getFirstChild(numNode, "del");
             Node insNode = getFirstChild(numNode, "ins");
-            if ((delNode == null || (delNode.getAttributes().getNamedItem(LEOS_TC_ORIGINAL_NUMBER) == null && delNode.getAttributes().getNamedItem(LEOS_ACTION_NUMBER) == null && delNode.getAttributes().getNamedItem(LEOS_ACTION_ENTER) == null)) &&
+            if ((delNode == null || (delNode.getAttributes().getNamedItem(LEOS_TC_ORIGINAL_NUMBER) == null &&
+                    delNode.getAttributes().getNamedItem(LEOS_ACTION_NUMBER) == null &&
+                    delNode.getAttributes().getNamedItem(LEOS_ACTION_ENTER) == null)) &&
                 (insNode == null || insNode.getAttributes().getNamedItem(LEOS_TC_ORIGINAL_NUMBER) == null)
             ) {
                 if (node.getNodeName().equals(DIVISION)) {
@@ -57,7 +59,7 @@ public class LeosXercesUtils {
                         removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
                     } else if (delNode != null && insNode != null) {
                         // It would be delNode != null && insNode != null && !delNode.getTextContent().equals(numLabel)
-                        // But there is not need od adding !delNode.getTextContent().equals(numLabel) in the end
+                        // But there is no need of adding !delNode.getTextContent().equals(numLabel) in the end
                         insNode.setTextContent(numLabel);
                         addAttribute(insNode, LEOS_UID, securityContext.getUser().getLogin());
                         addAttribute(insNode, LEOS_TITLE, getTitleValue(securityContext));
@@ -98,6 +100,11 @@ public class LeosXercesUtils {
                     removeAttribute(node, LEOS_ACTION_NUMBER);
                     removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
                 }
+            } else if ((insNode != null) && node.getNodeName().equalsIgnoreCase(POINT)) {
+                insNode.setTextContent(numLabel);
+                addAttribute(insNode, LEOS_UID, securityContext.getUser().getLogin());
+                addAttribute(insNode, LEOS_TITLE, getTitleValue(securityContext));
+                XercesUtils.removeAttribute(node.getParentNode(), LEOS_LIST_TYPE_ATTR);
             }
         } else {
             numNode = createElementAsFirstChildOfNode(node, getNumTag(node.getNodeName()), numLabel);
