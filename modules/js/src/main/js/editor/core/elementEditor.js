@@ -513,15 +513,17 @@ define(function elementEditorModule(require) {
     }
 
     function _checkForEmptyParagraphs(listItem$) {
-        var countOfNonEmptyPara = 0;
-        for (var i = 0; i < listItem$.length; i++) {
-            var paragraph = listItem$.get(i);
-            var paraSubElementCount = paragraph.children.length;
-            if (!(paraSubElementCount === 1 && paragraph.children[0].tagName === 'BR')) {
-                countOfNonEmptyPara++;
+        if (listItem$.attr(leosPluginUtils.DATA_AKN_ELEMENT) === leosPluginUtils.PARAGRAPH && listItem$.attr(leosPluginUtils.DATA_AKN_NUM)) {
+            var countOfNonEmptyPara = 0;
+            for (var i = 0; i < listItem$.length; i++) {
+                var paragraph = listItem$.get(i);
+                if (!($(paragraph).text() == null || $(paragraph).text() === "")) {
+                    countOfNonEmptyPara++;
+                }
             }
+            return !(countOfNonEmptyPara > 1);
         }
-        return !(countOfNonEmptyPara > 1);
+        return false;
     }
 
     function _isEmptyContentInElement(elementId) {
