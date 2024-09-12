@@ -89,7 +89,7 @@ Feature: Track Changes Feature
       | ins  | "B"                  |
       | text | "umbered paragraph." |
 
-  @trackChangesFromRules @local @focus
+  @trackChangesFromRules @local
   # Page with information: https://citnet.tech.ec.europa.eu/CITnet/confluence/pages/viewpage.action?spaceKey=LEOS&title=Leos+-+Track+changes
   # This test will cover: track changes scenarios 1 to 10
   Scenario: Track changes for rules in confluence
