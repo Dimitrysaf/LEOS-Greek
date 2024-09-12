@@ -102,9 +102,6 @@ public class LeosXercesUtils {
                 }
             } else if ((insNode != null) && node.getNodeName().equalsIgnoreCase(POINT)) {
                 insNode.setTextContent(numLabel);
-                addAttribute(insNode, LEOS_UID, securityContext.getUser().getLogin());
-                addAttribute(insNode, LEOS_TITLE, getTitleValue(securityContext));
-                XercesUtils.removeAttribute(node.getParentNode(), LEOS_LIST_TYPE_ATTR);
             }
         } else {
             numNode = createElementAsFirstChildOfNode(node, getNumTag(node.getNodeName()), numLabel);
