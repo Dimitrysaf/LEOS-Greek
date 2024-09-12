@@ -396,6 +396,7 @@ define(function listUnumberModule(require) {
         resetElementAttributeOnIndents: resetElementAttributeOnIndents,
         identifyNumberingConfigFromList: identifyNumberingConfigFromList,
         checkListsWithOnlyCrossheadings: checkListsWithOnlyCrossheadings,
+        removeCrossHeadingsFromListItems: _removeCrossHeadingsFromListItems,
         BULLET_NUM: BULLET_NUM,
         INDENT: INDENT
     };
