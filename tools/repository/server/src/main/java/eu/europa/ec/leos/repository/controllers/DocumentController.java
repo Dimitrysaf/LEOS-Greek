@@ -222,7 +222,7 @@ public class DocumentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Next version label issued", content = {@Content(mediaType = MediaType.APPLICATION_JSON_VALUE)}),
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
-    public ResponseEntity<String> getNextVersionLabel(@RequestParam("versionType") String versionType, @RequestParam("oldVersion") String oldVersion) {
+    public ResponseEntity<String> getNextVersionLabel(@RequestParam("versionType") String versionType, @RequestParam(name = "oldVersion", defaultValue = "") String oldVersion) {
         String nextVersion = RestPreconditions.checkFound(documentService.getNextVersionLabel(VersionType.valueOf(versionType), oldVersion),
                 HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting");
         return ResponseEntity.ok(nextVersion);
@@ -240,7 +240,6 @@ public class DocumentController {
         List<LeosDocument> xmlDocs = documentService.findAllMinorsForIntermediate(docRef, currIntVersion, startIndex, maxResults);
         return ResponseEntity.ok(new LeosDocumentList(xmlDocs));
     }
-
 
     @GetMapping(path = "/documents/all-majors/{docRef}",
             consumes = {},
@@ -268,7 +267,6 @@ public class DocumentController {
         return ResponseEntity.ok(result);
     }
 
-
     @GetMapping(path = "/documents/count-all-majors/{docRef}",
             consumes = {},
             produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -280,7 +278,6 @@ public class DocumentController {
         long result = documentService.getAllMajorsCount(docRef);
         return new ResponseEntity(result, HttpStatus.OK);
     }
-
 
     @GetMapping(path = "/documents/recent-minor-versions/{docRef}",
             consumes = {},
@@ -307,7 +304,6 @@ public class DocumentController {
         return ResponseEntity.ok(result);
     }
 
-
     @GetMapping(path = "/documents/latest-major-version/{docRef}",
             consumes = {},
             produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -322,7 +318,6 @@ public class DocumentController {
 
     }
 
-
     @GetMapping(path = "/documents/first-version/{docRef}",
             consumes = {},
             produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -335,7 +330,6 @@ public class DocumentController {
                 HttpStatus.NOT_FOUND, "No documents found");
         return ResponseEntity.ok(xmlDoc);
     }
-
 
     @GetMapping(path = "/document/{docRef}/find-by-version/{versionLabel}",
             consumes = {},
@@ -385,7 +379,7 @@ public class DocumentController {
             @ApiResponse(responseCode = "500", description = "Error while handling request", content = @Content)})
     public ResponseEntity<Object> findDocumentsUsingFilter(@RequestParam(value="packageName", required=false, defaultValue="%25") String packageName,
                                                            @RequestBody FindDocumentsRequest findDocumentsRequest,
-                                                               @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults,
+                                                           @RequestParam("startIndex") Integer startIndex, @RequestParam("maxResults") Integer maxResults,
                                                            @RequestParam(value = "fetchContent", required = false, defaultValue = "false") Boolean fetchContent)
             throws MalformedURLException {
         packageName = decode(packageName);
@@ -407,4 +401,5 @@ public class DocumentController {
         Long count = documentService.countDocumentsUsingFilter(packageName, findDocumentsRequest.getCategories(), findDocumentsRequest.getQueryFilter());
         return ResponseEntity.ok(RestPreconditions.checkFound(count, HttpStatus.UNPROCESSABLE_ENTITY, "Error while counting"));
     }
+
 }
