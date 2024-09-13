@@ -23,7 +23,7 @@ define(function leosTrackChangesPluginModule(require) {
         trackChangesTable = require("./leosTrackChangesTable");
     var UTILS = require("core/leosUtils");
     var numberModule = require("plugins/leosNumber/listItemNumberModule");
-
+    var unumberModule = require("plugins/leosUnumber/listUnumberModule");
     var pluginName = "leosTrackChanges";
 
     var pluginDefinition = {
@@ -32,7 +32,6 @@ define(function leosTrackChangesPluginModule(require) {
             if (editor.LEOS.instanceType === "COUNCIL" || !editor.LEOS.isTrackChangesEnabled) {
                 return;
             }
-
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
             var isTrackChangesShowed = editor.LEOS.isTrackChangesShowed, isTrackChangesEnabled = editor.LEOS.isTrackChangesEnabled;
             var canUserAcceptChanges = core.canUserAcceptChanges(editor), canUserRejectChanges = core.canUserRejectChanges(editor);
@@ -256,9 +255,40 @@ define(function leosTrackChangesPluginModule(require) {
                             core.removeTrackChangesAttributesForNumbering(element);
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
-                        core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
+                        var isNumbered = true;
+                        var closestList = $(element).closest('ol');
+                        if (!!closestList && closestList.length > 0 ){
+                            var list = closestList[0];
+                            if (!isNumberedList(list)) {
+                                var tcAttributes = ["data-akn-action-number", "data-akn-num"];
+                                for (var attrName of tcAttributes) {
+                                    element.removeAttribute(attrName);
+                                }
+                                isNumbered = false;
+                            }
+                        }
+                        if(isNumbered){
+                            core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
+                        }
                     }
                 }
+
+                function isNumberedList(orderedList) {
+                    var listItems = unumberModule.removeCrossHeadingsFromListItems(orderedList.children);
+                    var isNumbered = false;
+                    if (!!listItems && listItems.length > 0) {
+                        for (const element of listItems) {
+                            if (element && !!element.attributes[leosPluginUtils.DATA_AKN_NUM]
+                                && (!element.attributes['data-akn-action-number']
+                                    || element.attributes['data-akn-action-number'].value !== 'delete')){
+                                    isNumbered = true;
+                                    break;
+                            }
+                        }
+                    }
+                    return isNumbered;
+                }
+
             });
 
             editor.on("handleTrackTraceForEnterCreated", function (event) {
