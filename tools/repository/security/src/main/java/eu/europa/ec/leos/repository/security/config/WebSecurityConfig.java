@@ -59,11 +59,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
-	public JwtRequestFilter JwtRequestFilter() {
-		return new JwtRequestFilter();
-	}
-
-	@Bean
 	public UserDetailsService JwtUserDetailsService() {
 		return new JwtUserDetailsService();
 	}
@@ -141,6 +136,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.exceptionHandling().authenticationEntryPoint(JwtAuthenticationEntryPoint()).and().
 				sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
 				// Add a filter to validate the tokens with every request
-		        addFilterBefore(JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+		        addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class).
+				// Add a filter for preventing XSS attacks
+		        addFilterAfter(new XSSFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 }
