@@ -25,7 +25,7 @@
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
                     <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                        <akn4eu:akn4euVersion value="4.0.0.0"/>
+                        <akn4eu:akn4euVersion value="4.1.1.0"/>
                     </preservation>
                 </FRBRManifestation>
             </identification>

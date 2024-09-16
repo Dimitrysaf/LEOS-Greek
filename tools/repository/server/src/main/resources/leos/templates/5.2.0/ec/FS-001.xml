@@ -28,7 +28,7 @@
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
                     <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                        <akn4eu:akn4euVersion value="4.1.0.0"/>
+                        <akn4eu:akn4euVersion value="4.1.1.0"/>
 						<akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
                     </preservation>
                 </FRBRManifestation>
@@ -36,6 +36,7 @@
             <references source="~PUBL">
                 <TLCReference xml:id="language"  href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
                 <TLCOrganization xml:id="PUBL" href="http://publications.europa.eu/resource/authority/corporate-body/PUBL" showAs="Publications Office"/>
+                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM " showAs="European Commission" />
                 <TLCReference xml:id="STAT_FINANC_LEGIS" href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement"/>
                 <TLCConcept xml:id="INP" href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" />
 				<!--  draft  -->
