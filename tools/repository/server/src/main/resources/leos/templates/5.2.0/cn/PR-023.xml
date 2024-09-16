@@ -38,6 +38,7 @@
             <references source="~COM">
                 <TLCLocation xml:id="BEL_BRU" href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels"/>
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
+                <TLCReference xml:id="STAT_FINANC_LEGIS" href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement"/>
                 <TLCReference xml:id="PROP_ACT" href="http://publications.europa.eu/resource/authority/resource-type/PROP_ACT" name="docType" showAs="Proposal for an act"/>
                 <TLCReference xml:id="EXPL_MEMORANDUM" href="http://publications.europa.eu/resource/authority/resource-type/EXPL_MEMORANDUM" name="docType" showAs="Explanatory memorandum"/>
                 <TLCReference xml:id="REG" href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation"/>
