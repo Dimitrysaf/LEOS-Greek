@@ -79,7 +79,7 @@ class ckEditorWindow {
     }
 
     clickParagraphModeIcon() {
-        this.elements.paragraphModeIcon().click().click();
+        this.elements.paragraphModeIcon().click();
     }
 
     clickIncreaseIndentIcon() {

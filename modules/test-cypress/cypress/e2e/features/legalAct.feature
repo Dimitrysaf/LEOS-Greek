@@ -101,8 +101,8 @@ Feature: Legal Act Page Regression Features
         And  ribbon toolbar is displayed
         When mouseover and click on article 1
         Then ck editor window is displayed
-        When append " New Text " at offset 7 in numbered paragraph 1 of article in edition mode
-        Then numbered paragraph 1 of article contains "Text... New Text" in edition mode
+        When append "New Text" at offset 7 in numbered paragraph 1 of article in edition mode
+        Then numbered paragraph 1 of article contains "Text...New Text" in edition mode
         When click save and close button of ck editor
         Then drafting rule violations dialog box displayed with message "Articles with a single paragraph cannot be numbered."
         Then click dialog ok button
@@ -120,9 +120,13 @@ Feature: Legal Act Page Regression Features
         When click save and close button of ck editor
         Then drafting rule violations dialog box displayed with message "Articles with a single paragraph cannot be numbered."
         Then click dialog ok button
-        When move the cursor position to offset 7 in paragraph 1 of article in edition mode
+        When click at offset 8 of child 2 of li 1 with data-akn-element "paragraph" of article in edition mode
         And  click enter from keyboard in edition mode
         When click save and close button of ck editor
+        Then drafting rule violations dialog box displayed with message "Articles with a single paragraph cannot be numbered."
+        Then click dialog ok button
+        When append "New Text" at offset 0 in numbered paragraph 2 of article in edition mode
+        And  click save and close button of ck editor
         Then ck editor window is not displayed
 
     @articleEditing @local
@@ -236,60 +240,6 @@ Feature: Legal Act Page Regression Features
         And  content of subparagraph refersTo "~_WRP" of list 1 of paragraph 1 of article 6 contains "wrapper subparagraph"
         And  content of point 1 of list 1 of paragraph 1 of article 6 contains "Point a"
         And  content of subparagraph 1 of paragraph 1 of article 6 contains "list sibling subparagraph"
-
-#    @leosCore210211 @local
-#    Scenario: changing article from numbered to unnumbered with List creates an empty paragraph
-#        Given navigate to edit drafting application with "User1"
-#        Then user is on home page
-#        When click on Create act button
-#        Then user is on create new legislative document window
-#        When click on template "SJ-023" in create new legislative document window
-#        When click on next button in create document page
-#        And  provide document title "Automation Article Testing" in create document page
-#        And  click on create button
-#        Then user is on act viewer page
-#        When click on legal act link present in act viewer page
-#        Then user is on legal act page
-#        And  annotation side bar is present
-#        And  ribbon toolbar is displayed
-#        And  toc editing button is displayed and enabled
-#        When mousehover and click on article 1
-#        Then ck editor window is displayed
-#        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-#        When click enter from keyboard in edition mode
-#        And  add content "line 1" to li 2 with data-akn-element "paragraph" of article in edition mode
-#        And  click on increase indent icon present in ck editor panel
-#        And  click enter from keyboard in edition mode
-#        And  add content "line 2" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        When click save and close button of ck editor
-#        Then ck editor window is not displayed
-#        And  content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
-#        And  content of point 1 of list 1 of paragraph 1 of article 1 contains "line 1"
-#        And  content of point 2 of list 1 of paragraph 1 of article 1 contains "line 2"
-#        When mousehover and click on article 1
-#        Then ck editor window is displayed
-#        When click at offset 0 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  click on decrease indent icon present in ck editor panel
-#        Then decrease indent icon is disabled in ck editor panel
-#        When click save and close button of ck editor
-#        Then ck editor window is not displayed
-#        And  content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
-#        And  content of point 1 of list 1 of paragraph 1 of article 1 contains "line 1"
-#        And  content of paragraph 2 of article 1 contains "line 2"
-#        When mousehover and click on article 1
-#        Then ck editor window is displayed
-#        When click at offset 0 of li 2 with data-akn-element "paragraph" of article in edition mode
-#        Then decrease indent icon is disabled in ck editor panel
-#        When click on paragraph mode icon present in ck editor panel
-#        Then "data-akn-num" attribute is not present in li 1 with data-akn-element "paragraph" of article in edition mode
-#        And  "data-akn-num" attribute is not present in li 2 with data-akn-element "paragraph" of article in edition mode
-#        When click save and close button of ck editor
-#        Then ck editor window is not displayed
-#        And  content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
-#        And  content of point 1 of list 1 of paragraph 1 of article 1 contains "line 1"
-#        And  content of paragraph 2 of article 1 contains "line 2"
-#        And  paragraph 1 of article 1 doesnot contain num tag
-#        And  paragraph 2 of article 1 doesnot contain num tag
 
     @definitionArticle @local
     Scenario: definition article should have maximum three depth
@@ -469,86 +419,6 @@ Feature: Legal Act Page Regression Features
         And  num tag of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "(2)"
         And  content of point 2 of list 1 of point 2 of list 1 of point 2 of list 1 of paragraph 2 of article 3 contains "point ii"
 
-#    @importOfficeJournal @local
-#    Scenario: import from office journal
-#        Given navigate to edit drafting application with "User1"
-#        Then user is on home page
-#        When click on Create act button
-#        Then user is on create new legislative document window
-#        When click on template "SJ-023" in create new legislative document window
-#        When click on next button in create document page
-#        And  provide document title "Automation import OJ Testing" in create document page
-#        And  click on create button
-#        Then user is on act viewer page
-#        When click on legal act link present in act viewer page
-#        Then user is on legal act page
-#        And  annotation side bar is present
-#        And  ribbon toolbar is displayed
-#        When click on import from oj button in ribbon toolbar
-#        Then user is on "Import from the Official Journal of the European Union" window
-#        And  close button in import office journal window is displayed and enabled
-#        And  select all recitals button is disabled
-#        And  select all articles button is disabled
-#        And  "REGULATION" option is selected by default for type field
-#        And  current year is selected by default for year field
-#        And  blank input box is present for Nr. field
-#        When click on type field
-#        And  below options are displayed in type dropdown
-#            | TypeOptions |
-#            | REGULATION |
-#            | DIRECTIVE  |
-#            | DECISION   |
-#        When click on search button in import office journal window
-#        Then exclamation mark is appeared with "rgb(48, 48, 48)" color
-#        When select option "DIRECTIVE" for type field
-#        And  select option "2016" for year field
-#        And  provide value "2102" in Nr. field
-#        And  click on search button in import office journal window
-#        Then bill content is appeared in import office journal window
-#        And  select all recitals button is enabled
-#        And  select all articles button is enabled
-#        When click on checkbox of recital 1
-#        When click on checkbox of recital 2
-#        When click on checkbox of recital 3
-#        When click on checkbox of article 1
-#        When click on checkbox of article 2
-#        When click on checkbox of article 3
-#        When click on import button
-#        Then 3 recitals are added in legal act by import oj
-#        Then 3 articles are added in legal act by import oj
-#        When click on import from oj button in ribbon toolbar
-#        Then user is on "Import from the Official Journal of the European Union" window
-#        When select option "REGULATION" for type field
-#        And  select option "2014" for year field
-#        And  provide value "9999" in Nr. field
-#        And  click on search button in import office journal window
-#        Then warning message contains "Search returned with no result! Please modify the search parameters"
-#        When select option "REGULATION" for type field
-#        And  select option "2016" for year field
-#        And  provide value "679" in Nr. field
-#        And  click on search button in import office journal window
-#        Then bill content is appeared in import office journal window
-#        When click on select all recitals button in import office journal window
-#        Then checkboxes of all the recitals are selected
-#        And  number of recitals selected is 173
-#        When click on import button
-#        Then 176 recitals are added FVin legal act by import oj
-#        When click on import from oj button in ribbon toolbar
-#        Then user is on "Import from the Official Journal of the European Union" window
-#        When select option "REGULATION" for type field
-#        And  select option "2016" for year field
-#        And  provide value "679" in Nr. field
-#        And  click on search button in import office journal window
-#        Then bill content is appeared in import office journal window
-#        When click on select all articles button in import office journal window
-#        Then checkboxes of all the articles are selected
-#        And  number of articles selected is 99
-#        When click on import button
-#        Then 102 articles are added in legal act by import oj
-#        When click on versions pane accordion
-#        When click on show more button in "Recent changes" eui-card
-#        Then title of last 3 minor versions from recent changes eui-card contains "Import element(s) inserted"
-
     @internalReference @local
     Scenario: test internal reference by uploading existing leg file
         Given navigate to edit drafting application with "User1"
@@ -647,3 +517,137 @@ Feature: Legal Act Page Regression Features
         Then article 8 is displayed
         When click on internal reference link 1 of paragraph 1 of article 8
         Then paragraph 2 of article 11 is displayed
+
+    @importOfficeJournal @local
+    Scenario: import from office journal
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation import OJ Testing" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        And  annotation side bar is present
+        And  ribbon toolbar is displayed
+        When click on import from oj button in ribbon toolbar
+        Then user is on "Import from the Official Journal of the European Union" window
+        And  close button in import office journal window is displayed and enabled
+        And  select all recitals button is disabled
+        And  select all articles button is disabled
+        And  "REGULATION" option is selected by default for type field
+        And  current year is selected by default for year field
+        And  blank input box is present for Nr. field
+        When click on type field
+        And  below options are displayed in type dropdown
+            | TypeOptions |
+            | REGULATION |
+            | DIRECTIVE  |
+            | DECISION   |
+        When click on search button in import office journal window
+        Then exclamation mark is appeared with "rgb(48, 48, 48)" color
+        When select option "DIRECTIVE" for type field
+        And  select option "2016" for year field
+        And  provide value "2102" in Nr. field
+        And  click on search button in import office journal window
+        Then bill content is appeared in import office journal window
+        And  select all recitals button is enabled
+        And  select all articles button is enabled
+        When click on checkbox of recital 1
+        When click on checkbox of recital 2
+        When click on checkbox of recital 3
+        When click on checkbox of article 1
+        When click on checkbox of article 2
+        When click on checkbox of article 3
+        When click on import button
+        Then 3 recitals are added in legal act by import oj
+        Then 3 articles are added in legal act by import oj
+        When click on import from oj button in ribbon toolbar
+        Then user is on "Import from the Official Journal of the European Union" window
+        When select option "REGULATION" for type field
+        And  select option "2014" for year field
+        And  provide value "9999" in Nr. field
+        And  click on search button in import office journal window
+        Then warning message contains "Search returned with no result! Please modify the search parameters"
+        When select option "REGULATION" for type field
+        And  select option "2016" for year field
+        And  provide value "679" in Nr. field
+        And  click on search button in import office journal window
+        Then bill content is appeared in import office journal window
+        When click on select all recitals button in import office journal window
+        Then checkboxes of all the recitals are selected
+        And  number of recitals selected is 173
+        When click on import button
+        Then 176 recitals are added in legal act by import oj
+        When click on import from oj button in ribbon toolbar
+        Then user is on "Import from the Official Journal of the European Union" window
+        When select option "REGULATION" for type field
+        And  select option "2016" for year field
+        And  provide value "679" in Nr. field
+        And  click on search button in import office journal window
+        Then bill content is appeared in import office journal window
+        When click on select all articles button in import office journal window
+        Then checkboxes of all the articles are selected
+        And  number of articles selected is 99
+        When click on import button
+        Then 102 articles are added in legal act by import oj
+        When click on versions pane accordion
+        When click on show more button in "Recent changes" eui-card
+        Then title of last 3 minor versions from recent changes eui-card contains "Import element(s) inserted"
+
+    @numberedToUnnumbered @local
+    Scenario: changing article from numbered to unnumbered with List creates an empty paragraph
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "Automation Article Testing" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on legal act link present in act viewer page
+        Then user is on legal act page
+        And  annotation side bar is present
+        And  ribbon toolbar is displayed
+        And  toc editing button is displayed and enabled
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+        When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
+        When click enter from keyboard in edition mode
+        And  add content "line 1" to li 2 with data-akn-element "paragraph" of article in edition mode
+        And  click on increase indent icon present in ck editor panel
+        And  click enter from keyboard in edition mode
+        And  add content "line 2" to li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
+        And  content of point 1 of list 1 of paragraph 1 of article 1 contains "line 1"
+        And  content of point 2 of list 1 of paragraph 1 of article 1 contains "line 2"
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+        When click at offset 0 in li 2 with data-akn-element "point" of li 1 with data-akn-element "paragraph" of article in edition mode
+        And  click on decrease indent icon present in ck editor panel
+        Then decrease indent icon is disabled in ck editor panel
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
+        And  content of point 1 of list 1 of paragraph 1 of article 1 contains "line 1"
+        And  content of paragraph 2 of article 1 contains "line 2"
+        When mouseover and click on article 1
+        Then ck editor window is displayed
+        When click at offset 0 of li 2 with data-akn-element "paragraph" of article in edition mode
+        Then decrease indent icon is disabled in ck editor panel
+        When click on paragraph mode icon present in ck editor panel
+        Then "data-akn-num" attribute is not present in li 1 with data-akn-element "paragraph" of article in edition mode
+        And  "data-akn-num" attribute is not present in li 2 with data-akn-element "paragraph" of article in edition mode
+        When click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  content of subparagraph 1 of list 1 of paragraph 1 of article 1 contains "Text..."
+        And  content of point 1 of list 1 of paragraph 1 of article 1 contains "line 1"
+        And  content of paragraph 2 of article 1 contains "line 2"
+        And  paragraph 1 of article 1 doesn't contain num tag
+        And  paragraph 2 of article 1 doesn't contain num tag
