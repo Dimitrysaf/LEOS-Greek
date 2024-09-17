@@ -89,8 +89,10 @@ public class LeosXercesUtils {
                 String oldNumLabel = delNode.getTextContent();
                 if (!oldNumLabel.equals(numLabel)) {
                     insNode.setTextContent(numLabel);
-                    addAttribute(insNode, LEOS_UID, securityContext.getUser().getLogin());
-                    addAttribute(insNode, LEOS_TITLE, getTitleValue(securityContext));
+                    if (securityContext != null) {
+                        addAttribute(insNode, LEOS_UID, securityContext.getUser().getLogin());
+                        addAttribute(insNode, LEOS_TITLE, getTitleValue(securityContext));
+                    }
                 } else {
                     numNode.removeChild(delNode);
                     numNode.removeChild(insNode);
@@ -100,7 +102,7 @@ public class LeosXercesUtils {
                     removeAttribute(node, LEOS_ACTION_NUMBER);
                     removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
                 }
-            } else if ((insNode != null) && node.getNodeName().equalsIgnoreCase(POINT)) {
+            } else if ((insNode != null) && node.getNodeName().equalsIgnoreCase(POINT) && !insNode.getTextContent().equals(numLabel)) {
                 insNode.setTextContent(numLabel);
             }
         } else {

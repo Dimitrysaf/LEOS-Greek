@@ -226,6 +226,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         return nodeToByteArray(document);
     }
 
+    @Override
+    public byte[] cleanTrackChanges(byte[] xmlContent, String elementId) {
+        Document document = createXercesDocument(xmlContent);
+        Node element = XercesUtils.getElementById(document, elementId);
+        if (element != null) {
+            cleanTrackChangesForElement(element);
+        }
+        return nodeToByteArray(document);
+    }
+
     private boolean cleanTrackChangesForElement(Node node) {
         NodeList nodeList = node.getChildNodes();
         for (int index = 0; index < nodeList.getLength(); index++) {
@@ -262,7 +272,9 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 XercesUtils.deleteElement(node);
                 isNodeDeleted = true;
             } else {
-                removeTrackChangesAttributes(node);
+                //removeTrackChangesAttributes(node);
+                XercesUtils.deleteElement(node);
+                isNodeDeleted = true;
             }
         } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION)) {
             if("span".equals(node.getNodeName())) {
@@ -521,16 +533,16 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                 Node updatedNode = XercesUtils.getElementById(updatedDocument, elementId);
                 if(updatedNode != null) {
                     String updatedNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(updatedNode));
-                    NodeList nodeList = updatedNode.getChildNodes();
-                    for (int i = 0; i < nodeList.getLength(); i++) {
-                        String childNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(nodeList.item(i)));
-                        if (nodeList.item(i).getNodeName().equals(LIST)) {
+                    List<Node> nodeList = XercesUtils.getChildren(updatedNode);
+                    for (int i = 0; i < nodeList.size(); i++) {
+                        String childNodeContent = XmlHelper.removeAllNameSpaces(XercesUtils.nodeToString(nodeList.get(i)));
+                        if (nodeList.get(i).getNodeName().equals(LIST)) {
                             if (i == 0) {
                                 updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent + PARA_END);
                             } else {
                                 updatedNodeContent = updatedNodeContent.replace(childNodeContent, PARA_START + childNodeContent + PARA_END);
                             }
-                        } else if (nodeList.item(i).getNodeName().equals(SUBPARAGRAPH)) {
+                        } else if (nodeList.get(i).getNodeName().equals(SUBPARAGRAPH)) {
                             if (i == 0) {
                                 updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replaceFirst(SUBPARA_REGEX, "").replace(SUBPARA_END, PARA_END));
                             } else {

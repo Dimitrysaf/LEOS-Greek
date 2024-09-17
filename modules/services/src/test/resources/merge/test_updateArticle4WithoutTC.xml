@@ -797,11 +797,12 @@
                                 <point xml:id="akn_art_kCjLvC_5HYy1n">
                                     <num xml:id="akn_art_kCjLvC_rnCADB">(a)</num><list xml:id="_akn_art_kCjLvC_fmTVS6">
                                     <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_kCjLvC_5HYy1n">
-                                        <content xml:id="akn_art_kCjLvC_NDOT4Y">
-                                            <p xml:id="akn_art_kCjLvC_frDQl5">there is an overlap between several data required for the application for supporting documents and the customs declaration;</p>
+                                        <content leos:origin="ec" xml:id="akn_art_kCjLvC_NDOT4Y">
+                                            <p leos:origin="ec" xml:id="akn_art_kCjLvC_frDQl5">there is an overlap between several data required for the
+                                                application for supporting documents and the customs declaration;</p>
                                         </content>
                                     </subparagraph>
-                                    <point leos:indent-origin-num-origin="ec" leos:origin="ec" xml:id="_akn_art_kCjLvC_UjpNX6">
+                                    <point leos:origin="ec" xml:id="_akn_art_kCjLvC_UjpNX6">
                                         <num leos:origin="ec" xml:id="_akn_art_kCjLvC_63XoOG">(i)</num>
                                         <content leos:origin="ec" xml:id="_akn_art_kCjLvC_GChucU">
                                             <p leos:origin="ec" xml:id="_akn_art_kCjLvC_lhXEci">
@@ -809,7 +810,7 @@
                                             </p>
                                         </content>
                                     </point>
-                                    <point leos:indent-origin-num-origin="ec" leos:origin="ec" xml:id="_akn_art_kCjLvC_i6xM6K">
+                                    <point leos:origin="ec" xml:id="_akn_art_kCjLvC_i6xM6K">
                                         <num leos:origin="ec" xml:id="_akn_art_kCjLvC_kJfbzF">(ii)</num>
                                         <content leos:origin="ec" xml:id="_akn_art_kCjLvC_37rAFF">
                                             <p leos:origin="ec" xml:id="_akn_art_kCjLvC_q1d6up">

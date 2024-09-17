@@ -77,7 +77,6 @@ define(function mergeContributionExtensionModule(require) {
                     }
                     if (HIGHER_ELTS.indexOf(mainEltTag) === -1) {
                         _attachWrapperActionEvents(connector, $main_element);
-                        checkIfAlreadyProcessedAndSetCssClass($changed_element, $element, $main_element);
                     } else {
                         _attachWrapperActionEvents(connector, $element);
                     }
@@ -101,27 +100,6 @@ define(function mergeContributionExtensionModule(require) {
             }
         }
         _checkAndRemoveInvalidActions();
-    }
-
-    function checkIfAlreadyProcessedAndSetCssClass($changed_elements, $element, $main_element) {
-        const $originalElementWithChangedID =$("#" + $element.attr(UTILS.ID).replace(REVISION_PREFIX, ''));
-        const $originalElement =$("#" + $element.attr(UTILS.ID).replace(REVISION_PREFIX, '').replace(MOVED_PREFIX, '').replace(DELETED_PREFIX, ''));
-        const action = $element.attr(MERGE_ACTION_ATTR);
-        const selectedAction = $element.attr(SELECTED_ACTION_ATTR);
-        if (!action && !selectedAction) {
-            if ($originalElementWithChangedID.length > 0 && $changed_elements.index($originalElementWithChangedID) !== -1 &&
-                ($element.attr(TRACK_ACTION_ATTR) || $element.attr(TRACK_ACTION_ATTR)) &&
-                ($element.attr(TRACK_ACTION_ATTR) === $originalElementWithChangedID.attr(TRACK_ACTION_ATTR)
-                    || $element.attr(SOFT_ACTION_ATTR) === $originalElementWithChangedID.attr(SOFT_ACTION_ATTR))) {
-                $main_element[0].classList.add(ACTION_DONE_CLASS);
-            } else if ($originalElement.length === 0 && $changed_elements.index($originalElement) === -1 && $element.attr(TRACK_ACTION_ATTR) === DELETE) {
-                $main_element[0].classList.add(ACTION_DONE_CLASS);
-            } else if ($originalElement.length > 0 && $changed_elements.index($originalElement) === -1  && $element.attr(TRACK_ACTION_ATTR) === INSERT && !$element.attr(SOFT_ACTION_ATTR)) {
-                $main_element[0].classList.add(ACTION_DONE_CLASS);
-            }
-        } else if (!!action) {
-            $main_element[0].classList.add(ACTION_DONE_CLASS);
-        }
     }
 
     function _refreshActions($element, $actions) {

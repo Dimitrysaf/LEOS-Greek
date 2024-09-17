@@ -93,8 +93,9 @@ public class TestUtils {
                 .replaceAll("\\n+", "")
                 .replaceAll("\\n\\r+", "")
                 .replaceAll("\\t+", "")
-                .replaceAll("<num[^>]*>[^num]*</num>", "<num>dummyNum</num>")
+                .replaceAll("<num[^>]*>((?!num>).)*</num>", "<num>dummyNum</num>")
                 .replaceAll("leos:origin=\".+?\"", "")
+                .replaceAll("leos:depth=\".+?\"", "")
                 .replaceAll("leos:listIdAttr=\"[^(\")]*\"", "");
     }
 
