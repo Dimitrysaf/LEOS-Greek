@@ -44,6 +44,37 @@ Feature: Track Changes Feature
       | ins  | "(a)"                              |
     Then point 1 of list 1 of paragraph 1 of article 1 has below content
       | ins  | "New paragraph"                    |
+    When disable track changes
+    Then enable track changes toggle bar is off in ribbon toolbar
+    When click on insert after icon of article 1
+    And  mouseover and click on article 2
+    Then ck editor window is displayed
+    When append "one" at offset 7 in numbered paragraph 1 of article in edition mode
+    And  append "two" at offset 7 in numbered paragraph 2 of article in edition mode
+    And  click enter from keyboard in edition mode
+    And  append "Text...Third" at offset 0 in numbered paragraph 3 of article in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    When click at offset 12 of li 3 with data-akn-element "paragraph" of article in edition mode
+    And  click enter from keyboard in edition mode
+    And  append "new paragraph" at offset 0 in numbered paragraph 4 of article in edition mode
+    And  click on paragraph mode icon present in ck editor panel
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+    When mouseover and click on article 2
+    Then ck editor window is displayed
+    When click at offset 7 of li 2 with data-akn-element "paragraph" of article in edition mode
+    And  click enter from keyboard in edition mode
+    Then li 3 with data-akn-element "paragraph" of article contains attribute "new" in edition mode
+    And  li 3 with data-akn-element "paragraph" of article contains attribute "data-akn-tc-original-number" with value "NEW" in edition mode
+    When click save and close button of ck editor
+    Then ck editor window is not displayed
+    And  paragraph 3 of article 2 contains attribute "leos:tc-original-number" with value "NEW"
+    And  content of paragraph 3 of article 2 contains "two"
 
   @addTrackChangesText @local
   Scenario: Basic tests for add track changes text in an article in Legal Act

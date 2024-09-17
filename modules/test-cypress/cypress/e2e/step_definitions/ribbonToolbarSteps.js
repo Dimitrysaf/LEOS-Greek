@@ -68,3 +68,7 @@ Then(/^see track changes is disabled$/, function () {
 Then(/^show clean version button is not present in ribbon toolbar$/, function () {
     ribbonToolbar.elements.showCleanVersionBtn().should('not.exist');
 });
+
+When(/^disable track changes$/, function () {
+    ribbonToolbar.clickEnableTrackChangesToggleBtn();
+});
