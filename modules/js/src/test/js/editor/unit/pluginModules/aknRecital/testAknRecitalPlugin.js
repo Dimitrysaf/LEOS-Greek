@@ -35,7 +35,11 @@ define(function testAknRecitalPlugin(require) {
 
 
     describe("Unit tests for plugins/aknRecitalPlugin", function () {
-        var transformationConfigForRecital = '{"akn":"recital","html":"p","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"leos:editable","html":"data-akn-attr-editable"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},{"html":"data-akn-name=recital"},{"akn":"leos:action","html":"data-akn-action"},{"akn":"leos:uid","html":"data-akn-uid"},{"akn":"leos:title","html":"title"}],"sub":[{"akn":"num","html":"p","attr":[{"akn":"xml:id","html":"data-akn-num-id"},{"akn":"leos:origin","html":"data-num-origin"}],"sub":{"akn":"text","html":"p[data-akn-num]"}},{"akn":"mp","html":"p","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"}],"sub":{"akn":"text","html":"p/text"}}]}';
+        var transformationConfigForRecital = '{"akn":"recital","html":"p","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"leos:editable","html":"data-akn-attr-editable"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},' +
+            '{"akn":"leos:softmove_to","html":"data-akn-attr-softmove_to"},{"akn":"leos:softmove_from","html":"data-akn-attr-softmove_from"},' +
+            '{"akn":"leos:softmove_label","html":"data-akn-attr-softmove_label"},{"akn":"leos:softaction","html":"data-akn-attr-softaction"},'+
+            '{"akn":"leos:softactionroot","html":"data-akn-attr-softactionroot"},' +
+            '{"html":"data-akn-name=recital"},{"akn":"leos:action","html":"data-akn-action"},{"akn":"leos:uid","html":"data-akn-uid"},{"akn":"leos:title","html":"title"}],"sub":[{"akn":"num","html":"p","attr":[{"akn":"xml:id","html":"data-akn-num-id"},{"akn":"leos:origin","html":"data-num-origin"}],"sub":{"akn":"text","html":"p[data-akn-num]"}},{"akn":"mp","html":"p","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"}],"sub":{"akn":"text","html":"p/text"}}]}';
 
         describe("Tests if transformation config is valid.", function () {
             it("Expects uptodate transformation config.", function () {

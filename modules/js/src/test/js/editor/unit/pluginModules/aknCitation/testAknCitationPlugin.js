@@ -17,7 +17,11 @@ define(function testAknCitationPlugin(require) {
     var aknCitationPluginToTest = require("plugins/aknCitation/aknCitationPlugin");
     
     describe("Unit tests for plugins/aknCitationPlugin", function() {
-        var transformationConfigForCitation = '{"akn":"citation","html":"p","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"refersTo","html":"data-refersto"},{"akn":"leos:editable","html":"data-akn-attr-editable"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},{"html":"data-akn-name=citation"},{"akn":"leos:action","html":"data-akn-action"},{"akn":"leos:uid","html":"data-akn-uid"},{"akn":"leos:title","html":"title"}],"sub":{"akn":"mp","html":"p","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"}],"sub":{"akn":"text","html":"p/text"}}}';
+        var transformationConfigForCitation = '{"akn":"citation","html":"p","attr":[{"akn":"xml:id","html":"id"},{"akn":"leos:origin","html":"data-origin"},{"akn":"refersTo","html":"data-refersto"},{"akn":"leos:editable","html":"data-akn-attr-editable"},{"akn":"leos:softuser","html":"data-akn-attr-softuser"},{"akn":"leos:softdate","html":"data-akn-attr-softdate"},' +
+            '{"akn":"leos:softmove_to","html":"data-akn-attr-softmove_to"},{"akn":"leos:softmove_from","html":"data-akn-attr-softmove_from"},' +
+            '{"akn":"leos:softmove_label","html":"data-akn-attr-softmove_label"},{"akn":"leos:softaction","html":"data-akn-attr-softaction"},'+
+            '{"akn":"leos:softactionroot","html":"data-akn-attr-softactionroot"},' +
+            '{"html":"data-akn-name=citation"},{"akn":"leos:action","html":"data-akn-action"},{"akn":"leos:uid","html":"data-akn-uid"},{"akn":"leos:title","html":"title"}],"sub":{"akn":"mp","html":"p","attr":[{"akn":"xml:id","html":"data-akn-mp-id"},{"akn":"leos:origin","html":"data-mp-origin"}],"sub":{"akn":"text","html":"p/text"}}}';
 
         it("Tests if transformation config is valid.", function() {
             expect(JSON.stringify(aknCitationPluginToTest.transformationConfig)).toEqual(transformationConfigForCitation);

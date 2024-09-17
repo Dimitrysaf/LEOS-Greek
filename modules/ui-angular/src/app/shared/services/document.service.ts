@@ -1608,4 +1608,8 @@ export class DocumentService {
     const { major, intermediate, minor } = version.versionNumber;
     return `${major}.${intermediate}.${minor}`;
   }
+
+  isTrackChangesEnabled(){
+    return this.currentConfig.trackChangesEnabled;
+  }
 }

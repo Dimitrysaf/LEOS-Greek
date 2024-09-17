@@ -110,6 +110,21 @@ define(function aknCitationPluginModule(require) {
             akn : "leos:softdate",
             html : "data-akn-attr-softdate"
         }, {
+            akn : "leos:softmove_to",
+            html : "data-akn-attr-softmove_to"
+        }, {
+            akn : "leos:softmove_from",
+            html : "data-akn-attr-softmove_from"
+        }, {
+            akn : "leos:softmove_label",
+            html : "data-akn-attr-softmove_label"
+        }, {
+            akn : "leos:softaction",
+            html : "data-akn-attr-softaction"
+        }, {
+            akn : "leos:softactionroot",
+            html : "data-akn-attr-softactionroot"
+        }, {
             html : ["data-akn-name", CITATION_NAME].join("=")
         }, {
             akn : "leos:action",

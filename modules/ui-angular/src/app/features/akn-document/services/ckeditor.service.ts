@@ -167,6 +167,10 @@ export class CKEditorService {
     this.trackChangesConnector?.$triggerStateChange();
   }
 
+  refreshStateSoftActionsConnector() {
+    this.softActionsConnector?.$triggerStateChange();
+  }
+
   triggerMergeContributionConnectorStateChange() {
     this.mergeContributionConnector.$triggerStateChange();
   }

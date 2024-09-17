@@ -364,7 +364,10 @@ export class DocumentComponent
       if (this.shouldReloadDocument(data)) {
         this.documentService.reloadDocument();
       } else {
-        this.reloadElements(data)
+        this.reloadElements(data);
+      }
+      if(this.documentService.isTrackChangesEnabled()){
+        this.ckeditorService.refreshStateSoftActionsConnector();
       }
     }
     this.initTrackChangesActions();
