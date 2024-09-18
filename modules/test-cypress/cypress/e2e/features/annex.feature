@@ -121,7 +121,7 @@ Feature: Annex Page Regression Features
         When mouseover and click on article 1
         Then ck editor window is displayed
         When click at offset 7 of li 1 with data-akn-element "paragraph" of article in edition mode
-        And  click on paragraph mode icon present in ck editor panel
+        And  click on paragraph mode icon two times present in ck editor panel
         And  click enter from keyboard in edition mode
         And  add content "Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text" to li 2 with data-akn-element "paragraph" of article in edition mode
         And  click on increase indent icon present in ck editor panel

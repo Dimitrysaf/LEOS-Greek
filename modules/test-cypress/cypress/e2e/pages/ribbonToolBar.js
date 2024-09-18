@@ -18,7 +18,7 @@ class ribbonToolBar {
     }
 
     clickEnableTrackChangesToggleBtn() {
-        this.elements.enableTrackChangesInput().invoke('show').click({force:true})
+        this.elements.enableTrackChangesInput().invoke('show').click({force:true}).wait(500);
     }
 
     clickChangeAnnexStructureBtn(){

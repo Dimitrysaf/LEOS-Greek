@@ -90,6 +90,7 @@ Feature: milestone section regression features
             | Cover Page  [1.0.0]             |
             | Explanatory Memorandum  [1.0.0] |
             | Legal Act  [1.0.0]              |
+            | Financial Statement  [1.0.0]    |
         When export button is displayed in milestone explorer window
 #         When click on export button present in milestone explorer window
 #         And  recent pdf file present in downloads folder contains below words

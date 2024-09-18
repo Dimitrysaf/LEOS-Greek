@@ -460,3 +460,7 @@ When('click at offset {int} of child {int} of recital in edition mode', function
 When('add {string} at offset {int} in paragraph in edition mode', function (newContent, offset) {
     ckEditorWindow.addContentInParagraph(newContent, offset);
 });
+
+When(/^click on paragraph mode icon two times present in ck editor panel$/, function () {
+    ckEditorWindow.clickTwoTimesParagraphModeIcon();
+});
