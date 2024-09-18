@@ -36,7 +36,7 @@
             <references source="~PUBL">
                 <TLCReference xml:id="language"  href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
                 <TLCOrganization xml:id="PUBL" href="http://publications.europa.eu/resource/authority/corporate-body/PUBL" showAs="Publications Office"/>
-                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM " showAs="European Commission" />
+                <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" />
                 <TLCReference xml:id="STAT_FINANC_LEGIS" href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement"/>
                 <TLCConcept xml:id="INP" href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" />
 				<!--  draft  -->
