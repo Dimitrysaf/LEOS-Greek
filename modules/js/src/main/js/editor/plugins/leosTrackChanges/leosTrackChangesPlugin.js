@@ -260,7 +260,7 @@ define(function leosTrackChangesPluginModule(require) {
                         if (!!closestList && closestList.length > 0 ){
                             var list = closestList[0];
                             if (!isNumberedList(list)) {
-                                var tcAttributes = ["data-akn-action-number", "data-akn-num"];
+                                var tcAttributes = ["title-number", "data-akn-uid-number", "data-akn-action-number", "data-akn-num"];
                                 for (var attrName of tcAttributes) {
                                     element.removeAttribute(attrName);
                                 }
