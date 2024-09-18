@@ -6,8 +6,8 @@ class legalActPage {
         preface: () => this.elements.bill().find('preface'),
         longTitle: () => this.elements.preface().find('longtitle'),
         docPurpose: () => this.elements.longTitle().find('docpurpose'),
-        recitalFromImportOj: () => cy.get("recital[id^='imp_']"),
-        articleFromImportOj: () => cy.get("article[id^='imp_']")
+        recitalFromImportOj: () => cy.get("recital[id^='impXrec']"),
+        articleFromImportOj: () => cy.get("article[id^='impXart']")
     }
 
     clickCloseBtn() {
@@ -95,7 +95,7 @@ class legalActPage {
     }
 
     clickInsertAfterIconOfArticle(articleNumber) {
-        this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }));
+        this.getArticle(articleNumber).invoke('attr', 'id').then(id => cy.get("#" + id).trigger('mouseover').next('div .leos-actions').find('.leos-actions-icon').realHover({ position: "top" }).click('top', { force: true }).parent().find("span[data-widget-type='insert.after']").click({ force: true }).wait(500));
     }
 
     clickInsertBeforeIconOfArticle(articleNumber) {
