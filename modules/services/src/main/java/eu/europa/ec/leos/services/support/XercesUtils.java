@@ -54,11 +54,22 @@ import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.INLINE;
 import static eu.europa.ec.leos.services.support.XmlHelper.INLINE_NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ENTER;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_NUMBER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_ACTION_DELETE;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_SOFT_MOVE_TO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_DELETE_ELEMENT_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ACTION;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_INSERT_ELEMENT_NAME;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TC_ORIGINAL_NUMBER;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE_ENTER;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_TITLE_NUMBER;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID_ENTER;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_UID_NUMBER;
 import static eu.europa.ec.leos.services.support.XmlHelper.LIST;
 import static eu.europa.ec.leos.services.support.XmlHelper.NUM;
 import static eu.europa.ec.leos.services.support.XmlHelper.OPEN_END_TAG;
@@ -1420,5 +1431,69 @@ public class XercesUtils {
             return xPath;
         }
 
+    }
+
+    public static boolean cleanTrackChangesForElement(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        for (int index = 0; index < nodeList.getLength(); index++) {
+            Node childNode = nodeList.item(index);
+            if (childNode.getNodeType() != Node.TEXT_NODE) {
+                boolean isNodeDeleted = doCleanTrackChanges(childNode);
+                if(isNodeDeleted) {
+                    index--;
+                } else {
+                    isNodeDeleted = cleanTrackChangesForElement(childNode);
+                    if(isNodeDeleted) {
+                        index--;
+                    }
+                }
+            }
+        }
+        if(!node.hasChildNodes() && !node.getNodeName().equals("documentRef")) {
+            XercesUtils.deleteElement(node);
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean doCleanTrackChanges(Node node) {
+        boolean isNodeDeleted = false;
+        if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
+            XercesUtils.deleteElement(node);
+            isNodeDeleted = true;
+        } else if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())) {
+            XercesUtils.replaceElement(node.getFirstChild(), node);
+            isNodeDeleted = true;
+        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
+            if("span".equals(node.getNodeName())) {
+                XercesUtils.deleteElement(node);
+                isNodeDeleted = true;
+            } else {
+                //removeTrackChangesAttributes(node);
+                XercesUtils.deleteElement(node);
+                isNodeDeleted = true;
+            }
+        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION)) {
+            if("span".equals(node.getNodeName())) {
+                XercesUtils.replaceElement(node.getFirstChild(), node);
+                isNodeDeleted = true;
+            } else {
+                removeTrackChangesAttributes(node);
+            }
+        }
+        return isNodeDeleted;
+    }
+
+    private static void removeTrackChangesAttributes(Node node) {
+        XercesUtils.removeAttribute(node, LEOS_ACTION_ATTR);
+        XercesUtils.removeAttribute(node, LEOS_ACTION_NUMBER);
+        XercesUtils.removeAttribute(node, LEOS_ACTION_ENTER);
+        XercesUtils.removeAttribute(node, LEOS_TITLE);
+        XercesUtils.removeAttribute(node, LEOS_TITLE_NUMBER);
+        XercesUtils.removeAttribute(node, LEOS_TITLE_ENTER);
+        XercesUtils.removeAttribute(node, LEOS_UID);
+        XercesUtils.removeAttribute(node, LEOS_UID_NUMBER);
+        XercesUtils.removeAttribute(node, LEOS_UID_ENTER);
+        XercesUtils.removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
     }
 }
