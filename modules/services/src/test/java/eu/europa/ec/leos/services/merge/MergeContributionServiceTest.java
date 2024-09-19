@@ -1890,4 +1890,23 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
         this.contribution3.setXmlContent(contributionContent3);
     }
+
+    @Test
+    public void testMergeNewTable() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("impXart_d1e2997Xec00tGmYwGEGOx6mE");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution3);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItems,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTableWithoutTC.xml"));
+        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+    }
 }

@@ -82,6 +82,7 @@ import static eu.europa.ec.leos.services.processor.content.XmlContentProcessorHe
 import static eu.europa.ec.leos.services.support.LeosXercesUtils.getTitleValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.addSibling;
+import static eu.europa.ec.leos.services.support.XercesUtils.cleanTrackChangesForElement;
 import static eu.europa.ec.leos.services.support.XercesUtils.createElement;
 import static eu.europa.ec.leos.services.support.XercesUtils.createNodeFromXmlFragment;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
@@ -95,7 +96,6 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getId;
 import static eu.europa.ec.leos.services.support.XercesUtils.getLastChild;
 import static eu.europa.ec.leos.services.support.XercesUtils.getNextSibling;
 import static eu.europa.ec.leos.services.support.XercesUtils.getParentId;
-import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.importNodeInDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateAttributeValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.insertOrUpdateStylingAttribute;
@@ -234,70 +234,6 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             cleanTrackChangesForElement(element);
         }
         return nodeToByteArray(document);
-    }
-
-    private boolean cleanTrackChangesForElement(Node node) {
-        NodeList nodeList = node.getChildNodes();
-        for (int index = 0; index < nodeList.getLength(); index++) {
-            Node childNode = nodeList.item(index);
-            if (childNode.getNodeType() != Node.TEXT_NODE) {
-                boolean isNodeDeleted = doCleanTrackChanges(childNode);
-                if(isNodeDeleted) {
-                    index--;
-                } else {
-                    isNodeDeleted = cleanTrackChangesForElement(childNode);
-                    if(isNodeDeleted) {
-                        index--;
-                    }
-                }
-            }
-        }
-        if(!node.hasChildNodes() && !node.getNodeName().equals("documentRef")) {
-            XercesUtils.deleteElement(node);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean doCleanTrackChanges(Node node) {
-        boolean isNodeDeleted = false;
-        if(LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
-            XercesUtils.deleteElement(node);
-            isNodeDeleted = true;
-        } else if(LEOS_TC_INSERT_ELEMENT_NAME.equals(node.getNodeName())) {
-            XercesUtils.replaceElement(node.getFirstChild(), node);
-            isNodeDeleted = true;
-        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_DELETE_ACTION)) {
-            if("span".equals(node.getNodeName())) {
-                XercesUtils.deleteElement(node);
-                isNodeDeleted = true;
-            } else {
-                //removeTrackChangesAttributes(node);
-                XercesUtils.deleteElement(node);
-                isNodeDeleted = true;
-            }
-        } else if(hasAttributeWithValue(node, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION)) {
-            if("span".equals(node.getNodeName())) {
-                XercesUtils.replaceElement(node.getFirstChild(), node);
-                isNodeDeleted = true;
-            } else {
-                removeTrackChangesAttributes(node);
-            }
-        }
-        return isNodeDeleted;
-    }
-
-    private void removeTrackChangesAttributes(Node node) {
-        XercesUtils.removeAttribute(node, LEOS_ACTION_ATTR);
-        XercesUtils.removeAttribute(node, LEOS_ACTION_NUMBER);
-        XercesUtils.removeAttribute(node, LEOS_ACTION_ENTER);
-        XercesUtils.removeAttribute(node, LEOS_TITLE);
-        XercesUtils.removeAttribute(node, LEOS_TITLE_NUMBER);
-        XercesUtils.removeAttribute(node, LEOS_TITLE_ENTER);
-        XercesUtils.removeAttribute(node, LEOS_UID);
-        XercesUtils.removeAttribute(node, LEOS_UID_NUMBER);
-        XercesUtils.removeAttribute(node, LEOS_UID_ENTER);
-        XercesUtils.removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
     }
 
     @Override

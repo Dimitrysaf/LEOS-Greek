@@ -41,6 +41,7 @@ import java.util.stream.Collectors;
 import static eu.europa.ec.leos.services.dto.request.MergeActionVO.ElementState;
 import static eu.europa.ec.leos.services.dto.request.MergeActionVO.ElementState.ADD;
 import static eu.europa.ec.leos.services.support.XercesUtils.addAttribute;
+import static eu.europa.ec.leos.services.support.XercesUtils.cleanTrackChangesForElement;
 import static eu.europa.ec.leos.services.support.XercesUtils.createElementAsLastChildOfNode;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.support.XercesUtils.getAttributeValue;
@@ -57,6 +58,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.getNumTag;
 import static eu.europa.ec.leos.services.support.XercesUtils.getStartTagNodeAsXmlFragment;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAscendantWithAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttribute;
+import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasDescendantWithAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
@@ -123,6 +125,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.UTF_8;
 import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemByName;
 import static java.util.stream.Collectors.groupingBy;
+import static javax.swing.text.html.HTML.Tag.TR;
 
 @Service
 public class MergeContributionService {
@@ -439,6 +442,16 @@ public class MergeContributionService {
         return elementState.equals(ElementState.ADD);
     }
 
+    private boolean checkIfIsInAddedColumn(Node node) {
+        Node tdNode = getFirstAscendant(node, Arrays.asList("td"));
+        if (tdNode != null) {
+            Node trNode = getFirstAscendant(node, Arrays.asList("tr"));
+            return (hasAttributeWithValue(tdNode, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION)
+                    || (trNode != null && hasAttributeWithValue(trNode, LEOS_ACTION_ATTR, LEOS_TC_INSERT_ACTION)));
+        }
+        return false;
+    }
+
     // Merges all "ins" and "del" tag from inside contribution node
     private void mergeInsertedAndDeletedTextFromContributionNode(String elementId,
                                                                  Node contributionNode,
@@ -450,7 +463,7 @@ public class MergeContributionService {
         NodeList insElts = XercesUtils.getElementsByName(contributionNode, LEOS_TC_INSERT_ELEMENT_NAME);
         for (int i = insElts.getLength() - 1; i >= 0; i--) {
             Node insElt = insElts.item(i);
-            if (insElt == null || insElt.getParentNode().getNodeName().equals(NUM)) {
+            if (insElt == null || insElt.getParentNode().getNodeName().equals(NUM) || checkIfIsInAddedColumn(insElt)) {
                 continue;
             }
             // Checks if "ins" tag is part of entire inserted point, paragraph, ...
@@ -686,6 +699,19 @@ public class MergeContributionService {
         return xmlContent;
     }
 
+    private Node checkIfIsInTable(Node node, Node relatedParentOriginalNode, boolean withTrackChanges) {
+        if (node.getNodeName().equals("tr") || node.getNodeName().equals("td")) {
+            Node parentNode = node;
+            Node previousNode = node;
+            while (parentNode != null && getElementById(relatedParentOriginalNode, getId(parentNode)) == null) {
+                previousNode = parentNode;
+                parentNode = parentNode.getParentNode();
+            }
+            return previousNode;
+        }
+        return node;
+    }
+
     // Merges all inserted or removed tracked elements from inside contribution node
     private void mergeInsertedAndDeletedElementsInContributionNode(Node contributionNode,
                                                                    Node relatedParentOriginalNode,
@@ -699,9 +725,13 @@ public class MergeContributionService {
             if (isAlreadyProcessed(addedElt)) {
                 continue;
             }
+            addedElt = checkIfIsInTable(addedElt, relatedParentOriginalNode, withTrackChanges);
             if (!addedElt.getNodeName().equals(NUM) && !XercesUtils.hasAttribute(addedElt, LEOS_SOFT_MOVE_FROM)) {
                 if (!isMainElementStillToBeAdded(elementState)) {
                     checkNum(addedElt, null, ADD, withTrackChanges);
+                    if (!withTrackChanges) {
+                        cleanTrackChangesForElement(addedElt);
+                    }
                     mergeInsertedEltInsideNode(relatedParentOriginalNode, addedElt, nodeToString(addedElt), withTrackChanges, elementId);
                 }
                 impactedElements.add(getId(addedElt));
@@ -1612,6 +1642,18 @@ public class MergeContributionService {
             } else if (xmlNextSibling != null) {
                 XercesUtils.addSibling(newNode, xmlNextSibling, true);
             } else if (xmlParentSibling != null) {
+                Node lastChild = getLastChild(xmlParentSibling);
+                if (lastChild != null && lastChild.getNodeName().equals(CONTENT)) {
+                    Node contentInContribution = getElementById(refNode, getId(lastChild));
+                    if (contentInContribution != null) {
+                        XercesUtils.replaceElement(lastChild, (getStartTagNodeAsXmlFragment(contentInContribution.getParentNode())
+                                + nodeToString(lastChild)
+                                + getEndTagNodeAsXmlFragment(contentInContribution.getParentNode())));
+                        if (!withTrackChanges) {
+                            resolveTrackChange(lastChild, false);
+                        }
+                    }
+                }
                 XercesUtils.addChild(newNode, xmlParentSibling);
             } else {
                 mergingCompletelySuccessfull = false;
