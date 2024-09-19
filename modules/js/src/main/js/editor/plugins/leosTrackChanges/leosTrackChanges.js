@@ -171,6 +171,13 @@ define(function leosTrackChangesModule(require) {
             }
         },
 
+        removeTrackChangesAttributesForNumberingDelete: function(element) {
+            var tcAttributes = ["data-akn-num"];
+            for (var attrName of tcAttributes) {
+                element.removeAttribute(attrName);
+            }
+        },
+
         removeTrackChangesAttributesForNumbering: function(element) {
             var tcAttributes = ["data-akn-action-number", "data-akn-uid-number", "title-number", "data-akn-tc-original-number"];
             for (var attrName of tcAttributes) {
@@ -615,6 +622,9 @@ define(function leosTrackChangesModule(require) {
                 for (var elementSibling of element.getParent().$.children) {
                     if (elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) && elementSibling.getAttribute(leosPluginUtils.DATA_AKN_NUM) && !elementSibling.getAttribute(core.ACTION_ATTR)) {
                         core.removeTrackChangesAttributes(elementSibling);
+                        if(elementSibling.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.DELETE_ACTION) {
+                            core.removeTrackChangesAttributesForNumberingDelete(elementSibling);
+                        }
                         core.removeTrackChangesAttributesForNumbering(elementSibling);
                         core.removeSoftAttributes(elementSibling);
                         elementSibling.setAttribute(core.DATA_AKN_RENUMBER, core.ACCEPT);
