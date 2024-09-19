@@ -248,7 +248,6 @@ $BLACK : #000000;
 
     %contributionWrapperAfterMerge {
         background-color: rgba(166, 166, 166, .8) !important;
-        border: #8c8c8c thin solid;
         [leos\:mergeAction]:not([leos\:selectedAction]),
         [leos\:mergeaction]:not([leos\:selectedaction]),
         ins,
@@ -265,6 +264,10 @@ $BLACK : #000000;
 
     [leos\:mergeAction]:not([leos\:selectedAction]) {
         @extend %contributionWrapperAfterMerge;
+    }
+
+    .merge-contribution-wrapper[leos\:mergeAction]:not([leos\:selectedAction]):not(list) {
+        border: #8c8c8c thin solid;
     }
 
     [leos\:selectedAction] {

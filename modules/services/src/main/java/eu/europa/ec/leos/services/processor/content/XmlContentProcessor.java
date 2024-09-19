@@ -36,6 +36,8 @@ public interface XmlContentProcessor {
 
     byte[] cleanTrackChanges(byte[] xmlContent);
 
+    byte[] cleanTrackChanges(byte[] xmlContent, String elementId);
+
     String getElementValue(byte[] xmlContent, String xPath, boolean namespaceEnabled);
 
     byte[] removeElement(byte[] xmlContent, String xPath, boolean namespaceEnabled);

@@ -190,6 +190,20 @@ public class XercesUtils {
         return XmlHelper.removeEnclosingTags(xmlContent);
     }
 
+    public static String getStartTagNodeAsXmlFragment(Node node) {
+        String startTagContent = "<" + node.getNodeName();
+        for (int i = 0; i < node.getAttributes().getLength(); i++) {
+            Node attr = node.getAttributes().item(i);
+            startTagContent += " " + attr.getNodeName() + "=\"" + attr.getNodeValue() + "\"";
+        }
+        startTagContent += ">";
+        return startTagContent;
+    }
+
+    public static String getEndTagNodeAsXmlFragment(Node node) {
+        return "</" + node.getNodeName() + ">";
+    }
+
     /**
      * Skips all XML headers and print only the real XML root <akomaNtoso>.
      * This method performs better that nodeToStringWithTransformer() for small contents.
@@ -451,8 +465,12 @@ public class XercesUtils {
         }
         startTagContent += ">";
         Node nodeWithNewContent = createNodeFromXmlFragment(node.getOwnerDocument(), (startTagContent + newContentInsideNode + endTagContent).getBytes(UTF_8), false);
-        addSibling(nodeWithNewContent, node, false);
-        deleteElement(node);
+        if (node.getParentNode() != null) {
+            addSibling(nodeWithNewContent, node, false);
+            deleteElement(node);
+        } else {
+            node = nodeWithNewContent;
+        }
     }
 
     public static void appendToNodeContent(Node node, String contentToAppend, boolean before) {
@@ -890,6 +908,38 @@ public class XercesUtils {
             }
         }
         return null;
+    }
+
+    public static boolean hasDescendantWithAttribute(Node node, String attrName) {
+        List<Node> children = getChildren(node);
+        for (Node child : children) {
+            if (hasAttribute(child, attrName) || hasDescendantWithAttribute(child, attrName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasAscendantWithAttribute(Node node, String attrName) {
+        Node parent = node;
+        while (parent != null) {
+            if (hasAttribute(parent, attrName)) {
+                return true;
+            }
+            parent = parent.getParentNode();
+        }
+        return false;
+    }
+
+    public static boolean hasAscendantWithAttributeValue(Node node, String attrName, String attrValue) {
+        Node parent = node;
+        while (parent != null) {
+            if (hasAttribute(parent, attrName) && getAttributeValue(parent, attrName).equals(attrValue)) {
+                return true;
+            }
+            parent = parent.getParentNode();
+        }
+        return false;
     }
 
     public static int getPointDepth(Node node) {

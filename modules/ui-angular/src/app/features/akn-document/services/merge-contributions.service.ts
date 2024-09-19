@@ -25,7 +25,7 @@ import {
   DELETE_ATTR,
   ID, INSERT_ATTR,
   LEOS_SOFT_ACTION,
-  LEOS_TRACK_ACTION, MERGE_CONTRIBUTION,
+  LEOS_TRACK_ACTION, MERGE_ACTION_ATTR, MERGE_CONTRIBUTION,
   MOVE_ATTR,
   MOVE_FROM_ATTR, MOVE_PREFIX,
   MOVE_TO_ATTR,
@@ -616,9 +616,9 @@ export class MergeContributionsService {
 
   public getImpactedElements(element: HTMLElement): NodeList {
     if (this.HIGHER_ELTS.includes(element.tagName.toLowerCase())) {
-      return element.querySelectorAll('num.' + MERGE_CONTRIBUTION + ',heading.' + MERGE_CONTRIBUTION);
+      return element.querySelectorAll('num.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction])' + ',heading.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction])');
     } else {
-      return element.querySelectorAll('.' + MERGE_CONTRIBUTION);
+      return element.querySelectorAll('.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction])');
     }
   }
 
