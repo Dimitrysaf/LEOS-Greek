@@ -9,11 +9,15 @@ import eu.europa.ec.leos.i18n.MandateMessageHelper;
 import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.CheckinCommentVO;
 import eu.europa.ec.leos.model.action.ContributionVO;
+import eu.europa.ec.leos.model.user.Entity;
+import eu.europa.ec.leos.model.user.User;
 import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.repository.domain.ContentImpl;
 import eu.europa.ec.leos.repository.domain.SourceImpl;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.services.api.MergeContributionService;
+import eu.europa.ec.leos.services.clone.CloneContext;
 import eu.europa.ec.leos.services.document.AnnexService;
 import eu.europa.ec.leos.services.document.BillService;
 import eu.europa.ec.leos.services.document.ContributionServiceProposalImpl;
@@ -23,8 +27,8 @@ import eu.europa.ec.leos.services.dto.request.ApplyContributionsRequest;
 import eu.europa.ec.leos.services.dto.request.MergeActionVO;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.NumberProcessorHandlerProposal;
-import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.numbering.NumberServiceProposal;
+import eu.europa.ec.leos.services.numbering.NumberServiceTest;
 import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
 import eu.europa.ec.leos.services.numbering.depthBased.ParentChildConverter;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessor;
@@ -34,13 +38,13 @@ import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBased;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorDepthBasedDefault;
 import eu.europa.ec.leos.services.numbering.processor.NumberProcessorParagraphAndPoint;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessorProposal;
-import eu.europa.ec.leos.services.processor.content.XmlContentProcessorTest;
 import eu.europa.ec.leos.services.response.MergeContributionResponse;
 import eu.europa.ec.leos.services.store.LegService;
 import eu.europa.ec.leos.services.store.PackageService;
 import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.tracking.TrackChangesContext;
 import eu.europa.ec.leos.services.util.TestUtils;
+import eu.europa.ec.leos.test.support.model.ModelHelper;
 import io.atlassian.fugue.Option;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,9 +53,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,12 +64,18 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDate;
+import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndDummyDateWithoutOrigin;
+import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlAndOriginAndDummyDate;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlRemoveNumValue;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlWithoutIdsAndDummyDate;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
-public class MergeContributionServiceTest extends XmlContentProcessorTest {
+public class MergeContributionServiceTest extends NumberServiceTest {
+    @Mock
+    protected CloneContext cloneContext;
+
     @Mock
     private ProposalService proposalService;
 
@@ -86,6 +96,9 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
 
     @Mock
     private LeosRepository leosRepository;
+
+    @Mock
+    private SecurityContext securityContext;
 
     @InjectMocks
     protected MessageHelper messageHelper = Mockito.spy(getMessageHelper());
@@ -123,8 +136,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
             .collect(Collectors.toList()));
 
     @InjectMocks
-    NumberService numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, xmlContentProcessor,
-            documentLanguageContext);
+    NumberServiceProposal numberService;
 
     @InjectMocks
     eu.europa.ec.leos.services.document.ContributionService contributionService = new ContributionServiceProposalImpl<Bill>(
@@ -134,13 +146,16 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
             memorandumService, legService, xmlContentProcessor, repositoryPropertiesMapper);
 
     @InjectMocks
-    MergeContributionService mergeContributionService = new MergeContributionService(xmlContentProcessor, contributionService, documentLanguageContext,
-            numberService);
+    MergeContributionService mergeContributionService;
 
     private ContributionVO contribution;
     private ContributionVO contribution2;
     private ContributionVO contribution3;
+    private ContributionVO contribution4;
+    private ContributionVO contribution5;
+    private ContributionVO contribution6;
     private XmlDocument xmlDoc;
+    private byte[] docContent;
     protected byte[] contributionContent;
     private byte[] docContent2;
     private XmlDocument xmlDoc2;
@@ -148,6 +163,15 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     private byte[] docContent3;
     private XmlDocument xmlDoc3;
     protected byte[] contributionContent3;
+    private byte[] docContent4;
+    private XmlDocument xmlDoc4;
+    protected byte[] contributionContent4;
+    private byte[] docContent5;
+    private XmlDocument xmlDoc5;
+    protected byte[] contributionContent5;
+    private byte[] docContent6;
+    private XmlDocument xmlDoc6;
+    protected byte[] contributionContent6;
 
     private final String FILE_PREFIX = "/merge";
 
@@ -178,12 +202,19 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
     public void setup() {
         super.setup();
 
+        when(cloneContext.isClonedProposal()).thenReturn(false);
         docContent = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml");
         docContent2 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest2.xml");
         docContent3 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml");
+        docContent4 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml");
+        docContent5 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest5.xml");
+        docContent6 = TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest6.xml");
         contributionContent = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest.xml");
         contributionContent2 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest2.xml");
         contributionContent3 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest3.xml");
+        contributionContent4 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest4.xml");
+        contributionContent5 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest5.xml");
+        contributionContent6 = TestUtils.getFileContent(FILE_PREFIX + "/contributionMergeTest6.xml");
         Content content = new ContentImpl("billMergeTest.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(docContent)));
         this.xmlDoc = getMockedBill(content);
@@ -193,6 +224,15 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         content = new ContentImpl("billMergeTest3.xml", "mime type", 23,
                 new SourceImpl(new ByteArrayInputStream(docContent3)));
         this.xmlDoc3 = getMockedBill(content);
+        content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(docContent4)));
+        this.xmlDoc4 = getMockedBill(content);
+        content = new ContentImpl("billMergeTest5.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(docContent5)));
+        this.xmlDoc5 = getMockedBill(content);
+        content = new ContentImpl("billMergeTest6.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(docContent6)));
+        this.xmlDoc6 = getMockedBill(content);
         this.contribution = new ContributionVO();
         this.contribution.setCollaborators(Arrays.asList());
         this.contribution.setCheckinCommentVO(new CheckinCommentVO());
@@ -222,6 +262,50 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         this.contribution3.setContributionStatus(ContributionVO.ContributionStatus.RECEIVED.getValue());
         this.contribution3.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
         this.contribution3.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
+
+        this.contribution4 = new ContributionVO();
+        this.contribution4.setCollaborators(Arrays.asList());
+        this.contribution4.setCheckinCommentVO(new CheckinCommentVO());
+        this.contribution4.setDocumentId("454");
+        this.contribution4.setUpdatedDate(Instant.now());
+        this.contribution4.setXmlContent(contributionContent4);
+        this.contribution4.setContributionStatus(ContributionVO.ContributionStatus.RECEIVED.getValue());
+        this.contribution4.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
+        this.contribution4.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
+
+        this.contribution5 = new ContributionVO();
+        this.contribution5.setCollaborators(Arrays.asList());
+        this.contribution5.setCheckinCommentVO(new CheckinCommentVO());
+        this.contribution5.setDocumentId("454");
+        this.contribution5.setUpdatedDate(Instant.now());
+        this.contribution5.setXmlContent(contributionContent5);
+        this.contribution5.setContributionStatus(ContributionVO.ContributionStatus.RECEIVED.getValue());
+        this.contribution5.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
+        this.contribution5.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
+
+        this.contribution6 = new ContributionVO();
+        this.contribution6.setCollaborators(Arrays.asList());
+        this.contribution6.setCheckinCommentVO(new CheckinCommentVO());
+        this.contribution6.setDocumentId("454");
+        this.contribution6.setUpdatedDate(Instant.now());
+        this.contribution6.setXmlContent(contributionContent6);
+        this.contribution6.setContributionStatus(ContributionVO.ContributionStatus.RECEIVED.getValue());
+        this.contribution6.setDocumentName("REG-cm0z6hbqp00053k286ebc40gl-en.xml");
+        this.contribution6.setLegFileName("PROP_ACT-cm0z6hben00023k28ruc0rt24-en.leg");
+        numberService = new NumberServiceProposal(structureContextProvider, numberProcessorHandler, parentChildConverter, xmlContentProcessor,
+                documentLanguageContext);
+        mergeContributionService = Mockito.spy(new MergeContributionService(xmlContentProcessor, contributionService, documentLanguageContext,
+                numberService));
+        ReflectionTestUtils.setField(numberProcessorArticle, "securityContext", securityContext);
+        ReflectionTestUtils.setField(numberProcessorPoint, "securityContext", securityContext);
+        ReflectionTestUtils.setField(numberProcessorDefault, "securityContext", securityContext);
+        ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessorsDepthBased", numberProcessorsDepthBased);
+        ReflectionTestUtils.setField(numberProcessorHandler, "numberProcessors", numberProcessors);
+        List<Entity> entities = new ArrayList<Entity>();
+        entities.add(new Entity("1", "DIGIT.B2", "DIGIT"));
+        User user = ModelHelper.buildUser(45L, "demo", "demo", entities);
+        when(securityContext.getUser()).thenReturn(user);
+        when(securityContext.getUserName()).thenReturn("demo");
     }
 
     @Test
@@ -236,7 +320,8 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList,
+                new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addChapter.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -260,7 +345,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -279,7 +364,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveCitation.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -303,10 +388,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -322,7 +407,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveCitation.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -346,10 +431,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -365,7 +450,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveRecital.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -389,10 +474,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -408,10 +493,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveRecital.xml"));
-        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
     }
 
     @Test
@@ -432,10 +517,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -451,7 +536,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticle.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -475,10 +560,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -494,7 +579,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticle.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -518,10 +603,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -537,7 +622,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle.xml"));
         assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
@@ -561,10 +646,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -580,7 +665,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle2.xml"));
         assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
@@ -604,7 +689,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -623,7 +708,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.DELETE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_deleteArticle.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -647,10 +732,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.DELETE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -666,7 +751,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateHeading.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -690,10 +775,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -709,7 +794,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle3.xml"));
         assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
@@ -733,7 +818,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -752,7 +837,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle4.xml"));
         assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
@@ -776,7 +861,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -795,7 +880,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addParagraph.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -819,7 +904,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -838,7 +923,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addArticle.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -862,7 +947,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -881,7 +966,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addChapterWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -905,7 +990,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -924,10 +1009,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveCitationWithoutTC.xml"));
-        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
     }
 
     @Test
@@ -948,7 +1033,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -967,10 +1052,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveCitationWithoutTC.xml"));
-        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
     }
 
     @Test
@@ -991,7 +1076,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -1010,10 +1095,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveRecitalWithoutTC.xml"));
-        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
     }
 
     @Test
@@ -1034,7 +1119,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -1053,7 +1138,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveRecitalWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1077,7 +1162,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -1096,7 +1181,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticleWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1120,7 +1205,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -1139,7 +1224,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_moveArticleWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1163,10 +1248,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.MOVE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndDummyDateWithoutOrigin(expected), squeezeXmlAndDummyDateWithoutOrigin(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -1182,7 +1267,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticleWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1206,10 +1291,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -1225,7 +1310,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle2WithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1249,7 +1334,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -1268,7 +1353,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.DELETE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_deleteArticleWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1292,7 +1377,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.DELETE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -1311,7 +1396,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateHeadingWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1335,10 +1420,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -1354,7 +1439,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle3WithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1378,10 +1463,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -1397,7 +1482,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticle4WithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1421,10 +1506,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -1440,7 +1525,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addParagraphWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1464,10 +1549,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -1484,7 +1569,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addArticleWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1508,10 +1593,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndDummyDateWithoutOrigin(expected), squeezeXmlAndDummyDateWithoutOrigin(resultStr));
         this.contribution.setXmlContent(contributionContent);
     }
 
@@ -1527,7 +1612,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc2, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc2, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticleWithDeletedList.xml"));
         assertEquals(squeezeXmlWithoutIdsAndDummyDate(expected), squeezeXmlWithoutIdsAndDummyDate(resultStr));
@@ -1551,10 +1636,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest2.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution2.setXmlContent(contributionContent2);
     }
 
@@ -1571,7 +1656,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc2, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc2, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateArticleWithDeletedListWithoutTC.xml"));
         assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
@@ -1595,7 +1680,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest2.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -1614,7 +1699,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItems,
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItemList,
                 new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateChapterHeading.xml"));
@@ -1639,7 +1724,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -1658,7 +1743,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItems,
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItemList,
                 new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateChapterHeadingWithoutTC.xml"));
@@ -1683,10 +1768,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndDummyDate(expected), squeezeXmlAndDummyDate(resultStr));
         this.contribution3.setXmlContent(contributionContent3);
     }
 
@@ -1702,7 +1787,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItems,
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItemList,
                 new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addChapterWithUpdatesAndMoves.xml"));
@@ -1727,10 +1812,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution3.setXmlContent(contributionContent3);
     }
 
@@ -1746,7 +1831,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItems,
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItemList,
                 new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_addChapterWithUpdatesAndMovesWithoutTC.xml"));
@@ -1771,10 +1856,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.ADD);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution3.setXmlContent(contributionContent3);
     }
 
@@ -1790,7 +1875,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItems,
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItemList,
                 new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_contentUpdateArticle.xml"));
@@ -1815,10 +1900,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution3.setXmlContent(contributionContent3);
     }
 
@@ -1834,11 +1919,11 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItems,
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItemList,
                 new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_contentUpdateArticleWithoutTC.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
     }
 
     @Test
@@ -1859,10 +1944,10 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml"));
-        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
         this.contribution3.setXmlContent(contributionContent3);
     }
 
@@ -1884,7 +1969,7 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItems, new ArrayList<>());
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_contentUpdateArticleWithPartProcessed.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
@@ -1903,10 +1988,847 @@ public class MergeContributionServiceTest extends XmlContentProcessorTest {
         mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
         mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
         request.setMergeActions(Arrays.asList(mergeActionVO));
-        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItems,
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItemList,
                 new ArrayList<>());
         String resultStr = new String(result.getMergedContent());
         String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTableWithoutTC.xml"));
         assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+    }
+
+
+    @Test
+    public void testUndoNewTable() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTableWithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest3.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("impXart_d1e2997Xec00tGmYwGEGOx6mE");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable.xml");
+        this.contribution3.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution3);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest3.xml"));
+        assertEquals(squeezeXmlAndDummyDateWithoutOrigin(expected), squeezeXmlAndDummyDateWithoutOrigin(resultStr));
+        this.contribution3.setXmlContent(contributionContent3);
+    }
+
+    @Test
+    public void testMergeNewTableTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("impXart_d1e2997Xec00tGmYwGEGOx6mE");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution3);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc3, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable.xml"));
+        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+    }
+
+    @Test
+    public void testMergeSubParagraphsUpdateArticle() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecK7dPHTIz0K0hwoq");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_subParagraphsUpdateArticleWithoutTC.xml"));
+        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+    }
+
+    @Test
+    public void testUndoSubParagraphsUpdateArticle() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_subParagraphsUpdateArticleWithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecK7dPHTIz0K0hwoq");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithSubParagraphsUpdateArticle.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeSubParagraphsUpdateArticleTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecK7dPHTIz0K0hwoq");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_subParagraphsUpdateArticle.xml"));
+        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+    }
+
+    @Test
+    public void testUndoSubParagraphsUpdateArticleTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_subParagraphsUpdateArticle.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecK7dPHTIz0K0hwoq");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithSubParagraphsUpdateArticle.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeSubParagraphsUpdateParagraph() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecbZgUmOfj5D0fTql");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_subParagraphsUpdateParagraphWithoutTC.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoSubParagraphsUpdateParagraph() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_subParagraphsUpdateParagraphWithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecbZgUmOfj5D0fTql");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithSubParagraphsUpdateParagraph.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeSubParagraphsUpdateParagraphTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecbZgUmOfj5D0fTql");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_subParagraphsUpdateParagraph.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoSubParagraphsUpdateParagraphTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_subParagraphsUpdateParagraph.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecbZgUmOfj5D0fTql");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithSubParagraphsUpdateParagraph.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTableUpdateParagraph() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecQhNs0Uw50gGK4po");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable2WithoutTC.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTableUpdateParagraph() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable2WithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecQhNs0Uw50gGK4po");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable2.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTableUpdateParagraphTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecQhNs0Uw50gGK4po");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable2.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTableUpdateParagraphTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable2.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecQhNs0Uw50gGK4po");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable2.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTable2UpdateParagraph() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ec2ouS615TiyBKih9");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable3WithoutTC.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTable2UpdateParagraph() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable3WithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ec2ouS615TiyBKih9");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable3.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTable2UpdateParagraphTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ec2ouS615TiyBKih9");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable3.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTable2UpdateParagraphTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable3.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ec2ouS615TiyBKih9");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable3.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTable3UpdateParagraph() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecqMwZLc0IHirzKf2");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable4WithoutTC.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTable3UpdateParagraph() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable4WithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecqMwZLc0IHirzKf2");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable4.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTable3UpdateParagraphTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecqMwZLc0IHirzKf2");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTable3UpdateParagraphTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable4.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecqMwZLc0IHirzKf2");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable4.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTable4UpdateArticle() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("impXart_d1e3059Xecm1xPCOKbOF0LH0d");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable5WithoutTC.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTable4UpdateArticle() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable5WithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("impXart_d1e3059Xecm1xPCOKbOF0LH0d");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable5.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTable4UpdateParagraphTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("impXart_d1e3059Xecm1xPCOKbOF0LH0d");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable5.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTable4UpdateArticleTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable5.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("impXart_d1e3059Xecm1xPCOKbOF0LH0d");
+        mergeActionVO.setElementTagName("article");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable5.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTable5UpdateParagraph() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecuYoelMUcLxTUlNa");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable6WithoutTC.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTable5UpdateParagraph() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable6WithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecuYoelMUcLxTUlNa");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable6.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeNewTable5UpdateParagraphTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecuYoelMUcLxTUlNa");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc4, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_newTable6.xml"));
+        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+    }
+
+    @Test
+    public void testUndoNewTable5UpdateParagraphTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_newTable6.xml");
+        Content content = new ContentImpl("billMergeTest4.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecuYoelMUcLxTUlNa");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithNewTable6.xml");
+        this.contribution4.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution4);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest4.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution4.setXmlContent(contributionContent4);
+    }
+
+    @Test
+    public void testMergeRemoveTableUpdateParagraph() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecVG44oNn0ymkt6i2");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution5);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc5, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_removeTableWithoutTC.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoRemoveTableUpdateParagraph() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_removeTableWithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest5.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecVG44oNn0ymkt6i2");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithRemoveTable.xml");
+        this.contribution5.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution5);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest5.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution5.setXmlContent(contributionContent5);
+    }
+
+    @Test
+    public void testMergeRemoveTableUpdateParagraphTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecVG44oNn0ymkt6i2");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution5);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc5, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_removeTable.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoRemoveTableUpdateParagraphTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_removeTable.xml");
+        Content content = new ContentImpl("billMergeTest5.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecVG44oNn0ymkt6i2");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithRemoveTable.xml");
+        this.contribution5.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution5);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest5.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution5.setXmlContent(contributionContent5);
+    }
+
+    @Test
+    public void testMergeUpdateParagraphWithTableTC() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecYa0WQ0p0S9kDsh9");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(true);
+        mergeActionVO.setContributionVO(this.contribution6);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT_TC);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc6, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateParagraphWithTable.xml"));
+        assertEquals(squeezeXmlRemoveNumValue(expected), squeezeXmlRemoveNumValue(resultStr));
+    }
+
+    @Test
+    public void testUndoUpdateParagraphWithTableTC() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateParagraphWithTable.xml");
+        Content content = new ContentImpl("billMergeTest6.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ecYa0WQ0p0S9kDsh9");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithUpdateParagraphWithTable.xml");
+        this.contribution6.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution6);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest6.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution6.setXmlContent(contributionContent6);
+    }
+
+    @Test
+    public void testMergeUpdateParagraphWithMathJax() throws Exception {
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ec5L30syBRVW5kaTo");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        mergeActionVO.setContributionVO(this.contribution6);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.ACCEPT);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, this.xmlDoc6, this.tocItemList,
+                new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/test_updateParagraphWithMathJaxWithoutTC.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+    }
+
+    @Test
+    public void testUndoUpdateParagraphWithMathJax() throws Exception {
+        byte[] mergedContent = TestUtils.getFileContent(FILE_PREFIX + "/test_updateParagraphWithMathJaxWithoutTC.xml");
+        Content content = new ContentImpl("billMergeTest6.xml", "mime type", 23,
+                new SourceImpl(new ByteArrayInputStream(mergedContent)));
+        XmlDocument mergedBill = getMockedBill(content);
+        ApplyContributionsRequest request = new ApplyContributionsRequest();
+        request.setAcceptAllContributions(false);
+        MergeActionVO mergeActionVO = new MergeActionVO();
+        mergeActionVO.setElementId("ec5L30syBRVW5kaTo");
+        mergeActionVO.setElementTagName("paragraph");
+        mergeActionVO.setWithTrackChanges(false);
+        byte[] contributionUpdatedXml = TestUtils.getFileContent(FILE_PREFIX + "/contributionWithUpdateParagraphWithMathJax.xml");
+        this.contribution6.setXmlContent(contributionUpdatedXml);
+        mergeActionVO.setContributionVO(this.contribution6);
+        mergeActionVO.setElementState(MergeActionVO.ElementState.CONTENT_CHANGE);
+        mergeActionVO.setAction(MergeActionVO.MergeAction.UNDO);
+        request.setMergeActions(Arrays.asList(mergeActionVO));
+        MergeContributionResponse result = this.mergeContributionService.updateDocumentWithContributions(request, mergedBill, this.tocItemList, new ArrayList<>());
+        String resultStr = new String(result.getMergedContent());
+        String expected = new String(TestUtils.getFileContent(FILE_PREFIX + "/billMergeTest6.xml"));
+        assertEquals(squeezeXmlAndOriginAndDummyDate(expected), squeezeXmlAndOriginAndDummyDate(resultStr));
+        this.contribution6.setXmlContent(contributionContent6);
     }
 }

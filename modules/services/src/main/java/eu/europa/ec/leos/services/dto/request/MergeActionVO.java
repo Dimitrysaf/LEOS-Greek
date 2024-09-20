@@ -10,7 +10,7 @@ public class MergeActionVO {
     Boolean withTrackChanges = false;
     ContributionVO contributionVO;
 
-    public enum MergeAction {ACCEPT, ACCEPT_TC, PROCESSED, UNDO}
+    public enum MergeAction {ACCEPT, ACCEPT_TC, PROCESSED, UNDO, UNSELECT}
 
     public enum ElementState {DELETE, MOVE, CONTENT_CHANGE, ADD}
 

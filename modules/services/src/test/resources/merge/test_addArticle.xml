@@ -597,7 +597,7 @@
             <article leos:action="insert" leos:listIdAttr="_akn_article_VeHpJu" leos:origin="ls" leos:softaction="add" leos:softdate="2024-03-08T14:55:00.299+01:00" leos:softuser="DAS Satyabrata(AGRI)" leos:title="DAS Satyabrata : 2024-03-08T14:55:00.189+01:00" leos:uid="dasatya" xml:id="_bill__akn_article_2kQl24">
                 <num leos:editable="false" xml:id="_bill__akn_article_2kQl24_E8YJo6">Article 8</num>
                 <heading xml:id="_bill__akn_article_2kQl24_3au8VH">Article heading...</heading>
-                <paragraph leos:origin="ls" leos:softaction="add" leos:softdate="2024-03-08T14:55:00.302+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="_bill__akn_article_2kQl24-par1">
+                <paragraph xml:id="_bill__akn_article_2kQl24-par1">
                     <num xml:id="_bill__akn_article_2kQl24_mRCeYY">1.</num>
                     <content xml:id="_bill__akn_article_2kQl24_h5fE8l">
                         <p xml:id="_bill__akn_article_2kQl24_0VctTM">Text...</p>
@@ -607,7 +607,7 @@
             <num xml:id="akn_XqViZx">Chapter III</num>
             <heading xml:id="akn_RGD2LO">National single window environments for customs</heading>
             <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_XV6KSx" xml:id="akn_art_dMHd93">
-                <num leos:editable="false" leos:origin="ec" xml:id="akn_art_dMHd93_zsIeaG">Article 8</num>
+                <num leos:editable="false" leos:origin="ec" xml:id="akn_art_dMHd93_zsIeaG">Article 9</num>
                 <heading xml:id="akn_art_dMHd93_tB9qgm">Establishment of national single window environments for customsÂ </heading>
                 <paragraph xml:id="akn_art_dMHd93_w3Psxl">
                     <num xml:id="akn_art_dMHd93_8OMAeP">1.</num>
@@ -657,7 +657,7 @@
                 </paragraph>
             </article>
             <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_RVg6Ji" xml:id="akn_art_7SgBab">
-                <num leos:editable="false" xml:id="akn_art_7SgBab_RgWzWJ">Article 9</num>
+                <num leos:editable="false" xml:id="akn_art_7SgBab_RgWzWJ">Article 10</num>
                 <heading xml:id="akn_art_7SgBab_Fy38kB">Personal data processing within the national single window environments for customs</heading>
                 <paragraph xml:id="akn_art_7SgBab_Ap5wOa">
                     <num xml:id="akn_art_7SgBab_eTr586">1.</num>
@@ -686,7 +686,7 @@
                     <num xml:id="akn_zntRbe">Section 1</num>
                     <heading xml:id="akn_RT0jeA">DIGITAL COOPERATION RELATED TO UNION NON-CUSTOMS FORMALITIES</heading>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_HaKQtt" xml:id="akn_art_q7XGxr">
-                        <num leos:editable="false" xml:id="akn_art_q7XGxr_ilVeFO">Article 10</num>
+                        <num leos:editable="false" xml:id="akn_art_q7XGxr_ilVeFO">Article 11</num>
                         <heading xml:id="akn_art_q7XGxr_L2iO0x">Information exchange processed through EU CSW-CERTEX</heading>
                         <paragraph xml:id="akn_art_q7XGxr_t7zhJW">
                             <num xml:id="akn_art_q7XGxr_sd2xlH">1.</num>
@@ -762,7 +762,7 @@
                     <num xml:id="akn_dKcnyq">Section 2</num>
                     <heading xml:id="akn_UAL67f">ADDITIONAL DIGITAL COOPERATION RELATED TO UNION NON-CUSTOMS FORMALITIES</heading>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_lFYQR3" xml:id="akn_art_dtWbDZ">
-                        <num leos:editable="false" xml:id="akn_art_dtWbDZ_6qZ851">Article 11</num>
+                        <num leos:editable="false" xml:id="akn_art_dtWbDZ_6qZ851">Article 12</num>
                         <heading xml:id="akn_art_dtWbDZ_KZj4UG">Streamlining the fulfilment of customs and Union non-customs formalities</heading>
                         <paragraph xml:id="akn_art_dtWbDZ_XfqDj2">
                             <list xml:id="akn_art_dtWbDZ_pfVhrA">
@@ -787,7 +787,7 @@
                         </paragraph>
                     </article>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_UMkYLW" xml:id="akn_art_kCjLvC">
-                        <num leos:editable="false" xml:id="akn_art_kCjLvC_KG9Dwl">Article 12</num>
+                        <num leos:editable="false" xml:id="akn_art_kCjLvC_KG9Dwl">Article 13</num>
                         <heading xml:id="akn_art_kCjLvC_4E3Sfp">Union non-customs formalities subject to additional digital cooperation</heading>
                         <paragraph xml:id="akn_art_kCjLvC_qLqoJI">
                             <num xml:id="akn_art_kCjLvC_LP3juG">1.</num>
@@ -837,7 +837,7 @@
                         </paragraph>
                     </article>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_HOM8NU" xml:id="akn_art_NytFbv">
-                        <num leos:editable="false" xml:id="akn_art_NytFbv_nd9Fas">Article 13</num>
+                        <num leos:editable="false" xml:id="akn_art_NytFbv_nd9Fas">Article 14</num>
                         <heading xml:id="akn_art_NytFbv_xyMyYe">Data harmonisation and rationalisation</heading>
                         <paragraph xml:id="akn_art_NytFbv_sFcMSP">
                             <num xml:id="akn_art_NytFbv_L0ZAEI">1.</num>
@@ -865,7 +865,7 @@
                         </paragraph>
                     </article>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_KuZsFC" xml:id="akn_art_4YJPOt">
-                        <num leos:editable="false" xml:id="akn_art_4YJPOt_WlyVcy">Article 14</num>
+                        <num leos:editable="false" xml:id="akn_art_4YJPOt_WlyVcy">Article 15</num>
                         <heading xml:id="akn_art_4YJPOt_amvUQB">Submission of customs and Union non-customs data by economic operators</heading>
                         <paragraph xml:id="akn_art_4YJPOt_OdIUTF">
                             <num xml:id="akn_art_4YJPOt_2jvb9j">1.</num>
@@ -881,7 +881,7 @@
                         </paragraph>
                     </article>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_LyW1Dx" xml:id="akn_art_LBFSRW">
-                        <num leos:editable="false" xml:id="akn_art_LBFSRW_Si0yWB">Article 15</num>
+                        <num leos:editable="false" xml:id="akn_art_LBFSRW_Si0yWB">Article 16</num>
                         <heading xml:id="akn_art_LBFSRW_Y1SPgf">Additional information exchange processed through EU CSW-CERTEX</heading>
                         <paragraph xml:id="akn_art_LBFSRW_eXWyDr">
                             <num xml:id="akn_art_LBFSRW_36NDMs">1.</num>
@@ -923,7 +923,7 @@
                     <num xml:id="akn_Kk5pYg">Section 3</num>
                     <heading xml:id="akn_z1TmGt">OTHER PROCEDURAL RULES FOR THE UNION NON-CUSTOMS FORMALITIESÂ </heading>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_QKoT34" xml:id="akn_art_adfnqa">
-                        <num leos:editable="false" xml:id="akn_art_adfnqa_x3bHMx">Article 16</num>
+                        <num leos:editable="false" xml:id="akn_art_adfnqa_x3bHMx">Article 17</num>
                         <heading xml:id="akn_art_adfnqa_ZCTwJB">Use of the EORI system by partner competent authorities</heading>
                         <paragraph xml:id="akn_art_adfnqa_KVvz0A">
                             <content xml:id="akn_art_adfnqa_kzP5Pf">
@@ -932,7 +932,7 @@
                         </paragraph>
                     </article>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_7M6AAu" xml:id="akn_art_ninkXQ">
-                        <num leos:editable="false" xml:id="akn_art_ninkXQ_U9iKBh">Article 17</num>
+                        <num leos:editable="false" xml:id="akn_art_ninkXQ_U9iKBh">Article 18</num>
                         <heading xml:id="akn_art_ninkXQ_xC6YJV">National coordinators</heading>
                         <paragraph xml:id="akn_art_ninkXQ_e4cxNV">
                             <list xml:id="akn_art_ninkXQ_hjUw2m">
@@ -962,7 +962,7 @@
                 <num xml:id="akn_8zLWYN">Chapter V</num>
                 <heading xml:id="akn_J2fghH">Costs of EU CSW-CERTEX, work programme, and monitoring and reporting</heading>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_5vSnsU" xml:id="akn_art_ZQi0El">
-                    <num leos:editable="false" xml:id="akn_art_ZQi0El_6QPM6i">Article 18</num>
+                    <num leos:editable="false" xml:id="akn_art_ZQi0El_6QPM6i">Article 19</num>
                     <heading xml:id="akn_art_ZQi0El_RvSiFX">Costs</heading>
                     <paragraph xml:id="akn_art_ZQi0El_RUk5SM">
                         <num xml:id="akn_art_ZQi0El_0GUdhQ">1.</num>
@@ -978,7 +978,7 @@
                     </paragraph>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_Jv6Lz5" xml:id="akn_art_rWpWZg">
-                    <num leos:editable="false" xml:id="akn_art_rWpWZg_PkcfJf">Article 19</num>
+                    <num leos:editable="false" xml:id="akn_art_rWpWZg_PkcfJf">Article 20</num>
                     <heading xml:id="akn_art_rWpWZg_LN1aK5">Work programme</heading>
                     <paragraph xml:id="akn_art_rWpWZg-par1">
                         <content xml:id="akn_art_rWpWZg_zgUS0v">
@@ -987,7 +987,7 @@
                     </paragraph>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_wEabj3" xml:id="akn_art_9bdXcQ">
-                    <num leos:editable="false" xml:id="akn_art_9bdXcQ_2sFIP8">Article 20</num>
+                    <num leos:editable="false" xml:id="akn_art_9bdXcQ_2sFIP8">Article 21</num>
                     <heading xml:id="akn_art_9bdXcQ_Gagszt">Monitoring and reporting</heading>
                     <paragraph xml:id="akn_art_9bdXcQ_I8teu1">
                         <num xml:id="akn_art_9bdXcQ_9EdSp2">1.</num>
@@ -1019,7 +1019,7 @@
                 <num xml:id="akn_348OfS">Chapter VI</num>
                 <heading xml:id="akn_DculZe">Procedures for adoption of implementing and delegated acts, amendments to Regulation (EU) No 952/2013 and final provisions</heading>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_6L6h0k" xml:id="akn_art_fTOjdP">
-                    <num leos:editable="false" xml:id="akn_art_fTOjdP_O0SFyi">Article 21</num>
+                    <num leos:editable="false" xml:id="akn_art_fTOjdP_O0SFyi">Article 22</num>
                     <heading xml:id="akn_art_fTOjdP_An3ga2">Exercise of the delegation</heading>
                     <paragraph xml:id="akn_art_fTOjdP_4qGRQC">
                         <num xml:id="akn_art_fTOjdP_SFjEa7">1.</num>
@@ -1059,7 +1059,7 @@
                     </paragraph>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_6hHL5j" xml:id="akn_art_Kw3Lfu">
-                    <num leos:editable="false" xml:id="akn_art_Kw3Lfu_AwLNHZ">Article 22</num>
+                    <num leos:editable="false" xml:id="akn_art_Kw3Lfu_AwLNHZ">Article 23</num>
                     <heading xml:id="akn_art_Kw3Lfu_l0ehX4">Committee procedure</heading>
                     <paragraph xml:id="akn_art_Kw3Lfu_OHkiLz">
                         <num xml:id="akn_art_Kw3Lfu_gl6A0x">1.</num>
@@ -1081,7 +1081,7 @@
                     </paragraph>
                 </article>
                 <article leos:listIdAttr="_akn_article_nT3puI" xml:id="akn_article_KAkYFV">
-                    <num leos:editable="false" xml:id="akn_article_KAkYFV_CZn5Xc">Article 23</num>
+                    <num leos:editable="false" xml:id="akn_article_KAkYFV_CZn5Xc">Article 24</num>
                     <heading xml:id="akn_article_KAkYFV_8HIm8V">Amendments toÂ Regulation (EU) No 952/2013</heading>
                     <paragraph xml:id="akn_article_KAkYFV_Cb6AJZ">
                         <content xml:id="akn_article_KAkYFV_aoorEu">
@@ -1115,7 +1115,7 @@
                     </paragraph>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_tzycU7" xml:id="art_2">
-                    <num leos:editable="false" xml:id="art_2__num">Article 24</num>
+                    <num leos:editable="false" xml:id="art_2__num">Article 25</num>
                     <heading xml:id="art_2__heading">Entry into force and application</heading>
                     <paragraph xml:id="art_2_qTBtZk">
                         <content xml:id="art_2_jwl4J2">

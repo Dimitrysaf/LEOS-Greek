@@ -753,7 +753,7 @@
                     <num xml:id="akn_dKcnyq">Section 2</num>
                     <heading xml:id="akn_UAL67f">ADDITIONAL DIGITAL COOPERATION RELATED TO UNION NON-CUSTOMS FORMALITIES</heading>
                     <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_lFYQR3" xml:id="akn_art_dtWbDZ">
-                        <num leos:editable="false" leos:origin="ec" xml:id="akn_art_dtWbDZ_6qZ851">#</num>
+                        <num leos:editable="true" xml:id="akn_art_dtWbDZ_6qZ851">Article 11</num>
                         <heading xml:id="akn_art_dtWbDZ_KZj4UG">Streamlining the  and Union non-customs new changes formalities</heading>
                         <paragraph xml:id="akn_art_dtWbDZ_XfqDj2">
                             <list xml:id="akn_art_dtWbDZ_pfVhrA">
@@ -768,7 +768,7 @@
                                         <p xml:id="akn_art_dtWbDZ_8fHRWQ">allowing economic operators to submit the relevant information required for the fulfilment of the applicable customs formalities and Union non-customs formalities;</p>
                                     </content>
                                 </point><point leos:origin="ec" xml:id="_akn_art_dtWbDZ_IiqQ3Z">
-                                <num leos:origin="ec" xml:id="_akn_art_dtWbDZ_hxDbb1">(b)</num>
+                                <num xml:id="_akn_art_dtWbDZ_hxDbb1">(b)</num>
                                 <content leos:origin="ec" xml:id="_akn_art_dtWbDZ_8ABraR">
                                     <p leos:origin="ec" xml:id="_akn_art_dtWbDZ_5eY8RH">
                                         new point added
