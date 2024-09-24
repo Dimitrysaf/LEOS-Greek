@@ -261,11 +261,10 @@ table, tr, td, th {
 }
 
 .leos-content-soft-removed table,
-[leos\:softaction="del"] table,
+:not([leos\:optional="true"])[leos\:softaction="del"] table,
 [leos\:softaction="del_trans"] table,
 [leos\:softaction="move_to"] table {
   @include borderStyle(2px, dotted);
-  @extend %softRemoved;
 }
 
 .leos-content-soft-new table, [leos\:softaction="add"] table,

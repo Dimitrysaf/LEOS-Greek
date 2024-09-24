@@ -39,6 +39,7 @@ export class TrackChangesActionsService {
     'akntitle',
     'part',
     'section',
+    'subparagraph',
   ];
   private selector: string;
 

@@ -792,7 +792,7 @@
                         <!-- rotated table (landscape) -->
                         <table style="border-collapse:collapse;width:90%;margin-left:0%;">
                             <tr>
-                                <td style="background-color:#D3D3D3;border:1px solid black;text-align:center;">
+                                <td class="leos-gray-1" style="border:1px solid black;text-align:center;">
                                     <p>
                                         <b>Heading of multiannual financial
                                             <br/>
@@ -1399,7 +1399,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td rowspan="2" style="width: 198.0pt; border: solid windowtext 1.0pt; border-top: none; background: #F1F1F1; padding: 0cm 5.4pt 0cm 5.4pt;">
+                                <td rowspan="2" class="leos-gray-2" style="width: 198.0pt; border: solid windowtext 1.0pt; border-top: none; padding: 0cm 5.4pt 0cm 5.4pt;">
                                     <p style="text-align: center;">
                                         <b>TOTAL appropriations</b>
                                         <br/>
@@ -1605,7 +1605,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td rowspan="2" style="background-color:#D3D3D3;border:1px solid black;text-align:left;">
+                                <td rowspan="2" class="leos-gray-1" style="border:1px solid black;text-align:left;">
                                     <p>
                                         <b>TOTAL appropriations
                                             <br/>
@@ -1695,7 +1695,7 @@
                         <!-- rotated table -->
                         <table style="border-collapse:collapse;width:89%;margin-left:0%">
                             <tr>
-                                <td style="border:1px solid black;text-align:center; background-color:#D3D3D3;">
+                                <td class="leos-gray-1" style="border:1px solid black;text-align:center;">
                                     <p>
                                         <b>Heading of multiannual financial
                                             <br/>
@@ -1703,7 +1703,7 @@
                                         </b>
                                     </p>
                                 </td>
-                                <td style="border:1px solid black;text-align:center; background-color:#D3D3D3;">
+                                <td class="leos-gray-1" style="border:1px solid black;text-align:center;">
                                     <p>
                                         <b>7</b>
                                     </p>
@@ -1878,7 +1878,7 @@
                         <!-- rotated table -->
                         <table style="border-collapse:collapse;margin-left:0%;">
                             <tr>
-                                <td style="border:1px solid black;text-align:center; background-color:#D3D3D3; width: 198.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;">
+                                <td class="leos-gray-1" style="border:1px solid black;text-align:center;width: 198.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 13.85pt;">
                                     <p>
                                         <b>TOTAL appropriations
                                             <br/>
@@ -1962,7 +1962,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td rowspan="2" style="border:1px solid black; background-color:#D3D3D3; text-align:center;">
+                                <td rowspan="2" class="leos-gray-1" style="border:1px solid black;text-align:center;">
                                     <p>
                                         <b>TOTAL appropriations
                                             <br/>
@@ -2114,55 +2114,55 @@
                                         cost
                                     </p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid          black;border-right:dashed;">
+                                <td class="leos-gray-1" style="border:1px solid          black;border-right:dashed;">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;">
+                                <td class="leos-gray-1" style="">
                                     <p>Cost</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid          black;border-right:dashed;">
+                                <td class="leos-gray-1" style="border:1px solid          black;border-right:dashed;">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;">
+                                <td class="leos-gray-1" style="">
                                     <p>Cost</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid          black;border-right:dashed;">
+                                <td class="leos-gray-1" style="border:1px solid          black;border-right:dashed;">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;">
+                                <td class="leos-gray-1" style="">
                                     <p>Cost</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid          black;border-right:dashed;">
+                                <td class="leos-gray-1" style="border:1px solid          black;border-right:dashed;">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;">
+                                <td class="leos-gray-1" style="">
                                     <p>Cost</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid          black;border-right:dashed;width:4%">
+                                <td class="leos-gray-1" style="border:1px solid          black;border-right:dashed;width:4%">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;width:4%">
+                                <td class="leos-gray-1" style="width:4%">
                                     <p>Cost</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid          black;border-right:dashed;width:4%">
+                                <td class="leos-gray-1" style="border:1px solid          black;border-right:dashed;width:4%">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;width:4%">
+                                <td class="leos-gray-1" style="width:4%">
                                     <p>Cost</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid          black;border-right:dashed;width:4%">
+                                <td class="leos-gray-1" style="border:1px solid          black;border-right:dashed;width:4%">
                                     <p>No</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid black;width:4%">
+                                <td class="leos-gray-1" style="border:1px solid black;width:4%">
                                     <p>Cost</p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid black;border-right:dashed">
+                                <td class="leos-gray-1" style="border:1px solid black;border-right:dashed">
                                     <p>Total
                                         <br/>
                                         No
                                     </p>
                                 </td>
-                                <td style="background-color:#D3D3D3;border:1px solid black;">
+                                <td class="leos-gray-1" style="border:1px solid black;">
                                     <p>Total
                                         <br/>
                                         cost
@@ -2670,7 +2670,7 @@
                             </tr>
                             <!-- à vérifier et cleaner -->
                             <tr>
-                                <td style="border: solid windowtext 1.0pt; background: #CCCCCC;">
+                                <td class="leos-gray-3" style="border: solid windowtext 1.0pt;">
                                     <p>
                                         <b>HEADING 7</b>
                                         <br/>
@@ -2750,7 +2750,7 @@
                                 </td>
                             </tr>
                             <tr style="height: 29.25pt;">
-                                <td style="border: solid windowtext 1.0pt; background: #CCCCCC;">
+                                <td class="leos-gray-3" style="border: solid windowtext 1.0pt;">
                                     <p>
                                         <b>Subtotal HEADING 7
                                             <br/>
@@ -2785,7 +2785,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt;background: #CCCCCC;">
+                                <td class="leos-gray-3" style="border: solid windowtext 1.0pt;">
                                     <p>
                                         <b>Outside HEADING 7
                                             <authorialNote marker="13" placement="bottom">
@@ -2874,7 +2874,7 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: solid windowtext 1.0pt;background: #CCCCCC;">
+                                <td class="leos-gray-3" style="border: solid windowtext 1.0pt;">
                                     <p>
                                         <b>Subtotal
                                             <br/>

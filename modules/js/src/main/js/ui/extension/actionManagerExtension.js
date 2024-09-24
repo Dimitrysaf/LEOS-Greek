@@ -381,8 +381,9 @@ define(function actionManagerExtensionModule(require) {
         var elementType = _getType($element);
         var editable = _getEditable($element);
         var deletable = _getDeletable($element);
+        let optional = $element.attr('leos\:optional');
         var user = connector.user;
-        if (_isValidAction(action, elementId, elementType, editable, deletable, user)) {
+        if (_isValidAction(action, elementId, elementType, editable, deletable, user) || optional) {
             var data = {
                 action: action,
                 elementId: elementId,
@@ -466,11 +467,13 @@ define(function actionManagerExtensionModule(require) {
         } else {
             var elementsWithoutValidId = ["num", "aknp", "content", "mp", "inline"];
             var selection = window.getSelection();
-            var elementToGetId = selection.anchorNode.parentElement;
-            while (elementToGetId.parentElement && elementsWithoutValidId.includes(elementToGetId.localName)) {
-                elementToGetId = elementToGetId.parentElement;
+            if (selection.anchorNode) {
+                var elementToGetId = selection.anchorNode.parentElement;
+                while (elementToGetId.parentElement && elementsWithoutValidId.includes(elementToGetId.localName)) {
+                    elementToGetId = elementToGetId.parentElement;
+                }
+                id = elementToGetId.id;
             }
-            id = elementToGetId.id;
         }
         return id;
     }
@@ -536,7 +539,7 @@ define(function actionManagerExtensionModule(require) {
         return actions;
     }
 
-    function _insertBeforeAndAfterIcon($element, deletable, connector) {
+    function _insertBeforeAndAfterIcon($element, insertBeforeAndAfterParam) {
         var insertBeforeAndAfter;
         let type = _getType($element).toLowerCase();
         switch (type) {
@@ -552,7 +555,7 @@ define(function actionManagerExtensionModule(require) {
             case 'block':
             case 'crossHeading':
             case 'alinea': {
-                insertBeforeAndAfter = deletable;
+                insertBeforeAndAfter = insertBeforeAndAfterParam;
                 break;
             }
             default: insertBeforeAndAfter = false; //for all the rest false
@@ -582,9 +585,13 @@ define(function actionManagerExtensionModule(require) {
         type = type === 'alinea' || type === 'subparagraph' ? 'sub-point' : type;
         type = type === 'crossHeading' ? 'crossheading' : type;
         type = type === 'block' ? 'crossheading' : type;
-        var insertBeforeAndAfter = _insertBeforeAndAfterIcon($element, deletable, connector);
+        let optional = $element.attr('leos\:optional');
+        // If we don't have leos:optional, uses deletable because it was previously using this variable
+        // So, to avoid conflicts, we add the same old value in this case
+        let hasBeforeAndAfter = optional ? false : deletable;
+        var insertBeforeAndAfter = _insertBeforeAndAfterIcon($element, hasBeforeAndAfter);
         editable = editable || (editable && $element.attr('leos\:optionlist'));
-        deletable = _isDeletable($element, deletable, connector);
+        deletable = optional || _isDeletable($element, deletable, connector);
 
         let template = ['<div class="leos-actions Vaadin-Icons">']; //FIXME: we can directly create elements
 

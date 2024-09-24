@@ -109,6 +109,9 @@ define(function aknSubParagraphMandatePluginModule(require) {
                 akn : "leos:deletable",
                 html : "leos:deletable"
             }, {
+                akn : "leos:optional",
+                html : "data-akn-optional"
+            }, {
                 akn : "leos:allow-soft-enter",
                 html : "data-akn-allow-soft-enter"
             }]

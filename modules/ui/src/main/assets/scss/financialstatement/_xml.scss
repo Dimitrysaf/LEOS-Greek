@@ -76,6 +76,7 @@
         @extend %xmlPreface;
         @extend %xmlList;
         @extend %xmlTable;
+        @extend %xmlTdTableTransparent;
         @extend %xmlCoverPageFS;
         @extend %compare;
         @extend %xmlHigherElements;
