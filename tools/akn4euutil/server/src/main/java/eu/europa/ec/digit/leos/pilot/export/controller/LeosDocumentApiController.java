@@ -15,6 +15,7 @@ package eu.europa.ec.digit.leos.pilot.export.controller;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.LeosDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
+import eu.europa.ec.digit.leos.pilot.export.service.ConvertDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -33,11 +34,12 @@ import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildVal
 @RestController
 @CrossOrigin(origins = "*")
 public class LeosDocumentApiController {
-
     private final LeosDocumentService leosDocumentService;
+    private final ConvertDocumentService convertDocumentService;
 
-    public LeosDocumentApiController(LeosDocumentService leosDocumentService) {
+    public LeosDocumentApiController(LeosDocumentService leosDocumentService, ConvertDocumentService convertDocumentService) {
         this.leosDocumentService = leosDocumentService;
+        this.convertDocumentService = convertDocumentService;
     }
 
     @RequestMapping(value = "/getRenditions", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -62,7 +64,8 @@ public class LeosDocumentApiController {
     @RequestMapping(value = "/updateWithTranslations", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @ResponseBody
     public ResponseEntity<Object> updateWithTranslations(@RequestParam MultipartFile inputFile,
-                                                         @RequestParam MultipartFile translationsFile) {
+                                                         @RequestParam MultipartFile translationsFile,
+                                                         @RequestParam(required = false) String outputDescriptor) {
 
         if (translationsFile.isEmpty() || !translationsFile.getContentType().equalsIgnoreCase("application/zip")) {
             return ResponseEntity.badRequest().body("The translations file must be a .zip file.");
@@ -73,6 +76,9 @@ public class LeosDocumentApiController {
                     translationsFile
             );
             byte[] convertDocumentOutput = leosDocumentService.updateWithTranslations(convertDocumentInput);
+            if(outputDescriptor != null && !outputDescriptor.isEmpty()) {
+                convertDocumentOutput = this.convertDocumentService.convertDocument(convertDocumentOutput, outputDescriptor);
+            }
             return buildValidZipResponse(convertDocumentOutput);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
