@@ -319,12 +319,16 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     @Override
     public byte[] removeElementById(byte[] xmlContent, String elementId, boolean isTrackChangesEnabled) {
-        if (isTrackChangesEnabled) {
-            Element element = getElementById(xmlContent, elementId);
+        Element element = getElementById(xmlContent, elementId);
+        boolean hasOptional = false;
+        if (element != null && element.getElementFragment() != null && element.getElementFragment().contains("leos:optional=\"true\"")) {
+            hasOptional = true;
+        }
+        if (isTrackChangesEnabled || hasOptional) {
             if (element == null) {
                 return xmlContent;
             }
-            return removeElement(xmlContent, element, LS, isTrackChangesEnabled);
+            return removeElement(xmlContent, element, LS, isTrackChangesEnabled || hasOptional);
         }
         return deleteElementById(xmlContent, elementId);
     }

@@ -15,6 +15,8 @@ import {
 } from '@/features/akn-document/services/track-changes-actions.service';
 import { DocumentConfig, LeosConfig, Permission } from '@/shared';
 import { DocumentService } from '@/shared/services/document.service';
+import {EuiDialogService} from "@eui/components/eui-dialog";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-track-changes-actions',
@@ -50,6 +52,8 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
     private trackChangesActionsService: TrackChangesActionsService,
     private ckEditorService: CKEditorService,
     private appConfigService: AppConfigService,
+    private dialogService: EuiDialogService,
+    private translateService: TranslateService,
   ) {
     trackChangesActionsService.show.subscribe((trackChanges) => {
       this.trackChangesDr = trackChanges.trackChanges;
@@ -146,14 +150,27 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   onAccept() {
-    this.trackChangesActionsService.applyTrackChangeAction(
-      this.trackChangeAction,
-      {
-        elementType: this.currentElement.tagName.toLowerCase(),
-        elementId: this.currentElement.id,
-      },
-      this.doc,
-    );
+    if (this.currentElement.getAttribute("leos:optional") === "true") {
+      this.dialogService.openDialog({
+        title: this.translateService.instant(
+          'page.editor.element-delete-dialog.optional.title',
+        ),
+        content: this.translateService.instant(
+          'page.editor.element-delete-dialog.optional.body',
+        ),
+        hasDismissButton: false,
+        accept: () => { },
+      });
+    } else {
+      this.trackChangesActionsService.applyTrackChangeAction(
+        this.trackChangeAction,
+        {
+          elementType: this.currentElement.tagName.toLowerCase(),
+          elementId: this.currentElement.id,
+        },
+        this.doc,
+      );
+    }
   }
 
   onReject() {

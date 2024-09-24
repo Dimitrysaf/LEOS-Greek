@@ -94,8 +94,12 @@
     box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);
   }
 
-  tr[leos\:action="delete"] {
+  tr[leos\:action="delete"], [leos\:action="delete"] tr {
     box-shadow: inset 0 0 0 2px rgba(255, 0, 0, 0.5);
+  }
+
+  [leos\:optional="true"] tr {
+    background-color: transparent;
   }
 
 }
@@ -127,7 +131,7 @@
     box-shadow: inset 0 0 0 2px rgba(0, 255, 0, 0.5);
   }
 
-  tr[data-akn-action="delete"] {
+  tr[data-akn-action="delete"], [data-akn-action="delete"] tr {
     box-shadow: inset 0 0 0 2px rgba(255, 0, 0, 0.5);
   }
 

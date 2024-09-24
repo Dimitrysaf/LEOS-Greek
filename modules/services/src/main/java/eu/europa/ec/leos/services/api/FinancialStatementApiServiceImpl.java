@@ -1,9 +1,12 @@
 package eu.europa.ec.leos.services.api;
 
+import eu.europa.ec.leos.domain.common.Result;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
 import eu.europa.ec.leos.domain.repository.document.FinancialStatement;
+import eu.europa.ec.leos.domain.repository.document.XmlDocument;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
+import eu.europa.ec.leos.i18n.MessageHelper;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
@@ -13,16 +16,23 @@ import eu.europa.ec.leos.services.document.util.DocumentViewService;
 import eu.europa.ec.leos.services.dto.request.Position;
 import eu.europa.ec.leos.services.dto.response.DocumentViewResponse;
 import eu.europa.ec.leos.services.dto.response.SaveElementResponse;
+import eu.europa.ec.leos.services.label.ReferenceLabelService;
+import eu.europa.ec.leos.services.processor.FinancialStatementProcessor;
+import eu.europa.ec.leos.services.processor.TrackChangesProcessor;
 import eu.europa.ec.leos.services.request.ReplaceAllMatchRequest;
 import eu.europa.ec.leos.services.request.ReplaceMatchRequest;
 import eu.europa.ec.leos.services.request.SaveAfterReplaceRequest;
 import eu.europa.ec.leos.services.response.DocumentConfigResponse;
 import eu.europa.ec.leos.services.response.EditElementResponse;
+import eu.europa.ec.leos.services.structure.StructureContext;
+import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Provider;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +40,26 @@ import java.util.Map;
 @Service
 public class FinancialStatementApiServiceImpl implements FinancialStatementApiService {
 
+    private static final String FINANCIAL_STATEMENT_METADATA_IS_REQUIRED = "Financial statement metadata is required!";
+
     @Autowired
     FinancialStatementService financialStatementService;
     @Autowired
     RepositoryPropertiesMapper repositoryPropertiesMapper;
     @Autowired
     DocumentViewService documentViewService;
+    @Autowired
+    FinancialStatementProcessor financialStatementProcessor;
+    @Autowired
+    MessageHelper messageHelper;
+    @Autowired
+    ReferenceLabelService referenceLabelService;
+    @Autowired
+    Provider<StructureContext> structureContext;
+    @Autowired
+    DocumentLanguageContext documentLanguageContext;
+    @Autowired
+    TrackChangesProcessor<FinancialStatement> trackChangesProcessor;
 
     @Override
     public boolean toggleTrackChangeEnabled(boolean isTrackChangeEnabled, String documentRef) {
@@ -56,7 +80,20 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
 
     @Override
     public DocumentViewResponse deleteBlock(String documentRef, String elementName, String elementId) throws Exception {
-        return null;
+        FinancialStatement financialStatement = this.financialStatementService.findFinancialStatementByRef(documentRef);
+        this.setStructureContext(financialStatement.getMetadata().getOrError(() -> FINANCIAL_STATEMENT_METADATA_IS_REQUIRED).getDocTemplate());
+        final byte[] newXmlContent = financialStatementProcessor.deleteElement(financialStatement, elementId, elementName);
+        final String updatedLabel = generateLabel(elementId, financialStatement);
+        final String comment = messageHelper.getMessage("operation.element.deleted", updatedLabel);
+        financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent, comment);
+        return documentViewService.updateDocumentView(financialStatement);
+    }
+
+    private String generateLabel(String reference, XmlDocument sourceDocument) {
+        final byte[] sourceXmlContent = sourceDocument.getContent().get().getSource().getBytes();
+        Result<String> updatedLabel = referenceLabelService.generateLabelStringRef(Arrays.asList(reference),
+                sourceDocument.getMetadata().get().getRef(), sourceXmlContent);
+        return updatedLabel.get();
     }
 
     @Override
@@ -180,7 +217,26 @@ public class FinancialStatementApiServiceImpl implements FinancialStatementApiSe
     }
 
     @Override
-    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType changeType, String presenterId) throws Exception {
-        return null;
+    public DocumentViewResponse rejectChange(String documentRef, String elementId, String elementTagName, TrackChangeActionType trackChangeAction, String presenterId) throws Exception {
+        String op = "rejected";
+        String msg = "operation.element.track.change." + trackChangeAction.getTrackChangeAction() + "." + op;
+
+        FinancialStatement financialStatement = this.financialStatementService.findFinancialStatementByRef(documentRef);
+        this.setStructureContext(financialStatement.getMetadata().getOrError(() -> FINANCIAL_STATEMENT_METADATA_IS_REQUIRED).getDocTemplate());
+        documentLanguageContext.setDocumentLanguage(financialStatement.getMetadata().get().getLanguage());
+        byte[] newXmlContent = trackChangesProcessor.rejectChange(financialStatement, elementId, trackChangeAction);
+        this.structureContext.get().useDocumentTemplate(financialStatement.getMetadata().getOrError(() -> "Document metadata is required!").getDocTemplate());
+
+        final String updatedLabel = generateLabel(elementId, financialStatement);
+        final String comment = messageHelper.getMessage(msg, updatedLabel);
+        financialStatement = financialStatementService.updateFinancialStatement(financialStatement, newXmlContent, comment);
+
+        trackChangesProcessor.handleCoEdition(newXmlContent, documentRef, elementId, elementTagName, trackChangeAction, presenterId, false);
+        return documentViewService.updateDocumentView(financialStatement);
     }
+
+    private void setStructureContext(String docTemplate) {
+        this.structureContext.get().useDocumentTemplate(docTemplate);
+    }
+
 }

@@ -475,6 +475,8 @@
   "page.editor.last-element-delete-confirmation.message": "Warning, You are about to delete the last editing zone of this area. If you need to have this type of element back, you will have to add it using the Table of Content Edition. <br/> Are you sure you want to delete this last element?",
   "page.editor.element-delete-dialog.title": "Delete Element: confirmation",
   "page.editor.element-delete-dialog.body": "Are you sure you want to delete this element?",
+  "page.editor.element-delete-dialog.optional.title": "Optional element: accept deletion not allowed",
+  "page.editor.element-delete-dialog.optional.body": "In order to allow to put it back later on if required, it cannot be completely<br> deleted at this stage.<br> Would you wish to fully remove it from the text, please use the \"finalise\"<br> new feature",
   "page.editor.track.changes.actions.accept": "Accept this change",
   "page.editor.track.changes.actions.reject": "Reject this change",
   "popup.token.expired.title": "Session expired",

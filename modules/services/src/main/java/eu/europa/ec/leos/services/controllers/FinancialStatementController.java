@@ -2,6 +2,7 @@ package eu.europa.ec.leos.services.controllers;
 
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
+import eu.europa.ec.leos.model.action.TrackChangeActionType;
 import eu.europa.ec.leos.model.action.VersionVO;
 import eu.europa.ec.leos.services.api.FinancialStatementApiService;
 import eu.europa.ec.leos.services.api.GenericDocumentApiService;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -321,6 +323,23 @@ public class FinancialStatementController {
 
     }
 
+    @DeleteMapping(value = "/{documentRef}/element/{elementName}/{elementId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> deleteDocumentElement(@PathVariable("documentRef") String documentRef,
+            @PathVariable("elementName") String elementName,
+            @PathVariable("elementId") String elementId) {
+        try {
+            documentRef = encodeParam(documentRef);
+            elementName = encodeParam(elementName);
+            elementId = encodeParam(elementId);
+            DocumentViewResponse bill = this.financialStatementApiService.deleteBlock(documentRef, elementName, elementId);
+            return ResponseEntity.ok().body(bill);
+        } catch (Exception e) {
+            LOG.error("Error occurred while getting bill  element - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error occurred while deleting bill element", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @PutMapping(value = "/{documentRef}/replace-one", produces = MediaType.TEXT_XML_VALUE)
     @ResponseBody
     public ResponseEntity<Object> replaceOneText(@PathVariable("documentRef") String documentRef,
@@ -415,4 +434,27 @@ public class FinancialStatementController {
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping(value = "/{documentRef}/reject-change/{elementId}/{elementTagName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> rejectChange(@PathVariable("documentRef") String documentRef,
+            @PathVariable("elementId") String elementId,
+            @PathVariable("elementTagName") String elementTagName,
+            @RequestParam("trackChangeAction") String trackChangeAction,
+            @RequestHeader("presenterId") String presenterId) {
+        try {
+            documentRef = encodeParam(documentRef);
+            elementId = encodeParam(elementId);
+            elementTagName = encodeParam(elementTagName);
+            trackChangeAction = encodeParam(trackChangeAction);
+            presenterId = encodeParam(presenterId);
+            TrackChangeActionType trackChangeActionType = TrackChangeActionType.of(trackChangeAction);
+            DocumentViewResponse response = this.financialStatementApiService.rejectChange(documentRef, elementId, elementTagName, trackChangeActionType, presenterId);
+            return ResponseEntity.ok().body(response);
+        } catch (Exception e) {
+            LOG.error("Error occurred  while rejecting change - " + e.getMessage());
+            return new ResponseEntity<>("Unexpected error while rejecting change ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

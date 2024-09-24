@@ -109,10 +109,13 @@ $NUM_WIDTH: 40px;
   }
 
   level[leos\:action='delete'] {
-      & > num {
-          text-decoration: line-through;
-      }
+    & > num {
+      text-decoration: line-through;
     }
+    & > num {
+      border: 2px dotted;
+    }
+  }
 
 }
 

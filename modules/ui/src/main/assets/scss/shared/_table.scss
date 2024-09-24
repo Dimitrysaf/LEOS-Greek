@@ -67,6 +67,23 @@
     }
 }
 
+%xmlTdTableTransparent {
+    [leos\:action="delete"] td.leos-gray-1,
+    [leos\:action="delete"] td.leos-gray-2,
+    [leos\:action="delete"] td.leos-gray-3 {
+        background-color: transparent;
+    }
+    td.leos-gray-1 {
+        background-color: #D3D3D3;
+    }
+    td.leos-gray-2 {
+        background-color: #F1F1F1;
+    }
+    td.leos-gray-3 {
+        background-color: #CCCCCC;
+    }
+}
+
 %tableMargin {
     margin-top: 12pt;
     margin-bottom: 12pt;

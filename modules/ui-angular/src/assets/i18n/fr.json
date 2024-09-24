@@ -475,6 +475,8 @@
   "page.editor.last-element-delete-confirmation.message": "Attention, vous êtes sur le point de supprimer la dernière zone d'édition de cette zone. Si vous avez besoin de récupérer ce type d'élément, vous devrez l'ajouter à l'aide de l'édition de la table des matières. <br/> Êtes-vous sûr de vouloir supprimer ce dernier élément ?",
   "page.editor.element-delete-dialog.title": "Suppression d'élément : confirmation",
   "page.editor.element-delete-dialog.body": "Êtes-vous sûr de vouloir supprimer cet élément ?",
+  "page.editor.element-delete-dialog.optional.title": "Élément facultatif: accepter la suppression n'est pas autorisée",
+  "page.editor.element-delete-dialog.optional.body": "Afin de pouvoir le réintroduire ultérieurement si nécessaire, il ne peut pas être complètement<br> supprimé dès maintenant.<br> Si vous souhaitez le supprimer complètement du texte, veuillez utiliser la nouvelle<br> fonction \"finaliser\"",
   "page.editor.track.changes.actions.accept": "Accepter ce changement",
   "page.editor.track.changes.actions.reject": "Rejeter ce changement",
   "popup.token.expired.title": "Session expirée",
