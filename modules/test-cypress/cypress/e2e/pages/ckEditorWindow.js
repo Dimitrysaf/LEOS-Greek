@@ -162,6 +162,10 @@ class ckEditorWindow {
         this.elements.ckEditableInline().find('ol li p').eq(pTagNumber - 1).type(text);
     }
 
+    getRecitalOfNumber(recitalNumber) {
+        return this.elements.ckEditableInline().find("p[data-akn-name='recital'][data-akn-num='" + recitalNumber + "']");
+    }
+
     getNumberedParagraphElementOfArticle(paragraphNumber) {
         return this.elements.ckEditableInline().find("article li[data-akn-element='paragraph'][data-akn-num='" + paragraphNumber + ".']");
     }

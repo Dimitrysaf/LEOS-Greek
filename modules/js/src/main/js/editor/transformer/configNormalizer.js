@@ -202,7 +202,7 @@ define(function configNormalizerModule(require) {
                  */
                 _configPathAttributeResolver: function(fullPath) {
                     var path, elementName, attributeName, attributeValue;
-                    var result = fullPath.match(configNormalizerMatcher.matchElementWithNameAndAttribute)
+                    var result = fullPath && fullPath.match(configNormalizerMatcher.matchElementWithNameAndAttribute)
                     if (!result) {
                         LOG.error("Invalid config transformation part: "+fullPath+" for transformation config: " + JSON.stringify(this._.rawConfig).replace(/"/g,''));
                     } else {

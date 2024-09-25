@@ -23,6 +23,7 @@ $RECITAL_SPACING: 32px;
             @extend %paddedText;
             min-width: $RECITAL_SPACING;
             float: left;
+            padding-right: 10px;
         }
         & > aknP, & > p {
             @extend %paddedText;

@@ -233,6 +233,12 @@ Then('li {int} with data-akn-element {string} of article contains attribute {str
     ckEditorWindow.getParagraphElementOfArticle(li, dataAknElement).should('have.attr', attributeName).and('equal', attributeValue);
 });
 
+Then('recital with {string} contains attribute {string} with value {string} in edition mode', function (recitalNumber, attributeName, attributeValue) {
+    ckEditorWindow.getRecitalOfNumber(recitalNumber).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+
+
 Then('li {int} with data-akn-element {string} of article contains attribute {string} in edition mode', function (li, dataAknElement, attributeName) {
     ckEditorWindow.getParagraphElementOfArticle(li, dataAknElement).should('have.attr', attributeName);
 });

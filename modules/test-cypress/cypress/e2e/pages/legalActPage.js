@@ -51,6 +51,7 @@ class legalActPage {
     }
 
     mouseHoverAndClickOnRecital(recitalNumber) {
+        cy.wait(1000);
         cy.xpath("//recital[" + recitalNumber + "]").realHover({ position: "top" }).invoke('attr', 'id').then(id => cy.get("#" + id).realHover({ position: "top" }).click({ force: true }));
     }
 

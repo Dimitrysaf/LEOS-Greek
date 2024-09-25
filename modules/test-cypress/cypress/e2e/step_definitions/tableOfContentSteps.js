@@ -183,6 +183,10 @@ Then('enacting terms contains node label {string} and showing as bold', function
     tableOfContent.getLabelExtended().contains(label).should('exist').should('have.class', 'leos-soft-new');
 });
 
+Then('preamble contains node label {string} and showing as bold', function (label) {
+    tableOfContent.getLabelExtended().contains(label).should('exist').should('have.class', 'leos-soft-new');
+});
+
 Then('enacting terms contains node label {string}', function (label) {
     tableOfContent.getLabelExtended().contains(label).should('be.visible');
 });

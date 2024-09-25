@@ -39,6 +39,30 @@ define(function aknRecitalPluginModule(require) {
 
             $(editor.element.$).on("keyup mouseup", null, [editor], _handleClickEvent);
 
+            editor.on("toDataFormat", function (evt) {
+                const parser = new DOMParser();
+                var xmlString = evt.data.dataValue.replace('<recital', '<recital xmlns:leos="leos"');
+                const doc = parser.parseFromString(xmlString, 'text/xml');
+                const recitalTag = doc.querySelector('recital');
+                const numTag = doc.querySelector('num');
+                if (recitalTag && numTag) {
+                    const insTag = numTag.querySelector('ins');
+                    const delTag = numTag.querySelector('del');
+                    if (insTag && delTag) {
+                        numTag.childNodes.forEach(node => {
+                            if (node.nodeType === Node.TEXT_NODE) {
+                                const regex = /\(\d+\)/;
+                                if (regex.test(node.nodeValue.trim())) {
+                                    node.nodeValue = node.nodeValue.replace(regex, '').trim();
+                                }
+                            }
+                        });
+                        evt.data.dataValue = recitalTag.outerHTML.replace('xmlns:leos="leos"', '');
+                    }
+                }
+
+            }, null, null, 99);
+
             leosKeyHandler.on({
                 editor : editor,
                 eventType : 'key',
@@ -142,10 +166,58 @@ define(function aknRecitalPluginModule(require) {
                 akn : "leos:origin",
                 html : "data-num-origin"
             }],
-            sub: {
+            sub: [{
                 akn: "text",
                 html: "p[data-akn-num]"
-            }
+            }, {
+                akn: "del",
+                html: "p",
+                attr: [{
+                    akn: "xml:id",
+                    html: "data-akn-del-num-id"
+                }, {
+                    akn: "leos:action-number",
+                    html: "data-akn-num-del-action"
+                }, {
+                    akn: "leos:tc-original-number",
+                    html: "data-akn-tc-original-number"
+                }, {
+                    akn: "leos:title",
+                    html: "title-number"
+                }, {
+                    akn: "leos:uid",
+                    html: "data-akn-uid-number"
+                }],
+                sub: [{
+                    akn: "text",
+                    html: "p[data-akn-tc-original-number]"
+                }]
+
+            }, {
+                akn: "ins",
+                html: "p",
+                attr: [{
+                    akn: "xml:id",
+                    html: "data-akn-ins-num-id"
+                }, {
+                    akn: "leos:action-number",
+                    html: "data-akn-num-ins-action"
+                }, {
+                    akn: "leos:tc-original-number",
+                    html: "data-akn-tc-original-number"
+                }, {
+                    akn: "leos:title",
+                    html: "title-number"
+                }, {
+                    akn: "leos:uid",
+                    html: "data-akn-uid-number"
+                }],
+                sub: [{
+                    akn: "text",
+                    html: "p[data-akn-num]"
+                }]
+
+            } ]
         }, {
             akn: "mp",
             html: "p",
