@@ -401,3 +401,22 @@ Then('show all action menu is not present for citation {int}', function (citatio
 Then('show all action menu is not present for recital {int}', function (recitalNumber) {
     legalActPage.getLeosActionsIconOfRecital(recitalNumber).should('not.exist');
 });
+
+Then('recital {int} contains attribute {string} with value {string}', function (recitalNumber, attributeName, attributeValue) {
+    legalActPage.getRecital(recitalNumber).should('have.attr', attributeName).and('equal', attributeValue);
+});
+
+Then('ins tag of aknp tag of recital {int} contains value {string}', function (recitalNumber, value) {
+    const tagName = 'ins';
+    legalActPage.getAknpTagOfRecital(recitalNumber).find(tagName).should('have.text', value);
+});
+
+And('del tag with attribute {string} and value {string} of num tag of recital {int} contains value {string}', function (attributeName, attributeValue, recitalNumber, value) {
+    const tagName = 'del';
+    legalActPage.getRecital(recitalNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});
+
+Then('ins tag with attribute {string} and value {string} of num tag of recital {int} contains value {string}', function (attributeName, attributeValue, recitalNumber, value) {
+    const tagName = 'ins';
+    legalActPage.getRecital(recitalNumber).find(tagName + "[" + attributeName + "='" + attributeValue + "']").should('have.text', value);
+});

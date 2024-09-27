@@ -26,6 +26,10 @@ class legalActPage {
         return cy.xpath("//recital[" + recitalNumber + "]");
     }
 
+    getAknpTagOfRecital(recitalNumber) {
+        return this.getRecital(recitalNumber).find('aknp');
+    }
+
     getArticle(articleNumber) {
         return cy.get('article').eq(articleNumber-1);
     }
