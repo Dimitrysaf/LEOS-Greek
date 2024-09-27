@@ -34,6 +34,7 @@ import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTEN
 import static eu.europa.ec.leos.services.compare.ContentComparatorService.CONTENT_REMOVED_CLASS;
 import static eu.europa.ec.leos.services.support.XercesUtils.createXercesDocument;
 import static eu.europa.ec.leos.services.util.TestUtils.squeezeXml;
+import static eu.europa.ec.leos.services.util.TestUtils.squeezeXmlDescriptor;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -159,8 +160,8 @@ public class XMLContentComparatorServiceImplTest extends LeosTest {
         String result = testCompare(oldContent, newContent);
         Document documentResult = createXercesDocument(result.getBytes(UTF_8), false);
         result = XercesUtils.nodeToString(documentResult);
-//        expectedStr = squeezeXml(expectedStr);
-//        result = squeezeXml(result);
+        expectedStr = squeezeXmlDescriptor(expectedStr);
+        result = squeezeXmlDescriptor(result);
         assertEquals(expectedStr, result);
     }
 

@@ -928,7 +928,7 @@ public class XmlContentProcessorMandate extends XmlContentProcessorImpl {
         if(!fragment.contains(contentFragmentMergeOn)){
             fragment =  Jsoup.parse(fragment, EMPTY_STRING, Parser.xmlParser()).toString();
         }
-        final String replace = fragment.replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
+        final String replace = XercesUtils.removeXmlDefinition(fragment).replace(contentFragmentMergeOn, contentFragmentMergeOn + " " + contentFragment);
 
         byte[] updatedXmlContent = replaceElementById(xmlContent, replace, mergeOnElement.getElementId());
 

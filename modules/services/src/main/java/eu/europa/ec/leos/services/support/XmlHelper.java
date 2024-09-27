@@ -579,7 +579,8 @@ public class XmlHelper {
                 .replaceAll(" xmlns:fmx=\"http://formex.*?xd\"", "")
                 .replaceAll(" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\"", "")
                 .replaceAll(" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\"", "")
-                .replaceAll("<\\?xml version=\"1\\.0\" encoding=\"UTF-8\"\\?>", "");
+                .replaceAll("<\\?xml *version=\"1\\.0\" *encoding=\"UTF-8\" *\\?>", "")
+                .replaceAll("<\\?xml *version=\"1\\.0\" *encoding=\"UTF-8\" *standalone=\"no\" *\\?>", "");
     }
 
     public static String parseXml(String str) {
