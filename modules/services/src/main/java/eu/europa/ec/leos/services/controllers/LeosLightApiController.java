@@ -157,7 +157,7 @@ public class LeosLightApiController {
     @RequestMapping(value = "/leos-light/context-token", method = RequestMethod.GET)
     public String getContextToken(@RequestParam String clientId, @RequestParam String user, @RequestParam String role, @RequestParam String systemName) {
         AuthClient authClient = tokenService.getAuthClient(clientId);
-        if(authClient == null || !authClient.isVerified()) {
+        if(authClient == null) {
             throw new NotFoundException(messageHelper.getMessage("leoslight.auth.client.not.found"));
         }
         return tokenService.getClientContextToken(clientId, user, role, systemName);
@@ -191,7 +191,7 @@ public class LeosLightApiController {
 
     @RequestMapping(value = "/leos-light/test-callback", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<Object> testCallbackAddress(@RequestParam MultipartFile inputFile) {
+    public ResponseEntity<Object> testCallbackAddress(@RequestParam MultipartFile file) {
         return ResponseEntity.ok().body(ImmutableMap.of("result", "Successfully tested callback address!"));
     }
 
