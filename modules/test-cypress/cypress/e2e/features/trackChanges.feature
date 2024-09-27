@@ -330,6 +330,48 @@ Feature: Track Changes Feature
     #   | html  | <del leos:title="DOE Jane : \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}" leos:uid="jane" id=".*"> tex</del> |
     #   | text  | "t to test."        |
 
+  @renumberingRecitalTrackChanges @local
+  Scenario: test renumbering of recital when added and edited
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation testing article ck editor scenario" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  ribbon toolbar is displayed
+    And  toc editing button is displayed and enabled
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When click on toc edit button
+    Then cancel button is displayed and enabled in navigation pane
+    Then below element lists are displayed in Elements menu
+      | ElementList |
+      | Citation    |
+      | Recital     |
+      | Part        |
+      | Title       |
+      | Chapter     |
+      | Section     |
+      | Article     |
+    When click on right angle icon of preamble link
+    When drag element "Recital" from element tree list and drop before node label "(1) Recital..." in navigation pane
+    Then preamble contains node label "# Recital..." and showing as bold
+    When click on save and close button in navigation pane
+    Then toc editing button is displayed and enabled
+    When mouseover and click on recital 2
+    Then ck editor window is displayed
+    And  recital with "(2)" contains attribute "data-akn-num" with value "(2)" in edition mode
+    And  recital with "(2)" contains attribute "data-akn-tc-original-number" with value "(1)" in edition mode
+    When add " New Text " at offset 7 in recital in edition mode
+    And  click save and close button of ck editor
+    Then ck editor window is not displayed
+
+
   @renumberingTrackChanges @local
   Scenario: test renumbering of paragraphs when we add or delete paragraph
     Given navigate to edit drafting application with "User1"

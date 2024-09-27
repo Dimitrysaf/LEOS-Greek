@@ -27,7 +27,7 @@ class tableOfContent {
         subVersion: () => this.elements.cardContentOfRecentChanges().find('div.subversion'),
         subVersionTitle: () => this.elements.subVersion().find('.title'),
         nodeLabel: () => cy.get(".mat-tree-node div.label[id^='node-label'], .mat-tree-node div.label-extended[id^='node-label']"),
-        preambleLink: () => this.elements.nestedTreeNode().find('#node-label-_preamble').closest('div.mat-tree-node'),
+        preambleLink: () => this.elements.nestedTreeNode().contains('Preamble').closest('div.mat-tree-node'),
         elementList: () => cy.get("ul[cdkdroplistconnectedto='tree'] li.eui-list-item"),
         labelExtended: () => cy.get(".label-extended").closest('mat-nested-tree-node'),
         revertToThisVersionBtn: () => cy.get("button").contains('Revert to this version'),
