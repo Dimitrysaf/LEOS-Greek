@@ -338,7 +338,7 @@ Feature: Track Changes Feature
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
     When click on next button in create document page
-    And  provide document title "Automation testing article ck editor scenario" in create document page
+    And  provide document title "Automation testing recital track changes scenario" in create document page
     And  click on create button
     Then user is on act viewer page
     When click on legal act link present in act viewer page
@@ -349,27 +349,27 @@ Feature: Track Changes Feature
     Then enable track changes toggle bar is on in ribbon toolbar
     When click on toc edit button
     Then cancel button is displayed and enabled in navigation pane
-    Then below element lists are displayed in Elements menu
-      | ElementList |
-      | Citation    |
-      | Recital     |
-      | Part        |
-      | Title       |
-      | Chapter     |
-      | Section     |
-      | Article     |
     When click on right angle icon of preamble link
     When drag element "Recital" from element tree list and drop before node label "(1) Recital..." in navigation pane
     Then preamble contains node label "# Recital..." and showing as bold
     When click on save and close button in navigation pane
     Then toc editing button is displayed and enabled
+    And  recital 1 contains attribute "leos:action" with value "insert"
+    And  recital 1 contains attribute "leos:softaction" with value "add"
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of recital 2 contains value "(1)"
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of recital 2 contains value "(2)"
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of recital 3 contains value "(2)"
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of recital 3 contains value "(3)"
     When mouseover and click on recital 2
     Then ck editor window is displayed
     And  recital with "(2)" contains attribute "data-akn-num" with value "(2)" in edition mode
     And  recital with "(2)" contains attribute "data-akn-tc-original-number" with value "(1)" in edition mode
-    When add " New Text " at offset 7 in recital in edition mode
+    When add "New Text " at offset 0 in recital in edition mode
     And  click save and close button of ck editor
     Then ck editor window is not displayed
+    And  ins tag of aknp tag of recital 2 contains value "New Text "
+    And  del tag with attribute "leos\:action-number" and value "delete" of num tag of recital 2 contains value "(1)"
+    And  ins tag with attribute "leos\:action-number" and value "insert" of num tag of recital 2 contains value "(2)"
 
 
   @renumberingTrackChanges @local

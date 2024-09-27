@@ -18,7 +18,7 @@ When('click on act {int}', (proposalIndex) => {
     repositoryBrowserPage.clickOnNthProposal(proposalIndex);
 });
 
-When(`upload button is not present`, () => {
+When(`upload act button is not present`, () => {
     repositoryBrowserPage.elements.uploadBtn().should('not.exist');
 });
 
