@@ -114,6 +114,7 @@
   "page.workspace.upload-cn.label": "Sélectionner un fichier leg à charger.",
   "page.workspace.upload-cn.button.label": "S'il vous plaît, sélectionnez un fichier leg à charger:",
   "page.workspace.upload.button.text": "Charger un acte",
+  "page.workspace.upload.notification.button.text": "Charger une notification",
   "page.workspace.upload-cn.button.text": "Créer un mandat",
   "page.workspace.upload.button.tooltip": "Charger un ficher .leg",
   "page.workspace.results.title": "Résultats",

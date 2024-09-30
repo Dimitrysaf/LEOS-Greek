@@ -114,6 +114,7 @@
   "page.workspace.upload-cn.label": "Select a leg file to be uploaded.",
   "page.workspace.upload-cn.button.label": "Please select a leg file to be uploaded:",
   "page.workspace.upload.button.text": "Upload act",
+  "page.workspace.upload.notification.button.text": "Upload notification",
   "page.workspace.upload-cn.button.text": "Create mandate",
   "page.workspace.upload.button.tooltip": "Upload a .leg file",
   "page.workspace.results.title": "Results",
