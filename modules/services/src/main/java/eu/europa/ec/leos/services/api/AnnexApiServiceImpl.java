@@ -196,7 +196,7 @@ public class AnnexApiServiceImpl implements AnnexApiService {
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementContent, boolean isSplit) throws Exception {
+                                           String elementContent, boolean isSplit, String alternateElementId) throws Exception {
         Annex annex = this.annexService.findAnnexByRef(documentRef);
 
         if (annex == null) {

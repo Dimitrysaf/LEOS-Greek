@@ -455,9 +455,12 @@ define(function elementEditorModule(require) {
             var eventData = _removeNonBreakingSpaceFromElement(elementId,  event.data.data);
             // set read-only to prevent changes
             editor.setReadOnly(true);
+            const alternateElementId = editor.config.isAlternativeArticle ? editor.element.getFirst().getId() : null;
+
             // save the element being edited
             var data = {
                 elementId: elementId,
+                alternateElementId: alternateElementId,
                 elementType: elementType,
                 elementFragment: eventData,
                 isSplit: event.data.origin === "split" ? true : false,
@@ -491,7 +494,6 @@ define(function elementEditorModule(require) {
             .replace(/&#xa0;/g, WHITE_SPACE)
             .replace(/&#160;/g, WHITE_SPACE)
             .replace(/&amp;#xa0;/g, WHITE_SPACE);
-//            .replace(/\u00A0/g, ' ');
     }
 
     function _isArticleWithOneNumberedParagraph(elementId, editor) {

@@ -203,6 +203,7 @@ export interface EditElementResponse {
 
 export interface SaveElementAction {
   elementId: string;
+  alternateElementId: string,
   elementType: string;
   elementFragment: string;
   isSplit: boolean;

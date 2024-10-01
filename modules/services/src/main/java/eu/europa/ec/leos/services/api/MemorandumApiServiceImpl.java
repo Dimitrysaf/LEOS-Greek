@@ -172,7 +172,7 @@ public class MemorandumApiServiceImpl implements MemorandumApiService {
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementFragment, boolean isSplit) {
+                                           String elementFragment, boolean isSplit, String alternateElementId) {
         Memorandum memorandum = this.memorandumService.findMemorandumByRef(documentRef);
         StructureContext structureContext1 = structureContext.get();
         structureContext1.useDocumentTemplate(

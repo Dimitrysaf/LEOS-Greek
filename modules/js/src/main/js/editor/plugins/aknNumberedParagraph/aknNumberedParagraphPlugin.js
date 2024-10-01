@@ -241,11 +241,18 @@ define(function aknNumberedParagraphPluginModule(require) {
         var cmd = event.listenerData;
         var jqEditor = $(event.editor.editable().$);
         var paragraphs = jqEditor.find(PARA_SELECTOR);
+        var rootElement = event.editor.element.getFirst();
+        var isAlternative = rootElement && rootElement.getAttribute("leos:alternative");
+
         if (paragraphs.length > 0) {
-            PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM)
-            && !(paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).startsWith(DELETED))
-            && paragraphs[0].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER) !== leosTrackChanges.core.DELETE_ACTION
-                ? NUMBERED : UNNUMBERED;
+            if(isAlternative && rootElement.getName() === leosTrackChanges.core.ARTICLE) {
+                PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM) ? NUMBERED : UNNUMBERED;
+            } else {
+                PARA_MODE = paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM)
+                && !(paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID) && paragraphs[0].getAttribute(leosPluginUtils.DATA_AKN_NUM_ID).startsWith(DELETED))
+                && paragraphs[0].getAttribute(leosTrackChanges.core.DATA_AKN_ACTION_NUMBER) !== leosTrackChanges.core.DELETE_ACTION
+                  ? NUMBERED : UNNUMBERED;
+            }
         }
         cmd.setState(PARA_MODE);
     }

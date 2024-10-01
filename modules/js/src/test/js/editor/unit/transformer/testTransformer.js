@@ -104,7 +104,7 @@ define(function testTransformerModule(require) {
                 fragment: fragment
             });
             expect(elementReplaceCount).toEqual(1);
-            expect(transformationsCount).toEqual(2);
+            expect(transformationsCount).toEqual(1);
 
         });
 

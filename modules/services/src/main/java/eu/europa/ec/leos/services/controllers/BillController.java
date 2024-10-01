@@ -84,13 +84,15 @@ public class BillController {
                                                   @PathVariable("elementId") String elementId,
                                                   @RequestHeader("presenterId") String presenterId,
                                                   @RequestParam(required = false) boolean isSplit,
+                                                  @RequestParam(required = false, defaultValue = "") String alternateElementId,
                                                   @RequestBody String elementContent) {
         try {
             documentRef = encodeParam(documentRef);
             elementName = encodeParam(elementName);
             elementId = encodeParam(elementId);
             presenterId = encodeParam(presenterId);
-            SaveElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName, elementContent, isSplit);
+            SaveElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName,
+                    elementContent, isSplit, alternateElementId);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {

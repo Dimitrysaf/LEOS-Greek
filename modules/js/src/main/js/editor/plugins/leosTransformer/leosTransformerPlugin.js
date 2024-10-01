@@ -30,11 +30,12 @@ define(function leosTransformerPluginModule(require) {
             editor.on('toHtml', function(evt) {
                 var fragment = evt.data.dataValue;
                 var transformer = transformerStamp();
-                transformer.transform({
+                var transformedFragment = transformer.transform({
                     transformationConfigResolver: editor.LEOS.profile.transformationConfigResolver,
                     direction: "to",
-                    fragment: fragment
+                    fragment: fragment,
                 });
+                return transformedFragment;
             }, null, null, 6);
 
             editor.on("toDataFormat", function(evt) {

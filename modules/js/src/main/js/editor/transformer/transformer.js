@@ -47,8 +47,9 @@ define(function transformerModule(require) {
             this._.direction = params.direction;
             this._.transformationConfigResolver = params.transformationConfigResolver;
             var bindedTransformElement = LODASH.bind(this._transformElement, this);
-            params.fragment.forEach(bindedTransformElement);
-
+            var transformedProducts = params.fragment.children.map(bindedTransformElement);
+            transformedProducts = transformedProducts.filter(product => product !== null);
+            return transformedProducts;
         },
         _isCKEditorWidget : function _isCKEditorWidget(fragment) {
             if(!fragment || !fragment.children || fragment.children.length == 0) {
@@ -88,8 +89,7 @@ define(function transformerModule(require) {
             });
             if (product) {
                 element.replaceWith(product);
-                // return false so that forEach iterator won't iterate over its children
-                return false;
+                return product;
             }
             return true;
         },

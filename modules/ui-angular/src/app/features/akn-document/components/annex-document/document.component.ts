@@ -119,8 +119,6 @@ export class DocumentComponent
     }
   }
 
-  ng
-
   ngOnInit(): void {
     if (!this.readonly) {
       this.documentService.refreshView$

@@ -101,6 +101,12 @@ define(function aknAlternativeArticlePluginModule(require) {
             akn : "leos:selectedoption",
             html : "leos:selectedoption"
         }, {
+            akn : "data-akn-original-option",
+            html : "data-akn-original-option"
+        }, {
+            akn : "data-akn-action-alter",
+            html : "data-akn-action-alter"
+        }, {
             akn : "leos:softuser",
             html : "data-akn-attr-softuser"
         }, {

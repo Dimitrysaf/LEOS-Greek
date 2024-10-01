@@ -122,7 +122,7 @@ public class MemorandumController {
             elementId = encodeParam(elementId);
             presenterId = encodeParam(presenterId);
             SaveElementResponse updatedElement = this.memorandumApiService.saveElement(documentRef, elementId,
-                    elementName, elementContent, isSplit);
+                    elementName, elementContent, isSplit, null);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {

@@ -342,6 +342,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
     this.saveDocumentElement(
       this.documentService.documentRef,
       elemData.elementId,
+      elemData.alternateElementId,
       elemData.elementType,
       elemData.elementFragment,
       elemData.isSplit,
@@ -546,6 +547,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   private saveDocumentElement(
     documentRef: string,
     elementId: string,
+    alternateElementId: string,
     elementType: string,
     elementFragment: string,
     isSplit: boolean,
@@ -554,7 +556,7 @@ export class LeosEditorConnector extends AbstractJavaScriptComponent<LeosEditorC
   ) {
     const cleanedHtml = this.cleanElementFromCoEditInfo(elementFragment);
     return this.http.put<RefreshElementResponse>(
-      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element?isSplit=${isSplit}`,
+      `${apiBaseUrl}/secured/${documentType}/${documentRef}/element/${elementType}/${elementId}/save-element?isSplit=${isSplit}&alternateElementId=${alternateElementId}`,
       cleanedHtml,
       {
         headers: {
