@@ -15,6 +15,7 @@ package eu.europa.ec.digit.leos.pilot.export.controller;
 
 import eu.europa.ec.digit.leos.pilot.export.exception.LeosDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
+import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.ConvertDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import org.springframework.http.HttpStatus;
@@ -53,7 +54,7 @@ public class LeosDocumentApiController {
                     isWithAnnotations
             );
             byte[] convertDocumentOutput = leosDocumentService.getRenditions(convertDocumentInput);
-            return buildValidZipResponse(convertDocumentOutput);
+            return buildValidZipResponse(convertDocumentOutput, null);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
@@ -75,11 +76,13 @@ public class LeosDocumentApiController {
                     inputFile,
                     translationsFile
             );
-            byte[] convertDocumentOutput = leosDocumentService.updateWithTranslations(convertDocumentInput);
+            LeosConvertDocumentOutput convertDocumentOutput = leosDocumentService.updateWithTranslations(convertDocumentInput);
             if(outputDescriptor != null && !outputDescriptor.isEmpty()) {
-                convertDocumentOutput = this.convertDocumentService.convertDocument(convertDocumentOutput, outputDescriptor);
+                byte[] convertedDocument = this.convertDocumentService.convertDocument(convertDocumentOutput.getOutputFile(),
+                        outputDescriptor);
+                convertDocumentOutput.setOutputFile(convertedDocument);
             }
-            return buildValidZipResponse(convertDocumentOutput);
+            return buildValidZipResponse(convertDocumentOutput.getOutputFile(), convertDocumentOutput.getOutputFileName());
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
@@ -92,7 +95,7 @@ public class LeosDocumentApiController {
     public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile) {
         try {
             byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
-            return buildValidZipResponse(documentOutput);
+            return buildValidZipResponse(documentOutput, null);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {

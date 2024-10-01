@@ -11,14 +11,31 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Licence for the specific language governing permissions and limitations under the Licence.
  */
-package eu.europa.ec.digit.leos.pilot.export.service;
+package eu.europa.ec.digit.leos.pilot.export.model;
 
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
-import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
+public class LeosConvertDocumentOutput {
 
-import java.util.List;
+    private byte[] outputFile;
+    private String outputFileName;
 
-public interface LeosLegDocumentService {
-    LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, List<LeosRenditionOutput> renditionOutputs);
+    public LeosConvertDocumentOutput(String outputFileName, byte[] outputFile) {
+        this.outputFileName = outputFileName;
+        this.outputFile = outputFile;
+    }
+
+    public byte[] getOutputFile() {
+        return outputFile;
+    }
+
+    public void setOutputFile(byte[] outputFile) {
+        this.outputFile = outputFile;
+    }
+
+    public String getOutputFileName() {
+        return outputFileName;
+    }
+
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName = outputFileName;
+    }
 }

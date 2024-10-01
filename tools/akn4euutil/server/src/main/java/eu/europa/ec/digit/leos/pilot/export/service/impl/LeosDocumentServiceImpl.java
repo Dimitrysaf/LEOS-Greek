@@ -15,11 +15,13 @@ package eu.europa.ec.digit.leos.pilot.export.service.impl;
 
 import eu.europa.ec.digit.leos.pilot.export.model.CustomMultipartFile;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
+import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.MetadataService;
 import eu.europa.ec.digit.leos.pilot.export.service.XmlDocumentService;
+import eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +69,7 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return xmlDocumentService.xmlToHtmlPackage(convertDocumentInput);
     }
 
-    public byte[] updateWithTranslations(LeosConvertDocumentInput convertDocumentInput) {
+    public LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput) {
         List<LeosRenditionOutput> renditionOutputs = getRenditionOutputs(convertDocumentInput);
         return leosLegDocumentService.updateWithTranslations(convertDocumentInput, renditionOutputs);
     }
@@ -78,10 +80,15 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         try {
             translationMap = ZipUtil.unzipByteArray(convertDocumentInput.getTranslationsFile().getBytes());
             translationMap.keySet().stream().forEach(translationKey -> {
+                MultipartFile main = null;
+                if(translationKey.startsWith(ConvertUtil.PROPOSAL_FILE_PREFIX)) {
+                    main = new CustomMultipartFile((byte[])translationMap.get(translationKey), translationKey,
+                            "application/xml");
+                }
                 LeosConvertDocumentInput renditionInput = createDocumentInput(
                         new CustomMultipartFile((byte[])translationMap.get(translationKey), translationKey,
                                 "application/xml"),
-                        null,
+                        main,
                         false
                 );
                 LeosRenditionOutput renditionOutput = xmlDocumentService.xmlToHtmlRendition(renditionInput);

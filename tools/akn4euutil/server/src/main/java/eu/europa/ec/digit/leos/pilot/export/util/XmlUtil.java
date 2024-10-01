@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -56,7 +57,7 @@ public class XmlUtil {
             StreamResult result = new StreamResult(buffer);
             DOMSource source = new DOMSource(node);
             TransformerFactory.newInstance().newTransformer().transform(source, result);
-            String nodeContent = new String(buffer.toByteArray()).replaceAll("(<\\?xml.*?\\?>)", "");
+            String nodeContent = new String(buffer.toByteArray(), StandardCharsets.UTF_8).replaceAll("(<\\?xml.*?\\?>)", "");
             nodeContent = nodeContent.replaceAll("xmlns(.*?)=(\".*?\")", "");
             return nodeContent;
         }
