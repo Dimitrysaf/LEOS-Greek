@@ -48,17 +48,19 @@ define(function aknRecitalPluginModule(require) {
                 if (recitalTag && numTag) {
                     const insTag = numTag.querySelector('ins');
                     const delTag = numTag.querySelector('del');
-                    if (insTag && delTag) {
-                        numTag.childNodes.forEach(node => {
-                            if (node.nodeType === Node.TEXT_NODE) {
-                                const regex = /\(\d+\)/;
-                                if (regex.test(node.nodeValue.trim())) {
-                                    node.nodeValue = node.nodeValue.replace(regex, '').trim();
+                    if (insTag && !insTag.hasAttribute('leos:action-number')) {
+                        insTag.remove();
+                    } else if (insTag && delTag) {
+                            numTag.childNodes.forEach(node => {
+                                if (node.nodeType === Node.TEXT_NODE) {
+                                    const regex = /\(\d+\)/;
+                                    if (regex.test(node.nodeValue.trim())) {
+                                        node.nodeValue = node.nodeValue.replace(regex, '').trim();
+                                    }
                                 }
-                            }
-                        });
-                        evt.data.dataValue = recitalTag.outerHTML.replace('xmlns:leos="leos"', '');
+                            });
                     }
+                    evt.data.dataValue = recitalTag.outerHTML.replace('xmlns:leos="leos"', '');
                 }
 
             }, null, null, 99);
