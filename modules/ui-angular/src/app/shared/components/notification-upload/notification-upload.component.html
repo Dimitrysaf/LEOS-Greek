@@ -16,7 +16,7 @@
     {{ 'global.actions.cancel' | translate }}
   </button>
   <button euiButton euiPrimary [disabled]="!uploadForm.valid || !isValidFile" (click)="uploadNotifications()">
-    {{ 'page.workspace.upload.button.text' | translate }}
+    {{ 'page.workspace.upload.notification.button.text' | translate }}
   </button>
 </div>
 <eui-card *ngIf="errorsVO && errorsVO.length > 0">

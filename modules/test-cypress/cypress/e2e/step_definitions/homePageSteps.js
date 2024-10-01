@@ -28,3 +28,26 @@ Then(/^below options are displayed in support menu$/, function (datatable) {
         })
         .should('deep.equal', actualElementList)
 });
+
+When(/^click on notification icon$/, function () {
+    homePage.clickNotificationIcon();
+});
+
+When(/^click on language icon$/, function () {
+    homePage.clickLanguageIcon();
+});
+
+Then(/^below buttons are displayed under language icon$/, function (datatable) {
+    const actualElementList = [];
+    datatable.hashes().forEach((element) => {
+        actualElementList.push(element.ButtonName);
+    });
+    homePage.elements.languageOptions()
+        .then(($els) => {
+            return (
+                Cypress.$.makeArray($els)
+                    .map((el) => el.innerText)
+            )
+        })
+        .should('deep.equal', actualElementList)
+});
