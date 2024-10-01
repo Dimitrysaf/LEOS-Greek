@@ -136,7 +136,7 @@ public class CoverPageController {
             presenterId = encodeParam(presenterId);
             SaveCoverPageElementResponse updatedElement = (SaveCoverPageElementResponse) this.coverPageApiService.saveElement(
                     documentRef, elementId,
-                    elementName, elementContent, isSplit);
+                    elementName, elementContent, isSplit, null);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {

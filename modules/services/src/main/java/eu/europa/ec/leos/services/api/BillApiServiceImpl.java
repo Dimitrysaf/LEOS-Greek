@@ -585,7 +585,7 @@ public abstract class BillApiServiceImpl implements BillApiService {
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementFragment, boolean isSplit) throws Exception {
+                                           String elementFragment, boolean isSplit, String alternateElementId) throws Exception {
         Bill bill = this.billService.findBillByRef(documentRef);
 
         if (bill == null) {
@@ -622,6 +622,9 @@ public abstract class BillApiServiceImpl implements BillApiService {
             }
         }
         Bill updatedBill = billService.updateBill(bill, newXmlContent, checkinCommentJson);
+        if(alternateElementId != null && !"null".equals(alternateElementId)) {
+            elementId = alternateElementId;
+        }
         String newContent = elementProcessor.getElement(updatedBill, elementName, elementId);
         if (splittedContent == null) {
             splittedContentIsEmpty = true;

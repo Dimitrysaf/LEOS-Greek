@@ -91,7 +91,7 @@ public class AnnexController {
             elementId = encodeParam(elementId);
             presenterId = encodeParam(presenterId);
             SaveElementResponse newElement = this.annexApiService.saveElement(documentRef, elementId, elementName,
-                    elementContent, isSplit);
+                    elementContent, isSplit, null);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, newElement);
             return ResponseEntity.ok().body(newElement);
         } catch (Exception e) {

@@ -341,14 +341,14 @@ define(function actionManagerExtensionModule(require) {
 
     function _handleElementClickAction(connector, action, event) {
         const selection = window.getSelection();
-
         // Means the event was fired from single click and not selection
         if (selection.isCollapsed && selection.type === "Caret") {
+            const isInstanceReady = CKEDITOR.currentInstance ? CKEDITOR.currentInstance.instanceReady : false;
             // Ignore clicks coming from specific elements
             const shouldBeIgnored = connector.getState().isAngularUI &&
                 (IGNORE_EDIT_CLICK.elementName.includes(event.target.nodeName) ||
                  IGNORE_EDIT_CLICK.elementClass.some((cl) => event.target?.classList?.contains(cl)) ||
-                 IGNORE_EDIT_CLICK.elementName.includes(event.target?.offsetParent?.nodeName)
+                 IGNORE_EDIT_CLICK.elementName.includes(event.target?.offsetParent?.nodeName) || isInstanceReady
                 );
             if (!shouldBeIgnored) {
                 _handleAction(connector, "edit", event);

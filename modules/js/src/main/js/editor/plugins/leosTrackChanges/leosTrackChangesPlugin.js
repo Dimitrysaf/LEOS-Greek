@@ -197,17 +197,28 @@ define(function leosTrackChangesPluginModule(require) {
             editor.on("handleTcAlternateClause", function (event) {
                 function changeOption(option, callback) {
                     var currentElement = editor.element.$.firstChild;
-                    var currentIndex = currentElement.getAttribute("leos:selectedoption");
-                    if(!currentElement.hasAttribute("data-akn-action-alter")) {
-                        core.addTrackChangesAttributesForAlternative(editor, currentElement, currentIndex);
+                    core.addTrackChangesAttributesForAlternative(editor, currentElement, currentIndex);
+                    var isArticle = currentElement && currentElement.getAttribute('data-akn-name') === core.ARTICLE;
+                    if(isArticle) {
+                        currentElement.childNodes.forEach(child => {
+                            if(!child.getAttribute('data-cke-widget-wrapper')) {
+                                child.childNodes.forEach(subChild => {
+                                    core.addTrackChangesAttributesForNumbering(editor, subChild, core.DELETE_ACTION);
+                                })
+                                editor.getSelection().selectElement(new CKEDITOR.dom.element(child));
+                            }
+                        });
+                    } else {
+                        editor.getSelection().selectElement(new CKEDITOR.dom.element(currentElement));
                     }
-                    editor.getSelection().selectElement(new CKEDITOR.dom.element(currentElement));
                     if (!core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)) {
                         style.apply(editor, deleteTcStyle);
                     }
                     var tempEle = editor.document.createElement('div');
                     tempEle.$.innerHTML = option.content;
-                    actions.insertNewData(editor, tempEle.$.innerText);
+                    var content = isArticle ? tempEle.$.innerHTML : tempEle.$.innerText;
+                    actions.insertNewData(editor, content);
+
                     if(callback) {
                         callback.call(editor);
                     }
@@ -221,14 +232,17 @@ define(function leosTrackChangesPluginModule(require) {
                     var newOption = optionList.list.find(listOfOption => listOfOption.index == newIndex);
 
                     var currentElement = ckeditor.element.$.firstChild;
+                    var currentIndex = currentElement.getAttribute("leos:selectedoption");
                     var trackChangeElements = $(currentElement).find("[data-akn-action]");
                     if(trackChangeElements.length > 0) {
                         trackChangeElements.each(function() {
                             actions.rejectChange(ckeditor, new CKEDITOR.dom.element(this), numberModule);
                         });
+                        core.removeTrackChangesAttributesForAlternative(currentElement);
                     }
-
-                    changeOption(newOption, callback);
+                    if(newIndex > currentIndex) {
+                        changeOption(newOption, callback);
+                    }
                 }
             });
 
@@ -238,12 +252,18 @@ define(function leosTrackChangesPluginModule(require) {
                     core.setOriginalNumber(element, event.data.previousNumber);
                     if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
                         && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
-                        && element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
+                        && element.getAttribute(leosPluginUtils.DATA_AKN_NUM) &&
+                        element.getAttribute(core.DATA_AKN_ACTION_NUMBER) !== core.DELETE_ACTION) {
                         if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {
                             core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                         } else {
                             core.removeTrackChangesAttributesForNumbering(element);
                         }
+                    } else if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
+                      && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
+                      && element.getAttribute(leosPluginUtils.DATA_AKN_NUM) &&
+                      element.getAttribute(core.DATA_AKN_ACTION_NUMBER) === core.DELETE_ACTION) {
+                        core.addTrackChangesAttributesForNumbering(editor, element, core.DELETE_ACTION);
                     } else if ((element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.UNNUMBERED)
                         && (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) !== core.NEW)
                         && !element.getAttribute(leosPluginUtils.DATA_AKN_NUM)) {

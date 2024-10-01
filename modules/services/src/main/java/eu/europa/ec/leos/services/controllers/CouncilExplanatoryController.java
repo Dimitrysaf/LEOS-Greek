@@ -92,7 +92,7 @@ public class CouncilExplanatoryController {
             elementId = encodeParam(elementId);
             presenterId = encodeParam(presenterId);
             SaveElementResponse updatedElement = this.explanatoryApiService.saveElement(documentRef, elementId,
-                    elementName, elementContent, isSplit);
+                    elementName, elementContent, isSplit, null);
             coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {

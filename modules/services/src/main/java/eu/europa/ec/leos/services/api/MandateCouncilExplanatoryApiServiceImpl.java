@@ -165,7 +165,7 @@ public class MandateCouncilExplanatoryApiServiceImpl implements CouncilExplanato
 
     @Override
     public SaveElementResponse saveElement(String documentRef, String elementId, String elementName,
-                                           String elementFragment, boolean isSplit) throws Exception {
+                                           String elementFragment, boolean isSplit, String alternateElementId) throws Exception {
         Explanatory explanatory = this.explanatoryService.findExplanatoryByRef(documentRef);
         this.setStructureContext(
                 explanatory.getMetadata().getOrError(() -> EXPLANATORY_METADATA_IS_REQUIRED).getDocTemplate());

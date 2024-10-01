@@ -130,7 +130,8 @@ define(function aknInlineAlternativeArticleProfileModule(require) {
             mathJaxLib: './webjars/MathJax/2.7.0/MathJax.js?config=default',
             mathJaxClass: 'mathTex',
             // LEOS-2887 removing tooltip title 
-            title: false
+            title: false,
+            isAlternativeArticle: true
     };
     // adding the specific configs coming from the plugins.
     profileConfig = $.extend( profileConfig,  specificConfig);
