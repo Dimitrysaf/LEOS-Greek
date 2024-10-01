@@ -37,6 +37,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_RENDITION_CSS_PATH;
+
 @Service
 public class XmlDocumentServiceImpl implements XmlDocumentService {
 
@@ -47,9 +49,7 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     private final String CSS_EXT = ".css";
     private final String CSS_PATH = "css/";
     private final String REF_NODE = "leos:ref";
-    private final String coverPage= "coverPage";
 
-    public static final String PROPOSAL_FILE = "main";
     public static final String ANNEX_FILE_PREFIX = "ANNEX";
     public static final String REG_FILE_PREFIX = "REG";
     public static final String DIR_FILE_PREFIX = "DIR";
@@ -67,31 +67,28 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
             String styleSheetFileName =  getStyleSheetName(convertDocumentInput);
             String cssFileName = getCssFileName(styleSheetFileName);
             String styleSheet = CSS_PATH + cssFileName;
+            String coverPage = prepareCoverPage(convertDocumentInput);
+
+            InputStream styleSheetInputStream = new ClassPathResource(styleSheet).getInputStream();
+            byte[] styleSheetOutput = StreamUtils.copyToByteArray(styleSheetInputStream);
+
             byte[] htmlOutput = templateEngineService.xmlToHtml(convertDocumentInput, cssFileName, coverPage);
-            String renditionFilename = convertDocumentInput.getInputFile().getOriginalFilename().substring(0,
-                    convertDocumentInput.getInputFile().getOriginalFilename().lastIndexOf('.'));
-            return new LeosRenditionOutput(htmlOutput, renditionFilename, new byte[0], styleSheet);
+            String renditionFilename = ConvertUtil.getFilename(convertDocumentInput.getInputFile(), "html");
+            return new LeosRenditionOutput(htmlOutput, renditionFilename, styleSheetOutput,
+                    HTML_RENDITION_CSS_PATH + cssFileName);
+        } catch (IOException e) {
+            LOG.error("Failed getting stylesheet or generating zip file", e);
+            throw new XmlDocumentException("Failed getting stylesheet or generating zip file", e);
         } catch (TemplateEngineException e) {
             LOG.error("Error calling template engine", e);
             throw new XmlDocumentException("Error calling template engine", e);
+        } catch (XmlUtilException e) {
+            LOG.error("Error parsing XML", e);
+            throw new XmlDocumentException("Error parsing XML", e);
+        } catch (TransformerException e) {
+            LOG.error("Error parsing Node", e);
+            throw new XmlDocumentException("Error parsing Node", e);
         }
-    }
-
-    private String getCssFileName(String styleSheetFileName) {
-        String cssFileName = null;
-        if (styleSheetFileName.startsWith(MEMORANDUM_FILE_PREFIX)) {
-            cssFileName = "memorandum.css";
-        } else if (styleSheetFileName.startsWith(REG_FILE_PREFIX) || styleSheetFileName.startsWith(DEC_FILE_PREFIX)
-        || styleSheetFileName.startsWith(DIR_FILE_PREFIX)) {
-            cssFileName = "bill.css";
-        } else if (styleSheetFileName.startsWith(STAT_FINANC_LEGIS_FILE_PREFIX)) {
-            cssFileName = "stat_financ_legis.css";
-        } else if (styleSheetFileName.startsWith(ANNEX_FILE_PREFIX)) {
-            cssFileName = "annex.css";
-        } else if (styleSheetFileName.startsWith(PROPOSAL_FILE)) {
-            cssFileName = "coverpage.css";
-        }
-        return cssFileName;
     }
 
     @Override
@@ -125,11 +122,30 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
         }
     }
 
-    private String prepareCoverPage(LeosConvertDocumentInput convertDocumentInput) throws IOException, XmlUtilException, TransformerException {
+    private String getCssFileName(String styleSheetFileName) {
+        String cssFileName = null;
+        if (styleSheetFileName.startsWith(MEMORANDUM_FILE_PREFIX)) {
+            cssFileName = "memorandum.css";
+        } else if (styleSheetFileName.startsWith(REG_FILE_PREFIX) || styleSheetFileName.startsWith(DEC_FILE_PREFIX)
+                || styleSheetFileName.startsWith(DIR_FILE_PREFIX)) {
+            cssFileName = "bill.css";
+        } else if (styleSheetFileName.startsWith(STAT_FINANC_LEGIS_FILE_PREFIX)) {
+            cssFileName = "stat_financ_legis.css";
+        } else if (styleSheetFileName.startsWith(ANNEX_FILE_PREFIX)) {
+            cssFileName = "annex.css";
+        } else if (styleSheetFileName.startsWith(ConvertUtil.PROPOSAL_FILE_PREFIX)) {
+            cssFileName = "coverpage.css";
+        }
+        return cssFileName;
+    }
+
+    private String prepareCoverPage(LeosConvertDocumentInput convertDocumentInput) throws IOException, XmlUtilException,
+            TransformerException {
         MultipartFile main = convertDocumentInput.getMain();
         if(main != null && !main.isEmpty()){
             InputStream inputStream = main.getInputStream();
-            Node node = XmlUtil.parseXml(inputStream).getElementByName(coverPage);
+            Node node = XmlUtil.parseXml(inputStream).getElementByName(ConvertUtil.COVER_PAGE);
+            XmlUtil.setNodeAttributeValue(node, "xmlns:leos", "urn:eu:europa:ec:leos");
             String coverPageContent = XmlUtil.XmlFile.parseNode(node);
             return coverPageContent;
         }
@@ -137,7 +153,7 @@ public class XmlDocumentServiceImpl implements XmlDocumentService {
     }
 
     private void addCoverPageStyleSheet(Map<String, Object> contentToZip) throws IOException {
-        String coverPageStyleSheet = CSS_PATH + coverPage.toLowerCase() + CSS_EXT;
+        String coverPageStyleSheet = CSS_PATH + ConvertUtil.COVER_PAGE.toLowerCase() + CSS_EXT;
         InputStream coverPageCSSInputStream = new ClassPathResource(coverPageStyleSheet).getInputStream();
         byte[] coverPageCSSOutput = StreamUtils.copyToByteArray(coverPageCSSInputStream);
         contentToZip.put(coverPageStyleSheet, coverPageCSSOutput);

@@ -14,6 +14,7 @@
 package eu.europa.ec.digit.leos.pilot.export.service;
 
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
+import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface LeosDocumentService {
@@ -24,7 +25,7 @@ public interface LeosDocumentService {
 
     byte[] getRenditions(LeosConvertDocumentInput convertDocumentInput);
 
-    byte[] updateWithTranslations(LeosConvertDocumentInput convertDocumentInput);
+    LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput);
 
     byte[] applyMetadata(MultipartFile inputFile);
 }

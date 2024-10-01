@@ -25,12 +25,13 @@ public class DocumentApiUtil {
         return new ResponseEntity<>(message + ": " + e.getMessage(), httpStatus);
     }
 
-    public static ResponseEntity<Object> buildValidZipResponse(byte[] outputFile) {
+    public static ResponseEntity<Object> buildValidZipResponse(byte[] outputFile, String fileName) {
         HttpHeaders headers = new HttpHeaders();
+        String filename = fileName != null ? fileName : "result_" + System.currentTimeMillis() + ".zip";
         headers.setContentDisposition(
                 ContentDisposition
                         .builder("attachment")
-                        .filename("result_" + System.currentTimeMillis() + ".zip")
+                        .filename(filename)
                         .build());
         headers.setContentType(MediaType.valueOf(ZipUtil.APPLICATION_ZIP_VALUE));
         headers.setContentLength(outputFile.length);

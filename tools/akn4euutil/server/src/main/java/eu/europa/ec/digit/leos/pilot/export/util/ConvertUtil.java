@@ -18,6 +18,15 @@ import org.springframework.web.multipart.MultipartFile;
 public class ConvertUtil {
 
     private static final String DOT = ".";
+    public static final String COVER_PAGE= "coverPage";
+    public static final String PROPOSAL_FILE_PREFIX = "main";
+    public static final String HTML_RENDITION_PATH = "renditions/html/";
+    public static final String HTML_RENDITION_CSS_PATH = "renditions/html/css/";
+    public static final String HTML_JS_PATH = "renditions/html/js/";
+    public static final String XML_EXT = ".xml";
+    public static final String HTML_EXT = ".html";
+    public static final String JS_EXT = ".js";
+    public static final String HTML_TOC = "_toc";
 
     public static String replaceSuffix(String inputString, String suffix) {
         if (inputString == null) {
@@ -40,6 +49,7 @@ public class ConvertUtil {
     public static String getFilename(MultipartFile file, String suffix) {
         String s = file.getOriginalFilename();
         if (s != null) {
+            s = s.startsWith(PROPOSAL_FILE_PREFIX) ? COVER_PAGE : s;
             return replaceSuffix(s, suffix);
         } else {
             return "noname";
