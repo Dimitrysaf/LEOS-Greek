@@ -47,3 +47,9 @@ Feature: repository browser page Regression Features
             | ButtonName    |
             | English (en)  |
             | français (fr) |
+        When provide "Automation" keyword in search for an act input box
+        And  click search button present beside of search for an act input box
+        Then search card container is displayed
+        And  total search results is displayed
+        When click on proposal 1 in search card container
+        Then user is on act viewer page

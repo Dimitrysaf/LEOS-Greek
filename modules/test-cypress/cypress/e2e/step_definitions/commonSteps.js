@@ -59,3 +59,11 @@ When(/^click on workspace button in breadcrumb item$/, function () {
 When(`click on home button`, () => {
     headerPage.clickHomeBtn();
 });
+
+When(/^wait for (\d+) milliseconds$/, function (milliseconds) {
+    cy.wait(milliseconds);
+});
+
+Given(/^refresh the browser$/, function () {
+    cy.reload();
+});

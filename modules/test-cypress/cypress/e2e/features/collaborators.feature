@@ -41,6 +41,10 @@ Feature: collaborator section regression features
     And  click on add users button
     Then "DEMO Demo" is displayed in row 2 of column name of collaborators tab
     And  "Reviewer" is displayed in row 2 of column role of collaborators tab
+    When  type "demo" in search filter input in collaborators tab
+    Then  total number of row is 1 in collaborators tab
+    And   "DEMO Demo" is displayed in row 1 of column name of collaborators tab
+    And   "Reviewer" is displayed in row 1 of column role of collaborators tab
     Given navigate to edit drafting application with "User3"
     Then  user is on home page
     When  click on view all acts button

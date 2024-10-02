@@ -56,9 +56,14 @@ Feature: milestone section regression features
             | Financial Statement  [1.0.0]    |
             | Annex 1  [1.0.0]                |
             | Annex 2  [1.0.0]                |
-
         When click on close button in milestone explorer view
         Then user is on act viewer page
+        When click on three dots under actions column of row 1 of milestones table
+        And  click on option "Download" under milestone actions
+        And  wait for 500 milliseconds
+        And  refresh the browser
+        When click on milestones tab in act view page
+        Then "EXPORTED" is showing under status column of row 1 of milestones table
 
     @exportBtnInMilestoneExplorer @nonlocal
     Scenario: navigate to legal act page
