@@ -17,6 +17,12 @@ Feature: act viewer page Regression Features
         And  provide document title "Automation Testing" in create document page
         And  click on create button
         Then user is on act viewer page
+        When click on details tab in act view page
+        Then active tab name is "Details"
+        And  template name is "SJ-023" in details tab
+        And  language is "EN" in details tab
+        And  confidentiality level is "STANDARD" in details tab
+        And  EEA Relevance is unticked in details tab
         When click on milestones tab in act view page
         And  click on add button in milestones tab
         Then add milestone window is displayed

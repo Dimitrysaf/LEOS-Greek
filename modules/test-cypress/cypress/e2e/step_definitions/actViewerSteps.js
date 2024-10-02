@@ -130,3 +130,23 @@ Then(`active tab name is {string}`, function (tabName) {
 When(/^click on collaborators tab in act view page$/, function () {
     actViewerPage.clickCollaboratorsTab();
 });
+
+When(/^click on details tab in act view page$/, function () {
+    actViewerPage.clickDetailsTab();
+});
+
+Then(/^template name is "([^"]*)" in details tab$/, function (templateName) {
+    actViewerPage.elements.templateLabelValue().should('have.text', templateName);
+});
+
+Then(/^language is "([^"]*)" in details tab$/, function (language) {
+    actViewerPage.elements.languageLabelValue().should('have.text', language);
+});
+
+Then(/^confidentiality level is "([^"]*)" in details tab$/, function (confidentialityLevel) {
+    actViewerPage.elements.confidentialityLevelLabelValue().should('have.text', confidentialityLevel);
+});
+
+Then(/^EEA Relevance is unticked in details tab$/, function () {
+    actViewerPage.elements.eeARelevanceCheckBoxValue().should('not.be.checked');
+});

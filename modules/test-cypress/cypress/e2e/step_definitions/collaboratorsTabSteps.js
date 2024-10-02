@@ -28,3 +28,11 @@ When('click on row {int} from the user list in name field of add users window', 
 When('select role with value {string} in add users window', function (role) {
     collaboratorsTab.selectRole(role).should('have.value', role);
 });
+
+When(/^type "([^"]*)" in search filter input in collaborators tab$/, function (keyword) {
+    collaboratorsTab.searchInput(keyword)
+});
+
+Then(/^total number of row is (\d+) in collaborators tab$/, function (count) {
+    collaboratorsTab.elements.collaboratorsRow().should('have.length', count);
+});
