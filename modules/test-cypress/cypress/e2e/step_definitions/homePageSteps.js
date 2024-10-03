@@ -51,3 +51,24 @@ Then(/^below buttons are displayed under language icon$/, function (datatable) {
         })
         .should('deep.equal', actualElementList)
 });
+
+When(/^provide "([^"]*)" keyword in search for an act input box$/, function (keyword) {
+    homePage.searchInput(keyword)
+});
+
+When(/^click search button present beside of search for an act input box$/, function () {
+    homePage.clickSearchBtn();
+});
+
+Then(/^search card container is displayed$/, function () {
+    homePage.elements.searchCardContainer().should('be.visible');
+
+});
+
+When(/^click on proposal (\d+) in search card container$/, function (proposalIndex) {
+    homePage.clickProposalInSearchCardContainer(proposalIndex);
+});
+
+Then(/^total search results is displayed$/, function () {
+    homePage.elements.totalSearchResults().should('be.visible');
+});

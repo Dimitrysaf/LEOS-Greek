@@ -17,6 +17,7 @@ class actViewerPage {
         activeTab: () => cy.get('div.eui-tab-item--active'),
         tabItem: () => cy.get('div.eui-tabs__items-wrapper .eui-tab-item'),
         draftsTab: () => this.elements.tabItem().contains('Drafts'),
+        detailsTab: () => this.elements.tabItem().contains('Details'),
         milestoneTab: () => this.elements.tabItem().contains('Milestones'),
         collaboratorsTab: () => this.elements.tabItem().contains('Collaborators'),
         // proposalDetailsTab: () => this.elements.tabItem().contains('Details'),
@@ -28,7 +29,12 @@ class actViewerPage {
         annexCount: () => cy.get('eui-card .eui-card-content table tbody tr'),
         changeTitleBtn: () => cy.xpath("//button[text()='Change title']"),
         deleteBtnFromActionMenu: () => cy.xpath("//button[text()='Delete']"),
-        chipContentContainer: () => cy.get('div.eui-chip__content-container')
+        chipContentContainer: () => cy.get('div.eui-chip__content-container'),
+        rowLabel: () => cy.get('.row label'),
+        templateLabelValue: () => this.elements.rowLabel().contains('Template').closest('div').next('div'),
+        languageLabelValue: () => this.elements.rowLabel().contains('Language').closest('div').next('div'),
+        confidentialityLevelLabelValue: () => this.elements.rowLabel().contains('Confidentiality Level').closest('div').next('div'),
+        eeARelevanceCheckBoxValue: () => this.elements.rowLabel().contains('EEA Relevance').prev('input')
     }
 
     clickCloseBtn(){
@@ -114,6 +120,10 @@ class actViewerPage {
 
     clickCollaboratorsTab() {
         this.elements.collaboratorsTab().click();
+    }
+
+    clickDetailsTab() {
+        this.elements.detailsTab().click();
     }
 }
 export default new actViewerPage();
