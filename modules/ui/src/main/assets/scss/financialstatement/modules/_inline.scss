@@ -15,8 +15,12 @@
 //------------------------------- Xml Styles -----------------------------//
 
 %xmlInline {
-  inline[name=date] {
+  date[date] {
     display: inline;
+    cursor: pointer;
+    placeholder {
+      color:inherit;
+    }
   }
 
   inline[name=unchecked], inline[name=checked] {

@@ -23,7 +23,7 @@ define(function datePickerExtensionModule(require) {
     var dateFormats = new Map();
     dateFormats.set('yy', 'YYYY');
     dateFormats.set('dd/mm/yy', '[DD/MM]YYYY');
-    var selector = "inline[name='date']";
+    var selector = "date[date]";
 
 
     function _initDatePicker(connector) {
@@ -46,7 +46,7 @@ define(function datePickerExtensionModule(require) {
                 var idAttr = $(this).attr('id');
                 var element = $('#'+idAttr);
                 var format = $(this).attr('period');
-                var formName = $(this).attr('name');
+                var formName = $(this).attr('date');
                 var hiddenInput = document.createElement('input');
                 hiddenInput.name = formName;
                 hiddenInput.type = 'hidden';
