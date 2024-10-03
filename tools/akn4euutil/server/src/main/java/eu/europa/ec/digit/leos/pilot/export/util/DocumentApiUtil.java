@@ -25,6 +25,18 @@ public class DocumentApiUtil {
         return new ResponseEntity<>(message + ": " + e.getMessage(), httpStatus);
     }
 
+    public static ResponseEntity<Object> buildValidZipResponse(byte[] outputFile) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentDisposition(
+                ContentDisposition
+                        .builder("attachment")
+                        .filename("result_" + System.currentTimeMillis() + ".zip")
+                        .build());
+        headers.setContentType(MediaType.valueOf(ZipUtil.APPLICATION_ZIP_VALUE));
+        headers.setContentLength(outputFile.length);
+        return new ResponseEntity<>(outputFile, headers, HttpStatus.OK);
+    }
+
     public static ResponseEntity<Object> buildValidZipResponse(byte[] outputFile, String fileName) {
         HttpHeaders headers = new HttpHeaders();
         String filename = fileName != null ? fileName : "result_" + System.currentTimeMillis() + ".zip";
@@ -37,5 +49,4 @@ public class DocumentApiUtil {
         headers.setContentLength(outputFile.length);
         return new ResponseEntity<>(outputFile, headers, HttpStatus.OK);
     }
-
 }

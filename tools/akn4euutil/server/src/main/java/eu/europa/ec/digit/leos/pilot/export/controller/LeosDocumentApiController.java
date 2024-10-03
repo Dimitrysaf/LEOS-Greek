@@ -54,7 +54,7 @@ public class LeosDocumentApiController {
                     isWithAnnotations
             );
             byte[] convertDocumentOutput = leosDocumentService.getRenditions(convertDocumentInput);
-            return buildValidZipResponse(convertDocumentOutput, null);
+            return buildValidZipResponse(convertDocumentOutput);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
@@ -95,7 +95,7 @@ public class LeosDocumentApiController {
     public ResponseEntity<Object> applyMetadata(@RequestParam MultipartFile inputFile) {
         try {
             byte[] documentOutput = leosDocumentService.applyMetadata(inputFile);
-            return buildValidZipResponse(documentOutput, null);
+            return buildValidZipResponse(documentOutput);
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
