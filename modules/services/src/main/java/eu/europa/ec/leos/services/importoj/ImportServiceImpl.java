@@ -22,6 +22,7 @@ import eu.europa.ec.leos.services.numbering.NumberService;
 import eu.europa.ec.leos.services.processor.content.XmlContentProcessor;
 import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XPathCatalog;
+import eu.europa.ec.leos.services.support.XercesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +98,7 @@ public class ImportServiceImpl implements ImportService {
             } else if (elementType.equalsIgnoreCase(RECITAL)) {
                 updatedElement = this.numberService.renumberImportedRecital(updatedElement);
             }
-            updatedElement = updatedElement.replaceFirst(">", " leos:editable=\"true\" leos:deletable=\"true\">");
+            updatedElement = XercesUtils.removeXmlDefinition(updatedElement).replaceFirst(">", " leos:editable=\"true\" leos:deletable=\"true\">");
 
             // Insert selected element to the document
             if (elementId != null) {

@@ -40,7 +40,6 @@ import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_N
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN4EU_URI;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_NAME;
 import static eu.europa.ec.leos.services.support.XPathCatalog.NAMESPACE_AKN_URI;
-import static eu.europa.ec.leos.services.support.XercesUtils.getContentNodeAsXmlFragment;
 import static eu.europa.ec.leos.services.support.XmlHelper.BLOCK;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLASS_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.CLOSE_END_TAG;
@@ -84,12 +83,12 @@ import static eu.europa.ec.leos.services.support.XmlHelper.XMLID;
 import static eu.europa.ec.leos.services.support.XmlHelper.XML_NAME;
 import static eu.europa.ec.leos.services.support.XmlHelper.convertStringDateToCalendar;
 import static eu.europa.ec.leos.services.support.XmlHelper.findString;
-import static eu.europa.ec.leos.services.support.XmlHelper.getOpeningTag;
 import static eu.europa.ec.leos.services.support.XmlHelper.isExcludedNode;
 import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElements;
 import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
 
 public class XercesUtils {
+    private static final String XML_DEFINITION_REGEX = "^<\\?((xml)|(XML)) *(v|V)ersion=(\"|\')1\\.(0|1)(\"|\') *((e|E)ncoding=(\"|\')((utf)|(UTF))-((8)|(16)|(32))(\"|\'))?( *(s|S)tandalone=(\"|\')((yes)|(no))(\"|\'))? *\\?>";
 
     private static final Logger LOG = LoggerFactory.getLogger(XercesUtils.class);
 
@@ -159,28 +158,34 @@ public class XercesUtils {
         return document;
     }
 
+    public static byte[] nodeToByteArray(Node node, boolean omitXmlDeclaration) {
+        return nodeToStringWithTransformer(node, omitXmlDeclaration).getBytes(UTF_8);
+    }
+
+    public static String nodeToString(Node node, boolean omitXmlDeclaration) {
+        return nodeToStringWithTransformer(node, omitXmlDeclaration);
+    }
     public static byte[] nodeToByteArray(Node node) {
-        return nodeToStringWithTransformer(node).getBytes(UTF_8);
+        return nodeToStringWithTransformer(node, true).getBytes(UTF_8);
     }
 
     public static String nodeToString(Node node) {
-        return nodeToStringWithTransformer(node);
+        return nodeToStringWithTransformer(node, true);
     }
-
     /**
      * This method performs better that nodeToStringSimple() for normal/big documents.
      * For small fragments nodeToStringSimple() performs better
      */
-    public static String nodeToStringWithTransformer(Node node) {
+    public static String nodeToStringWithTransformer(Node node, boolean omitXmlDeclaration) {
         StringWriter sw = new StringWriter();
         StreamResult output = new StreamResult(sw);
-        saveNodeToOutput(node, output);
+        saveNodeToOutput(node, output, omitXmlDeclaration);
         String xmlString = sw.getBuffer().toString();
         xmlString = xmlString.replaceAll("xmlns:leos=\""+NAMESPACE_AKN_URI+"\"", "");
         return xmlString;
     }
 
-    private static void saveNodeToOutput(Node node, StreamResult output) {
+    private static void saveNodeToOutput(Node node, StreamResult output,boolean omitXmlDeclaration) {
         try {
             final Source input = new DOMSource(node);
             final TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -188,7 +193,12 @@ public class XercesUtils {
             Transformer transformer = transformerFactory.newTransformer();
             transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             //transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            if(omitXmlDeclaration){
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            }else{
+                transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+                transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
+            }
             transformer.transform(input, output);
         } catch (Exception e) {
             throw new IllegalStateException("Cannot save Node to output", e);
@@ -499,7 +509,7 @@ public class XercesUtils {
     }
 
     public static Node replaceElement(Node node, String newContent) {
-        Node fakeNodeWithNewContent = createNodeFromXmlFragment(node.getOwnerDocument(), ("<fake>" + newContent + "</fake>").getBytes(UTF_8), false);
+        Node fakeNodeWithNewContent = createNodeFromXmlFragment(node.getOwnerDocument(), ("<fake>" + removeXmlDefinition(newContent) + "</fake>").getBytes(UTF_8), false);
         NodeList fakeNodeChildNodes = fakeNodeWithNewContent.getChildNodes();
         boolean isInline = false;
         for (int i = fakeNodeChildNodes.getLength() - 1; i >= 0 ; i--) {
@@ -1496,4 +1506,10 @@ public class XercesUtils {
         XercesUtils.removeAttribute(node, LEOS_UID_ENTER);
         XercesUtils.removeAttribute(node, LEOS_TC_ORIGINAL_NUMBER);
     }
+
+
+    public static String removeXmlDefinition(String xmlFragment) {
+        return (xmlFragment != null ? xmlFragment.replaceAll(XML_DEFINITION_REGEX,"") : "");
+    }
+
 }

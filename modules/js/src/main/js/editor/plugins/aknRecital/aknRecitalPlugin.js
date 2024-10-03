@@ -24,6 +24,7 @@ define(function aknRecitalPluginModule(require) {
     var ENTER_KEY = 13;
     var UNDERLINE = CKEDITOR.CTRL + 85;
     var BOLD = CKEDITOR.CTRL + 66;
+    var WHITE_SPACE = '\u00A0';
 
     var pluginDefinition = {
         init: function init(editor) {
@@ -42,6 +43,11 @@ define(function aknRecitalPluginModule(require) {
             editor.on("toDataFormat", function (evt) {
                 const parser = new DOMParser();
                 var xmlString = evt.data.dataValue.replace('<recital', '<recital xmlns:leos="leos"');
+                xmlString = xmlString.replace(/&amp;nbsp;/g, WHITE_SPACE)
+                    .replace(/&nbsp;/g, WHITE_SPACE)
+                    .replace(/&#xa0;/g, WHITE_SPACE)
+                    .replace(/&#160;/g, WHITE_SPACE)
+                    .replace(/&amp;#xa0;/g, WHITE_SPACE);
                 const doc = parser.parseFromString(xmlString, 'text/xml');
                 const recitalTag = doc.querySelector('recital');
                 const numTag = doc.querySelector('num');

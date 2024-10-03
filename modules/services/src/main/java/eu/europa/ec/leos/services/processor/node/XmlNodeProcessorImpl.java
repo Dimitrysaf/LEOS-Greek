@@ -107,7 +107,7 @@ public class XmlNodeProcessorImpl implements XmlNodeProcessor {
             }
         }
         LOG.trace("Values set in xml ({} milliseconds)", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-        return XercesUtils.nodeToByteArray(document);
+        return XercesUtils.nodeToByteArray(document, false);
     }
 
     @Override
