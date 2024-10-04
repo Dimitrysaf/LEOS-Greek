@@ -275,21 +275,11 @@ define(function leosTrackChangesPluginModule(require) {
                             core.removeTrackChangesAttributesForNumbering(element);
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
-                        var isNumbered = true;
                         var closestList = $(element).closest('ol');
-                        if (!!closestList && closestList.length > 0 ){
-                            var list = closestList[0];
-                            if (!isNumberedList(list)) {
-                                var tcAttributes = ["title-number", "data-akn-uid-number", "data-akn-action-number", "data-akn-num"];
-                                for (var attrName of tcAttributes) {
-                                    element.removeAttribute(attrName);
-                                }
-                                isNumbered = false;
-                            }
+                        if (!!closestList && closestList.length > 0 && !isNumberedList(closestList[0])) {
+                            element.removeAttribute("data-akn-num");
                         }
-                        if(isNumbered){
-                            core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
-                        }
+                        core.addTrackChangesAttributesForNumbering(editor, element, core.INSERT_ACTION);
                     }
                 }
 

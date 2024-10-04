@@ -173,6 +173,9 @@ define(function aknRecitalPluginModule(require) {
             }, {
                 akn : "leos:origin",
                 html : "data-num-origin"
+            },{
+                akn : "leos:uid",
+                html : "data-akn-uid-number"
             }],
             sub: [{
                 akn: "text",
