@@ -32,7 +32,7 @@
         <property name="continueFilterChainOnUnsuccessfulAuthentication" value="true"/>
         <property name="authenticationDetailsSource" ref="authenticationDetailsSource"/>
         <property name="authenticationFailureHandler" ref="jeePreAuthFailureHandler"/>
-        <property name="authenticationSuccessHandler" ref="jwtAuthenticationSuccessHandler"/>
+        <property name="authenticationSuccessHandler" ref="jeePreAuthSuccessHandler"/>
     </bean>
 
     <!-- Get the web.xml roles and populate the matching roles in Authentication object-->
@@ -65,7 +65,7 @@
         <property name="useForward" value="true"/>
     </bean>
 
-    <!-- Define the JwtAuthenticationSuccessHandler bean -->
-    <bean id="jwtAuthenticationSuccessHandler" class="eu.europa.ec.leos.api.auth.JwtAuthenticationSuccessHandler"/>
+    <!-- Define the jeeAuthenticationSuccessHandler bean -->
+    <bean id="jeePreAuthSuccessHandler" class="eu.europa.ec.leos.security.JeePreAuthSuccessHandler"/>
 
 </beans>
