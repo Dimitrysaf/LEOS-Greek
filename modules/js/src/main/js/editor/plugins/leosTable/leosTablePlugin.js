@@ -268,6 +268,9 @@ define(function leosTablePluginModule(require) {
                     }, {
                         akn : "leos:editable",
                         html : "contenteditable",
+                    }, {
+                        akn : 'class',
+                        html : 'class'
                     }]
                 }
             }

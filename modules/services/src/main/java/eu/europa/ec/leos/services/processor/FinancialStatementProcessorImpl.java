@@ -32,6 +32,7 @@ import javax.inject.Provider;
 import java.util.List;
 
 import static eu.europa.ec.leos.services.support.XmlHelper.CONTENT;
+import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.SUBPARAGRAPH;
 
@@ -103,7 +104,16 @@ public class FinancialStatementProcessorImpl implements FinancialStatementProces
         Validate.notNull(elementId, "Element id is required.");
         Validate.notNull(tagName, "Tag name is required.");
         byte[] updatedContent = getContent(financialStatement);
-        if(tagName.equalsIgnoreCase(SUBPARAGRAPH)) {
+        Element element = xmlContentProcessor.getElementById(updatedContent, elementId);
+        Element parentElement = xmlContentProcessor.getParentElement(updatedContent, elementId);
+        boolean specialDeleteForLevels = false;
+        if (element != null && element.getElementFragment() != null && element.getElementFragment().contains("leos:optional=\"true\"")
+                && element.getElementTagName().equals(HEADING)
+                && parentElement != null && parentElement.getElementFragment() != null && parentElement.getElementTagName().equals("level")) {
+            elementId = parentElement.getElementId();
+            specialDeleteForLevels = true;
+        }
+        if(tagName.equalsIgnoreCase(SUBPARAGRAPH) || specialDeleteForLevels) {
             //TODO: Check for last element deletion
             updatedContent = xmlContentProcessor.removeElementById(updatedContent, elementId, financialStatement.isTrackChangesEnabled());
         } else {

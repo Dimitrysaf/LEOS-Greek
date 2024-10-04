@@ -41,6 +41,7 @@ $BLACK : #000000;
     }
 
     [leos\:editable=true],
+    [leos\:optional=true],
     .leos-placeholder
     {
         @extend %elementEditable;

@@ -42,7 +42,7 @@ Feature: financial statement page regression features
     Then active tab name is "Drafts"
     When click on financial statement link present in act viewer page
     Then user is on financial statement page
-    And  doctype is "LEGISLATIVE FINANCIAL STATEMENT"
+    And  doctype is "LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT"
     And  annotation side bar is present
     And  content of level 2 contains "[...]" in financial statement page
     When mouseover and click on level 2 in financial statement page

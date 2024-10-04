@@ -62,6 +62,15 @@
         }
       ],
       "content": "<guidance id=\"guidance-_223__p\" class=\"guidance-green-block\"><span id=\"_223__p-guidance\">[The costs of controls are to be estimated at Commission level and, for shared and indirect management, also (separately) at the level of Member States or Entrusted Entities. Also the source of the information (related to the cost of controls at the level of Member States or Entrusted Entities) and how they were estimated should be presented.<br>If for the whole or part of the programme the estimated total cost of controls (i.e. those of the Commission plus, if applicable, those of the Member States or the Entrusted Entities) are relatively high, then this should be explained by referring to possible cost drivers such as the specific risk-profile, the (dis)economies of scale in terms of number and size of the DG's typical transactions processed, complexity of delivery mechanisms, etc.<br>Remark: Such justification is especially crucial when the programme is split into segments, with a deviating delivery set-up for some of them.<br>In terms of expected error rate(s), at the stage of the legislative proposals the aim is to maintain the error rate below the threshold of 2%. A different materiality threshold could only be discussed on a case-by-case basis in the light of the legislative debate, notably when the Legislative Authority would not (fully) endorse the proposed programme simplifications and/or would cap the controls, which would have consequences on the expected error rate. This would then require a coordinated approach.]</span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//level[49]/content/aknp",
+          "position": "AFTER-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance-_223__p\" class=\"guidance-green-block\"><span id=\"_223__p-guidance\">[NB: In case the initial Commission proposal evolves considerably during the legislative negotiations, it should be considered to update information laid down in the LFDS for any financial and/or digital aspects, as necessary, with the aim to support the negotiation process and create clarity for all parties concerned.]</span></guidance>"
     }
   ],
   "structure": [

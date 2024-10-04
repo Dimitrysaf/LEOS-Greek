@@ -1401,9 +1401,12 @@ export const isNodeLastElement = (
   elementId: string,
 ) => {
   const targetNode = findNodeById(toc, elementId);
-  const parentNode = findNodeById(toc, targetNode.parentItem);
-
-  return parentNode?.childItems?.length === 1;
+  if (targetNode) {
+    const parentNode = findNodeById(toc, targetNode.parentItem);
+    return parentNode?.childItems?.length === 1;
+  } else {
+    return false;
+  }
 };
 
 export const restoreMovedItemOrSetNumber = (

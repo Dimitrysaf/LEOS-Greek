@@ -585,13 +585,19 @@ define(function actionManagerExtensionModule(require) {
         type = type === 'alinea' || type === 'subparagraph' ? 'sub-point' : type;
         type = type === 'crossHeading' ? 'crossheading' : type;
         type = type === 'block' ? 'crossheading' : type;
+        let isHeadingOfAnOptionalLevel = false;
         let optional = $element.attr('leos\:optional');
+        let leosAction = "";
+        if (optional === 'true' && $element[0] && $element[0].parentNode && $element[0].parentNode.localName === 'level') {
+            isHeadingOfAnOptionalLevel = true;
+            leosAction = $element[0].parentNode.getAttribute("leos:action");
+        }
         // If we don't have leos:optional, uses deletable because it was previously using this variable
         // So, to avoid conflicts, we add the same old value in this case
         let hasBeforeAndAfter = optional ? false : deletable;
         var insertBeforeAndAfter = _insertBeforeAndAfterIcon($element, hasBeforeAndAfter);
         editable = editable || (editable && $element.attr('leos\:optionlist'));
-        deletable = optional || _isDeletable($element, deletable, connector);
+        deletable = (optional === 'true') || _isDeletable($element, deletable, connector);
 
         let template = ['<div class="leos-actions Vaadin-Icons">']; //FIXME: we can directly create elements
 
@@ -603,7 +609,10 @@ define(function actionManagerExtensionModule(require) {
                 template.push(`<span data-widget-type="edit" title="Edit text">&#xe7fa</span>`);
             }
             if (deletable && connector.getState().tocEdition) {
-                template.push(`<span data-widget-type="delete" title="Delete ${type}">&#xe80b</span>`);
+                const title = (!isHeadingOfAnOptionalLevel) ? `Delete ${type}` : (leosAction !== 'delete' ? 'Delete entire section' : '');
+                if (title) {
+                    template.push(`<span data-widget-type="delete" title="${title}">&#xe80b</span>`);
+                }
             }
             if (insertBeforeAndAfter && connector.getState().tocEdition) {
                 template.push(`<span style="transform: rotate(180deg);" data-widget-type="insert.after" title="Insert ${type} after">&#xe623</span>`);
