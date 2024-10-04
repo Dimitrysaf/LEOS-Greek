@@ -4,12 +4,12 @@ stages:
   - deploy
 
 variables:
-  MAVEN_OPTS: '-Dmaven.repo.local=$CI_PROJECT_DIR/.m2/repository -DskipTests=true'
+  MAVEN_OPTS: '-Dmaven.repo.local=$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.m2/repository -DskipTests=true'
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
-  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn/cache"
+  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.yarn/cache"
   GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository -e .npm
-  npm_config_cache: '$CI_PROJECT_DIR/.npm'
-  CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/cache/Cypress'
+  npm_config_cache: '$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.npm'
+  CYPRESS_CACHE_FOLDER: '$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/cache/Cypress'
 
 #cache:
 #    key: ${CI_COMMIT_REF_SLUG}
