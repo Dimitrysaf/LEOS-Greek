@@ -31,6 +31,9 @@ public class XPathCatalog {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:refOriginForClone/akn:iscRef";
     }
 
+    public String getXPathForDoc() {
+        return "/akn:akomaNtoso//akn:doc";
+    }
     public String getXPathRefOriginForCloneObjectId() {
         return "/akn:akomaNtoso//akn:meta/akn:proprietary/leos:refOriginForClone/akn:objectId";
     }

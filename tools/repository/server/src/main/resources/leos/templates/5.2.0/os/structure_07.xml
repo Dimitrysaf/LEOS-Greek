@@ -77,6 +77,10 @@
                     <elementSelector>level[leos\:editable='true']</elementSelector>
                     <profileName>inlineAknLevelFinancialStatement</profileName>
                 </profile>
+                <profile>
+                    <elementSelector>level heading[leos\:optional='true']</elementSelector>
+                    <profileName>inlineAknLevelFinancialStatement</profileName>
+                </profile>
             </profiles>
             <editable>true</editable>
             <maxDepth>7</maxDepth>

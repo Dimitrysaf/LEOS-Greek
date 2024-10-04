@@ -150,7 +150,8 @@ export class TrackChangesActionsComponent implements OnInit, OnDestroy {
   }
 
   onAccept() {
-    if (this.currentElement.getAttribute("leos:optional") === "true") {
+    if (this.currentElement.getAttribute("leos:optional") === "true"
+      || (this.currentElement.children && this.currentElement.children[1] && this.currentElement.children[1].getAttribute("leos:optional") === "true")) {
       this.dialogService.openDialog({
         title: this.translateService.instant(
           'page.editor.element-delete-dialog.optional.title',

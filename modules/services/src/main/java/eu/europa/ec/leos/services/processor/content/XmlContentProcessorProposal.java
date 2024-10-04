@@ -14,6 +14,7 @@
 package eu.europa.ec.leos.services.processor.content;
 
 import eu.europa.ec.leos.domain.common.InstanceType;
+import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.instance.Instance;
 import eu.europa.ec.leos.model.action.SoftActionType;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
@@ -24,6 +25,7 @@ import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
+import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
@@ -132,7 +134,8 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     private NumberProcessorHandler numberProcessorHandler;
     @Autowired
     protected NumberConfigFactory numberConfigFactory;
-
+    @Autowired
+    protected XPathCatalog xPathCatalog;
 
     public Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
                                     Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled) {
@@ -384,7 +387,10 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         Document document = createXercesDocument(xmlContent);
         Node nodeToBeRemoved = XercesUtils.getElementById(document, elementId);
         String tagName = nodeToBeRemoved.getNodeName().toLowerCase();
-        document = restoreNumElementOnIntermediateNodes(document, elementId, null, tagName);
+        String docType = getAttributeValueByXpath(xmlContent, xPathCatalog.getXPathForDoc(), XmlHelper.XML_NAME);
+        if (docType == null || !docType.equals(LeosCategory.STAT_FINANC_LEGIS.name())) {
+            document = restoreNumElementOnIntermediateNodes(document, elementId, null, tagName);
+        }
         if (accept) {
             XercesUtils.deleteElement(nodeToBeRemoved);
         } else {
@@ -427,8 +433,20 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         XercesUtils.removeAttribute(nodeToRestore, LEOS_ACTION_ATTR);
         XercesUtils.removeAttribute(nodeToRestore, LEOS_TITLE);
         XercesUtils.removeAttribute(nodeToRestore, LEOS_UID);
-        if (XercesUtils.hasAttribute(nodeToRestore, LEOS_EDITABLE_ATTR)) {
+
+        Node headingNode = getFirstChild(nodeToRestore, HEADING);
+        boolean isOptionalForLevel = false;
+        if (headingNode != null && headingNode.getAttributes() != null && headingNode.getAttributes().getNamedItem("leos:optional") != null
+                && "true".equals(headingNode.getAttributes().getNamedItem("leos:optional").getTextContent())
+                && nodeToRestore.getLocalName().equals(LEVEL)) {
+            isOptionalForLevel = true;
+        }
+
+        if (XercesUtils.hasAttribute(nodeToRestore, LEOS_EDITABLE_ATTR) && !isOptionalForLevel) {
             XercesUtils.addAttribute(nodeToRestore, LEOS_EDITABLE_ATTR, "true");
+        }
+        if (isOptionalForLevel) {
+            XercesUtils.removeAttribute(nodeToRestore, LEOS_EDITABLE_ATTR);
         }
         XercesUtils.updateXMLIDAttributeFullStructureNode(nodeToRestore, EMPTY_STRING, true);
         Node numNode = getFirstChild(nodeToRestore, getNumTag(nodeToRestore.getNodeName()));
@@ -439,7 +457,9 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                     documentLanguageContext.getDocumentLanguage());
 
             if (numNode != null && (langNumConfig != null && langNumConfig.isAuto())) {
-                numNode.setTextContent("#");
+                if (!isOptionalForLevel) {
+                    numNode.setTextContent("#");
+                }
                 XercesUtils.removeAttribute(numNode, LEOS_ACTION_ATTR);
                 XercesUtils.removeAttribute(numNode, LEOS_TITLE);
                 XercesUtils.removeAttribute(numNode, LEOS_UID);
