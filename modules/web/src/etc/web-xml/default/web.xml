@@ -15,8 +15,8 @@
 
 -->
 <web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
-    version="3.1" id="LeosWebModuleID">
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1" id="LeosWebModuleID">
 
     <display-name>${project.description}</display-name>
 
@@ -41,6 +41,7 @@
         <param-value>120</param-value>
         <!-- heartbeat should always be smaller then half of the session timeout  -->
     </context-param>
+	
     <!-- SLF4J bridge listener -->
     <listener>
         <listener-class>eu.europa.ec.leos.web.support.log.SLF4JBridgeListener</listener-class>
@@ -66,16 +67,19 @@
         <url-pattern>/VAADIN/*</url-pattern>
         <url-pattern>/ws/*</url-pattern>
     </filter-mapping>
-    
+
     <!-- Milestone resource filters -->
     <filter>
-      <filter-name>milestoneCssFilter</filter-name>
-      <filter-class>eu.europa.ec.leos.ui.window.milestone.filter.MilestoneCssFilter</filter-class>
+        <filter-name>milestoneCssFilter</filter-name>
+        <filter-class>eu.europa.ec.leos.ui.window.milestone.filter.MilestoneCssFilter</filter-class>
+        <async-supported>true</async-supported>
     </filter>
 
     <filter-mapping>
         <filter-name>milestoneCssFilter</filter-name>
         <url-pattern>/css/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ASYNC</dispatcher>
     </filter-mapping>
 
     <!-- LEOS API Dispatcher Servlet -->
@@ -87,6 +91,7 @@
             <param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
@@ -104,6 +109,7 @@
             <param-value>/WEB-INF/ui-dispatcher-servlet.xml</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
         <servlet-name>ui-dispatcher</servlet-name>
@@ -173,22 +179,28 @@
     <filter>
         <filter-name>LeosCorsFilter</filter-name>
         <filter-class>eu.europa.ec.leos.web.support.LeosCorsFilter</filter-class>
+        <async-supported>true</async-supported>
     </filter>
 
     <filter-mapping>
         <filter-name>LeosCorsFilter</filter-name>
         <url-pattern>/api/token</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ASYNC</dispatcher>
     </filter-mapping>
 
     <!-- ForwardSlashFilter filter -->
     <filter>
         <filter-name>ForwardSlashFilter</filter-name>
         <filter-class>eu.europa.ec.leos.web.support.resource.ForwardSlashFilter</filter-class>
+        <async-supported>true</async-supported>
     </filter>
 
     <filter-mapping>
         <filter-name>ForwardSlashFilter</filter-name>
         <url-pattern>/ui</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ASYNC</dispatcher>
     </filter-mapping>
 
     <!-- LeosVaadinAccessFilter filter -->
@@ -206,6 +218,7 @@
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <async-supported>true</async-supported>
     </filter>
 
     <!-- Spring security should be applied only to Secure URLs -->
@@ -215,6 +228,8 @@
         <url-pattern>/ui-v/*</url-pattern>
         <url-pattern>/VAADIN/*</url-pattern>
         <url-pattern>/ui/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ASYNC</dispatcher>
     </filter-mapping>
 
     <!-- User authentication -->
