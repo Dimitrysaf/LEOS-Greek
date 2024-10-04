@@ -132,5 +132,10 @@
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>${bouncycastle-bcprov.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 </project>

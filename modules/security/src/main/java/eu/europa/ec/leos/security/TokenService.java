@@ -13,6 +13,7 @@
  */
 package eu.europa.ec.leos.security;
 
+import javax.servlet.http.Cookie;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ public interface TokenService {
     String getAccessToken(String user);
 
     String getNgAccessToken(String user);
+
+    Cookie getNgAccessCookie(String user, String contextPath);
 
     String getClientContextToken(String clientId, String user, String role, String systemName);
 

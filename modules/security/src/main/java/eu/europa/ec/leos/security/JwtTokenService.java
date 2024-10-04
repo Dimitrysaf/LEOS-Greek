@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.Cookie;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -65,6 +66,9 @@ class JwtTokenService implements TokenService {
 
     @Value("${leos.api.jwt.auth.access.token.expire.min}")
     private int accessTokenExpirationInMin;
+
+    @Value("${leos.mapping.url}")
+    private String leosMappingUrl;
 
     private static final int ANNOT_TOKEN_EXPIRE_IN_MIN = 9;
 
@@ -153,6 +157,27 @@ class JwtTokenService implements TokenService {
         final Date now = Calendar.getInstance().getTime();
         return generateToken(clientId, null, null, now, now, tokenExpireInMin,
                 clientSecret, user, null, null);
+    }
+
+    @Override
+    public Cookie getNgAccessCookie(String user, String contextPath) {
+        String token = this.getNgAccessToken(user);
+        Cookie cookie = new Cookie("Authorization", token);
+        cookie.setPath(contextPath);
+        cookie.setMaxAge(-1);
+        cookie.setHttpOnly(true); // set the HttpOnly flag to prevent XSS attacks
+        cookie.setSecure(this.isSecureConnection()); // set the Secure flag to prevent network eavesdropping
+        return cookie;
+    }
+
+    private boolean isSecureConnection() {
+        // Cannot be used "request.isSecure()" to check connection because LEOS can be behind a load balancer
+        // with HTTPS in front but that sends to server behind requests on HTTP and not HTTPS
+        boolean isSecureConnection = leosMappingUrl.startsWith("https://");
+        if (!isSecureConnection) {
+            LOG.warn("Authorization cookie created is not secure. Application is under a HTTP connection!");
+        }
+        return isSecureConnection;
     }
 
     @Override
