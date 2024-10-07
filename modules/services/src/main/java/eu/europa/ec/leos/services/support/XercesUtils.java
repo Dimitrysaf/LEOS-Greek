@@ -88,7 +88,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElem
 import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
 
 public class XercesUtils {
-    private static final String XML_DEFINITION_REGEX = "^<\\?((xml)|(XML)) *(v|V)ersion=(\"|\')1\\.(0|1)(\"|\') *((e|E)ncoding=(\"|\')((utf)|(UTF))-((8)|(16)|(32))(\"|\'))?( *(s|S)tandalone=(\"|\')((yes)|(no))(\"|\'))? *\\?>";
+    private static final String XML_DEFINITION_REGEX = "^<\\?xml *version=[\"\']1\\.[01][\"\'] *encoding=([\"\'])UTF-8([\"\'])?( *standalone=([\"\'])((yes)|(no))([\"\']))? *\\?>";
 
     private static final Logger LOG = LoggerFactory.getLogger(XercesUtils.class);
 
