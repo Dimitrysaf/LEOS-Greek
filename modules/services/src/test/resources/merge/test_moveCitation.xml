@@ -121,7 +121,7 @@
                 <citation leos:editable="true" refersTo="~legalBasis" xml:id="cit_6">
                     <p xml:id="cit_6__p">Acting in accordance with the ordinary legislative procedure,</p>
                 </citation>
-                <citation leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
+                <citation leos:action="insert" leos:editable="true" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true"
                           leos:softdate="2024-03-08T04:09:09.000Z" leos:softmove_from="movedXcit_1" leos:softmove_label="MOVED from first citation"
                           leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.615+01:00" leos:uid="gautare" refersTo="~legalBasis" xml:id="cit_1">
                     <p xml:id="cit_1__p">Having regard to the Treaty on the Functioning of the European Union, and in particular Articles 33, 114 and 207 thereof,</p>

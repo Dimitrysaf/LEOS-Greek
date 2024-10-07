@@ -350,7 +350,7 @@
                     <num leos:editable="false" leos:origin="ec" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.591+01:00" xml:id="movedXart_1__num">Article 1</num>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_0Yljie" xml:id="akn_art_xX8jV5">
-                    <num leos:editable="false" xml:id="akn_art_xX8jV5_7CQ3Z9">Article 2</num>
+                    <num leos:editable="false" xml:id="akn_art_xX8jV5_7CQ3Z9">Article 1</num>
                     <heading xml:id="akn_art_xX8jV5_sm7ESs">Definitions</heading>
                     <paragraph xml:id="akn_art_xX8jV5_yo3l6B">
                         <content xml:id="akn_art_xX8jV5_8hrY8T">
@@ -389,7 +389,7 @@
                     </paragraph>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_hBC712" xml:id="akn_art_sjUC1P">
-                    <num leos:editable="false" xml:id="akn_art_sjUC1P_C159Oh">Article 3</num>
+                    <num leos:editable="false" xml:id="akn_art_sjUC1P_C159Oh">Article 2</num>
                     <heading xml:id="akn_art_sjUC1P_GjAIEZ">European Union Single Window Environment for Customs</heading>
                     <paragraph xml:id="akn_art_sjUC1P-par1">
                         <content xml:id="akn_art_sjUC1P_RLUzhW">
@@ -402,7 +402,7 @@
                 <num xml:id="akn_rnHisF">Chapter II</num>
                 <heading xml:id="akn_RWG2yz">European Union Customs Single Window Certificates Exchange System</heading>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_zknBOT" xml:id="akn_art_2YbqTL">
-                    <num leos:editable="false" xml:id="akn_art_2YbqTL_D4fiap">Article 4</num>
+                    <num leos:editable="false" xml:id="akn_art_2YbqTL_D4fiap">Article 3</num>
                     <heading xml:id="akn_art_2YbqTL_DWm6eE">Establishment of the European Union Customs Single Window Certificates Exchange System</heading>
                     <paragraph xml:id="akn_art_2YbqTL_xSg044">
                         <content xml:id="akn_art_2YbqTL_IyfWt2">
@@ -411,7 +411,7 @@
                     </paragraph>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_ITxRTG" xml:id="akn_art_ubc2NQ">
-                    <num leos:editable="false" xml:id="akn_art_ubc2NQ_Wwu4Uv">Article 5</num>
+                    <num leos:editable="false" xml:id="akn_art_ubc2NQ_Wwu4Uv">Article 4</num>
                     <heading xml:id="akn_art_ubc2NQ_HeudnT">Roles and responsibilities for EU CSW-CERTEX</heading>
                     <paragraph xml:id="akn_art_ubc2NQ_Zur2uo">
                         <num xml:id="akn_art_ubc2NQ_uoY0vh">1.</num>
@@ -439,7 +439,7 @@
                     </paragraph>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_sZwrnU" xml:id="akn_art_phTLdP">
-                    <num leos:editable="false" leos:origin="ec" xml:id="akn_art_phTLdP_HqKfs6">Article 6</num>
+                    <num leos:editable="false" leos:origin="ec" xml:id="akn_art_phTLdP_HqKfs6">Article 5</num>
                     <heading xml:id="akn_art_phTLdP_gjfAUn">Processing of personal data in EU CSW-CERTEX</heading>
                     <paragraph xml:id="akn_art_phTLdP_GDNZEE">
                         <num leos:origin="ec" xml:id="akn_art_phTLdP_EPO84e">1.</num>
@@ -533,7 +533,7 @@
                     </paragraph>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_JBUKF2" xml:id="akn_art_jSKkaB">
-                    <num leos:editable="false" leos:origin="ec" xml:id="akn_art_jSKkaB_gKvQut">Article 7</num>
+                    <num leos:editable="false" leos:origin="ec" xml:id="akn_art_jSKkaB_gKvQut">Article 6</num>
                     <heading xml:id="akn_art_jSKkaB_i1xheN">Joint controllership of EU CSW-CERTEX</heading>
                     <paragraph xml:id="akn_art_jSKkaB_1oEQCa">
                         <num xml:id="akn_art_jSKkaB_pY6a7Z">1.</num>
@@ -582,11 +582,8 @@
                         </list>
                     </paragraph>
                 </article>
-            </chapter><article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_aljBSj" leos:origin="ec" leos:softaction="move_from"
-                               leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_from="movedXart_1"
-                               leos:softmove_label="MOVED from Article 1" leos:softuser="REVTI Gautam(CNECT)"
-                               leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" xml:id="art_1">
-            <num leos:action="insert" leos:editable="false" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" leos:uid="gautare" xml:id="art_1__num">#</num>
+            </chapter><article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_aljBSj" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2024-03-08T08:12:58.000Z" leos:softmove_from="movedXart_1" leos:softmove_label="MOVED from Article 1" leos:softuser="REVTI Gautam(CNECT)" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" xml:id="art_1">
+            <num leos:action="insert" leos:editable="false" leos:origin="ls" leos:title="DAS Satyabrata : 2024-03-08T15:05:03.643+01:00" leos:uid="gautare" xml:id="art_1__num">Article 7</num>
             <heading xml:id="art_1__heading">Subject matter</heading>
             <paragraph xml:id="art_1_61PenZ">
                 <content xml:id="art_1_BrqgVv">

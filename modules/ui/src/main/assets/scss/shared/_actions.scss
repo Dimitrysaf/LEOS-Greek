@@ -249,8 +249,7 @@ $BLACK : #000000;
 
     %contributionWrapperAfterMerge {
         background-color: rgba(166, 166, 166, .8) !important;
-        [leos\:mergeAction]:not([leos\:selectedAction]),
-        [leos\:mergeaction]:not([leos\:selectedaction]),
+        [leos\:mergeAction]:not([leos\:mergeAction=UNSELECT]):not([leos\:selectedAction]),
         ins,
         del,
         num {
@@ -263,11 +262,11 @@ $BLACK : #000000;
         border-color: #ADB4BB;
     }
 
-    [leos\:mergeAction]:not([leos\:selectedAction]) {
+    [leos\:mergeAction]:not([leos\:mergeAction=UNSELECT]):not([leos\:selectedAction]) {
         @extend %contributionWrapperAfterMerge;
     }
 
-    .merge-contribution-wrapper[leos\:mergeAction]:not([leos\:selectedAction]):not(list) {
+    .merge-contribution-wrapper[leos\:mergeAction]:not([leos\:mergeAction=UNSELECT]):not([leos\:selectedAction]):not(list) {
         border: #8c8c8c thin solid;
     }
 

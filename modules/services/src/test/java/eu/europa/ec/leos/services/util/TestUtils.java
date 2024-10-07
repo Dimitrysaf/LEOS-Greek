@@ -82,11 +82,6 @@ public class TestUtils {
                 .replaceAll("leos:listIdAttr=\".+?\"", "")
                 .replaceAll("leos:list-type=\".+?\"", "");
     }
-    
-    public static String squeezeXmlRemoveNum(String input) {
-        return squeezeXml(input)
-                .replaceAll("<num(\\s)*?xml:id=\".+?\"(\\s)*?>", "<num>");
-    }
 
     public static String squeezeXmlRemoveNumValue(String input) {
         return squeezeXmlDescriptor(input).replaceAll("\\s+", "")
@@ -94,9 +89,10 @@ public class TestUtils {
                 .replaceAll("\\n\\r+", "")
                 .replaceAll("\\t+", "")
                 .replaceAll("<num[^>]*>((?!num>).)*</num>", "<num>dummyNum</num>")
+                .replaceAll("leos:softmove\\_label=\"[^\"]*\"", "")
                 .replaceAll("leos:origin=\".+?\"", "")
                 .replaceAll("leos:depth=\".+?\"", "")
-                .replaceAll("leos:listIdAttr=\"[^(\")]*\"", "");
+                .replaceAll("leos:listIdAttr=\"[^\"]*\"", "");
     }
 
     public static String squeezeXmlWithoutXmlIds(String input) {
@@ -109,7 +105,7 @@ public class TestUtils {
 
     public static String squeezeXmlWithoutIdsAndDummyDate(String input) {
         return squeezeXmlDescriptor(input).replaceAll("\\s+", "")
-                .replaceAll("xml:id=\".+?\"", "xml:id=\"dummyId\"")
+                .replaceAll("xml:id=\"((?!\">).)*\"", "xml:id=\"dummyId\"")
                 .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"");
     }
 
@@ -117,10 +113,26 @@ public class TestUtils {
         return squeezeXmlDescriptor(input).replaceAll("\\s+", "")
                 .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"");
     }
+
     public static String squeezeXmlDescriptor(String input) {
         return input.replaceAll("<\\?xml *version=\"1\\.0\" *encoding=\"UTF-8\" *\\?>", "")
                 .replaceAll("<\\?xml *version=\"1\\.0\" *encoding=\"UTF-8\" *standalone=\"no\" *\\?>", "");
     }
+
+    public static String squeezeXmlAndDummyDateWithoutOrigin(String input) {
+        return squeezeXmlDescriptor(input).replaceAll("\\s+", "")
+                .replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"")
+                .replaceAll("leos:origin=\"[^\"]*\"", "");
+    }
+
+    public static String squeezeXmlAndOriginAndDummyDate(String input) {
+        return squeezeXmlDescriptor(input).replaceAll("\\s+", "")
+                .replaceAll("leos:softdate=\"[^\"]*\"", "leos:softdate=\"dummyDate\"")
+                .replaceAll("leos:origin=\"[^\"]*\"", "")
+                .replaceAll("leos:editable=\"[^\"]*\"", "")
+                .replaceAll("leos:listIdAttr=\"[^\"]*\"", "");
+    }
+
     public static String dummyDate(String input) {
         return squeezeXmlDescriptor(input).replaceAll("leos:softdate=\".+?\"", "leos:softdate=\"dummyDate\"");
     }

@@ -64,6 +64,7 @@ define(function mergeContributionExtensionModule(require) {
     function _registerActionTriggers(connector) {
         const $changed_element = $("[leos\\:action='" + DELETE + "'], del, [leos\\:action='" + INSERT + "'], ins, [leos\\:softaction='" + MOVE_FROM + "']");
         var $parent_element;
+        var selectedParentElements = new Array();
         for (let i = 0; i < $changed_element.length; i++) {
             var $element = $($changed_element[i]);
             if ($element.length > 0 && $element.attr(UTILS.ID) && $element.attr(UTILS.ID).includes(REVISION_PREFIX) && UTILS.getElementTagName($element).toLowerCase() !== UTILS.NUM) {
@@ -90,9 +91,13 @@ define(function mergeContributionExtensionModule(require) {
                             var $parent = $($parent_element[j]);
                             const parentEltTag = UTILS.getElementTagName($parent).toLowerCase();
                             if (parentEltTag !== UTILS.NUM
-                                && HIGHER_ELTS.indexOf(parentEltTag) === -1 && $changed_element.index($parent) === -1) {
-                                $parent.attr(PARENT_AFFECTED, "true");
-                                _attachWrapperActionEvents(connector, $parent);
+                                && HIGHER_ELTS.indexOf(parentEltTag) === -1 && $changed_element.index($parent) === -1
+                                && $parent.find('.' + MERGE_CONTRIBUTION).length > 1) {
+                                if (selectedParentElements.includes($parent.attr('id'))) {
+                                    $parent.attr(PARENT_AFFECTED, "true");
+                                    _attachWrapperActionEvents(connector, $parent);
+                                }
+                                selectedParentElements.push($parent.attr('id'));
                             }
                         }
                     }
@@ -198,12 +203,14 @@ define(function mergeContributionExtensionModule(require) {
         }
     }
 
+    function doShowActionMenu($element, event) {
+        this.showActionMenu(event, $element[0], $element.actions);
+    }
+
     function _createClickActions(connector, $element) {
         var threeDots = $($element.actions).find("[data-widget-type='show.all.actions']");
         if (threeDots.length > 0) {
-            threeDots[0].addEventListener("click", (event) => {
-                connector.showActionMenu(event, $element[0], $element.actions);
-            });
+            threeDots[0].addEventListener("click", doShowActionMenu.bind(connector, $element));
         }
         var undo = $($element.actions).find("[data-widget-type='undo']");
         if (undo.length > 0) {
@@ -314,8 +321,7 @@ define(function mergeContributionExtensionModule(require) {
         _registerActionTriggers(connector);
     }
 
-    function _refreshContributions() {
-        let connector = this;
+    function _refreshContributions(connector) {
         _registerActionTriggers(connector);
     }
 

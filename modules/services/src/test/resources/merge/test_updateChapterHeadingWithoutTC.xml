@@ -1,4 +1,5 @@
-<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?>
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
     <bill name="REG">
         <meta>
             <identification source="~COM">
@@ -42,50 +43,397 @@
                 <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
                 <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions" xml:id="ART_DEF"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/><TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="_WRP"/></references>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="_WRP"/>
+            </references>
             <proprietary source="~COM">
                 <leos:templateVersion>4.1.0</leos:templateVersion>
                 <leos:docVersion>0.1.0</leos:docVersion>
                 <leos:template>SJ-023</leos:template>
                 <leos:docTemplate>BL-023</leos:docTemplate>
-                <leos:docPurpose xml:id="_proprietary__docpurpose">sur tests milestones</leos:docPurpose><leos:docStage xml:id="_proprietary__docstage">Proposal for a</leos:docStage><leos:ref>REG-cm0xzwvj90004io28b879jaqc-en</leos:ref><leos:docType xml:id="_proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType><leos:objectId/></proprietary>
+                <leos:docPurpose xml:id="_proprietary__docpurpose">sur tests milestones</leos:docPurpose>
+                <leos:docStage xml:id="_proprietary__docstage">Proposal for a</leos:docStage>
+                <leos:ref>REG-cm0xzwvj90004io28b879jaqc-en</leos:ref>
+                <leos:docType xml:id="_proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType>
+                <leos:objectId/>
+            </proprietary>
         </meta>
-        <preface xml:id="ecfYfxQMH1slWtt0s"><container class="template" name="procedureIdentifier" xml:id="ecieo2WCteaSQkVhF">
-            <p xml:id="ecrE9aWJZPDiD4GU8">
-                <docketNumber class="template" xml:id="ecC7SZnExrKsD7TLk"/>
+        <preface xml:id="ecfYfxQMH1slWtt0s">
+            <container class="template" name="procedureIdentifier" xml:id="ecieo2WCteaSQkVhF">
+                <p xml:id="ecrE9aWJZPDiD4GU8">
+                    <docketNumber class="template" xml:id="ecC7SZnExrKsD7TLk"/>
+                </p>
+            </container>
+            <longTitle xml:id="ecdrY41FymI1Z4nHk">
+                <p xml:id="eckq9LfTik4BYfvzy">
+                    <docStage xml:id="ecBV605OSVWOCAw5J">Proposal for a</docStage>
+                    <docType refersTo="~REG" xml:id="ecfxZM0MmIzpR86yq">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
+                    <docPurpose xml:id="ecagoMZ8M1JaBjhLL">sur tests milestones</docPurpose>
+                </p>
+            </longTitle>
+        </preface>
+        <preamble xml:id="ecrEb1IODSm3JeaSk">
+            <formula name="actingEntity" xml:id="ecajwLE6MZIHJlDgQ">
+                <p xml:id="ecUOctDtLzuJmOxkK">THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</p>
+            </formula>
+            <citations leos:editable="false" xml:id="ecCnLdjRowFMzdNk7">
+                <citation leos:editable="true" refersTo="~legalBasis" xml:id="ecHOk2occrJVuS3UJ">
+                    <p xml:id="ec0kY0DFYYtf0Fm8K">Having regard to the Treaty on the Functioning of the European Union, and in particular Article [...] thereof,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="eczvCOA3rGzQPxvpc">
+                    <p xml:id="ecIePNM36Z4aDO8Fk">Having regard to the proposal from the European Commission,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="ecEeHzsLxclNDHYc3">
+                    <p xml:id="ecaLPpM1dGenKQcjE">After transmission of the draft legislative act to the national Parliaments,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="ecNs7JtV7raZkk9LS">
+                    <p xml:id="ecFvUryME6FNQdiM3">Having regard to the opinion of the European Economic and Social Committee
+                        <authorialNote marker="1" placement="bottom" xml:id="eckJnmOHFGAmk12kH">
+                            <p xml:id="ecvzHfbrObx3g1jb0">OJ C [...], [...], p. [...]</p>
+                        </authorialNote>
+                        ,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="ecxrTPLKywRNE082W">
+                    <p xml:id="ecYvmOMF5rUHsaHGk">Having regard to the opinion of the Committee of the Regions
+                        <authorialNote marker="2" placement="bottom" xml:id="ecKxWLxycFwtoJkAp">
+                            <p xml:id="ecJRNt5O0wEGI0byW">OJ C [...], [...], p. [...]</p>
+                        </authorialNote>
+                        ,</p>
+                </citation>
+                <citation leos:editable="true" xml:id="echR8IO6JtUigFZUI">
+                    <p xml:id="ecf2Gl6yqxIfzmgpF">Acting in accordance with the ordinary legislative procedure,</p>
+                </citation>
+            </citations>
+            <recitals leos:editable="false" xml:id="ecnf650KaVzlQvszA">
+                <intro xml:id="ecRfWY2oRgvRpfotP">
+                    <p xml:id="ecyiMcemlexI4jr4H">Whereas:</p>
+                </intro>
+                <recital leos:editable="true" xml:id="ecrlFto8L0GBbGkRH">
+                    <num xml:id="ecowxbWbfTtmdlih6">(1)</num>
+                    <p xml:id="ecd0rSuu1v2qlN1rq">Recital...</p>
+                </recital>
+                <recital leos:editable="true" xml:id="ecN4jvqWb26lRjBxN">
+                    <num xml:id="ecu7GYtWD2MnGjR6m">(2)</num>
+                    <p xml:id="ecipbVhfpzE3sKFJL">Recital...</p>
+                </recital>
+                <recital leos:deletable="true" leos:editable="true" xml:id="impXrec_d1e87Xecl1ziP9miGPMU0Pq">
+                    <num xml:id="ec7SUkW6yPECNflwl">(3)</num>
+                    <p xml:id="eckeFYiNDDwv5Mc0M">The G-20 Declaration of 2 April 2009 on Strengthening of the Financial System called for internationally consistent efforts that are aimed at strengthening transparency, accountability and regulation by improving the quantity and quality of capital in the banking system once the economic recovery is assured. That declaration also called for introduction of a supplementary non-risk based measure to contain the build-up of leverage in the banking system, and the development of a framework for stronger liquidity buffers. In response to the mandate given by the G-20, in September 2009 the Group of Central Bank Governors and Heads of Supervision (GHOS), agreed on a number of measures to strengthen the regulation of the banking sector. Those measures were endorsed by the G-20 leaders at their Pittsburgh Summit of 24-25 September 2009 and were set out in detail in December 2009. In July and September 2010, GHOS issued two further announcements on design and calibration of those new measures, and in December 2010, the Basel Committee on Banking Supervision (BCBS) published the final measures, that are referred to as the Basel III framework.</p>
+                </recital>
+                <recital leos:deletable="true" leos:editable="true" xml:id="impXrec_d1e102XecLWNqfo9PDswT7P4">
+                    <num xml:id="ecf4pnfFmWLfPi65T">(4)</num>
+                    <p xml:id="ecCugWE58yHeaDsD5">The High Level Group on Financial Supervision in the EU chaired by Jacques de LarosiÃ¨re (the "de LarosiÃ¨re group") invited the Union to develop a more harmonised set of financial regulations. In the context of the future European supervisory architecture, the European Council of 18 and 19 June 2009 also stressed the need to establish a 'European Single Rule Book' applicable to all credit institutions and investment firms in the internal market.</p>
+                </recital>
+                <recital leos:deletable="true" leos:editable="true" xml:id="impXrec_d1e123XecQTA0dOET9qzlxyP">
+                    <num xml:id="ecAmJ6PbzBLiIH0uR">(5)</num>
+                    <p xml:id="ecPLA0Q84ZBHgeTYN">As stated in the de LarosiÃ¨re group's report of 25 February 2009 (the "de LarosiÃ¨re report"), "a Member State should be able to adopt more stringent national regulatory measures considered to be domestically appropriate for safeguarding financial stability as long as the principles of the internal market and agreed minimum core standards are respected".</p>
+                </recital>
+            </recitals>
+            <formula name="enactingFormula" xml:id="ec885MnCQ9n7M8YKV">
+                <p xml:id="ecf7rv5oxPlKAig9Z">HAVE ADOPTED THIS REGULATION:</p>
+            </formula>
+        </preamble>
+        <body xml:id="ecCi6z52gDQBuz6ed">
+            <chapter leos:depth="1" xml:id="ecEy2yYLKugHkHMWs">
+                <num xml:id="ecVNIUOvhrdhuqNwi">Chapter 1</num>
+                <heading xml:id="ecMx441KrjVTv0g4c">IntitulÃ© du Chapitre1</heading>
+                <article leos:autonumbering="true" leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecKhvPMzdjz0gwkyi" refersTo="~ART_DEF" xml:id="eciR7LQcISID7oGs5">
+                    <num leos:editable="true" leos:origin="ec" xml:id="ecjxYLuyQS97O3QJm">Article 1</num>
+                    <heading xml:id="ec0zUH5kjTzvaIObN">Definitions</heading>
+                    <paragraph xml:id="ec48MlA9PbWiYmAOR">
+                        <content xml:id="ecIPlLOrdWmy0FHwO">
+                            <p xml:id="ecbnhxordr8TqW0wQ">Text...</p>
+                        </content>
+                    </paragraph>
+                </article>
+            </chapter>
+            <title leos:depth="1" xml:id="ecPELq4YhkN8fPjJY">
+                <num xml:id="ecAZeYq9pcOLghJR0">Title I</num>
+                <heading xml:id="ecqPeZyuax7hNdKrB">IntitulÃ© du titre...</heading>
+                <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="eczzzFVWtS3Czor2g" leos:origin="ec" xml:id="ecsS3cB7DIW5ASm0R">
+                    <num leos:origin="ec" xml:id="ec1f5qAm0i7xxzcMg">Article 2</num>
+                    <heading xml:id="ectrYtpfFC3PqiL5f">Scope</heading>
+                    <paragraph xml:id="ecRrdg4W2JfpHu0oU">
+                        <num leos:origin="ec" xml:id="ecuRJbp4Vazt9TdBj">1.</num>
+                        <list xml:id="ecvGG5ix0jgNi7htv">
+                            <subparagraph refersTo="~_INP" xml:id="eckClGxWsrIHqTiTD">
+                                <content xml:id="ec1N4Ipq0SamPmQZi">
+                                    <p xml:id="ec1xaMuTvJOpWOKG4">Text...</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="ecCBTksrbDa1lBh6v">
+                                <num xml:id="ecQbBZkcQx648RTTD">(a)</num>
+                                <content xml:id="ecvoTs9WowG4I349D">
+                                    <p xml:id="ecOCEzQPCjGW63Dor">Point qsdfqsdfqsd</p>
+                                </content>
+                            </point>
+                        </list>
+                    </paragraph>
+                    <paragraph xml:id="ec0SGSg9Qf6xrWtZV">
+                        <num leos:origin="ec" xml:id="ec9DY3RCkC9yB8YPg">2.</num>
+                        <content xml:id="eceY5eaOFddv5LzAx">
+                            <p xml:id="ecnEgsxiSUQpAvhJS">Text...</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:autonumbering="true" leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecdIrQ0Tb2hrt0e0e" xml:id="ecFoz8bdkkbHHZY05">
+                    <num leos:editable="false" xml:id="ecCcKdHDtGCIUm1mb">Article 3</num>
+                    <heading xml:id="eclNm3bkqfST334H7">Entry into force</heading>
+                    <paragraph xml:id="ecaNNBpQo7OeKUJJv">
+                        <content xml:id="ec4BevpGpa0RCYjJg">
+                            <p xml:id="ecUKiY1CLxmOqwhnZ">This Regulation shall enter into force on the [...] day following that of its publication in the
+                                <i xml:id="ecUGcz0o4Iwv1nn8t">Official Journal of the European Union</i>
+                                .
+                            </p>
+                        </content>
+                    </paragraph>
+                </article>
+            </title>
+            <chapter leos:depth="1" xml:id="ec3k9zplOk8pdQoUo">
+                <num xml:id="ecn0TDEWg0324mNrC">Chapter 2</num>
+                <heading xml:id="ecu21YMuEgoIRv2E6">IntitulÃ© du Chapitre...</heading>
+                <article leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecZdHbb0O0cAg00oY" xml:id="impXart_d1e2966XeczINChiCt4jIqlbo">
+                    <num xml:id="ecZ33sxM8deOUhBEC">Article 4</num>
+                    <heading xml:id="ecbzLJK0T1wOYc7M2">General principles</heading>
+                    <paragraph xml:id="ecEYryrUhdvMUaot1">
+                        <num xml:id="ecw8kJUS6cLxhRxfL">1.</num>
+                        <content xml:id="echB4r9tsbh26FSOx">
+                            <p xml:id="ecNcDSw17RHZmkCQa">Institutions shall comply with the obligations laid down in Parts Two to Five and Eight on an individual basis.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="ecIc8tZummyhdxWmo">
+                        <num xml:id="ec0MFjmlG0YFwxNVz">2.</num>
+                        <content xml:id="ecdlpMkayKalpH5Aq">
+                            <p xml:id="ecuep49grLTkHFnrY">Every institution which is either a subsidiary in the Member State where it is authorised and supervised, or a parent undertaking, and every institution included in the consolidation pursuant to Article 19, shall not be required to comply with the obligations laid down in Articles 89, 90 and 91 on an individual basis.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="ecGPDmvuZOuUYGRpk">
+                        <num xml:id="ecKitkpWV17tf4QjM">3.</num>
+                        <content xml:id="echoRUh044CRiUGoT">
+                            <p xml:id="ec2m10ug22fHO7QnG">Every institution which is either a parent undertaking, or a subsidiary, and every institution included in the consolidation pursuant to Article 19, shall not be required to comply with the obligations laid down in Part Eight on an individual basis.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="ecEbDh0DEd3ta1EQi">
+                        <num xml:id="ecApez9s9fjNLxJ2k">4.</num>
+                        <content xml:id="ecETLQcLnBrOrbf3z">
+                            <p xml:id="ecP40ycGqkiRJI90M">Credit institutions and investment firms that are authorised to provide the investment services and activities listed in points (3) and (6) of Section A of Annex I to Directive 2004/39/EC shall comply with the obligations laid down in Part Six on an individual basis. Pending the report from the Commission in accordance with Article 508(3), competent authorities may exempt investment firms from compliance with the obligations laid down in Part Six taking into account the nature, scale and complexity of the investment firms' activities.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="ec5gpxcnlLsueVHiw">
+                        <num xml:id="ecyClMhso3b8oSiAD">5.</num>
+                        <content xml:id="ec7DWp6YHpNUuCWRz">
+                            <p xml:id="ecalJCNFF2Zm2ga35">Institutions, except for investment firms referred to in Article 95(1) and Article 96(1) and institutions for which competent authorities have exercised the derogation specified in Article 7(1) or (3), shall comply with the obligations laid down in Part Seven on an individual basis.</p>
+                        </content>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecru6CBHo3LtTWtfz" xml:id="impXart_d1e2997Xec00tGmYwGEGOx6mE">
+                    <num xml:id="ecTdghhHGGayGyido">Article 5</num>
+                    <heading xml:id="ec6mWOTOvUmElS6Mm">Derogation to the application of prudential requirements on an individual basis</heading>
+                    <paragraph xml:id="ecf9svD7kRPkwD9VR">
+                        <num xml:id="ec0EdYr69CEasBoAn">1.</num>
+                        <list xml:id="ec45YkylV7GRTjtUP">
+                            <subparagraph refersTo="~_INP" xml:id="ec1Z44Du0u0oIQL92">
+                                <content xml:id="eckLimzol0AvAFs6r">
+                                    <p xml:id="ecnBpZI09aVjnQWqI">Competent authorities may waive the application of Article 6(1) to any subsidiary of an institution, where both the subsidiary and the institution are subject to authorisation and supervision by the Member State concerned, and the subsidiary is included in the supervision on a consolidated basis of the institution which is the parent undertaking, and all of the following conditions are satisfied, in order to ensure that own funds are distributed adequately between the parent undertaking and the subsidiary:</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="ect8Ux0iEuZwM78ed">
+                                <num xml:id="ecSlhxLwGEdxbWGrt">(a)</num>
+                                <content xml:id="ecVu4l1zO867E41eU">
+                                    <p xml:id="ecuOj9DTHIC9glDbr">there is no current or foreseen material practical or legal impediment to the prompt transfer of own funds or repayment of liabilities by its parent undertaking;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ecorqIm0QCI8Tkvhd">
+                                <num xml:id="ecfoQUHpjGDUnviL5">(b)</num>
+                                <content xml:id="ecHIohIQZuVReBw2V">
+                                    <p xml:id="ec0cB01PV5kaBNNtx">either the parent undertaking satisfies the competent authority regarding the prudent management of the subsidiary and has declared, with the permission of the competent authority, that it guarantees the commitments entered into by the subsidiary, or the risks in the subsidiary are of negligible interest;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ec6Qe6cPZj9OAYbvE">
+                                <num xml:id="ec49QKuBW7OKZTOAo">(c)</num>
+                                <content xml:id="ecebBfCWZma5zZ4Dt">
+                                    <p xml:id="ecdWd3eEWURA3DAdd">the risk evaluation, measurement and control procedures of the parent undertaking cover the subsidiary;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ecDSDv01kef10fgnZ">
+                                <num xml:id="ec1Gr7nG0uO8JiZkJ">(d)</num>
+                                <content xml:id="ecAWCTiB0WWuLA0pQ">
+                                    <p xml:id="ec8HRy1n251R9Qnz6">the parent undertaking holds more than 50 % of the voting rights attached to shares in the capital of the subsidiary or has the right to appoint or remove a majority of the members of the management body of the subsidiary.</p>
+                                </content>
+                            </point>
+                        </list>
+                    </paragraph>
+                    <paragraph xml:id="ecB2EIax5ca3PN04k">
+                        <num xml:id="ecPfRNiyyxDfyfdzn">2.</num>
+                        <content xml:id="ecB0VOn80fgunnbv8">
+                            <p xml:id="eczj3uIFTwRnHb95M">Competent authorities may exercise the option provided for in paragraph 1 where the parent undertaking is a financial holding company or a mixed financial holding company set up in the same Member State as the institution, provided that it is subject to the same supervision as that exercised over institutions, and in particular to the standards laid down in Article 11(1).</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="ecG0z8WYeiymACQYd">
+                        <num xml:id="ecxHoSQzF03hZNm0K">3.</num>
+                        <list xml:id="ecarWLVq1dG6Z2mv0">
+                            <subparagraph refersTo="~_INP" xml:id="ecpjQPDPJbj0ZoHEE">
+                                <content xml:id="ecrzvHt2PDcyldnS7">
+                                    <p xml:id="ecUvWrqBkYr3jKbt0">Competent authorities may waive the application of Article 6(1) to a parent institution in a Member State where that institution is subject to authorisation and supervision by the Member State concerned, and it is included in the supervision on a consolidated basis, and all the following conditions are satisfied, in order to ensure that own funds are distributed adequately among the parent undertaking and the subsidiaries:</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="ecRq0OPkw4OWpS00n">
+                                <num xml:id="ecanaOmtEj2GoyJhm">(a)</num>
+                                <content xml:id="ecd0UbpPTaHjIhPwa">
+                                    <p xml:id="ecTudameBpiFP7v6g">there is no current or foreseen material practical or legal impediment to the prompt transfer of own funds or repayment of liabilities to the parent institution in a Member State;</p>
+                                </content>
+                            </point>
+                            <point xml:id="eckd2B8MNMVok0Nsf">
+                                <num xml:id="ecj2qZYKkNqZnbAT5">(b)</num>
+                                <content xml:id="eccNMDemWq6tICrte">
+                                    <p xml:id="ecIF7vKoaWiPFJWbC">the risk evaluation, measurement and control procedures relevant for consolidated supervision cover the parent institution in a Member State.</p>
+                                </content>
+                            </point>
+                            <subparagraph refersTo="~_WRP" xml:id="ecgdxToKMnhcu0G7h">
+                                <content xml:id="ec8Y0YyvLAcFYJ4tj">
+                                    <p xml:id="ecpxzVwA7kPlBtG6T">The competent authority which makes use of this paragraph shall inform the competent authorities of all other Member States.</p>
+                                </content>
+                            </subparagraph>
+                        </list>
+                    </paragraph>
+                </article>
+                <article leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ec34EU7dLoi7miAPm" xml:id="impXart_d1e3059XecxFWu00Wfj5RIKLM">
+                    <num xml:id="ecSBoQS1m2LqbiLER">Article 6</num>
+                    <heading xml:id="ecMyT0200HztkN18O">Derogation to the application of liquidity requirements on an individual basis</heading>
+                    <paragraph xml:id="ecUpyGAzgtDityz98">
+                        <num xml:id="eczq7g0wC4W442McA">1.</num>
+                        <list xml:id="ecS4RAbiAdQtsxSt3">
+                            <subparagraph refersTo="~_INP" xml:id="ectiKgcDJqv0cCMuz">
+                                <content xml:id="ecNiKOfvjQFdoolQ7">
+                                    <p xml:id="ec0ILnfJMOzm600BO">The competent authorities may waive in full or in part the application of Part Six to an institution and to all or some of its subsidiaries in the Union and supervise them as a single liquidity sub-group so long as they fulfil all of the following conditions:</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="ecs7ivgCwpZ0U7AmE">
+                                <num xml:id="ecMdfPW3eZYLjULIT">(a)</num>
+                                <content xml:id="ecoDwL3fniwTrkiea">
+                                    <p xml:id="ec61m7oE4E43z8V2I">the parent institution on a consolidated basis or a subsidiary institution on a sub-consolidated basis complies with the obligations laid down in Part Six;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ec7NTB7D37kc0TsKS">
+                                <num xml:id="ecKPBOdS91Di7wH1v">(b)</num>
+                                <content xml:id="eckdyhhAuHscqM7uO">
+                                    <p xml:id="ecbxHu3eLS7GPPgPg">the parent institution on a consolidated basis or the subsidiary institution on a sub-consolidated basis monitors and has oversight at all times over the liquidity positions of all institutions within the group or sub-group, that are subject to the waiver and ensures a sufficient level of liquidity for all of these institutions;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ecnd6BY3E4badlnWm">
+                                <num xml:id="ecgl8ZuGtYphCJHMy">(c)</num>
+                                <content xml:id="ec1AvOGKHQRuQFqSd">
+                                    <p xml:id="ecxxlbdy53lg0JKVD">the institutions have entered into contracts that, to the satisfaction of the competent authorities, provide for the free movement of funds between them to enable them to meet their individual and joint obligations as they come due;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ecGzSfoSyndLLfij0">
+                                <num xml:id="ec7hpAWb8SI7C0CPw">(d)</num>
+                                <content xml:id="ectNAfLCHOn0CjEj0">
+                                    <p xml:id="ec4QueIZyYfHzcIhT">there is no current or foreseen material practical or legal impediment to the fulfilment of the contracts referred to in (c).</p>
+                                </content>
+                            </point>
+                            <subparagraph refersTo="~_WRP" xml:id="ecJ6vimdWuTF5vC22">
+                                <content xml:id="ecv7IzpPbKsVFF5yR">
+                                    <p xml:id="ecAaE0Oe9mW6YPmbP">By 1 January 2014 the Commission shall report to the European Parliament and the Council on any legal obstacles which are capable of rendering impossible the application of point (c) of the first subparagraph and is invited to make a legislative proposal, if appropriate, by 31 December 2015 on which of those obstacles should be removed.</p>
+                                </content>
+                            </subparagraph>
+                        </list>
+                    </paragraph>
+                    <paragraph xml:id="ech0JnPZFg0CqH6Wi">
+                        <num xml:id="ecT0x55tcIVKevEfb">2.</num>
+                        <content xml:id="ec6K07JaGl06jvMux">
+                            <p xml:id="ecuyLZPZiNxdam8VT">The competent authorities may waive in full or in part the application of Part Six to an institution and to all or some of its subsidiaries where all institutions of the single liquidity sub-group are authorised in the same Member State and provided that the conditions in paragraph 1 are fulfilled.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="ecG7m0h0NH814J4Bb">
+                        <num xml:id="ecRs6Icxva0BbveKo">3.</num>
+                        <list xml:id="ecJtVjhRBGGmMwgFu">
+                            <subparagraph refersTo="~_INP" xml:id="ec9gmRs77KBWH5kts">
+                                <content xml:id="ecMQKJgUadLrTRFP7">
+                                    <p xml:id="ecDfu0SMEPvnLjHJa">Where institutions of the single liquidity sub-group are authorised in several Member States, paragraph 1 shall only be applied after following the procedure laid down in Article 21 and only to the institutions whose competent authorities agree about the following elements:</p>
+                                </content>
+                            </subparagraph>
+                            <point xml:id="ecZtch3rawUsfgmUa">
+                                <num xml:id="ec10c6crmgQzPlNUd">(a)</num>
+                                <content xml:id="ecIV1B2Zt9v45RZPH">
+                                    <p xml:id="ectxDBpfKRYRRU20K">their assessment of the compliance of the organisation and of the treatment of liquidity risk with the conditions set out in Article 86 of Directive 2013/36/EU across the single liquidity sub-group;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ec2a0lh5JZkBG9pLM">
+                                <num xml:id="ecarmhWJ8lpSQVYoC">(b)</num>
+                                <content xml:id="ecnr96szR7xHHZ91I">
+                                    <p xml:id="ecPMB6HuOoktkYhKt">the distribution of amounts, location and ownership of the required liquid assets to be held within the single liquidity sub-group;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ec2PfNwJHtx3rFEPZ">
+                                <num xml:id="ecDelMLzM05vaNJQC">(c)</num>
+                                <content xml:id="ecBe0AJcooNqQKVhW">
+                                    <p xml:id="ec6nWSPNpUKL2sybK">the determination of minimum amounts of liquid assets to be held by institutions for which the application of Part Six will be waived;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ecLdFeKAFxGwN0C0c">
+                                <num xml:id="ecyUjqSr1kfeCWTOJ">(d)</num>
+                                <content xml:id="ecYtdDwdZYV01la9s">
+                                    <p xml:id="ec4gVEdqw6jdoa0YB">the need for stricter parameters than those set out in Part Six;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ecLSQSLhQZF3DZ0V8">
+                                <num xml:id="ec44Gm0L04vNOjomn">(e)</num>
+                                <content xml:id="ecciSbiYP3v08Fsue">
+                                    <p xml:id="eciQTCr8Uh7CKDdpV">unrestricted sharing of complete information between the competent authorities;</p>
+                                </content>
+                            </point>
+                            <point xml:id="ec564LwQZVoapQou2">
+                                <num xml:id="ecIAAbSA2d9N3eR6z">(f)</num>
+                                <content xml:id="ecld4Wmtzupw02dqv">
+                                    <p xml:id="ecxRUIkrh671zSrsz">a full understanding of the implications of such a waiver.</p>
+                                </content>
+                            </point>
+                        </list>
+                    </paragraph>
+                    <paragraph xml:id="ecOOK2n2QfoEYHP9o">
+                        <num xml:id="eck8vT8oAUSmxcb6L">4.</num>
+                        <content xml:id="ecm0fYLdnbaQk3umK">
+                            <p xml:id="ecOqbOKVU6Oum0rWI">Competent authorities may also apply paragraphs 1, 2 and 3 to institutions which are members of the same institutional protection scheme referred to in Article 113(7)(b), provided that they meet all the conditions laid down in Article 113(7), and to other institutions linked by a relationship referred to in Article 113(6) provided that they meet all the conditions laid down therein. Competent authorities shall in that case determine one of the institutions subject to the waiver to meet Part Six on the basis of the consolidated situation of all institutions of the single liquidity sub-group.</p>
+                        </content>
+                    </paragraph>
+                    <paragraph xml:id="ecaJqDQb0FdPb9zox">
+                        <num xml:id="ecaMV6ehGD3Gpk7pY">5.</num>
+                        <content xml:id="ecRIhk9WwMW1Oz1ml">
+                            <p xml:id="ecHz737tq1jkOuvzb">Where a waiver has been granted under paragraph 1 or paragraph 2, the competent authorities may also apply Article 86 of Directive 2013/36/EU, or parts thereof, at the level of the single liquidity sub-group and waive the application of Article 86 of Directive 2013/36/EU, or parts thereof, on an individual basis.</p>
+                        </content>
+                    </paragraph>
+                </article>
+            </chapter>
+            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="eca9EOQT9EkceYsJD">
+                <content xml:id="ecoFdLpRKdzaqPBma">
+                    <p xml:id="ecfOgUyV9W9MCa0iT">This Regulation shall be binding in its entirety and directly applicable in all Member States.</p>
+                </content>
+            </clause>
+        </body>
+        <conclusions xml:id="ecf0SaRl9gvFf1Y3k">
+            <p xml:id="ecyD2lvx7LCQ8blDl">Done at
+                <location refersTo="~BEL_BRU" xml:id="ecnb7zqymPstZRacN">Brussels</location>
+                ,
+                <date class="template" date="2999-01-01" xml:id="ecsG0oRwPDMbFqkJO"/>
             </p>
-        </container><longTitle xml:id="ecdrY41FymI1Z4nHk">
-            <p xml:id="eckq9LfTik4BYfvzy">
-                <docStage xml:id="ecBV605OSVWOCAw5J">Proposal for a</docStage>
-                <docType refersTo="~REG" xml:id="ecfxZM0MmIzpR86yq">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
-                <docPurpose xml:id="ecagoMZ8M1JaBjhLL">sur tests milestones</docPurpose>
-            </p>
-        </longTitle></preface>
-        <preamble xml:id="ecrEb1IODSm3JeaSk"><formula name="actingEntity" xml:id="ecajwLE6MZIHJlDgQ"><p xml:id="ecUOctDtLzuJmOxkK">THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</p></formula><citations leos:editable="false" xml:id="ecCnLdjRowFMzdNk7"><citation leos:editable="true" refersTo="~legalBasis" xml:id="ecHOk2occrJVuS3UJ"><p xml:id="ec0kY0DFYYtf0Fm8K">Having regard to the Treaty on the Functioning of the European Union, and in particular Article [...] thereof,</p></citation><citation leos:editable="true" xml:id="eczvCOA3rGzQPxvpc"><p xml:id="ecIePNM36Z4aDO8Fk">Having regard to the proposal from the European Commission,</p></citation><citation leos:editable="true" xml:id="ecEeHzsLxclNDHYc3"><p xml:id="ecaLPpM1dGenKQcjE">After transmission of the draft legislative act to the national Parliaments,</p></citation><citation leos:editable="true" xml:id="ecNs7JtV7raZkk9LS"><p xml:id="ecFvUryME6FNQdiM3">Having regard to the opinion of the European Economic and Social Committee<authorialNote marker="1" placement="bottom" xml:id="eckJnmOHFGAmk12kH"><p xml:id="ecvzHfbrObx3g1jb0">OJ C [...], [...], p. [...]</p></authorialNote>,</p></citation><citation leos:editable="true" xml:id="ecxrTPLKywRNE082W"><p xml:id="ecYvmOMF5rUHsaHGk">Having regard to the opinion of the Committee of the Regions<authorialNote marker="2" placement="bottom" xml:id="ecKxWLxycFwtoJkAp"><p xml:id="ecJRNt5O0wEGI0byW">OJ C [...], [...], p. [...]</p></authorialNote>,</p></citation><citation leos:editable="true" xml:id="echR8IO6JtUigFZUI"><p xml:id="ecf2Gl6yqxIfzmgpF">Acting in accordance with the ordinary legislative procedure,</p></citation></citations><recitals leos:editable="false" xml:id="ecnf650KaVzlQvszA"><intro xml:id="ecRfWY2oRgvRpfotP"><p xml:id="ecyiMcemlexI4jr4H">Whereas:</p></intro><recital leos:editable="true" xml:id="ecrlFto8L0GBbGkRH"><num xml:id="ecowxbWbfTtmdlih6">(1)</num><p xml:id="ecd0rSuu1v2qlN1rq">Recital...</p></recital><recital leos:editable="true" xml:id="ecN4jvqWb26lRjBxN"><num xml:id="ecu7GYtWD2MnGjR6m">(2)</num><p xml:id="ecipbVhfpzE3sKFJL">Recital...</p></recital><recital leos:deletable="true" leos:editable="true" xml:id="impXrec_d1e87Xecl1ziP9miGPMU0Pq"><num xml:id="ec7SUkW6yPECNflwl">(3)</num><p xml:id="eckeFYiNDDwv5Mc0M">The G-20 Declaration of 2 April 2009 on Strengthening of the Financial System called for internationally consistent efforts that are aimed at strengthening transparency, accountability and regulation by improving the quantity and quality of capital in the banking system once the economic recovery is assured. That declaration also called for introduction of a supplementary non-risk based measure to contain the build-up of leverage in the banking system, and the development of a framework for stronger liquidity buffers. In response to the mandate given by the G-20, in September 2009 the Group of Central Bank Governors and Heads of Supervision (GHOS), agreed on a number of measures to strengthen the regulation of the banking sector. Those measures were endorsed by the G-20 leaders at their Pittsburgh Summit of 24-25 September 2009 and were set out in detail in December 2009. In July and September 2010, GHOS issued two further announcements on design and calibration of those new measures, and in December 2010, the Basel Committee on Banking Supervision (BCBS) published the final measures, that are referred to as the Basel III framework.</p></recital><recital leos:deletable="true" leos:editable="true" xml:id="impXrec_d1e102XecLWNqfo9PDswT7P4"><num xml:id="ecf4pnfFmWLfPi65T">(4)</num><p xml:id="ecCugWE58yHeaDsD5">The High Level Group on Financial Supervision in the EU chaired by Jacques de LarosiÃ¨re (the "de LarosiÃ¨re group") invited the Union to develop a more harmonised set of financial regulations. In the context of the future European supervisory architecture, the European Council of 18 and 19 June 2009 also stressed the need to establish a 'European Single Rule Book' applicable to all credit institutions and investment firms in the internal market.</p></recital><recital leos:deletable="true" leos:editable="true" xml:id="impXrec_d1e123XecQTA0dOET9qzlxyP"><num xml:id="ecAmJ6PbzBLiIH0uR">(5)</num><p xml:id="ecPLA0Q84ZBHgeTYN">As stated in the de LarosiÃ¨re group's report of 25 February 2009 (the "de LarosiÃ¨re report"), "a Member State should be able to adopt more stringent national regulatory measures considered to be domestically appropriate for safeguarding financial stability as long as the principles of the internal market and agreed minimum core standards are respected".</p></recital></recitals><formula name="enactingFormula" xml:id="ec885MnCQ9n7M8YKV"><p xml:id="ecf7rv5oxPlKAig9Z">HAVE ADOPTED THIS REGULATION:</p></formula></preamble>
-        <body xml:id="ecCi6z52gDQBuz6ed"><chapter leos:depth="1" xml:id="ecEy2yYLKugHkHMWs"><num xml:id="ecVNIUOvhrdhuqNwi">Chapter 1</num><heading xml:id="ecMx441KrjVTv0g4c">IntitulÃ© du Chapitre 1</heading><article leos:autonumbering="true" leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecKhvPMzdjz0gwkyi" refersTo="~ART_DEF" xml:id="eciR7LQcISID7oGs5"><num leos:editable="true" leos:origin="ec" xml:id="ecjxYLuyQS97O3QJm">Article 1</num><heading xml:id="ec0zUH5kjTzvaIObN">Definitions</heading><paragraph xml:id="ec48MlA9PbWiYmAOR">
-            <content xml:id="ecIPlLOrdWmy0FHwO">
-                <p xml:id="ecbnhxordr8TqW0wQ">Text...</p>
-            </content>
-        </paragraph></article></chapter><title leos:depth="1" xml:id="ecPELq4YhkN8fPjJY"><num xml:id="ecAZeYq9pcOLghJR0">Title I</num><heading xml:id="ecqPeZyuax7hNdKrB">IntitulÃ© du titre...</heading><article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="eczzzFVWtS3Czor2g" leos:origin="ec" xml:id="ecsS3cB7DIW5ASm0R"><num leos:origin="ec" xml:id="ec1f5qAm0i7xxzcMg">Article 2</num><heading xml:id="ectrYtpfFC3PqiL5f">Scope</heading><paragraph xml:id="ecRrdg4W2JfpHu0oU"><num leos:origin="ec" xml:id="ecuRJbp4Vazt9TdBj">1.</num><list xml:id="ecvGG5ix0jgNi7htv"><subparagraph refersTo="~_INP" xml:id="eckClGxWsrIHqTiTD"><content xml:id="ec1N4Ipq0SamPmQZi"><p xml:id="ec1xaMuTvJOpWOKG4">Text...</p></content></subparagraph><point xml:id="ecCBTksrbDa1lBh6v"><num xml:id="ecQbBZkcQx648RTTD">(a)</num><content xml:id="ecvoTs9WowG4I349D"><p xml:id="ecOCEzQPCjGW63Dor">Point qsdfqsdfqsd</p></content></point></list></paragraph><paragraph xml:id="ec0SGSg9Qf6xrWtZV"><num leos:origin="ec" xml:id="ec9DY3RCkC9yB8YPg">2.</num><content xml:id="eceY5eaOFddv5LzAx"><p xml:id="ecnEgsxiSUQpAvhJS">Text...</p></content></paragraph></article><article leos:autonumbering="true" leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecdIrQ0Tb2hrt0e0e" xml:id="ecFoz8bdkkbHHZY05"><num leos:editable="false" xml:id="ecCcKdHDtGCIUm1mb">Article 3</num><heading xml:id="eclNm3bkqfST334H7">Entry into force</heading><paragraph xml:id="ecaNNBpQo7OeKUJJv">
-            <content xml:id="ec4BevpGpa0RCYjJg">
-                <p xml:id="ecUKiY1CLxmOqwhnZ">This Regulation shall enter into force on the [...] day following that of its publication in the <i xml:id="ecUGcz0o4Iwv1nn8t">Official Journal of the European Union</i>.</p>
-            </content>
-        </paragraph></article></title><chapter leos:depth="1" xml:id="ec3k9zplOk8pdQoUo"><num xml:id="ecn0TDEWg0324mNrC">Chapter 2</num><heading xml:id="ecu21YMuEgoIRv2E6">IntitulÃ© du Chapitre...</heading><article leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecZdHbb0O0cAg00oY" xml:id="impXart_d1e2966XeczINChiCt4jIqlbo"><num xml:id="ecZ33sxM8deOUhBEC">Article 4</num><heading xml:id="ecbzLJK0T1wOYc7M2">General principles</heading><paragraph xml:id="ecEYryrUhdvMUaot1"><num xml:id="ecw8kJUS6cLxhRxfL">1.</num><content xml:id="echB4r9tsbh26FSOx"><p xml:id="ecNcDSw17RHZmkCQa">Institutions shall comply with the obligations laid down in Parts Two to Five and Eight on an individual basis.</p></content></paragraph><paragraph xml:id="ecIc8tZummyhdxWmo"><num xml:id="ec0MFjmlG0YFwxNVz">2.</num><content xml:id="ecdlpMkayKalpH5Aq"><p xml:id="ecuep49grLTkHFnrY">Every institution which is either a subsidiary in the Member State where it is authorised and supervised, or a parent undertaking, and every institution included in the consolidation pursuant to Article 19, shall not be required to comply with the obligations laid down in Articles 89, 90 and 91 on an individual basis.</p></content></paragraph><paragraph xml:id="ecGPDmvuZOuUYGRpk"><num xml:id="ecKitkpWV17tf4QjM">3.</num><content xml:id="echoRUh044CRiUGoT"><p xml:id="ec2m10ug22fHO7QnG">Every institution which is either a parent undertaking, or a subsidiary, and every institution included in the consolidation pursuant to Article 19, shall not be required to comply with the obligations laid down in Part Eight on an individual basis.</p></content></paragraph><paragraph xml:id="ecEbDh0DEd3ta1EQi"><num xml:id="ecApez9s9fjNLxJ2k">4.</num><content xml:id="ecETLQcLnBrOrbf3z"><p xml:id="ecP40ycGqkiRJI90M">Credit institutions and investment firms that are authorised to provide the investment services and activities listed in points (3) and (6) of Section A of Annex I to Directive 2004/39/EC shall comply with the obligations laid down in Part Six on an individual basis. Pending the report from the Commission in accordance with Article 508(3), competent authorities may exempt investment firms from compliance with the obligations laid down in Part Six taking into account the nature, scale and complexity of the investment firms' activities.</p></content></paragraph><paragraph xml:id="ec5gpxcnlLsueVHiw"><num xml:id="ecyClMhso3b8oSiAD">5.</num><content xml:id="ec7DWp6YHpNUuCWRz"><p xml:id="ecalJCNFF2Zm2ga35">Institutions, except for investment firms referred to in Article 95(1) and Article 96(1) and institutions for which competent authorities have exercised the derogation specified in Article 7(1) or (3), shall comply with the obligations laid down in Part Seven on an individual basis.</p></content></paragraph></article><article leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ecru6CBHo3LtTWtfz" xml:id="impXart_d1e2997Xec00tGmYwGEGOx6mE"><num xml:id="ecTdghhHGGayGyido">Article 5</num><heading xml:id="ec6mWOTOvUmElS6Mm">Derogation to the application of prudential requirements on an individual basis</heading><paragraph xml:id="ecf9svD7kRPkwD9VR"><num xml:id="ec0EdYr69CEasBoAn">1.</num><list xml:id="ec45YkylV7GRTjtUP"><subparagraph refersTo="~_INP" xml:id="ec1Z44Du0u0oIQL92"><content xml:id="eckLimzol0AvAFs6r"><p xml:id="ecnBpZI09aVjnQWqI">Competent authorities may waive the application of Article 6(1) to any subsidiary of an institution, where both the subsidiary and the institution are subject to authorisation and supervision by the Member State concerned, and the subsidiary is included in the supervision on a consolidated basis of the institution which is the parent undertaking, and all of the following conditions are satisfied, in order to ensure that own funds are distributed adequately between the parent undertaking and the subsidiary:</p></content></subparagraph><point xml:id="ect8Ux0iEuZwM78ed"><num xml:id="ecSlhxLwGEdxbWGrt">(a)</num><content xml:id="ecVu4l1zO867E41eU"><p xml:id="ecuOj9DTHIC9glDbr">there is no current or foreseen material practical or legal impediment to the prompt transfer of own funds or repayment of liabilities by its parent undertaking;</p></content></point><point xml:id="ecorqIm0QCI8Tkvhd"><num xml:id="ecfoQUHpjGDUnviL5">(b)</num><content xml:id="ecHIohIQZuVReBw2V"><p xml:id="ec0cB01PV5kaBNNtx">either the parent undertaking satisfies the competent authority regarding the prudent management of the subsidiary and has declared, with the permission of the competent authority, that it guarantees the commitments entered into by the subsidiary, or the risks in the subsidiary are of negligible interest;</p></content></point><point xml:id="ec6Qe6cPZj9OAYbvE"><num xml:id="ec49QKuBW7OKZTOAo">(c)</num><content xml:id="ecebBfCWZma5zZ4Dt"><p xml:id="ecdWd3eEWURA3DAdd">the risk evaluation, measurement and control procedures of the parent undertaking cover the subsidiary;</p></content></point><point xml:id="ecDSDv01kef10fgnZ"><num xml:id="ec1Gr7nG0uO8JiZkJ">(d)</num><content xml:id="ecAWCTiB0WWuLA0pQ"><p xml:id="ec8HRy1n251R9Qnz6">the parent undertaking holds more than 50 % of the voting rights attached to shares in the capital of the subsidiary or has the right to appoint or remove a majority of the members of the management body of the subsidiary.</p></content></point></list></paragraph><paragraph xml:id="ecB2EIax5ca3PN04k"><num xml:id="ecPfRNiyyxDfyfdzn">2.</num><content xml:id="ecB0VOn80fgunnbv8"><p xml:id="eczj3uIFTwRnHb95M">Competent authorities may exercise the option provided for in paragraph 1 where the parent undertaking is a financial holding company or a mixed financial holding company set up in the same Member State as the institution, provided that it is subject to the same supervision as that exercised over institutions, and in particular to the standards laid down in Article 11(1).</p></content></paragraph><paragraph xml:id="ecG0z8WYeiymACQYd"><num xml:id="ecxHoSQzF03hZNm0K">3.</num><list xml:id="ecarWLVq1dG6Z2mv0"><subparagraph refersTo="~_INP" xml:id="ecpjQPDPJbj0ZoHEE"><content xml:id="ecrzvHt2PDcyldnS7"><p xml:id="ecUvWrqBkYr3jKbt0">Competent authorities may waive the application of Article 6(1) to a parent institution in a Member State where that institution is subject to authorisation and supervision by the Member State concerned, and it is included in the supervision on a consolidated basis, and all the following conditions are satisfied, in order to ensure that own funds are distributed adequately among the parent undertaking and the subsidiaries:</p></content></subparagraph><point xml:id="ecRq0OPkw4OWpS00n"><num xml:id="ecanaOmtEj2GoyJhm">(a)</num><content xml:id="ecd0UbpPTaHjIhPwa"><p xml:id="ecTudameBpiFP7v6g">there is no current or foreseen material practical or legal impediment to the prompt transfer of own funds or repayment of liabilities to the parent institution in a Member State;</p></content></point><point xml:id="eckd2B8MNMVok0Nsf"><num xml:id="ecj2qZYKkNqZnbAT5">(b)</num><content xml:id="eccNMDemWq6tICrte"><p xml:id="ecIF7vKoaWiPFJWbC">the risk evaluation, measurement and control procedures relevant for consolidated supervision cover the parent institution in a Member State.</p></content></point><subparagraph refersTo="~_WRP" xml:id="ecgdxToKMnhcu0G7h"><content xml:id="ec8Y0YyvLAcFYJ4tj"><p xml:id="ecpxzVwA7kPlBtG6T">The competent authority which makes use of this paragraph shall inform the competent authorities of all other Member States.</p></content></subparagraph></list></paragraph></article><article leos:deletable="true" leos:depth="2" leos:editable="true" leos:listIdAttr="ec34EU7dLoi7miAPm" xml:id="impXart_d1e3059XecxFWu00Wfj5RIKLM"><num xml:id="ecSBoQS1m2LqbiLER">Article 6</num><heading xml:id="ecMyT0200HztkN18O">Derogation to the application of liquidity requirements on an individual basis</heading><paragraph xml:id="ecUpyGAzgtDityz98"><num xml:id="eczq7g0wC4W442McA">1.</num><list xml:id="ecS4RAbiAdQtsxSt3"><subparagraph refersTo="~_INP" xml:id="ectiKgcDJqv0cCMuz"><content xml:id="ecNiKOfvjQFdoolQ7"><p xml:id="ec0ILnfJMOzm600BO">The competent authorities may waive in full or in part the application of Part Six to an institution and to all or some of its subsidiaries in the Union and supervise them as a single liquidity sub-group so long as they fulfil all of the following conditions:</p></content></subparagraph><point xml:id="ecs7ivgCwpZ0U7AmE"><num xml:id="ecMdfPW3eZYLjULIT">(a)</num><content xml:id="ecoDwL3fniwTrkiea"><p xml:id="ec61m7oE4E43z8V2I">the parent institution on a consolidated basis or a subsidiary institution on a sub-consolidated basis complies with the obligations laid down in Part Six;</p></content></point><point xml:id="ec7NTB7D37kc0TsKS"><num xml:id="ecKPBOdS91Di7wH1v">(b)</num><content xml:id="eckdyhhAuHscqM7uO"><p xml:id="ecbxHu3eLS7GPPgPg">the parent institution on a consolidated basis or the subsidiary institution on a sub-consolidated basis monitors and has oversight at all times over the liquidity positions of all institutions within the group or sub-group, that are subject to the waiver and ensures a sufficient level of liquidity for all of these institutions;</p></content></point><point xml:id="ecnd6BY3E4badlnWm"><num xml:id="ecgl8ZuGtYphCJHMy">(c)</num><content xml:id="ec1AvOGKHQRuQFqSd"><p xml:id="ecxxlbdy53lg0JKVD">the institutions have entered into contracts that, to the satisfaction of the competent authorities, provide for the free movement of funds between them to enable them to meet their individual and joint obligations as they come due;</p></content></point><point xml:id="ecGzSfoSyndLLfij0"><num xml:id="ec7hpAWb8SI7C0CPw">(d)</num><content xml:id="ectNAfLCHOn0CjEj0"><p xml:id="ec4QueIZyYfHzcIhT">there is no current or foreseen material practical or legal impediment to the fulfilment of the contracts referred to in (c).</p></content></point><subparagraph refersTo="~_WRP" xml:id="ecJ6vimdWuTF5vC22"><content xml:id="ecv7IzpPbKsVFF5yR"><p xml:id="ecAaE0Oe9mW6YPmbP">By 1 January 2014 the Commission shall report to the European Parliament and the Council on any legal obstacles which are capable of rendering impossible the application of point (c) of the first subparagraph and is invited to make a legislative proposal, if appropriate, by 31 December 2015 on which of those obstacles should be removed.</p></content></subparagraph></list></paragraph><paragraph xml:id="ech0JnPZFg0CqH6Wi"><num xml:id="ecT0x55tcIVKevEfb">2.</num><content xml:id="ec6K07JaGl06jvMux"><p xml:id="ecuyLZPZiNxdam8VT">The competent authorities may waive in full or in part the application of Part Six to an institution and to all or some of its subsidiaries where all institutions of the single liquidity sub-group are authorised in the same Member State and provided that the conditions in paragraph 1 are fulfilled.</p></content></paragraph><paragraph xml:id="ecG7m0h0NH814J4Bb"><num xml:id="ecRs6Icxva0BbveKo">3.</num><list xml:id="ecJtVjhRBGGmMwgFu"><subparagraph refersTo="~_INP" xml:id="ec9gmRs77KBWH5kts"><content xml:id="ecMQKJgUadLrTRFP7"><p xml:id="ecDfu0SMEPvnLjHJa">Where institutions of the single liquidity sub-group are authorised in several Member States, paragraph 1 shall only be applied after following the procedure laid down in Article 21 and only to the institutions whose competent authorities agree about the following elements:</p></content></subparagraph><point xml:id="ecZtch3rawUsfgmUa"><num xml:id="ec10c6crmgQzPlNUd">(a)</num><content xml:id="ecIV1B2Zt9v45RZPH"><p xml:id="ectxDBpfKRYRRU20K">their assessment of the compliance of the organisation and of the treatment of liquidity risk with the conditions set out in Article 86 of Directive 2013/36/EU across the single liquidity sub-group;</p></content></point><point xml:id="ec2a0lh5JZkBG9pLM"><num xml:id="ecarmhWJ8lpSQVYoC">(b)</num><content xml:id="ecnr96szR7xHHZ91I"><p xml:id="ecPMB6HuOoktkYhKt">the distribution of amounts, location and ownership of the required liquid assets to be held within the single liquidity sub-group;</p></content></point><point xml:id="ec2PfNwJHtx3rFEPZ"><num xml:id="ecDelMLzM05vaNJQC">(c)</num><content xml:id="ecBe0AJcooNqQKVhW"><p xml:id="ec6nWSPNpUKL2sybK">the determination of minimum amounts of liquid assets to be held by institutions for which the application of Part Six will be waived;</p></content></point><point xml:id="ecLdFeKAFxGwN0C0c"><num xml:id="ecyUjqSr1kfeCWTOJ">(d)</num><content xml:id="ecYtdDwdZYV01la9s"><p xml:id="ec4gVEdqw6jdoa0YB">the need for stricter parameters than those set out in Part Six;</p></content></point><point xml:id="ecLSQSLhQZF3DZ0V8"><num xml:id="ec44Gm0L04vNOjomn">(e)</num><content xml:id="ecciSbiYP3v08Fsue"><p xml:id="eciQTCr8Uh7CKDdpV">unrestricted sharing of complete information between the competent authorities;</p></content></point><point xml:id="ec564LwQZVoapQou2"><num xml:id="ecIAAbSA2d9N3eR6z">(f)</num><content xml:id="ecld4Wmtzupw02dqv"><p xml:id="ecxRUIkrh671zSrsz">a full understanding of the implications of such a waiver.</p></content></point></list></paragraph><paragraph xml:id="ecOOK2n2QfoEYHP9o"><num xml:id="eck8vT8oAUSmxcb6L">4.</num><content xml:id="ecm0fYLdnbaQk3umK"><p xml:id="ecOqbOKVU6Oum0rWI">Competent authorities may also apply paragraphs 1, 2 and 3 to institutions which are members of the same institutional protection scheme referred to in Article 113(7)(b), provided that they meet all the conditions laid down in Article 113(7), and to other institutions linked by a relationship referred to in Article 113(6) provided that they meet all the conditions laid down therein. Competent authorities shall in that case determine one of the institutions subject to the waiver to meet Part Six on the basis of the consolidated situation of all institutions of the single liquidity sub-group.</p></content></paragraph><paragraph xml:id="ecaJqDQb0FdPb9zox"><num xml:id="ecaMV6ehGD3Gpk7pY">5.</num><content xml:id="ecRIhk9WwMW1Oz1ml"><p xml:id="ecHz737tq1jkOuvzb">Where a waiver has been granted under paragraph 1 or paragraph 2, the competent authorities may also apply Article 86 of Directive 2013/36/EU, or parts thereof, at the level of the single liquidity sub-group and waive the application of Article 86 of Directive 2013/36/EU, or parts thereof, on an individual basis.</p></content></paragraph></article></chapter><clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:selectedoption="1" xml:id="eca9EOQT9EkceYsJD">
-            <content xml:id="ecoFdLpRKdzaqPBma">
-                <p xml:id="ecfOgUyV9W9MCa0iT">This Regulation shall be binding in its entirety and directly applicable in all Member States.</p>
-            </content>
-        </clause></body>
-        <conclusions xml:id="ecf0SaRl9gvFf1Y3k"><p xml:id="ecyD2lvx7LCQ8blDl">Done at <location refersTo="~BEL_BRU" xml:id="ecnb7zqymPstZRacN">Brussels</location>, <date class="template" date="2999-01-01" xml:id="ecsG0oRwPDMbFqkJO"/></p><block name="signatory" xml:id="ecMSJ5gD8Kv0lH0VB">
-            <signature xml:id="ec4BZ0cOT7PFLzTCA">
-                <organization refersTo="~EP" xml:id="ecb20Kov0ge5S7wkU">For the European Parliament</organization>
-                <role refersTo="~PRESID" xml:id="ecgw03bbuppSSDP6z">The President</role>
-                <person refersTo="" xml:id="ecUzTTBwFgauYwyZi">[...]</person>
-            </signature>
-            <signature xml:id="ecnQqLkvzmj9u7uYq">
-                <organization refersTo="~CONSIL" xml:id="ec7QnYbjjPL13n1VM">For the Council</organization>
-                <role refersTo="~PRESID" xml:id="ec5uWmN9cDjB9mtea">The President</role>
-                <person refersTo="" xml:id="eceaCgRTfcVb19yTT">[...]</person>
-            </signature>
-        </block></conclusions>
-        <attachments><attachment xml:id="ecVUm7CNoQVvvgWUb"><documentRef href="ANNEX-cm0xzwyh70005io28wt071834-en.xml" showAs="Annex" xml:id="ecQbtx0Hc5lv6nNuy"/></attachment></attachments></bill>
+            <block name="signatory" xml:id="ecMSJ5gD8Kv0lH0VB">
+                <signature xml:id="ec4BZ0cOT7PFLzTCA">
+                    <organization refersTo="~EP" xml:id="ecb20Kov0ge5S7wkU">For the European Parliament</organization>
+                    <role refersTo="~PRESID" xml:id="ecgw03bbuppSSDP6z">The President</role>
+                    <person refersTo="" xml:id="ecUzTTBwFgauYwyZi">[...]</person>
+                </signature>
+                <signature xml:id="ecnQqLkvzmj9u7uYq">
+                    <organization refersTo="~CONSIL" xml:id="ec7QnYbjjPL13n1VM">For the Council</organization>
+                    <role refersTo="~PRESID" xml:id="ec5uWmN9cDjB9mtea">The President</role>
+                    <person refersTo="" xml:id="eceaCgRTfcVb19yTT">[...]</person>
+                </signature>
+            </block>
+        </conclusions>
+        <attachments>
+            <attachment xml:id="ecVUm7CNoQVvvgWUb">
+                <documentRef href="ANNEX-cm0xzwyh70005io28wt071834-en.xml" showAs="Annex" xml:id="ecQbtx0Hc5lv6nNuy"/>
+            </attachment>
+        </attachments>
+    </bill>
 </akomaNtoso>

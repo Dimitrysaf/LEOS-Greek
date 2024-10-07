@@ -485,7 +485,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                                 updatedNodeContent = updatedNodeContent.replace(childNodeContent, childNodeContent.replace("<" + SUBPARAGRAPH, "<" + PARAGRAPH).replace(SUBPARA_END, PARA_END));
                             }
                         }
-                        updatedNodeContent = updatedNodeContent.replace(PARA_END + PARA_END, PARA_END);
+                        updatedNodeContent = updatedNodeContent.replaceAll(PARA_END + "[^<|>]*" + PARA_END, PARA_END);
                     }
                     Document newDocument = createXercesDocument(xmlContent);
                     Node newElementNode = XercesUtils.getElementById(newDocument, elementId);
@@ -558,7 +558,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
         Node node = XercesUtils.getElementById(document, parentId);
         if (node != null) {
             Node newNode = XercesUtils.createNodeFromXmlFragment(document, elementContent.getBytes(UTF_8), false);
-            XercesUtils.addLastChild(newNode, node);
+            node.appendChild(newNode);
         }
         return nodeToByteArray(document);
     }

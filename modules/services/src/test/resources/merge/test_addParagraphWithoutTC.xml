@@ -353,7 +353,7 @@
                         <content xml:id="art_1_BrqgVv">
                             <p xml:id="art_1_9KdmGu">This Regulation establishes a European Union Single Window Environment for Customs that provides an integrated set of interoperable electronic services at Union and national level through the European Union Customs Single Window Certificates Exchange System to support interaction and information exchange between the national single window environments for customs and the Union non-customs systems referred to in the Annex.</p>
                         </content>
-                    </paragraph><paragraph leos:origin="ec" xml:id="_art_1_W8BmoP">
+                    </paragraph><paragraph leos:action-number="insert" leos:origin="ec" leos:tc-original-number="NEW" leos:title-number="DAS Satyabrata : 2024-03-08T13:57:09+00:00" leos:uid-number="dasatya" xml:id="_art_1_W8BmoP">
                     <content leos:origin="ec" xml:id="art_1_BrqgVv">
                         <p leos:origin="ec" xml:id="art_1_9KdmGu">
                             new paragraph
@@ -432,25 +432,25 @@
                     <num leos:editable="false" xml:id="akn_art_ubc2NQ_Wwu4Uv">Article 5</num>
                     <heading xml:id="akn_art_ubc2NQ_HeudnT">Roles and responsibilities for EU CSW-CERTEX</heading>
                     <paragraph xml:id="akn_art_ubc2NQ_Zur2uo">
-                        <num xml:id="akn_art_ubc2NQ_uoY0vh">#</num>
+                        <num xml:id="akn_art_ubc2NQ_uoY0vh">1.</num>
                         <content xml:id="akn_art_ubc2NQ_kK4yzk">
                             <p xml:id="akn_art_ubc2NQ_Dq8ODX">The Commission, in collaboration with the Member States, shall develop, integrate and operate EU CSW-CERTEX.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_ubc2NQ_NTFf7I">
-                        <num xml:id="akn_art_ubc2NQ_aV7H4W">#</num>
+                        <num xml:id="akn_art_ubc2NQ_aV7H4W">2.</num>
                         <content xml:id="akn_art_ubc2NQ_tEH5xU">
                             <p xml:id="akn_art_ubc2NQ_G6OPaA">The Commission shall connect the Union non-customs systems referred to in the Annex with EU CSW-CERTEX and enable information to be exchangedÂ on the Union non-customs formalities listed in the Annex.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_ubc2NQ_BqyeQZ">
-                        <num xml:id="akn_art_ubc2NQ_Xxgpvo">#</num>
+                        <num xml:id="akn_art_ubc2NQ_Xxgpvo">3.</num>
                         <content xml:id="akn_art_ubc2NQ_YHKsUD">
                             <p xml:id="akn_art_ubc2NQ_dp7Zao">The Member States shall connect the national single window environments for customs with EU CSW-CERTEX and enable information to be exchangedÂ on the Union non-customs formalities listed in the Annex.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_ubc2NQ_PDxMr6">
-                        <num xml:id="akn_art_ubc2NQ_h93WOx">#</num>
+                        <num xml:id="akn_art_ubc2NQ_h93WOx">4.</num>
                         <content xml:id="akn_art_ubc2NQ_n3kL7r">
                             <p xml:id="akn_art_ubc2NQ_2UlaOk">The Commission is empowered to adopt delegated acts in accordance with Article 21Â amending the Annex, in particular to cover other Union non-customs formalities.</p>
                         </content>
@@ -460,7 +460,7 @@
                     <num leos:editable="false" leos:origin="ec" xml:id="akn_art_phTLdP_HqKfs6">Article 6</num>
                     <heading xml:id="akn_art_phTLdP_gjfAUn">Processing of personal data in EU CSW-CERTEX</heading>
                     <paragraph xml:id="akn_art_phTLdP_GDNZEE">
-                        <num leos:origin="ec" xml:id="akn_art_phTLdP_EPO84e">#</num>
+                        <num leos:origin="ec" xml:id="akn_art_phTLdP_EPO84e">1.</num>
                         <list xml:id="akn_art_phTLdP_ieIr1P">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_C9WFYo">
                                 <content xml:id="akn_art_phTLdP_E5fjAu">
@@ -482,7 +482,7 @@
                         </list>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_NvQTzp">
-                        <num leos:origin="ec" xml:id="akn_art_phTLdP_Lm9ODY">#</num>
+                        <num leos:origin="ec" xml:id="akn_art_phTLdP_Lm9ODY">2.</num>
                         <list xml:id="akn_art_phTLdP_7DFoOJ">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_FE6qXG">
                                 <content xml:id="akn_art_phTLdP_obG97T">
@@ -516,7 +516,7 @@
                         </list>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_QsVl8H">
-                        <num xml:id="akn_art_phTLdP_JFGuwC">#</num>
+                        <num xml:id="akn_art_phTLdP_JFGuwC">3.</num>
                         <list xml:id="akn_art_phTLdP_u49VGy">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_Hyqr4c">
                                 <content xml:id="akn_art_phTLdP_ARYfGY">
@@ -538,13 +538,13 @@
                         </list>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_EPBM9a">
-                        <num xml:id="akn_art_phTLdP_SrwOpM">#</num>
+                        <num xml:id="akn_art_phTLdP_SrwOpM">4.</num>
                         <content xml:id="akn_art_phTLdP_JbfzjJ">
                             <p xml:id="akn_art_phTLdP_D8qZer">EU CSW-CERTEX shall not store any information exchanged between the national single window environments for customs and Union non-customs systems.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_phTLdP_JhbISd">
-                        <num xml:id="akn_art_phTLdP_Vfew0u">#</num>
+                        <num xml:id="akn_art_phTLdP_Vfew0u">5.</num>
                         <content xml:id="akn_art_phTLdP_mICcWs">
                             <p xml:id="akn_art_phTLdP_Vuy4KE">The transformation of personal data referred to in paragraph 1, point (b), shall be performed using information technology infrastructure located in the Union. Â  Â  Â Â </p>
                         </content>
@@ -554,19 +554,19 @@
                     <num leos:editable="false" leos:origin="ec" xml:id="akn_art_jSKkaB_gKvQut">Article 7</num>
                     <heading xml:id="akn_art_jSKkaB_i1xheN">Joint controllership of EU CSW-CERTEX</heading>
                     <paragraph xml:id="akn_art_jSKkaB_1oEQCa">
-                        <num xml:id="akn_art_jSKkaB_pY6a7Z">#</num>
+                        <num xml:id="akn_art_jSKkaB_pY6a7Z">1.</num>
                         <content xml:id="akn_art_jSKkaB_Ry9fcT">
                             <p xml:id="akn_art_jSKkaB_zrKTWd">As regards the processing of personal data in EU CSW-CERTEX, the Commission shall be a joint controller within the meaning of Article 28(1) of Regulation (EU) 2018/1725, and customs authorities and partner competent authorities shall be joint controllers within the meaning of Article 26(1) of Regulation (EU) 2016/679.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_jSKkaB_KzuCNP">
-                        <num xml:id="akn_art_jSKkaB_Kl0qpt">#</num>
+                        <num xml:id="akn_art_jSKkaB_Kl0qpt">2.</num>
                         <content xml:id="akn_art_jSKkaB_EvaKng">
                             <p xml:id="akn_art_jSKkaB_UfLtRx">TheÂ Commission shall, by means of implementing acts, establish the respective responsibilities of the joint controllers to comply with the obligations under Regulations (EU) 2016/679 and (EU) 2018/1725. Those implementing acts shall be adopted in accordance with the examination procedure referred to in Article 22(3) of this Regulation.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_jSKkaB_7DGsxr">
-                        <num xml:id="akn_art_jSKkaB_aZUNmZ">#</num>
+                        <num xml:id="akn_art_jSKkaB_aZUNmZ">3.</num>
                         <list xml:id="akn_art_jSKkaB_6EEUWu">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_jSKkaB_1dypT1">
                                 <content xml:id="akn_art_jSKkaB_AHS0L6">
@@ -608,19 +608,19 @@
                     <num leos:editable="false" leos:origin="ec" xml:id="akn_art_dMHd93_zsIeaG">Article 8</num>
                     <heading xml:id="akn_art_dMHd93_tB9qgm">Establishment of national single window environments for customsÂ </heading>
                     <paragraph xml:id="akn_art_dMHd93_w3Psxl">
-                        <num xml:id="akn_art_dMHd93_8OMAeP">#</num>
+                        <num xml:id="akn_art_dMHd93_8OMAeP">1.</num>
                         <content xml:id="akn_art_dMHd93_m5x1WO">
                             <p xml:id="akn_art_dMHd93_IoF34H">The Member States shall establish national single window environments for customs. Each Member State shall be responsible for the development, integration and operation of its single window environment for customs.</p>
                         </content>
                     </paragraph>
                     <paragraph leos:origin="ec" xml:id="akn_art_dMHd93_7KBuaY">
-                        <num leos:origin="ec" xml:id="akn_art_dMHd93_KCL3by">#</num>
+                        <num leos:origin="ec" xml:id="akn_art_dMHd93_KCL3by">2.</num>
                         <content leos:origin="ec" xml:id="akn_art_dMHd93_vDg8nK">
                             <p leos:origin="ec" xml:id="akn_art_dMHd93_5uf5mT">The national single window environments for customs shall enable the exchange of information and cooperation by electronic means between customs authorities, partner competent authorities and economic operators for the purposes of compliance with and efficient enforcement of customs legislation and the Union non-customs formalities listed in the Annex.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_dMHd93_X20PeL">
-                        <num xml:id="akn_art_dMHd93_VsWLtx">#</num>
+                        <num xml:id="akn_art_dMHd93_VsWLtx">3.</num>
                         <list xml:id="akn_art_dMHd93_fjD8KI">
                             <subparagraph refersTo="~_INP" xml:id="akn_art_dMHd93_sMzfOQ">
                                 <content xml:id="akn_art_dMHd93_8FM4cZ">
@@ -648,7 +648,7 @@
                         </list>
                     </paragraph>
                     <paragraph xml:id="akn_art_dMHd93_VQGJh8">
-                        <num xml:id="akn_art_dMHd93_0Eyz2X">#</num>
+                        <num xml:id="akn_art_dMHd93_0Eyz2X">4.</num>
                         <content xml:id="akn_art_dMHd93_6Rfzp9">
                             <p xml:id="akn_art_dMHd93_7oiXaH">The national single window environments for customs may be used as a platform to coordinate controls in accordance with Article 47(1) of Regulation (EU)Â 952/2013.</p>
                         </content>
@@ -658,19 +658,19 @@
                     <num leos:editable="false" xml:id="akn_art_7SgBab_RgWzWJ">Article 9</num>
                     <heading xml:id="akn_art_7SgBab_Fy38kB">Personal data processing within the national single window environments for customs</heading>
                     <paragraph xml:id="akn_art_7SgBab_Ap5wOa">
-                        <num xml:id="akn_art_7SgBab_eTr586">#</num>
+                        <num xml:id="akn_art_7SgBab_eTr586">1.</num>
                         <content xml:id="akn_art_7SgBab_bya1DB">
                             <p xml:id="akn_art_7SgBab_8AWcWv">The processing of personal data within the national single window environments for customs shall take place in accordance with Regulation (EU) 2016/679 separately from the processing operations referred to in Article 6 of this Regulation.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_7SgBab_EO5nGZ">
-                        <num xml:id="akn_art_7SgBab_JyyCO2">#</num>
+                        <num xml:id="akn_art_7SgBab_JyyCO2">2.</num>
                         <content xml:id="akn_art_7SgBab_aR44h6">
                             <p xml:id="akn_art_7SgBab_FqDM38">Each Member State shall be the sole controller of the data processing operations taking place within its single window environment for customs.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_7SgBab_rc0fvk">
-                        <num xml:id="akn_art_7SgBab_yjYhAc">#</num>
+                        <num xml:id="akn_art_7SgBab_yjYhAc">3.</num>
                         <content xml:id="akn_art_7SgBab_B0hHs1">
                             <p xml:id="akn_art_7SgBab_gEitzc">Each Member State shall notify the Commission of any personal data breach that compromises the security, confidentiality, availability or integrity of the personal data processed within its single window environment for customs.</p>
                         </content>
@@ -687,7 +687,7 @@
                         <num leos:editable="false" xml:id="akn_art_q7XGxr_ilVeFO">Article 10</num>
                         <heading xml:id="akn_art_q7XGxr_L2iO0x">Information exchange processed through EU CSW-CERTEX</heading>
                         <paragraph xml:id="akn_art_q7XGxr_t7zhJW">
-                            <num xml:id="akn_art_q7XGxr_sd2xlH">#</num>
+                            <num xml:id="akn_art_q7XGxr_sd2xlH">1.</num>
                             <list xml:id="akn_art_q7XGxr_JOEMzG">
                                 <subparagraph refersTo="~_INP" xml:id="akn_art_q7XGxr_bIuYAK">
                                     <content xml:id="akn_art_q7XGxr_E176AP">
@@ -721,7 +721,7 @@
                             </list>
                         </paragraph>
                         <paragraph xml:id="akn_art_q7XGxr_7GzwUc">
-                            <num xml:id="akn_art_q7XGxr_UAgiy6">#</num>
+                            <num xml:id="akn_art_q7XGxr_UAgiy6">2.</num>
                             <list xml:id="akn_art_q7XGxr_PgDoT7">
                                 <subparagraph refersTo="~_INP" xml:id="akn_art_q7XGxr_RUwVxP">
                                     <content xml:id="akn_art_q7XGxr_jL3AuW">
@@ -743,13 +743,13 @@
                             </list>
                         </paragraph>
                         <paragraph xml:id="akn_art_q7XGxr_Qe9qGQ">
-                            <num xml:id="akn_art_q7XGxr_APtk7M">#</num>
+                            <num xml:id="akn_art_q7XGxr_APtk7M">3.</num>
                             <content xml:id="akn_art_q7XGxr_xDKCYG">
                                 <p xml:id="akn_art_q7XGxr_d33CUm">The Commission is empowered to adopt delegated acts in accordance with Article 21Â specifying the data elementsÂ to be exchanged through EU CSW-CERTEX in accordance with paragraph 1 of this Article.</p>
                             </content>
                         </paragraph>
                         <paragraph xml:id="akn_art_q7XGxr_R8ee99">
-                            <num xml:id="akn_art_q7XGxr_tzgNfc">#</num>
+                            <num xml:id="akn_art_q7XGxr_tzgNfc">4.</num>
                             <content xml:id="akn_art_q7XGxr_AUT4Qx">
                                 <p xml:id="akn_art_q7XGxr_3MlhVZ">The Commission shall, by means of implementing acts, adopt specific rules for the information exchange referred to in paragraphs 1 and 2, including, where appropriate, any specific rules to ensure the protection of personal data. Those implementing acts shall be adopted in accordance with the advisory procedure referred to in Article 22(2).</p>
                             </content>
@@ -788,13 +788,13 @@
                         <num leos:editable="false" xml:id="akn_art_kCjLvC_KG9Dwl">Article 12</num>
                         <heading xml:id="akn_art_kCjLvC_4E3Sfp">Union non-customs formalities subject to additional digital cooperation</heading>
                         <paragraph xml:id="akn_art_kCjLvC_qLqoJI">
-                            <num xml:id="akn_art_kCjLvC_LP3juG">#</num>
+                            <num xml:id="akn_art_kCjLvC_LP3juG">1.</num>
                             <content xml:id="akn_art_kCjLvC_FP2wU6">
                                 <p xml:id="akn_art_kCjLvC_z3mUYn">A Union non-customs formality listed in the Annex shall be subject to Article 8(3), point (c),Â Articles 11 to 15 and Article 16(2) provided that the Commission has determined in accordance with paragraph 2 of this Article that such formality fulfils the criteria set out in that paragraph.</p>
                             </content>
                         </paragraph>
                         <paragraph xml:id="akn_art_kCjLvC_zUa3wJ">
-                            <num xml:id="akn_art_kCjLvC_516xzg">#</num>
+                            <num xml:id="akn_art_kCjLvC_516xzg">2.</num>
                             <list xml:id="akn_art_kCjLvC_dNIHv5">
                                 <subparagraph refersTo="~_INP" xml:id="akn_art_kCjLvC_SwXBty">
                                     <content xml:id="akn_art_kCjLvC_toeFZz">
@@ -828,7 +828,7 @@
                             </list>
                         </paragraph>
                         <paragraph xml:id="akn_art_kCjLvC_b8CP4W">
-                            <num xml:id="akn_art_kCjLvC_3PKntl">#</num>
+                            <num xml:id="akn_art_kCjLvC_3PKntl">3.</num>
                             <content xml:id="akn_art_kCjLvC_kYIOqT">
                                 <p xml:id="akn_art_kCjLvC_YvtAcO">Those implementing acts shall be adopted in accordance with the advisory procedure referred to in Article 22(2).</p>
                             </content>
@@ -838,25 +838,25 @@
                         <num leos:editable="false" xml:id="akn_art_NytFbv_nd9Fas">Article 13</num>
                         <heading xml:id="akn_art_NytFbv_xyMyYe">Data harmonisation and rationalisation</heading>
                         <paragraph xml:id="akn_art_NytFbv_sFcMSP">
-                            <num xml:id="akn_art_NytFbv_L0ZAEI">#</num>
+                            <num xml:id="akn_art_NytFbv_L0ZAEI">1.</num>
                             <content xml:id="akn_art_NytFbv_Ani65c">
                                 <p xml:id="akn_art_NytFbv_6obSOj">The Commission shall identify the common data between the customs declaration and the corresponding application for supporting documents, and identify the additional data elements subject solely to Union non-customs legislation.</p>
                             </content>
                         </paragraph>
                         <paragraph xml:id="akn_art_NytFbv_ew4QTF">
-                            <num xml:id="akn_art_NytFbv_zlx54E">#</num>
+                            <num xml:id="akn_art_NytFbv_zlx54E">2.</num>
                             <content xml:id="akn_art_NytFbv_pXhRPe">
                                 <p xml:id="akn_art_NytFbv_z9KM4O">The additional data elements referred to in paragraph 1 shall be identified by the corresponding acronym of the Union non-customs formality listed in the Annex, followed by the suffix â€˜partner competent authority (PCA) data setâ€™.</p>
                             </content>
                         </paragraph>
                         <paragraph xml:id="akn_art_NytFbv_LTeEq0">
-                            <num xml:id="akn_art_NytFbv_gksRzk">#</num>
+                            <num xml:id="akn_art_NytFbv_gksRzk">3.</num>
                             <content xml:id="akn_art_NytFbv_3ZEJfJ">
                                 <p xml:id="akn_art_NytFbv_iiylK0">The customs declaration data and the additional data elements referred to in paragraph 1 requiredÂ to placeÂ the goods under a specific customs procedure shall constitute an integratedÂ declaration, containing all data neededÂ by customs and partner competent authorities for goods clearance.</p>
                             </content>
                         </paragraph>
                         <paragraph xml:id="akn_art_NytFbv_r6BKH6">
-                            <num xml:id="akn_art_NytFbv_ndFQP6">#</num>
+                            <num xml:id="akn_art_NytFbv_ndFQP6">4.</num>
                             <content xml:id="akn_art_NytFbv_iXdnf2">
                                 <p xml:id="akn_art_NytFbv_CqFHxD">The Commission is empowered to adopt delegated acts in accordance with Article 21, identifying,Â on the one hand, the data elements that are common to both the customs declaration and the application for supporting documents and, on the other hand, the PCA data setÂ for each of the relevant Union actsÂ applicable to Union non-customs formalities listed in the Annex.</p>
                             </content>
@@ -866,13 +866,13 @@
                         <num leos:editable="false" xml:id="akn_art_4YJPOt_WlyVcy">Article 14</num>
                         <heading xml:id="akn_art_4YJPOt_amvUQB">Submission of customs and Union non-customs data by economic operators</heading>
                         <paragraph xml:id="akn_art_4YJPOt_OdIUTF">
-                            <num xml:id="akn_art_4YJPOt_2jvb9j">#</num>
+                            <num xml:id="akn_art_4YJPOt_2jvb9j">1.</num>
                             <content xml:id="akn_art_4YJPOt_hra5wY">
                                 <p xml:id="akn_art_4YJPOt_pIGwIn">For the purposes of Article 11, point (a), national single window environments for customs may enableÂ economic operators to submit an integratedÂ declaration containing the PCA data set(s) together with the customs declaration lodged prior to the presentation of the goods in accordance with Article 171 of Regulation (EU) No 952/2013.</p>
                             </content>
                         </paragraph>
                         <paragraph xml:id="akn_art_4YJPOt_nNbDV4">
-                            <num xml:id="akn_art_4YJPOt_hfPMdH">#</num>
+                            <num xml:id="akn_art_4YJPOt_hfPMdH">2.</num>
                             <content xml:id="akn_art_4YJPOt_3IVieJ">
                                 <p xml:id="akn_art_4YJPOt_k9X2Im">The integratedÂ declaration submitted in accordance with paragraph 1 shall constitute both the customs declaration and the application for supporting documents.</p>
                             </content>
@@ -882,7 +882,7 @@
                         <num leos:editable="false" xml:id="akn_art_LBFSRW_Si0yWB">Article 15</num>
                         <heading xml:id="akn_art_LBFSRW_Y1SPgf">Additional information exchange processed through EU CSW-CERTEX</heading>
                         <paragraph xml:id="akn_art_LBFSRW_eXWyDr">
-                            <num xml:id="akn_art_LBFSRW_36NDMs">#</num>
+                            <num xml:id="akn_art_LBFSRW_36NDMs">1.</num>
                             <list xml:id="akn_art_LBFSRW_9fx8ti">
                                 <subparagraph refersTo="~_INP" xml:id="akn_art_LBFSRW_a2ccWr">
                                     <content xml:id="akn_art_LBFSRW_kcKzuH">
@@ -904,13 +904,13 @@
                             </list>
                         </paragraph>
                         <paragraph xml:id="akn_art_LBFSRW_EQJjNu">
-                            <num xml:id="akn_art_LBFSRW_QBTjjp">#</num>
+                            <num xml:id="akn_art_LBFSRW_QBTjjp">2.</num>
                             <content xml:id="akn_art_LBFSRW_TGn9a3">
                                 <p xml:id="akn_art_LBFSRW_95bDqs">Where anÂ economic operator is registered with the customs authorities in accordance with Article 9 of Regulation (EU) No 952/2013, the EORI number shall be used for the exchanges of information referred to in paragraph 1.</p>
                             </content>
                         </paragraph>
                         <paragraph xml:id="akn_art_LBFSRW_TpDs2b">
-                            <num xml:id="akn_art_LBFSRW_PG57Xs">#</num>
+                            <num xml:id="akn_art_LBFSRW_PG57Xs">3.</num>
                             <content xml:id="akn_art_LBFSRW_BJlpCG">
                                 <p xml:id="akn_art_LBFSRW_dsz76A">The Commission shall adopt, by means of implementing acts,Â procedural arrangements for the exchanges of information referred to in paragraph 1, including, where appropriate, any specific rules governing the protection of personal data. Those implementing acts shall be adopted in accordance with the advisory procedure referred to in Article 22(2).</p>
                             </content>
@@ -963,13 +963,13 @@
                     <num leos:editable="false" xml:id="akn_art_ZQi0El_6QPM6i">Article 18</num>
                     <heading xml:id="akn_art_ZQi0El_RvSiFX">Costs</heading>
                     <paragraph xml:id="akn_art_ZQi0El_RUk5SM">
-                        <num xml:id="akn_art_ZQi0El_0GUdhQ">#</num>
+                        <num xml:id="akn_art_ZQi0El_0GUdhQ">1.</num>
                         <content xml:id="akn_art_ZQi0El_hxU2hX">
                             <p xml:id="akn_art_ZQi0El_Cufb5X">The costs associated with the development, integration and operation of EU CSW-CERTEX and its interfaces with Union non-customs systems shall be borne by the Union.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_ZQi0El_WOJfbR">
-                        <num xml:id="akn_art_ZQi0El_OEZbn2">#</num>
+                        <num xml:id="akn_art_ZQi0El_OEZbn2">2.</num>
                         <content xml:id="akn_art_ZQi0El_m8aNvP">
                             <p xml:id="akn_art_ZQi0El_v7vl8u">Each Member State shall bear the costs incurred in relation to the development, integration and operation of itsÂ national single window environmentÂ for customs and itsÂ connection with EU CSW-CERTEX.</p>
                         </content>
@@ -988,25 +988,25 @@
                     <num leos:editable="false" xml:id="akn_art_9bdXcQ_2sFIP8">Article 20</num>
                     <heading xml:id="akn_art_9bdXcQ_Gagszt">Monitoring and reporting</heading>
                     <paragraph xml:id="akn_art_9bdXcQ_I8teu1">
-                        <num xml:id="akn_art_9bdXcQ_9EdSp2">#</num>
+                        <num xml:id="akn_art_9bdXcQ_9EdSp2">1.</num>
                         <content xml:id="akn_art_9bdXcQ_yZs624">
                             <p xml:id="akn_art_9bdXcQ_3mbrE2">The Commission shall regularly monitor the functioning of the European Union Single Window Environment for Customs.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_9bdXcQ_I89Zai">
-                        <num xml:id="akn_art_9bdXcQ_sq9tfA">#</num>
+                        <num xml:id="akn_art_9bdXcQ_sq9tfA">2.</num>
                         <content xml:id="akn_art_9bdXcQ_Gq1kpV">
                             <p xml:id="akn_art_9bdXcQ_U0xenu">The Commission shall regularly evaluate the performance of EU CSW-CERTEX.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_9bdXcQ_8mHd8J">
-                        <num xml:id="akn_art_9bdXcQ_0AfDuw">#</num>
+                        <num xml:id="akn_art_9bdXcQ_0AfDuw">3.</num>
                         <content xml:id="akn_art_9bdXcQ_JKUmEI">
                             <p xml:id="akn_art_9bdXcQ_ZV00Am">By 31 December 2027Â and every threeÂ years thereafter, the Commission shall submit to the European Parliament and to the Council a report on the implementation of this Regulation. The report shall also include information on the monitoring and evaluation carried out in accordance with paragraphs 1 and 2, respectively.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_9bdXcQ_9osdf8">
-                        <num xml:id="akn_art_9bdXcQ_LDQmfH">#</num>
+                        <num xml:id="akn_art_9bdXcQ_LDQmfH">4.</num>
                         <content xml:id="akn_art_9bdXcQ_MpU6Pb">
                             <p xml:id="akn_art_9bdXcQ_Ljz7kX">The Member States shall, upon request from the Commission, provide any information that is necessary for the report referred to in paragraph 3.</p>
                         </content>
@@ -1020,37 +1020,37 @@
                     <num leos:editable="false" xml:id="akn_art_fTOjdP_O0SFyi">Article 21</num>
                     <heading xml:id="akn_art_fTOjdP_An3ga2">Exercise of the delegation</heading>
                     <paragraph xml:id="akn_art_fTOjdP_4qGRQC">
-                        <num xml:id="akn_art_fTOjdP_SFjEa7">#</num>
+                        <num xml:id="akn_art_fTOjdP_SFjEa7">1.</num>
                         <content xml:id="akn_art_fTOjdP_QkB1dA">
                             <p xml:id="akn_art_fTOjdP_C77I3n">The power to adopt delegated acts is conferred on the Commission subject to the conditions laid down in this Article.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_fTOjdP_H3RTzQ">
-                        <num xml:id="akn_art_fTOjdP_lWoQ0X">#</num>
+                        <num xml:id="akn_art_fTOjdP_lWoQ0X">2.</num>
                         <content xml:id="akn_art_fTOjdP_sZmHdi">
                             <p xml:id="akn_art_fTOjdP_M17TTw">The power to adopt delegated acts referred to in Articles 5(4), 10(3)Â and 13(4) shall be conferred on the Commission for an indeterminate period from the date of entry into force of this Regulation.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_fTOjdP_iBajuF">
-                        <num xml:id="akn_art_fTOjdP_5xn1XI">#</num>
+                        <num xml:id="akn_art_fTOjdP_5xn1XI">3.</num>
                         <content xml:id="akn_art_fTOjdP_324rCB">
                             <p xml:id="akn_art_fTOjdP_DnZKCT">The delegation of power referred to in Articles 5(4), 10(3)Â and 13(4) may be revoked at any time by the European Parliament or by the Council. A decision to revoke shall put an end to the delegation of the power specified in that decision. It shall take effect the day following the publication of the decision in the Official Journal of the European Union or at a later date specified therein. It shall not affect the validity of any delegated acts already in force.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_fTOjdP_5Qbfw3">
-                        <num xml:id="akn_art_fTOjdP_8G0qII">#</num>
+                        <num xml:id="akn_art_fTOjdP_8G0qII">4.</num>
                         <content xml:id="akn_art_fTOjdP_L8kOCH">
                             <p xml:id="akn_art_fTOjdP_6I67WG">Before adopting a delegated act, the Commission shall consult experts designated by each Member State in accordance with the principles laid down in the Interinstitutional Agreement of 13 April 2016 on Better Law-Making.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_fTOjdP_6oifjk">
-                        <num xml:id="akn_art_fTOjdP_rxHwaO">#</num>
+                        <num xml:id="akn_art_fTOjdP_rxHwaO">5.</num>
                         <content xml:id="akn_art_fTOjdP_OTpy0d">
                             <p xml:id="akn_art_fTOjdP_1eczFa">As soon as it adopts a delegated act, the Commission shall notify it simultaneously to the European Parliament and to the Council.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_fTOjdP_XE1MLD">
-                        <num xml:id="akn_art_fTOjdP_oWkAaR">#</num>
+                        <num xml:id="akn_art_fTOjdP_oWkAaR">6.</num>
                         <content xml:id="akn_art_fTOjdP_aeMe5r">
                             <p xml:id="akn_art_fTOjdP_BfcDny">A delegated act adopted pursuant to Articles 5(4), 10(3) and 13(4) shall enter into force only if no objection has been expressed either by the European Parliament or by the Council within a period of two months of notification of that act to the European Parliament and the Council or if, before the expiry of that period, the European Parliament and the Council have both informed the Commission that they will not object. That period shall be extended by two months at the initiative of the European Parliament or of the Council.</p>
                         </content>
@@ -1060,19 +1060,19 @@
                     <num leos:editable="false" xml:id="akn_art_Kw3Lfu_AwLNHZ">Article 22</num>
                     <heading xml:id="akn_art_Kw3Lfu_l0ehX4">Committee procedure</heading>
                     <paragraph xml:id="akn_art_Kw3Lfu_OHkiLz">
-                        <num xml:id="akn_art_Kw3Lfu_gl6A0x">#</num>
+                        <num xml:id="akn_art_Kw3Lfu_gl6A0x">1.</num>
                         <content xml:id="akn_art_Kw3Lfu_o64pfY">
                             <p xml:id="akn_art_Kw3Lfu_vvrrr0">The Commission shall be assisted by the Customs Code Committee established by Regulation (EU) No 952/2013. That committee shall be a committee within the meaning of Regulation (EU) No 182/2011.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_Kw3Lfu_msmR4W">
-                        <num xml:id="akn_art_Kw3Lfu_D5MKw1">#</num>
+                        <num xml:id="akn_art_Kw3Lfu_D5MKw1">2.</num>
                         <content xml:id="akn_art_Kw3Lfu_x00WBR">
                             <p xml:id="akn_art_Kw3Lfu_Ey7BFm">Where reference is made to this paragraph, Article 4 of Regulation (EU) No 182/2011 shall apply.</p>
                         </content>
                     </paragraph>
                     <paragraph xml:id="akn_art_Kw3Lfu_FJjRrM">
-                        <num xml:id="akn_art_Kw3Lfu_iwljMh">#</num>
+                        <num xml:id="akn_art_Kw3Lfu_iwljMh">3.</num>
                         <content xml:id="akn_art_Kw3Lfu_mDZSB1">
                             <p xml:id="akn_art_Kw3Lfu_CHlSVJ">Where reference is made to this paragraph, Article 5 of Regulation (EU) No 182/2011 shall apply.</p>
                         </content>
