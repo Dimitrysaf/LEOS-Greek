@@ -832,7 +832,11 @@ define(function leosArticleListPluginModule(require) {
             cursor.select();
             bm = cursor.createBookmark2();
         } else if (isINP) {
-            cursor.enlarge( CKEDITOR.ENLARGE_LIST_ITEM_CONTENTS );
+            if (cursor.startContainer && cursor.startContainer.getName() === 'p') {
+                cursor.enlarge(CKEDITOR.ENLARGE_ELEMENT);
+            } else {
+                cursor.enlarge(CKEDITOR.ENLARGE_LIST_ITEM_CONTENTS);
+            }
             var fragToMove = cursor.extractContents();
             nextCursor.startContainer.append(fragToMove);
             nextCursor.startContainer.appendText(" ");
