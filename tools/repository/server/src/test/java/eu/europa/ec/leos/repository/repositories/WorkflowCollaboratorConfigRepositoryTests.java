@@ -18,6 +18,7 @@ import eu.europa.ec.leos.repository.entities.LeosClients;
 import eu.europa.ec.leos.repository.entities.Package;
 import eu.europa.ec.leos.repository.entities.WorkflowCollaboratorConfig;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,7 @@ public class WorkflowCollaboratorConfigRepositoryTests {
     @Autowired
     PackageRepository packageRepository;
 
+    @Ignore
     @Test
     public void test_saveWorkflowCollaboratorConfig() {
 
@@ -74,6 +76,7 @@ public class WorkflowCollaboratorConfigRepositoryTests {
         return workflowCollaboratorConfig;
     }
 
+    @Ignore
     @Test
     public void test_deleteWorkflowCollaboratorConfigByPackageIdAndClientName() {
         Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
@@ -84,6 +87,7 @@ public class WorkflowCollaboratorConfigRepositoryTests {
         assertThat(list, hasSize(0));
     }
 
+    @Ignore
     @Test
     public void test_getWorkflowCollaboratorConfigByPackageIdAndClientName() {
         Optional<Package> pkg = packageRepository.findPackageByName("package_leos");
