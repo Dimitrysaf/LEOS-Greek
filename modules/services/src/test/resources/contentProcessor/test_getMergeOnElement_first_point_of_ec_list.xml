@@ -5,7 +5,7 @@
         <paragraph leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_494qUn">
             <num leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_gxZ46e">1.</num>
             <list leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_J7TbDh">
-                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="impXart_d1e1276_XAPlpX_KyB4qy">
+                <subparagraph leos:origin="ec" refersTo="~INP" xml:id="impXart_d1e1276_XAPlpX_KyB4qy">
                     <content leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_nBJK4i">
                         <p leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_aW9qa6">For the purposes of this Regulation, the following definitions shall
                             apply:</p>
@@ -22,7 +22,7 @@
                 <point leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_HMwJok">
                     <num leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_TD9PRk">(2)</num>
                     <list leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_aZi7xk">
-                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="impXart_d1e1276_XAPlpX_vPsN8G">
+                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="impXart_d1e1276_XAPlpX_vPsN8G">
                             <content leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_Atnkut">
                                 <p leos:origin="ec" xml:id="impXart_d1e1276_XAPlpX_Z5vpZD">'investment firm' means a person as defined in point (1) of
                                     Article 4(1) of Directive 2004/39/EC, which is subject to the requirements imposed by that Directive, excluding the

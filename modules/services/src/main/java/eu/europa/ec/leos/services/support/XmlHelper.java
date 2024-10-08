@@ -131,10 +131,10 @@ public class XmlHelper {
     public static final String STYLE = "style";
     public static final String WHITESPACE = " ";
     public static final String REFERS_TO_ATTR = "refersTo";
-    public static final String TLC_CONCEPT_INP_ID = "_INP";
-    public static final String INTRODUCTORY_PART = "~_INP";
-    public static final String TLC_CONCEPT_WRP_ID = "_WRP";
-    public static final String ENDING_PART = "~_WRP";
+    public static final String TLC_CONCEPT_INP_ID = "INP";
+    public static final String INTRODUCTORY_PART = "~INP";
+    public static final String TLC_CONCEPT_WRP_ID = "WRP";
+    public static final String ENDING_PART = "~WRP";
 
     public static final String LEOS_ANONYMOUS = "Anonymous";
     public static final String LEOS_UID = "leos:uid";

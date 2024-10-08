@@ -25,7 +25,7 @@
                     <num leos:origin="ec" xml:id="deletedX_imp_art_d1e602_1nNpFO_SC9AWu">2.</num>
                     
                     <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2022-05-20T14:29:20.962+02:00" leos:softuser="demo jane (Ext)" xml:id="deletedX_art_2_num_par1_list">
-                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2022-05-20T14:29:20.950+02:00" leos:softuser="demo jane (Ext)" refersTo="~_INP" xml:id="deletedX_art_2_num_par2_sub">
+                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2022-05-20T14:29:20.950+02:00" leos:softuser="demo jane (Ext)" refersTo="~INP" xml:id="deletedX_art_2_num_par2_sub">
                             <num leos:origin="ec" xml:id="deletedXnull"/>
                             <content leos:origin="ec" xml:id="deletedX_imp_art_d1e602_1nNpFO_ce2U2a">
                                 <p leos:origin="ec" xml:id="deletedX_imp_art_d1e602_1nNpFO_uJJljZ">par 2</p>

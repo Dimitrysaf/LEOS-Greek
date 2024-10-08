@@ -4,7 +4,7 @@
     <paragraph xml:id="art_2__para_1">
         <num xml:id="art_2__para_1__b">(1)</num>
         <list xml:id="art_2__list1">
-            <subparagraph refersTo="~_INP" xml:id="art_2__para_1_sub">
+            <subparagraph refersTo="~INP" xml:id="art_2__para_1_sub">
                 <content xml:id="art_2__para_1__content">
                     <p xml:id="art_2__para_1__content__p">Paragraph 1.</p>
                 </content>
@@ -18,7 +18,7 @@
             <point xml:id="art_2__list1_p_2">
                 <num xml:id="akn_art2_YnSKbj_soCjiB">2</num>
                 <list xml:id="art_2__list2">
-                    <subparagraph refersTo="~_INP">
+                    <subparagraph refersTo="~INP">
                         <content xml:id="akn_art2_YnSKbj_89xvgD">
                             <p xml:id="akn_art2_YnSKbj_g319GD">point (b)</p>
                         </content>
@@ -26,7 +26,7 @@
                     <point xml:id="art_2__list2_p_1">
                         <num xml:id="akn_art2_YnSKbj_soCjiB">(a.</num>
                         <list xml:id="art_2__list3">
-                            <subparagraph refersTo="~_INP">
+                            <subparagraph refersTo="~INP">
                                 <content xml:id="akn_art2_YnSKbj_89xvgD">
                                     <p xml:id="akn_art2_YnSKbj_g319GD">point (i)</p>
                                 </content>
@@ -34,7 +34,7 @@
                             <point xml:id="art_2__list3_p_1">
                                 <num xml:id="akn_art2_YnSKbj_soCjiB">i</num>
                                 <list xml:id="art_2__list4">
-                                    <subparagraph refersTo="~_INP">
+                                    <subparagraph refersTo="~INP">
                                         <content xml:id="akn_art2_YnSKbj_89xvgD">
                                             <p xml:id="akn_art2_YnSKbj_g319GD">point (1)</p>
                                         </content>

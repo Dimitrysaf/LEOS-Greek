@@ -19,7 +19,7 @@
 				<paragraph leos:origin="ec" xml:id="akn_article_ebFhaW_S1g3RO">
 					<num leos:origin="ec" xml:id="akn_article_ebFhaW_SkSGPr">1.</num>
 					<list leos:origin="ec" xml:id="akn_article_ebFhaW_11DoqG">
-						<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_8vWzbq">
+						<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_article_ebFhaW_8vWzbq">
 							<content leos:origin="ec" xml:id="akn_article_ebFhaW_oNWhzj">
 								<p leos:origin="ec" xml:id="akn_article_ebFhaW_iMglHR">Par 1</p>
 							</content>
@@ -33,7 +33,7 @@
 						<point leos:origin="ec" xml:id="akn_article_ebFhaW_SoxNh2">
 							<num leos:origin="ec" xml:id="akn_article_ebFhaW_bkypwY">(b)</num>
 							<list leos:origin="ec" xml:id="List2">
-								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_PyPpzx">
+								<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_article_ebFhaW_PyPpzx">
 									<content leos:origin="ec" xml:id="akn_article_ebFhaW_XouBdl">
 										<p leos:origin="ec" xml:id="akn_article_ebFhaW_rjaPnu">This is point (b)</p>
 									</content>
@@ -65,7 +65,7 @@
 								</point>
 							</list>
 							<list leos:origin="ec" xml:id="akn_article_ebFhaW_kzC5GS">
-								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_4pEtYJ">
+								<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_article_ebFhaW_4pEtYJ">
 									<content leos:origin="ec" xml:id="akn_article_ebFhaW_Nbt0HT">
 										<p leos:origin="ec" xml:id="akn_article_ebFhaW_v4RAaY">aliena splitting 2 lists</p>
 									</content>
@@ -79,7 +79,7 @@
 								<point leos:origin="ec" xml:id="akn_article_ebFhaW_j9tG0S">
 									<num leos:origin="ec" xml:id="akn_article_ebFhaW_mTzYq4">(ii)</num>
 									<list leos:origin="ec" xml:id="akn_article_ebFhaW_HtO6lo">
-										<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_rK96jy">
+										<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_article_ebFhaW_rK96jy">
 											<content leos:origin="ec" xml:id="akn_article_ebFhaW_YmdMUd">
 												<p leos:origin="ec" xml:id="akn_article_ebFhaW_Umdr5x">Point(ii)</p>
 											</content>
@@ -117,7 +117,7 @@
 										</point>
 									</list>
 									<list leos:origin="cn" xml:id="_lis_cYOs4T">
-										<subparagraph leos:origin="ec" leos:softaction="trans" refersTo="~_INP" xml:id="akn_article_ebFhaW_zpT8yJ">
+										<subparagraph leos:origin="ec" leos:softaction="trans" refersTo="~INP" xml:id="akn_article_ebFhaW_zpT8yJ">
 											<content leos:origin="ec" xml:id="akn_article_ebFhaW_7CY6ew">
 												<p leos:origin="ec" xml:id="akn_article_ebFhaW_Bsi83y">aliena splitting 2 lists (inner)</p>
 											</content>
@@ -146,7 +146,7 @@
 						</point>
 					</list>
 					<list leos:origin="ec" xml:id="second_sub_ebFhaW_11DoqG">
-						<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="second_sub">
+						<subparagraph leos:origin="ec" refersTo="~INP" xml:id="second_sub">
 							<content leos:origin="ec" xml:id="second_sub_oNWhzj">
 								<p leos:origin="ec" xml:id="second_subiMglHR">sub to split lists</p>
 							</content>
@@ -160,7 +160,7 @@
 						<point leos:origin="ec" xml:id="second_sub_ebFhaW_SoxNh2">
 							<num leos:origin="ec" xml:id="second_sub_ebFhaW_bkypwY">(b)</num>
 							<list leos:origin="ec" xml:id="second_sub_List2">
-								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="second_sub_ebFhaW_PyPpzx">
+								<subparagraph leos:origin="ec" refersTo="~INP" xml:id="second_sub_ebFhaW_PyPpzx">
 									<content leos:origin="ec" xml:id="second_sub_ebFhaW_XouBdl">
 										<p leos:origin="ec" xml:id="second_sub_ebFhaW_rjaPnu">This is point (b)</p>
 									</content>
@@ -173,7 +173,7 @@
 								</point>
 							</list>
 							<list leos:origin="cn" xml:id="s_lis_cYOs4T">
-								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="second_sub_ebFhaW_4pEtYJ">
+								<subparagraph leos:origin="ec" refersTo="~INP" xml:id="second_sub_ebFhaW_4pEtYJ">
 									<content leos:origin="ec" xml:id="second_sub_ebFhaW_Nbt0HT">
 										<p leos:origin="ec" xml:id="second_sub_ebFhaW_v4RAaY">aliena splitting 2 lists</p>
 									</content>

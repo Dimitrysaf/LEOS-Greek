@@ -13,7 +13,7 @@
                     <point xml:id="akn_EZas6o">
                         <num xml:id="akn_cWfvQa">(a)</num>
                         
-                        <list leos:origin="cn" xml:id="lis_DC8vLq"><subparagraph refersTo="~_INP" xml:id="akn_alinea_gNRfcY">
+                        <list leos:origin="cn" xml:id="lis_DC8vLq"><subparagraph refersTo="~INP" xml:id="akn_alinea_gNRfcY">
                             <content xml:id="akn_hv7ptL">
                                 <p xml:id="akn_CxpeEp">Crossheading...</p>
                             </content>
@@ -33,7 +33,7 @@
                             <point xml:id="akn_FlZMbb">
                                 <num xml:id="akn_e425K4">(iii)</num>
                                 
-                                <list leos:origin="cn" xml:id="lis_d6McQH"><subparagraph refersTo="~_INP" xml:id="akn_alinea_clAXNs">
+                                <list leos:origin="cn" xml:id="lis_d6McQH"><subparagraph refersTo="~INP" xml:id="akn_alinea_clAXNs">
                                     <content xml:id="akn_RwAxg5">
                                         <p xml:id="akn_D0LNAr">gqdgvsdf</p>
                                     </content>
@@ -78,7 +78,7 @@
             <level leos:depth="1" xml:id="body_level_2">
                 <num xml:id="body_level_2_num">2.</num>
                 
-                <list leos:origin="cn" xml:id="lis_s5JJGx"><subparagraph refersTo="~_INP" xml:id="akn_subparagraph_SzvtsL">
+                <list leos:origin="cn" xml:id="lis_s5JJGx"><subparagraph refersTo="~INP" xml:id="akn_subparagraph_SzvtsL">
                     <content xml:id="body_level_2_content">
                         <p xml:id="body_level_2_content_p">Text...</p>
                     </content>

@@ -65,7 +65,7 @@
             <level leos:depth="1" leos:editable="true" leos:origin="cn" xml:id="_akn_level_LAjir8">
                 <num leos:origin="cn" xml:id="_akn_kEHMdY">1.</num>
                 <list leos:origin="cn" xml:id="_lis_NiLVdY">
-                    <subparagraph leos:editable="true" leos:origin="cn" refersTo="~_INP" xml:id="_akn_subparagraph_rQ2w6q">
+                    <subparagraph leos:editable="true" leos:origin="cn" refersTo="~INP" xml:id="_akn_subparagraph_rQ2w6q">
                         <content xml:id="_akn_ewdmkZ">
                             <p xml:id="_akn_XYACJH">Text of Level 1</p>
                         </content>

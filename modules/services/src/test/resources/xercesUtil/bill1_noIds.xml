@@ -245,7 +245,7 @@
                     <heading>Scope</heading>
                     <paragraph>
                         
-                        <list><subparagraph refersTo="~_INP">
+                        <list><subparagraph refersTo="~INP">
                             <content>
                                 <p>This Regulation lays down uniform rules
                                     concerning general prudential requirements that institutions supervised under
@@ -339,7 +339,7 @@
                         <paragraph>
                             <num>1.</num>
                             
-                            <list><subparagraph refersTo="~_INP">
+                            <list><subparagraph refersTo="~INP">
                                 <content>
                                     <p>For the purposes of this Regulation, the
                                         following definitions shall apply:
@@ -359,7 +359,7 @@
                                 <point>
                                     <num>(b)</num>
                                     
-                                    <list><subparagraph refersTo="~_INP">
+                                    <list><subparagraph refersTo="~INP">
                                         <content>
                                             <p>'investment firm' means a
                                                 person as defined in point (1) of Article 4(1) of Directive 2004/39/EC,
@@ -537,7 +537,7 @@
                                 <point>
                                     <num>(m)</num>
                                     
-                                    <list><subparagraph refersTo="~_INP">
+                                    <list><subparagraph refersTo="~INP">
                                         <content>
                                             <p>'originator' means an
                                                 entity which:
@@ -579,7 +579,7 @@
                                 <point>
                                     <num>(o)</num>
                                     
-                                    <list><subparagraph refersTo="~_INP">
+                                    <list><subparagraph refersTo="~INP">
                                         <content>
                                             <p>'parent undertaking'
                                                 means:
@@ -612,7 +612,7 @@
                                 <point>
                                     <num>(p)</num>
                                     
-                                    <list><subparagraph refersTo="~_INP">
+                                    <list><subparagraph refersTo="~INP">
                                         <content>
                                             <p>'subsidiary' means:</p>
                                         </content>
@@ -636,7 +636,7 @@
                                                 </p>
                                             </content>
                                         </point>
-                                    <subparagraph refersTo="~_WRP">
+                                    <subparagraph refersTo="~WRP">
                                         <content>
                                             <p>Subsidiaries of subsidiaries shall
                                                 also be considered to be subsidiaries of the undertaking that is their

@@ -7,7 +7,7 @@
                 <paragraph leos:origin="ec" xml:id="_art_1__para_1">
                     <num leos:origin="ec" xml:id="_art_1__para_1__num">1.</num>
                     <list leos:origin="ec" xml:id="_art_1_VqBxls">
-                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_0IxItO">
+                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="_art_1_0IxItO">
                             <content leos:origin="ec" xml:id="_art_1__para_1__content">
                                 <p leos:origin="ec" xml:id="_art_1__para_1__content__p">Article 1</p>
                             </content>

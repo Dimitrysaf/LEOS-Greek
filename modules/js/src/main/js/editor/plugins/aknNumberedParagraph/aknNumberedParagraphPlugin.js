@@ -59,7 +59,7 @@ define(function aknNumberedParagraphPluginModule(require) {
     var DATA_AKN_ATTR_SOFTACTION = "data-akn-attr-softaction";
     var DATA_AKN_ATTR_SOFTTRANSFROM = "data-akn-attr-softtrans_from";
     var DATA_REFERS_TO = "refersto";
-    var INP = "~_INP";
+    var INP = "~INP";
 
     var pluginDefinition = {
         icons: pluginName.toLowerCase(),

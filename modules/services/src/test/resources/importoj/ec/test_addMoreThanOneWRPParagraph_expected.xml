@@ -45,9 +45,9 @@
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language"
                               showAs="en" xml:id="language"/>
                 <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP"
-                            showAs="introductory part" xml:id="_INP"/>
+                            showAs="introductory part" xml:id="INP"/>
                 <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP"
-                            showAs="closing part" xml:id="_WRP"/>
+                            showAs="closing part" xml:id="WRP"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -176,7 +176,7 @@
                 <paragraph xml:id="dummy6">
                     <num xml:id="dummy1">1.</num>
                     <list xml:id="dummy7">
-                        <subparagraph refersTo="~_INP" xml:id="dummy2">
+                        <subparagraph refersTo="~INP" xml:id="dummy2">
                             <content xml:id="dummy8">
                                 <p xml:id="dummy3">The Commission shall be empowered to adopt a delegated act in
                                     accordance with
@@ -203,7 +203,7 @@
                                 </p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="dummy11">
+                        <subparagraph refersTo="~WRP" xml:id="dummy11">
                             <content xml:id="dummy12">
                                 <p xml:id="dummy13">The provisions of the code of conduct shall not in any way contradict the
                                     relevant provisions of this Regulation or the Fund-specific rules.
@@ -216,7 +216,7 @@
                 <paragraph xml:id="dummy14">
                     <num xml:id="dummy15">2.</num>
                     <list xml:id="dummy16">
-                        <subparagraph refersTo="~_INP" xml:id="dummy17">
+                        <subparagraph refersTo="~INP" xml:id="dummy17">
                             <content xml:id="dummy18">
                                 <p xml:id="dummy19">The Commission shall be empowered to adopt a delegated act in
                                     accordance with
@@ -243,7 +243,7 @@
                                 </p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="dummy24">
+                        <subparagraph refersTo="~WRP" xml:id="dummy24">
                             <content xml:id="dummy25">
                                 <p xml:id="dummy26">The provisions of the code of conduct shall not in any way contradict the
                                     relevant provisions of this Regulation or the Fund-specific rules.

@@ -99,7 +99,7 @@
                     </content>
                 </subparagraph>
                 
-                <list xml:id="akn_TkF8FL"><subparagraph refersTo="~_INP" xml:id="akn_F7Y8oo">
+                <list xml:id="akn_TkF8FL"><subparagraph refersTo="~INP" xml:id="akn_F7Y8oo">
                     <content xml:id="akn_UCkOtZ">
                         <p xml:id="akn_q9SPfF">Level 2 second sub
                         </p>
@@ -208,7 +208,7 @@
                         </content>
                     </subparagraph>
                     
-                    <list xml:id="akn_PaYaaw"><subparagraph refersTo="~_INP" xml:id="akn_YhypGg">
+                    <list xml:id="akn_PaYaaw"><subparagraph refersTo="~INP" xml:id="akn_YhypGg">
                         <content xml:id="akn_uAEvEh">
                             <p xml:id="akn_P23JFw">Paragraph1, sub2 content
                             </p>

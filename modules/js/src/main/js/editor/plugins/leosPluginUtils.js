@@ -64,8 +64,8 @@ define(function leosPluginUtilsModule(require) {
     var EC = "ec";
     var CN = "cn";
     var REFERS_TO = "refersto";
-    var INP = "~_INP";
-    var WRP = "~_WRP";
+    var INP = "~INP";
+    var WRP = "~WRP";
 
     var NUMBERED_ITEM = "point, indent, paragraph";
     var UNUMBERED_ITEM = "alinea, subparagraph";

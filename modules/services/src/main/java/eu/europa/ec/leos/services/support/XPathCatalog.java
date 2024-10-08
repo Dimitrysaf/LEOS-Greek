@@ -163,11 +163,11 @@ public class XPathCatalog {
     }
 
     public String getXPathSubparagraphWithReferToINPAttribute() {
-        return "/akn:akomaNtoso//akn:subparagraph[@refersTo=\"~_INP\"]";
+        return "/akn:akomaNtoso//akn:subparagraph[@refersTo=\"~INP\"]";
     }
 
     public String getXPathSubparagraphWithReferToWRPAttribute() {
-        return "/akn:akomaNtoso//akn:subparagraph[@refersTo=\"~_WRP\"]";
+        return "/akn:akomaNtoso//akn:subparagraph[@refersTo=\"~WRP\"]";
     }
 
     public String getXPathMetaReferences() {
@@ -175,11 +175,11 @@ public class XPathCatalog {
     }
 
     public String getXPathMetaReferenceForINP() {
-        return "/akn:akomaNtoso//akn:meta/akn:references/akn:TLCConcept[@xml:id=\"_INP\"]";
+        return "/akn:akomaNtoso//akn:meta/akn:references/akn:TLCConcept[@xml:id=\"INP\"]";
     }
 
     public String getXPathMetaReferenceForWRP() {
-        return "/akn:akomaNtoso//akn:meta/akn:references/akn:TLCConcept[@xml:id=\"_WRP\"]";
+        return "/akn:akomaNtoso//akn:meta/akn:references/akn:TLCConcept[@xml:id=\"WRP\"]";
     }
 
     public static String removeNamespaceFromXml(String xml) {

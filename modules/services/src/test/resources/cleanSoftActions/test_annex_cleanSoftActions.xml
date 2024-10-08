@@ -77,7 +77,7 @@
                 <level leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="true" leos:softdate="2020-10-13T15:33:43.075+02:00" leos:softuser="jane" xml:id="deletedXakn_level_RseJk9">
                     <num leos:origin="ec" xml:id="deletedXakn_qMcLg8">1.</num>
                     <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.075+02:00" leos:softuser="jane" xml:id="deletedXakn_zoG0cE">
-                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.073+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deletedXakn_PDmVKD">
+                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.073+02:00" leos:softuser="jane" refersTo="~INP" xml:id="deletedXakn_PDmVKD">
                             <content leos:origin="ec" xml:id="deletedXakn_gfWyXn">
                                 <p leos:origin="ec" xml:id="deletedXakn_o9DJMl">Level 1</p>
                             </content>
@@ -85,7 +85,7 @@
                         <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.075+02:00" leos:softuser="jane" xml:id="deletedXakn_zAyOSH">
                             <num leos:origin="ec" xml:id="deletedXakn_02JeQN">(a)</num>
                             <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.075+02:00" leos:softuser="jane" xml:id="deletedXakn_3xnBky">
-                                <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.073+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deletedXakn_4GXM5w">
+                                <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.073+02:00" leos:softuser="jane" refersTo="~INP" xml:id="deletedXakn_4GXM5w">
                                     <content leos:origin="ec" xml:id="deletedXakn_JpNEp1">
                                         <p leos:origin="ec" xml:id="deletedXakn_C6Qjfi">Point a</p>
                                     </content>
@@ -99,7 +99,7 @@
                                 <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.074+02:00" leos:softuser="jane" xml:id="deletedXakn_0qjKGP">
                                     <num leos:origin="ec" xml:id="deletedXakn_VkTDEm">(ii)</num>
                                     <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.074+02:00" leos:softuser="jane" xml:id="deletedXakn_Wb9dpb">
-                                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.073+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deletedXakn_Fhzyp0">
+                                        <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.073+02:00" leos:softuser="jane" refersTo="~INP" xml:id="deletedXakn_Fhzyp0">
                                             <content leos:origin="ec" xml:id="deletedXakn_AFwahh">
                                                 <p leos:origin="ec" xml:id="deletedXakn_ExUY0O">Point ii</p>
                                             </content>
@@ -107,7 +107,7 @@
                                         <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.074+02:00" leos:softuser="jane" xml:id="deletedXakn_3nmXif">
                                             <num leos:origin="ec" xml:id="deletedXakn_QoB0E7">(1)</num>
                                             <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.074+02:00" leos:softuser="jane" xml:id="deletedXakn_IUjI2Y">
-                                                <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.073+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="deletedXakn_gSKo6t">
+                                                <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2020-10-13T15:33:43.073+02:00" leos:softuser="jane" refersTo="~INP" xml:id="deletedXakn_gSKo6t">
                                                     <content leos:origin="ec" xml:id="deletedXakn_6OIzSG">
                                                         <p leos:origin="ec" xml:id="deletedXakn_YDL8ov">Point 1</p>
                                                     </content>
@@ -149,7 +149,7 @@
                 <level leos:origin="ec" xml:id="akn_level_biIuvM">
                     <num leos:origin="ec" xml:id="akn_hv7AMt">1.1.1.</num>
                     <list leos:origin="ec" xml:id="akn_OKrsPP">
-                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_81XGRl">
+                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_81XGRl">
                             <content leos:origin="ec" xml:id="akn_ULX2GT">
                                 <p leos:origin="ec" xml:id="akn_Col53V">Level 1.1.1</p>
                             </content>
@@ -157,7 +157,7 @@
                         <point leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2020-10-13T15:20:05.636+02:00" leos:softmove_from="movedXakn_2wkgF4" leos:softmove_label="MOVED from title I, point 1.1.1, point (b)" leos:softuser="jane" xml:id="akn_2wkgF4">
                             <num leos:origin="cn" xml:id="akn_LN7wn2">(-a)</num>
                             <list leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false" leos:softdate="2020-10-13T15:20:05.621+02:00" leos:softmove_from="movedXakn_NVXoge" leos:softmove_label="MOVED from title I, point 1.1.1, point (b)" leos:softuser="jane" xml:id="akn_NVXoge">
-                                <subparagraph leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false" leos:softdate="2020-10-13T15:20:05.591+02:00" leos:softmove_from="movedXakn_l4nug5" leos:softmove_label="MOVED from title I, point 1.1.1, point (b), first sub-point" leos:softuser="jane" refersTo="~_INP" xml:id="akn_l4nug5">
+                                <subparagraph leos:origin="ec" leos:softaction="move_from" leos:softactionroot="false" leos:softdate="2020-10-13T15:20:05.591+02:00" leos:softmove_from="movedXakn_l4nug5" leos:softmove_label="MOVED from title I, point 1.1.1, point (b), first sub-point" leos:softuser="jane" refersTo="~INP" xml:id="akn_l4nug5">
                                     <content leos:origin="ec" xml:id="akn_KL87za">
                                         <p leos:origin="ec" xml:id="akn_m5tEWi">Point b</p>
                                     </content>
@@ -179,7 +179,7 @@
                         <point leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2020-10-13T15:20:05.710+02:00" leos:softmove_label="MOVED to title I, point 1.1.1, point (-a)" leos:softmove_to="akn_2wkgF4" leos:softuser="jane" xml:id="movedXakn_2wkgF4">
                             <num leos:origin="ec" xml:id="movedXakn_LN7wn2">(b)</num>
                             <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="false" leos:softdate="2020-10-13T15:20:05.695+02:00" leos:softmove_label="MOVED to title I, point 1.1.1, point (-a)" leos:softmove_to="akn_NVXoge" leos:softuser="jane" xml:id="movedXakn_NVXoge">
-                                <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="false" leos:softdate="2020-10-13T15:20:05.665+02:00" leos:softmove_label="MOVED to title I, point 1.1.1, point (-a), first sub-point" leos:softmove_to="akn_l4nug5" leos:softuser="jane" refersTo="~_INP" xml:id="movedXakn_l4nug5">
+                                <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="false" leos:softdate="2020-10-13T15:20:05.665+02:00" leos:softmove_label="MOVED to title I, point 1.1.1, point (-a), first sub-point" leos:softmove_to="akn_l4nug5" leos:softuser="jane" refersTo="~INP" xml:id="movedXakn_l4nug5">
                                     <content leos:origin="ec" xml:id="movedXakn_KL87za">
                                         <p leos:origin="ec" xml:id="movedXakn_m5tEWi">Point b</p>
                                     </content>

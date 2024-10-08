@@ -100,7 +100,7 @@
                 </subparagraph>
                 
                 <list xml:id="akn_TkF8FL">
-                    <subparagraph refersTo="~_INP" xml:id="akn_F7Y8oo">
+                    <subparagraph refersTo="~INP" xml:id="akn_F7Y8oo">
                         <content xml:id="akn_UCkOtZ">
                             <p xml:id="akn_q9SPfF">Level 2 second sub
                             </p>
@@ -123,7 +123,7 @@
                     <point xml:id="akn_UHfYUM">
                         <num xml:id="akn_DmW8sW">(c)</num>
                         
-                        <list xml:id="akn_Wnr1Vo"><subparagraph refersTo="~_INP" xml:id="akn_qe9dVP">
+                        <list xml:id="akn_Wnr1Vo"><subparagraph refersTo="~INP" xml:id="akn_qe9dVP">
                             <content xml:id="akn_aPdJei">
                                 <p xml:id="akn_DzUrQq">Point (c)
                                 </p>
@@ -138,7 +138,7 @@
                             <point xml:id="akn_oKzLzv">
                                 <num xml:id="akn_dROzvZ">(ii)</num>
                                 
-                                <list xml:id="akn_9fC0PY"><subparagraph refersTo="~_INP" xml:id="akn_wDyHSL">
+                                <list xml:id="akn_9fC0PY"><subparagraph refersTo="~INP" xml:id="akn_wDyHSL">
                                     <content xml:id="akn_Zg9JHF">
                                         <p xml:id="akn_9ICU81">Point (ii)
                                         </p>
@@ -154,7 +154,7 @@
                                     <point xml:id="akn_Ow9nYB">
                                         <num xml:id="akn_FvVOCJ">(2)</num>
                                         
-                                        <list xml:id="akn_RngOKV"><subparagraph refersTo="~_INP" xml:id="akn_GHR4zl">
+                                        <list xml:id="akn_RngOKV"><subparagraph refersTo="~INP" xml:id="akn_GHR4zl">
                                             <content xml:id="akn_q3F3M1">
                                                 <p xml:id="akn_ikMSPS">Point (2)
                                                 </p>
@@ -209,7 +209,7 @@
                         </content>
                     </subparagraph>
                     
-                    <list xml:id="akn_PaYaaw"><subparagraph refersTo="~_INP" xml:id="akn_YhypGg">
+                    <list xml:id="akn_PaYaaw"><subparagraph refersTo="~INP" xml:id="akn_YhypGg">
                         <content xml:id="akn_uAEvEh">
                             <p xml:id="akn_P23JFw">Paragraph1, sub2 content
                             </p>
@@ -218,7 +218,7 @@
                         <point xml:id="akn_vMNCUo">
                             <num xml:id="akn_mK95SV">(a)</num>
                             
-                            <list xml:id="akn_r0DG1y"><subparagraph refersTo="~_INP" xml:id="akn_yH0GoP">
+                            <list xml:id="akn_r0DG1y"><subparagraph refersTo="~INP" xml:id="akn_yH0GoP">
                                 <content xml:id="akn_utKeSZ">
                                     <p xml:id="akn_ckls4Y">Point (a) content
                                     </p>

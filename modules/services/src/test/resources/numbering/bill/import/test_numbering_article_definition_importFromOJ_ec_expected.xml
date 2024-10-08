@@ -4,7 +4,7 @@
     <paragraph xml:id="par1">
         <num>1.</num>
         <list xml:id="list_L1">
-            <subparagraph refersTo="~_INP">
+            <subparagraph refersTo="~INP">
                 <content>
                     <p>For the purposes of this Chapter, the following definitions shall apply:</p>
                 </content>
@@ -24,7 +24,7 @@
             <point xml:id="list_L1_point_3">
                 <num>(c)</num>
                 <list xml:id="list_L2">
-                    <subparagraph refersTo="~_INP">
+                    <subparagraph refersTo="~INP">
                         <content>
                             <p>point (c)</p>
                         </content>

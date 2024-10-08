@@ -23,7 +23,7 @@
                     <list leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
                           leos:softdate="2022-08-09T13:52:33.804+02:00" leos:softuser=" jane(DIGIT)" xml:id="deletedXmovedXlist">
                         <subparagraph leos:deletable="false" leos:editable="false" leos:origin="ec" leos:softaction="del" leos:softactionroot="false"
-                                      leos:softdate="2022-08-09T13:52:33.804+02:00" leos:softuser=" jane(DIGIT)" refersTo="~_INP"
+                                      leos:softdate="2022-08-09T13:52:33.804+02:00" leos:softuser=" jane(DIGIT)" refersTo="~INP"
                                       xml:id="deletedXmovedXpar3_sub">
                             <content leos:origin="ec" xml:id="deletedXmovedXart3_ce2U2a">
                                 <p leos:origin="ec" xml:id="deletedXmovedXart3_uJJljZ">paragraph 3</p>
@@ -48,7 +48,7 @@
                 <paragraph leos:origin="ec" xml:id="par4">
                     <num leos:origin="ec" xml:id="art3_OnpQgl">4.</num>
                     <list leos:origin="ec" xml:id="art3_EmN1LF">
-                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art3_k9jna3">
+                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="art3_k9jna3">
                             <content leos:origin="ec" xml:id="art3_Tndj0O">
                                 <p leos:origin="ec" xml:id="art3_8q0PFw">paragraph 4</p>
                             </content>

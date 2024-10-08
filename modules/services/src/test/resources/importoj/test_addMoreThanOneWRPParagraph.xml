@@ -1805,7 +1805,7 @@
                     <paragraph>
                         <num>1.</num>
                         <list>
-                            <subparagraph refersTo="~_INP">
+                            <subparagraph refersTo="~INP">
                                 <content>
                                     <p>The Commission shall be empowered to adopt a delegated act in accordance with
                                         Article 149 to provide for a European code of conduct on partnership (the 'code
@@ -1830,7 +1830,7 @@
                                     </p>
                                 </content>
                             </point>
-                            <subparagraph refersTo="~_WRP">
+                            <subparagraph refersTo="~WRP">
                                 <content>
                                     <p>The provisions of the code of conduct shall not in any way contradict the
                                         relevant provisions of this Regulation or the Fund-specific rules.
@@ -1843,7 +1843,7 @@
                     <paragraph>
                         <num>2.</num>
                         <list>
-                            <subparagraph refersTo="~_INP">
+                            <subparagraph refersTo="~INP">
                                 <content>
                                     <p>The Commission shall be empowered to adopt a delegated act in accordance with
                                         Article 149 to provide for a European code of conduct on partnership (the 'code
@@ -1868,7 +1868,7 @@
                                     </p>
                                 </content>
                             </point>
-                            <subparagraph refersTo="~_WRP">
+                            <subparagraph refersTo="~WRP">
                                 <content>
                                     <p>The provisions of the code of conduct shall not in any way contradict the
                                         relevant provisions of this Regulation or the Fund-specific rules.

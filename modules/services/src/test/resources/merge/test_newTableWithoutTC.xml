@@ -43,8 +43,8 @@
                 <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
                 <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions" xml:id="ART_DEF"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="_WRP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="INP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="WRP"/>
             </references>
             <proprietary source="~COM">
                 <leos:templateVersion>4.1.0</leos:templateVersion>
@@ -156,7 +156,7 @@
                     <paragraph xml:id="ecRrdg4W2JfpHu0oU">
                         <num leos:origin="ec" xml:id="ecuRJbp4Vazt9TdBj">1.</num>
                         <list xml:id="ecvGG5ix0jgNi7htv">
-                            <subparagraph refersTo="~_INP" xml:id="eckClGxWsrIHqTiTD">
+                            <subparagraph refersTo="~INP" xml:id="eckClGxWsrIHqTiTD">
                                 <content xml:id="ec1N4Ipq0SamPmQZi">
                                     <p xml:id="ec1xaMuTvJOpWOKG4">Text...</p>
                                 </content>
@@ -232,7 +232,7 @@
                     <paragraph xml:id="ecf9svD7kRPkwD9VR">
                         <num xml:id="ec0EdYr69CEasBoAn">1.</num>
                         <list xml:id="ec45YkylV7GRTjtUP">
-                            <subparagraph refersTo="~_INP" xml:id="ec1Z44Du0u0oIQL92">
+                            <subparagraph refersTo="~INP" xml:id="ec1Z44Du0u0oIQL92">
                                 <content xml:id="eckLimzol0AvAFs6r">
                                     <p xml:id="ecnBpZI09aVjnQWqI">Competent authorities may waive the application of Article 6(1) to any subsidiary of an institution, where both the subsidiary and the institution are subject to authorisation and supervision by the Member State concerned, and the subsidiary is included in the supervision on a consolidated basis of the institution which is the parent undertaking, and all of the following conditions are satisfied, in order to ensure that own funds are distributed adequately between the parent undertaking and the subsidiary:</p>
                                 </content>
@@ -336,7 +336,7 @@
                     <paragraph xml:id="ecG0z8WYeiymACQYd">
                         <num xml:id="ecxHoSQzF03hZNm0K">4.</num>
                         <list xml:id="ecarWLVq1dG6Z2mv0">
-                            <subparagraph refersTo="~_INP" xml:id="ecpjQPDPJbj0ZoHEE">
+                            <subparagraph refersTo="~INP" xml:id="ecpjQPDPJbj0ZoHEE">
                                 <content xml:id="ecrzvHt2PDcyldnS7">
                                     <p xml:id="ecUvWrqBkYr3jKbt0">Competent authorities may waive the application of Article 6(1) to a parent institution in a Member State where that institution is subject to authorisation and supervision by the Member State concerned, and it is included in the supervision on a consolidated basis, and all the following conditions are satisfied, in order to ensure that own funds are distributed adequately among the parent undertaking and the subsidiaries:</p>
                                 </content>
@@ -347,7 +347,7 @@
                                     <p xml:id="ecTudameBpiFP7v6g">there is no current or foreseen material practical or legal impediment to the prompt transfer of own funds or repayment of liabilities to the parent institution in a Member State;</p>
                                 </content>
                             </point>
-                            <subparagraph refersTo="~_WRP" xml:id="ecgdxToKMnhcu0G7h">
+                            <subparagraph refersTo="~WRP" xml:id="ecgdxToKMnhcu0G7h">
                                 <content xml:id="ec8Y0YyvLAcFYJ4tj">
                                     <p xml:id="ecpxzVwA7kPlBtG6T">The competent authority which makes use of this paragraph shall inform the competent authorities of all other Member States.</p>
                                 </content>
@@ -361,7 +361,7 @@
                     <paragraph xml:id="ecUpyGAzgtDityz98">
                         <num xml:id="eczq7g0wC4W442McA">1.</num>
                         <list xml:id="ecS4RAbiAdQtsxSt3">
-                            <subparagraph refersTo="~_INP" xml:id="ectiKgcDJqv0cCMuz">
+                            <subparagraph refersTo="~INP" xml:id="ectiKgcDJqv0cCMuz">
                                 <content xml:id="ecNiKOfvjQFdoolQ7">
                                     <p xml:id="ec0ILnfJMOzm600BO">The competent authorities may waive in full or in part the application of Part Six to an institution and to all or some of its subsidiaries in the Union and supervise them as a single liquidity sub-group so long as they fulfil all of the following conditions:</p>
                                 </content>
@@ -390,7 +390,7 @@
                                     <p xml:id="ec4QueIZyYfHzcIhT">there is no current or foreseen material practical or legal impediment to the fulfilment of the contracts referred to in (c).</p>
                                 </content>
                             </point>
-                            <subparagraph refersTo="~_WRP" xml:id="ecJ6vimdWuTF5vC22">
+                            <subparagraph refersTo="~WRP" xml:id="ecJ6vimdWuTF5vC22">
                                 <content xml:id="ecv7IzpPbKsVFF5yR">
                                     <p xml:id="ecAaE0Oe9mW6YPmbP">By 1 January 2014 the Commission shall report to the European Parliament and the Council on any legal obstacles which are capable of rendering impossible the application of point (c) of the first subparagraph and is invited to make a legislative proposal, if appropriate, by 31 December 2015 on which of those obstacles should be removed.</p>
                                 </content>
@@ -406,7 +406,7 @@
                     <paragraph xml:id="ecG7m0h0NH814J4Bb">
                         <num xml:id="ecRs6Icxva0BbveKo">3.</num>
                         <list xml:id="ecJtVjhRBGGmMwgFu">
-                            <subparagraph refersTo="~_INP" xml:id="ec9gmRs77KBWH5kts">
+                            <subparagraph refersTo="~INP" xml:id="ec9gmRs77KBWH5kts">
                                 <content xml:id="ecMQKJgUadLrTRFP7">
                                     <p xml:id="ecDfu0SMEPvnLjHJa">Where institutions of the single liquidity sub-group are authorised in several Member States, paragraph 1 shall only be applied after following the procedure laid down in Article 21 and only to the institutions whose competent authorities agree about the following elements:</p>
                                 </content>

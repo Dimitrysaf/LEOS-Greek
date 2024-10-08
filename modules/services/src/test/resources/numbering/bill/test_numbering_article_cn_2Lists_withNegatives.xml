@@ -7,7 +7,7 @@
 				<paragraph leos:origin="ec" xml:id="akn_article_ebFhaW_S1g3RO">
 					<num leos:origin="ec" xml:id="akn_article_ebFhaW_SkSGPr">1.</num>
 					<list leos:origin="ec" xml:id="akn_article_ebFhaW_11DoqG">
-						<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_8vWzbq">
+						<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_article_ebFhaW_8vWzbq">
 							<content leos:origin="ec" xml:id="akn_article_ebFhaW_oNWhzj">
 								<p leos:origin="ec" xml:id="akn_article_ebFhaW_iMglHR">Test of indent-outdent of points-subpoints</p>
 							</content>
@@ -21,7 +21,7 @@
 						<point leos:origin="ec" xml:id="akn_article_ebFhaW_SoxNh2">
 							<num leos:origin="ec" xml:id="akn_article_ebFhaW_bkypwY">(b)</num>
 							<list leos:origin="ec" xml:id="akn_article_ebFhaW_kzC5GS">
-								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_PyPpzx">
+								<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_article_ebFhaW_PyPpzx">
 									<content leos:origin="ec" xml:id="akn_article_ebFhaW_XouBdl">
 										<p leos:origin="ec" xml:id="akn_article_ebFhaW_rjaPnu">This is a point,</p>
 									</content>
@@ -35,7 +35,7 @@
 								<point leos:origin="ec" xml:id="akn_article_ebFhaW_j9tG0S">
 									<num leos:origin="ec" xml:id="akn_article_ebFhaW_mTzYq4">(ii)</num>
 									<list leos:origin="ec" xml:id="akn_article_ebFhaW_HtO6lo">
-										<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_rK96jy">
+										<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_article_ebFhaW_rK96jy">
 											<content leos:origin="ec" xml:id="akn_article_ebFhaW_YmdMUd">
 												<p leos:origin="ec" xml:id="akn_article_ebFhaW_Umdr5x">the placing of cultural goods under one of the following categories of special procedures referred to in Article 210 of Regulation (EU) No 952/2013:</p>
 											</content>
@@ -60,7 +60,7 @@
 										</point>
 									</list>
 									<list leos:origin="ec" xml:id="_lis_URgp1r">
-										<subparagraph leos:indent-origin-indent-level="3" leos:indent-origin-num="(2)" leos:indent-origin-num-id="akn_article_XRXtjV" leos:indent-origin-num-origin="ec" leos:indent-origin-type="FIRST_SUBPOINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-12-02T16:00:28.155+01:00" leos:softtrans_from="akn_article_ebFhaW_9wBqsn" leos:softuser="nystepa" refersTo="~_INP" xml:id="akn_article_ebFhaW_a7h6Sd">
+										<subparagraph leos:indent-origin-indent-level="3" leos:indent-origin-num="(2)" leos:indent-origin-num-id="akn_article_XRXtjV" leos:indent-origin-num-origin="ec" leos:indent-origin-type="FIRST_SUBPOINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-12-02T16:00:28.155+01:00" leos:softtrans_from="akn_article_ebFhaW_9wBqsn" leos:softuser="nystepa" refersTo="~INP" xml:id="akn_article_ebFhaW_a7h6Sd">
 											<content leos:origin="ec" xml:id="akn_article_xRZkW7">
 												<p leos:origin="ec" xml:id="akn_article_kSgpRW">specific use, comprising temporary admission and end-use;</p>
 											</content>
@@ -68,7 +68,7 @@
 										<point leos:indent-origin-indent-level="4" leos:indent-origin-type="OTHER_SUBPOINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-12-02T16:00:28.155+01:00" leos:softuser="nystepa" xml:id="transformedXakn_article_ebFhaW_EXRv7x">
 											<num leos:origin="cn" xml:id="_num_sChS4s">#</num>
 											<list leos:origin="cn" xml:id="_lis_H4f6O6">
-												<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_article_ebFhaW_EXRv7x">
+												<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_article_ebFhaW_EXRv7x">
 													<content leos:origin="ec" xml:id="akn_article_ebFhaW_XCnEA2">
 														<p leos:origin="ec" xml:id="akn_article_ebFhaW_hC0jj4">Second subpoint,</p>
 													</content>
@@ -81,7 +81,7 @@
 												</indent>
 											</list>
 											<list leos:origin="ec" xml:id="_lis_4kVpjC">
-												<subparagraph leos:indent-origin-indent-level="4" leos:indent-origin-num="-" leos:indent-origin-num-id="akn_article_ebFhaZ_XRXtjV" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-12-02T16:00:28.156+01:00" leos:softuser="nystepa" refersTo="~_INP" xml:id="akn_article_ebFhaW_aCPDNb">
+												<subparagraph leos:indent-origin-indent-level="4" leos:indent-origin-num="-" leos:indent-origin-num-id="akn_article_ebFhaZ_XRXtjV" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softaction="trans" leos:softactionroot="true" leos:softdate="2021-12-02T16:00:28.156+01:00" leos:softuser="nystepa" refersTo="~INP" xml:id="akn_article_ebFhaW_aCPDNb">
 													<content leos:origin="ec" xml:id="akn_article_ebFhaZ_xRZkW7">
 														<p leos:origin="ec" xml:id="akn_article_ebFhaZ_kSgpRW">First indent</p>
 													</content>

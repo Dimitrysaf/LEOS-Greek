@@ -36,7 +36,7 @@
                 <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
                 <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="INP"/>
             </references>
             <proprietary source="~leos">
                 <leos:templateVersion>3.0.0</leos:templateVersion>
@@ -483,7 +483,7 @@
                     <paragraph leos:origin="ec" xml:id="akn_art_phTLdP_GDNZEE">
                         <num leos:origin="ec" xml:id="akn_art_phTLdP_EPO84e">1.</num>
                         <list leos:origin="ec" xml:id="akn_art_phTLdP_ieIr1P">
-                            <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_phTLdP_C9WFYo">
+                            <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_phTLdP_C9WFYo">
                                 <content leos:origin="ec" xml:id="akn_art_phTLdP_E5fjAu">
                                     <p leos:origin="ec" xml:id="akn_art_phTLdP_5TvVpF">Processing of personal data may take place in EU CSW-CERTEX only for the following purposes:</p>
                                 </content>
@@ -531,7 +531,7 @@
                             <ins leos:action-number="insert" leos:tc-original-number="2." leos:title="DAS Satyabrata : 2024-03-08T13:55:57+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_cjAc8E">3.</ins>
                         </num>
                         <list leos:origin="ec" xml:id="akn_art_phTLdP_7DFoOJ">
-                            <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_phTLdP_FE6qXG">
+                            <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_phTLdP_FE6qXG">
                                 <content leos:origin="ec" xml:id="akn_art_phTLdP_obG97T">
                                     <p leos:origin="ec" xml:id="akn_art_phTLdP_IWYLwk">EU CSW-CERTEX may process personal data only on the following categories of data subjects:</p>
                                 </content>
@@ -573,7 +573,7 @@
                             <ins leos:action-number="insert" leos:tc-original-number="3." leos:title="DAS Satyabrata : 2024-03-08T13:55:57+00:00" leos:uid="dasatya" xml:id="_akn_art_phTLdP_m9Sdej">4.</ins>
                         </num>
                         <list leos:origin="ec" xml:id="akn_art_phTLdP_u49VGy">
-                            <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_phTLdP_Hyqr4c">
+                            <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_phTLdP_Hyqr4c">
                                 <content leos:origin="ec" xml:id="akn_art_phTLdP_ARYfGY">
                                     <p leos:origin="ec" xml:id="akn_art_phTLdP_g8wNtg">EU CSW-CERTEX may process only the following categories of personal data:</p>
                                 </content>
@@ -648,7 +648,7 @@
                     <paragraph leos:origin="ec" xml:id="akn_art_jSKkaB_7DGsxr">
                         <num leos:origin="ec" xml:id="akn_art_jSKkaB_aZUNmZ">3.</num>
                         <list leos:origin="ec" xml:id="akn_art_jSKkaB_6EEUWu">
-                            <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_jSKkaB_1dypT1">
+                            <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_jSKkaB_1dypT1">
                                 <content leos:origin="ec" xml:id="akn_art_jSKkaB_AHS0L6">
                                     <p leos:origin="ec" xml:id="akn_art_jSKkaB_9MzApm">The joint controllers shall ensure that they:</p>
                                 </content>
@@ -757,7 +757,7 @@
                             <ins leos:action-number="insert" leos:tc-original-number="3." leos:title="DAS Satyabrata : 2024-03-08T13:56:25+00:00" leos:uid="dasatya" xml:id="_akn_art_dMHd93_TnUNzk">2.</ins>
                         </num>
                         <list leos:origin="ec" xml:id="akn_art_dMHd93_fjD8KI">
-                            <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_dMHd93_sMzfOQ">
+                            <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_dMHd93_sMzfOQ">
                                 <content leos:origin="ec" xml:id="akn_art_dMHd93_8FM4cZ">
                                     <p leos:origin="ec" xml:id="akn_art_dMHd93_PULz4y">The national single window environments for customs shall provide in particular the following functionalities:</p>
                                 </content>
@@ -843,7 +843,7 @@
                         <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.372+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_t7zhJW">
                             <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_sd2xlH">1.</num>
                             <list leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_JOEMzG">
-                                <subparagraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="deletedXakn_art_q7XGxr_bIuYAK">
+                                <subparagraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.373+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~INP" xml:id="deletedXakn_art_q7XGxr_bIuYAK">
                                     <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_E176AP">
                                         <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_uwVnDm">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall enable information to be exchanged between the national single window environments for customs and the relevant Union non-customs systems for the following purposes:</p>
                                     </content>
@@ -877,7 +877,7 @@
                         <paragraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.374+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_7GzwUc">
                             <num leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_UAgiy6">2.</num>
                             <list leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" xml:id="deletedXakn_art_q7XGxr_PgDoT7">
-                                <subparagraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="deletedXakn_art_q7XGxr_RUwVxP">
+                                <subparagraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2024-03-08T14:55:23.375+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~INP" xml:id="deletedXakn_art_q7XGxr_RUwVxP">
                                     <content leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_jL3AuW">
                                         <p leos:origin="ec" xml:id="deletedXakn_art_q7XGxr_GAUZf1">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall provide for the following:</p>
                                     </content>
@@ -923,7 +923,7 @@
                         </heading>
                         <paragraph leos:origin="ec" leos:tc-original-number="UNNUMBERED" xml:id="akn_art_dtWbDZ_XfqDj2">
                             <list leos:origin="ec" xml:id="akn_art_dtWbDZ_pfVhrA">
-                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_dtWbDZ_YTj1W0">
+                                <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_dtWbDZ_YTj1W0">
                                     <content leos:origin="ec" xml:id="akn_art_dtWbDZ_KHYPbU">
                                         <p leos:origin="ec" xml:id="akn_art_dtWbDZ_eLCD5A">For goods subject to any of the Union non-customs formalities listed in the Annex, the national single window environments for customs shall provide the following functionalities:</p>
                                     </content>
@@ -968,7 +968,7 @@
                         <paragraph leos:mergeAction="ACCEPT_TC" leos:origin="ec" xml:id="akn_art_kCjLvC_zUa3wJ">
                             <num leos:origin="ec" xml:id="akn_art_kCjLvC_516xzg">2.</num>
                             <list leos:origin="ec" xml:id="akn_art_kCjLvC_dNIHv5">
-                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_kCjLvC_SwXBty">
+                                <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_kCjLvC_SwXBty">
                                     <content leos:origin="ec" xml:id="akn_art_kCjLvC_toeFZz">
                                         <p leos:origin="ec" xml:id="akn_art_kCjLvC_bzqs48">The Commission shall, by means of implementing acts, determine which of the Union non-customs formalities listed in the Annex fulfil the following criteria:Â </p>
                                     </content>
@@ -976,7 +976,7 @@
                                 <point leos:origin="ec" xml:id="akn_art_kCjLvC_5HYy1n">
                                     <num leos:origin="ec" xml:id="akn_art_kCjLvC_rnCADB">(a)</num>
                                     <list leos:mergeAction="ACCEPT_TC" xml:id="_akn_art_kCjLvC_fmTVS6">
-                                        <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-03-08T15:05:03.483+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~_INP" xml:id="transformedXakn_art_kCjLvC_5HYy1n">
+                                        <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-03-08T15:05:03.483+01:00" leos:softuser="DAS Satyabrata(AGRI)" refersTo="~INP" xml:id="transformedXakn_art_kCjLvC_5HYy1n">
                                             <content leos:origin="ec" xml:id="akn_art_kCjLvC_NDOT4Y">
                                                 <p leos:origin="ec" xml:id="akn_art_kCjLvC_frDQl5">there is an overlap between several data required for the application for supporting documents and the customs declaration;</p>
                                             </content>
@@ -1101,7 +1101,7 @@
                         <paragraph leos:origin="ec" xml:id="akn_art_LBFSRW_eXWyDr">
                             <num leos:origin="ec" xml:id="akn_art_LBFSRW_36NDMs">1.</num>
                             <list leos:origin="ec" xml:id="akn_art_LBFSRW_9fx8ti">
-                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_LBFSRW_a2ccWr">
+                                <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_LBFSRW_a2ccWr">
                                     <content leos:origin="ec" xml:id="akn_art_LBFSRW_kcKzuH">
                                         <p leos:origin="ec" xml:id="akn_art_LBFSRW_RRt9eD">EU CSW-CERTEX shall enable the necessary exchanges of information between national single window environments for customs and Union non-customs systems for the following purposes:</p>
                                     </content>
@@ -1151,7 +1151,7 @@
                         <heading leos:origin="ec" xml:id="akn_art_ninkXQ_xC6YJV">National coordinators</heading>
                         <paragraph leos:origin="ec" xml:id="akn_art_ninkXQ_e4cxNV">
                             <list leos:origin="ec" xml:id="akn_art_ninkXQ_hjUw2m">
-                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_ninkXQ_Gb8eF4">
+                                <subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_ninkXQ_Gb8eF4">
                                     <content leos:origin="ec" xml:id="akn_art_ninkXQ_HOV02w">
                                         <p leos:origin="ec" xml:id="akn_art_ninkXQ_OQmHlf">Each Member State shall designate a competent authority to act as a national coordinator for the European Union Single Window Environment for Customs. The national coordinator shall carry out the following tasks:</p>
                                     </content>

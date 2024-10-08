@@ -27,7 +27,7 @@
 					</content>
 				</subparagraph>
 				<list leos:origin="ec" xml:id="akn_TkF8FL">
-					<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_F7Y8oo">
+					<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_F7Y8oo">
 						<content leos:origin="ec" xml:id="akn_UCkOtZ">
 							<p leos:origin="ec" xml:id="akn_q9SPfF">Second subparagraph -  before starting the list. To that end approval First subparagraph before starting the list. To that end approval authorities must ensure, before granting first and subsequent stage type-approvals, that suitable arrangements exist between the relevantmanufacturers for the supply and interchange of documents and information, so that the completed type of vehicle meets the technical requirements of all the relevant regulatory acts listed in Annex II.</p>
 						</content>
@@ -47,7 +47,7 @@
 					<point leos:origin="ec" xml:id="akn_UHfYUM">
 						<num leos:origin="ec" xml:id="akn_DmW8sW">(c)</num>
 						<list leos:origin="ec" xml:id="akn_Wnr1Vo">
-							<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_qe9dVP">
+							<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_qe9dVP">
 								<content leos:origin="ec" xml:id="akn_aPdJei">
 									<p leos:origin="ec" xml:id="akn_DzUrQq">the Basic UDI-DI as referred to in Part C of Annex VI assigned by the the Basic UDI-DI as referred to in Part C of Annex VI assigned by the manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;o on 1 2 3 4 5 6 7 8 9 and so on 2 1 2 3 4 5 6 7 8 9 and so on - 3 - 1 2 3 4 5 6 7 8 9 and so on - 4 - 1 2 3 4 5 6 7 8 9 - 5 - 1 2 3 4 5 6 7 8 9- 6 - 1 2 3 4 5 6 7 8 9- 7 - 1 2 3 4 5 6 7 8 9- 8 - 1 2 3 4 5 6 7 8 9- 9 - 1 2 3 4 5 6 7 8 9- 5- 10 -1 2 3 4 5 6 7 8 9- 11 - 1 2 3 4 5 6 7 8 9- 12 - 1 2 3 4 5 6 7 8 9- 13 - 1 2 3 4 5 6 7 8 9- 14 - 1 2 3 4 5 6 7 8 9- 15 - 1 2 3 4 5 6 7 8 9- 16 - 1 2 3 4 5 6 7 8 9- 17 - 1 2 3 4 5 6 7 8 9- 18 - 1 2 3 4 5 6 7 8 9- 19 - 1 2 3 4 5 6 7 8 9- 20 - 1 2 3 4 5 6 7 8 9- 21 - 1 2 3 4 5 6 7 8 9- 22 - 1 2 3 4 5 6 7 8 9- 23- 1 2 3 4 5 6 7 8 9- 524- 1 2 3 4 5 6 7 8 9- 25 - 1 2 3 4 5 6 7 8 9- 26 - 1 2 3 4 5 6 7 8 9- 527- 1 2 3 4 5 6 7 8 9- 28 - 1 2 3 4 5 6 7 8 9- 29 - 1 2 3 4 5 6 7 8 9- 30 - 1 2 3 4 5 6 7 8 9- 31- 1 2 3 4 5 6 7 8 9- 32 - 1 2 3 4 5 6 7 8 9- 33 - 1 2 3 4 5 6 7 8 9- 34 - 1 2 3 4 5 6 7 8 9- 35- 1 2 3 4 5 6 7 8 9- 36- 1 2 3 4 5 6 7 8 9- 37 - 1 2 3 4 5 6 7 8 9- 38 - 1 2 3 4 5 6 7 8 9- 39 - 1 2 3 4 5 6 7 8 9- 40 - 1 2 3 4 5 6 7 8 9- 41 - 1 2 3 4 5 6 7 8 9- 42 - 1 2 3 4 5 6 7 8 9- 43 - 1 2 3 4 5 6 7 8 9- 44 - 1 2 3 4 5 6 7 8 9- 45 - 1 2 3 4 5 6 7 8 9</p>
 								</content>
@@ -79,7 +79,7 @@
 							<point leos:origin="ec" xml:id="akn_oKzLzv">
 								<num leos:origin="ec" xml:id="akn_dROzvZ">(v)</num>
 								<list leos:origin="ec" xml:id="akn_9fC0PY">
-									<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_wDyHSL">
+									<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_wDyHSL">
 										<content leos:origin="ec" xml:id="akn_Zg9JHF">
 											<p leos:origin="ec" xml:id="akn_9ICU81">manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;and so on 1 2 3 4 5 6 7 8 9 and so on 2 1 2 3 4 5 6 7 8 9 and so on - 3 - 1 2 3 4 5 6 7 8 9 and so on - 4 - 1 2 3 4 5 6 7 8 9 - 5 - 1 2 3 4 5 6 7 8 9- 6 - 1 2 3 4 5 6 7 8 9- 7 - 1 2 3 4 5 6 7 8 9- 8 - 1 2 3 4 5 6 7 8 9- 9 - 1 2 3 4 5 6 7 8 9- 5- 10 -1 2 3 4 5 6 7 8 9- 11 - 1 2 3 4 5 6 7 8 9- 12 - 1 2 3 4 5 6 7 8 9- 13 - 1 2 3 4 5 6 7 8 9- 14 - 1 2 3 4 5 6 7 8 9- 15 - 1 2 3 4 5 6 7 8 9- 16 - 1 2 3 4 5 6 7 8 9- 17 - 1 2 3 4 5 6 7 8 9- 18 - 1 2 3 4 5 6 7 8 9- 19 - 1 2 3 4 5 6 7 8 9- 20 - 1 2 3 4 5 6 7 8 9- 21 - 1 2 3 4 5 6 7 8 9- 22 - 1 2 3 4 5 6 7 8 9- 23- 1 2 3 4 5 6 7 8 9- 524- 1 2 3 4 5 6 7 8 9- 25 - 1 2 3 4 5 6 7 8 9- 26 - 1 2 3 4 5 6 7 8 9- 527- 1 2 3 4 5 6 7 8 9- 28 - 1 2 3 4 5 6 7 8 9- 29 - 1 2 3 4 5 6 7 8 9- 30 - 1 2 3 4 5 6 7 8 9- 31- 1 2 3 4 5 6 7 8 9- 32 - 1 2 3 4 5 6 7 8 9- 33 - 1 2 3 4 5 6 7 8 9- 34 - 1 2 3 4 5 6 7 8 9- 35- 1 2 3 4 5 6 7 8 9- 36- 1 2 3 4 5 6 7 8 9- 37 - 1 2 3 4 5 6 7 8 9- 38 - 1 2 3 4 5 6 7 8 9- 39 - 1 2 3 4 5 6 7 8 9- 40 - 1 2 3 4 5 6 7 8 9- 41 - 1 2 3 4 5 6 7 8 9- 42 - 1 2 3 4 5 6 7 8 9- 43 - 1 2 3 4 5 6 7 8 9- 44 - 1 2 3 4 5 6 7 8 9- 45 - 1 2 3 4 5 6 7 8 9</p>
 										</content>
@@ -99,7 +99,7 @@
 									<point leos:origin="ec" xml:id="akn_Ow9nYB">
 										<num leos:origin="ec" xml:id="akn_FvVOCJ">(3)</num>
 										<list leos:origin="ec" xml:id="akn_RngOKV">
-											<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_GHR4zl">
+											<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_GHR4zl">
 												<content leos:origin="ec" xml:id="akn_q3F3M1">
 													<p leos:origin="ec" xml:id="akn_ikMSPS">manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;and so on 1 2 3 4 5 6 7 8 9 and so on 2 1 2 3 4 5 6 7 8 9 and so on - 3 - 1 2 3 4 5 6 7 8 9 and so on - 4 - 1 2 3 4 5 6 7 8 9 - 5 - 1 2 3 4 5 6 7 8 9- 6 - 1 2 3 4 5 6 7 8 9- 7 - 1 2 3 4 5 6 7 8 9- 8 - 1 2 3 4 5 6 7 8 9- 9 - 1 2 3 4 5 6 7 8 9- 5- 10 -1 2 3 4 5 6 7 8 9- 11 - 1 2 3 4 5 6 7 8 9- 12 - 1 2 3 4 5 6 7 8 9- 13 - 1 2 3 4 5 6 7 8 9- 14 - 1 2 3 4 5 6 7 8 9- 15 - 1 2 3 4 5 6 7 8 9- 16 - 1 2 3 4 5 6 7 8 9- 17 - 1 2 3 4 5 6 7 8 9- 18 - 1 2 3 4 5 6 7 8 9- 19 - 1 2 3 4 5 6 7 8 9- 20 - 1 2 3 4 5 6 7 8 9- 21 - 1 2 3 4 5 6 7 8 9- 22 - 1 2 3 4 5 6 7 8 9- 23- 1 2 3 4 5 6 7 8 9- 524- 1 2 3 4 5 6 7 8 9- 25 - 1 2 3 4 5 6 7 8 9- 26 - 1 2 3 4 5 6 7 8 9- 527- 1 2 3 4 5 6 7 8 9- 28 - 1 2 3 4 5 6 7 8 9- 29 - 1 2 3 4 5 6 7 8 9- 30 - 1 2 3 4 5 6 7 8 9- 31- 1 2 3 4 5 6 7 8 9- 32 - 1 2 3 4 5 6 7 8 9- 33 - 1 2 3 4 5 6 7 8 9- 34 - 1 2 3 4 5 6 7 8 9- 35- 1 2 3 4 5 6 7 8 9- 36- 1 2 3 4 5 6 7 8 9- 37 - 1 2 3 4 5 6 7 8 9- 38 - 1 2 3 4 5 6 7 8 9- 39 - 1 2 3 4 5 6 7 8 9- 40 - 1 2 3 4 5 6 7 8 9- 41 - 1 2 3 4 5 6 7 8 9- 42 - 1 2 3 4 5 6 7 8 9- 43 - 1 2 3 4 5 6 7 8 9- 44 - 1 2 3 4 5 6 7 8 9- 45 - 1 2 3 4 5 6 7 8 9</p>
 												</content>
@@ -164,7 +164,7 @@
 							<p leos:origin="ec" xml:id="akn_LY7qpC">manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;</p>
 						</content>
 					</point>
-					<subparagraph leos:origin="ec" refersTo="~_WRP" xml:id="akn_zaia7m">
+					<subparagraph leos:origin="ec" refersTo="~WRP" xml:id="akn_zaia7m">
 						<content leos:origin="ec" xml:id="akn_NmAHoO">
 							<p leos:origin="ec" xml:id="akn_lSZCIN">manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability;++</p>
 						</content>
@@ -237,7 +237,7 @@
 					<num leos:origin="ec" xml:id="akn_QA3cwA">5.1.1.1.1.2.</num>
 					<heading leos:origin="ec" xml:id="akn_89i1HJ">Level with only subs - but very long title very long title very long title very long title very long title very long title very long title very long title very long title very long title very</heading>
 					<list leos:origin="ec" xml:id="akn_71oWot">
-						<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_bOWqX4">
+						<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_bOWqX4">
 							<content leos:origin="ec" xml:id="akn_DASfCs">
 								<p leos:origin="ec" xml:id="akn_qU8sfp">manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing</p>
 							</content>
@@ -251,7 +251,7 @@
 						<point leos:origin="ec" xml:id="akn_zP3LNk">
 							<num leos:origin="ec" xml:id="akn_cLlS0y">(b)</num>
 							<list leos:origin="ec" xml:id="akn_r0Gnt7">
-								<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_UWGUDz">
+								<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_UWGUDz">
 									<content leos:origin="ec" xml:id="akn_gMCCE6">
 										<p leos:origin="ec" xml:id="akn_Nptr2L">traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability</p>
 									</content>
@@ -301,7 +301,7 @@
 								<point leos:origin="ec" xml:id="akn_WMIMNO">
 									<num leos:origin="ec" xml:id="akn_c3bPLv">(viii)</num>
 									<list leos:origin="ec" xml:id="akn_zNJ2fc">
-										<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_HmLEnK">
+										<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_HmLEnK">
 											<content leos:origin="ec" xml:id="akn_HtOp1V">
 												<p leos:origin="ec" xml:id="akn_o3nyCO">traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability</p>
 											</content>
@@ -321,7 +321,7 @@
 										<point leos:origin="ec" xml:id="akn_7u5IqJ">
 											<num leos:origin="ec" xml:id="akn_Pwe8Lk">(3)</num>
 											<list leos:origin="ec" xml:id="akn_kOu2kL">
-												<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_2lrCui">
+												<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_2lrCui">
 													<content leos:origin="ec" xml:id="akn_ptNbkE">
 														<p leos:origin="ec" xml:id="akn_Morg6r">traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability</p>
 													</content>
@@ -338,7 +338,7 @@
 								</point>
 							</list>
 						</point>
-						<subparagraph leos:origin="ec" refersTo="~_WRP" xml:id="akn_7ifIEr">
+						<subparagraph leos:origin="ec" refersTo="~WRP" xml:id="akn_7ifIEr">
 							<content leos:origin="ec" xml:id="akn_ElN0HN">
 								<p leos:origin="ec" xml:id="akn_kmLhma">traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability</p>
 							</content>
@@ -358,7 +358,7 @@
 					</content>
 				</subparagraph>
 				<list leos:origin="ec" xml:id="akn_PaYaaw">
-					<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_p9IOAd">
+					<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_p9IOAd">
 						<content leos:origin="ec" xml:id="akn_Ekay3R">
 							<p leos:origin="ec" xml:id="akn_MzevPK">sub - or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowingor otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing</p>
 						</content>
@@ -366,7 +366,7 @@
 					<point leos:origin="ec" xml:id="akn_vMNCUo">
 						<num leos:origin="ec" xml:id="akn_mK95SV">(a)</num>
 						<list leos:origin="ec" xml:id="akn_r0DG1y">
-							<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_yH0GoP">
+							<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_yH0GoP">
 								<content leos:origin="ec" xml:id="akn_utKeSZ">
 									<p leos:origin="ec" xml:id="akn_ckls4Y">Otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowingor otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing</p>
 								</content>
@@ -386,7 +386,7 @@
 							<point leos:origin="ec" xml:id="akn_oyY0OZ">
 								<num leos:origin="ec" xml:id="akn_ASAIg2">(iii)</num>
 								<list leos:origin="ec" xml:id="akn_PlZKMM">
-									<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_BGJlrW">
+									<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_BGJlrW">
 										<content leos:origin="ec" xml:id="akn_6kn7Di">
 											<p leos:origin="ec" xml:id="akn_BBTuqW">Otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowingor otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowingo on 1 2 3 4 5 6 7 8 9 and so on 2 1 2 3 4 5 6 7 8 9 and so on - 3 - 1 2 3 4 5 6 7 8 9 and so on - 4 - 1 2 3 4 5 6 7 8 9 - 5 - 1 2 3 4 5 6 7 8 9- 6 - 1 2 3 4 5 6 7 8 9- 7 - 1 2 3 4 5 6 7 8 9- 8 - 1 2 3 4 5 6 7 8 9- 9 - 1 2 3 4 5 6 7 8 9- 5- 10 -1 2 3 4 5 6 7 8 9- 11 - 1 2 3 4 5 6 7 8 9- 12 - 1 2 3 4 5 6 7 8 9- 13 - 1 2 3 4 5 6 7 8 9- 14 - 1 2 3 4 5 6 7 8 9- 15 - 1 2 3 4 5 6 7 8 9- 16 - 1 2 3 4 5 6 7 8 9- 17 - 1 2 3 4 5 6 7 8 9- 18 - 1 2 3 4 5 6 7 8 9- 19 - 1 2 3 4 5 6 7 8 9- 20 - 1 2 3 4 5 6 7 8 9- 21 - 1 2 3 4 5 6 7 8 9- 22 - 1 2 3 4 5 6 7 8 9- 23- 1 2 3 4 5 6 7 8 9- 524- 1 2 3 4 5 6 7 8 9- 25 - 1 2 3 4 5 6 7 8 9- 26 - 1 2 3 4 5 6 7 8 9- 527- 1 2 3 4 5 6 7 8 9- 28 - 1 2 3 4 5 6 7 8 9- 29 - 1 2 3 4 5 6 7 8 9- 30 - 1 2 3 4 5 6 7 8 9- 31- 1 2 3 4 5 6 7 8 9- 32 - 1 2 3 4 5 6 7 8 9- 33 - 1 2 3 4 5 6 7 8 9- 34 - 1 2 3 4 5 6 7 8 9- 35- 1 2 3 4 5 6 7 8 9- 36- 1 2 3 4 5 6 7 8 9- 37 - 1 2 3 4 5 6 7 8 9- 38 - 1 2 3 4 5 6 7 8 9- 39 - 1 2 3 4 5 6 7 8 9- 40 - 1 2 3 4 5 6 7 8 9- 41 - 1 2 3 4 5 6 7 8 9- 42 - 1 2 3 4 5 6 7 8 9- 43 - 1 2 3 4 5 6 7 8 9- 44 - 1 2 3 4 5 6 7 8 9- 45 - 1 2 3 4 5 6 7 8 9</p>
 										</content>
@@ -400,7 +400,7 @@
 									<point leos:origin="ec" xml:id="akn_fGZ3L2">
 										<num leos:origin="ec" xml:id="akn_8VIpHk">(2)</num>
 										<list leos:origin="ec" xml:id="akn_gr5qMG">
-											<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_ERlXO7">
+											<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_ERlXO7">
 												<content leos:origin="ec" xml:id="akn_6N2cLc">
 													<p leos:origin="ec" xml:id="akn_tI2tNw">Otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowingor otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing</p>
 												</content>
@@ -441,7 +441,7 @@
 							</point>
 						</list>
 					</point>
-					<subparagraph leos:origin="ec" refersTo="~_WRP" xml:id="akn_e6CqGJ">
+					<subparagraph leos:origin="ec" refersTo="~WRP" xml:id="akn_e6CqGJ">
 						<content leos:origin="ec" xml:id="akn_J9nxOG">
 							<p leos:origin="ec" xml:id="akn_QfbEwe">Otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowingor otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing</p>
 						</content>
@@ -540,7 +540,7 @@
 					</content>
 				</subparagraph>
 				<list leos:origin="ec" xml:id="akn_CXgmzM">
-					<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_tIFGXf">
+					<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_tIFGXf">
 						<content leos:origin="ec" xml:id="akn_jJDWgs">
 							<p leos:origin="ec" xml:id="akn_js516M">traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification</p>
 						</content>
@@ -559,7 +559,7 @@
 							</content>
 						</subparagraph>
 						<list leos:origin="ec" xml:id="akn_luSGpm">
-							<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_12a57K">
+							<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_12a57K">
 								<content leos:origin="ec" xml:id="akn_4GstXk">
 									<table border="1" cellpadding="1" cellspacing="1" leos:origin="ec" style="width: 500px;" xml:id="akn_fdbJmi">
 										<caption leos:origin="ec" xml:id="akn_fPJX4U">fref</caption>
@@ -593,7 +593,7 @@
 							<point leos:origin="ec" xml:id="akn_Sru4Po">
 								<num leos:origin="ec" xml:id="akn_Qh0wLa">(i)</num>
 								<list leos:origin="ec" xml:id="akn_3mD8HK">
-									<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_ZfLjOp">
+									<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_ZfLjOp">
 										<content leos:origin="ec" xml:id="akn_yqzwL7">
 											<p leos:origin="ec" xml:id="akn_qkc6iz">traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability</p>
 										</content>
@@ -601,7 +601,7 @@
 									<point leos:origin="ec" xml:id="akn_ydWFBF">
 										<num leos:origin="ec" xml:id="akn_ZBq6AH">(1)</num>
 										<list leos:origin="ec" xml:id="akn_QIsSug">
-											<subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_p5irJ7">
+											<subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_p5irJ7">
 												<content leos:origin="ec" xml:id="akn_L4xZHj">
 													<p leos:origin="ec" xml:id="akn_LMBNBb">traceability;manufacturer to the device in question, as soon as identification of this device becomes based on a UDI system, or otherwise a clear identification by means of product code, catalogue number or other unambiguous reference allowing traceability</p>
 												</content>

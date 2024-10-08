@@ -38,7 +38,7 @@
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="_language"/>
                 <TLCReference href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" name="procedureReference" shortForm="YYYY/NNN/AAA" showAs="YYYY/NNNN (AAA)" xml:id="_procedure_YYYY_NNN"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER" name="identifier" shortForm="AAA/YYYY/NNN" showAs="AAA(YYYY) NNN" xml:id="_azs3y"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="INP"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.1.1</leos:templateVersion>
@@ -66,7 +66,7 @@
             <level leos:affected="true" leos:depth="1" leos:editable="true" leos:origin="cn" xml:id="_akn_level_LAjir8">
                 <num leos:origin="cn" xml:id="_akn_kEHMdY">1.</num>
                 <list leos:list-type="point_num" leos:origin="cn" xml:id="_lis_NiLVdY">
-                    <subparagraph leos:editable="true" leos:origin="cn" refersTo="~_INP" xml:id="_akn_subparagraph_rQ2w6q">
+                    <subparagraph leos:editable="true" leos:origin="cn" refersTo="~INP" xml:id="_akn_subparagraph_rQ2w6q">
                         <content xml:id="_akn_ewdmkZ">
                             <p xml:id="_akn_XYACJH">Text of Level 1</p>
                         </content>

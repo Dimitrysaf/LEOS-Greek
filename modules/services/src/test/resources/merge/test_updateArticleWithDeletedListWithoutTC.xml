@@ -39,8 +39,8 @@
                 <TLCReference href="http://eur-lex.europa.eu/procedure/EN/YYYY_NNN" name="procedureReference" shortForm="YYYY/NNN/AAA" showAs="YYYY/NNNN (AAA)" xml:id="_procedure_YYYY_NNN"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/document-identifier-format/COM_NUMBER" name="identifier" shortForm="AAA/YYYY/NNN" showAs="AAA(YYYY) NNN" xml:id="_azs3y"/>
                 <TLCConcept href="http://publications.europa.eu/resource/subdivision-content/ART_DEF" showAs="Article on definitions" xml:id="_ART_DEF"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="_WRP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="INP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="WRP"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>3.1.0</leos:templateVersion>
@@ -233,7 +233,7 @@
                 <paragraph xml:id="impXart_d1e29372_idXU3e_0uCXWD">
                     <num leos:origin="ec" xml:id="impXart_d1e29372_idXU3e_354g1r">4.</num>
                     <list xml:id="impXart_d1e29372_idXU3e_JEwiRR">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_d1e29372_idXU3e_hocfUx">
+                        <subparagraph refersTo="~INP" xml:id="impXart_d1e29372_idXU3e_hocfUx">
                             <content xml:id="impXart_d1e29372_idXU3e_r8jeTq">
                                 <p xml:id="impXart_d1e29372_idXU3e_pL8TQv">Other qualifying items are:</p>
                             </content>
@@ -256,7 +256,7 @@
                                 <p xml:id="impXart_d1e29372_idXU3e_heBa9g">securities issued by institutions that are deemed to be of equivalent, or higher, credit quality than those associated with credit quality step 2 under the Standardised Approach for credit risk of exposures to institutions and that are subject to supervisory and regulatory arrangements comparable to those under this Regulation and Directive 2013/36/EU.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_d1e29372_idXU3e_GMUfIW">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_d1e29372_idXU3e_GMUfIW">
                             <content xml:id="impXart_d1e29372_idXU3e_mtj4zW">
                                 <p xml:id="impXart_d1e29372_idXU3e_frMfE4">Institutions that make use of point (a) or (b) shall have a documented methodology in place to assess whether assets meet the requirements in those points and shall notify this methodology to the competent authorities.</p>
                             </content>
@@ -270,7 +270,7 @@
                 <paragraph xml:id="impXart_d1e29483_POeDCh_noDDUq">
                     <num xml:id="impXart_d1e29483_POeDCh_SpjC8I">1.</num>
                     <list xml:id="impXart_d1e29483_POeDCh_P88D3V">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_d1e29483_POeDCh_ms5Mam">
+                        <subparagraph refersTo="~INP" xml:id="impXart_d1e29483_POeDCh_ms5Mam">
                             <content xml:id="impXart_d1e29483_POeDCh_7fOP7u">
                                 <p xml:id="impXart_d1e29483_POeDCh_XeHDui">For instruments in the trading book that are securitisation positions, the institution shall weight with the following its net positions as calculated in accordance with Article 327(1):</p>
                             </content>

@@ -46,7 +46,7 @@ define(function leosArticleListPluginModule(require) {
     var DATA_AKN_NUM = "data-akn-num";
     var DATA_AKN_NUM_ID = "data-akn-num-id";
     var REFERS_TO = "refersto";
-    var INP = "~_INP";
+    var INP = "~INP";
     var POINT = "point";
     var SUBPARAGRAPH = "subparagraph";
     var PARAGRAPH = "paragraph";

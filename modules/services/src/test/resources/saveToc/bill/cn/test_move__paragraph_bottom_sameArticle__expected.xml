@@ -6,7 +6,7 @@
                 <heading leos:origin="ec" xml:id="art_1__heading">Scope</heading>
                 <paragraph leos:deletable="false" leos:depth="1" leos:editable="false" leos:origin="ec" leos:softaction="move_to" leos:softactionroot="true" leos:softdate="2022-06-17T11:39:45.367+02:00" leos:softmove_to="art_1__para_1" leos:softuser="demo jane(Ext)" xml:id="movedXart_1__para_1">
                     <num leos:origin="ec" xml:id="movedXart_1_par_1_num">1.</num>
-                    <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="movedXart_1_subpar_1">
+                    <subparagraph leos:origin="ec" refersTo="~INP" xml:id="movedXart_1_subpar_1">
                         <content leos:origin="ec" xml:id="movedXart_1_subpar_1_content">
                             <p leos:origin="ec" xml:id="movedXart_1_subpar_1_content_p">Paragraph 1</p>
                         </content>
@@ -34,7 +34,7 @@
                 </paragraph>
                 <paragraph leos:depth="1" leos:origin="ec" leos:softaction="move_from" leos:softactionroot="true" leos:softdate="2022-06-17T11:39:45.382+02:00" leos:softmove_from="movedXart_1__para_1" leos:softuser="demo jane(Ext)" xml:id="art_1__para_1">
                     <num leos:origin="cn" xml:id="art_1_par_1_num">#</num>
-                    <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_subpar_1">
+                    <subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_1_subpar_1">
                         <content leos:origin="ec" xml:id="art_1_subpar_1_content">
                             <p leos:origin="ec" xml:id="art_1_subpar_1_content_p">Paragraph 1</p>
                         </content>

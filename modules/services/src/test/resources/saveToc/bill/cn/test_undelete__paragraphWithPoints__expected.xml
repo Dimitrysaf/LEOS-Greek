@@ -23,7 +23,7 @@
                 </paragraph>
                 <paragraph leos:origin="ec" leos:softaction="undelete" leos:softactionroot="true" leos:softdate="2022-05-20T14:33:58.281+02:00" leos:softuser="demo jane (Ext)" xml:id="_art_2_num_par2">
                     <num leos:origin="ec" xml:id="impXart_d1e602_1nNpFO_SC9AWu">2.</num>
-                    <subparagraph leos:origin="ec" leos:softaction="undelete" leos:softactionroot="false" leos:softdate="2022-05-20T14:33:58.250+02:00" leos:softuser="demo jane (Ext)" refersTo="~_INP" xml:id="_art_2_num_par2_sub">
+                    <subparagraph leos:origin="ec" leos:softaction="undelete" leos:softactionroot="false" leos:softdate="2022-05-20T14:33:58.250+02:00" leos:softuser="demo jane (Ext)" refersTo="~INP" xml:id="_art_2_num_par2_sub">
                         <content leos:origin="ec" xml:id="impXart_d1e602_1nNpFO_ce2U2a">
                             <p leos:origin="ec" xml:id="impXart_d1e602_1nNpFO_uJJljZ">par 2</p>
                         </content>
