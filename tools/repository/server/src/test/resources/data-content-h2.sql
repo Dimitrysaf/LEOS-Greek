@@ -5611,7 +5611,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                 <heading xml:id="_body__level_13__heading" leos:editable="false">
                     <b xml:id="_body__level_13__heading__b">The proposal/initiative relates to:</b>
                 </heading>
-                <list leos:editable="false" class="~CHECK" xml:id="_body__level_13__list">
+                <list leos:editable="false" class="CHECK" xml:id="_body__level_13__list">
                     <indent xml:id="_body__level_13__list__indent_1">
                         <num xml:id="_body__level_13__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_13__list__indent_1__num__inline">
@@ -5798,7 +5798,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                 <heading xml:id="_body__level_16__heading" leos:editable="false">
                     <b xml:id="_body__level_16__heading__b">Duration and financial impact of the proposal/initiative</b>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_16__list" leos:editable="false">
+                <list class="CHECK" xml:id="_body__level_16__list" leos:editable="false">
                     <indent xml:id="_body__level_16__list__indent_1">
                         <num xml:id="_body__level_16__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_16__list__indent_1__num__inline">&#x2610;</inline>
@@ -5810,7 +5810,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                                 </p>
                             </content>
                         </subparagraph>
-                        <list class="~CHECK" xml:id="_body__level_16__list__indent_1__list">
+                        <list class="CHECK" xml:id="_body__level_16__list__indent_1__list">
                             <indent xml:id="_body__level_16__list__indent_1__list__indent_1">
                                 <num xml:id="_body__level_16__list__indent_1__list__indent_1__num">
                                     <inline name="unchecked" xml:id="_body__level_16__list__indent_1__list__indent_1__num__inline">&#x2610;</inline>
@@ -5853,7 +5853,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                                 </p>
                             </content>
                         </subparagraph>
-                        <list class="~CHECK" xml:id="_body__level_16__list__indent_2__list" leos:editable="false">
+                        <list class="CHECK" xml:id="_body__level_16__list__indent_2__list" leos:editable="false">
                             <indent xml:id="_body__level_16__list__indent_2__list__indent_1">
                                 <num xml:id="_body__level_16__list__indent_2__list__indent_1_num"></num>
                                 <content xml:id="_body__level_16__list__indent_2__list__indent_1__content">
@@ -5884,7 +5884,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                         </p>
                     </authorialNote>
                 </heading>
-                <list class="~CHECK" xml:id="_body__level_17__list" leos:editable="false">
+                <list class="CHECK" xml:id="_body__level_17__list" leos:editable="false">
                     <indent leos:editable="false" xml:id="_body__level_17__list__indent_1">
                         <num xml:id="_body__level_17__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_17__list__indent_1__num__inline">&#x2610;</inline>
@@ -5896,7 +5896,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                                     by the Commission</p>
                             </content>
                         </subparagraph>
-                        <list leos:editable="false" class="~CHECK" xml:id="_body__level_17__list__indent_1__list">
+                        <list leos:editable="false" class="CHECK" xml:id="_body__level_17__list__indent_1__list">
                             <indent leos:editable="false"  xml:id="_body__level_17__list__indent_1__list__indent_1">
                                 <num xml:id="_body__level_17__list__indent_1__list__indent_1__num">
                                     <inline name="unchecked" xml:id="_body__level_17__list__indent_1__list__indent_1__num__inline">&#x2610;</inline>
@@ -5936,7 +5936,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                                     by entrusting budget implementation tasks to:</p>
                             </content>
                         </subparagraph>
-                        <list leos:editable="false" class="~CHECK" xml:id="_body__level_17__list__indent_3__list">
+                        <list leos:editable="false" class="CHECK" xml:id="_body__level_17__list__indent_3__list">
                             <indent leos:editable="false" xml:id="_body__level_17__list__indent_3__list__indent_1">
                                 <num xml:id="_body__level_17__list__indent_3__list__indent_1__num">
                                     <inline name="unchecked" xml:id="_body__level_17__list__indent_3__list__indent_1__num__inline">&#x2610;</inline>
@@ -6295,7 +6295,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                 <heading leos:editable="false" xml:id="_body__level_321__heading">
                     <i xml:id="_body__level_321__heading__i">Summary of estimated impact on operational appropriations</i>
                 </heading>
-                <list leos:editable="false" class="~CHECK" xml:id="_body__level_321__list">
+                <list leos:editable="false" class="CHECK" xml:id="_body__level_321__list">
                     <indent xml:id="_body__level_321__list__indent_1">
                         <num xml:id="_body__level_321__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_321__list__indent_1__num__inline">&#x2610;</inline>
@@ -8127,7 +8127,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                 <heading leos:editable="false" xml:id="_body__level_323__heading">
                     <i xml:id="_body__level_323__heading__i">Summary of estimated impact on administrative appropriations</i>
                 </heading>
-                <list leos:editable="false" class="~CHECK" xml:id="_body__level_323__list">
+                <list leos:editable="false" class="CHECK" xml:id="_body__level_323__list">
                     <indent xml:id="_body__level_323__list__indent_1">
                         <num xml:id="_body__level_323__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_323__list__indent_1__num__inline">&#x2610;</inline>
@@ -8482,7 +8482,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                 <heading leos:editable="false" xml:id="_body__level_3231__heading">
                     <i xml:id="_body__level_3231__heading__i">Estimated requirements of human resources</i>
                 </heading>
-                <list leos:editable="false" class="~CHECK" xml:id="_body__level_3231__list">
+                <list leos:editable="false" class="CHECK" xml:id="_body__level_3231__list">
                     <indent xml:id="_body__level_3231__list__indent_1">
                         <num xml:id="_body__level_3231__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_3231__list__indent_1__num__inline">&#x2610;</inline>
@@ -8977,7 +8977,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                         <p leos:editable="false" xml:id="_body__level_324__subparagraph__content__p">The proposal/initiative :</p>
                     </content>
                 </subparagraph>
-                <list leos:editable="true" class="~CHECK" xml:id="_body__level_324__list">
+                <list leos:editable="true" class="CHECK" xml:id="_body__level_324__list">
                     <indent xml:id="_body__level_324__list__indent_1">
                         <num xml:id="_body__level_324__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_324__list__indent_1__num__inline">&#x2610;</inline>
@@ -9035,7 +9035,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                         <p leos:editable="false" xml:id="_body__level_325__subparagraph__content__p">The proposal/initiative:</p>
                     </content>
                 </subparagraph>
-                <list leos:editable="false" class="~CHECK" xml:id="_body__level_325__list">
+                <list leos:editable="false" class="CHECK" xml:id="_body__level_325__list">
                     <indent xml:id="_body__level_325__list__indent_1">
                         <num xml:id="_body__level_325__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_325__list__indent_1__num__inline">&#x2610;</inline>
@@ -9161,7 +9161,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                 <heading leos:editable="false" xml:id="_body__level_33__heading">
                     <b leos:editable="false" xml:id="_body__level_33__heading__b">Estimated impact on revenue</b>
                 </heading>
-                <list leos:editable="false" class="~CHECK" xml:id="_body__level_33__list">
+                <list leos:editable="false" class="CHECK" xml:id="_body__level_33__list">
                     <indent leos:editable="false" xml:id="_body__level_33__list__indent_1">
                         <num xml:id="_body__level_33__list__indent_1__num">
                             <inline name="unchecked" xml:id="_body__level_33__list__indent_1__num__inline">&#x2610;</inline>
@@ -9179,7 +9179,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                                 <p leos:editable="false" xml:id="_body__level_33__list__indent_2__subparagraph__content__p">The proposal/initiative has the following financial impact:</p>
                             </content>
                         </subparagraph>
-                        <list leos:editable="false" class="~CHECK" xml:id="_body__level_33__list__indent_2__list">
+                        <list leos:editable="false" class="CHECK" xml:id="_body__level_33__list__indent_2__list">
                             <indent leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_1">
                                 <num xml:id="_body__level_33__list__indent_2__list__indent_1__num">
                                     <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_1__num__inline">&#x2610;</inline>
@@ -9192,7 +9192,7 @@ SET @str1 = '<!--legislative_financial_statement-->
                                 <num xml:id="_body__level_33__list__indent_2__list__indent_2_2__num">
                                     <inline name="unchecked" xml:id="_body__level_33__list__indent_2__list__indent_2_2__num__inline">&#x2610;</inline>
                                 </num>
-                                <list leos:editable="false" class="~CHECK" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list">
+                                <list leos:editable="false" class="CHECK" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list">
                                     <subparagraph leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_subparagraph">
                                         <content xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_subparagraph_content">
                                             <p leos:editable="false" xml:id="_body__level_33__list__indent_2__list__indent_2_2_list_subparagraph_content_p">on other revenue</p>
