@@ -13,6 +13,9 @@
  */
 package eu.europa.ec.leos.repository.entities;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,6 +31,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "PACKAGE")
@@ -67,6 +71,11 @@ public class Package implements Serializable {
     private String language;
     @Column(name = "IS_TRANSLATED")
     private Boolean isTranslated;
+
+    @Getter
+    @Setter
+    @OneToMany(mappedBy = "pkg", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WorkflowCollaboratorConfig> workflowCollaboratorConfigs;
 
     public Package() {
     }

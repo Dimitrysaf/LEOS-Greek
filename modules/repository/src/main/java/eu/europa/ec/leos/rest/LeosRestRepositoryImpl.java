@@ -27,6 +27,7 @@ import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.model.user.User;
@@ -58,6 +59,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -67,6 +69,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1061,6 +1064,28 @@ public class LeosRestRepositoryImpl implements LeosRepository {
     public List<FavouritePackageResponse> findFavouritePackagesForUser(String userId) {
         logger.trace("Finding favourite packages by userId... [userId=" + userId + ']');
         return repository.findFavouritePackagesForUser(userId);
+    }
+
+    @Override
+    @PerformanceLogger
+    public Optional<WorkflowCollaboratorConfigVO> getWorkflowCollaboratorConfig(String packageName, String clientName) {
+        try {
+            return Optional.of(repository.getWorkflowCollaboratorConfig(packageName, clientName));
+        } catch (HttpClientErrorException.NotFound ex) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    @PerformanceLogger
+    public Integer createOrUpdateWorkflowCollaboratorConfig(String clientSystemId, String packageName, String aclCallbackUrl, String userCheckCallbackUrl) {
+        return repository.createOrUpdateWorkflowCollaboratorConfig(clientSystemId, packageName, aclCallbackUrl, userCheckCallbackUrl);
+    }
+
+    @Override
+    @PerformanceLogger
+    public void deleteWorkflowCollaborator(BigInteger id) {
+        repository.deleteWorkflowCollaborator(id);
     }
 
     @Override

@@ -24,6 +24,15 @@ public class RestPreconditions {
         }
         return resource;
     }
+
+    public static <S> S checkFound(final Optional<S> resource, HttpStatus httpStatus, String message) {
+        return resource.orElseThrow(() -> new ResponseStatusException(httpStatus == null ? HttpStatus.NOT_FOUND: httpStatus, message));
+    }
+
+    public static <S> S assertFound(final Optional<S> resource, String message) {
+        return checkFound(resource, HttpStatus.NOT_FOUND, message);
+    }
+
     public static <T extends Collection> T checkFound(final T resource, HttpStatus httpStatus, String message) {
         if (CollectionUtils.isEmpty(resource)) {
             throw new ResponseStatusException(httpStatus == null ? HttpStatus.NOT_FOUND: httpStatus, message);

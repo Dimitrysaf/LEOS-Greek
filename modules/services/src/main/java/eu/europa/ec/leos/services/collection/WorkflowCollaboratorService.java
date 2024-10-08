@@ -3,19 +3,18 @@ package eu.europa.ec.leos.services.collection;
 import eu.europa.ec.leos.domain.repository.document.Proposal;
 import eu.europa.ec.leos.services.dto.collaborator.WorkflowCollaboratorDTO;
 import eu.europa.ec.leos.services.request.WorkflowCollaboratorAclRequest;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WorkflowCollaboratorService {
 
-    @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
-    String setWorkflowCollaboratorAcl(String clientSystemId, Proposal proposal, WorkflowCollaboratorAclRequest wcar);
+    //Not pre-authorize check since it is done on behave of an client system and not a user
+    Integer setWorkflowCollaboratorAcl(Proposal proposal, String clientSystemId, WorkflowCollaboratorAclRequest wcar);
 
-    @PreAuthorize("hasPermission(#proposal, 'CAN_ADD_REMOVE_COLLABORATOR')")
-    String removeWorkflowCollaboratorAcl(String clientSystemId, Proposal proposal);
+    void deleteWorkflowCollaborator(String clientSystemId, Proposal proposal);
 
     List<WorkflowCollaboratorDTO> getCollaborators(Proposal proposal);
 
-    WorkflowCollaboratorDTO getCollaborators(Proposal proposal, String clientSystemId);
+    Optional<WorkflowCollaboratorDTO> getCollaborators(String proposalName, String clientSystemId);
 }

@@ -8,8 +8,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class WorkflowCollaboratorAclRequest {
-
     private String aclCallbackUrl;
-    private List<String> entities;
-
+    private String userCheckCallbackUrl;
 }
