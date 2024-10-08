@@ -78,7 +78,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
         if (softAction && softAction === MOVE_FROM_ATTR) {
           selectedElements = selectedElements.filter( (s) => s.getAttribute(ID) !== REVISION_PREFIX + SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elt.getAttribute(ID).replace(REVISION_PREFIX, ""));
         }
-        const children = this.mergeContributionsService.getImpactedElements(elt);
+        const children = this.mergeContributionsService.getImpactedElements(elt, false);
         children.forEach((c) => {
           const child = c as HTMLElement;
           selectedElements = selectedElements.filter( (s) => s.getAttribute(ID) !== child.getAttribute(ID));
@@ -147,7 +147,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
           movedFromElement.removeAttribute(SELECTED_ACTION_ATTR);
           const temp_list =
             this.mergeContributionsService.getImpactedElements(
-              movedFromElement,
+              movedFromElement, false
             );
           temp_list.forEach((e) => {
             const elt = e as HTMLElement;
@@ -165,7 +165,7 @@ export class MergeContributionConnector extends AbstractJavaScriptComponent<Merg
       const removedAction: MergeActionVO = this.mergeContributionsService.removeMergeActionList(element);
       this.doUpdateMergeActionList({action: removedAction, select: false});
 
-      const list = this.mergeContributionsService.getImpactedElements(element);
+      const list = this.mergeContributionsService.getImpactedElements(element, true);
       list.forEach(e => {
         const elt =  e as HTMLElement;
         elt.removeAttribute(SELECTED_ACTION_ATTR);

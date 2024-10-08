@@ -134,8 +134,6 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
     private NumberProcessorHandler numberProcessorHandler;
     @Autowired
     protected NumberConfigFactory numberConfigFactory;
-    @Autowired
-    protected XPathCatalog xPathCatalog;
 
     public Node buildTocItemContent(List<TocItem> tocItems, List<NumberingConfig> numberingConfigs, Map<TocItem, List<TocItem>> tocRules,
                                     Document document, Node parentNode, TableOfContentItemVO tocVo, User user, boolean isTrackChangesEnabled) {
@@ -494,12 +492,17 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
 
     private Document restoreNumElementOnIntermediateNodes(Document doc, String originId, String destId, String tagName) {
         NodeList nodesToBeRestored = doc.getElementsByTagName(tagName);
+        boolean parentToBeChecked = Arrays.asList(PARAGRAPH, POINT, INDENT).contains(tagName);
+        Node refParent = null;
         boolean letsRestore = false;
         for (int nodeIdx = 0; nodeIdx < nodesToBeRestored.getLength(); nodeIdx++) {
             Node nodeToRestore = nodesToBeRestored.item(nodeIdx);
+            Node parent = nodeToRestore.getParentNode();
             String idAttrVal = XercesUtils.getAttributeValue(nodeToRestore, XMLID);
             if (letsRestore && (idAttrVal.equals(originId) || idAttrVal.equals(destId))
-                    || (XercesUtils.hasAttribute(nodeToRestore, LEOS_ACTION_ATTR) || XercesUtils.hasAttribute(nodeToRestore, LEOS_SOFT_ACTION_ATTR))) {
+                    || (XercesUtils.hasAttribute(nodeToRestore, LEOS_ACTION_ATTR)
+                    || XercesUtils.hasAttribute(nodeToRestore, LEOS_SOFT_ACTION_ATTR))
+                    || (parentToBeChecked && refParent != null && !refParent.equals(parent))) {
                 letsRestore = false;
             }
             if (letsRestore) {
@@ -520,6 +523,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
                 }
             }
             if (!letsRestore && (idAttrVal.equals(originId) || idAttrVal.equals(destId))) {
+                refParent = nodeToRestore.getParentNode();
                 letsRestore = true;
             }
         }

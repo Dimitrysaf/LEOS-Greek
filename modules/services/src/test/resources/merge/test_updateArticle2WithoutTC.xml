@@ -450,7 +450,7 @@
                     </paragraph>
                 </article>
                 <article leos:deletable="true" leos:editable="true" leos:listIdAttr="_akn_article_sZwrnU" xml:id="akn_art_phTLdP">
-                    <num leos:editable="false" leos:origin="ec" xml:id="akn_art_phTLdP_HqKfs6">#</num>
+                    <num leos:editable="true" xml:id="akn_art_phTLdP_HqKfs6">Article 6</num>
                     <heading xml:id="akn_art_phTLdP_gjfAUn">Processing of personal data in EU CSW-CERTEX</heading>
                     <paragraph xml:id="akn_art_phTLdP_GDNZEE">
                         <num leos:origin="ec" xml:id="akn_art_phTLdP_EPO84e">1.</num>
@@ -466,7 +466,7 @@
                                     <p xml:id="akn_art_phTLdP_J1ZwuD">enabling information to be exchanged between national single window environments for customs and the Union non-customs systems referred to in the AnnexÂ as regards the Union non-customs formalities listed therein;</p>
                                 </content>
                             </point><point leos:origin="ec" xml:id="_akn_art_phTLdP_T0cTpp">
-                            <num leos:origin="ec" xml:id="_akn_art_phTLdP_35pSJw">(b)</num>
+                            <num xml:id="_akn_art_phTLdP_35pSJw">(b)</num>
                             <content leos:origin="ec" xml:id="_akn_art_phTLdP_GHnq58">
                                 <p leos:origin="ec" xml:id="_akn_art_phTLdP_HrHSy8">
                                     new changes
@@ -481,7 +481,7 @@
                             </point>
                         </list>
                     </paragraph><paragraph leos:origin="ec" xml:id="_akn_art_phTLdP_8XedvP">
-                    <num leos:origin="ec" xml:id="_akn_art_phTLdP_9VwjCX">2.</num>
+                    <num xml:id="_akn_art_phTLdP_9VwjCX">2.</num>
                     <content leos:origin="ec" xml:id="_akn_art_phTLdP_R5V28q">
                         <p leos:origin="ec" xml:id="_akn_art_phTLdP_t3JrAn">
                             new paragraph
@@ -505,7 +505,7 @@
                             <point xml:id="akn_art_phTLdP_UiWM7N">
                                 <num xml:id="akn_art_phTLdP_U3Z4gS">(b)</num>
                                 <content xml:id="akn_art_phTLdP_FvflpZ">
-                                    <p xml:id="akn_art_phTLdP_seXHAg">natural persons whose personal informatio  cumentary evidence new changes  required for the fulfilment of the Union non-customs formalities listed in the Annex;</p>
+                                    <p xml:id="akn_art_phTLdP_seXHAg">natural persons whose personal informatio cumentary evidence new changes  required for the fulfilment of the Union non-customs formalities listed in the Annex;</p>
                                 </content>
                             </point>
                             <point xml:id="akn_art_phTLdP_Nv7XNK">

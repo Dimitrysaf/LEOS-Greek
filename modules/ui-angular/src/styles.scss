@@ -577,8 +577,7 @@ body {
   background-color: rgb(166 166 166 / 80%) !important;
   border: #8c8c8c thin solid;
 
-  [leos\:mergeAction]:not([leos\:selectedAction]),
-  [leos\:mergeaction]:not([leos\:selectedaction]),
+  [leos\:mergeAction]:not([leos\:mergeAction=UNSELECT]):not([leos\:selectedAction]),
   ins,
   del,
   num {

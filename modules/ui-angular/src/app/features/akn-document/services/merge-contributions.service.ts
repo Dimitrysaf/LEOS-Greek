@@ -194,20 +194,13 @@ export class MergeContributionsService {
   handleContributionSelectCount(selected: boolean, reset?: boolean) {
     if (reset) {
       this.contributionSelectionsBS.next(0);
-    } else if (selected) {
-      this.contributionSelectionsBS.next(
-        this.contributionSelectionsBS.value + 1,
-      );
+      this.emptyMergeActionList();
     } else {
-      if (this.contributionSelectionsBS.value - 1 >= 0) {
-        this.contributionSelectionsBS.next(
-          this.contributionSelectionsBS.value - 1,
-        );
-      } else {
-        this.contributionSelectionsBS.next(0);
-      }
+      this.contributionSelectionsBS.next(
+        this.getMergeActionListSize()
+      );
     }
-    this.contributionSelectedBS.next(this.contributionSelectionsBS.value === 0);
+    this.contributionSelectedBS.next(this.getMergeActionListSize()<=0);
   }
 
   setContributionViewAndMergeCollapsed(collapsed: boolean) {
@@ -241,6 +234,10 @@ export class MergeContributionsService {
 
   setCurrentContribution(contribution: ContributionVO) {
     this.contribution = contribution;
+  }
+
+  getMergeActionListSize() {
+    return this.mergeActionList.filter((action) => action.action !== ContributionActionAttrValue.UNSELECT).length;
   }
 
   getContributions() {
@@ -556,13 +553,26 @@ export class MergeContributionsService {
   }
 
   public addMergeActionList(action: MergeActionVO) {
+    this.mergeActionList = this.mergeActionList.filter((listAction) => listAction.elementId !== action.elementId);
     this.mergeActionList.push(action);
   }
 
   public removeMergeActionList(element: HTMLElement): MergeActionVO {
-    const removedAction = this.mergeActionList.find((action) => action.elementId === element.getAttribute(ID).replace(REVISION_PREFIX, ''));
-    this.mergeActionList = this.mergeActionList.filter((action) => action.elementId !== element.getAttribute(ID).replace(REVISION_PREFIX, ''));
-    return removedAction;
+    if (element.closest('[leos\\:selectedAction]')) {
+      const action: MergeActionVO = {action: "", contributionVO: undefined, elementId: "", elementState: "", elementTagName: "", withTrackChanges: false};
+      action.elementId = element.getAttribute(ID).replace(REVISION_PREFIX, '');
+      action.elementState = this.getAction(element);
+      action.action = ContributionActionAttrValue.UNSELECT;
+      action.withTrackChanges = false;
+      action.elementTagName = element.tagName.toLowerCase();
+      action.contributionVO = this.contribution;
+      this.addMergeActionList(action);
+      return action;
+    } else {
+      const removedAction = this.mergeActionList.find((action) => action.elementId === element.getAttribute(ID).replace(REVISION_PREFIX, ''));
+      this.mergeActionList = this.mergeActionList.filter((action) => action.elementId !== element.getAttribute(ID).replace(REVISION_PREFIX, ''));
+      return removedAction;
+    }
   }
 
   public emptyMergeActionList() {
@@ -596,7 +606,7 @@ export class MergeContributionsService {
       if (element.getAttribute(ID).includes(MOVE_PREFIX)) {
         const movedFromElement = document.getElementById(element.getAttribute(ID).replace(MOVE_PREFIX, ''));
         movedFromElement.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-        const temp_list = this.getImpactedElements(movedFromElement);
+        const temp_list = this.getImpactedElements(movedFromElement, false);
         temp_list.forEach(e => {
           const elt =  e as HTMLElement;
           elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
@@ -607,18 +617,26 @@ export class MergeContributionsService {
       }
     }
     element.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
-    const list = this.getImpactedElements(element);
+    const list = this.getImpactedElements(element, false);
     list.forEach(e => {
       const elt =  e as HTMLElement;
       elt.setAttribute(SELECTED_ACTION_ATTR, contributionActionAttrValue);
     });
   }
 
-  public getImpactedElements(element: HTMLElement): NodeList {
+  public getImpactedElements(element: HTMLElement, unselect: boolean): NodeList {
     if (this.HIGHER_ELTS.includes(element.tagName.toLowerCase())) {
-      return element.querySelectorAll('num.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction])' + ',heading.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction])');
+      if (unselect) {
+        return element.querySelectorAll('num.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction])' + ',heading.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction])');
+      } else {
+        return element.querySelectorAll('num.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction]):not([leos\\:selectedAction])' + ',heading.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction]):not([leos\\:selectedAction])');
+      }
     } else {
-      return element.querySelectorAll('.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction])');
+      if (unselect) {
+        return element.querySelectorAll('.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction])');
+      } else {
+        return element.querySelectorAll('.' + MERGE_CONTRIBUTION + ':not([leos\\:mergeAction]):not([leos\\:selectedAction])');
+      }
     }
   }
 

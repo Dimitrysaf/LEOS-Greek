@@ -4,6 +4,7 @@ export enum ContributionActionAttrValue {
   ACCEPT_TC = "ACCEPT_TC",
   PROCESSED = "PROCESSED",
   UNDO = "UNDO",
+  UNSELECT = "UNSELECT",
 }
 
 const MERGE_CONTRIBUTION = "merge-contribution-wrapper";

@@ -62,7 +62,7 @@ public class LeosDomainUtil {
     }
 
     public static String wrapXmlFragment(String xmlFragment) {
-        String regex = "^<\\?((xml)|(XML)) *(v|V)ersion=(\"|\')1\\.(0|1)(\"|\') *((e|E)ncoding=(\"|\')((utf)|(UTF))-((8)|(16)|(32))(\"|\'))?( *(s|S)tandalone=(\"|\')((yes)|(no))(\"|\'))? *\\?>";
+        String regex = "^<\\?xml *version=[\"\']1\\.[01][\"\'] *encoding=([\"\'])UTF-8([\"\'])?( *standalone=([\"\'])((yes)|(no))([\"\']))? *\\?>";
 
         return WRAP_FRAGMENT_START +
                 (xmlFragment != null ? xmlFragment.replaceAll(regex,"") : "")

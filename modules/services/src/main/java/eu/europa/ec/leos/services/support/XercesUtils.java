@@ -88,7 +88,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.removeSelfClosingElem
 import static eu.europa.ec.leos.services.support.XmlHelper.replaceNonBreakingSpace;
 
 public class XercesUtils {
-    private static final String XML_DEFINITION_REGEX = "^<\\?((xml)|(XML)) *(v|V)ersion=(\"|\')1\\.(0|1)(\"|\') *((e|E)ncoding=(\"|\')((utf)|(UTF))-((8)|(16)|(32))(\"|\'))?( *(s|S)tandalone=(\"|\')((yes)|(no))(\"|\'))? *\\?>";
+    private static final String XML_DEFINITION_REGEX = "^<\\?xml *version=[\"\']1\\.[01][\"\'] *encoding=([\"\'])UTF-8([\"\'])?( *standalone=([\"\'])((yes)|(no))([\"\']))? *\\?>";
 
     private static final Logger LOG = LoggerFactory.getLogger(XercesUtils.class);
 
@@ -511,19 +511,11 @@ public class XercesUtils {
     public static Node replaceElement(Node node, String newContent) {
         Node fakeNodeWithNewContent = createNodeFromXmlFragment(node.getOwnerDocument(), ("<fake>" + removeXmlDefinition(newContent) + "</fake>").getBytes(UTF_8), false);
         NodeList fakeNodeChildNodes = fakeNodeWithNewContent.getChildNodes();
-        boolean isInline = false;
         for (int i = fakeNodeChildNodes.getLength() - 1; i >= 0 ; i--) {
             Node childNode = fakeNodeChildNodes.item(i);
-            if(childNode != null && childNode.getNodeName().equalsIgnoreCase(INLINE)) {
-                replaceElement(childNode, node);
-                isInline = true;
-            } else {
-                addSibling(childNode, node, false);
-            }
+            addSibling(childNode, node, false);
         }
-        if(!isInline) {
-            deleteElement(node);
-        }
+        deleteElement(node);
         return node.getOwnerDocument();
     }
 
@@ -909,6 +901,30 @@ public class XercesUtils {
         return descendants;
     }
 
+    public static boolean hasDescendantWithId(Node node, String id) {
+        if (getId(node).equals(id)) {
+            return true;
+        }
+        List<Node> children = getChildren(node);
+        for (Node child : children) {
+            if (hasDescendantWithId(child, id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasAscendantWithId(Node node, String id) {
+        if (getId(node).equals(id)) {
+            return true;
+        }
+        Node parent = node.getParentNode();
+        while (parent != null && (getId(parent) == null || !getId(parent).equals(id))) {
+            parent = parent.getParentNode();
+        }
+        return parent != null;
+    }
+
     public static Node getFirstAscendant(Node node, List<String> tagNames) {
         Node parent = node.getParentNode();
         while (parent != null && !tagNames.contains(parent.getNodeName())) {
@@ -952,10 +968,12 @@ public class XercesUtils {
         return false;
     }
 
-    public static boolean hasAscendantWithAttributeValue(Node node, String attrName, String attrValue) {
+    public static boolean hasAscendantWithAttributeExceptValue(Node node, String attrName, String value) {
         Node parent = node;
         while (parent != null) {
-            if (hasAttribute(parent, attrName) && getAttributeValue(parent, attrName).equals(attrValue)) {
+            if (hasAttribute(parent, attrName) && hasAttributeValue(attrName, value, parent)) {
+                return false;
+            } else if (hasAttribute(parent, attrName)) {
                 return true;
             }
             parent = parent.getParentNode();

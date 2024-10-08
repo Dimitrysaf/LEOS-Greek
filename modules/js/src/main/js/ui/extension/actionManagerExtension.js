@@ -609,7 +609,12 @@ define(function actionManagerExtensionModule(require) {
                 template.push(`<span data-widget-type="edit" title="Edit text">&#xe7fa</span>`);
             }
             if (deletable && connector.getState().tocEdition) {
-                const title = (!isHeadingOfAnOptionalLevel) ? `Delete ${type}` : (leosAction !== 'delete' ? 'Delete entire section' : '');
+                let title = '';
+                if (!isHeadingOfAnOptionalLevel) {
+                    title = `Delete ${type}`;
+                } else if (leosAction !== 'delete') {
+                    title = 'Delete entire section';
+                }
                 if (title) {
                     template.push(`<span data-widget-type="delete" title="${title}">&#xe80b</span>`);
                 }
