@@ -22,7 +22,7 @@ public interface TokenService {
 
     String getDgtToken(String user);
 
-    String getAccessToken(String user);
+    String getAccessToken(String user, AuthClient authClient);
 
     String getNgAccessToken(String user);
 

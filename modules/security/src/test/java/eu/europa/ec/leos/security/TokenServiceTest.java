@@ -69,7 +69,7 @@ public class TokenServiceTest extends LeosTest {
         ReflectionTestUtils.setField(tokenService, "accessTokenExpirationInMin", 1);
         String user = "demo";
         //When
-        String accessToken = tokenService.getAccessToken(user);
+        String accessToken = tokenService.getAccessToken(user,null);
         boolean isValid = tokenService.validateAccessToken(accessToken);
         
         //Then

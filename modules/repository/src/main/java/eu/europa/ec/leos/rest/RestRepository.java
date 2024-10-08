@@ -19,12 +19,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
 import eu.europa.ec.leos.domain.repository.LeosLegStatus;
 import eu.europa.ec.leos.domain.repository.common.VersionType;
+import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
 import eu.europa.ec.leos.rest.support.model.LeosDocument;
 import eu.europa.ec.leos.rest.support.model.LeosDocumentList;
-import eu.europa.ec.leos.rest.support.model.LinkedPackage;
 import eu.europa.ec.leos.rest.support.model.LinkedPackageList;
 import eu.europa.ec.leos.rest.support.model.Package;
 import eu.europa.ec.leos.rest.support.requests.CreateDocumentRequest;
@@ -41,7 +41,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -141,6 +143,9 @@ public class RestRepository extends AbstractRestClient {
 
     @Value("${leos.rest.repository.config.notifications.fetch}")
     private String leosRestRepositoryConfigNotificationsFetch;
+
+    @Value("${leos.rest.repository.config.workflow-collaborator-config}")
+    private String leosRestRepositoryWorkflowCollaboratorConfig;
 
     @Autowired
     private RepositoryPropertiesMapper repositoryPropertiesMapper;
@@ -518,6 +523,32 @@ public class RestRepository extends AbstractRestClient {
         return putEntity(url, null, FavouritePackageResponse.class, ref, userId);
     }
 
+    Integer createOrUpdateWorkflowCollaboratorConfig(String clientName, String packageName, String aclCallbackUrl, String userCheckCallbackUrl) {
+        LOGGER.trace("createOrUpdateWorkflowCollaboratorConfig ... [packageName =" + packageName + ", clientId = "+clientName+"]");
+        String url = getUrl(leosRestRepositoryWorkflowCollaboratorConfig);
+        String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
+                .encode()
+                .toUriString();
+        Map<String, Object> dynamicPayload = new HashMap<>();
+        dynamicPayload.put("packageName", packageName);
+        dynamicPayload.put("clientName", clientName);
+        dynamicPayload.put("aclCallbackUrl", aclCallbackUrl);
+        dynamicPayload.put("userCheckCallbackUrl", userCheckCallbackUrl);
+
+        return postEntity(urlTemplate, dynamicPayload, Integer.class, packageName, clientName);
+    }
+
+    WorkflowCollaboratorConfigVO getWorkflowCollaboratorConfig(final String packageName, final String clientName) {
+        LOGGER.trace("getWorkflowCollaboratorConfig ... [packageName =" + packageName + ", clientId = "+clientName+"]");
+        String url = getUrl(leosRestRepositoryWorkflowCollaboratorConfig);
+        String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
+                .queryParam("packageName", "{packageName}")
+                .queryParam("clientName", "{clientName}")
+                .encode()
+                .toUriString();
+        return getEntity(urlTemplate, WorkflowCollaboratorConfigVO.class, packageName, clientName);
+    }
+
     Object configNotificationsUpload(String content) throws JsonProcessingException {
         LOGGER.trace("Upload config notifications... ");
         String url = getUrl(leosRestRepositoryConfigNotificationsUpload);
@@ -532,4 +563,13 @@ public class RestRepository extends AbstractRestClient {
         return getEntity(url, String.class);
     }
 
+    public void deleteWorkflowCollaborator(BigInteger id) {
+        LOGGER.trace("delete WorkflowCollaboratorConfig ... [id =" + id + "]");
+        String url = getUrl(leosRestRepositoryWorkflowCollaboratorConfig);
+        String urlTemplate = UriComponentsBuilder.fromHttpUrl(url)
+                .path("/{id}")
+                .encode()
+                .toUriString();
+        delete(urlTemplate, id);
+    }
 }

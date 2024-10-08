@@ -19,6 +19,7 @@ import eu.europa.ec.leos.cmis.extensions.LeosMetadataExtensions;
 import eu.europa.ec.leos.domain.common.RepositoryProfileType;
 import eu.europa.ec.leos.domain.repository.LinkedPackage;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
+import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
 import eu.europa.ec.leos.repository.RepositoryProfile;
 import eu.europa.ec.leos.repository.mapping.LeosMapper;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
@@ -39,6 +40,7 @@ import eu.europa.ec.leos.repository.LeosRepository;
 import eu.europa.ec.leos.cmis.CmisRepositoryContext;
 import eu.europa.ec.leos.repository.mapping.RepositoryProperties;
 import eu.europa.ec.leos.repository.mapping.RepositoryPropertiesMapper;
+import eu.europa.ec.leos.rest.aop.annotation.PerformanceLogger;
 import eu.europa.ec.leos.security.LeosPermissionAuthorityMapHelper;
 import eu.europa.ec.leos.security.SecurityContext;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
@@ -54,6 +56,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Provider;
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -685,6 +688,20 @@ public class LeosCmisRepositoryImpl implements LeosRepository {
     @Override
     public LeosDocument findConfigByName(String name) {
         return null;
+    }
+
+    @Override
+    public Optional<WorkflowCollaboratorConfigVO> getWorkflowCollaboratorConfig(String packageName, String clientName) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Integer createOrUpdateWorkflowCollaboratorConfig(String clientSystemId, String proposalName, String aclCallbackUrl, String userCheckCallbackUrl) {
+        return -1;
+    }
+
+    @Override
+    public void deleteWorkflowCollaborator(BigInteger id) {
     }
 
     @Override

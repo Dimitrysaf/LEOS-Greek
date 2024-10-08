@@ -25,13 +25,16 @@ import eu.europa.ec.leos.domain.repository.document.LeosDocument;
 import eu.europa.ec.leos.domain.repository.metadata.LeosMetadata;
 import eu.europa.ec.leos.domain.vo.CloneDocumentMetadataVO;
 import eu.europa.ec.leos.domain.vo.CloneProposalMetadataVO;
+import eu.europa.ec.leos.domain.vo.WorkflowCollaboratorConfigVO;
 import eu.europa.ec.leos.model.filter.QueryFilter;
 import eu.europa.ec.leos.model.user.Collaborator;
 import eu.europa.ec.leos.vo.response.FavouritePackageResponse;
 import eu.europa.ec.leos.vo.response.RecentPackageResponse;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -407,4 +410,9 @@ public interface LeosRepository {
 
     LeosDocument findConfigByName(String name);
 
+    Optional<WorkflowCollaboratorConfigVO> getWorkflowCollaboratorConfig(String packageName, String clientName);
+
+    Integer createOrUpdateWorkflowCollaboratorConfig(String clientSystemId, String packageName, String aclCallbackUrl, String userCheckCallbackUrl);
+
+    void deleteWorkflowCollaborator(BigInteger id);
 }

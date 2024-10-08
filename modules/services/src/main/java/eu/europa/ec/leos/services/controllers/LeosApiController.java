@@ -200,7 +200,7 @@ public class LeosApiController {
 
             int accessTokenExpirationInMinInt = getAccessTokenExpirationInMinInt();
             long expiresInMilliSec = System.currentTimeMillis() + accessTokenExpirationInMinInt * 60 * 1000;
-            String accessToken = tokenService.getAccessToken(user);
+            String accessToken = tokenService.getAccessToken(user, authClient); //TODO provide systemName
             JsonTokenReponse jsonToken = new JsonTokenReponse(accessToken, "jwt", expiresInMilliSec, null, null);
             tokenService.setAccessTokenMap(accessToken, jSessionId != null ? jSessionId.getValue() : null);
             LOG.debug("Created accessToken for the Client '{}", authClient.getName());
@@ -759,4 +759,3 @@ public class LeosApiController {
         }
     }
 }
-    
