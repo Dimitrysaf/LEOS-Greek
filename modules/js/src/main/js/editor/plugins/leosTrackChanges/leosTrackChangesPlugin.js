@@ -275,7 +275,7 @@ define(function leosTrackChangesPluginModule(require) {
                             core.removeTrackChangesAttributesForNumbering(element);
                         }
                     } else if (element.getAttribute(core.DATA_AKN_TC_ORIGINAL_NUMBER) === core.NEW) {
-                        const closestList = $(element).closest('ol');
+                        var closestList = $(element).closest('ol');
                         if (!!closestList && closestList.length > 0 && !isNumberedList(closestList[0])) {
                             element.removeAttribute("data-akn-num");
                         }
