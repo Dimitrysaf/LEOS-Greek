@@ -19,8 +19,7 @@ public abstract class LeosDocument implements Auditable, Versionable {
     private final Option<Content> content;
     private final AuditData auditData;
     private final VersionData versionData;
-
-    private String lfds;
+    private String lfdsScreenFlag;
 
     protected LeosDocument(LeosCategory category, String id, String name, String createdBy, Instant creationInstant,
                            String lastModifiedBy, Instant lastModificationInstant, String versionSeriesId,
@@ -37,14 +36,14 @@ public abstract class LeosDocument implements Auditable, Versionable {
     protected LeosDocument(LeosCategory category, String id, String name, String createdBy, Instant creationInstant,
             String lastModifiedBy, Instant lastModificationInstant, String versionSeriesId,
             String cmisVersionLabel, String versionLabel, String versionComment, VersionType versionType,
-            boolean isLatestVersion, Option<Content> content, String lfds) {
+            boolean isLatestVersion, Option<Content> content, String lfdsScreenFlag) {
         this.auditData = new AuditData(createdBy, creationInstant, lastModifiedBy, lastModificationInstant);
         this.versionData = new VersionData(versionSeriesId, cmisVersionLabel, versionLabel, versionComment, versionType, isLatestVersion);
         this.category = category;
         this.id = id;
         this.name = name;
         this.content = content;
-        this.lfds = lfds;
+        this.lfdsScreenFlag = lfdsScreenFlag;
     }
 
     public LeosCategory getCategory() {
@@ -103,12 +102,12 @@ public abstract class LeosDocument implements Auditable, Versionable {
         return versionData.getVersionType();
     }
 
-    public String getLfds() {
-        return lfds;
+    public String getLfdsScreenFlag() {
+        return lfdsScreenFlag;
     }
 
-    public void setLfds(String lfds) {
-        this.lfds = lfds;
+    public void setLfdsScreenFlag(String lfds) {
+        this.lfdsScreenFlag = lfds;
     }
 
 }

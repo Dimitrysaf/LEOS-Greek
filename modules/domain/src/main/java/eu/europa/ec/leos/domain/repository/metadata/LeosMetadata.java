@@ -23,6 +23,8 @@ public abstract class LeosMetadata {
     protected boolean imported;
     protected String packageRef;
 
+    private String creationFlag;
+
     protected LeosMetadata(LeosCategory category, String stage, String type, String purpose, String template,
                            String language, String docTemplate, String ref, String packageRef, String objectId, String docVersion,
                            boolean eeaRelevance) {
@@ -44,6 +46,14 @@ public abstract class LeosMetadata {
                            String language, String docTemplate, String ref, String objectId, String docVersion,
                            boolean eeaRelevance) {
         this(category, stage, type, purpose, template, language, docTemplate, ref, null, objectId, docVersion, eeaRelevance);
+    }
+
+    public String getCreationFlag() {
+        return creationFlag;
+    }
+
+    public void setCreationFlag(String creationFlag) {
+        this.creationFlag = creationFlag;
     }
 
     public String getStage() {
