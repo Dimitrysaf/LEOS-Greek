@@ -8,7 +8,7 @@
                 <heading leos:origin="ec" xml:id="_art_2__heading">Entry into force</heading>
                 <paragraph leos:affected="true" leos:origin="ec" xml:id="_art_2_PbEh5K">
                     <list leos:origin="ec" xml:id="_art_2_dETnG9">
-                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_2_RaenZD">
+                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="_art_2_RaenZD">
                             <content leos:origin="ec" xml:id="_art_2_56CDyx">
                                 <p leos:origin="ec" xml:id="_art_2_x9yg5u">Article 2</p>
                             </content>
@@ -34,7 +34,7 @@
                             <list leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2022-08-09T13:52:34.814+02:00"
                                   leos:softuser=" jane(DIGIT)" xml:id="deletedX_art_2_y10Jke">
                                 <subparagraph leos:origin="ec" leos:softaction="del" leos:softactionroot="false" leos:softdate="2022-08-09T13:52:34.814+02:00"
-                                              leos:softuser=" jane(DIGIT)" refersTo="~_INP" xml:id="deletedX_art_2_btTLSv">
+                                              leos:softuser=" jane(DIGIT)" refersTo="~INP" xml:id="deletedX_art_2_btTLSv">
                                     <content leos:origin="ec" xml:id="deletedX_art_2_1pKPOW">
                                         <p leos:origin="ec" xml:id="deletedX_art_2_9kttFq">Point b of Article 2</p>
                                     </content>

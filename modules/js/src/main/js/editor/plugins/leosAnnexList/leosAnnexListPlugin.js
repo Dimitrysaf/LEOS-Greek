@@ -32,7 +32,7 @@ define(function leosAnnexListPluginModule(require) {
     var DATA_AKN_NUM = "data-akn-num";
     var DATA_AKN_NUM_ID = "data-akn-num-id";
     var REFERS_TO = "refersto";
-    var INP = "~_INP";
+    var INP = "~INP";
     var POINT = "point";
     var SUBPARAGRAPH = "subparagraph";
 
@@ -768,7 +768,7 @@ define(function leosAnnexListPluginModule(require) {
 
         // Merge with previous block's content.
         nextCursor.enlarge( CKEDITOR.ENLARGE_LIST_ITEM_CONTENTS );
-        var isINP = nextCursor.startContainer.getAttribute("refersto") && nextCursor.startContainer.getAttribute("refersto") === "~_INP";
+        var isINP = nextCursor.startContainer.getAttribute("refersto") && nextCursor.startContainer.getAttribute("refersto") === "~INP";
         var frag = nextCursor.extractContents();
 
         cursor.trim( false, true );

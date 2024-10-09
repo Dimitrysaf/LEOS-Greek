@@ -3,7 +3,7 @@
     <heading>Definitions</heading>
     <paragraph>
         <list>
-            <subparagraph refersTo="~_INP">
+            <subparagraph refersTo="~INP">
                 <content>
                     <p>Sub paragraph content</p>
                 </content>
@@ -11,7 +11,7 @@
             <indent>
                 <num/>
                 <list>
-                    <subparagraph refersTo="~_INP">
+                    <subparagraph refersTo="~INP">
                         <content>
                             <p>General terms</p>
                         </content>
@@ -27,7 +27,7 @@
             <indent>
                 <num/>
                 <list>
-                    <subparagraph refersTo="~_INP">
+                    <subparagraph refersTo="~INP">
                         <content>
                             <p>Transaction types</p>
                         </content>
@@ -49,7 +49,7 @@
             <indent>
                 <num/>
                 <list>
-                    <subparagraph refersTo="~_INP">
+                    <subparagraph refersTo="~INP">
                         <content>
                             <p>Netting set, hedging sets, and related terms</p>
                         </content>

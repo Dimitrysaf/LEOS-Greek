@@ -147,7 +147,7 @@
                 <paragraph xml:id="art_1__para_1">
                     <num xml:id="art_1__para_1__num">1.</num>
                     
-                    <list xml:id="art_1_1w6KRX"><subparagraph refersTo="~_INP" xml:id="art_1_ftJWXT">
+                    <list xml:id="art_1_1w6KRX"><subparagraph refersTo="~INP" xml:id="art_1_ftJWXT">
                         <content xml:id="art_1__para_1__content">
                             <p xml:id="art_1__para_1__content__p">art1-par1 (sub) </p>
                         </content>
@@ -172,7 +172,7 @@
                 <heading xml:id="art_2__heading">Entry into force</heading>
                 <paragraph xml:id="art_2__para_1">
                     
-                    <list xml:id="art_2_lKHtUF"><subparagraph refersTo="~_INP" xml:id="art_2_SNi868">
+                    <list xml:id="art_2_lKHtUF"><subparagraph refersTo="~INP" xml:id="art_2_SNi868">
                         <content xml:id="art_2__para_1__content">
                             <p xml:id="art_2__para_1__content__p">This Regulation shall enter into force on the [...]
                                 day following that of its publication in the <i xml:id="art_2__para_1__content__p__i">
@@ -218,7 +218,7 @@
                 <paragraph xml:id="akn_art_B6BGPx-par1">
                     <num xml:id="akn_art_B6BGPx_CEEgdz">1.</num>
                     
-                    <list xml:id="akn_art_B6BGPx_patRZP"><subparagraph refersTo="~_INP" xml:id="akn_art_B6BGPx_LjgRwY">
+                    <list xml:id="akn_art_B6BGPx_patRZP"><subparagraph refersTo="~INP" xml:id="akn_art_B6BGPx_LjgRwY">
                         <content xml:id="akn_art_B6BGPx_tAYgzk">
                             <p xml:id="akn_art_B6BGPx_S6dVOu">art 3 - par1 (sub)</p>
                         </content>
@@ -226,7 +226,7 @@
                         <point xml:id="akn_art_B6BGPx_EFkmBp">
                             <num xml:id="akn_art_B6BGPx_55WP4L">(a)</num>
                             
-                            <list xml:id="akn_art_B6BGPx_CKBXAf"><subparagraph refersTo="~_INP" xml:id="akn_art_B6BGPx_dS0ZVD">
+                            <list xml:id="akn_art_B6BGPx_CKBXAf"><subparagraph refersTo="~INP" xml:id="akn_art_B6BGPx_dS0ZVD">
                                 <content xml:id="akn_art_B6BGPx_LD9GxL">
                                     <p xml:id="akn_art_B6BGPx_GzpWwi">art3- point a</p>
                                 </content>

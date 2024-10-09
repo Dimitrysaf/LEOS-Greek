@@ -7,7 +7,7 @@
                 <paragraph leos:affected="true" leos:origin="ec" xml:id="_art_1__para_1">
                     <num leos:origin="ec" xml:id="_art_1__para_1__num">1.</num>
                     <list leos:origin="ec" xml:id="_art_1_geFV8v">
-                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_9QazpL">
+                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="_art_1_9QazpL">
                             <content leos:origin="ec" xml:id="_art_1__para_1__content">
                                 <p leos:origin="ec" xml:id="_art_1__para_1__content__p">This a custom article.</p>
                             </content>
@@ -23,7 +23,7 @@
                         <point leos:origin="ec" xml:id="_art_1_iTVvtl">
                             <num leos:origin="ec" xml:id="_art_1_dRmzE0">(b)</num>
                             <list leos:origin="ec" xml:id="_art_1_kSgdA1">
-                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_H6p1HX">
+                                <subparagraph leos:origin="ec" refersTo="~INP" xml:id="_art_1_H6p1HX">
                                     <content leos:origin="ec" xml:id="_art_1_GS0DdI">
                                         <p leos:origin="ec" xml:id="_art_1_eXY3hF">Second point</p>
                                     </content>
@@ -36,7 +36,7 @@
                                         </content>
                                     </subparagraph>
                                     <list leos:origin="ec" xml:id="_art_1_jI1hMO">
-                                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_sf68he">
+                                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="_art_1_sf68he">
                                             <content leos:origin="ec" xml:id="_art_1_8FSQqS">
                                                 <p leos:origin="ec" xml:id="_art_1_EpY1x9">This a subparagraph</p>
                                             </content>
@@ -44,7 +44,7 @@
                                         <point leos:origin="ec" xml:id="_art_1_AW7mmk">
                                             <num leos:origin="ec" xml:id="_art_1_jwMvmL">(1)</num>
                                             <list leos:origin="ec" xml:id="_art_1_muTM7F">
-                                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="_art_1_QrNUIS">
+                                                <subparagraph leos:origin="ec" refersTo="~INP" xml:id="_art_1_QrNUIS">
                                                     <content leos:origin="ec" xml:id="_art_1_HETZsY">
                                                         <p leos:origin="ec" xml:id="_art_1_f4OEmt">Fourth point</p>
                                                     </content>

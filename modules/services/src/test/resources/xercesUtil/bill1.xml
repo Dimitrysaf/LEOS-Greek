@@ -239,7 +239,7 @@
                     <heading xml:id="impXart_d179e1221_P9kEii_QVmXB0">Scope</heading>
                     <paragraph xml:id="impXart_d179e1221_P9kEii_oHxHh8">
                         
-                        <list xml:id="impXart_d179e1221_P9kEii_z694nQ"><subparagraph refersTo="~_INP" xml:id="impXart_d179e1221_P9kEii_DV2icu">
+                        <list xml:id="impXart_d179e1221_P9kEii_z694nQ"><subparagraph refersTo="~INP" xml:id="impXart_d179e1221_P9kEii_DV2icu">
                             <content xml:id="impXart_d179e1221_P9kEii_THG15B">
                                 <p xml:id="impXart_d179e1221_P9kEii_LTEPGI">This Regulation lays down uniform rules
                                     concerning general prudential requirements that institutions supervised under
@@ -332,7 +332,7 @@
                         <paragraph xml:id="impXart_d179e1276_YsW4Ef_drVHDs">
                             <num xml:id="impXart_d179e1276_YsW4Ef_PRwcBT">1.</num>
                             
-                            <list xml:id="impXart_d179e1276_YsW4Ef_q0DVmQ"><subparagraph refersTo="~_INP" xml:id="impXart_d179e1276_YsW4Ef_wzJMCY">
+                            <list xml:id="impXart_d179e1276_YsW4Ef_q0DVmQ"><subparagraph refersTo="~INP" xml:id="impXart_d179e1276_YsW4Ef_wzJMCY">
                                 <content xml:id="impXart_d179e1276_YsW4Ef_tLR9Ps">
                                     <p xml:id="impXart_d179e1276_YsW4Ef_l1wyP5">For the purposes of this Regulation, the
                                         following definitions shall apply:
@@ -351,7 +351,7 @@
                                 <point xml:id="impXart_d179e1276_YsW4Ef_eluJlj">
                                     <num xml:id="impXart_d179e1276_YsW4Ef_pbgRY6">(b)</num>
                                     
-                                    <list xml:id="impXart_d179e1276_YsW4Ef_SqgyUd"><subparagraph refersTo="~_INP" xml:id="impXart_d179e1276_YsW4Ef_Enjtmv">
+                                    <list xml:id="impXart_d179e1276_YsW4Ef_SqgyUd"><subparagraph refersTo="~INP" xml:id="impXart_d179e1276_YsW4Ef_Enjtmv">
                                         <content xml:id="impXart_d179e1276_YsW4Ef_N8T4VV">
                                             <p xml:id="impXart_d179e1276_YsW4Ef_GLPSNi">'investment firm' means a
                                                 person as defined in point (1) of Article 4(1) of Directive 2004/39/EC,
@@ -506,7 +506,7 @@
                                 <point xml:id="impXart_d179e1276_YsW4Ef_gk4xFM">
                                     <num xml:id="impXart_d179e1276_YsW4Ef_qU4s40">(m)</num>
                                     
-                                    <list xml:id="impXart_d179e1276_YsW4Ef_QtPqz4"><subparagraph refersTo="~_INP" xml:id="impXart_d179e1276_YsW4Ef_rkV5BY">
+                                    <list xml:id="impXart_d179e1276_YsW4Ef_QtPqz4"><subparagraph refersTo="~INP" xml:id="impXart_d179e1276_YsW4Ef_rkV5BY">
                                         <content xml:id="impXart_d179e1276_YsW4Ef_4017jr">
                                             <p xml:id="impXart_d179e1276_YsW4Ef_yphZrc">'originator' means an
                                                 entity which:
@@ -546,7 +546,7 @@
                                 <point xml:id="impXart_d179e1276_YsW4Ef_9ja2ab">
                                     <num xml:id="impXart_d179e1276_YsW4Ef_nojqST">(o)</num>
                                     
-                                    <list xml:id="impXart_d179e1276_YsW4Ef_pMTM6D"><subparagraph refersTo="~_INP" xml:id="impXart_d179e1276_YsW4Ef_dN9RTn">
+                                    <list xml:id="impXart_d179e1276_YsW4Ef_pMTM6D"><subparagraph refersTo="~INP" xml:id="impXart_d179e1276_YsW4Ef_dN9RTn">
                                         <content xml:id="impXart_d179e1276_YsW4Ef_75jWwF">
                                             <p xml:id="impXart_d179e1276_YsW4Ef_GEG1zB">'parent undertaking'
                                                 means:
@@ -578,7 +578,7 @@
                                 <point xml:id="impXart_d179e1276_YsW4Ef_QDAZi0">
                                     <num xml:id="impXart_d179e1276_YsW4Ef_b4yp9B">(p)</num>
                                     
-                                    <list xml:id="impXart_d179e1276_YsW4Ef_4P4bbA"><subparagraph refersTo="~_INP" xml:id="impXart_d179e1276_YsW4Ef_Rfzqhn">
+                                    <list xml:id="impXart_d179e1276_YsW4Ef_4P4bbA"><subparagraph refersTo="~INP" xml:id="impXart_d179e1276_YsW4Ef_Rfzqhn">
                                         <content xml:id="impXart_d179e1276_YsW4Ef_vjpfwY">
                                             <p xml:id="impXart_d179e1276_YsW4Ef_ROh9EY">'subsidiary' means:</p>
                                         </content>
@@ -601,7 +601,7 @@
                                                 </p>
                                             </content>
                                         </point>
-                                    <subparagraph refersTo="~_WRP" xml:id="impXart_d179e1276_YsW4Ef_iCIczu">
+                                    <subparagraph refersTo="~WRP" xml:id="impXart_d179e1276_YsW4Ef_iCIczu">
                                         <content xml:id="impXart_d179e1276_YsW4Ef_XrxRus">
                                             <p xml:id="impXart_d179e1276_YsW4Ef_ipKEyh">Subsidiaries of subsidiaries shall
                                                 also be considered to be subsidiaries of the undertaking that is their

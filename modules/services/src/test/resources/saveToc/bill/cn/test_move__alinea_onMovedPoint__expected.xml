@@ -6,7 +6,7 @@
                 <heading leos:origin="ec" xml:id="art_1__heading">Scope</heading>
                 <paragraph leos:origin="ec" xml:id="art_1__para_1">
                     <num leos:origin="ec" xml:id="art_1__para_1__num">1.</num>
-                    <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_7T3z1H">
+                    <subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_1_7T3z1H">
                         <content leos:origin="ec" xml:id="art_1_ZVEA1I">
                             <p leos:origin="ec" xml:id="art_1_13IN9L">Text...</p>
                         </content>

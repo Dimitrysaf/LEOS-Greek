@@ -15,7 +15,7 @@
         <paragraph xml:id="impXart_23_P99mof_58pYPx">
             <num xml:id="impXart_23_P99mof_h0d1hy">2.</num>
             <list xml:id="impXart_23_P99mof_u93htc">
-                <subparagraph refersTo="~_INP" xml:id="impXart_23_P99mof_Qk0CtG">
+                <subparagraph refersTo="~INP" xml:id="impXart_23_P99mof_Qk0CtG">
                     <content xml:id="impXart_23_P99mof_prZB8Z">
                         <p xml:id="impXart_23_P99mof_gwVoMB">Article 25, paragraph 2, first subparagraph</p>
                     </content>
@@ -41,7 +41,7 @@
                         </content>
                     </subparagraph>
                     <list xml:id="impXart_23_P99mof_SQ8BMd">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_23_P99mof_LYUT0e">
+                        <subparagraph refersTo="~INP" xml:id="impXart_23_P99mof_LYUT0e">
                             <content xml:id="impXart_23_P99mof_znCsOX">
                                 <p xml:id="impXart_23_P99mof_n8tcjP">Article 25, paragraph 2, Point (b), second alinea</p>
                             </content>

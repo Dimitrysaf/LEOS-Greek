@@ -36,7 +36,7 @@
                 <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
                 <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="INP"/>
             </references>
             <proprietary source="~leos">
                 <leos:templateVersion>3.0.0</leos:templateVersion>
@@ -462,7 +462,7 @@
                     <paragraph xml:id="akn_art_phTLdP_GDNZEE">
                         <num leos:origin="ec" xml:id="akn_art_phTLdP_EPO84e">1.</num>
                         <list xml:id="akn_art_phTLdP_ieIr1P">
-                            <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_C9WFYo">
+                            <subparagraph refersTo="~INP" xml:id="akn_art_phTLdP_C9WFYo">
                                 <content xml:id="akn_art_phTLdP_E5fjAu">
                                     <p xml:id="akn_art_phTLdP_5TvVpF">Processing of personal data may take place in EU CSW-CERTEX only for the following purposes:</p>
                                 </content>
@@ -484,7 +484,7 @@
                     <paragraph xml:id="akn_art_phTLdP_NvQTzp">
                         <num leos:origin="ec" xml:id="akn_art_phTLdP_Lm9ODY">2.</num>
                         <list xml:id="akn_art_phTLdP_7DFoOJ">
-                            <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_FE6qXG">
+                            <subparagraph refersTo="~INP" xml:id="akn_art_phTLdP_FE6qXG">
                                 <content xml:id="akn_art_phTLdP_obG97T">
                                     <p xml:id="akn_art_phTLdP_IWYLwk">EU CSW-CERTEX may process personal data only on the following categories of data subjects:</p>
                                 </content>
@@ -518,7 +518,7 @@
                     <paragraph xml:id="akn_art_phTLdP_QsVl8H">
                         <num xml:id="akn_art_phTLdP_JFGuwC">3.</num>
                         <list xml:id="akn_art_phTLdP_u49VGy">
-                            <subparagraph refersTo="~_INP" xml:id="akn_art_phTLdP_Hyqr4c">
+                            <subparagraph refersTo="~INP" xml:id="akn_art_phTLdP_Hyqr4c">
                                 <content xml:id="akn_art_phTLdP_ARYfGY">
                                     <p xml:id="akn_art_phTLdP_g8wNtg">EU CSW-CERTEX may process only the following categories of personal data:</p>
                                 </content>
@@ -568,7 +568,7 @@
                     <paragraph xml:id="akn_art_jSKkaB_7DGsxr">
                         <num xml:id="akn_art_jSKkaB_aZUNmZ">3.</num>
                         <list xml:id="akn_art_jSKkaB_6EEUWu">
-                            <subparagraph refersTo="~_INP" xml:id="akn_art_jSKkaB_1dypT1">
+                            <subparagraph refersTo="~INP" xml:id="akn_art_jSKkaB_1dypT1">
                                 <content xml:id="akn_art_jSKkaB_AHS0L6">
                                     <p xml:id="akn_art_jSKkaB_9MzApm">The joint controllers shall ensure that they:</p>
                                 </content>
@@ -622,7 +622,7 @@
                     <paragraph xml:id="akn_art_dMHd93_X20PeL">
                         <num xml:id="akn_art_dMHd93_VsWLtx">3.</num>
                         <list xml:id="akn_art_dMHd93_fjD8KI">
-                            <subparagraph refersTo="~_INP" xml:id="akn_art_dMHd93_sMzfOQ">
+                            <subparagraph refersTo="~INP" xml:id="akn_art_dMHd93_sMzfOQ">
                                 <content xml:id="akn_art_dMHd93_8FM4cZ">
                                     <p xml:id="akn_art_dMHd93_PULz4y">The national single window environments for customs shall provide in particular the following functionalities:</p>
                                 </content>
@@ -689,7 +689,7 @@
                         <paragraph xml:id="akn_art_q7XGxr_t7zhJW">
                             <num xml:id="akn_art_q7XGxr_sd2xlH">1.</num>
                             <list xml:id="akn_art_q7XGxr_JOEMzG">
-                                <subparagraph refersTo="~_INP" xml:id="akn_art_q7XGxr_bIuYAK">
+                                <subparagraph refersTo="~INP" xml:id="akn_art_q7XGxr_bIuYAK">
                                     <content xml:id="akn_art_q7XGxr_E176AP">
                                         <p xml:id="akn_art_q7XGxr_uwVnDm">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall enable information to be exchanged between the national single window environments for customs and the relevant Union non-customs systems for the following purposes:</p>
                                     </content>
@@ -723,7 +723,7 @@
                         <paragraph xml:id="akn_art_q7XGxr_7GzwUc">
                             <num xml:id="akn_art_q7XGxr_UAgiy6">2.</num>
                             <list xml:id="akn_art_q7XGxr_PgDoT7">
-                                <subparagraph refersTo="~_INP" xml:id="akn_art_q7XGxr_RUwVxP">
+                                <subparagraph refersTo="~INP" xml:id="akn_art_q7XGxr_RUwVxP">
                                     <content xml:id="akn_art_q7XGxr_jL3AuW">
                                         <p xml:id="akn_art_q7XGxr_GAUZf1">For each of the Union non-customs formalities listed in the Annex, EU CSW-CERTEX shall provide for the following:</p>
                                     </content>
@@ -764,7 +764,7 @@
                         <heading xml:id="akn_art_dtWbDZ_KZj4UG">Streamlining the fulfilment of customs and Union non-customs formalities</heading>
                         <paragraph xml:id="akn_art_dtWbDZ_XfqDj2">
                             <list xml:id="akn_art_dtWbDZ_pfVhrA">
-                                <subparagraph refersTo="~_INP" xml:id="akn_art_dtWbDZ_YTj1W0">
+                                <subparagraph refersTo="~INP" xml:id="akn_art_dtWbDZ_YTj1W0">
                                     <content xml:id="akn_art_dtWbDZ_KHYPbU">
                                         <p xml:id="akn_art_dtWbDZ_eLCD5A">For goods subject to any of the Union non-customs formalities listed in the Annex, the national single window environments for customs shall provide the following functionalities:</p>
                                     </content>
@@ -796,7 +796,7 @@
                         <paragraph xml:id="akn_art_kCjLvC_zUa3wJ">
                             <num xml:id="akn_art_kCjLvC_516xzg">2.</num>
                             <list xml:id="akn_art_kCjLvC_dNIHv5">
-                                <subparagraph refersTo="~_INP" xml:id="akn_art_kCjLvC_SwXBty">
+                                <subparagraph refersTo="~INP" xml:id="akn_art_kCjLvC_SwXBty">
                                     <content xml:id="akn_art_kCjLvC_toeFZz">
                                         <p xml:id="akn_art_kCjLvC_bzqs48">The Commission shall, by means of implementing acts, determine which of the Union non-customs formalities listed in the Annex fulfil the following criteria:Â </p>
                                     </content>
@@ -884,7 +884,7 @@
                         <paragraph xml:id="akn_art_LBFSRW_eXWyDr">
                             <num xml:id="akn_art_LBFSRW_36NDMs">1.</num>
                             <list xml:id="akn_art_LBFSRW_9fx8ti">
-                                <subparagraph refersTo="~_INP" xml:id="akn_art_LBFSRW_a2ccWr">
+                                <subparagraph refersTo="~INP" xml:id="akn_art_LBFSRW_a2ccWr">
                                     <content xml:id="akn_art_LBFSRW_kcKzuH">
                                         <p xml:id="akn_art_LBFSRW_RRt9eD">EU CSW-CERTEX shall enable the necessary exchanges of information between national single window environments for customs and Union non-customs systems for the following purposes:</p>
                                     </content>
@@ -934,7 +934,7 @@
                         <heading xml:id="akn_art_ninkXQ_xC6YJV">National coordinators</heading>
                         <paragraph xml:id="akn_art_ninkXQ_e4cxNV">
                             <list xml:id="akn_art_ninkXQ_hjUw2m">
-                                <subparagraph refersTo="~_INP" xml:id="akn_art_ninkXQ_Gb8eF4">
+                                <subparagraph refersTo="~INP" xml:id="akn_art_ninkXQ_Gb8eF4">
                                     <content xml:id="akn_art_ninkXQ_HOV02w">
                                         <p xml:id="akn_art_ninkXQ_OQmHlf">Each Member State shall designate a competent authority to act as a national coordinator for the European Union Single Window Environment for Customs. The national coordinator shall carry out the following tasks:</p>
                                     </content>

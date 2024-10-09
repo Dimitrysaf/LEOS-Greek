@@ -36,8 +36,8 @@
                 <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
                 <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="_WRP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="INP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="WRP"/>
             </references>
             <proprietary source="~_leos">
                 <leos:templateVersion>2.0.0</leos:templateVersion>
@@ -171,7 +171,7 @@
                 </paragraph>
                 <paragraph xml:id="impXart_1_2t3hpi_6n6QWQ">
                     <list xml:id="impXart_1_2t3hpi_hfUlHK">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_1_2t3hpi_unn5we">
+                        <subparagraph refersTo="~INP" xml:id="impXart_1_2t3hpi_unn5we">
                             <content xml:id="impXart_1_2t3hpi_hIJr6g">
                                 <p xml:id="impXart_1_2t3hpi_Jwb0Od">The rules set out in this Regulation shall apply without prejudice to the provisions laid down in Regulation (EU) No 1306/2013 of the European Parliament and of the Council
                                     <authorialNote marker="3" placement="bottom" xml:id="impXart_1_2t3hpi_mvoU0J">
@@ -229,7 +229,7 @@
                 <heading xml:id="impXart_2_QJ59nH_NlXYGX">Definitions</heading>
                 <paragraph xml:id="impXart_2_QJ59nH_dtULZG">
                     <list xml:id="impXart_2_QJ59nH_NY4jrC">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_2_QJ59nH_9vK0Qt">
+                        <subparagraph refersTo="~INP" xml:id="impXart_2_QJ59nH_9vK0Qt">
                             <content xml:id="impXart_2_QJ59nH_MpYNEi">
                                 <p xml:id="impXart_2_QJ59nH_AorRAI">For the purposes of this Regulation, the following definitions apply;</p>
                             </content>
@@ -582,7 +582,7 @@
                 <paragraph xml:id="impXart_5_Q3lwbO_Leff4z">
                     <num xml:id="impXart_5_Q3lwbO_bxAVer">1.</num>
                     <list xml:id="impXart_5_Q3lwbO_8Af8JR">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_5_Q3lwbO_lvpJEZ">
+                        <subparagraph refersTo="~INP" xml:id="impXart_5_Q3lwbO_lvpJEZ">
                             <content xml:id="impXart_5_Q3lwbO_AeE35P">
                                 <p xml:id="impXart_5_Q3lwbO_OfkmYU">For the Partnership Agreement and each programme, each Member State shall in accordance with its institutional and legal framework organise a partnership with the competent regional and local authorities. The partnership shall also include the following partners:</p>
                             </content>
@@ -616,7 +616,7 @@
                 <paragraph xml:id="impXart_5_Q3lwbO_UsBIpp">
                     <num xml:id="impXart_5_Q3lwbO_C4UmXA">3.</num>
                     <list xml:id="impXart_5_Q3lwbO_NPORIg">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_5_Q3lwbO_fAwUBU">
+                        <subparagraph refersTo="~INP" xml:id="impXart_5_Q3lwbO_fAwUBU">
                             <content xml:id="impXart_5_Q3lwbO_oKFKpF">
                                 <p xml:id="impXart_5_Q3lwbO_dmqJO7">The Commission shall be empowered to adopt a delegated act in accordance with Article 149 to provide for a European code of conduct on partnership (the 'code of conduct') in order to support and facilitate Member States in the organisation of partnership in accordance with paragraphs 1 and 2 of this Article. The code of conduct shall set out the framework within which the Member States, in accordance with their institutional and legal framework as well as their national and regional competences, shall pursue the implementation of partnership. The code of conduct, while fully respecting the principles of subsidiarity and proportionality, shall lay down the following elements:</p>
                             </content>
@@ -663,7 +663,7 @@
                                 <p xml:id="impXart_5_Q3lwbO_dbtrx3">the main principles and good practices that are apt to facilitate the Member States' assessment of the implementation of partnership and its added value.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_5_Q3lwbO_SF6Tej">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_5_Q3lwbO_SF6Tej">
                             <content xml:id="impXart_5_Q3lwbO_ZpzgUL">
                                 <p xml:id="impXart_5_Q3lwbO_YkMOva">The provisions of the code of conduct shall not in any way contradict the relevant provisions of this Regulation or the Fund-specific rules.</p>
                             </content>
@@ -736,7 +736,7 @@
                 <heading xml:id="impXart_9_25A49Q_9GqQ2E">Thematic objectives</heading>
                 <paragraph xml:id="impXart_9_25A49Q_bsfrV9">
                     <list xml:id="impXart_9_25A49Q_kOLkED">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_9_25A49Q_aEgbAL">
+                        <subparagraph refersTo="~INP" xml:id="impXart_9_25A49Q_aEgbAL">
                             <content xml:id="impXart_9_25A49Q_d10l1Y">
                                 <p xml:id="impXart_9_25A49Q_2F0UD0">In order to contribute to the Union strategy for smart, sustainable and inclusive growth as well as the Fund-specific missions pursuant to their Treaty-based objectives, including economic, social and territorial cohesion, each ESI Fund shall support the following thematic objectives:</p>
                             </content>
@@ -842,7 +842,7 @@
                 <heading xml:id="impXart_11_T6bXjh_5pkdHO">Content</heading>
                 <paragraph xml:id="impXart_11_T6bXjh_MnRbOU">
                     <list xml:id="impXart_11_T6bXjh_Y0srkA">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_11_T6bXjh_bagzLp">
+                        <subparagraph refersTo="~INP" xml:id="impXart_11_T6bXjh_bagzLp">
                             <content xml:id="impXart_11_T6bXjh_yWwHDg">
                                 <p xml:id="impXart_11_T6bXjh_c4ANlR">The CSF shall establish:</p>
                             </content>
@@ -962,7 +962,7 @@
                 <paragraph xml:id="impXart_15_oKMUxO_oI5PhG">
                     <num xml:id="impXart_15_oKMUxO_rpF2Vb">1.</num>
                     <list xml:id="impXart_15_oKMUxO_e8XftV">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_15_oKMUxO_xq7BEc">
+                        <subparagraph refersTo="~INP" xml:id="impXart_15_oKMUxO_xq7BEc">
                             <content xml:id="impXart_15_oKMUxO_o2gY7H">
                                 <p xml:id="impXart_15_oKMUxO_L7g1ZX">The Partnership Agreement shall set out:</p>
                             </content>
@@ -970,7 +970,7 @@
                         <point xml:id="impXart_15_oKMUxO_u3hlPJ">
                             <num xml:id="impXart_15_oKMUxO_kZp4y1">(a)</num>
                             <list xml:id="impXart_15_oKMUxO_SG0RFS">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_15_oKMUxO_Jkn3xh">
+                                <subparagraph refersTo="~INP" xml:id="impXart_15_oKMUxO_Jkn3xh">
                                     <content xml:id="impXart_15_oKMUxO_QQpZKn">
                                         <p xml:id="impXart_15_oKMUxO_UK03K9">arrangements to ensure alignment with the Union strategy for smart, sustainable and inclusive growth as well as the Fund-specific missions pursuant to their Treaty-based objectives, including economic, social and territorial cohesion, including:</p>
                                     </content>
@@ -1022,7 +1022,7 @@
                         <point xml:id="impXart_15_oKMUxO_Wmfw1P">
                             <num xml:id="impXart_15_oKMUxO_qJA7ws">(b)</num>
                             <list xml:id="impXart_15_oKMUxO_DORtdV">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_15_oKMUxO_ggGfCW">
+                                <subparagraph refersTo="~INP" xml:id="impXart_15_oKMUxO_ggGfCW">
                                     <content xml:id="impXart_15_oKMUxO_QRBBVD">
                                         <p xml:id="impXart_15_oKMUxO_hpZvV2">arrangements to ensure effective implementation of the ESI Funds, including:</p>
                                     </content>
@@ -1082,7 +1082,7 @@
                 <paragraph xml:id="impXart_15_oKMUxO_gR1gin">
                     <num xml:id="impXart_15_oKMUxO_tImxWB">2.</num>
                     <list xml:id="impXart_15_oKMUxO_TWNjSq">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_15_oKMUxO_FY8LW3">
+                        <subparagraph refersTo="~INP" xml:id="impXart_15_oKMUxO_FY8LW3">
                             <content xml:id="impXart_15_oKMUxO_GuRVGZ">
                                 <p xml:id="impXart_15_oKMUxO_oKhZIU">The Partnership Agreement shall also indicate:</p>
                             </content>
@@ -1090,7 +1090,7 @@
                         <point xml:id="impXart_15_oKMUxO_9f5Y3L">
                             <num xml:id="impXart_15_oKMUxO_1YiHCr">(a)</num>
                             <list xml:id="impXart_15_oKMUxO_vnDSmu">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_15_oKMUxO_PZ1V1N">
+                                <subparagraph refersTo="~INP" xml:id="impXart_15_oKMUxO_PZ1V1N">
                                     <content xml:id="impXart_15_oKMUxO_cHX9Co">
                                         <p xml:id="impXart_15_oKMUxO_Nr8LWX">an integrated approach to territorial development supported by the ESI Funds or a summary of the integrated approaches to territorial development based on the content of the programmes, setting out:</p>
                                     </content>
@@ -1265,7 +1265,7 @@
                 </paragraph>
                 <paragraph xml:id="impXart_20_UhwEER_Kqnm7G">
                     <list xml:id="impXart_20_UhwEER_sHGsA8">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_20_UhwEER_QxREWu">
+                        <subparagraph refersTo="~INP" xml:id="impXart_20_UhwEER_QxREWu">
                             <content xml:id="impXart_20_UhwEER_b3Wnh0">
                                 <p xml:id="impXart_20_UhwEER_e4RRi0">The following resources are excluded for the purpose of calculating the performance reserve:</p>
                             </content>
@@ -1424,7 +1424,7 @@
                         </content>
                     </subparagraph>
                     <list xml:id="impXart_23_WyBPm0_ltqUsM">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_23_WyBPm0_CkNhUj">
+                        <subparagraph refersTo="~INP" xml:id="impXart_23_WyBPm0_CkNhUj">
                             <content xml:id="impXart_23_WyBPm0_LQzRQU">
                                 <p xml:id="impXart_23_WyBPm0_wmGGOh">Such a request may be made for the following purposes:</p>
                             </content>
@@ -1448,7 +1448,7 @@
                         <point xml:id="impXart_23_WyBPm0_gysxOI">
                             <num xml:id="impXart_23_WyBPm0_fBXypd">(c)</num>
                             <list xml:id="impXart_23_WyBPm0_8gexD6">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_23_WyBPm0_ShSZtb">
+                                <subparagraph refersTo="~INP" xml:id="impXart_23_WyBPm0_ShSZtb">
                                     <content xml:id="impXart_23_WyBPm0_Dd1q0X">
                                         <p xml:id="impXart_23_WyBPm0_V2H2hW">to maximise the growth and competitiveness impact of the available ESI Funds, if a Member State meets one of the following conditions:</p>
                                     </content>
@@ -1485,7 +1485,7 @@
                                 </point>
                             </list>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_23_WyBPm0_Pf8R8h">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_23_WyBPm0_Pf8R8h">
                             <content xml:id="impXart_23_WyBPm0_xTBiZH">
                                 <p xml:id="impXart_23_WyBPm0_syRYvf">For the purposes of point (b) of the second subparagraph, each of those conditions shall be deemed to be satisfied where such assistance has been made available to the Member State before or after 21 December 2013 and remains available to it.</p>
                             </content>
@@ -1551,7 +1551,7 @@
                 <paragraph xml:id="impXart_23_WyBPm0_cpiHFp">
                     <num xml:id="impXart_23_WyBPm0_orMb2X">9.</num>
                     <list xml:id="impXart_23_WyBPm0_oq2Dgh">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_23_WyBPm0_Hi0t3Y">
+                        <subparagraph refersTo="~INP" xml:id="impXart_23_WyBPm0_Hi0t3Y">
                             <content xml:id="impXart_23_WyBPm0_FIagIQ">
                                 <p xml:id="impXart_23_WyBPm0_FH7WSF">The Commission shall make a proposal to the Council to suspend part or all of the commitments or payments for the programmes of a Member State in the following cases:</p>
                             </content>
@@ -1586,7 +1586,7 @@
                                 <p xml:id="impXart_23_WyBPm0_TglSng">where the Council decides that a Member State does not comply with the macro-economic adjustment programme referred to in Article 7 of Regulation (EU) No 472/2013, or with the measures requested by a Council decision adopted in accordance with Article 136(1) TFEU.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_23_WyBPm0_Koz8Ca">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_23_WyBPm0_Koz8Ca">
                             <content xml:id="impXart_23_WyBPm0_6yJcH3">
                                 <p xml:id="impXart_23_WyBPm0_DVUSuN">In making its proposal, the Commission shall respect the provisions of paragraph 11 and shall take account of all relevant information in that regard, and it shall give due consideration to any elements arising from and opinions expressed through the structured dialogue under paragraph 15.</p>
                             </content>
@@ -1624,7 +1624,7 @@
                         </content>
                     </subparagraph>
                     <list xml:id="impXart_23_WyBPm0_CBwXOA">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_23_WyBPm0_zDXB94">
+                        <subparagraph refersTo="~INP" xml:id="impXart_23_WyBPm0_zDXB94">
                             <content xml:id="impXart_23_WyBPm0_qMQ0UW">
                                 <p xml:id="impXart_23_WyBPm0_avBPsz">The suspension of commitments shall be subject to the lower of the following ceilings:</p>
                             </content>
@@ -1650,7 +1650,7 @@
                                 </content>
                             </subparagraph>
                             <list xml:id="impXart_23_WyBPm0_YxD5zg">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_23_WyBPm0_XLBhSK">
+                                <subparagraph refersTo="~INP" xml:id="impXart_23_WyBPm0_XLBhSK">
                                     <content xml:id="impXart_23_WyBPm0_BmPzbW">
                                         <p xml:id="impXart_23_WyBPm0_c2e3bi">If non-compliance relating to corrective actions referred to in points (a), (b) and (c) of the first subparagraph of paragraph 9 persists, the percentage of that GDP cap shall be gradually increased up to:</p>
                                     </content>
@@ -1687,7 +1687,7 @@
                 <paragraph xml:id="impXart_23_WyBPm0_YVmy8R">
                     <num xml:id="impXart_23_WyBPm0_Zo3v3h">12.</num>
                     <list xml:id="impXart_23_WyBPm0_g6xo0E">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_23_WyBPm0_ecwlQV">
+                        <subparagraph refersTo="~INP" xml:id="impXart_23_WyBPm0_ecwlQV">
                             <content xml:id="impXart_23_WyBPm0_OuNMT2">
                                 <p xml:id="impXart_23_WyBPm0_woEN0v">Without prejudice to de-commitment rules set out in Articles 86 to 88 the Commission shall lift the suspension of commitments, without delay, in the following cases:</p>
                             </content>
@@ -1714,7 +1714,7 @@
                                 <p xml:id="impXart_23_WyBPm0_7GXIZ9">where the Commission has concluded that the Member State concerned has taken adequate measures to implement the adjustment programme referred to in Article 7 of Regulation (EU) No 472/2013 or the measures requested by a decision of the Council in accordance with Article 136(1) TFEU.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_23_WyBPm0_YdYtQ5">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_23_WyBPm0_YdYtQ5">
                             <content xml:id="impXart_23_WyBPm0_E7G0Qn">
                                 <p xml:id="impXart_23_WyBPm0_3yRtJn">When lifting the suspension of commitments, the Commission shall re-budget the suspended commitments in accordance with Article 8 of Council Regulation (EU, Euratom) No 1311/2013.</p>
                             </content>
@@ -1775,7 +1775,7 @@
                 <paragraph xml:id="impXart_24_fpJYk4_WXNbLV">
                     <num xml:id="impXart_24_fpJYk4_OmzQZC">1.</num>
                     <list xml:id="impXart_24_fpJYk4_9K93sE">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_24_fpJYk4_9gWdC6">
+                        <subparagraph refersTo="~INP" xml:id="impXart_24_fpJYk4_9gWdC6">
                             <content xml:id="impXart_24_fpJYk4_kXAVAP">
                                 <p xml:id="impXart_24_fpJYk4_r1lrvX">On the request of a Member State, interim payments may be increased by 10 percentage points above the co-financing rate applicable to each priority for the ERDF, ESF and the Cohesion Fund or to each measure for the EAFRD and the EMFF. If a Member State meets one of the following conditions after 21 December 2013, the increased rate, which may not exceed 100 %, shall apply to its requests for payments for the period until 30 June 2016:</p>
                             </content>
@@ -1798,7 +1798,7 @@
                                 <p xml:id="impXart_24_fpJYk4_ApASoD">where financial assistance is made available to the Member State concerned conditional on the implementation of a macroeconomic adjustment programme as specified in Regulation (EU) No 472/2013.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_24_fpJYk4_SagqAc">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_24_fpJYk4_SagqAc">
                             <content xml:id="impXart_24_fpJYk4_YXDR3H">
                                 <p xml:id="impXart_24_fpJYk4_rjNrVy">This paragraph shall not apply to programmes under the ETC Regulation.</p>
                             </content>
@@ -1918,7 +1918,7 @@
                 <paragraph xml:id="impXart_27_rqJekQ_TIQwQj">
                     <num xml:id="impXart_27_rqJekQ_rkxGMb">4.</num>
                     <list xml:id="impXart_27_rqJekQ_q8nSUU">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_27_rqJekQ_A8xECN">
+                        <subparagraph refersTo="~INP" xml:id="impXart_27_rqJekQ_A8xECN">
                             <content xml:id="impXart_27_rqJekQ_lVUgDU">
                                 <p xml:id="impXart_27_rqJekQ_JpQO3f">Each priority shall set out indicators and corresponding targets expressed in qualitative or quantitative terms, in accordance with the Fund-specific rules, in order to assess progress in programme implementation aimed at achievement of objectives as the basis for monitoring, evaluation and review of performance. Those indicators shall include:</p>
                             </content>
@@ -1941,7 +1941,7 @@
                                 <p xml:id="impXart_27_rqJekQ_AqsVdl">result indicators relating to the priority concerned.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_27_rqJekQ_XmL3nB">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_27_rqJekQ_XmL3nB">
                             <content xml:id="impXart_27_rqJekQ_SJItPh">
                                 <p xml:id="impXart_27_rqJekQ_NZZcu7">For each ESI Fund, the Fund-specific rules shall set out common indicators and may set out provisions related to programme-specific indicators.</p>
                             </content>
@@ -1973,7 +1973,7 @@
                 <paragraph xml:id="impXart_28_z34n07_UU6Khs">
                     <num xml:id="impXart_28_z34n07_Bb8QCz">1.</num>
                     <list xml:id="impXart_28_z34n07_xorzDd">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_28_z34n07_zZBqPn">
+                        <subparagraph refersTo="~INP" xml:id="impXart_28_z34n07_zZBqPn">
                             <content xml:id="impXart_28_z34n07_Q1cX4q">
                                 <p xml:id="impXart_28_z34n07_hF9tf0">By way of derogation from Article 27, the dedicated programmes referred to in point (b) of the first subparagraph of Article 39(4) shall include:</p>
                             </content>
@@ -2121,7 +2121,7 @@
                 <paragraph xml:id="impXart_32_Dghqzh_DAve2p">
                     <num xml:id="impXart_32_Dghqzh_wpBsJE">2.</num>
                     <list xml:id="impXart_32_Dghqzh_nPOdaR">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_32_Dghqzh_wIUWOy">
+                        <subparagraph refersTo="~INP" xml:id="impXart_32_Dghqzh_wIUWOy">
                             <content xml:id="impXart_32_Dghqzh_JzTjiV">
                                 <p xml:id="impXart_32_Dghqzh_vdrOHa">Community-led local development shall be:</p>
                             </content>
@@ -2177,7 +2177,7 @@
                 <paragraph xml:id="impXart_33_IJGktV_zUXSU4">
                     <num xml:id="impXart_33_IJGktV_1dT6rh">1.</num>
                     <list xml:id="impXart_33_IJGktV_24DNuc">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_33_IJGktV_y5yEPe">
+                        <subparagraph refersTo="~INP" xml:id="impXart_33_IJGktV_y5yEPe">
                             <content xml:id="impXart_33_IJGktV_4Q3WPd">
                                 <p xml:id="impXart_33_IJGktV_twt45Y">A community-led local development strategy shall contain at least the following elements:</p>
                             </content>
@@ -2282,7 +2282,7 @@
                 <paragraph xml:id="impXart_34_fwhCSa_2fi7nI">
                     <num xml:id="impXart_34_fwhCSa_f1Q66I">3.</num>
                     <list xml:id="impXart_34_fwhCSa_n9s1bf">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_34_fwhCSa_MpvQjA">
+                        <subparagraph refersTo="~INP" xml:id="impXart_34_fwhCSa_MpvQjA">
                             <content xml:id="impXart_34_fwhCSa_V634br">
                                 <p xml:id="impXart_34_fwhCSa_orINyN">The tasks of local action groups shall include the following:</p>
                             </content>
@@ -2350,7 +2350,7 @@
                 <paragraph xml:id="impXart_35_fm5nKI_Pvgmr0">
                     <num xml:id="impXart_35_fm5nKI_hu2ztB">1.</num>
                     <list xml:id="impXart_35_fm5nKI_miXU9f">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_35_fm5nKI_5l3hSe">
+                        <subparagraph refersTo="~INP" xml:id="impXart_35_fm5nKI_5l3hSe">
                             <content xml:id="impXart_35_fm5nKI_YEXVqU">
                                 <p xml:id="impXart_35_fm5nKI_ohI78J">Support from the ESI Funds concerned for community-led local development shall cover:</p>
                             </content>
@@ -2363,7 +2363,7 @@
                                 </content>
                             </subparagraph>
                             <list xml:id="impXart_35_fm5nKI_iabSRT">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_35_fm5nKI_flpRLz">
+                                <subparagraph refersTo="~INP" xml:id="impXart_35_fm5nKI_flpRLz">
                                     <content xml:id="impXart_35_fm5nKI_i3Etjc">
                                         <p xml:id="impXart_35_fm5nKI_hnv18U">Such costs may include one or more of the following elements:</p>
                                     </content>
@@ -2398,7 +2398,7 @@
                                         <p xml:id="impXart_35_fm5nKI_lPG79K">support for small pilot projects.</p>
                                     </content>
                                 </point>
-                                <subparagraph refersTo="~_WRP" xml:id="impXart_35_fm5nKI_pypGXP">
+                                <subparagraph refersTo="~WRP" xml:id="impXart_35_fm5nKI_pypGXP">
                                     <content xml:id="impXart_35_fm5nKI_ssMpBY">
                                         <p xml:id="impXart_35_fm5nKI_vvs6HL">Such preparatory support shall be eligible regardless of whether the community-led local development strategy designed by the local action group benefitting from the support is selected for funding by the selection committee set up under Article 33(3).</p>
                                     </content>
@@ -2499,7 +2499,7 @@
                 <paragraph xml:id="impXart_37_ArgpRg_JeBKrC">
                     <num xml:id="impXart_37_ArgpRg_keIo6Y">2.</num>
                     <list xml:id="impXart_37_ArgpRg_xyn9EE">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_37_ArgpRg_tM56Wo">
+                        <subparagraph refersTo="~INP" xml:id="impXart_37_ArgpRg_tM56Wo">
                             <content xml:id="impXart_37_ArgpRg_GKtfOq">
                                 <p xml:id="impXart_37_ArgpRg_Ha30qK">Support of financial instruments shall be based on an ex ante assessment which has established evidence of market failures or suboptimal investment situations, and the estimated level and scope of public investment needs, including types of financial instruments to be supported. Such ex ante assessment shall include:</p>
                             </content>
@@ -2633,7 +2633,7 @@
                 <paragraph xml:id="impXart_38_oKH1VA_Lk7jgX">
                     <num xml:id="impXart_38_oKH1VA_HoKZyD">1.</num>
                     <list xml:id="impXart_38_oKH1VA_ldF78k">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_38_oKH1VA_4pnseC">
+                        <subparagraph refersTo="~INP" xml:id="impXart_38_oKH1VA_4pnseC">
                             <content xml:id="impXart_38_oKH1VA_sMijIj">
                                 <p xml:id="impXart_38_oKH1VA_m9NwFF">In implementing Article 37, managing authorities may provide a financial contribution to the following financial instruments:</p>
                             </content>
@@ -2673,7 +2673,7 @@
                 <paragraph xml:id="impXart_38_oKH1VA_8DmUkM">
                     <num xml:id="impXart_38_oKH1VA_RIF0mt">3.</num>
                     <list xml:id="impXart_38_oKH1VA_OYyN8W">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_38_oKH1VA_c8KR3m">
+                        <subparagraph refersTo="~INP" xml:id="impXart_38_oKH1VA_c8KR3m">
                             <content xml:id="impXart_38_oKH1VA_BSTM8q">
                                 <p xml:id="impXart_38_oKH1VA_v6LcEb">For financial instruments under point (b) of paragraph 1, the managing authority may provide a financial contribution to the following financial instruments:</p>
                             </content>
@@ -2690,7 +2690,7 @@
                                 <p xml:id="impXart_38_oKH1VA_dQLGzY">already existing or newly created financial instruments which are specifically designed to achieve the specific objectives set out under the relevant priority.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_38_oKH1VA_QfhvA1">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_38_oKH1VA_QfhvA1">
                             <content xml:id="impXart_38_oKH1VA_tFB2WY">
                                 <p xml:id="impXart_38_oKH1VA_tXcgjW">The Commission shall adopt implementing acts concerning the standard terms and conditions with which the financial instruments under point (a) of the first subparagraph shall comply. Those implementing acts shall be adopted in accordance with the examination procedure referred to in Article 150(3).</p>
                             </content>
@@ -2700,7 +2700,7 @@
                 <paragraph xml:id="impXart_38_oKH1VA_BchoAO">
                     <num xml:id="impXart_38_oKH1VA_Lg1iuy">4.</num>
                     <list xml:id="impXart_38_oKH1VA_kuZdUP">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_38_oKH1VA_GBhY42">
+                        <subparagraph refersTo="~INP" xml:id="impXart_38_oKH1VA_GBhY42">
                             <content xml:id="impXart_38_oKH1VA_co1GW3">
                                 <p xml:id="impXart_38_oKH1VA_OlR4oX">When supporting financial instruments referred to in point (b) of paragraph 1 the managing authority may:</p>
                             </content>
@@ -2714,7 +2714,7 @@
                         <point xml:id="impXart_38_oKH1VA_XKUe4i">
                             <num xml:id="impXart_38_oKH1VA_XKVDOl">(b)</num>
                             <list xml:id="impXart_38_oKH1VA_Lc7MDe">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_38_oKH1VA_GjlAGz">
+                                <subparagraph refersTo="~INP" xml:id="impXart_38_oKH1VA_GjlAGz">
                                     <content xml:id="impXart_38_oKH1VA_FnBhpY">
                                         <p xml:id="impXart_38_oKH1VA_8QLake">entrust implementation tasks to:</p>
                                     </content>
@@ -2745,7 +2745,7 @@
                                 <p xml:id="impXart_38_oKH1VA_6JGDyg">undertake implementation tasks directly, in the case of financial instruments consisting solely of loans or guarantees. In that case the managing authority shall be considered to be the beneficiary as defined in point (10) of Article 2.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_38_oKH1VA_Kil4JV">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_38_oKH1VA_Kil4JV">
                             <content xml:id="impXart_38_oKH1VA_OFRjBa">
                                 <p xml:id="impXart_38_oKH1VA_zzixy5">When implementing the financial instrument, the bodies referred to in points (a),(b) and (c) of the first subparagraph shall ensure compliance with applicable law, including rules covering the ESI Funds, State aid, public procurement and relevant standards and applicable legislation on the prevention of money laundering, the fight against terrorism and tax fraud. Those bodies shall not be established and shall not maintain business relations with entities incorporated in territories, whose jurisdictions do not cooperate with the Union in relation to the application of the internationally agreed tax standards and shall transpose such requirements in their contracts with the selected financial intermediaries.</p>
                             </content>
@@ -2772,7 +2772,7 @@
                 <paragraph xml:id="impXart_38_oKH1VA_ZZ2ctb">
                     <num xml:id="impXart_38_oKH1VA_Mwr53R">7.</num>
                     <list xml:id="impXart_38_oKH1VA_LwZW8X">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_38_oKH1VA_QDzcSQ">
+                        <subparagraph refersTo="~INP" xml:id="impXart_38_oKH1VA_QDzcSQ">
                             <content xml:id="impXart_38_oKH1VA_x1Oyxw">
                                 <p xml:id="impXart_38_oKH1VA_duBN9U">Where a financial instrument is implemented under points (a) and (b) of the first subparagraph of paragraph 4, subject to the implementation structure of the financial instrument, the terms and conditions for contributions from programmes to financial instruments shall be set out in funding agreements in accordance with Annex III at the following levels:</p>
                             </content>
@@ -2822,7 +2822,7 @@
                 <paragraph xml:id="impXart_39_Z3SYvF_3SBZ6m">
                     <num xml:id="impXart_39_Z3SYvF_o8TqL1">2.</num>
                     <list xml:id="impXart_39_Z3SYvF_9HWWZD">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_39_Z3SYvF_umOrqV">
+                        <subparagraph refersTo="~INP" xml:id="impXart_39_Z3SYvF_umOrqV">
                             <content xml:id="impXart_39_Z3SYvF_jViXkQ">
                                 <p xml:id="impXart_39_Z3SYvF_Ern8YH">Member States may use the ERDF and EAFRD to provide a financial contribution to financial instruments referred to in point (a) of Article 38(1) of this Regulation, managed indirectly by the Commission with implementation tasks entrusted to the EIB pursuant to point (c)(iii) of Article 58(1) and Article 139(4) of the Financial Regulation, in respect of the following activities:</p>
                             </content>
@@ -2836,7 +2836,7 @@
                         <point xml:id="impXart_39_Z3SYvF_sfLuDj">
                             <num xml:id="impXart_39_Z3SYvF_VpTzE3">(b)</num>
                             <list xml:id="impXart_39_Z3SYvF_GTch2e">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_39_Z3SYvF_U42kSf">
+                                <subparagraph refersTo="~INP" xml:id="impXart_39_Z3SYvF_U42kSf">
                                     <content xml:id="impXart_39_Z3SYvF_hTMzEM">
                                         <p xml:id="impXart_39_Z3SYvF_DpJAh7">securitisation, as defined in point (61) of Article 4 (1) of Regulation (EU) 575/2013 of the European Parliament and of the Council
                                             <authorialNote marker="17" placement="bottom" xml:id="impXart_39_Z3SYvF_BGx4kq">
@@ -2859,7 +2859,7 @@
                                 </point>
                             </list>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_39_Z3SYvF_WeJh5s">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_39_Z3SYvF_WeJh5s">
                             <content xml:id="impXart_39_Z3SYvF_dhciT0">
                                 <p xml:id="impXart_39_Z3SYvF_fAVv2p">The financial contribution referred to in points (a) and (b) of the first subparagraph of this paragraph shall contribute to junior and/or mezzanine tranches of portfolios mentioned therein provided that the relevant financial intermediary retains a sufficient part of the risk of the portfolios at least equal to the risk retention requirement set out in Directive 2013/36/EU of the European Parliament and of the Council
                                     <authorialNote marker="18" placement="bottom" xml:id="impXart_39_Z3SYvF_RTH6JL">
@@ -2904,7 +2904,7 @@
                 <paragraph xml:id="impXart_39_Z3SYvF_65f2hx">
                     <num xml:id="impXart_39_Z3SYvF_ctly1U">4.</num>
                     <list xml:id="impXart_39_Z3SYvF_JwV3kg">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_39_Z3SYvF_qLagGC">
+                        <subparagraph refersTo="~INP" xml:id="impXart_39_Z3SYvF_qLagGC">
                             <content xml:id="impXart_39_Z3SYvF_oMcsx7">
                                 <p xml:id="impXart_39_Z3SYvF_SySSt0">The financial contribution referred to in paragraph 2 shall comply with the following conditions:</p>
                             </content>
@@ -2931,7 +2931,7 @@
                         <point xml:id="impXart_39_Z3SYvF_dx4JE2">
                             <num xml:id="impXart_39_Z3SYvF_vdCnYu">(c)</num>
                             <list xml:id="impXart_39_Z3SYvF_MVlo4b">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_39_Z3SYvF_JkFoDl">
+                                <subparagraph refersTo="~INP" xml:id="impXart_39_Z3SYvF_JkFoDl">
                                     <content xml:id="impXart_39_Z3SYvF_04mhPv">
                                         <p xml:id="impXart_39_Z3SYvF_Opvd0n">it shall be subject to the conditions set out in a funding agreement concluded between each participating Member State and the EIB including, inter alia:</p>
                                     </content>
@@ -2996,7 +2996,7 @@
                                         <p xml:id="impXart_39_Z3SYvF_hhrUXb">the conditions for termination of the agreement.</p>
                                     </content>
                                 </point>
-                                <subparagraph refersTo="~_WRP" xml:id="impXart_39_Z3SYvF_gBKzZM">
+                                <subparagraph refersTo="~WRP" xml:id="impXart_39_Z3SYvF_gBKzZM">
                                     <content xml:id="impXart_39_Z3SYvF_URYttp">
                                         <p xml:id="impXart_39_Z3SYvF_eQE4vz">For the purposes of implementation of the instrument, the EIB will enter into contractual arrangements with selected financial intermediaries;</p>
                                     </content>
@@ -3009,7 +3009,7 @@
                                 <p xml:id="impXart_39_Z3SYvF_fvyZll">in the event that the funding agreement referred to in point (c) is not concluded within six months of the adoption of the programme referred to in point (b), the Member State shall have the right to reallocate such contribution to other programmes and priorities in accordance with requirements for thematic concentration.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_39_Z3SYvF_1BogoW">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_39_Z3SYvF_1BogoW">
                             <content xml:id="impXart_39_Z3SYvF_mxlAZZ">
                                 <p xml:id="impXart_39_Z3SYvF_F4ZmlD">The Commission shall, in order to ensure uniform conditions for the implementation of this Article, adopt an implementing act laying down the model of the funding agreement referred to in point (c) of the first subparagraph. That implementing act shall be adopted in accordance with the examination procedure referred to in Article 150(3).</p>
                             </content>
@@ -3049,7 +3049,7 @@
                 <paragraph xml:id="impXart_39_Z3SYvF_Pgv1ly">
                     <num xml:id="impXart_39_Z3SYvF_GDSVvy">8.</num>
                     <list xml:id="impXart_39_Z3SYvF_Cv0Hwc">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_39_Z3SYvF_UEkvrG">
+                        <subparagraph refersTo="~INP" xml:id="impXart_39_Z3SYvF_UEkvrG">
                             <content xml:id="impXart_39_Z3SYvF_HJeXqv">
                                 <p xml:id="impXart_39_Z3SYvF_IqNTA1">At closure of the programme, the eligible expenditure shall be the total amount of programme contributions paid to the financial instrument, corresponding:</p>
                             </content>
@@ -3077,7 +3077,7 @@
                 <paragraph xml:id="impXart_39_Z3SYvF_Hdjupc">
                     <num xml:id="impXart_39_Z3SYvF_owieRL">10.</num>
                     <list xml:id="impXart_39_Z3SYvF_yP2RIJ">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_39_Z3SYvF_Bu2v5F">
+                        <subparagraph refersTo="~INP" xml:id="impXart_39_Z3SYvF_Bu2v5F">
                             <content xml:id="impXart_39_Z3SYvF_xQ2Yk0">
                                 <p xml:id="impXart_39_Z3SYvF_HFURKr">The report referred to in Article 46(1) shall include the following additional elements:</p>
                             </content>
@@ -3127,7 +3127,7 @@
                 <paragraph xml:id="impXart_40_qqjMHe_awoZEk">
                     <num xml:id="impXart_40_qqjMHe_Dmpbs8">3.</num>
                     <list xml:id="impXart_40_qqjMHe_BEwMmw">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_40_qqjMHe_TRP2KQ">
+                        <subparagraph refersTo="~INP" xml:id="impXart_40_qqjMHe_TRP2KQ">
                             <content xml:id="impXart_40_qqjMHe_wmYrO2">
                                 <p xml:id="impXart_40_qqjMHe_xI0M7G">The bodies responsible for the audit of programmes may conduct audits at the level of final recipients only when one or more of the following situations occur:</p>
                             </content>
@@ -3165,7 +3165,7 @@
                 <paragraph xml:id="impXart_41_VozWSD_kZzqgQ">
                     <num xml:id="impXart_41_VozWSD_H5HrlL">1.</num>
                     <list xml:id="impXart_41_VozWSD_FLgDzP">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_41_VozWSD_D93BeR">
+                        <subparagraph refersTo="~INP" xml:id="impXart_41_VozWSD_D93BeR">
                             <content xml:id="impXart_41_VozWSD_sKfuA5">
                                 <p xml:id="impXart_41_VozWSD_cPVnOT">As regards financial instruments referred to in point (a) of Article 38(1) and financial instruments referred to in point (b) of Article 38(1) implemented in accordance with points (a) and (b) of Article 38(4), phased applications for interim payments shall be made for programme contributions paid to the financial instrument during the eligibility period laid down in Article 65(2) (the 'eligibility period") in accordance with the following conditions:</p>
                             </content>
@@ -3185,7 +3185,7 @@
                         <point xml:id="impXart_41_VozWSD_bhMhvF">
                             <num xml:id="impXart_41_VozWSD_z6FgNB">(c)</num>
                             <list xml:id="impXart_41_VozWSD_AYHSIa">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_41_VozWSD_zFWWyB">
+                                <subparagraph refersTo="~INP" xml:id="impXart_41_VozWSD_zFWWyB">
                                     <content xml:id="impXart_41_VozWSD_Y9ph7y">
                                         <p xml:id="impXart_41_VozWSD_Wf1cVG">subsequent applications for interim payment submitted during the eligibility period shall only be made:</p>
                                     </content>
@@ -3244,7 +3244,7 @@
                 <paragraph xml:id="impXart_42_kw8fNf_mD40AU">
                     <num xml:id="impXart_42_kw8fNf_EJpPl6">1.</num>
                     <list xml:id="impXart_42_kw8fNf_tj4hwM">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_42_kw8fNf_KrOQkN">
+                        <subparagraph refersTo="~INP" xml:id="impXart_42_kw8fNf_KrOQkN">
                             <content xml:id="impXart_42_kw8fNf_oWE9Jn">
                                 <p xml:id="impXart_42_kw8fNf_S0RybF">At closure of a programme, the eligible expenditure of the financial instrument shall be the total amount of programme contributions effectively paid or, in the case of guarantees, committed by the financial instrument within the eligibility period, corresponding to:</p>
                             </content>
@@ -3273,7 +3273,7 @@
                                 <p xml:id="impXart_42_kw8fNf_CkMUM8">reimbursement of management costs incurred or payment of management fees of the financial instrument.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_42_kw8fNf_pBatnF">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_42_kw8fNf_pBatnF">
                             <content xml:id="impXart_42_kw8fNf_8gIkoJ">
                                 <p xml:id="impXart_42_kw8fNf_tdq10X">The Commission shall be empowered to adopt delegated acts in accordance with Article 149 laying down the specific rules concerning the establishment of a system of capitalisation of annual instalments for interest rate subsidies and guarantee fee subsidies referred to in point (c) of the first subparagraph.</p>
                             </content>
@@ -3294,7 +3294,7 @@
                         </content>
                     </subparagraph>
                     <list xml:id="impXart_42_kw8fNf_DjUnRK">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_42_kw8fNf_e0WfYj">
+                        <subparagraph refersTo="~INP" xml:id="impXart_42_kw8fNf_e0WfYj">
                             <content xml:id="impXart_42_kw8fNf_7VQn0w">
                                 <p xml:id="impXart_42_kw8fNf_hdb2mi">The amount paid into the escrow account:</p>
                             </content>
@@ -3317,7 +3317,7 @@
                                 <p xml:id="impXart_42_kw8fNf_3hz9pY">shall not exceed 20 % of the eligible expenditure of the equity-based instrument referred to in point (a) of the first subparagraph of paragraph 1 from which ceiling capital resources and gains returned to that equity-based instrument during the eligibility period shall be deducted.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_42_kw8fNf_tzp8d5">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_42_kw8fNf_tzp8d5">
                             <content xml:id="impXart_42_kw8fNf_xq7iwE">
                                 <p xml:id="impXart_42_kw8fNf_X8ZuFD">Any amounts paid into the escrow account which are not used for investments in final recipients paid in the period referred to in the first subparagraph shall be used in accordance with Article 45.</p>
                             </content>
@@ -3327,7 +3327,7 @@
                 <paragraph xml:id="impXart_42_kw8fNf_zrUeTF">
                     <num xml:id="impXart_42_kw8fNf_TUerik">4.</num>
                     <list xml:id="impXart_42_kw8fNf_w0Ixfy">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_42_kw8fNf_Ycmjay">
+                        <subparagraph refersTo="~INP" xml:id="impXart_42_kw8fNf_Ycmjay">
                             <content xml:id="impXart_42_kw8fNf_05sRyy">
                                 <p xml:id="impXart_42_kw8fNf_31fNaS">The eligible expenditure disclosed in accordance with paragraphs 1 and 2 shall not exceed the sum of the:</p>
                             </content>
@@ -3399,7 +3399,7 @@
                 <paragraph xml:id="impXart_44_qghSl9_dLlKOH">
                     <num xml:id="impXart_44_qghSl9_sUzxDu">1.</num>
                     <list xml:id="impXart_44_qghSl9_V97hPg">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_44_qghSl9_pV5iTD">
+                        <subparagraph refersTo="~INP" xml:id="impXart_44_qghSl9_pV5iTD">
                             <content xml:id="impXart_44_qghSl9_MTgtab">
                                 <p xml:id="impXart_44_qghSl9_A2kLE7">Resources paid back to financial instruments from investments or from the release of resources committed for guarantee contracts, including capital repayments and gains and other earnings or yields, such as interest, guarantee fees, dividends, capital gains or any other income generated by investments, which are attributable to the support from the ESI Funds, shall be re-used for the following purposes, up to the amounts necessary and in the order agreed in the relevant funding agreements:</p>
                             </content>
@@ -3422,7 +3422,7 @@
                                 <p xml:id="impXart_44_qghSl9_cL8K1v">where applicable, reimbursement of management costs incurred and payment of management fees of the financial instrument.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_44_qghSl9_TtqGss">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_44_qghSl9_TtqGss">
                             <content xml:id="impXart_44_qghSl9_QrKAzO">
                                 <p xml:id="impXart_44_qghSl9_98gF9o">The need and the level for preferential remuneration pursuant to point (b) of the first subparagraph shall be established in the ex-ante assessment. The preferential remuneration shall not exceed what is necessary to create the incentives for attracting private counterpart resources and shall not over-compensate private investors, or public investors operating under the market economy principle. The alignment of interest shall be ensured through an appropriate sharing of risk and profit and shall be carried out on a normal commercial basis and be compatible with Union State aid rules.</p>
                             </content>
@@ -3457,7 +3457,7 @@
                 <paragraph xml:id="impXart_46_k3HB08_sUbw9F">
                     <num xml:id="impXart_46_k3HB08_QbJEgt">2.</num>
                     <list xml:id="impXart_46_k3HB08_9b1klu">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_46_k3HB08_QPtzM3">
+                        <subparagraph refersTo="~INP" xml:id="impXart_46_k3HB08_QPtzM3">
                             <content xml:id="impXart_46_k3HB08_6BbKHN">
                                 <p xml:id="impXart_46_k3HB08_VgaFnd">The specific report referred to in paragraph 1 shall include, for each financial instrument, the following information:</p>
                             </content>
@@ -3522,7 +3522,7 @@
                                 <p xml:id="impXart_46_k3HB08_hpCHJf">contribution of the financial instrument to the achievement of the indicators of the priority or measure concerned.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_46_k3HB08_53uu1i">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_46_k3HB08_53uu1i">
                             <content xml:id="impXart_46_k3HB08_hjeuxc">
                                 <p xml:id="impXart_46_k3HB08_mTYp0X">The information in points (h) and (j) of the first subparagraph may be included only in the annex to the annual implementation reports submitted in 2017 and 2019 as well as in the final implementation report. The reporting obligations set out in points (a) to (j) of the first subparagraph shall not be applied at the level of final recipients.</p>
                             </content>
@@ -3751,7 +3751,7 @@
                 <paragraph xml:id="impXart_52_tWhJPB_1oETyh">
                     <num xml:id="impXart_52_tWhJPB_oFBGPv">2.</num>
                     <list xml:id="impXart_52_tWhJPB_3ZgXfS">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_52_tWhJPB_TbVUNG">
+                        <subparagraph refersTo="~INP" xml:id="impXart_52_tWhJPB_TbVUNG">
                             <content xml:id="impXart_52_tWhJPB_fLK08H">
                                 <p xml:id="impXart_52_tWhJPB_ymopVS">The progress report shall set out information on and assess:</p>
                             </content>
@@ -3899,7 +3899,7 @@
                 <paragraph xml:id="impXart_55_RTAWXp_OErXyo">
                     <num xml:id="impXart_55_RTAWXp_Oomk0D">3.</num>
                     <list xml:id="impXart_55_RTAWXp_9cM8uN">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_55_RTAWXp_6pW6sx">
+                        <subparagraph refersTo="~INP" xml:id="impXart_55_RTAWXp_6pW6sx">
                             <content xml:id="impXart_55_RTAWXp_8PUD8U">
                                 <p xml:id="impXart_55_RTAWXp_nDMXZP">Ex ante evaluations shall appraise:</p>
                             </content>
@@ -4079,7 +4079,7 @@
                         </content>
                     </subparagraph>
                     <list xml:id="impXart_58_f7Vs5A_tFUET7">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_58_f7Vs5A_SwvBIA">
+                        <subparagraph refersTo="~INP" xml:id="impXart_58_f7Vs5A_SwvBIA">
                             <content xml:id="impXart_58_f7Vs5A_D0ycDl">
                                 <p xml:id="impXart_58_f7Vs5A_ioATS5">The measures referred to in the first subparagraph may include in particular:</p>
                             </content>
@@ -4156,7 +4156,7 @@
                                 <p xml:id="impXart_58_f7Vs5A_LgDXPa">measures to identify, prioritize and implement structural and administrative reforms in response to economic and social challenges in Member States which meet the conditions set out in Article 24(1).</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_58_f7Vs5A_PY3rk1">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_58_f7Vs5A_PY3rk1">
                             <content xml:id="impXart_58_f7Vs5A_0WIQFv">
                                 <p xml:id="impXart_58_f7Vs5A_GMrZFI">To bring about greater efficiency in communication to the public at large and stronger synergies between the communication activities undertaken at the initiative of the Commission, the resources allocated to communication actions under this Regulation shall also contribute to the corporate communication of the political priorities of the Union as far as they are related to the general objectives of this Regulation.</p>
                             </content>
@@ -4227,7 +4227,7 @@
                 <paragraph xml:id="impXart_61_QFJHj7_G90nV0">
                     <num xml:id="impXart_61_QFJHj7_0hkUQz">3.</num>
                     <list xml:id="impXart_61_QFJHj7_Hmng7Z">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_61_QFJHj7_qoteDt">
+                        <subparagraph refersTo="~INP" xml:id="impXart_61_QFJHj7_qoteDt">
                             <content xml:id="impXart_61_QFJHj7_JzGDMJ">
                                 <p xml:id="impXart_61_QFJHj7_ZwnRkr">The potential net revenue of the operation shall be determined in advance by one of the following methods chosen by the managing authority for a sector, subsector or type of operation:</p>
                             </content>
@@ -4244,7 +4244,7 @@
                                 <p xml:id="impXart_61_QFJHj7_N2wpsq">calculation of the discounted net revenue of the operation, taking into account the reference period appropriate to the sector or subsector applicable to the operation, the profitability normally expected of the category of investment concerned, the application of the polluter-pays principle and, if appropriate, considerations of equity linked to the relative prosperity of the Member State or region concerned.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_61_QFJHj7_w17MZG">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_61_QFJHj7_w17MZG">
                             <content xml:id="impXart_61_QFJHj7_W5tLAy">
                                 <p xml:id="impXart_61_QFJHj7_QGJR5r">The Commission shall be empowered to adopt delegated acts in accordance with Article 149 in duly justified cases to amend Annex V by adjusting the flat rates established therein taking into account historical data, the potential for cost recovery and the polluter-pays principle where applicable.</p>
                             </content>
@@ -4304,7 +4304,7 @@
                 <paragraph xml:id="impXart_61_QFJHj7_mVSvvX">
                     <num xml:id="impXart_61_QFJHj7_FMzsDQ">7.</num>
                     <list xml:id="impXart_61_QFJHj7_yeamX0">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_61_QFJHj7_BooaG8">
+                        <subparagraph refersTo="~INP" xml:id="impXart_61_QFJHj7_BooaG8">
                             <content xml:id="impXart_61_QFJHj7_17YeRt">
                                 <p xml:id="impXart_61_QFJHj7_c2b3Le">Paragraphs 1 to 6 shall not apply to:</p>
                             </content>
@@ -4357,7 +4357,7 @@
                                 <p xml:id="impXart_61_QFJHj7_FPLOz6">operations for which amounts or rates of support are defined in Annex II to the EAFRD Regulation.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_61_QFJHj7_n7n7vr">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_61_QFJHj7_n7n7vr">
                             <content xml:id="impXart_61_QFJHj7_SnXhpj">
                                 <p xml:id="impXart_61_QFJHj7_sbZw7F">Notwithstanding point (b) of the first subparagraph of this paragraph, where a Member State applies paragraph 5, it may include in the relevant priority or measure operations whose total eligible cost before application of paragraphs 1 to 6 does not exceed EUR 1000000.</p>
                             </content>
@@ -4367,7 +4367,7 @@
                 <paragraph xml:id="impXart_61_QFJHj7_2L58kZ">
                     <num xml:id="impXart_61_QFJHj7_tGMhMS">8.</num>
                     <list xml:id="impXart_61_QFJHj7_cSwUTf">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_61_QFJHj7_Ry0udO">
+                        <subparagraph refersTo="~INP" xml:id="impXart_61_QFJHj7_Ry0udO">
                             <content xml:id="impXart_61_QFJHj7_WaDD2m">
                                 <p xml:id="impXart_61_QFJHj7_OsCMyF">In addition, paragraphs 1 to 6 shall not apply to operations for which support under the programme constitutes:</p>
                             </content>
@@ -4390,7 +4390,7 @@
                                 <p xml:id="impXart_61_QFJHj7_sm2fOS">compatible State aid, where an individual verification of financing needs in accordance with the applicable State aid rules has been carried out.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_61_QFJHj7_m6b1Ba">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_61_QFJHj7_m6b1Ba">
                             <content xml:id="impXart_61_QFJHj7_C1NubI">
                                 <p xml:id="impXart_61_QFJHj7_8JFV9U">Notwithstanding the first subparagraph, a managing authority may apply the paragraphs 1 to 6 to operations which fall under points (a) to (c) of the first subparagraph of this paragraph where this is provided for in national rules.</p>
                             </content>
@@ -4413,7 +4413,7 @@
                 <paragraph xml:id="impXart_63_KY2615_Xwb41N">
                     <num xml:id="impXart_63_KY2615_hKb8S8">1.</num>
                     <list xml:id="impXart_63_KY2615_TDCDmy">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_63_KY2615_dBf2rm">
+                        <subparagraph refersTo="~INP" xml:id="impXart_63_KY2615_dBf2rm">
                             <content xml:id="impXart_63_KY2615_RLJEln">
                                 <p xml:id="impXart_63_KY2615_pN3MSb">In relation to a PPP operation, and by way of derogation from point (10) of Article 2, a beneficiary may be either:</p>
                             </content>
@@ -4463,7 +4463,7 @@
                 <paragraph xml:id="impXart_64_jHgFaP_ORuyLW">
                     <num xml:id="impXart_64_jHgFaP_8cjeOa">1.</num>
                     <list xml:id="impXart_64_jHgFaP_FefKjv">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_64_jHgFaP_Nrc4qK">
+                        <subparagraph refersTo="~INP" xml:id="impXart_64_jHgFaP_Nrc4qK">
                             <content xml:id="impXart_64_jHgFaP_Rd7Bem">
                                 <p xml:id="impXart_64_jHgFaP_o0Mzfg">In the case of a PPP operation where the beneficiary is a public law body, expenditure under a PPP operation which has been incurred and paid by the private partner may, by way of derogation from Article 65(2), be considered as incurred and paid by a beneficiary and included in a request for payment to the Commission provided that the following conditions are met:</p>
                             </content>
@@ -4559,7 +4559,7 @@
                         </content>
                     </subparagraph>
                     <list xml:id="impXart_65_ooJr4d_L8eUfN">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_65_ooJr4d_WQu7Yv">
+                        <subparagraph refersTo="~INP" xml:id="impXart_65_ooJr4d_WQu7Yv">
                             <content xml:id="impXart_65_ooJr4d_Z6wP78">
                                 <p xml:id="impXart_65_ooJr4d_Rp9ZKc">This paragraph shall not apply to:</p>
                             </content>
@@ -4618,7 +4618,7 @@
                                 <p xml:id="impXart_65_ooJr4d_7IRwh4">operations for which the total eligible cost does not exceed EUR 50000.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_65_ooJr4d_yWyq94">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_65_ooJr4d_yWyq94">
                             <content xml:id="impXart_65_ooJr4d_0PPAbg">
                                 <p xml:id="impXart_65_ooJr4d_S7t4Tu">For the purposes of this Article and Article 61, any payment received by the beneficiary arising from contractual penalties as a result of a breach of contract between the beneficiary and a third party or third parties or that has occurred as a result of the withdrawal of an offer by a third party chosen under public procurement rules (the 'deposit') shall not be considered as revenue and shall not be deducted from the eligible expenditure of the operation.</p>
                             </content>
@@ -4671,7 +4671,7 @@
                 <paragraph xml:id="impXart_67_MKFhz2_gb8Aqi">
                     <num xml:id="impXart_67_MKFhz2_GUOdd6">1.</num>
                     <list xml:id="impXart_67_MKFhz2_XCefe4">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_67_MKFhz2_6M2ryy">
+                        <subparagraph refersTo="~INP" xml:id="impXart_67_MKFhz2_6M2ryy">
                             <content xml:id="impXart_67_MKFhz2_E1RGvN">
                                 <p xml:id="impXart_67_MKFhz2_jIMlL8">Grants and repayable assistance may take any of the following forms:</p>
                             </content>
@@ -4700,7 +4700,7 @@
                                 <p xml:id="impXart_67_MKFhz2_gKGWSL">flat-rate financing, determined by the application of a percentage to one or more defined categories of costs.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_67_MKFhz2_SKtU7F">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_67_MKFhz2_SKtU7F">
                             <content xml:id="impXart_67_MKFhz2_lwQmuS">
                                 <p xml:id="impXart_67_MKFhz2_dENFEo">Fund-specific rules may limit the forms of grants or repayable assistance applicable to certain operations.</p>
                             </content>
@@ -4728,7 +4728,7 @@
                 <paragraph xml:id="impXart_67_MKFhz2_xTkz1k">
                     <num xml:id="impXart_67_MKFhz2_6Gxn73">5.</num>
                     <list xml:id="impXart_67_MKFhz2_u3bOoi">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_67_MKFhz2_9dwkxS">
+                        <subparagraph refersTo="~INP" xml:id="impXart_67_MKFhz2_9dwkxS">
                             <content xml:id="impXart_67_MKFhz2_H91aNA">
                                 <p xml:id="impXart_67_MKFhz2_9CQKUg">The amounts referred to in points (b), (c) and (d) of the first subparagraph of paragraph 1 shall be established in one of the following ways:</p>
                             </content>
@@ -4736,7 +4736,7 @@
                         <point xml:id="impXart_67_MKFhz2_j2Fbjd">
                             <num xml:id="impXart_67_MKFhz2_cbRGXz">(a)</num>
                             <list xml:id="impXart_67_MKFhz2_OFoYJQ">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_67_MKFhz2_XFzkiX">
+                                <subparagraph refersTo="~INP" xml:id="impXart_67_MKFhz2_XFzkiX">
                                     <content xml:id="impXart_67_MKFhz2_Hjsn94">
                                         <p xml:id="impXart_67_MKFhz2_SN2b70">a fair, equitable and verifiable calculation method based on:</p>
                                     </content>
@@ -4800,7 +4800,7 @@
                 <paragraph xml:id="impXart_68_90l1F8_CfWLTl">
                     <num xml:id="impXart_68_90l1F8_annPUw">1.</num>
                     <list xml:id="impXart_68_90l1F8_lnyxf0">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_68_90l1F8_jSeJLe">
+                        <subparagraph refersTo="~INP" xml:id="impXart_68_90l1F8_jSeJLe">
                             <content xml:id="impXart_68_90l1F8_sWS49U">
                                 <p xml:id="impXart_68_90l1F8_Xnt5RH">Where the implementation of an operation gives rise to indirect costs, they may be calculated at a flat rate in one of the following ways:</p>
                             </content>
@@ -4823,7 +4823,7 @@
                                 <p xml:id="impXart_68_90l1F8_lO6DY3">a flat rate applied to eligible direct costs based on existing methods and corresponding rates, applicable in Union policies for a similar type of operation and beneficiary.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_68_90l1F8_9AMJeE">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_68_90l1F8_9AMJeE">
                             <content xml:id="impXart_68_90l1F8_UpL4xR">
                                 <p xml:id="impXart_68_90l1F8_g4y1VW">The Commission shall be empowered to adopt delegated acts in accordance with Article 149 concerning the definition of the flat rate and the related methods referred to in point (c) of the first subparagraph of this paragraph.</p>
                             </content>
@@ -4843,7 +4843,7 @@
                 <paragraph xml:id="impXart_69_zz4wOz_EkNjBH">
                     <num xml:id="impXart_69_zz4wOz_mUS5OF">1.</num>
                     <list xml:id="impXart_69_zz4wOz_gyPNVZ">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_69_zz4wOz_pp4Jcd">
+                        <subparagraph refersTo="~INP" xml:id="impXart_69_zz4wOz_pp4Jcd">
                             <content xml:id="impXart_69_zz4wOz_mqGPsz">
                                 <p xml:id="impXart_69_zz4wOz_GV8hZs">Contributions in kind in the form of provision of works, goods, services, land and real estate for which no cash payment supported by invoices, or documents of equivalent probative value, has been made, may be eligible on condition that the eligibility rules of the ESI Funds and the programme so provide and that all the following criteria are fulfilled:</p>
                             </content>
@@ -4878,7 +4878,7 @@
                                 <p xml:id="impXart_69_zz4wOz_aMvpmh">in the case of contributions in kind in the form of unpaid work, the value of that work is determined by taking into account the verified time spent and the rate of remuneration for equivalent work.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_69_zz4wOz_ZR18J3">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_69_zz4wOz_ZR18J3">
                             <content xml:id="impXart_69_zz4wOz_83MCe6">
                                 <p xml:id="impXart_69_zz4wOz_yEmnxH">The value of the land or real estate referred to in point (d) of the first subparagraph of this paragraph shall be certified by an independent qualified expert or duly authorised official body and shall not exceed the limit laid down in point (b) of paragraph 3.</p>
                             </content>
@@ -4888,7 +4888,7 @@
                 <paragraph xml:id="impXart_69_zz4wOz_JbbaXO">
                     <num xml:id="impXart_69_zz4wOz_lR7zi9">2.</num>
                     <list xml:id="impXart_69_zz4wOz_LPfxKk">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_69_zz4wOz_IfEljR">
+                        <subparagraph refersTo="~INP" xml:id="impXart_69_zz4wOz_IfEljR">
                             <content xml:id="impXart_69_zz4wOz_KcniO7">
                                 <p xml:id="impXart_69_zz4wOz_ShdBzV">Depreciation costs may be considered as eligible where the following conditions are fulfilled:</p>
                             </content>
@@ -4922,7 +4922,7 @@
                 <paragraph xml:id="impXart_69_zz4wOz_77nxU9">
                     <num xml:id="impXart_69_zz4wOz_QX4JQD">3.</num>
                     <list xml:id="impXart_69_zz4wOz_N0Ca3T">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_69_zz4wOz_owjk9h">
+                        <subparagraph refersTo="~INP" xml:id="impXart_69_zz4wOz_owjk9h">
                             <content xml:id="impXart_69_zz4wOz_zsnHDq">
                                 <p xml:id="impXart_69_zz4wOz_sm4YSH">The following costs shall not be eligible for a contribution from the ESI Funds and from the amount of support transferred from the Cohesion Fund to the CEF as referred to in Article 92(6):</p>
                             </content>
@@ -4960,7 +4960,7 @@
                 <paragraph xml:id="impXart_70_SMvatc_7J0pJ5">
                     <num xml:id="impXart_70_SMvatc_v3xIBf">2.</num>
                     <list xml:id="impXart_70_SMvatc_cGvvdd">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_70_SMvatc_WzjWrk">
+                        <subparagraph refersTo="~INP" xml:id="impXart_70_SMvatc_WzjWrk">
                             <content xml:id="impXart_70_SMvatc_8lr2Tx">
                                 <p xml:id="impXart_70_SMvatc_hSEDpz">The managing authority may accept that an operation is implemented outside the programme area but within the Union, provided that all the following conditions are satisfied:</p>
                             </content>
@@ -5010,7 +5010,7 @@
                 <paragraph xml:id="impXart_71_4Ydz7F_KB0ZKg">
                     <num xml:id="impXart_71_4Ydz7F_ZUIA4h">1.</num>
                     <list xml:id="impXart_71_4Ydz7F_IBejm6">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_71_4Ydz7F_MCZjfV">
+                        <subparagraph refersTo="~INP" xml:id="impXart_71_4Ydz7F_MCZjfV">
                             <content xml:id="impXart_71_4Ydz7F_Mrp4Vr">
                                 <p xml:id="impXart_71_4Ydz7F_xvt6y5">An operation comprising investment in infrastructure or productive investment shall repay the contribution from the ESI Funds if within five years of the final payment to the beneficiary or within the period of time set out in State aid rules, where applicable, it is subject to any of the following:</p>
                             </content>
@@ -5033,7 +5033,7 @@
                                 <p xml:id="impXart_71_4Ydz7F_6MGLvz">a substantial change affecting its nature, objectives or implementation conditions which would result in undermining its original objectives.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_71_4Ydz7F_zZDYdR">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_71_4Ydz7F_zZDYdR">
                             <content xml:id="impXart_71_4Ydz7F_DeAdft">
                                 <p xml:id="impXart_71_4Ydz7F_4lbO2F">Sums unduly paid in respect of the operation shall be recovered by the Member State in proportion to the period for which the requirements have not been fulfilled.</p>
                             </content>
@@ -5075,7 +5075,7 @@
                 <heading xml:id="impXart_72_C9g8us_jdEYPl">General principles of management and control systems</heading>
                 <paragraph xml:id="impXart_72_C9g8us_xYSCha">
                     <list xml:id="impXart_72_C9g8us_tvFOFC">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_72_C9g8us_lWIRej">
+                        <subparagraph refersTo="~INP" xml:id="impXart_72_C9g8us_lWIRej">
                             <content xml:id="impXart_72_C9g8us_ezZetm">
                                 <p xml:id="impXart_72_C9g8us_09TzNR">Management and control systems shall, in accordance with Article 4(8), provide for:</p>
                             </content>
@@ -5324,7 +5324,7 @@
                 <paragraph xml:id="impXart_83_tUo6fh_0AJ7AQ">
                     <num xml:id="impXart_83_tUo6fh_ukDPrB">1.</num>
                     <list xml:id="impXart_83_tUo6fh_uWfS1h">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_83_tUo6fh_w4Ur6E">
+                        <subparagraph refersTo="~INP" xml:id="impXart_83_tUo6fh_w4Ur6E">
                             <content xml:id="impXart_83_tUo6fh_dyo7Xh">
                                 <p xml:id="impXart_83_tUo6fh_fcTolc">The payment deadline for an interim payment claim may be interrupted by the authorising officer by delegation within the meaning of the Financial Regulation for a maximum period of six months if:</p>
                             </content>
@@ -5347,7 +5347,7 @@
                                 <p xml:id="impXart_83_tUo6fh_4W1yOu">there is a failure to submit one of the documents required under Article 59(5) of the Financial Regulation.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_83_tUo6fh_7qgA1D">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_83_tUo6fh_7qgA1D">
                             <content xml:id="impXart_83_tUo6fh_ek0xPp">
                                 <p xml:id="impXart_83_tUo6fh_x7HTUj">The Member State may agree to an extension of the interruption period for another three months.</p>
                             </content>
@@ -5387,7 +5387,7 @@
                 <paragraph xml:id="impXart_85_nnMKtt_RIHIZF">
                     <num xml:id="impXart_85_nnMKtt_w5LWr8">2.</num>
                     <list xml:id="impXart_85_nnMKtt_uKUBwb">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_85_nnMKtt_nsThWl">
+                        <subparagraph refersTo="~INP" xml:id="impXart_85_nnMKtt_nsThWl">
                             <content xml:id="impXart_85_nnMKtt_7OOqIQ">
                                 <p xml:id="impXart_85_nnMKtt_qLSsEU">A breach of applicable law shall lead to a financial correction only in relation to expenditure which has been declared to the Commission and where one of the following conditions is met:</p>
                             </content>
@@ -5459,7 +5459,7 @@
                 <paragraph xml:id="impXart_87_4SZ4Wb_IWub6L">
                     <num xml:id="impXart_87_4SZ4Wb_TAyt3f">1.</num>
                     <list xml:id="impXart_87_4SZ4Wb_tcWxSN">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_87_4SZ4Wb_O5xYCd">
+                        <subparagraph refersTo="~INP" xml:id="impXart_87_4SZ4Wb_O5xYCd">
                             <content xml:id="impXart_87_4SZ4Wb_QCR5tl">
                                 <p xml:id="impXart_87_4SZ4Wb_j4GhM2">The amount concerned by decommitment shall be reduced by the amounts equivalent to that part of the budget commitment for which:</p>
                             </content>
@@ -5476,7 +5476,7 @@
                                 <p xml:id="impXart_87_4SZ4Wb_NIVqkk">it has not been possible to make a request for payment for reasons of force majeure seriously affecting implementation of all or part of the programme.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_87_4SZ4Wb_mZ9Kzh">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_87_4SZ4Wb_mZ9Kzh">
                             <content xml:id="impXart_87_4SZ4Wb_4SFwyA">
                                 <p xml:id="impXart_87_4SZ4Wb_5BRR3y">The national authorities claiming force majeure under point (b) of the first subparagraph shall demonstrate the direct consequences of the force majeure on the implementation of all or part of the programme.</p>
                             </content>
@@ -5548,7 +5548,7 @@
                 <paragraph xml:id="impXart_89_5BFxVe_jSQWOR">
                     <num xml:id="impXart_89_5BFxVe_3fEUGs">2.</num>
                     <list xml:id="impXart_89_5BFxVe_hdTpS2">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_89_5BFxVe_C3sKHH">
+                        <subparagraph refersTo="~INP" xml:id="impXart_89_5BFxVe_C3sKHH">
                             <content xml:id="impXart_89_5BFxVe_tWL89g">
                                 <p xml:id="impXart_89_5BFxVe_ICzqpi">For the purpose of the mission referred to in paragraph 1, the following goals shall be pursued:</p>
                             </content>
@@ -5580,7 +5580,7 @@
                 <paragraph xml:id="impXart_90_idwuRl_bjPPJH">
                     <num xml:id="impXart_90_idwuRl_pjoLD5">2.</num>
                     <list xml:id="impXart_90_idwuRl_Xt5wLo">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_90_idwuRl_k8Z7we">
+                        <subparagraph refersTo="~INP" xml:id="impXart_90_idwuRl_k8Z7we">
                             <content xml:id="impXart_90_idwuRl_TTEiAu">
                                 <p xml:id="impXart_90_idwuRl_US3Tez">Resources for the Investment for growth and jobs goal shall be allocated among the following three categories of NUTS level 2 regions:</p>
                             </content>
@@ -5603,7 +5603,7 @@
                                 <p xml:id="impXart_90_idwuRl_ATUvqv">more developed regions, whose GDP per capita is above 90 % of the average GDP of the EU-27.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_90_idwuRl_YPeJCb">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_90_idwuRl_YPeJCb">
                             <content xml:id="impXart_90_idwuRl_DGiJON">
                                 <p xml:id="impXart_90_idwuRl_8PJclJ">The classification of regions under one of the three categories of regions shall be determined on the basis of how the GDP per capita of each region, measured in purchasing power parities (PPS) and calculated on the basis of Union figures for the period 2007 - 2009, relates to the average GDP of the EU-27 for the same reference period.</p>
                             </content>
@@ -5664,7 +5664,7 @@
                 <paragraph xml:id="impXart_92_fiUgE7_UZn0Ce">
                     <num xml:id="impXart_92_fiUgE7_enZRGy">1.</num>
                     <list xml:id="impXart_92_fiUgE7_W3zV9P">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_92_fiUgE7_fzMSYn">
+                        <subparagraph refersTo="~INP" xml:id="impXart_92_fiUgE7_fzMSYn">
                             <content xml:id="impXart_92_fiUgE7_Y3izU5">
                                 <p xml:id="impXart_92_fiUgE7_BPeIiS">Resources for the Investment for growth and jobs goal shall amount to 96,33 % of the global resources (i.e., a total of EUR 313197435409) and shall be allocated as follows:</p>
                             </content>
@@ -5839,7 +5839,7 @@
                 <paragraph xml:id="impXart_95_ddJdsa_6N3JrM">
                     <num xml:id="impXart_95_ddJdsa_95N9kl">1.</num>
                     <list xml:id="impXart_95_ddJdsa_jgVEo0">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_95_ddJdsa_nYf6PT">
+                        <subparagraph refersTo="~INP" xml:id="impXart_95_ddJdsa_nYf6PT">
                             <content xml:id="impXart_95_ddJdsa_oMMyDX">
                                 <p xml:id="impXart_95_ddJdsa_Yuv1A4">For the purposes of this Article and Annex X, the following definitions apply:</p>
                             </content>
@@ -5943,7 +5943,7 @@
                 <paragraph xml:id="impXart_96_OUqyDo_2EGJNz">
                     <num xml:id="impXart_96_OUqyDo_wNCP5T">1.</num>
                     <list xml:id="impXart_96_OUqyDo_VvHqJZ">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_cDWCXm">
+                        <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_cDWCXm">
                             <content xml:id="impXart_96_OUqyDo_4mQXQq">
                                 <p xml:id="impXart_96_OUqyDo_x8ORiq">An operational programme shall consist of priority axes. A priority axis shall concern one Fund and one category of region, except in the case of the Cohesion Fund, and shall correspond, without prejudice to Article 59, to a thematic objective and comprise one or more of the investment priorities of that thematic objective, in accordance with the Fund-specific rules. Where appropriate and in order to increase its impact and effectiveness through a thematically coherent integrated approach, a priority axis may:</p>
                             </content>
@@ -5972,7 +5972,7 @@
                                 <p xml:id="impXart_96_OUqyDo_oLqZ8X">for the ESF, combine investment priorities from different thematic objectives set out in points (8), (9), (10) and (11) of the first paragraph of Article 9 in order to facilitate their contribution to other priority axes and in order to implement social innovation and transnational cooperation.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_96_OUqyDo_np0j6p">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_96_OUqyDo_np0j6p">
                             <content xml:id="impXart_96_OUqyDo_pCy46R">
                                 <p xml:id="impXart_96_OUqyDo_V2zFmB">Member States may combine two or more of the options in points (a) to (d).</p>
                             </content>
@@ -5982,7 +5982,7 @@
                 <paragraph xml:id="impXart_96_OUqyDo_Fkzl8F">
                     <num xml:id="impXart_96_OUqyDo_I7x7IZ">2.</num>
                     <list xml:id="impXart_96_OUqyDo_7V9dh9">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_rF3sUj">
+                        <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_rF3sUj">
                             <content xml:id="impXart_96_OUqyDo_X84AQZ">
                                 <p xml:id="impXart_96_OUqyDo_fSPjcn">An operational programme shall contribute to the Union strategy for smart, sustainable and inclusive growth and to the achievement of economic, social and territorial cohesion and shall set out:</p>
                             </content>
@@ -5996,7 +5996,7 @@
                         <point xml:id="impXart_96_OUqyDo_tW4El7">
                             <num xml:id="impXart_96_OUqyDo_a6T6cn">(b)</num>
                             <list xml:id="impXart_96_OUqyDo_9MALjT">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_Z1nK9I">
+                                <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_Z1nK9I">
                                     <content xml:id="impXart_96_OUqyDo_odObs7">
                                         <p xml:id="impXart_96_OUqyDo_Isfl8A">for each priority axis other than technical assistance:</p>
                                     </content>
@@ -6048,7 +6048,7 @@
                         <point xml:id="impXart_96_OUqyDo_3gkhq0">
                             <num xml:id="impXart_96_OUqyDo_B5EDUJ">(c)</num>
                             <list xml:id="impXart_96_OUqyDo_NLGVkz">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_HfOozm">
+                                <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_HfOozm">
                                     <content xml:id="impXart_96_OUqyDo_xApjuW">
                                         <p xml:id="impXart_96_OUqyDo_1yHJGn">for each priority axis concerning technical assistance:</p>
                                     </content>
@@ -6083,7 +6083,7 @@
                                         <p xml:id="impXart_96_OUqyDo_9AerEb">the corresponding categories of intervention based on a nomenclature adopted by the Commission, and an indicative breakdown of the programmed resources.</p>
                                     </content>
                                 </point>
-                                <subparagraph refersTo="~_WRP" xml:id="impXart_96_OUqyDo_P6tKdr">
+                                <subparagraph refersTo="~WRP" xml:id="impXart_96_OUqyDo_P6tKdr">
                                     <content xml:id="impXart_96_OUqyDo_u8NNXh">
                                         <p xml:id="impXart_96_OUqyDo_cDiiYn">Point (ii) shall not apply where the Union contribution to the priority axis or axes concerning technical assistance in an operational programme does not exceed EUR 15000000.</p>
                                     </content>
@@ -6093,7 +6093,7 @@
                         <point xml:id="impXart_96_OUqyDo_1SubVJ">
                             <num xml:id="impXart_96_OUqyDo_d5kpdS">(d)</num>
                             <list xml:id="impXart_96_OUqyDo_vD3dpC">
-                                <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_p4Ctgy">
+                                <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_p4Ctgy">
                                     <content xml:id="impXart_96_OUqyDo_gCp4pz">
                                         <p xml:id="impXart_96_OUqyDo_7ITDlD">a financing plan containing the following tables:</p>
                                     </content>
@@ -6117,7 +6117,7 @@
                                         </content>
                                     </subparagraph>
                                 </point>
-                                <subparagraph refersTo="~_WRP" xml:id="impXart_96_OUqyDo_2YB4A2">
+                                <subparagraph refersTo="~WRP" xml:id="impXart_96_OUqyDo_2YB4A2">
                                     <content xml:id="impXart_96_OUqyDo_03dcG7">
                                         <p xml:id="impXart_96_OUqyDo_itq4qD">Where the national co-financing is made up of public and private co-financing, the table shall give the indicative breakdown between the public and the private components. It shall show, for information purposes, the envisaged participation from the EIB;</p>
                                     </content>
@@ -6142,7 +6142,7 @@
                 <paragraph xml:id="impXart_96_OUqyDo_Oap4N9">
                     <num xml:id="impXart_96_OUqyDo_VTdrXN">3.</num>
                     <list xml:id="impXart_96_OUqyDo_CTgHas">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_ln3SiK">
+                        <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_ln3SiK">
                             <content xml:id="impXart_96_OUqyDo_9rWVOy">
                                 <p xml:id="impXart_96_OUqyDo_kagH9M">Taking into account its content and objectives, an operational programme shall describe the integrated approach to territorial development, having regard to the Partnership Agreement, and showing how that operational programme contributes to the accomplishment of its objectives and expected results, specifying, where appropriate, the following:</p>
                             </content>
@@ -6182,7 +6182,7 @@
                 <paragraph xml:id="impXart_96_OUqyDo_ze1YOe">
                     <num xml:id="impXart_96_OUqyDo_KKe8uL">4.</num>
                     <list xml:id="impXart_96_OUqyDo_5BdRmg">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_flfV6S">
+                        <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_flfV6S">
                             <content xml:id="impXart_96_OUqyDo_3Ojdgy">
                                 <p xml:id="impXart_96_OUqyDo_YXvVlW">In addition, the operational programme shall specify the following:</p>
                             </content>
@@ -6204,7 +6204,7 @@
                 <paragraph xml:id="impXart_96_OUqyDo_uISRR7">
                     <num xml:id="impXart_96_OUqyDo_l8XMzI">5.</num>
                     <list xml:id="impXart_96_OUqyDo_ZrLbkR">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_mJeUx3">
+                        <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_mJeUx3">
                             <content xml:id="impXart_96_OUqyDo_zaxU6H">
                                 <p xml:id="impXart_96_OUqyDo_Z4Ldrv">The operational programme shall identify:</p>
                             </content>
@@ -6232,7 +6232,7 @@
                 <paragraph xml:id="impXart_96_OUqyDo_WPgVtY">
                     <num xml:id="impXart_96_OUqyDo_WXswsn">6.</num>
                     <list xml:id="impXart_96_OUqyDo_WL6fWD">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_085r6P">
+                        <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_085r6P">
                             <content xml:id="impXart_96_OUqyDo_wAIpDY">
                                 <p xml:id="impXart_96_OUqyDo_8duPjs">The operational programme shall also set out the following, having regard to the content of the Partnership Agreement and taking into account the institutional and legal framework of the Member States:</p>
                             </content>
@@ -6260,7 +6260,7 @@
                 <paragraph xml:id="impXart_96_OUqyDo_4yEmnz">
                     <num xml:id="impXart_96_OUqyDo_Y2EiJg">7.</num>
                     <list xml:id="impXart_96_OUqyDo_kuVqLI">
-                        <subparagraph refersTo="~_INP" xml:id="impXart_96_OUqyDo_2QXWZW">
+                        <subparagraph refersTo="~INP" xml:id="impXart_96_OUqyDo_2QXWZW">
                             <content xml:id="impXart_96_OUqyDo_Uz9f9f">
                                 <p xml:id="impXart_96_OUqyDo_3WB80i">Each operational programme, except those where technical assistance is undertaken under a specific operational programme, shall, subject to the Member State's duly justified assessment of their relevance to the content and objectives of the operational programmes, include a description of:</p>
                             </content>
@@ -6283,7 +6283,7 @@
                                 <p xml:id="impXart_96_OUqyDo_F1v7Ca">the contribution of the operational programme to the promotion of equality between men and women and, where appropriate, the arrangements to ensure the integration of gender perspective at operational programme and operation level.</p>
                             </content>
                         </point>
-                        <subparagraph refersTo="~_WRP" xml:id="impXart_96_OUqyDo_IFJh2T">
+                        <subparagraph refersTo="~WRP" xml:id="impXart_96_OUqyDo_IFJh2T">
                             <content xml:id="impXart_96_OUqyDo_w4Srly">
                                 <p xml:id="impXart_96_OUqyDo_69PC33">Member States may submit an opinion from the national equality bodies on the measures set out in points (b) and (c) of the first subparagraph with the proposal for an operational programme under the Investment for growth and jobs goal.</p>
                             </content>

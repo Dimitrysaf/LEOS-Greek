@@ -184,7 +184,7 @@
                     <paragraph leos:origin="ec" xml:id="art_2_par1">
                         <num leos:origin="ec" xml:id="art_2_Woc735">1.</num>
                         
-                        <list leos:origin="ec" xml:id="art_2_Wnl7op"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_2_par1_sub1">
+                        <list leos:origin="ec" xml:id="art_2_Wnl7op"><subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_2_par1_sub1">
                             <content leos:origin="ec" xml:id="art_2_fCeC1t">
                                 <p leos:origin="ec" xml:id="art_2_NT9OhJ">Sub paragraph --
                                     <b leos:origin="ec" xml:id="art_2_Klz48x"> of Paragraph 1</b> Article 2

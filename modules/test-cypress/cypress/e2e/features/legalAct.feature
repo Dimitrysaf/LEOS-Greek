@@ -236,8 +236,8 @@ Feature: Legal Act Page Regression Features
         And  add "list sibling subparagraph" at current cursor position in edition mode
         When click save and close button of ck editor
         Then ck editor window is not displayed
-        And  content of subparagraph refersTo "~_INP" of list 1 of paragraph 1 of article 6 contains "Text..."
-        And  content of subparagraph refersTo "~_WRP" of list 1 of paragraph 1 of article 6 contains "wrapper subparagraph"
+        And  content of subparagraph refersTo "~INP" of list 1 of paragraph 1 of article 6 contains "Text..."
+        And  content of subparagraph refersTo "~WRP" of list 1 of paragraph 1 of article 6 contains "wrapper subparagraph"
         And  content of point 1 of list 1 of paragraph 1 of article 6 contains "Point a"
         And  content of subparagraph 1 of paragraph 1 of article 6 contains "list sibling subparagraph"
 

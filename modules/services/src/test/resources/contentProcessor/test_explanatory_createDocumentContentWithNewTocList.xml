@@ -281,7 +281,7 @@
             <level leos:depth="1" xml:id="_body_level_21">
                 <num xml:id="_body_level_21_num">21.</num>
                 <list xml:id="_body_level_21_list_1">
-                    <subparagraph refersTo="~_INP" xml:id="_body_level_21_subparagraph_1">
+                    <subparagraph refersTo="~INP" xml:id="_body_level_21_subparagraph_1">
                         <content xml:id="_akn_gM7klr">
                             <p xml:id="_body_level_21_content_p">In view of the above, the
                                 <u xml:id="_body_level_21__content__p_u_17">Permanent Representatives Committee</u>
@@ -306,7 +306,7 @@
             <level leos:depth="1" xml:id="_body_level_22">
                 <num xml:id="_body_level_22_num">22.</num>
                 <list xml:id="_body_level_22_list_1">
-                    <subparagraph refersTo="~_INP" xml:id="_body_level_22_subparagraph_1">
+                    <subparagraph refersTo="~INP" xml:id="_body_level_22_subparagraph_1">
                         <content xml:id="_akn_firnsX">
                             <p xml:id="_body_level_22_content_p">Against this background, the
                                 <u xml:id="_body_level_22__content__p_u_18">Permanent Representatives Committee</u>
@@ -317,7 +317,7 @@
                     <indent xml:id="_body_level_22_list_1_indent_1">
                         <num xml:id="_body_level_22_list_1_indent_1_num">•</num>
                         <list xml:id="_akn_WLUMJ8">
-                            <subparagraph refersTo="~_INP" xml:id="_akn_lER0zi">
+                            <subparagraph refersTo="~INP" xml:id="_akn_lER0zi">
                                 <content xml:id="_akn_kf3VaF">
                                     <p xml:id="_akn_v5pCvO">approve the final compromise text as set out in the Annex to this Note with a view to reaching an agreement at first reading with the European Parliament;</p>
                                 </content>
@@ -325,7 +325,7 @@
                             <indent xml:id="_akn_loKsyU">
                                 <num xml:id="_akn_WAB89f">◦</num>
                                 <list xml:id="_akn_9yy6qK">
-                                    <subparagraph refersTo="~_INP" xml:id="_akn_0mUcLO">
+                                    <subparagraph refersTo="~INP" xml:id="_akn_0mUcLO">
                                         <content xml:id="_akn_s0mxIO">
                                             <p xml:id="_akn_6EOCWg">tested</p>
                                         </content>
@@ -333,7 +333,7 @@
                                     <indent xml:id="_akn_zQmqsf">
                                         <num xml:id="_akn_4HU89O">▪</num>
                                         <list xml:id="_akn_c9hfiB">
-                                            <subparagraph refersTo="~_INP" xml:id="_akn_Fa65R2">
+                                            <subparagraph refersTo="~INP" xml:id="_akn_Fa65R2">
                                                 <content xml:id="_akn_zLXBL4">
                                                     <p xml:id="_akn_UIX4GE">rgtsrgts</p>
                                                 </content>
@@ -414,7 +414,7 @@
                             <p xml:id="_body_level_24_list_1_indent_2_content__p">decide that the statement in the addendum to this note be entered in the minutes of that meeting.</p>
                         </content>
                     </indent>
-                <subparagraph refersTo="~_WRP" xml:id="_body_level_24_subparagraph_2">
+                <subparagraph refersTo="~WRP" xml:id="_body_level_24_subparagraph_2">
                     <content xml:id="_body_level_24_subparagraph_2_content">
                         <p xml:id="_body_level_24_subparagraph_2_content__p">If the Council approves the European Parliament's position, the legislative act will be adopted.</p>
                     </content>

@@ -13,7 +13,7 @@
                 <paragraph leos:origin="ec" xml:id="art_1_GqEOBU">
                     <num leos:origin="ec" xml:id="art_1_Woc735">2.</num>
                     <list leos:origin="ec" xml:id="art_1_Wnl7op">
-                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_MU1hKr">
+                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_1_MU1hKr">
                             <content leos:origin="ec" xml:id="art_1_fCeC1t">
                                 <p leos:origin="ec" xml:id="art_1_NT9OhJ">Example --
                                     <b leos:origin="ec" xml:id="art_1_Klz48x">Point (c) indented</b>
@@ -35,7 +35,7 @@
                         <point leos:origin="ec" xml:id="art_1_ZzykdM">
                             <num leos:origin="ec" xml:id="art_1_koxWzM">(c)</num>
                             <list leos:origin="ec" xml:id="art_1_bQW8O7">
-                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_78ndzv">
+                                <subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_1_78ndzv">
                                     <content leos:origin="ec" xml:id="art_1_EzAUvo">
                                         <p leos:origin="ec" xml:id="art_1_17jvrP">'import of cultural goods' means:</p>
                                     </content>
@@ -49,7 +49,7 @@
                                 <point leos:origin="ec" xml:id="art_1_mSvIgb">
                                     <num leos:origin="ec" xml:id="art_1_Fyvr9w">(ii)</num>
                                     <list leos:origin="ec" xml:id="art_1_gDJwrD">
-                                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_6G73F7">
+                                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_1_6G73F7">
                                             <content leos:origin="ec" xml:id="art_1_keYk7S">
                                                 <p leos:origin="ec" xml:id="art_1_PMAuPF">the placing of cultural goods under one of the following categories of special procedures referred to in Article 210 of Regulation (EU) No 952/2013:</p>
                                             </content>
@@ -63,7 +63,7 @@
                                         <point leos:origin="ec" xml:id="art_1_SQHh5n">
                                             <num leos:origin="ec" xml:id="art_1_Z61Xsc">(2)</num>
                                             <list leos:origin="ec" xml:id="art_1_gDGhFRT">
-                                                <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_6G45GHJ">
+                                                <subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_1_6G45GHJ">
                                                     <content leos:origin="ec" xml:id="art_1_SPx97b">
                                                         <p leos:origin="ec" xml:id="art_1_iALt29">specific use, comprising temporary admission and end-use;</p>
                                                     </content>
@@ -83,7 +83,7 @@
                                         <span class="leos-content-soft-new">(iia)</span>
                                     </num>
                                     <list leos:origin="ec" xml:id="lis_zftkvS">
-                                        <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_6G47GHJ">
+                                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_1_6G47GHJ">
                                             <content leos:origin="ec" xml:id="art_1_NGHSZ">
                                                 <p leos:origin="ec" xml:id="art_1_bgH78">subpoint of indent</p>
                                             </content>

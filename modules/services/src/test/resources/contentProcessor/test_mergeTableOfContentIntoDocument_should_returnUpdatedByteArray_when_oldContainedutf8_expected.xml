@@ -18,7 +18,7 @@
                 <paragraph xml:id="art_1_par1">
                     <num xml:id="art_1_par1_num">1.</num>
                     <list xml:id="art_1_par1_list1">
-                        <subparagraph refersTo="~_INP" xml:id="art_1_par1_sub1">
+                        <subparagraph refersTo="~INP" xml:id="art_1_par1_sub1">
                             <content xml:id="art_1_xJBmXh">
                                 <p xml:id="art_1_w8GmHn">Sub 1</p>
                             </content>
@@ -31,7 +31,7 @@
                                 </content>
                             </subparagraph>
                             <list xml:id="art_1_par1_list2">
-                                <subparagraph refersTo="~_INP" xml:id="art_1_par1_list1_point_a_alinea2">
+                                <subparagraph refersTo="~INP" xml:id="art_1_par1_list1_point_a_alinea2">
                                     <content xml:id="art_1_91Pv8B">
                                         <p xml:id="art_1_0Y121M">Point (a) second alinea</p>
                                     </content>
@@ -39,7 +39,7 @@
                                 <point xml:id="art_1_par1_list2_point_i">
                                     <num xml:id="art_1_par1_list2_point_i_num">(i)</num>
                                     <list xml:id="art_1_par1_list3">
-                                        <subparagraph refersTo="~_INP" xml:id="art_1_par1_list2_point_i_alinea">
+                                        <subparagraph refersTo="~INP" xml:id="art_1_par1_list2_point_i_alinea">
                                             <content xml:id="art_1_pWClT9">
                                                 <p xml:id="art_1_j9YcTo">Point (i) first alinea</p>
                                             </content>
@@ -53,7 +53,7 @@
                                         <point xml:id="art_1_par1_list3_point_2">
                                             <num xml:id="art_1_par1_list3_point_2_num">(2)</num>
                                             <list xml:id="art_1_par1_list4">
-                                                <subparagraph refersTo="~_INP" xml:id="art_1_par1_list3_point_2_alinea">
+                                                <subparagraph refersTo="~INP" xml:id="art_1_par1_list3_point_2_alinea">
                                                     <content xml:id="art_1_IduNeb">
                                                         <p xml:id="art_1_mMX8dS">Point (2)</p>
                                                     </content>

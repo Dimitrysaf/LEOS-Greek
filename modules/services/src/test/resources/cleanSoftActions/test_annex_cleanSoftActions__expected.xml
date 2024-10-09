@@ -91,7 +91,7 @@
                 <level xml:id="akn_level_biIuvM">
                     <num xml:id="akn_hv7AMt">1.1.1.</num>
                     <list xml:id="akn_OKrsPP">
-                        <subparagraph refersTo="~_INP" xml:id="akn_81XGRl">
+                        <subparagraph refersTo="~INP" xml:id="akn_81XGRl">
                             <content xml:id="akn_ULX2GT">
                                 <p xml:id="akn_Col53V">Level 1.1.1</p>
                             </content>
@@ -99,7 +99,7 @@
                         <point xml:id="akn_2wkgF4">
                             <num leos:origin="cn" xml:id="akn_LN7wn2">(-a)</num>
                             <list xml:id="akn_NVXoge">
-                                <subparagraph refersTo="~_INP" xml:id="akn_l4nug5">
+                                <subparagraph refersTo="~INP" xml:id="akn_l4nug5">
                                     <content xml:id="akn_KL87za">
                                         <p xml:id="akn_m5tEWi">Point b</p>
                                     </content>

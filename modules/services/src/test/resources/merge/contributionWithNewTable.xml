@@ -42,8 +42,8 @@
                 <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
                 <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
                 <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions" xml:id="ART_DEF"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="_INP"/>
-                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="_WRP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="INP"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/WRP" showAs="closing part" xml:id="WRP"/>
             </references>
             <proprietary source="~COM">
                 <leos:templateVersion>4.1.0</leos:templateVersion>
@@ -150,7 +150,7 @@
                     <heading leos:origin="ec" xml:id="ec0zUH5kjTzvaIObN">Definitions</heading>
                     <paragraph leos:origin="ec" leos:softdate="2024-09-12T13:02:07+02:00" leos:softuser="DOE Jane(undefined)" leos:tc-original-number="UNNUMBERED" xml:id="ec48MlA9PbWiYmAOR">
                         <list xml:id="ec4E8k81MyPDs1pBg">
-                            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-09-12T13:02:21.823+02:00" leos:softuser="DOE Jane(DGT)" refersTo="~_INP" xml:id="transformedXec48MlA9PbWiYmAOR">
+                            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-09-12T13:02:21.823+02:00" leos:softuser="DOE Jane(DGT)" refersTo="~INP" xml:id="transformedXec48MlA9PbWiYmAOR">
                                 <content leos:origin="ec" xml:id="ecIPlLOrdWmy0FHwO">
                                     <p leos:origin="ec" xml:id="ecbnhxordr8TqW0wQ">T
                                         <del leos:title="DOE Jane : 2024-09-12T13:02:21+02:00" leos:uid="jane" xml:id="ecRz0hGhAMEAdhAnS">ext</del>
@@ -218,7 +218,7 @@
                             <ins leos:action-number="insert" leos:tc-original-number="2." leos:title="DEMO Demo : 2024-09-13T15:38:58+02:00" leos:uid="demo" xml:id="ecbAf5jx0Yno2DQN0">3.</ins>
                         </num>
                         <list xml:id="ec7reIdNItQUq0sWG">
-                            <subparagraph leos:origin="ls" leos:softaction="add" leos:softdate="2024-09-13T15:37:44.380+02:00" leos:softuser="DEMO Demo(CNECT)" refersTo="~_INP" xml:id="ecInzDLkaks5VUpLB">
+                            <subparagraph leos:origin="ls" leos:softaction="add" leos:softdate="2024-09-13T15:37:44.380+02:00" leos:softuser="DEMO Demo(CNECT)" refersTo="~INP" xml:id="ecInzDLkaks5VUpLB">
                                 <content xml:id="ecFJmqzONmGGxLuRz">
                                     <p xml:id="ecuzsKxtlOBwoaiKx">
                                         <del leos:title="DEMO Demo : 2024-09-13T15:36:48+02:00" leos:uid="demo" xml:id="ecf7e16RYQjlPAH2b">Text...</del>
@@ -248,7 +248,7 @@
                     <paragraph leos:origin="ec" xml:id="ecUpyGAzgtDityz98">
                         <num leos:origin="ec" xml:id="eczq7g0wC4W442McA">1.</num>
                         <list leos:origin="ec" xml:id="ecS4RAbiAdQtsxSt3">
-                            <subparagraph leos:origin="ec" leos:softdate="2024-09-13T15:14:00+02:00" leos:softuser="DEMO Demo(undefined)" refersTo="~_INP" xml:id="ectiKgcDJqv0cCMuz">
+                            <subparagraph leos:origin="ec" leos:softdate="2024-09-13T15:14:00+02:00" leos:softuser="DEMO Demo(undefined)" refersTo="~INP" xml:id="ectiKgcDJqv0cCMuz">
                                 <content leos:origin="ec" xml:id="ecNiKOfvjQFdoolQ7">
                                     <p leos:origin="ec" xml:id="ec0ILnfJMOzm600BO">The competent authorities may waive in full or in part the application of Part Six to an institution and to all or some of its subsidiaries in the Union and supervise them as a single liquidity sub-group s
                                         <ins leos:title="DEMO Demo : 2024-09-13T15:14:00+02:00" leos:uid="demo" xml:id="ecbv2u44jjF4fFSFW">terteteteterte</ins>
@@ -289,7 +289,7 @@
                                     <p leos:origin="ec" xml:id="ec4QueIZyYfHzcIhT">there is no current or foreseen material practical or legal impediment to the fulfilment of the contracts referred to in (c).</p>
                                 </content>
                             </point>
-                            <subparagraph leos:origin="ec" refersTo="~_WRP" xml:id="ecJ6vimdWuTF5vC22">
+                            <subparagraph leos:origin="ec" refersTo="~WRP" xml:id="ecJ6vimdWuTF5vC22">
                                 <content leos:origin="ec" xml:id="ecv7IzpPbKsVFF5yR">
                                     <p leos:origin="ec" xml:id="ecAaE0Oe9mW6YPmbP">By 1 January 2014 the Commission shall report to the European Parliament and the Council on any legal obstacles which are capable of rendering impossible the application of point (c) of the first subparagraph and is invited to make a legislative proposal, if appropriate, by 31 December 2015 on which of those obstacles should be removed.</p>
                                 </content>
@@ -318,7 +318,7 @@
                             <ins leos:action-number="insert" leos:tc-original-number="3." leos:title="DEMO Demo : 2024-09-13T15:38:58+02:00" leos:uid="demo" xml:id="ecyvSzb0Zyg3PQY83">4.</ins>
                         </num>
                         <list leos:origin="ec" xml:id="ecJtVjhRBGGmMwgFu">
-                            <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="ec9gmRs77KBWH5kts">
+                            <subparagraph leos:origin="ec" refersTo="~INP" xml:id="ec9gmRs77KBWH5kts">
                                 <content leos:origin="ec" xml:id="ecMQKJgUadLrTRFP7">
                                     <p leos:origin="ec" xml:id="ecDfu0SMEPvnLjHJa">Where institutions of the single liquidity sub-group are authorised in several Member States, paragraph 1 shall only be applied after following the procedure laid down in Article 21 and only to the institutions whose competent authorities agree about the following elements:</p>
                                 </content>
@@ -393,7 +393,7 @@
                     <paragraph leos:origin="ec" xml:id="ecRrdg4W2JfpHu0oU">
                         <num leos:origin="ec" xml:id="ecuRJbp4Vazt9TdBj">1.</num>
                         <list leos:origin="ec" xml:id="ecvGG5ix0jgNi7htv">
-                            <subparagraph leos:origin="ec" leos:softdate="2024-09-12T13:03:26+02:00" leos:softuser="DOE Jane(undefined)" refersTo="~_INP" xml:id="eckClGxWsrIHqTiTD">
+                            <subparagraph leos:origin="ec" leos:softdate="2024-09-12T13:03:26+02:00" leos:softuser="DOE Jane(undefined)" refersTo="~INP" xml:id="eckClGxWsrIHqTiTD">
                                 <content leos:origin="ec" xml:id="ec1N4Ipq0SamPmQZi">
                                     <p leos:origin="ec" xml:id="ec1xaMuTvJOpWOKG4">T
                                         <del leos:title="DOE Jane : 2024-09-12T13:03:26+02:00" leos:uid="jane" xml:id="ecqdA3cbzlxjiCIy2">ex</del>
@@ -452,7 +452,7 @@
                     <paragraph leos:origin="ec" xml:id="ecEYryrUhdvMUaot1">
                         <num leos:origin="ec" xml:id="ecw8kJUS6cLxhRxfL">1.</num>
                         <list xml:id="ecuZN6b23Z90nCAOn">
-                            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-09-12T13:03:40+02:00" leos:softuser="DOE Jane(undefined)" refersTo="~_INP" xml:id="transformedXecEYryrUhdvMUaot1">
+                            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-09-12T13:03:40+02:00" leos:softuser="DOE Jane(undefined)" refersTo="~INP" xml:id="transformedXecEYryrUhdvMUaot1">
                                 <content leos:origin="ec" xml:id="echB4r9tsbh26FSOx">
                                     <p leos:origin="ec" xml:id="ecNcDSw17RHZmkCQa">Institutions shall
                                         <ins leos:title="DOE Jane : 2024-09-12T13:03:40+02:00" leos:uid="jane" xml:id="ec9FMdPFH3EAenjqI">en plus</ins>
@@ -493,7 +493,7 @@
                     <paragraph leos:origin="ec" xml:id="ecGPDmvuZOuUYGRpk">
                         <num leos:origin="ec" xml:id="ecKitkpWV17tf4QjM">2.</num>
                         <list xml:id="ecgQ6vuNF05jJawuW">
-                            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-09-13T15:38:58.227+02:00" leos:softuser="DEMO Demo(CNECT)" refersTo="~_INP" xml:id="transformedXecGPDmvuZOuUYGRpk">
+                            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-09-13T15:38:58.227+02:00" leos:softuser="DEMO Demo(CNECT)" refersTo="~INP" xml:id="transformedXecGPDmvuZOuUYGRpk">
                                 <content leos:origin="ec" xml:id="echoRUh044CRiUGoT">
                                     <p leos:origin="ec" xml:id="ec2m10ug22fHO7QnG">Every institution which is either a parent undertaking, or a subsidiary, and every institution included in the consolidation pursuant to Article 19, shall not be required to comply with the obligations laid down in Part Eight on an individual basis.</p>
                                 </content>
@@ -530,7 +530,7 @@
                     <paragraph leos:mergeAction="ACCEPT" leos:origin="ec" xml:id="ecf9svD7kRPkwD9VR">
                         <num leos:origin="ec" xml:id="ec0EdYr69CEasBoAn">1.</num>
                         <list leos:origin="ec" xml:id="ec45YkylV7GRTjtUP">
-                            <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="ec1Z44Du0u0oIQL92">
+                            <subparagraph leos:origin="ec" refersTo="~INP" xml:id="ec1Z44Du0u0oIQL92">
                                 <content leos:origin="ec" xml:id="eckLimzol0AvAFs6r">
                                     <p leos:origin="ec" xml:id="ecnBpZI09aVjnQWqI">Competent authorities may waive the application of Article 6(1) to any subsidiary of an institution, where both the subsidiary and the institution are subject to authorisation and supervision by the Member State concerned, and the subsidiary is included in the supervision on a consolidated basis of the institution which is the parent undertaking, and all of the following conditions are satisfied, in order to ensure that own funds are distributed adequately between the parent undertaking and the subsidiary:</p>
                                 </content>
@@ -664,7 +664,7 @@
                             <ins leos:action-number="insert" leos:tc-original-number="3." leos:title="DEMO Demo : 2024-09-13T15:38:58+02:00" leos:uid="demo" xml:id="ecJC8fRj0gJUVtm98">4.</ins>
                         </num>
                         <list leos:origin="ec" xml:id="ecarWLVq1dG6Z2mv0">
-                            <subparagraph leos:origin="ec" refersTo="~_INP" xml:id="ecpjQPDPJbj0ZoHEE">
+                            <subparagraph leos:origin="ec" refersTo="~INP" xml:id="ecpjQPDPJbj0ZoHEE">
                                 <content leos:origin="ec" xml:id="ecrzvHt2PDcyldnS7">
                                     <p leos:origin="ec" xml:id="ecUvWrqBkYr3jKbt0">Competent authorities may waive the application of Article 6(1) to a parent institution in a Member State where that institution is subject to authorisation and supervision by the Member State concerned, and it is included in the supervision on a consolidated basis, and all the following conditions are satisfied, in order to ensure that own funds are distributed adequately among the parent undertaking and the subsidiaries:</p>
                                 </content>
@@ -683,7 +683,7 @@
                                     </p>
                                 </content>
                             </point>
-                            <subparagraph leos:origin="ec" refersTo="~_WRP" xml:id="ecgdxToKMnhcu0G7h">
+                            <subparagraph leos:origin="ec" refersTo="~WRP" xml:id="ecgdxToKMnhcu0G7h">
                                 <content leos:origin="ec" xml:id="ec8Y0YyvLAcFYJ4tj">
                                     <p leos:origin="ec" xml:id="ecpxzVwA7kPlBtG6T">The competent authority which makes use of this paragraph shall inform the competent authorities of all other Member States.</p>
                                 </content>

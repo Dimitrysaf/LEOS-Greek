@@ -233,7 +233,7 @@
             <level leos:depth="1" xml:id="body_level_21">
                 <num xml:id="body_level_21_num">21.</num>
                 <list xml:id="body_level_21_list_1">
-                    <subparagraph refersTo="~_INP" xml:id="body_level_21_subparagraph_1">
+                    <subparagraph refersTo="~INP" xml:id="body_level_21_subparagraph_1">
                         <content xml:id="akn_8vX1Qd">
                             <p xml:id="body_level_21_content_p">In view of the above, the <u xml:id="body_level_21__content__p_u_17">Permanent Representatives Committee
                             </u> is invited to examine the compromise text as set out in the Annex to this note, address the
@@ -259,7 +259,7 @@
             <level leos:depth="1" xml:id="body_level_22">
                 <num xml:id="body_level_22_num">22.</num>
                 <list xml:id="body_level_22_list_1">
-                    <subparagraph refersTo="~_INP" xml:id="body_level_22_subparagraph_1">
+                    <subparagraph refersTo="~INP" xml:id="body_level_22_subparagraph_1">
                         <content xml:id="akn_nHiJ1c">
                             <p xml:id="body_level_22_content_p">Against this background, the <u xml:id="body_level_22__content__p_u_18">Permanent Representatives Committee
                             </u> is invited to:
@@ -303,7 +303,7 @@
             <level leos:depth="1" xml:id="body_level_24">
                 <num xml:id="body_level_24_num">24.</num>
                 <list xml:id="body_level_24_list_1">
-                    <subparagraph refersTo="~_INP" xml:id="body_level_24_subparagraph_1">
+                    <subparagraph refersTo="~INP" xml:id="body_level_24_subparagraph_1">
                         <content xml:id="body_level_24_subparagraph_1_content">
                             <p xml:id="body_level_24_subparagraph_1_content__p">The <u xml:id="body_level_24__content__p_u_18">Permanent Representatives Committee
                             </u> is therefore asked to confirm its agreement and to suggest that <u xml:id="body_level_24__content__p_u_19">the Council</u>:
@@ -322,7 +322,7 @@
                             <p xml:id="body_level_24_list_1_indent_2_content__p">should be (b)</p>
                         </content>
                     </indent>
-                    <subparagraph refersTo="~_WRP" xml:id="body_level_24_subparagraph_2">
+                    <subparagraph refersTo="~WRP" xml:id="body_level_24_subparagraph_2">
                         <content xml:id="body_level_24_subparagraph_2_content">
                             <p xml:id="body_level_24_subparagraph_2_content__p">If the Council approves the European
                                 Parliament's position, the legislative act will be adopted.

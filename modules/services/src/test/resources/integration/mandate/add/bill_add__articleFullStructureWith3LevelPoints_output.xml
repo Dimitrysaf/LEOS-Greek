@@ -129,7 +129,7 @@
                 <paragraph leos:origin="ec" xml:id="art_1__para_1">
                     <num leos:origin="ec" xml:id="art_1__para_1__num">1.</num>
                     
-                    <list leos:origin="ec" xml:id="art_1_1w6KRX"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_1_ftJWXT">
+                    <list leos:origin="ec" xml:id="art_1_1w6KRX"><subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_1_ftJWXT">
                         <content leos:origin="ec" xml:id="art_1__para_1__content">
                             <p leos:origin="ec" xml:id="art_1__para_1__content__p">art1-par1 (sub) </p>
                         </content>
@@ -155,7 +155,7 @@
                 <paragraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="par_HD4a8k">
                     <num leos:origin="cn" xml:id="art_SvC65L_ByUxgX">1.</num>
                     
-                    <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="lis_1FMqcJ"><subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="akn_art_subpara_4u8JoA">
+                    <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="lis_1FMqcJ"><subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" refersTo="~INP" xml:id="akn_art_subpara_4u8JoA">
                         <content xml:id="art_SvC65L_WvWYjB">
                             <p xml:id="art_SvC65L_dxffNw"/>
                         </content>
@@ -163,7 +163,7 @@
                         <point leos:origin="cn" leos:softaction="add" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="cjvf2evm500126810nvi2nczn">
                             <num leos:origin="cn" xml:id="art_SvC65L_JLhKby">(a)</num>
                             
-                            <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="lis_yh1IJX"><subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="akn_art_alinea_0xa0a9">
+                            <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="lis_yh1IJX"><subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" refersTo="~INP" xml:id="akn_art_alinea_0xa0a9">
                                 <content xml:id="art_SvC65L_6vzG5x">
                                     <p xml:id="art_SvC65L_vk3Trv"/>
                                 </content>
@@ -171,7 +171,7 @@
                                 <point leos:origin="cn" leos:softaction="add" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="cjvf2f10400146810xj4dh5sl">
                                     <num leos:origin="cn" xml:id="art_SvC65L_zwfTbb">(1)</num>
                                     
-                                    <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="lis_lpib21"><subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="akn_art_alinea_XgRoqt">
+                                    <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="lis_lpib21"><subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" refersTo="~INP" xml:id="akn_art_alinea_XgRoqt">
                                         <content xml:id="art_SvC65L_4rAoJL">
                                             <p xml:id="art_SvC65L_UUekHg"/>
                                         </content>
@@ -179,7 +179,7 @@
                                         <point leos:origin="cn" leos:softaction="add" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="cjvf2ewvk00136810whg8fmdg">
                                             <num leos:origin="cn" xml:id="art_SvC65L_U9XbKN">(i)</num>
                                             
-                                            <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="lis_hZDPjG"><subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" refersTo="~_INP" xml:id="akn_art_alinea_kW8GNV">
+                                            <list leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" xml:id="lis_hZDPjG"><subparagraph leos:origin="cn" leos:softaction="add" leos:softactionroot="true" leos:softdate="2019-05-08T12:13:53.107+02:00" leos:softuser="jane" refersTo="~INP" xml:id="akn_art_alinea_kW8GNV">
                                                 <content xml:id="art_SvC65L_L1uuGL">
                                                     <p xml:id="art_SvC65L_jdNMOQ"/>
                                                 </content>
@@ -204,7 +204,7 @@
                 <heading leos:origin="ec" xml:id="art_2__heading">Entry into force</heading>
                 <paragraph leos:origin="ec" xml:id="art_2__para_1">
                     
-                    <list leos:origin="ec" xml:id="art_2_lKHtUF"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="art_2_SNi868">
+                    <list leos:origin="ec" xml:id="art_2_lKHtUF"><subparagraph leos:origin="ec" refersTo="~INP" xml:id="art_2_SNi868">
                         <content leos:origin="ec" xml:id="art_2__para_1__content">
                             <p leos:origin="ec" xml:id="art_2__para_1__content__p">This Regulation shall enter into
                                 force on the [...] day following that of its publication in the <i leos:origin="ec" xml:id="art_2__para_1__content__p__i">
@@ -238,7 +238,7 @@
                 <paragraph leos:origin="ec" xml:id="akn_art_B6BGPx-par1">
                     <num leos:origin="ec" xml:id="akn_art_B6BGPx_CEEgdz">1.</num>
                     
-                    <list leos:origin="ec" xml:id="akn_art_B6BGPx_patRZP"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_B6BGPx_LjgRwY">
+                    <list leos:origin="ec" xml:id="akn_art_B6BGPx_patRZP"><subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_B6BGPx_LjgRwY">
                         <content leos:origin="ec" xml:id="akn_art_B6BGPx_tAYgzk">
                             <p leos:origin="ec" xml:id="akn_art_B6BGPx_S6dVOu">art 3 - par1 (sub)</p>
                         </content>
@@ -246,7 +246,7 @@
                         <point leos:origin="ec" xml:id="akn_art_B6BGPx_EFkmBp">
                             <num leos:origin="ec" xml:id="akn_art_B6BGPx_55WP4L">(a)</num>
                             
-                            <list leos:origin="ec" xml:id="akn_art_B6BGPx_CKBXAf"><subparagraph leos:origin="ec" refersTo="~_INP" xml:id="akn_art_B6BGPx_dS0ZVD">
+                            <list leos:origin="ec" xml:id="akn_art_B6BGPx_CKBXAf"><subparagraph leos:origin="ec" refersTo="~INP" xml:id="akn_art_B6BGPx_dS0ZVD">
                                 <content leos:origin="ec" xml:id="akn_art_B6BGPx_LD9GxL">
                                     <p leos:origin="ec" xml:id="akn_art_B6BGPx_GzpWwi">art3- point a</p>
                                 </content>
