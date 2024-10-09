@@ -933,6 +933,14 @@ public class XercesUtils {
         return parent;
     }
 
+    public static Node getFirstAncestorWithTagNames(Node node, List<String> tagNames) {
+        Node parent = node;
+        while (parent != null && !tagNames.contains(parent.getNodeName())) {
+            parent = parent.getParentNode();
+        }
+        return parent;
+    }
+
     public static Node getFirstDescendant(Node node, List<String> tagNames) {
         List<Node> children = getChildren(node);
         for (Node child : children) {
@@ -968,17 +976,17 @@ public class XercesUtils {
         return false;
     }
 
-    public static boolean hasAscendantWithAttributeExceptValue(Node node, String attrName, String value) {
+    public static Node getAscendantWithAttributeExceptValue(Node node, String attrName, String value) {
         Node parent = node;
         while (parent != null) {
             if (hasAttribute(parent, attrName) && hasAttributeValue(attrName, value, parent)) {
-                return false;
+                return null;
             } else if (hasAttribute(parent, attrName)) {
-                return true;
+                return parent;
             }
             parent = parent.getParentNode();
         }
-        return false;
+        return null;
     }
 
     public static int getPointDepth(Node node) {
