@@ -270,6 +270,8 @@ export class MergeContributionsService {
             .subscribe((nbFeedbacks) => {
               if (nbFeedbacks > 0) {
                 this.setFeedbackToBeSent(true);
+              } else {
+                this.setFeedbackToBeSent(false);
               }
             });
         }
