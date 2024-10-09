@@ -3,7 +3,7 @@
     {
       "targets": [
         {
-          "destinationPath": "//preamble/formula[1]/aknp",
+          "destinationPath": "//preamble//formula[1]/aknp",
           "position": "AFTER-WRAPPER"
         }
       ],
@@ -39,15 +39,6 @@
     {
       "targets": [
         {
-          "destinationPath": "//recitals/recital[3]",
-          "position": "AFTER-WRAPPER"
-        }
-      ],
-      "content": "<guidance id=\"guidance-rec_3\" class=\"guidance-green-block\"><span id=\"rec_3-guidance\">[That recital is optional in accordance with the guidance note on explanatory documents available <a href=\"https://myintracomm.ec.europa.eu/corp/sg/fr/droit_comm/infractions/Documents/guidance_explanatory_documents_en.pdf\" target=\"_blank\">here</a> . Please note that a thorough justification must be provided in the explanatory memorandum on whether or not the Commission considers such explanatory documents to be justified.]</span></guidance>"
-    },
-    {
-      "targets": [
-        {
           "destinationPath": "//article[1]/heading",
           "position": "AFTER-WRAPPER"
         }
@@ -62,6 +53,15 @@
         }
       ],
       "content": "<guidance id=\"guidance-_art_definitions_heading\" class=\"guidance-green-block\"><span id=\"_art_2_definitions_heading-guidance\">[DAP info] <a href=\"https://webgate.ec.europa.eu/fpfis/wikis/display/dap/Definitions\" target=\"_blank\">Definitions</a></span></guidance>"
+    },
+    {
+      "targets": [
+        {
+          "destinationPath": "//article[3]/heading",
+          "position": "BEFORE-WRAPPER"
+        }
+      ],
+      "content": "<guidance id=\"guidance2-art_n1_4CzCN4\" class=\"guidance-green-block\"><span id=\"art_n1_4CzCN4-guidance2\">[Alternative 2 is only used to be used where it is essential that the national provisions be applied from the same date in all Member States]</span></guidance>"
     },
     {
       "targets": [
@@ -117,7 +117,7 @@
           "content": "<article xml:id=\"_art_n4\" leos:editable=\"true\" leos:deletable=\"false\" leos:alternative=\"true\" leos:optionlist=\"listOption2\" leos:selectedoption=\"2\"><num xml:id=\"art_n4_LcUtyg\" leos:editable=\"false\">Article 4</num><heading xml:id=\"art_n4_Q27Lyk\">Addressees</heading><paragraph xml:id=\"art_n4__para_1\"><content xml:id=\"art_n5_kfM6hD\"><p xml:id=\"art_n5_yZp7Mq\">This Directive is addressed to the Member States in accordance with the Treaties.</p></content></paragraph></article>"
         }
       ]
-    }    
+    }
   ],
   "structure": [
     {
