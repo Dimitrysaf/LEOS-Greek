@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import cool.graph.cuid.Cuid;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.repository.Content;
 import eu.europa.ec.leos.domain.repository.LeosCategory;
@@ -1482,6 +1481,7 @@ public class LegServiceImpl implements LegService {
             if (exportOptions.isWithFeedbackAnnotations()) {
                 String annotations = getAnnotationsFromZipContent(contentToZip, docName);
                 String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
+                annotations = annotateService.fetchFeedbackRepliesFromDB(ref, proposalRef, legFileName, annotations);
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
                 annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
@@ -1495,7 +1495,38 @@ public class LegServiceImpl implements LegService {
     }
 
     @Override
-    public String removePermissionsStoredAnnotations(String storedFeedbackAnnotations) {
+    public String removePermissionsStoredAnnotationsFromId(String storedFeedbackAnnotations, String documentRef, String legFileId) {
+        if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("")) {
+            return storedFeedbackAnnotations;
+        }
+        try {
+            LegDocument legDocument = findLegDocumentById(legFileId);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode storedJson = mapper.readTree(storedFeedbackAnnotations);
+            JsonNode storedAnnots = storedJson.get("rows");
+            for (final JsonNode storedAnnot : storedAnnots) {
+                JsonNode permissions = storedAnnot.get("permissions");
+                ((ObjectNode) permissions).putArray("update").removeAll();
+                ((ObjectNode) permissions).putArray("delete").removeAll();
+                ((ObjectNode) permissions).putArray("admin").removeAll();
+            }
+            storedAnnots = storedJson.get("replies");
+            for (final JsonNode storedAnnot : storedAnnots) {
+                JsonNode permissions = storedAnnot.get("permissions");
+                ((ObjectNode) permissions).putArray("update").removeAll();
+                ((ObjectNode) permissions).putArray("delete").removeAll();
+                ((ObjectNode) permissions).putArray("admin").removeAll();
+            }
+            return mapper.writeValueAsString(storedJson).replaceAll("uri://LEOS/" + documentRef,
+                    "uri://LEOS/" + legDocument.getName() + "/revision-" + documentRef);
+        } catch (Exception e) {
+            LOG.debug("Could not remove permissions on stored annotations", e);
+        }
+        return storedFeedbackAnnotations;
+    }
+
+    @Override
+    public String removePermissionsStoredAnnotations(String storedFeedbackAnnotations, String documentRef, String legFileName) {
         if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("")) {
             return storedFeedbackAnnotations;
         }
@@ -1509,7 +1540,14 @@ public class LegServiceImpl implements LegService {
                 ((ObjectNode) permissions).putArray("delete").removeAll();
                 ((ObjectNode) permissions).putArray("admin").removeAll();
             }
-            return mapper.writeValueAsString(storedJson);
+            storedAnnots = storedJson.get("replies");
+            for (final JsonNode storedAnnot : storedAnnots) {
+                JsonNode permissions = storedAnnot.get("permissions");
+                ((ObjectNode) permissions).putArray("update").removeAll();
+                ((ObjectNode) permissions).putArray("delete").removeAll();
+                ((ObjectNode) permissions).putArray("admin").removeAll();
+            }
+            return mapper.writeValueAsString(storedJson).replaceAll("uri://LEOS/" + documentRef, "uri://LEOS/" + legFileName + "/revision-" + documentRef);
         } catch (Exception e) {
             LOG.debug("Could not remove permissions on stored annotations", e);
         }
@@ -1520,12 +1558,16 @@ public class LegServiceImpl implements LegService {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode json = mapper.readTree(feedbackAnnotations);
         JsonNode annots = json.get("rows");
+        JsonNode replies = json.get("replies");
         JsonNode storedAnnots;
+        JsonNode storedReplies;
         if (storedFeedbackAnnotations == null || storedFeedbackAnnotations.equals("")) {
             storedAnnots = mapper.readTree("[]");
+            storedReplies = mapper.readTree("[]");
         } else {
             JsonNode storedJson = mapper.readTree(storedFeedbackAnnotations);
             storedAnnots = storedJson.get("rows");
+            storedReplies = storedJson.get("replies");
         }
         int count = 0;
         for (final JsonNode annot : annots) {
@@ -1533,6 +1575,19 @@ public class LegServiceImpl implements LegService {
             boolean added = false;
             for (final JsonNode storedAnnot : storedAnnots) {
                 if (annotId.equals(storedAnnot.get("id").textValue())) {
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                count++;
+            }
+        }
+        for (final JsonNode annot : replies) {
+            String annotId = annot.get("id").textValue();
+            boolean added = false;
+            for (final JsonNode storedReply : storedReplies) {
+                if (annotId.equals(storedReply.get("id").textValue())) {
                     added = true;
                     break;
                 }
@@ -1939,10 +1994,12 @@ public class LegServiceImpl implements LegService {
 
         JsonNode json = mapper.readTree(annotations);
         ArrayNode rowsNode = (ArrayNode) json.get("rows");
+        ArrayNode repliesNode = (ArrayNode) json.get("replies");
         LOG.debug("Found " + rowsNode.size() + " feedback annotations in LEG");
 
         JsonNode jsonFeedback = mapper.readTree(feedbackAnnotations);
         ArrayNode rowsNodeFeedback = (ArrayNode) jsonFeedback.get("rows");
+        ArrayNode repliesNodeFeedback = (ArrayNode) jsonFeedback.get("replies");
         LOG.debug("Found " + rowsNodeFeedback.size() + " feedback annotations in DB");
 
         Iterator<JsonNode> itrFeedback = rowsNodeFeedback.elements();
@@ -1952,11 +2009,21 @@ public class LegServiceImpl implements LegService {
                 filteredList.add(node);
             }
         });
+        Iterator<JsonNode> itrRepliesFeedback = repliesNodeFeedback.elements();
+        List<JsonNode> repliesFilteredList = new ArrayList<JsonNode>();
+        itrRepliesFeedback.forEachRemaining((node) -> {
+            if(!isPresent(rowsNodeFeedback, node)) {
+                repliesFilteredList.add(node);
+            }
+        });
 
         LOG.debug("Added " + filteredList.size() + " feedback annotations from DB");
         rowsNode.addAll(filteredList);
+        LOG.debug("Added " + repliesFilteredList.size() + " feedback replies from DB");
+        repliesNode.addAll(repliesFilteredList);
 
         ((ObjectNode) json).put("rows", rowsNode);
+        ((ObjectNode) json).put("replies", repliesNode);
         ((ObjectNode) json).put("total", rowsNode.size());
         LOG.debug("New list of feedbacks now contains " + rowsNode.size() + " feedback annotations");
 
