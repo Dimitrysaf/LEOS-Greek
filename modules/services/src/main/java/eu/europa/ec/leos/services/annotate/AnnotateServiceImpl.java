@@ -1,11 +1,16 @@
 package eu.europa.ec.leos.services.annotate;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import eu.europa.ec.leos.integration.rest.AnnotateStatusResponse;
 import eu.europa.ec.leos.integration.rest.SendTemporaryAnnotationsResponse;
 import eu.europa.ec.leos.security.LeosPermission;
+import org.apache.jena.atlas.json.JsonArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +76,48 @@ public class AnnotateServiceImpl implements AnnotateService {
             LOG.error("Error getting feedback annotations: ", exception);
             throw new RuntimeException("Error Occurred While Getting Feedback Annotation");
         }
+    }
+
+    @Override
+    public String fetchFeedbackRepliesFromDB(String docName, String proposalRef, String legFileName, String storedAnnotations) {
+        URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/search")
+                .queryParam("_separate_replies", true)
+                .queryParam("group", "__world__")
+                .queryParam("limit", -1)
+                .queryParam("offset", 0)
+                .queryParam("order", "asc")
+                .queryParam("sort", "created")
+                .queryParam("metadatasets", "[{\"status\":[\"ALL\"]}]")
+                .queryParam("uri", "uri://LEOS/" + docName).build().encode().toUri();
+
+        try {
+            String annotations =  annotationProvider.searchAnnotations(uri, this.getAnnotateToken(), proposalRef);
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode annotsJson = mapper.readTree(annotations);
+            JsonNode storedAnnotsJson = mapper.readTree(storedAnnotations);
+
+            JsonNode rowStoredAnnotsJson = storedAnnotsJson.get("rows");
+            JsonNode repliesAnnots = annotsJson.get("replies");
+            JsonNode storedRepliesJson = storedAnnotsJson.get("replies");
+            for (final JsonNode reply : repliesAnnots) {
+                boolean found = false;
+                JsonNode refs = reply.get("references");
+                for (final JsonNode storedAnnot : rowStoredAnnotsJson) {
+                    if (storedAnnot.get("id").asText("").equals(refs.get(0).asText("ref"))) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    ((ArrayNode) storedRepliesJson).add(reply);
+                }
+            }
+            storedAnnotations =  mapper.writeValueAsString(storedAnnotsJson);
+            storedAnnotations = storedAnnotations.replaceAll("uri://LEOS/" + docName, "uri://LEOS/" + legFileName + "/revision-" + docName);
+        } catch (Exception exception) {
+            LOG.error("Error getting feedback annotations: ", exception);
+        }
+        return storedAnnotations;
     }
 
     @Override

@@ -235,7 +235,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         if (removeRevisionPrefix) {
             result = result.replaceAll("revision-", "");
         } else {
-            result = legService.removePermissionsStoredAnnotations(result);
+            result = legService.removePermissionsStoredAnnotationsFromId(result, documentRef, legFileId);
         }
         return result;
     }
@@ -252,7 +252,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
             if (removeRevisionPrefix) {
                 result = result.replaceAll("revision-", "");
             } else {
-                result = legService.removePermissionsStoredAnnotations(result);
+                result = legService.removePermissionsStoredAnnotations(result, documentRef, legDocument.getName());
             }
             return result;
         } catch (Exception e) {
@@ -272,7 +272,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
             if (removeRevisionPrefix) {
                 result = result.replaceAll("revision-", "");
             } else {
-                result = legService.removePermissionsStoredAnnotations(result);
+                result = legService.removePermissionsStoredAnnotations(result, documentRef, legFileName);
             }
             return result;
         } catch (Exception e) {
@@ -292,7 +292,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
                 if (removeRevisionPrefix) {
                     result = result.replaceAll("revision-", "");
                 } else {
-                    result = legService.removePermissionsStoredAnnotations(result);
+                    result = legService.removePermissionsStoredAnnotations(result, documentRef, legFileName);
                 }
                 return result;
         } catch (IOException e) {
