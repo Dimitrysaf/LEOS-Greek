@@ -115,7 +115,7 @@ public class AnnotateController {
             documentRef = encodeParam(documentRef);
             final LeosCategoryClass documentCategory = LeosCategoryClass.valueOf(documentType);
             final String origText = mergeSuggestionRequest.getOrigText();
-            final String newText = mergeSuggestionRequest.getNewText();
+            final String newText = mergeSuggestionRequest.getNewText() == null ? "" : mergeSuggestionRequest.getNewText();
             final String elementId = mergeSuggestionRequest.getElementId();
             final int startOffset = mergeSuggestionRequest.getStartOffset();
             final int endOffset = mergeSuggestionRequest.getEndOffset();
