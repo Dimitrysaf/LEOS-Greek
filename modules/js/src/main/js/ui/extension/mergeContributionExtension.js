@@ -62,18 +62,35 @@ define(function mergeContributionExtensionModule(require) {
     }
 
     function _registerActionTriggers(connector) {
-        const $changed_element = $("[leos\\:action='" + DELETE + "'], del, [leos\\:action='" + INSERT + "'], ins, [leos\\:softaction='" + MOVE_FROM + "']");
+        let changed_element = $.makeArray($("[leos\\:indent-origin-type], [leos\\:action='" + DELETE + "'], del, [leos\\:action='" + INSERT + "'], ins," +
+            " [leos\\:softaction='" + MOVE_FROM + "']"));
+        let impactedArticles = [];
+        const $articles = $('article')
+        for (let i = 0; i < $articles.length; i++) {
+            var $element = $($articles[i]);
+            if ($element.attr(UTILS.ID).includes(REVISION_PREFIX)) {
+                var nbParagraphs = $element.find('paragraph');
+                var nbParagraphsNbToUnb = $element.find('paragraph[leos\\:action-number="delete"]');
+                var nbParagraphsUnbToNb = $element.find('paragraph[leos\\:action-number="insert"]');
+                if (nbParagraphsUnbToNb.length === nbParagraphs.length || nbParagraphsNbToUnb.length === nbParagraphs.length) {
+                    changed_element.push($articles[i]);
+                    impactedArticles.push($element.attr(UTILS.ID));
+                    $articles[i].setAttribute(PARENT_AFFECTED, "true");
+                }
+            }
+        }
+
         var $parent_element;
         var selectedParentElements = new Array();
-        for (let i = 0; i < $changed_element.length; i++) {
-            var $element = $($changed_element[i]);
+        for (let i = 0; i < changed_element.length; i++) {
+            var $element = $(changed_element[i]);
             if ($element.length > 0 && $element.attr(UTILS.ID) && $element.attr(UTILS.ID).includes(REVISION_PREFIX) && UTILS.getElementTagName($element).toLowerCase() !== UTILS.NUM) {
                 var $main_element = $element.closest(MAIN_ELEMENT_SELECTOR);
                 if ($main_element.length > 0 && UTILS.getElementTagName($main_element).toLowerCase() !== UTILS.NUM) {
                     const mainEltTag = UTILS.getElementTagName($main_element).toLowerCase();
                     if ($main_element.attr(UTILS.ID) != $element.attr(UTILS.ID)) {
                         $main_element.attr(PARENT_AFFECTED, "true");
-                    } else {
+                    } else if (!impactedArticles.includes($main_element.attr(UTILS.ID))) {
                         $main_element.removeAttr(PARENT_AFFECTED);
                     }
                     if (HIGHER_ELTS.indexOf(mainEltTag) === -1) {
@@ -91,7 +108,7 @@ define(function mergeContributionExtensionModule(require) {
                             var $parent = $($parent_element[j]);
                             const parentEltTag = UTILS.getElementTagName($parent).toLowerCase();
                             if (parentEltTag !== UTILS.NUM
-                                && HIGHER_ELTS.indexOf(parentEltTag) === -1 && $changed_element.index($parent) === -1
+                                && HIGHER_ELTS.indexOf(parentEltTag) === -1 && changed_element.indexOf($parent_element[j]) === -1
                                 && $parent.find('.' + MERGE_CONTRIBUTION).length > 1) {
                                 if (selectedParentElements.includes($parent.attr('id'))) {
                                     $parent.attr(PARENT_AFFECTED, "true");

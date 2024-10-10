@@ -66,12 +66,17 @@ import static eu.europa.ec.leos.services.utils.StructureConfigUtils.getTocItemBy
 public class MergeUtils {
     private static final Logger LOG = LoggerFactory.getLogger(MergeUtils.class);
 
+    public static void removeChildren(Node node) {
+        while (node.hasChildNodes())
+            node.removeChild(node.getFirstChild());
+    }
+
     public static boolean undoAllTrackChangesForElement(Node node, Node exceptionNode) {
         NodeList nodeList = node.getChildNodes();
         for (int index = 0; index < nodeList.getLength(); index++) {
             Node childNode = nodeList.item(index);
             if (childNode.getNodeType() != Node.TEXT_NODE && !getId(childNode).equals(getId(exceptionNode))) {
-                boolean isNodeDeleted = undoCleanTrackChanges(childNode);
+                boolean isNodeDeleted = undoCleanTrackChanges(childNode, true);
                 if(isNodeDeleted) {
                     index--;
                 } else {
@@ -85,16 +90,16 @@ public class MergeUtils {
         return false;
     }
 
-    public static boolean undoAllTrackChangesForElement(Node node) {
+    public static boolean undoAllTrackChangesForElement(Node node, boolean resetNum) {
         NodeList nodeList = node.getChildNodes();
         for (int index = 0; index < nodeList.getLength(); index++) {
             Node childNode = nodeList.item(index);
             if (childNode.getNodeType() != Node.TEXT_NODE) {
-                boolean isNodeDeleted = undoCleanTrackChanges(childNode);
+                boolean isNodeDeleted = undoCleanTrackChanges(childNode, resetNum);
                 if(isNodeDeleted) {
                     index--;
                 } else {
-                    isNodeDeleted = undoAllTrackChangesForElement(childNode);
+                    isNodeDeleted = undoAllTrackChangesForElement(childNode, resetNum);
                     if(isNodeDeleted) {
                         index--;
                     }
@@ -104,7 +109,7 @@ public class MergeUtils {
         return false;
     }
 
-    private static boolean undoCleanTrackChanges(Node node) {
+    private static boolean undoCleanTrackChanges(Node node, boolean resetNum) {
         boolean isNodeDeleted = false;
         if (LEOS_TC_DELETE_ELEMENT_NAME.equals(node.getNodeName())) {
             XercesUtils.replaceElement(node.getFirstChild(), node);
@@ -124,7 +129,7 @@ public class MergeUtils {
                 }
                 children = parent != null ? getChildren(parent) : null;
             }
-            if (parent != null && parent.getNodeName().equals(NUM) && StringUtils.isBlank(parent.getTextContent())) {
+            if (parent != null && parent.getNodeName().equals(NUM) && resetNum && StringUtils.isBlank(parent.getTextContent())) {
                 parent.setTextContent("#");
             }
             isNodeDeleted = true;
@@ -145,7 +150,7 @@ public class MergeUtils {
                 }
                 children = parent != null ? getChildren(parent) : null;
             }
-            if (parent != null && parent.getNodeName().equals(NUM) && StringUtils.isBlank(parent.getTextContent())) {
+            if (parent != null && parent.getNodeName().equals(NUM) && resetNum && StringUtils.isBlank(parent.getTextContent())) {
                 parent.setTextContent("#");
             }
             isNodeDeleted = true;

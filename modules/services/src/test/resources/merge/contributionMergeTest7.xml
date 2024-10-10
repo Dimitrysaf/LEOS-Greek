@@ -1,0 +1,219 @@
+<?xml-stylesheet type="text/css" href="renditions/html/css/bill.css"?><akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:leos="urn:eu:europa:ec:leos">
+    <bill name="REG">
+        <meta>
+            <identification source="~COM">
+                <FRBRWork>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:fileCUID value="cm2sztdg600057s28aapw8lar"/>
+                        <akn4eu:docCUID value="cm2sztd1v00027s28dq4jqlym"/>
+                    </preservation>
+                    <FRBRcountry value="EU"/>
+                    <FRBRprescriptive value="true"/>
+                </FRBRWork>
+                <FRBRExpression>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <FRBRlanguage language="en"/>
+                </FRBRExpression>
+                <FRBRManifestation>
+                    <FRBRthis value=""/>
+                    <FRBRuri value=""/>
+                    <FRBRdate date="2999-01-01" name=""/>
+                    <FRBRauthor href=""/>
+                    <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
+                        <akn4eu:akn4euVersion value="4.1.1.0"/>
+                        <akn4eu:akn4euDocumentation href="https://op.europa.eu/en/web/eu-vocabularies/dataset/-/resource?uri=http://publications.europa.eu/resource/dataset/akn4eu"/>
+                    </preservation>
+                </FRBRManifestation>
+            </identification>
+            <references source="~COM">
+                <TLCLocation href="http://publications.europa.eu/resource/authority/place/BEL_BRU" showAs="Brussels" xml:id="BEL_BRU"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/CONSIL" showAs="Council of the European Union" xml:id="CONSIL"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/EP" showAs="European Parliament" xml:id="EP"/>
+                <TLCOrganization href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission" xml:id="COM"/>
+                <TLCRole href="http://publications.europa.eu/resource/authority/role/PRESID" showAs="President" xml:id="PRESID"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/resource-type/REG" name="docType" showAs="Regulation" xml:id="REG"/>
+                <TLCReference href="http://eurovoc.europa.eu/5456" name="contentSubject" showAs="Legal basis" xml:id="legalBasis"/>
+                <TLCReference href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en" xml:id="language"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision-content/ART_DEF" showAs="Article on definitions" xml:id="ART_DEF"/>
+                <TLCConcept href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part" xml:id="INP"/></references>
+            <proprietary source="~COM">
+                <leos:templateVersion>4.1.0</leos:templateVersion>
+                <leos:docVersion>1.0.0</leos:docVersion>
+                <leos:template>SJ-023</leos:template>
+                <leos:docTemplate>BL-023</leos:docTemplate>
+                <leos:docPurpose xml:id="_proprietary__docpurpose">sur back teste</leos:docPurpose><leos:docStage xml:id="_proprietary__docstage">Proposal for a</leos:docStage><leos:ref>REG-cm2sztdg600057s28aapw8lar-en</leos:ref><leos:refOriginForClone ref="REG-cm2n0hwzq0004p028l3giikx4-en"><originMilestone>PROP_ACT-cm2n0hvk50001p028jg30f1iy-en.leg</originMilestone><iscRef>LEOS</iscRef><objectId>204</objectId></leos:refOriginForClone><leos:clonedProposal>true</leos:clonedProposal><leos:clonedProposals><leos:milestoneRef name="PROP_ACT-cm2n0hvk50001p028jg30f1iy-en.leg"><clonedProposalRef ref="REG-cm2n0hwzq0004p028l3giikx4-en"><targetUser>demo</targetUser><creationDate>Thu Oct 24 10:18:05 CEST 2024</creationDate><status>Sent for contribution</status></clonedProposalRef></leos:milestoneRef></leos:clonedProposals><leos:docType xml:id="_proprietary__doctype">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</leos:docType><leos:objectId>247</leos:objectId></proprietary>
+        </meta>
+        <preface leos:origin="ec" xml:id="ecW7n1v32KzsC59W9">
+            <container class="template" leos:origin="ec" name="procedureIdentifier" xml:id="eciZZK0sei7Gy8P0V">
+                <p leos:origin="ec" xml:id="ectipAgUSwWweCUMY">
+                    <docketNumber class="template" leos:origin="ec" xml:id="ec4q012OOV4Y1kyq8"/>
+                </p>
+            </container>
+            <longTitle leos:origin="ec" xml:id="ecrOONzqPg903c6qp">
+                <p leos:origin="ec" xml:id="eckCu15wKd4cKtKZi">
+                    <docStage leos:origin="ec" xml:id="ecqkdo99xZYuBtJcm">Proposal for a</docStage>
+                    <docType leos:origin="ec" refersTo="~REG" xml:id="ecMcRZtMaVqmzkvRI">REGULATION OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL</docType>
+                    <docPurpose leos:origin="ec" xml:id="ecoc8HJmQ5fVyFhp0">sur back teste</docPurpose>
+                </p>
+            </longTitle>
+        </preface>
+        <preamble leos:origin="ec" xml:id="ecMwgCTUEn92NW60H">
+            <formula leos:origin="ec" name="actingEntity" xml:id="ecQh2O7dJBLoKMGPd">
+                <p leos:origin="ec" xml:id="ecy16Sq3HTMzBWMZN">THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,</p>
+            </formula>
+            <citations leos:editable="false" leos:origin="ec" xml:id="ecfnMj79boazMa0gW">
+                <citation leos:editable="true" leos:origin="ec" refersTo="~legalBasis" xml:id="ecfBM5utmN2ehc2xq">
+                    <p leos:origin="ec" xml:id="ec0PgtBx9KOkyjk0A">Having regard to the Treaty on the Functioning of the European Union, and in particular Article [...] thereof,</p>
+                </citation>
+                <citation leos:editable="true" leos:origin="ec" xml:id="ecR42mRlIKxVlfgsY">
+                    <p leos:origin="ec" xml:id="ec7BU7ozGflGHwVD8">Having regard to the proposal from the European Commission,</p>
+                </citation>
+                <citation leos:editable="true" leos:origin="ec" xml:id="ecPqP3llYs5NNbcUC">
+                    <p leos:origin="ec" xml:id="ecnvQUZn7WqN4QYnr">After transmission of the draft legislative act to the national Parliaments,</p>
+                </citation>
+                <citation leos:editable="true" leos:origin="ec" xml:id="ecA6wtsFdslcSndGJ">
+                    <p leos:origin="ec" xml:id="ecdZYFP1ifmTZ25dB">Having regard to the opinion of the European Economic and Social Committee<authorialNote leos:origin="ec" marker="1" placement="bottom" xml:id="ec5Zo8NmDy6OmkT6Q"><p leos:origin="ec" xml:id="ecGenSjB7VFy3BIT2">OJ C [...], [...], p. [...]</p></authorialNote>,</p>
+                </citation>
+                <citation leos:editable="true" leos:origin="ec" xml:id="ecaK0xvQ1sd89Py1o">
+                    <p leos:origin="ec" xml:id="ecKo9GF3rNQ5w8yaF">Having regard to the opinion of the Committee of the Regions<authorialNote leos:origin="ec" marker="2" placement="bottom" xml:id="ecss5aqgnpPuY2tMD"><p leos:origin="ec" xml:id="ecoiaVJ0j5RgjTd01">OJ C [...], [...], p. [...]</p></authorialNote>,</p>
+                </citation>
+                <citation leos:editable="true" leos:origin="ec" xml:id="ecxZiS17eizIbxACY">
+                    <p leos:origin="ec" xml:id="ecBtgVzenhl0JlBfg">Acting in accordance with the ordinary legislative procedure,</p>
+                </citation>
+            </citations>
+            <recitals leos:editable="false" leos:origin="ec" xml:id="ec7jVEhfbB0WfWez5">
+                <intro leos:origin="ec" xml:id="ectatZs5W5KfSeark"><p leos:origin="ec" xml:id="ecDMaSK8m24s2Bqo8">Whereas:</p></intro>
+                <recital leos:editable="true" leos:origin="ec" xml:id="ecBT0WY940bGVrQYL"><num leos:origin="ec" xml:id="ecgYLDLG3qNOW2v7p">(1)</num><p leos:origin="ec" xml:id="ecklDQOpBUzbsrm9Y">Recital...cwxcwcw</p></recital>
+                <recital leos:editable="true" leos:origin="ec" xml:id="ecIiYQAu7GUI4kNxz">
+                    <num leos:origin="ec" xml:id="ecFaFebxDIIVh4El5">(2)</num>
+                    <p leos:origin="ec" xml:id="ecCb4iOhLzSz71PlL">Recital...</p>
+                </recital><recital leos:deletable="true" leos:editable="true" leos:origin="ec" xml:id="impXrecd1e87XecUyzxzVGgZYoYjk8"><num leos:origin="ec" xml:id="ecy9Y1O8lzCjZGxzk">(3)</num><p leos:origin="ec" xml:id="ec3Bsx736Az2QocmF">The G-20 Declaration of 2 April 2009 on Strengthening of the Financial System called for internationally consistent efforts that are aimed at strengthening transparency, accountability and regulation by improving the quantity and quality of capital in the banking system once the economic recovery is assured. That declaration also called for introduction of a supplementary non-risk based measure to contain the build-up of leverage in the banking system, and the development of a framework for stronger liquidity buffers. In response to the mandate given by the G-20, in September 2009 the Group of Central Bank Governors and Heads of Supervision (GHOS), agreed on a number of measures to strengthen the regulation of the banking sector. Those measures were endorsed by the G-20 leaders at their Pittsburgh Summit of 24-25 September 2009 and were set out in detail in December 2009. In July and September 2010, GHOS issued two further announcements on design and calibration of those new measures, and in December 2010, the Basel Committee on Banking Supervision (BCBS) published the final measures, that are referred to as the Basel III framework.</p></recital><recital leos:deletable="true" leos:editable="true" leos:origin="ec" xml:id="impXrecd1e102XecyB5M0MFNSQyColj"><num leos:origin="ec" xml:id="ecreJYi5iT0sSEtA4">(4)</num><p leos:origin="ec" xml:id="ecoEQA3wQfs6CavEG">The High Level Group on Financial Supervision in the EU chaired by Jacques de LarosiÃ¨re (the "de LarosiÃ¨re group") invited the Union to develop a more harmonised set of financial regulations. In the context of the future European supervisory architecture, the European Council of 18 and 19 June 2009 also stressed the need to establish a 'European Single Rule Book' applicable to all credit institutions and investment firms in the internal market.</p></recital>
+            </recitals>
+            <formula leos:origin="ec" name="enactingFormula" xml:id="ec7EwccHCOygHGmTe">
+                <p leos:origin="ec" xml:id="ecsHxzkvYcPctMf3j">HAVE ADOPTED THIS REGULATION:</p>
+            </formula>
+        </preamble>
+        <body leos:origin="ec" xml:id="ecpZm9hIoJUkfFxQJ">
+            <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="ec0UwSsS2ACF1HY53" leos:origin="ec" xml:id="ecVqSfxA1wDrqFyCM"><num leos:editable="false" leos:origin="ec" xml:id="ecxOC2TjwuicaOfRB">Article 1</num><heading leos:origin="ec" xml:id="ecmtoGFe4cK0AKa0S">Scope</heading><paragraph leos:origin="ec" xml:id="ecgkKCoRpG1che80J"><num leos:origin="ec" xml:id="ec1GtKlvYd0bu88pm">1.</num><content leos:origin="ec" xml:id="ecIGM3zrHRQUQNcJ8"><p leos:origin="ec" xml:id="ec0zbVqQODsGJrO9c">Text... test</p></content></paragraph><paragraph leos:origin="ec" xml:id="ecm78DeEHF7YQ5SMN"><num leos:origin="ec" xml:id="ecLNkAdp6SyHRvAiY">2.</num><content leos:origin="ec" xml:id="ecq1jjwAcAOVeR7P8"><p leos:origin="ec" xml:id="ecEvwUMiaAEYpEeQH">dfgdfgdf</p></content></paragraph><paragraph leos:origin="ec" xml:id="ecC0S4HacHJiepoOA"><num leos:origin="ec" xml:id="ecgqrr1vctrM1WNkG">3.</num><content leos:origin="ec" xml:id="ec3mdVpaOt0AaMnJh"><p leos:origin="ec" xml:id="ecmezm465BoHb0iu7">dfgdfgdfg</p></content></paragraph><paragraph leos:origin="ec" xml:id="ecCqmc28itETfSkKW"><num leos:origin="ec" xml:id="ec9JuE0fGaI1skHEi">4.</num><content leos:origin="ec" xml:id="ecNoYyiP00lP6AGkV"><p leos:origin="ec" xml:id="eccTuHqZv0iVJrLCW">dfgdfgdfgd</p></content></paragraph><paragraph leos:origin="ec" xml:id="ecO5bGAj5xB6QSAlc"><num leos:origin="ec" xml:id="ecalxBT9kGJp7OIxK">5.</num><content leos:origin="ec" xml:id="ecl267K7NbEC6QW6c"><p leos:origin="ec" xml:id="eciT4i8FvW6dW1tkv">dgdfgdfg</p></content></paragraph><paragraph leos:origin="ec" xml:id="ec2n4DMVpaZ7xpodA"><num leos:origin="ec" xml:id="ecY4kS5OCVP558ijG">6.</num><content leos:origin="ec" xml:id="ecs4sebcxxmwzrA5i"><p leos:origin="ec" xml:id="ecClyNCLmeRQ0stxs">dfgdfgd</p></content></paragraph><paragraph leos:origin="ec" xml:id="ecQO9HnqS1rPSFC8R"><num leos:origin="ec" xml:id="ecCfq7RVIkadeg0CQ">7.</num><subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-10-28T13:30:47.298+01:00" leos:softuser="DOE Jane(DGT)" xml:id="transformedXecQO9HnqS1rPSFC8R"><content xml:id="ec6sNAjS0QAwJm1ry"><p xml:id="ecp9z7jyDVKfEyFYY">Text...</p></content></subparagraph><subparagraph leos:action-enter="insert" leos:origin="ls" leos:softaction="add" leos:softdate="2024-10-28T13:30:47.299+01:00" leos:softuser="DOE Jane(DGT)" leos:title-enter="DOE Jane : 2024-10-28T13:30:47+01:00" leos:uid-enter="jane" xml:id="ecbl1VEmx2vzr3xH9"><content xml:id="ecfNnEG3Gqc5iI4oH"><p xml:id="ecxe9Bbz3SFadhuj4"><ins leos:title="DOE Jane : 2024-10-28T13:30:47+01:00" leos:uid="jane" xml:id="ecUMFkS3pjSNjA8jD">subpara</ins></p></content></subparagraph></paragraph></article>
+            <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:listIdAttr="ecvHcJs2CS5tRFq6P" leos:origin="ec" refersTo="~ART_DEF" xml:id="ecHrDJn0N0yhyAV1e">
+                <num leos:editable="false" leos:origin="ec" xml:id="ecvIxFHJDGB6W7KlB">Article 2</num>
+                <heading leos:origin="ec" xml:id="ec1zF1V0FQP4fFUbo">Definitions</heading>
+                <paragraph leos:origin="ec" leos:softdate="2024-10-28T13:31:41+01:00" leos:softuser="DOE Jane(undefined)" leos:tc-original-number="UNNUMBERED" xml:id="ecdqfc9FekqaIHkd6">
+                    <list xml:id="ecw2YMClTDDsM9vwh">
+                        <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-10-28T13:33:21+01:00" leos:softuser="DOE Jane(undefined)" refersTo="~INP" xml:id="transformedXecdqfc9FekqaIHkd6">
+                            <content leos:origin="ec" xml:id="ecxA7on0S50oLZ9AH">
+                                <p leos:origin="ec" xml:id="ecYNQ3YER00Ff8R5h">Text...
+                                </p>
+                            </content>
+                        </subparagraph>
+                        <point leos:indent-origin-type="PARAGRAPH" leos:origin="ec" leos:softdate="2024-10-28T13:31:34+01:00" leos:softuser="DOE Jane(undefined)" xml:id="ecif6k98kH2pud7LL">
+                            <num xml:id="ecw1NAA332KP6ouHR">
+                                <ins leos:action-number="insert" leos:tc-original-number="NEW" leos:title="DOE Jane : 2024-10-28T13:33:33+01:00" leos:uid="jane" xml:id="ecjUvgbLH4vENlOWv">(1)</ins>
+                            </num>
+                            <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-10-28T13:31:42.031+01:00" leos:softuser="DOE Jane(DGT)" xml:id="transformedXecif6k98kH2pud7LL">
+                                <content xml:id="ecxA7on0S50oLZ9AH">
+                                    <p xml:id="ecYNQ3YER00Ff8R5h">
+                                        <ins leos:title="DOE Jane : 2024-10-28T13:31:41+01:00" leos:uid="jane" xml:id="ecgaZqzq8vaYtZlwV">New Point</ins>
+                                    </p>
+                                </content>
+                            </subparagraph>
+                            <subparagraph leos:action-enter="insert" leos:origin="ls" leos:softaction="add" leos:softdate="2024-10-28T13:33:31+01:00" leos:softuser="DOE Jane(undefined)" leos:title-enter="DOE Jane : 2024-10-28T13:31:41+01:00" leos:uid-enter="jane" xml:id="ecLifLpCDHkAcivs0">
+                                <content xml:id="ecZkRuBrxyRHy7OSs">
+                                    <p xml:id="ecSDKOASR2gLSd4cl">
+                                        <ins leos:title="DOE Jane : 2024-10-28T13:31:41+01:00" leos:uid="jane" xml:id="ecDOuCH8mB8DmUNVI">suppara</ins>
+                                    </p>
+                                </content>
+                            </subparagraph>
+                        </point>
+                    </list>
+                </paragraph>
+                <paragraph leos:origin="ec" leos:tc-original-number="UNNUMBERED" xml:id="ecDF1DcWUTanfRS4e">
+                    <content leos:origin="ec" xml:id="ec2OyD44MFtdZid8W">
+                        <p leos:origin="ec" xml:id="ecTSr783Yvvj5A0ZK">dfgdfsgdsf</p>
+                    </content>
+                </paragraph>
+                <paragraph leos:action-number="delete" leos:indent-origin-num="(1)" leos:indent-origin-num-id="ecjUYxTUWfLjlNlPJ" leos:indent-origin-num-origin="ec" leos:indent-origin-type="POINT" leos:origin="ec" leos:softdate="2024-10-28T13:27:39+01:00" leos:softuser="DOE Jane(undefined)" leos:tc-original-number="(1)" leos:title-number="DOE Jane : 2024-10-28T13:33:33+01:00" leos:uid-number="jane" xml:id="ecOkZo9SWD8olZVyd">
+                    <num leos:origin="ec" xml:id="ecjUYxTUWfLjlNlPJ">
+                        <del leos:action-number="delete" leos:tc-original-number="(1)" leos:title="DOE Jane : 2024-10-28T13:33:33+01:00" leos:uid="jane" xml:id="ecAR6ty1FK88Fn6CY">(1)</del>
+                    </num>
+                    <list xml:id="ecwE1jTjdr09ZJhzG">
+                        <subparagraph leos:origin="ec" leos:softaction="trans" leos:softdate="2024-10-28T13:27:59.273+01:00" leos:softuser="DOE Jane(DGT)" refersTo="~INP" xml:id="transformedXecOkZo9SWD8olZVyd">
+                            <content leos:origin="ec" xml:id="ec0znuKZRBb30BNKQ">
+                                <p leos:origin="ec" xml:id="eciwY7nz8jHha1iLe">Point</p>
+                            </content>
+                        </subparagraph>
+                        <point leos:indent-origin-type="PARAGRAPH" leos:origin="ec" leos:softdate="2024-10-28T13:27:48+01:00" leos:softuser="DOE Jane(undefined)" xml:id="eceoqn20J6DYwidTz">
+                            <num xml:id="ecACSSKOv1vdQzhBy">
+                                <ins leos:action-number="insert" leos:tc-original-number="UNNUMBERED" leos:title="DOE Jane : 2024-10-28T13:33:33+01:00" leos:uid="jane" xml:id="ecQa1cvBvzCE1pudW">(1)</ins>
+                            </num>
+                            <content leos:origin="ec" xml:id="ec3cd4wVwnrEgwg06">
+                                <p leos:origin="ec" xml:id="ecUAwexyqrmnNTss0">gdfsgdsfgsd</p>
+                            </content>
+                        </point>
+                    </list>
+                </paragraph>
+                <paragraph leos:origin="ec" leos:tc-original-number="UNNUMBERED" xml:id="ecemeP55GSH2seU3O">
+                    <list leos:origin="ec" xml:id="ecmcR0tujj5epo0U4">
+                        <subparagraph leos:origin="ec" refersTo="~INP" xml:id="ecEC0ini1FEl4WzoQ">
+                            <content leos:origin="ec" xml:id="ecrR2MYsNwZ6ShfYE">
+                                <p leos:origin="ec" xml:id="eczBP68U9czNADx2Y">dfsgdsfgdsf</p>
+                            </content>
+                        </subparagraph>
+                        <point leos:origin="ec" xml:id="ecNu9QqdS5AmuPbrP">
+                            <num leos:origin="ec" xml:id="ecGYF7nfDUlmYFF7x">(1)</num>
+                            <content leos:origin="ec" xml:id="ecqNsEqv0uhzlHNfY">
+                                <p leos:origin="ec" xml:id="ecGR6o4oJv40kbG8v">test</p>
+                            </content>
+                        </point>
+                        <point leos:indent-origin-type="PARAGRAPH" leos:origin="ec" leos:softdate="2024-10-28T13:27:59+01:00" leos:softuser="DOE Jane(undefined)" xml:id="ec2EO2jvQMhN4k0jo">
+                            <num xml:id="ecgt6bP5WzxJQOibb">
+                                <ins leos:action-number="insert" leos:tc-original-number="UNNUMBERED" leos:title="DOE Jane : 2024-10-28T13:33:33+01:00" leos:uid="jane" xml:id="ec6nUne3PqZ5qvp00">(2)</ins>
+                            </num>
+                            <content leos:origin="ec" xml:id="eccyhDOz6Z2cz7T49">
+                                <p leos:origin="ec" xml:id="ecpED9UQMTF9Rjgi1">dfsgdsfg</p>
+                            </content>
+                        </point>
+                    </list>
+                </paragraph>
+            </article>
+            <article leos:autonumbering="true" leos:deletable="true" leos:editable="true" leos:initial-num="Article 3" leos:origin="ec" xml:id="ecEBUcz84aZfmDbpT">
+                <num leos:editable="false" leos:origin="ec" xml:id="ecaMCZmCuEMoRcQpx">Article 3</num>
+                <heading leos:origin="ec" xml:id="ecS6QNPPwvSnA8I9S">Entry into force</heading>
+                <paragraph leos:origin="ec" xml:id="ecBfuw4Sabd1D3ZBm">
+                    <content leos:origin="ec" xml:id="ecoDKwxNYYVfzKpWA">
+                        <p leos:origin="ec" xml:id="ecEbKRMSES4YKUJHb">This Regulation shall enter into force on the [...] day following that of its publication in the <i leos:origin="ec" xml:id="ecavac7TshU16VFy5">Official Journal of the European Union</i>.</p>
+                    </content>
+                </paragraph>
+            </article>
+
+            <clause leos:alternative="true" leos:deletable="true" leos:editable="true" leos:optionlist="listOption1" leos:origin="ec" leos:selectedoption="1" xml:id="eczo28ilmWNMICvDr">
+                <content leos:origin="ec" xml:id="ecpIn0I6UCHKdYK04">
+                    <p leos:origin="ec" xml:id="ecKZx8I0Fql8NwnBq">This Regulation shall be binding in its entirety and directly applicable in all Member States.</p>
+                </content>
+            </clause>
+
+        </body>
+        <conclusions leos:origin="ec" xml:id="ecGEWrcF5eJMCS0dq">
+            <p leos:origin="ec" xml:id="ecGTpFgxtw1Nck1I5">Done at <location leos:origin="ec" refersTo="~BEL_BRU" xml:id="ecKdmlJcm9tYGnAON">Brussels</location>, <date class="template" date="2999-01-01" leos:origin="ec" xml:id="ecUqLkWhSMhV2dwp1"/></p>
+            <block leos:origin="ec" name="signatory" xml:id="eccPwkl7HggP7ZTKW">
+                <signature leos:origin="ec" xml:id="ecgVivQ7CPaz0tnuA">
+                    <organization leos:origin="ec" refersTo="~EP" xml:id="ecNgd3iyexQpbZFB5">For the European Parliament</organization>
+                    <role leos:origin="ec" refersTo="~PRESID" xml:id="ecF7x73hEWLwbsej4">The President</role>
+                    <person leos:origin="ec" refersTo="" xml:id="ecpqODeaU5TZDzYlq">[...]</person>
+                </signature>
+                <signature leos:origin="ec" xml:id="ecjy07oYmqyjkQ4D5">
+                    <organization leos:origin="ec" refersTo="~CONSIL" xml:id="ectpglpvw1HRM1vCq">For the Council</organization>
+                    <role leos:origin="ec" refersTo="~PRESID" xml:id="ecyBOqSMnrvST4Sj0">The President</role>
+                    <person leos:origin="ec" refersTo="" xml:id="eco0REepyDSsAMM3w">[...]</person>
+                </signature>
+            </block>
+        </conclusions>
+        <attachments><attachment xml:id="ecM0Ndp819e2GtBhJ"><documentRef href="ANNEX-cm2sztdgv00067s28s6g5wcbu-en.xml" showAs="Annex" xml:id="ecy4Q1VYLBuDno8ZQ"/></attachment></attachments></bill>
+</akomaNtoso>
