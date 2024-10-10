@@ -1584,16 +1584,18 @@ public class LegServiceImpl implements LegService {
             }
         }
         for (final JsonNode annot : replies) {
-            String annotId = annot.get("id").textValue();
-            boolean added = false;
-            for (final JsonNode storedReply : storedReplies) {
-                if (annotId.equals(storedReply.get("id").textValue())) {
-                    added = true;
-                    break;
+            if (annot.get("status") == null || !annot.get("status").get("status").asText().equals("DELETED")) {
+                String annotId = annot.get("id").textValue();
+                boolean added = false;
+                for (final JsonNode storedReply : storedReplies) {
+                    if (annotId.equals(storedReply.get("id").textValue())) {
+                        added = true;
+                        break;
+                    }
                 }
-            }
-            if (!added) {
-                count++;
+                if (!added) {
+                    count++;
+                }
             }
         }
         return count;

@@ -795,9 +795,6 @@ define(function leosTrackChangesModule(require) {
                     } else {
                         core.removeTrackChangesAttributesForAlternative(parentElem);
                     }
-                } else if(element.getAttribute('data-wsc-ignore-checking') === 'true') {
-                    element.remove();
-                    return;
                 }
                 if($(element, editor.getData()).length > 0) {
                     element.$.outerHTML = element.$.innerHTML;
