@@ -75,6 +75,8 @@ define(function datePickerExtensionModule(require) {
                         var dateVal = $(this).attr('value');
                         if(dateVal && !(dateVal === element.text())) {
                             element.text(dateVal);
+                            let formattedDate = `${inst.currentYear}-${inst.currentMonth + 1}-${inst.currentDay}`;
+                            element.attr('date', formattedDate);
                             var data = {
                                 elementId: element.attr('id'),
                                 elementFragment: element[0].outerHTML,
@@ -85,11 +87,7 @@ define(function datePickerExtensionModule(require) {
                     }
                 });
             }
-
-
         });
-
-
     }
 
     // handle connector un-registration on client-side

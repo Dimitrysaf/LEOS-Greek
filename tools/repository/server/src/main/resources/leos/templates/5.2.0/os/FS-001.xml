@@ -306,7 +306,10 @@
                                     <inline name="unchecked">&#x2610;</inline>
                                 </num>
                                 <content>
-                                    <p>in effect from <inline name="date" period="dd/mm/yy">[DD/MM]YYYY</inline> to <inline name="date" period="dd/mm/yy">[DD/MM]YYYY</inline>
+                                    <p>in effect from
+                                        <date date="2999-01-01" period="dd/mm/yy"><placeholder>[DD/MM]YYYY</placeholder></date>
+                                        to
+                                        <date date="2999-01-01" period="dd/mm/yy"><placeholder>[DD/MM]YYYY</placeholder></date>
                                     </p>
                                 </content>
                             </indent>
@@ -315,9 +318,16 @@
                                     <inline name="unchecked">&#x2610;</inline>
                                 </num>
                                 <content>
-                                    <p>Financial impact from <inline name="date" period="yy">YYYY</inline> to <inline name="date" period="yy">YYYY</inline> for commitment appropriations and from
-                                        <inline name="date" period="yy">YYYY</inline> to <inline name="date" period="yy">YYYY</inline> for payment
-                                        appropriations. </p>
+                                    <p>Financial impact from
+                                        <date date="2999-01-01" period="yy"><placeholder>YYYY</placeholder></date>
+                                        to
+                                        <date date="2999-01-01" period="yy"><placeholder>YYYY</placeholder></date>
+                                        for commitment appropriations and from
+                                        <date date="2999-01-01" period="yy"><placeholder>YYYY</placeholder></date>
+                                        to
+                                        <date date="2999-01-01" period="yy"><placeholder>YYYY</placeholder></date>
+                                        for payment appropriations.
+                                    </p>
                                 </content>
                             </indent>
                         </list>
@@ -335,7 +345,10 @@
                         </subparagraph>
                         <subparagraph>
                             <content>
-                                <p>Implementation with a start-up period from <inline name="date" period="yy">YYYY</inline> to <inline name="date" period="yy">YYYY</inline>,</p>
+                                <p>Implementation with a start-up period from
+                                    <date date="2999-01-01" period="yy"><placeholder>YYYY</placeholder></date>
+                                    to
+                                    <date date="2999-01-01" period="yy"><placeholder>YYYY</placeholder></date>,</p>
                             </content>
                         </subparagraph>
                         <subparagraph>
