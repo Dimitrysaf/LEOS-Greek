@@ -260,7 +260,7 @@ public class FinancialStatementController {
             presenterId = encodeParam(presenterId);
             SaveElementResponse response = this.genericDocumentApiService.saveElement(documentRef, elementId,
                     elementName, elementContent);
-            coEditionContext.sendUpdatedElements(documentRef, presenterId, response);
+            coEditionContext.sendUpdatedElements(documentRef, presenterId, response, null);
             return ResponseEntity.ok(response);
         } catch (CmisBaseException cmisBaseException) {
             LOG.error("---[FINANCIAL STATEMENT] [CMIS EXCEPTION] --- Error saving element : {} ",

@@ -93,7 +93,7 @@ public class CouncilExplanatoryController {
             presenterId = encodeParam(presenterId);
             SaveElementResponse updatedElement = this.explanatoryApiService.saveElement(documentRef, elementId,
                     elementName, elementContent, isSplit, null);
-            coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
+            coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement, null);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting explanatory element - " + e.getMessage());

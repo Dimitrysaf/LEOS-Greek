@@ -84,6 +84,7 @@ public class AnnexController {
                                                    @PathVariable("elementId") String elementId,
                                                    @RequestParam(required = false) boolean isSplit,
                                                    @RequestHeader("presenterId") String presenterId,
+                                                   @RequestParam(required = false, defaultValue = "") String alternateElementId,
                                                    @RequestBody String elementContent) {
         try {
             documentRef = encodeParam(documentRef);
@@ -91,8 +92,8 @@ public class AnnexController {
             elementId = encodeParam(elementId);
             presenterId = encodeParam(presenterId);
             SaveElementResponse newElement = this.annexApiService.saveElement(documentRef, elementId, elementName,
-                    elementContent, isSplit, null);
-            coEditionContext.sendUpdatedElements(documentRef, presenterId, newElement);
+                    elementContent, isSplit, alternateElementId);
+            coEditionContext.sendUpdatedElements(documentRef, presenterId, newElement, alternateElementId);
             return ResponseEntity.ok().body(newElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting annex element - " + e.getMessage());
