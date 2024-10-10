@@ -506,7 +506,11 @@ define(function leosHierarchicalElementShiftEnterHandlerModule(require) {
         do {
             var elementName = currentElement.getName && currentElement.getName();
             // Added in case of the unnumbered paragraph: shift-enter should be disabled
-            if (editor.LEOS.instanceType !== 'COUNCIL' && elementName === "li" && currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph" && currentElement.getAttribute(DATA_AKN_NUM) === null) {
+            if (editor.LEOS.instanceType !== 'COUNCIL'
+                && elementName === "li"
+                && currentElement.getAttribute("data-akn-name") === "aknNumberedParagraph"
+                && (currentElement.getAttribute(DATA_AKN_NUM) === null
+                    || (editor.LEOS.isTrackChangesEnabled && currentElement.getAttribute("data-akn-action-number") === "delete"))) {
                 return false;
             }
             if (elementName === "ol") {
