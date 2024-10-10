@@ -25,17 +25,17 @@ public class CoEditionContext {
     private SimpMessagingTemplate simpMessagingTemplate;
     private List<Element> updatedElements = new ArrayList<Element>();
 
-    public void sendUpdatedElements(String documentRef, String presenterId, SaveElementResponse updatedElement) {
+    public void sendUpdatedElements(String documentRef, String presenterId, SaveElementResponse updatedElement, String alternateElementId) {
         final String presenterIdFinal = encodeParam(presenterId);
         final String documentRefFinal = encodeParam(documentRef);
         new Thread(() -> {
             User user = securityContext.getUser();
             addUpdatedElement(updatedElement.getElementId(), updatedElement.getElementTagName(),
-                    updatedElement.getElementFragment());
+                    updatedElement.getElementFragment(), alternateElementId);
 
             if(updatedElement.getElementsMoved()!=null){
                 updatedElement.getElementsMoved()
-                        .forEach(e -> addUpdatedElement(e.getElementId(),e.getElementTagName(), e.getElementFragment()));
+                        .forEach(e -> addUpdatedElement(e.getElementId(),e.getElementTagName(), e.getElementFragment(), alternateElementId));
             }
             simpMessagingTemplate.convertAndSend(CoEditionContext.TOPIC_DOCUMENT_SLASH + documentRef,
                     new UpdateCoEditionResponse(user, presenterIdFinal, documentRefFinal, InfoType.DOCUMENT_UPDATED,
@@ -43,8 +43,8 @@ public class CoEditionContext {
         }).start();
     }
 
-    public void addUpdatedElement(String elementId, String elementTagName, String elementFragment) {
-        Element newElement = new Element(elementId, elementTagName, elementFragment);
+    public void addUpdatedElement(String elementId, String elementTagName, String elementFragment, String alternateElementId) {
+        Element newElement = new Element(elementId, elementTagName, elementFragment, alternateElementId);
         updatedElements.remove(newElement);
         updatedElements.add(newElement);
     }
