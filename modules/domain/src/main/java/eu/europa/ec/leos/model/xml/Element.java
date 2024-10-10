@@ -7,11 +7,17 @@ public class Element {
 	private String elementId;
 	private String elementTagName;
 	private String elementFragment;
+	private String alternateElementId;
 
 	public Element(String elementId, String elementTagName, String elementFragment) {
 		this.elementId = elementId;
 		this.elementTagName = elementTagName;
 		this.elementFragment = elementFragment;
+	}
+
+	public Element(String elementId, String elementTagName, String elementFragment, String alternateElementId) {
+		this(elementId, elementTagName, elementFragment);
+		this.alternateElementId = alternateElementId;
 	}
 
 	public String getElementId() {
@@ -24,6 +30,10 @@ public class Element {
 
 	public String getElementFragment() {
 		return elementFragment;
+	}
+
+	public String getAlternateElementId() {
+		return alternateElementId;
 	}
 
 	@Override

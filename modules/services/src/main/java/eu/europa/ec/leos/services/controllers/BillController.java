@@ -93,7 +93,7 @@ public class BillController {
             presenterId = encodeParam(presenterId);
             SaveElementResponse updatedElement = this.billApiService.saveElement(documentRef, elementId, elementName,
                     elementContent, isSplit, alternateElementId);
-            coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement);
+            coEditionContext.sendUpdatedElements(documentRef, presenterId, updatedElement, alternateElementId);
             return ResponseEntity.ok().body(updatedElement);
         } catch (Exception e) {
             LOG.error("Error occurred while getting bill element - " + e.getMessage());

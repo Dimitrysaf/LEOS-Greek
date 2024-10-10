@@ -142,6 +142,7 @@ export class DocumentComponent
             elementType: data.elementType,
             elementFragment: data.elementFragment,
             presenterId: this.coEditionWSService.presenterId,
+            alternateElementId: null,
             isClosing: data.isClosing,
             isSaved: data.isSaved
           });
@@ -179,6 +180,7 @@ export class DocumentComponent
                   elementType: element.elementTagName,
                   elementFragment: element.elementFragment,
                   presenterId: coEditionUpdate.presenterId,
+                  alternateElementId: element.alternateElementId,
                   isClosing: false,
                   isSaved: false,
                 });
@@ -337,6 +339,7 @@ export class DocumentComponent
     elementType: string;
     elementFragment: string;
     presenterId: string,
+    alternateElementId: string,
     isClosing: boolean;
     isSaved: boolean;
   }) {
@@ -375,8 +378,10 @@ export class DocumentComponent
     elementId: string;
     elementType: string;
     elementFragment: string;
+    alternateElementId: string;
   }) {
-    return this.isCNInstance || this.authorialNotesUpdated(data) || this.isElementDepthUpdated(data) || this.isSplitParagraphs(data);
+    return this.isCNInstance || this.authorialNotesUpdated(data) || this.isElementDepthUpdated(data) ||
+      this.isSplitParagraphs(data) || this.isAlternateArticle(data);
   }
 
   private authorialNotesUpdated(data: {
@@ -429,6 +434,12 @@ export class DocumentComponent
     const fragmentElement = docFragment?.getElementById(data.elementId);
     const fragmentElementDepth = fragmentElement?.getAttribute("leos:depth");
     return !!xmlElementDepth && !!fragmentElementDepth && (xmlElementDepth !== fragmentElementDepth);
+  }
+
+  private isAlternateArticle(data: {
+    alternateElementId: string;
+  }) {
+    return data.alternateElementId !== null;
   }
 
   private updateElementInXml(data: {

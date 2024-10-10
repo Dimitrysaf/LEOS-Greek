@@ -91,12 +91,12 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
             case DELETE:
                 nodeToBeRemoved = XercesUtils.getElementById(xmlContent, elementId.replace(SOFT_DELETE_PLACEHOLDER_ID_PREFIX, ""));
                 elementFragment = nodeToBeRemoved != null ? nodeToString(nodeToBeRemoved) : "";
-                coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(elementId, tagName, elementFragment));
+                coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(elementId, tagName, elementFragment), null);
                 break;
             case ADD:
                 nodeToBeAdded = XercesUtils.getElementById(xmlContent, elementId);
                 elementFragment = nodeToBeAdded != null ? nodeToString(nodeToBeAdded) : "";
-                coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(elementId, tagName, elementFragment));
+                coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(elementId, tagName, elementFragment), null);
                 break;
             case MOVE_TO:
                 movedFromElementId = elementId.replace(SOFT_MOVE_PLACEHOLDER_ID_PREFIX, "");
@@ -110,8 +110,8 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
                     fragmentForMoveTo = nodeToBeAdded != null ? nodeToString(nodeToBeAdded) : "";
                     fragmentForMoveFrom = "";
                 }
-                coEditionContext.addUpdatedElement(movedFromElementId, tagName, fragmentForMoveFrom);
-                coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(movedToElementId, tagName, fragmentForMoveTo));
+                coEditionContext.addUpdatedElement(movedFromElementId, tagName, fragmentForMoveFrom, null);
+                coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(movedToElementId, tagName, fragmentForMoveTo), null);
                 break;
             case MOVE_FROM:
                 movedToElementId = SOFT_MOVE_PLACEHOLDER_ID_PREFIX + elementId;
@@ -125,8 +125,8 @@ public class TrackChangesProcessorImpl<T extends XmlDocument> implements TrackCh
                     fragmentForMoveTo = nodeToBeAdded != null ? nodeToString(nodeToBeAdded) : "";
                     fragmentForMoveFrom = "";
                 }
-                coEditionContext.addUpdatedElement(movedFromElementId, tagName, fragmentForMoveFrom);
-                coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(movedToElementId, tagName, fragmentForMoveTo));
+                coEditionContext.addUpdatedElement(movedFromElementId, tagName, fragmentForMoveFrom, null);
+                coEditionContext.sendUpdatedElements(docRef, presenterId, new SaveElementResponse(movedToElementId, tagName, fragmentForMoveTo), null);
                 break;
             default:
                 throw new UnsupportedOperationException(

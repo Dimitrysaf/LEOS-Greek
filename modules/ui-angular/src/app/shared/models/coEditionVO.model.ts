@@ -30,6 +30,7 @@ export interface Element {
   elementId: string;
   elementTagName: string;
   elementFragment: string;
+  alternateElementId: string;
 }
 
 export interface CoEditionActionInfo {

@@ -2022,7 +2022,7 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
                     XercesUtils.getParentId(node), documentNode, attr, sourceDocumentRef);
             if (labelResult != null && labelResult.isOk()) {
                 XercesUtils.addAttribute(node, LEOS_SOFT_MOVED_LABEL_ATTR, labelResult.get());
-                coEditionContext.addUpdatedElement(getId(node), node.getNodeName(), nodeToString(node));
+                coEditionContext.addUpdatedElement(getId(node), node.getNodeName(), nodeToString(node), null);
                 if (!Arrays.asList(PART, TITLE, CHAPTER, SECTION, ARTICLE).contains(node.getNodeName())) {
                     addTrackChangeAttributes(node, attr);
                 }

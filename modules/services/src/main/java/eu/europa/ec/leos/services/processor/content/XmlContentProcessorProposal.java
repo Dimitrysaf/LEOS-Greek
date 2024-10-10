@@ -25,7 +25,6 @@ import eu.europa.ec.leos.services.numbering.NumberProcessorHandler;
 import eu.europa.ec.leos.services.numbering.config.NumberConfig;
 import eu.europa.ec.leos.services.numbering.config.NumberConfigFactory;
 import eu.europa.ec.leos.services.support.LeosXercesUtils;
-import eu.europa.ec.leos.services.support.XPathCatalog;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.support.XmlHelper;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
@@ -693,7 +692,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         try {
             if (ELEMENTS_TO_BE_NUMBERED.contains(tagName)) {
                 numberProcessorHandler.renumberElement(parentNode, tagName, true, "EN");
-                coEditionContext.addUpdatedElement(getId(parentNode), parentNode.getNodeName(), nodeToString(parentNode));
+                coEditionContext.addUpdatedElement(getId(parentNode), parentNode.getNodeName(), nodeToString(parentNode), null);
             }
         } catch (Exception e) {
             LOG.error("Unable to renumber element", e);
@@ -720,7 +719,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
         addAttribute(sourceNode, LEOS_SOFT_MOVE_TO, idAttrVal);
         //Add leos:editable=false to make this element read-only inside CKE
         addAttribute(sourceNode, LEOS_EDITABLE_ATTR, "false");
-        coEditionContext.addUpdatedElement(idAttrVal, sourceNode.getNodeName(), nodeToString(sourceNode));
+        coEditionContext.addUpdatedElement(idAttrVal, sourceNode.getNodeName(), nodeToString(sourceNode), null);
     }
 
     private boolean containsSoftActionAttributes(Node node) {
@@ -737,7 +736,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             if (tempIdNodeVal != null && tempIdNodeVal.indexOf(SOFT_TEMP_PLACEHOLDER_ID_PREFIX) != -1) {
                 String updatedIdAttrVal = tempIdNodeVal.replace(SOFT_TEMP_PLACEHOLDER_ID_PREFIX, EMPTY_STRING);
                 XercesUtils.addAttribute(tempIdNode, XMLID, updatedIdAttrVal);
-                coEditionContext.addUpdatedElement(tempIdNodeVal, tempIdNode.getNodeName(), nodeToString(tempIdNode));
+                coEditionContext.addUpdatedElement(tempIdNodeVal, tempIdNode.getNodeName(), nodeToString(tempIdNode), null);
             }
         }
     }
