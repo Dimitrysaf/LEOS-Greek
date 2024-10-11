@@ -240,9 +240,7 @@ define(function leosTrackChangesPluginModule(require) {
                         });
                         core.removeTrackChangesAttributesForAlternative(currentElement);
                     }
-                    if(newIndex > currentIndex) {
-                        changeOption(newOption, callback);
-                    }
+                    changeOption(newOption, callback);
                 }
             });
 
