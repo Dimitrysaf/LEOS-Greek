@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,9 +68,9 @@ public class LeosDocumentServiceImpl implements LeosDocumentService {
         return xmlDocumentService.xmlToHtmlPackage(convertDocumentInput);
     }
 
-    public LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput) {
+    public LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, String outputDescriptor) {
         List<LeosRenditionOutput> renditionOutputs = getRenditionOutputs(convertDocumentInput);
-        return leosLegDocumentService.updateWithTranslations(convertDocumentInput, renditionOutputs);
+        return leosLegDocumentService.updateWithTranslations(convertDocumentInput, renditionOutputs, outputDescriptor);
     }
 
     private List<LeosRenditionOutput> getRenditionOutputs(LeosConvertDocumentInput convertDocumentInput) {

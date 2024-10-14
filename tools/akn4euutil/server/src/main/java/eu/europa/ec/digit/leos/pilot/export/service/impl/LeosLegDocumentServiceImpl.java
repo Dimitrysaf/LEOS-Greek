@@ -17,11 +17,13 @@ import eu.europa.ec.digit.leos.pilot.export.exception.LegDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosRenditionOutput;
+import eu.europa.ec.digit.leos.pilot.export.service.ConvertDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosLegDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil;
 import eu.europa.ec.digit.leos.pilot.export.util.ZipUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -33,6 +35,8 @@ import java.util.Map;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_EXT;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_JS_PATH;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_RENDITION_PATH;
+import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_RENDITION_PDF_PATH;
+import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_RENDITION_WORD_PATH;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.HTML_TOC;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.JS_EXT;
 import static eu.europa.ec.digit.leos.pilot.export.util.ConvertUtil.XML_EXT;
@@ -42,15 +46,18 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeosLegDocumentServiceImpl.class);
 
+    private final ConvertDocumentService convertDocumentService;
 
-    public LeosLegDocumentServiceImpl() {
+    @Autowired
+    public LeosLegDocumentServiceImpl(ConvertDocumentService convertDocumentService) {
+        this.convertDocumentService = convertDocumentService;
     }
 
-    public LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput, List<LeosRenditionOutput> renditionOutputs) {
+    public LeosConvertDocumentOutput updateWithTranslations(LeosConvertDocumentInput convertDocumentInput,
+                                                            List<LeosRenditionOutput> renditionOutputs, String outputDescriptor) {
         try {
             Map<String, Object> contentToZip = ZipUtil.unzipByteArray(convertDocumentInput.getInputFile().getBytes());
             Map<String, Object> translationMap = ZipUtil.unzipByteArray(convertDocumentInput.getTranslationsFile().getBytes());
-            Map<String, Object> cssContentToZip = new HashMap<>();
 
             List<String> filesToRemove = new ArrayList<>();
             Map<String, Object> filesToAdd = new HashMap<>();
@@ -81,8 +88,28 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
                 contentToZip.put(htmlName, output.getRendition());
                 contentToZip.put(output.getStyleSheetName(), output.getStyleSheetOutput());
             });
+
+            if(outputDescriptor != null && !outputDescriptor.isEmpty()) {
+                byte[] convertedDocument = this.convertDocumentService.convertDocument(ZipUtil.zipByteArray(contentToZip),
+                        outputFilename, outputDescriptor);
+                Map<String, Object> convertedDocumentMap = ZipUtil.unzipByteArray(convertedDocument);
+                convertedDocumentMap.keySet().stream().filter(entryKey -> entryKey.endsWith(".zip")).findFirst()
+                        .ifPresent(entryKey -> {
+                            try {
+                                Map<String, Object> documentMap = ZipUtil.unzipByteArray((byte[])convertedDocumentMap.get(entryKey));
+                                String documentKey = documentMap.keySet().stream().findFirst().get();
+                                contentToZip.put(HTML_RENDITION_PDF_PATH + documentKey, documentMap.get(documentKey));
+                            } catch (IOException e) {
+                                LOG.info("Issue converting document", e);
+                                throw new LegDocumentException("Issue converting document", e);
+                            }
+                        });
+            }
             return new LeosConvertDocumentOutput(outputFilename, ZipUtil.zipByteArray(contentToZip));
         } catch (IOException e) {
+            LOG.info("Issue converting document", e);
+            throw new LegDocumentException("Issue converting document", e);
+        } catch (Exception e) {
             LOG.info("Issue converting document", e);
             throw new LegDocumentException("Issue converting document", e);
         }
@@ -91,6 +118,7 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
     private String replaceOriginalWithTranslations(LeosConvertDocumentInput convertDocumentInput, List<String> filesToRemove,
                                                    Map<String, Object> translationMap, String outputFilename,
                                                    Map<String, Object> contentToZip, Map<String, Object> filesToAdd) {
+        boolean containsMainFile = false;
         for (String fileToRemove : filesToRemove) {
             String fileName = fileToRemove.substring(0, fileToRemove.indexOf(XML_EXT));
             String fileNameWithoutLang = fileName.substring(0, fileName.lastIndexOf("-"));
@@ -101,7 +129,8 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
                         .findFirst().get();
                 outputFilename = getOutputFilename(convertDocumentInput.getInputFile().getOriginalFilename(),
                         translatedFileName);
-            } else {
+                containsMainFile = true;
+            } else if(!containsMainFile){
                 outputFilename = convertDocumentInput.getInputFile().getOriginalFilename();
             }
             fileName = isMainFile ? ConvertUtil.COVER_PAGE : fileName;
@@ -113,6 +142,8 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
             contentToZip.remove(HTML_RENDITION_PATH + tocHtmlFile);
             contentToZip.remove(HTML_JS_PATH + jsFile);
         }
+        contentToZip.remove(HTML_RENDITION_PDF_PATH + "Proposal.pdf");
+        contentToZip.remove(HTML_RENDITION_WORD_PATH + "Bill.docx");
         //add the translations xml to zip
         contentToZip.putAll(filesToAdd);
         return outputFilename;
@@ -120,7 +151,7 @@ public class LeosLegDocumentServiceImpl implements LeosLegDocumentService {
 
     private String getOutputFilename(String originalFilename, String translationFilename) {
         originalFilename = originalFilename.substring(0, originalFilename.lastIndexOf('-'));
-        String translatedLang = translationFilename.substring(translationFilename.lastIndexOf('-') - 1,
+        String translatedLang = translationFilename.substring(translationFilename.lastIndexOf('-'),
                 translationFilename.lastIndexOf('.'));
         return originalFilename.concat(translatedLang + ".leg");
     }
