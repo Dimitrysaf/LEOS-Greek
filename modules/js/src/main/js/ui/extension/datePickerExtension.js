@@ -75,7 +75,9 @@ define(function datePickerExtensionModule(require) {
                         var dateVal = $(this).attr('value');
                         if(dateVal && !(dateVal === element.text())) {
                             element.text(dateVal);
-                            let formattedDate = `${inst.currentYear}-${inst.currentMonth + 1}-${inst.currentDay}`;
+                            let month = padZero(inst.currentMonth + 1);
+                            let day = padZero(inst.currentDay);
+                            let formattedDate = `${inst.currentYear}-${month}-${day}`;
                             element.attr('date', formattedDate);
                             var data = {
                                 elementId: element.attr('id'),
@@ -88,6 +90,11 @@ define(function datePickerExtensionModule(require) {
                 });
             }
         });
+    }
+
+    function padZero(value) {
+        // Convert the value to a string and pad with a leading zero if it's a single digit
+        return String(value).padStart(2, '0');
     }
 
     // handle connector un-registration on client-side
