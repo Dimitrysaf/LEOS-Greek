@@ -23,6 +23,8 @@ public class ConvertUtil {
     public static final String HTML_RENDITION_PATH = "renditions/html/";
     public static final String HTML_RENDITION_CSS_PATH = "renditions/html/css/";
     public static final String HTML_JS_PATH = "renditions/html/js/";
+    public static final String HTML_RENDITION_PDF_PATH = "renditions/pdf/";
+    public static final String HTML_RENDITION_WORD_PATH = "renditions/word/";
     public static final String XML_EXT = ".xml";
     public static final String HTML_EXT = ".html";
     public static final String JS_EXT = ".js";

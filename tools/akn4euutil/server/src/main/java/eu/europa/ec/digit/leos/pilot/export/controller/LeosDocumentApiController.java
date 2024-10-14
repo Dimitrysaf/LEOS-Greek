@@ -16,7 +16,6 @@ package eu.europa.ec.digit.leos.pilot.export.controller;
 import eu.europa.ec.digit.leos.pilot.export.exception.LeosDocumentException;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentInput;
 import eu.europa.ec.digit.leos.pilot.export.model.LeosConvertDocumentOutput;
-import eu.europa.ec.digit.leos.pilot.export.service.ConvertDocumentService;
 import eu.europa.ec.digit.leos.pilot.export.service.LeosDocumentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -36,11 +35,9 @@ import static eu.europa.ec.digit.leos.pilot.export.util.DocumentApiUtil.buildVal
 @CrossOrigin(origins = "*")
 public class LeosDocumentApiController {
     private final LeosDocumentService leosDocumentService;
-    private final ConvertDocumentService convertDocumentService;
 
-    public LeosDocumentApiController(LeosDocumentService leosDocumentService, ConvertDocumentService convertDocumentService) {
+    public LeosDocumentApiController(LeosDocumentService leosDocumentService) {
         this.leosDocumentService = leosDocumentService;
-        this.convertDocumentService = convertDocumentService;
     }
 
     @RequestMapping(value = "/getRenditions", method = RequestMethod.POST, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
@@ -76,12 +73,7 @@ public class LeosDocumentApiController {
                     inputFile,
                     translationsFile
             );
-            LeosConvertDocumentOutput convertDocumentOutput = leosDocumentService.updateWithTranslations(convertDocumentInput);
-            if(outputDescriptor != null && !outputDescriptor.isEmpty()) {
-                byte[] convertedDocument = this.convertDocumentService.convertDocument(convertDocumentOutput.getOutputFile(),
-                        outputDescriptor);
-                convertDocumentOutput.setOutputFile(convertedDocument);
-            }
+            LeosConvertDocumentOutput convertDocumentOutput = leosDocumentService.updateWithTranslations(convertDocumentInput, outputDescriptor);
             return buildValidZipResponse(convertDocumentOutput.getOutputFile(), convertDocumentOutput.getOutputFileName());
         } catch (LeosDocumentException e) {
             return buildErrorResponse("Issue processing the document", e, HttpStatus.INTERNAL_SERVER_ERROR);
