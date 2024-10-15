@@ -4,7 +4,7 @@ stages:
   - deploy
 
 variables:
-  MAVEN_OPTS: '-Dmaven.repo.local=$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.m2/repository -DskipTests=true'
+  MAVEN_OPTS: '-Dmaven.repo.local=$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.m2/repository'
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version"
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/$CI_MERGE_REQUEST_ID/.yarn/cache"
   GIT_CLEAN_FLAGS: -ffdx -e .yarn -e .m2/repository -e .npm
@@ -24,11 +24,11 @@ java-build:
   stage: build
   script:
     - cd $CI_PROJECT_DIR/tools/user-repo
-    - mvn clean install
+    - mvn clean install -q
     - cd $CI_PROJECT_DIR/tools/repository
-    - mvn clean install
+    - mvn clean install -q
     - cd $CI_PROJECT_DIR
-    - mvn clean install
+    - mvn clean install -DskipKarmaTests -q
   artifacts:
     expire_in: 1 day
     when: always
