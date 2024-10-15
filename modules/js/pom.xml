@@ -37,6 +37,7 @@
         <sonar.sources>src/main</sonar.sources>
         <exec.plugin.execution.phase>test</exec.plugin.execution.phase>
         <frontend.plugin.execution.phase>test</frontend.plugin.execution.phase>
+        <frontend.plugin.karma-test.skip>false</frontend.plugin.karma-test.skip>
     </properties>
 
     <dependencies>
@@ -165,6 +166,7 @@
                         </goals>
                         <phase>${exec.plugin.execution.phase}</phase>
                         <configuration>
+                            <skip>${frontend.plugin.karma-test.skip}</skip>
                             <workingDirectory>${project.basedir}</workingDirectory>
                             <executable>node</executable>
                             <arguments>
@@ -212,6 +214,7 @@
                         </goals>
                         <phase>${frontend.plugin.execution.phase}</phase>
                         <configuration>
+                            <skip>${frontend.plugin.karma-test.skip}</skip>
                             <karmaConfPath>karma.conf.ci.js</karmaConfPath>
                         </configuration>
                     </execution>
@@ -268,6 +271,17 @@
             <properties>
                 <frontend.plugin.execution.phase>none</frontend.plugin.execution.phase>
                 <exec.plugin.execution.phase>none</exec.plugin.execution.phase>
+            </properties>
+        </profile>
+        <profile>
+            <id>skipKarmaTests</id>
+            <activation>
+                <property>
+                    <name>skipKarmaTests</name>
+                </property>
+            </activation>
+            <properties>
+                <frontend.plugin.karma-test.skip>true</frontend.plugin.karma-test.skip>
             </properties>
         </profile>
     </profiles>

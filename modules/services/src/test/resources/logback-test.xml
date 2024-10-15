@@ -6,9 +6,9 @@
         </encoder>
     </appender>
 
-    <logger level="ALL" name="eu.europa.ec.leos"/>
+    <logger level="OFF" name="eu.europa.ec.leos"/>
 
-    <root level="INFO">
+    <root level="OFF">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
