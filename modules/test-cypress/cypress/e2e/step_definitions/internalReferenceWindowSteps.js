@@ -20,3 +20,7 @@ When(`click on point {int} of list {int} of paragraph {int} of article on the ri
 When(`click on paragraph {int} of article on the right side of internal reference window`, (paragraphNumber) => {
     internalReferenceWindow.clickParagraphOfArticle(paragraphNumber);
 });
+
+When(`click on {string} link in annex on the left side of internal reference window`, (link) => {
+    internalReferenceWindow.clickAnnexLink(link);
+});
