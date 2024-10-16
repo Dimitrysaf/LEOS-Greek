@@ -9,8 +9,8 @@
                     <FRBRdate date="2999-01-01" name=""/>
                     <FRBRauthor href=""/>
                     <preservation xmlns:akn4eu="http://imfc.europa.eu/akn4eu">
-                        <akn4eu:fileCUID value="yyyyyyyy"/>
-                        <akn4eu:docCUID value="xxxxxxxx"/>
+                        <akn4eu:fileCUID value="yyyyyyy"/>
+                        <akn4eu:docCUID value="xxxxxx"/>
                     </preservation>
                     <FRBRcountry value="EU"/>
                     <FRBRprescriptive value="false"/>
@@ -37,7 +37,7 @@
                 <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
                 <TLCOrganization xml:id="PUBL" href="http://publications.europa.eu/resource/authority/corporate-body/PUBL" showAs="Publications Office"/>
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCReference xml:id="STAT_DIGIT_FINANC_LEGIS" href="http://publications.europa.eu/resource/authority/resource-type/STAT_DIGIT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement"/>
+                <TLCReference xml:id="STAT_FINANC_LEGIS" href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement"/>
                 <TLCConcept xml:id="INP" href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part"/>
                 <!--  draft  -->
             </references>
@@ -51,8 +51,7 @@
         <preface>
             <longTitle>
                 <p>
-                    <docType refersTo="~STAT_DIGIT_FINANC_LEGIS">LEGISLATIVE FINANCIAL AND DIGITAL
-                        STATEMENT</docType>
+                    <docType refersTo="~STAT_FINANC_LEGIS">LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT</docType>
                 </p>
             </longTitle>
         </preface>
@@ -542,11 +541,9 @@
                 <heading leos:editable="false">
                     <b leos:editable="false">Monitoring and reporting rules </b>
                 </heading>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
+                <content>
+                    <p>[...]</p>
+                </content>
             </level>
             <level leos:depth="2" leos:deletable="false">
                 <num>2.2.</num>
@@ -592,11 +589,9 @@
                 <heading leos:editable="false">
                     <b leos:editable="false">Measures to prevent fraud and irregularities</b>
                 </heading>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
+                <content>
+                    <p>[...]</p>
+                </content>
             </level>
             <level leos:depth="1" class="landscape">
                 <num>3.</num>
@@ -1532,7 +1527,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false" leos:optional="true" leos:repeatable="true" leos:group="1">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr>
                                     <td style="width: 34%;">
                                         <p><b>Heading of multiannual financial</b></p>
@@ -1543,14 +1538,14 @@
                                     </td>
                                     <td style="width: 57%;"> </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" leos:optional="true" leos:repeatable="true" leos:group="1">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr>
                                     <td colspan="3" rowspan="2" style="width: 54%;">
                                         <p>DG: ...</p>
@@ -1796,14 +1791,14 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" leos:optional="true" leos:repeatable="true" leos:group="1">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr>
                                     <td colspan="3" rowspan="2" style="width: 54%;">
                                         <p>DG: ...</p>
@@ -2036,14 +2031,14 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false" leos:optional="true" leos:repeatable="true" leos:group="1">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr>
                                     <td colspan="3" rowspan="2" style="width: 48%;">
                                         <p/>
@@ -2239,7 +2234,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
@@ -2247,7 +2242,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr>
                                     <td style="width: 30%;"> </td>
                                     <td style="width: 9%;"> </td>
@@ -2451,14 +2446,14 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table border="1" style="width: 100%;" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr>
                                     <td style="width: 34%;">
                                         <p><b>Heading of multiannual financial</b></p>
@@ -2478,7 +2473,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
@@ -2486,7 +2481,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 14.4pt;">
                                     <td style="width: 60.64%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" colspan="4" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -2819,7 +2814,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -2840,7 +2835,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 480; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;">
                                     <td style="width: 34.78%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; background: #F1F1F1; mso-shading: windowtext; mso-pattern: thin-diag-stripe silver; padding: 0cm 5.4pt 0cm 5.4pt;">
                                         <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;"><b style="mso-bidi-font-weight: normal;"> Heading of multiannual financial</b></p>
@@ -2853,7 +2848,7 @@
                                         <p style="margin: 3.0pt 0cm 3.0pt 0cm;"> </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -2862,7 +2857,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;">
                                     <td style="width: 48.88%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -3153,7 +3148,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -3163,7 +3158,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;">
                                     <td style="width: 48.88%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -3454,7 +3449,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -3465,7 +3460,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 48.64%; border-top: windowtext; border-left: windowtext; border-bottom: black; border-right: black; border-style: solid; border-width: 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -3686,7 +3681,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -3696,7 +3691,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 480; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; mso-yfti-lastrow: yes;">
                                     <td style="width: 34.78%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; background: #F1F1F1; mso-shading: windowtext; mso-pattern: thin-diag-stripe silver; padding: 0cm 5.4pt 0cm 5.4pt;">
                                         <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;"><b style="mso-bidi-font-weight: normal;"> Heading of multiannual financial </b></p>
@@ -3709,7 +3704,7 @@
                                         <p style="margin: 3.0pt 0cm 3.0pt 0cm;"> </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -3718,7 +3713,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;">
                                     <td style="width: 48.88%; border: solid windowtext 1.0pt; border-bottom: none; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -4007,7 +4002,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -4018,7 +4013,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 21.0pt;">
                                     <td style="width: 48.88%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 21.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -4306,7 +4301,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -4317,7 +4312,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 48.64%; border-top: windowtext; border-left: windowtext; border-bottom: black; border-right: black; border-style: solid; border-width: 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" colspan="3" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -4538,7 +4533,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -4547,7 +4542,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 14.4pt;">
                                     <td style="width: 30.44%; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;"> </td>
                                     <td style="width: 9.42%; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" colspan="2"> </td>
@@ -4775,7 +4770,7 @@
                                         <p> </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -4803,7 +4798,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 657.0pt; margin-left: 5.9pt; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 14.4pt;">
                                     <td style="width: 394.6pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" colspan="4" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -5136,7 +5131,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -5151,7 +5146,7 @@
                     <content>
                         <!-- rotated table -->
                         <table style="width: 657.0pt; margin-left: 5.9pt; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 14.4pt;">
                                     <td style="width: 355.0pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 14.4pt;" colspan="2" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;"> </p>
@@ -5267,7 +5262,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                         <!-- end of rotated table-->
                     </content>
@@ -5849,10 +5844,9 @@
                 <heading leos:editable="false">
                     <i>Appropriations from voted budget</i>
                 </heading>
-                <subparagraph leos:editable="true" leos:deletable="false">
-                    <content>
+                <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 43.34%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -6105,10 +6099,9 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
-                </subparagraph>
             </level>
             <!-- Optionnal levels -Optional: if the proposal is partly or fully financed from external assigned revenues, fill in the tables in Sections 3.2.3.2. and 3.2.3.3. If not, please delete both sections. -->
             <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
@@ -6116,10 +6109,9 @@
                 <heading leos:editable="false">
                     <i>Appropriations from external assigned revenues</i>
                 </heading>
-                <subparagraph leos:editable="true" leos:deletable="false">
-                    <content>
+                <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 43.32%; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -6372,10 +6364,9 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
-                </subparagraph>
             </level>
             <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
                 <num>3.2.3.3</num>
@@ -6385,7 +6376,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 434.0pt; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 25.95pt;">
                                     <td style="width: 188.0pt; border: solid windowtext 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 25.95pt;" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;"><b>TOTAL</b></p>
@@ -6639,7 +6630,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
@@ -6665,23 +6656,19 @@
                         <num>
                             <inline name="unchecked">&#x2610;</inline>
                         </num>
-                        <subparagraph leos:editable="false">
-                            <content>
-                                <p leos:editable="false">The proposal/initiative does not require
-                                    the use of human resources </p>
-                            </content>
-                        </subparagraph>
+                        <content>
+                            <p leos:editable="false">The proposal/initiative does not require
+                                the use of human resources </p>
+                        </content>
                     </indent>
                     <indent>
                         <num>
                             <inline name="unchecked">&#x2610;</inline>
                         </num>
-                        <subparagraph leos:editable="false">
-                            <content>
-                                <p leos:editable="false">The proposal/initiative requires the use of
-                                    human resources, as explained below</p>
-                            </content>
-                        </subparagraph>
+                        <content>
+                            <p leos:editable="false">The proposal/initiative requires the use of
+                                human resources, as explained below</p>
+                        </content>
                     </indent>
                 </list>
             </level>
@@ -6705,7 +6692,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 58.26%; border: solid windowtext 1.0pt; border-right: solid black 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" colspan="2" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -7023,7 +7010,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
@@ -7034,10 +7021,9 @@
                 <heading leos:editable="false">
                     <i>Financed from external assigned revenues</i>
                 </heading>
-                <subparagraph leos:editable="true" leos:deletable="false">
-                    <content>
+                <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 58.26%; border: solid windowtext 1.0pt; border-right: solid black 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;" colspan="2" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;">
@@ -7356,10 +7342,9 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
-                </subparagraph>
             </level>
             <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
                 <num>3.2.4.3.</num>
@@ -7369,7 +7354,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 460.0pt; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 24.6pt;">
                                     <td style="width: 268.0pt; border: solid windowtext 1.0pt; border-right: solid black 1.0pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 24.6pt;" colspan="2" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;"><b>TOTAL</b></p>
@@ -7689,7 +7674,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
@@ -7764,7 +7749,7 @@
                 <subparagraph>
                     <content>
                         <table style="width: 474.35pt; margin-left: 0pt; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="1" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
                                     <td style="width: 92.25pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 15.0pt;">
                                         <p style="margin-left: 0cm; text-align: center;">
@@ -7845,7 +7830,7 @@
                                         <p style="margin-left: 0cm;"> </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
@@ -7857,7 +7842,7 @@
                 <subparagraph>
                     <content>
                         <table style="width: 522.0pt; margin-left: 0pt; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .25pt; mso-yfti-tbllook: 480; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .25pt solid windowtext; mso-border-insidev: .25pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes;">
                                     <td style="width: 162.0pt; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .25pt; padding: 0cm 5.4pt 0cm 5.4pt;">
                                         <p>Officials and temporary staff</p>
@@ -7874,7 +7859,7 @@
                                         <p> </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
@@ -7915,7 +7900,7 @@
                 <subparagraph>
                     <content>
                         <table style="border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 26.25pt;">
                                     <td style="width: 160.7pt; border: solid windowtext 1.0pt; border-bottom: none; mso-border-top-alt: solid windowtext 1.0pt; mso-border-left-alt: solid windowtext .5pt; mso-border-right-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 26.25pt;" rowspan="2">
                                         <p style="margin: 0cm; text-align: center;"><b> TOTAL </b></p>
@@ -8133,7 +8118,7 @@
                                         </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
@@ -8242,7 +8227,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .75pt; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .75pt solid windowtext; mso-border-insidev: .75pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; page-break-inside: avoid;">
                                     <td style="width: 31.82%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .75pt; padding: 0cm 5.4pt 0cm 5.4pt;">
                                         <p style="margin: 3.0pt 0cm 3.0pt 0cm;"> </p>
@@ -8307,7 +8292,7 @@
                                         <p style="text-align: center; margin: 3.0pt 0cm 3.0pt 0cm;"> </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
@@ -8378,7 +8363,7 @@
                 <subparagraph leos:editable="true" leos:deletable="false">
                     <content>
                         <table style="width: 100.0%; border-collapse: collapse; border: none; mso-border-alt: solid windowtext .5pt; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt; mso-border-insideh: .5pt solid windowtext; mso-border-insidev: .5pt solid windowtext;" border="1" cellspacing="0" cellpadding="0">
-
+                            
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 19.4pt;">
                                     <td style="width: 28.46%; border: solid windowtext 1.0pt; mso-border-alt: solid windowtext .5pt; padding: 0cm 5.4pt 0cm 5.4pt; height: 19.4pt;" rowspan="2">
                                         <p style="margin: 2.0pt 0cm 2.0pt 0cm;"> Budget revenue
@@ -8438,7 +8423,7 @@
                                         <p style="mso-para-margin-top: .4gd; mso-para-margin-right: 0cm; mso-para-margin-bottom: .4gd; mso-para-margin-left: 0cm; text-align: center; margin: 4.8pt 0cm 4.8pt 0cm;"> </p>
                                     </td>
                                 </tr>
-
+                            
                         </table>
                     </content>
                 </subparagraph>
