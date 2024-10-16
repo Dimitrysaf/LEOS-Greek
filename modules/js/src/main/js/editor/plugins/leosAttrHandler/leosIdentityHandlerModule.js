@@ -332,6 +332,9 @@ define(function leosIdentityHandler(require) {
                 idAttrValue = generateId();
                 element.setAttribute("id", idAttrValue);
                 element.setAttribute("NEW", '');
+                element.removeAttribute(leosPluginUtils.DATA_AKN_CONTENT_ID);
+                element.removeAttribute(leosPluginUtils.DATA_AKN_WRAPPED_CONTENT_ID);
+                element.removeAttribute(leosPluginUtils.DATA_AKN_MP_ID);
             }
         }
 
