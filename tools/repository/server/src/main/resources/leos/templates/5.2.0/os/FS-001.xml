@@ -37,7 +37,7 @@
                 <TLCReference xml:id="language" href="http://publications.europa.eu/resource/authority/language/ENG" name="language" showAs="en"/>
                 <TLCOrganization xml:id="PUBL" href="http://publications.europa.eu/resource/authority/corporate-body/PUBL" showAs="Publications Office"/>
                 <TLCOrganization xml:id="COM" href="http://publications.europa.eu/resource/authority/corporate-body/COM" showAs="European Commission"/>
-                <TLCReference xml:id="STAT_DIGIT_FINANC_LEGIS" href="http://publications.europa.eu/resource/authority/resource-type/STAT_DIGIT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement"/>
+                <TLCReference xml:id="STAT_FINANC_LEGIS" href="http://publications.europa.eu/resource/authority/resource-type/STAT_FINANC_LEGIS" name="docType" showAs="Legislative Financial Statement"/>
                 <TLCConcept xml:id="INP" href="http://publications.europa.eu/resource/authority/subdivision/INP" showAs="introductory part"/>
                 <!--  draft  -->
             </references>
@@ -51,8 +51,7 @@
         <preface>
             <longTitle>
                 <p>
-                    <docType refersTo="~STAT_DIGIT_FINANC_LEGIS">LEGISLATIVE FINANCIAL AND DIGITAL
-                        STATEMENT</docType>
+                    <docType refersTo="~STAT_FINANC_LEGIS">LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT</docType>
                 </p>
             </longTitle>
         </preface>
@@ -542,11 +541,9 @@
                 <heading leos:editable="false">
                     <b leos:editable="false">Monitoring and reporting rules </b>
                 </heading>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
+                <content>
+                    <p>[...]</p>
+                </content>
             </level>
             <level leos:depth="2" leos:deletable="false">
                 <num>2.2.</num>
@@ -592,11 +589,9 @@
                 <heading leos:editable="false">
                     <b leos:editable="false">Measures to prevent fraud and irregularities</b>
                 </heading>
-                <subparagraph leos:editable="true">
-                    <content>
-                        <p>[...]</p>
-                    </content>
-                </subparagraph>
+                <content>
+                    <p>[...]</p>
+                </content>
             </level>
             <level leos:depth="1" class="landscape">
                 <num>3.</num>
@@ -5849,8 +5844,7 @@
                 <heading leos:editable="false">
                     <i>Appropriations from voted budget</i>
                 </heading>
-                <subparagraph leos:editable="true" leos:deletable="false">
-                    <content>
+                <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
                             
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
@@ -6108,7 +6102,6 @@
                             
                         </table>
                     </content>
-                </subparagraph>
             </level>
             <!-- Optionnal levels -Optional: if the proposal is partly or fully financed from external assigned revenues, fill in the tables in Sections 3.2.3.2. and 3.2.3.3. If not, please delete both sections. -->
             <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
@@ -6116,8 +6109,7 @@
                 <heading leos:editable="false">
                     <i>Appropriations from external assigned revenues</i>
                 </heading>
-                <subparagraph leos:editable="true" leos:deletable="false">
-                    <content>
+                <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
                             
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
@@ -6375,7 +6367,6 @@
                             
                         </table>
                     </content>
-                </subparagraph>
             </level>
             <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
                 <num>3.2.3.3</num>
@@ -6665,23 +6656,19 @@
                         <num>
                             <inline name="unchecked">&#x2610;</inline>
                         </num>
-                        <subparagraph leos:editable="false">
-                            <content>
-                                <p leos:editable="false">The proposal/initiative does not require
-                                    the use of human resources </p>
-                            </content>
-                        </subparagraph>
+                        <content>
+                            <p leos:editable="false">The proposal/initiative does not require
+                                the use of human resources </p>
+                        </content>
                     </indent>
                     <indent>
                         <num>
                             <inline name="unchecked">&#x2610;</inline>
                         </num>
-                        <subparagraph leos:editable="false">
-                            <content>
-                                <p leos:editable="false">The proposal/initiative requires the use of
-                                    human resources, as explained below</p>
-                            </content>
-                        </subparagraph>
+                        <content>
+                            <p leos:editable="false">The proposal/initiative requires the use of
+                                human resources, as explained below</p>
+                        </content>
                     </indent>
                 </list>
             </level>
@@ -7034,8 +7021,7 @@
                 <heading leos:editable="false">
                     <i>Financed from external assigned revenues</i>
                 </heading>
-                <subparagraph leos:editable="true" leos:deletable="false">
-                    <content>
+                <content>
                         <table style="width: 100.0%; border-collapse: collapse; mso-yfti-tbllook: 1184; mso-padding-alt: 0cm 5.4pt 0cm 5.4pt;" border="0" cellspacing="0" cellpadding="0">
                             
                                 <tr style="mso-yfti-irow: 0; mso-yfti-firstrow: yes; height: 15.0pt;">
@@ -7359,7 +7345,6 @@
                             
                         </table>
                     </content>
-                </subparagraph>
             </level>
             <level leos:depth="4" class="landscape" leos:deletable="false" leos:optional="true">
                 <num>3.2.4.3.</num>
