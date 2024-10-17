@@ -17,6 +17,7 @@ import { TableOfContentService } from '@/features/akn-document/services/table-of
 import { DocumentService } from '@/shared/services/document.service';
 
 import { ViewVersionService } from '../../services/view-version.service';
+import {Observable} from "rxjs";
 
 @Component({
   selector: 'app-version-actions-dropdown',
@@ -32,7 +33,7 @@ export class VersionActionsDropdownComponent implements OnInit, OnDestroy {
   versionModalText: string;
   versionToRevert = '';
   isCNInstance = process.env.NG_APP_LEOS_INSTANCE === 'cn';
-  canRevertVersion: boolean;
+  canRevertVersion: Observable<boolean>;
 
   private removeEventListener?: () => void;
 

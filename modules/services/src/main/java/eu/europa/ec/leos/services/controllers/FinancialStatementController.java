@@ -1,5 +1,6 @@
 package eu.europa.ec.leos.services.controllers;
 
+import com.google.common.collect.ImmutableMap;
 import eu.europa.ec.leos.domain.common.TocMode;
 import eu.europa.ec.leos.domain.vo.SearchMatchVO;
 import eu.europa.ec.leos.model.action.TrackChangeActionType;
@@ -454,6 +455,18 @@ public class FinancialStatementController {
         } catch (Exception e) {
             LOG.error("Error occurred  while rejecting change - " + e.getMessage());
             return new ResponseEntity<>("Unexpected error while rejecting change ", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping(value = "/{documentRef}/finalise-document", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<Object> finaliseDocument(@PathVariable("documentRef") String documentRef) {
+        documentRef = encodeParam(documentRef);
+        try {
+            this.genericDocumentApiService.finaliseDocument(documentRef);
+            return ResponseEntity.ok().body(ImmutableMap.of("result", "Document successfully finalised!"));
+        } catch (Exception e) {
+            return new ResponseEntity<>("Unexpected error while finalising document", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

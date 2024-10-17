@@ -127,6 +127,7 @@ export class DocumentEditorComponent
 
   id: string;
 
+  hasUpdatePermission = false;
   showContributionsPane = false;
   isVersionsPaneExpanded = false;
   isContributionsPaneExpanded = false;
@@ -288,6 +289,8 @@ export class DocumentEditorComponent
         this.loadDocument = true;
         this.proposalRef = documentView.proposalRef;
       });
+
+    this.documentService.hasUpdatePermission().subscribe(value => this.hasUpdatePermission = value);
 
     this.tocService.isEditMode$
       .pipe(takeUntil(this.destroy$))
@@ -1027,7 +1030,7 @@ export class DocumentEditorComponent
   }
 
   get showTocEditButton() {
-    return (!this.profile || this.profile.tocEdition) && this.documentService.hasUpdatePermission();
+    return (!this.profile || this.profile.tocEdition) && this.hasUpdatePermission;
   }
 
   get showAnnotations() {

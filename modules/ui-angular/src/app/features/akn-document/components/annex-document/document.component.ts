@@ -14,7 +14,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import {BehaviorSubject, combineLatest, Subject, takeUntil} from 'rxjs';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { TrackChangesActionsService } from '@/features/akn-document/services/track-changes-actions.service';
@@ -228,10 +228,12 @@ export class DocumentComponent
     this.documentService.setDidDocumentLoadAndRender(true);
     if (!this.readonly) {
       this.interceptAndProcessBookmarkLink();
-      this.documentService.documentConfig$
+      combineLatest([this.documentService.documentConfig$, this.documentService.permissions$])
           .pipe(takeUntil(this.destroy$))
-          .subscribe((documentView) => {
-            this.ckeditorService.init();
+          .subscribe(([config, permissions]) => {
+            if(permissions != null && permissions.length > 0) {
+              this.ckeditorService.init();
+            }
           });
       this.coEditionWSService
         .getDocCoEditionInfo()

@@ -277,6 +277,19 @@ public class GenericDocumentApiService {
         return new DocumentViewResponse(versionContent, versionInfoVO);
     }
 
+    public void finaliseDocument(String documentRef) throws Exception {
+        final XmlDocument xmlDocument = this.findDocumentByRef(documentRef);
+        byte[] xmlContent = xmlContentProcessor.cleanSoftActions(xmlDocument.getContent().get().getSource().getBytes());
+        xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
+        this.leosRepository.updateDocument(
+                xmlDocument.getId(),
+                xmlContent,
+                VersionType.MINOR,
+                messageHelper.getMessage("operation.document.finalised"),
+                XmlDocument.class
+        );
+    }
+
     public byte[] downloadCleanVersion(String documentRef) {
         byte[] cleanVersion = new byte[0];
         FinancialStatement document = this.findDocumentByRef(FinancialStatement.class, documentRef);
