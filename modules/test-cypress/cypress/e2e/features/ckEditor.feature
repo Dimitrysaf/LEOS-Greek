@@ -196,3 +196,63 @@ Feature: CK Editor Regression Features
         Then ck editor window is not displayed
         And  content of paragraph 2 of article 1 contains tag "b"
         And  content of paragraph 2 of article 1 contains tag "i"
+
+    @ckEditorPlugin @local
+    Scenario: testing of different ck editor plugin in annexes
+        Given navigate to edit drafting application with "User1"
+        Then user is on home page
+        When click on Create act button
+        Then user is on create new legislative document window
+        And  collapse all button is displayed in create new legislative document window
+        When click on template "SJ-023" in create new legislative document window
+        When click on next button in create document page
+        And  provide document title "ck editor scenarios for annexes" in create document page
+        And  click on create button
+        Then user is on act viewer page
+        When click on add button in annexes section
+        Then total number of annexes present in act viewer page is 1
+        ########## open annex 1 ###################
+        When click on annex 1 link
+        Then annotation side bar is present
+        And  user is on annex page
+        And  annex title is "Annex"
+        ########## insert table functionality ###################
+        And  click on edit icon of level 1
+        Then ck editor window is displayed
+        And  click on table icon present in ck editor panel
+        Then cke dialog window is displayed with title "Table Properties"
+        When click on ok button in cke dialog window
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        And  content of subparagraph 2 of level 1 contains a table with 3 row and 2 column
+        ########## insert footnote  ###################
+        When click on edit icon of level 1
+        Then ck editor window is displayed
+        And  click at offset 7 in pTag 1 with data-akn-element "subparagraph" of li with data-akn-element "level" of ol with data-akn-element "level" in edition mode
+        When click on insert footnote icon present in ck editor panel
+        Then cke dialog window is displayed with title "Edit Footnote"
+        When type "new footnote" in cke dialog textarea
+        And  click on ok button in cke dialog window
+        Then authorial note with marker 1 and title "new footnote" is present inside level in edition mode
+        And  click save and close button of ck editor
+        Then ck editor window is not displayed
+        ########## click footnote  ###################
+        And  level 1 contains authorial note with marker 1 and text "new footnote"
+        When click on authorial note with marker 1 in level 1
+        Then authorial note table is displayed
+        And  text of marker 1 of authorial note table is "new footnote"
+        When click on marker 1 link in authorial note table
+        Then level 1 contains authorial note with marker 1 and text "new footnote"
+        ########### create internal reference ##############
+        When click on edit icon of level 1
+        Then ck editor window is displayed
+        And  click at offset 7 in pTag 1 with data-akn-element "subparagraph" of li with data-akn-element "level" of ol with data-akn-element "level" in edition mode
+        And  click on internal reference icon present in ck editor panel
+        Then cke dialog window is displayed with title "Internal reference"
+        When click on "2. Text..." link in annex on the left side of internal reference window
+        And  click on ok button in cke dialog window
+        And  click save and close button of ck editor
+        Then "point 2" is added as internal reference 1 of level 1
+        ### click the links of internal reference
+        When click on internal reference link 1 of level 1
+        Then level 3 of annex is displayed
