@@ -156,21 +156,26 @@ define(function leosAlternativesPluginModule(require) {
     }
 
     function _updateContent(editor, optionList, index) {
-        var callback = function() {
+        let callback = function() {
             _updateRootEltAttributes(editor, index);
             _updateButtonState(editor, index);
         };
 
         if(editor.LEOS.isTrackChangesEnabled) {
-            var options = {
+            let options = {
                 index: index,
                 optionList: optionList,
                 callback: callback
             };
             editor.fire("handleTcAlternateClause", options);
         } else {
-            var newOption = optionList.list.find(listOfOption => listOfOption.index == index);
+            let newOption = optionList.list.find(listOfOption => listOfOption.index == index);
             editor.setData(newOption.content.replace(/\n|\r/g), callback);
+
+            editor.focus();
+            let range = editor.createRange();
+            range.moveToElementEditStart(editor.editable());
+            editor.getSelection().selectRanges([range]);
         }
     }
 

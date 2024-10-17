@@ -690,7 +690,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             parentNode = parentNode.getParentNode();
         }
         try {
-            if (ELEMENTS_TO_BE_NUMBERED.contains(tagName)) {
+            if (ELEMENTS_TO_BE_NUMBERED.contains(tagName) && parentNode != null) {
                 numberProcessorHandler.renumberElement(parentNode, tagName, true, "EN");
                 coEditionContext.addUpdatedElement(getId(parentNode), parentNode.getNodeName(), nodeToString(parentNode), null);
             }
