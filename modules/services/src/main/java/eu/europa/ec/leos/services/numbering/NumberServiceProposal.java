@@ -24,6 +24,7 @@ import eu.europa.ec.leos.services.structure.lang.DocumentLanguageContext;
 import eu.europa.ec.leos.services.support.XercesUtils;
 import eu.europa.ec.leos.services.utils.StructureConfigUtils;
 import eu.europa.ec.leos.vo.structure.NumberingType;
+import eu.europa.ec.leos.vo.structure.OptionsType;
 import eu.europa.ec.leos.vo.structure.TocItem;
 import eu.europa.ec.leos.vo.toc.TableOfContentItemVO;
 import org.slf4j.Logger;
@@ -185,6 +186,9 @@ public class NumberServiceProposal implements NumberService {
     @Override
     public byte[] renumberHigherSubDivisions(byte[] xmlContent, String language, String elementName, List<TocItem> tocItems) {
         TocItem tocItem = getTocItemByName(tocItems, elementName);
+        if(OptionsType.NONE.equals(tocItem.getItemNumber())) {
+            return xmlContent;
+        }
         NumberingType numberingType = StructureConfigUtils.getNumberingTypeByLanguage(tocItem, language);
         if (isAutoNumberingEnabled(tocItems, elementName, language)) {
             Document document = createXercesDocument(xmlContent, false);
