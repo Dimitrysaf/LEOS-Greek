@@ -68,7 +68,7 @@ Feature: financial statement page regression features
     Then user is on act viewer page
 
   @finaliseFinancialStatement @local
-  Scenario: add section for financial statement document on Proposal Screen
+  Scenario: finalise financial statement document
     When click on Create act button
     Then user is on create new legislative document window
     When click on template "SJ-023" in create new legislative document window
@@ -94,6 +94,6 @@ Feature: financial statement page regression features
       | del | "[...]"                           |
       | ins | "text"                            |
     When click on finalise button in ribbon toolbar
-    And  content of level 2 contains "text" in financial statement page
-    When click on close button on financial statement page
-    Then user is on act viewer page
+    Then content of level 2 contains "text" in financial statement page
+    When click on versions pane accordion
+    And  last subversion of recent changes version card contains "1.0.1Document finalised"
