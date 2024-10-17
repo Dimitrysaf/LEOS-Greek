@@ -276,6 +276,8 @@ define(function aknNumberedParagraphPluginModule(require) {
         ckEditor.fire('lockSnapshot');
         var jqEditor = $(ckEditor.editable().$);
         var paragraphs = jqEditor.find(PARA_SELECTOR);
+        var rootElement = ckEditor.element.getFirst();
+        var isAlternative = rootElement && rootElement.getAttribute("leos:alternative");
         if (paragraphs.length > 0) {
             if (PARA_MODE === NUMBERED) {
                 var renumber = true;
@@ -291,7 +293,7 @@ define(function aknNumberedParagraphPluginModule(require) {
                         }
                     }
                 }
-                if (renumber) {
+                if (renumber && !(isAlternative && rootElement.getName() === leosTrackChanges.core.ARTICLE)) {
                     renumberModule.updateNumbers([paragraphs[0].parentElement], renumberModule.getSequences('Paragraph'));
                 }
             } else {
