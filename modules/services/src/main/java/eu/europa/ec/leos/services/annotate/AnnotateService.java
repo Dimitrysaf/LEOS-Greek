@@ -13,7 +13,7 @@ public interface AnnotateService {
 
 	String getFeedbackAnnotations(String docName, String legFileName, String proposalRef);
 
-	String fetchFeedbackRepliesFromDB(String docName, String proposalRef, String legFileName, String storedAnnotations);
+	String fetchFeedbackRepliesFromDB(String docName, String proposalRef, String legFileName, String storedAnnotations, boolean setFlag);
 
 	String createTemporaryAnnotations(byte[] legFile, String proposalRef);
 

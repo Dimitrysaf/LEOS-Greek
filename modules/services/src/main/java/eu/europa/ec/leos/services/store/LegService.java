@@ -76,6 +76,10 @@ public interface LegService {
 
     String getFeedbackAnnotationsFromLeg(String legFileId, String documentRef, String proposalRef) throws IOException;
 
+    String fetchFeedbackRepliesByID(String documentRef, String proposalRef, String legFileId, String storedAnnots);
+
+    String fetchFeedbackRepliesByName(String documentRef, String proposalRef, String legFileName, String storedAnnots);
+
     String removePermissionsStoredAnnotationsFromId(String storedFeedbackAnnotations, String documentRef, String legFileId);
 
     String removePermissionsStoredAnnotations(String storedFeedbackAnnotations, String documentRef, String legFileName);
