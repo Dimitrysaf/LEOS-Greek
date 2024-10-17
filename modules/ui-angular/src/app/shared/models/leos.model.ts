@@ -63,6 +63,7 @@ export type LeosConfig = {
   profile: Profile;
   contextRole: string;
   leosSwitchLevelArticle: boolean;
+  searchOnMinimumCharacter: number;
 };
 
 export type LeosAppConfig = LeosConfig & {
