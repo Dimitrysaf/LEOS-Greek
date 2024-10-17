@@ -51,3 +51,21 @@ When(`click on delete icon of level {int}`, (levelNumber) => {
 Then(`level {int} doesn't contain {string}`, (levelNumber, text) => {
     annexPage.getContentOfAnnex(levelNumber).invoke('text').should('not.contain', text);
 });
+
+Then('content of subparagraph {int} of level {int} contains a table with {int} row and {int} column', function (subparagraphNumber, levelNumber, rowNumber, columnNumber) {
+    annexPage.getRowFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber).should('have.length', rowNumber);
+    annexPage.getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber).should('have.length', columnNumber);
+});
+
+Then('level {int} contains authorial note with marker {int} and text {string}', function (levelNumber, markerNumber, text) {
+    annexPage.getAuthorialNoteWithMarkerNumberFromLevel(levelNumber, markerNumber).should('have.text', text);
+});
+
+When('click on authorial note with marker {int} in level {int}', function (markerNumber, levelNumber) {
+    annexPage.clickAuthorialNoteWithMarkerNumberFromLevel(levelNumber, markerNumber);
+});
+
+
+Then(`{string} is added as internal reference {int} of level {int}`, (text, mReferenceNumber, levelNumber) => {
+    annexPage.getMRefTextFromLevel(mReferenceNumber, levelNumber).should('have.text', text);
+});

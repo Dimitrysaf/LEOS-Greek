@@ -230,6 +230,7 @@ export class DocumentService {
   private refreshAnnotateCall?: () => void;
   private currentDocumentRef: string;
   private currentConfig: DocumentConfig;
+  private minSearchChar: number;
 
   constructor(
     private http: HttpClient,
@@ -242,6 +243,9 @@ export class DocumentService {
     private tocService: TableOfContentService,
     private envService: EnvironmentService,
   ) {
+    appConfig.config.subscribe((conf) => {
+      this.minSearchChar = conf.searchOnMinimumCharacter;
+    });
     this.trackChangesStatus$ = this.trackChangesStatusBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
@@ -1305,7 +1309,7 @@ export class DocumentService {
   }
 
   private doSearch(parameters: DocumentSearchParams) {
-    if (parameters.searchText !== '') {
+    if (parameters.searchText !== '' && parameters.searchText.length >= this.minSearchChar) {
       this.currentSearchResults = [];
       this.http
         .post<SearchMatchVO[]>(
