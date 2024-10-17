@@ -47,6 +47,7 @@ public class AppConfigResponse {
 
     private boolean showRevisionEnabled;
     private boolean leosSwitchLevelArticle;
+    private int searchOnMinimumCharacter;
 
     public AppConfigResponse() {
     }
@@ -241,4 +242,12 @@ public class AppConfigResponse {
         return leosSwitchLevelArticle;
     }
     public void setLeosSwitchLevelArticle(boolean leosSwitchLevelArticle)  { this.leosSwitchLevelArticle = leosSwitchLevelArticle; }
+
+    public int getSearchOnMinimumCharacter() {
+        return searchOnMinimumCharacter;
+    }
+
+    public void setSearchOnMinimumCharacter(int searchOnMinimumCharacter) {
+        this.searchOnMinimumCharacter = searchOnMinimumCharacter;
+    }
 }
