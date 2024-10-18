@@ -28,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,6 +72,7 @@ import static eu.europa.ec.leos.services.support.XercesUtils.hasAscendantWithId;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttribute;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasAttributeWithValue;
 import static eu.europa.ec.leos.services.support.XercesUtils.hasDescendantWithAttribute;
+import static eu.europa.ec.leos.services.support.XercesUtils.isListIntro;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToByteArray;
 import static eu.europa.ec.leos.services.support.XercesUtils.nodeToString;
 import static eu.europa.ec.leos.services.support.XercesUtils.removeAttribute;
@@ -269,7 +271,6 @@ public class MergeContributionService {
                         xmlContent,
                         mergeActionVO.getElementId(),
                         mergeActionVO.getElementState(),
-                        intRefMap,
                         mergeActionVO.isWithTrackChanges());
                 if (HIGHER_ELEMENTS.contains(mergeActionVO.getElementTagName().replace(AKN, "")) && DELETE.equals(mergeActionVO.getElementState())) {
                     String language = documentLanguageContext.getDocumentLanguage();
@@ -297,8 +298,7 @@ public class MergeContributionService {
                             mergeActionVO.getContributionVO(),
                             xmlContent,
                             mergeActionVO.getElementId(),
-                            mergeActionVO.getElementState(),
-                            intRefMap);
+                            mergeActionVO.getElementState());
                     if (HIGHER_ELEMENTS.contains(mergeActionVO.getElementTagName().replace(AKN, "")) && MergeActionVO.ElementState.ADD.equals(mergeActionVO.getElementState())) {
                         String language = documentLanguageContext.getDocumentLanguage();
                         xmlContent = this.numberService.renumberHigherSubDivisions(xmlContent, language, mergeActionVO.getElementTagName().replace(AKN, ""), this.tocItemsList);
@@ -321,6 +321,7 @@ public class MergeContributionService {
             executeContributionAction(request.getMergeActions().get(0), contributionXmlContent);
         }
         xmlContent = resetActionOnDocument(xmlContent);
+        xmlContent = updateInternalReferences(xmlContent, intRefMap);
         return new MergeContributionResponse(this.mergingCompletelySuccessfull, xmlContent);
     }
 
@@ -473,7 +474,6 @@ public class MergeContributionService {
                                                      byte[] xmlContent,
                                                      String elementId,
                                                      ElementState elementState,
-                                                     List<InternalRefMap> intRefMap,
                                                      boolean withTrackChanges) {
         elementId = removesMovedPrefixFromElementId(elementId);
         Node contributionNode = XercesUtils.getElementById(contribution.getXmlContent(), elementId);
@@ -676,10 +676,6 @@ public class MergeContributionService {
                 continue;
             }
 
-            // If that's a list, we must check intro and conclusion, to not add sth already present
-            // this method removes intro and conclusion from document content
-            xmlContent = handleIntroAndConclusionForList(xmlContent, insertedElement.getReallyImpactedNode());
-
             // Adding element in xml content
             if (insertedElement.getTagName().equals(LEOS_TC_INSERT_ELEMENT_NAME)) {
                 xmlContent = mergeInsertedOrDeletedText(xmlContent, insertedElement.getNode(), withTrackChanges, true);
@@ -699,6 +695,10 @@ public class MergeContributionService {
                     insertedElement.setId(getId(tmp));
                     insertedElement.setTagName(tmp.getNodeName());
                 }
+                // If that's a list, we must check intro and conclusion, to not add sth already present
+                // this method removes intro and conclusion from document content
+                xmlContent = handleIntroAndConclusionForList(xmlContent, insertedElement.getReallyImpactedNode(), insertedElement.getNode());
+
                 if (!withTrackChanges) {
                     replaceElement(insertedElement.getNode(), getContentNodeAsXmlFragment(insertedElement.getNode()));
                 }
@@ -1203,7 +1203,7 @@ public class MergeContributionService {
 
     // Undo merging
     private byte[] undoTrackChangesFromContribution(ContributionVO contribution, byte[] xmlContent, String elementId,
-                                                    ElementState elementState, List<InternalRefMap> intRefMap) {
+                                                    ElementState elementState) {
         elementId = removesMovedPrefixFromElementId(elementId);
         Node contributionNode = XercesUtils.getElementById(contribution.getXmlContent(), elementId);
         if (contributionNode == null) {
@@ -1342,7 +1342,7 @@ public class MergeContributionService {
                 xmlContent = undoDelInContent(xmlContent, delElt);
                 impactedElements.add(getId(delElt));
             } else {
-                xmlContent = handleIntroAndConclusionForList(xmlContent, realDelElt);
+                xmlContent = handleIntroAndConclusionForList(xmlContent, realDelElt, delElt);
                 Node sibling = getSiblingForRenumbering(realDelElt);
                 xmlContent = xmlContentProcessor.removeElementById(xmlContent, getId(realDelElt), false);
                 xmlContent = manageOnElementDeletion(xmlContent, getId(realDelElt.getParentNode()), null);
@@ -2067,13 +2067,14 @@ public class MergeContributionService {
         }
     }
 
-    private String updateInternalReferences(String xmlContentStr, List<InternalRefMap> map) {
+    private byte[] updateInternalReferences(byte[] xmlContent, List<InternalRefMap> map) {
+        String xmlContentStr = new String(xmlContent, UTF_8);
         for (InternalRefMap internalRefMap : map) {
             if (internalRefMap.getClonedRef() != null) {
                 xmlContentStr = xmlContentStr.replaceAll(internalRefMap.getClonedRef(), internalRefMap.getRef());
             }
         }
-        return xmlContentStr;
+        return xmlContentStr.getBytes(StandardCharsets.UTF_8);
     }
 
     private boolean isNodeAdded(Node node) {
@@ -2119,6 +2120,11 @@ public class MergeContributionService {
                 Node originalNode = getElementById(xmlContent, XercesUtils.getId(parentNode));
                 if (originalNode == null) {
                     return impactedNode;
+                } else if (parentNode != null && isListIntro(parentNode)) { // means that all element (point or paragraph) should be removed
+                    Node siblingList = getSibling(parentNode.getParentNode(), true);
+                    if (siblingList == null || !siblingList.getNodeName().equals(SUBPARAGRAPH)) {
+                        return parentNode.getParentNode().getParentNode();
+                    }
                 }
             }
         }
@@ -2188,6 +2194,7 @@ public class MergeContributionService {
                 relatedNode = XercesUtils.getElementById(xmlContent, subparaId);
             }
             if (relatedNode != null) {
+                replaceElement(subpara, nodeToString(relatedNode));
                 xmlContent = xmlContentProcessor.removeElementById(xmlContent, subparaId, false);
             }
         }
@@ -2196,8 +2203,10 @@ public class MergeContributionService {
 
     // If that's a list, we must check intro and conclusion, to not add sth already present
     // this method removes intro and conclusion from document content
-    private byte[] handleIntroAndConclusionForList(@NotNull byte[] xmlContent, @NotNull Node list) {
+    private byte[] handleIntroAndConclusionForList(@NotNull byte[] xmlContent, @NotNull Node list, @NotNull Node trackedNode) {
         if (list.getNodeName().equals(LIST)) {
+            list = createNodeFromXmlFragment(list.getOwnerDocument(), nodeToByteArray(list));
+            trackedNode = getElementById(list, getId(trackedNode));
             Node intro = XercesUtils.getFirstChild(list);
             xmlContent = handleSubparagraphsInList(xmlContent, intro);
             Node conclusion = getLastChild(list);
@@ -2317,7 +2326,7 @@ public class MergeContributionService {
             if (e.getNodeName().equals(RECITAL)) {
                 return this.numberService.renumberRecitals(xmlContent);
             } else if (e.getNodeName().equals(ARTICLE)) {
-                return this.numberService.renumberArticles(xmlContent);
+                return this.numberService.renumberArticles(xmlContent, true);
             }
             if (HIGHER_ELEMENTS.contains(e.getNodeName())) {
                 String language = documentLanguageContext.getDocumentLanguage();
