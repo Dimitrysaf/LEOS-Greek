@@ -300,6 +300,17 @@ public class LegServiceImpl implements LegService {
         return legDocumentVOs;
     }
 
+    @Override
+    public String fetchFeedbackRepliesByID(String documentRef, String proposalRef, String legFileId, String storedAnnots) {
+        LegDocument legDoc = findLegDocumentById(legFileId);
+        return annotateService.fetchFeedbackRepliesFromDB(documentRef, proposalRef, legDoc.getName(), storedAnnots, true);
+    }
+
+    @Override
+    public String fetchFeedbackRepliesByName(String documentRef, String proposalRef, String legFileName, String storedAnnots) {
+        return annotateService.fetchFeedbackRepliesFromDB(documentRef, proposalRef, legFileName, storedAnnots, true);
+    }
+
     private LegDocumentVO getLegDocumentVO(Proposal proposal, String legStatus) {
         LegDocumentVO legDocumentVO = null;
         List<LegDocument> legDocuments = findLegDocumentByProposal(proposal.getId());
@@ -1481,7 +1492,7 @@ public class LegServiceImpl implements LegService {
             if (exportOptions.isWithFeedbackAnnotations()) {
                 String annotations = getAnnotationsFromZipContent(contentToZip, docName);
                 String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
-                annotations = annotateService.fetchFeedbackRepliesFromDB(ref, proposalRef, legFileName, annotations);
+                annotations = annotateService.fetchFeedbackRepliesFromDB(ref, proposalRef, legFileName, annotations, false);
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
                 annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
