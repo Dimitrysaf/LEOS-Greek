@@ -10,7 +10,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { EuiDialogConfig, EuiDialogService } from '@eui/components/eui-dialog';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, combineLatest, map, Observable, take } from 'rxjs';
+import {BehaviorSubject, combineLatest, map, mergeMap, Observable, take} from 'rxjs';
 
 import { AppConfigService } from '@/core/services/app-config.service';
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
@@ -48,6 +48,8 @@ import {
   EXPORT_DROPDOWN_EXPORT_VERSION_WITH_ANNOTATIONS_ID,
   EXPORT_SECTION_DROPDOWN_ID,
   EXPORT_SECTION_ID,
+  MARK_AS_DONE_SECTION_ID,
+  MARK_AS_DONE_ACTION_ID,
   FINALIZE_ACTION_ID,
   FINALIZE_SECTION_ID,
   IMPORT_OJ_ACTION_ID,
@@ -269,7 +271,9 @@ export abstract class DocumentActionsService {
       this.pageMode === PageMode.Contribution &&
       this.buildMergeContributionsSection();
     const finalizeSection =
-      this.showMarkAsDoneButton && this.buildFinalizeSection();
+      this.isDocumentTypeTheSame(this.documentService.documentType, 'STAT_FINANC_LEGIS')
+      && this.buildFinalizeSection();
+    const leosLightSection =  this.showMarkAsDoneButton && this.buildMarkAsDoneSection();
     return [
       saveSection,
       importOJSection,
@@ -282,6 +286,7 @@ export abstract class DocumentActionsService {
       viewVersionSection,
       mergeContributionsSection,
       finalizeSection,
+      leosLightSection,
     ].filter(Boolean);
   }
 
@@ -883,14 +888,41 @@ export abstract class DocumentActionsService {
     return {
       type: IRibbonToolbarType.SECTION,
       id: FINALIZE_SECTION_ID,
+      label: this.translateService.instant('page.editor.toolbar-actions.section.finalisation.label'),
       order: 8,
       resizeOrder: 1,
-      sectionContainerCssClasses: 'overlay-finalize',
       cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
       children: [
         {
           type: IRibbonToolbarType.BUTTON,
           id: FINALIZE_ACTION_ID,
+          label: this.translateService.instant('page.editor.toolbar-actions.button.finalisation.label'),
+          description: this.translateService.instant(
+            'page.editor.toolbar-actions.button.finalisation.label',
+          ),
+          euiSize: 's',
+          euiStyle: 'secondary',
+          actionFn: () => {
+            this.finaliseDocument();
+          }
+        },
+      ],
+    };
+  }
+
+  private buildMarkAsDoneSection(): IRibbonToolbarSection {
+    return {
+      type: IRibbonToolbarType.SECTION,
+      id: MARK_AS_DONE_SECTION_ID,
+      label: this.translateService.instant('page.editor.toolbar-actions.section.leos.light.label'),
+      order: 9,
+      resizeOrder: 1,
+      sectionContainerCssClasses: 'overlay-leos-light',
+      cssClasses: 'eui-u-flex eui-u-flex-row app-u-gap-xs',
+      children: [
+        {
+          type: IRibbonToolbarType.BUTTON,
+          id: MARK_AS_DONE_ACTION_ID,
           label: this.translateService.instant('global.actions.mark.done'),
           description: this.translateService.instant(
             'global.actions.mark.done',
@@ -1051,5 +1083,14 @@ export abstract class DocumentActionsService {
 
   private canRejectTrackChanges() {
     return this.permissions?.includes('CAN_REJECT_CHANGES');
+  }
+
+  private finaliseDocument() {
+    this.documentService.saveVersion({
+      checkinComment: 'Before finalization',
+      versionType: 'MAJOR',
+    }).pipe(
+      mergeMap(() => this.documentService.finaliseDocument())
+    ).subscribe(() => this.documentService.reloadDocument());
   }
 }

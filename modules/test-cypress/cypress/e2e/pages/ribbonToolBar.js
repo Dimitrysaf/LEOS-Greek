@@ -14,7 +14,12 @@ class ribbonToolBar {
         seeTrackChangesToggleBtn: () => this.elements.seeTrackChangesSection().find('app-ribbon-toolbar-checkbox').eq(1).find('.eui-slide-toggle__container'),
         zoomValue: () => cy.get('span.zoom-value'),
         importFromOjBtn: () => cy.contains('Import from OJ '),
-        changeAnnexStructureBtn: () => cy.get('#STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID')
+        changeAnnexStructureBtn: () => cy.get('#STRUCTURE_CHANGE_ANNEX_STRUCTURE_ID'),
+        finaliseBtn: () => cy.get('#FINALIZE_ACTION_ID')
+    }
+
+    clickFinaliseBtn() {
+        this.elements.finaliseBtn().click();
     }
 
     clickEnableTrackChangesToggleBtn() {

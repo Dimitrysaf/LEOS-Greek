@@ -156,7 +156,7 @@ class JwtTokenService implements TokenService {
     private String createAccessToken(String user, String clientId, int tokenExpireInMin, String clientSecret, AuthClient authClient) {
         final Date now = Calendar.getInstance().getTime();
         return generateToken(clientId, null, null, now, now, tokenExpireInMin,
-                clientSecret, user, null, authClient);
+                clientSecret, user, null, null);
     }
 
     @Override
@@ -188,7 +188,7 @@ class JwtTokenService implements TokenService {
         }
         final Date now = Calendar.getInstance().getTime();
         return generateToken(authClient.getClientId(), null, null, now, now, CONTEXT_TOKEN_EXPIRE_IN_MIN,
-                authClient.getSecret(), user, role, authClient);
+                authClient.getSecret(), user, role, systemName);
     }
 
     @Override
@@ -200,7 +200,7 @@ class JwtTokenService implements TokenService {
     }
 
     private String generateToken(String clientId, String subject, String audience, Date issuedAt, Date notBefore,
-                                 int expireInMin, String secret, String user, String role, AuthClient authClient) {
+                                 int expireInMin, String secret, String user, String role, String systemName) {
         String token = null;
         try {
             Calendar expires = Calendar.getInstance();
@@ -225,9 +225,12 @@ class JwtTokenService implements TokenService {
                 builder.withClaim("role", role);
             }
 
-            if (authClient!=null) {
-                builder.withClaim("systemName", authClient.getName());
-                builder.withClaim("systemClientId", authClient.getClientId());
+            if (hasLength(systemName)) {
+                builder.withClaim("systemName", systemName);
+            }
+
+            if(hasLength(clientId)) {
+                builder.withClaim("systemClientId", clientId);
             }
 
             token = builder.sign(algorithm);

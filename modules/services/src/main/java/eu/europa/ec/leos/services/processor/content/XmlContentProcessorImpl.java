@@ -249,8 +249,26 @@ public abstract class XmlContentProcessorImpl implements XmlContentProcessor {
             Node childNode = nodeList.item(i);
             if (childNode.getNodeType() != Node.TEXT_NODE) {
                 doCleanSoftAction(childNode);
-                removeMiscAttributes(childNode);
                 cleanSoftActionForElement(childNode);
+            }
+        }
+    }
+
+    @Override
+    public byte[] cleanSoftActionsAndRemoveMiscAttributes(byte[] xmlContent) {
+        Document document = createXercesDocument(xmlContent);
+        cleanSoftActionAndRemoveMiscAttributesForElement(document);
+        return nodeToByteArray(document);
+    }
+
+    private void cleanSoftActionAndRemoveMiscAttributesForElement(Node node) {
+        NodeList nodeList = node.getChildNodes();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node childNode = nodeList.item(i);
+            if (childNode.getNodeType() != Node.TEXT_NODE) {
+                doCleanSoftAction(childNode);
+                removeMiscAttributes(childNode);
+                cleanSoftActionAndRemoveMiscAttributesForElement(childNode);
             }
         }
     }

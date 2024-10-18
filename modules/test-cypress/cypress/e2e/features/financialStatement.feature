@@ -66,3 +66,34 @@ Feature: financial statement page regression features
     And  content of subparagraph 2 of level 2 contains "Text..." in financial statement page
     When click on close button on financial statement page
     Then user is on act viewer page
+
+  @finaliseFinancialStatement @local
+  Scenario: finalise financial statement document
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing FS" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    And  title of the act contains "Automation Testing FS" keyword
+    When click on financial statement link present in act viewer page
+    Then user is on financial statement page
+    And  doctype is "LEGISLATIVE FINANCIAL AND DIGITAL STATEMENT"
+    And  content of level 2 contains "[...]" in financial statement page
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When mouseover and click on level 2 in financial statement page
+    Then ck editor window is displayed
+    And  pTag 1 of level contains "[...]" in edition mode
+    When select content from offset 0 to 5 of p tag 1 of level in edition mode
+    And  click delete button from keyboard in edition mode
+    And  append "text" at p tag 1 of level in edition mode
+    And  click save and close button of ck editor
+    Then content of level 2 has below content
+      | del | "[...]"                           |
+      | ins | "text"                            |
+    When click on finalise button in ribbon toolbar
+    Then content of level 2 contains "text" in financial statement page
+    When click on versions pane accordion
+    And  last subversion of recent changes version card contains "1.0.1Document finalised"

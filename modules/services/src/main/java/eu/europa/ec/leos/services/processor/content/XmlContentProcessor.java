@@ -83,6 +83,8 @@ public interface XmlContentProcessor {
 
     byte[] doXMLPostProcessing(byte[] xmlContent);
 
+    byte[] cleanSoftActionsAndRemoveMiscAttributes(byte[] xmlContent);
+
     byte[] cleanSoftActions(byte[] xmlContent);
 
     byte[] cleanSoftActionsForNode(byte[] xmlContent, List<TocItem> tocItemList);
