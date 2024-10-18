@@ -66,5 +66,9 @@ class annexPage {
     clickRefOfMRefOfLevel(mReferenceNumber, levelNumber){
         this.getLevel(levelNumber).find('mref').eq(mReferenceNumber-1).find('ref').click();
     }
+
+    checkLevelContainsImage(levelNumber){
+        return this.getLevel(levelNumber).find('img').should('exist');
+    }
 }
 export default new annexPage();

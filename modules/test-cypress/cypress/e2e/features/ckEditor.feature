@@ -197,7 +197,7 @@ Feature: CK Editor Regression Features
         And  content of paragraph 2 of article 1 contains tag "b"
         And  content of paragraph 2 of article 1 contains tag "i"
 
-    @ckEditorPlugin @local
+    @ckEditorPluginInAnnex @local
     Scenario: testing of different ck editor plugin in annexes
         Given navigate to edit drafting application with "User1"
         Then user is on home page
@@ -256,3 +256,12 @@ Feature: CK Editor Regression Features
         ### click the links of internal reference
         When click on internal reference link 1 of level 1
         Then level 3 of annex is displayed
+        ###########  insert image ###########
+        When click on edit icon of level 2
+        Then ck editor window is displayed
+        And  click on image icon present in ck editor panel
+        Then cke dialog window is displayed with title "Image"
+        And upload an image file from a relative location "the-quick-fox.jpg" in iframe "cke_dialog_ui_input_file"
+        And click dialog ok button
+        When click save and close button of ck editor
+        Then level 2 contains an image
