@@ -143,7 +143,7 @@ define(function leosTrackChangesPluginModule(require) {
                     if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
                         && !elementWithPseudoElt.getAttribute(core.ACTION_ATTR) && core.isMouseOverPseudoElt(elementWithPseudoElt, core.BEFORE, editor.LEOS.mousePosition)) {
                         editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
-                        if ((elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_NUM))
+                        if ((elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) && elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_NUM))
                             || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                             return {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
