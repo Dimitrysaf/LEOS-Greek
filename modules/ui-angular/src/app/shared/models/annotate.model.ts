@@ -22,7 +22,7 @@ export type AnnotateConnectorState = LeosJavaScriptExtensionState & {
   anotHost: string;
   oauthClientId: string;
   annotationPopupDefaultStatus: 'ON' | 'OFF';
-  isSpellCheckerEnabled: boolean;
+  spellCheckerName: string;
   spellCheckerServiceUrl: string;
   spellCheckerSourceUrl: string;
 

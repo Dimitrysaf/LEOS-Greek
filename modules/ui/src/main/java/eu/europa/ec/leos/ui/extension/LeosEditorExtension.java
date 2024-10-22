@@ -82,7 +82,7 @@ public class LeosEditorExtension<T extends AbstractComponent> extends LeosJavaSc
         this.eventBus = eventBus;
 
         getState().isImplicitSaveEnabled = Boolean.valueOf(cfgHelper.getProperty("implicitSaveAndClose.enabled"));
-        getState().isSpellCheckerEnabled = Boolean.valueOf(cfgHelper.getIntegrationProperty("leos.spell.checker.enabled"));
+        getState().spellCheckerName = cfgHelper.getIntegrationProperty("leos.spell.checker");
         getState().spellCheckerServiceUrl = cfgHelper.getIntegrationProperty("leos.spell.checker.service.url");
         getState().spellCheckerSourceUrl = cfgHelper.getIntegrationProperty("leos.spell.checker.source.url");
         getState().tocItemsJsonArray = toJsonString(tocItemList);

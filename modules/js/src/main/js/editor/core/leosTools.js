@@ -19,9 +19,29 @@ define(function leosToolsModule(require) {
         return require.toUrl(resource);
     }
 
+    async function loadExternalJs(url) {
+        var script = document.createElement('script');
+        script.src = url;
+        document.head.appendChild(script);
+        return new Promise((resolve, reject) => {
+            const timer = setTimeout(() => {
+                reject(new Error(`Loading script timed out: ${url}`));
+            }, 1000);
+            script.onload = () => {
+                clearTimeout(timer);
+                resolve(url);
+            };
+            script.onerror = () => {
+                clearTimeout(timer); // Clear the timeout on error
+                reject(new Error(`Failed to load script: ${url}`));
+            };
+        });
+    }
+
     // return module definition
     var leosTools = {
-        toUrl: toUrl
+        toUrl: toUrl,
+        loadExternalJs: loadExternalJs
     };
 
     return leosTools;

@@ -15,11 +15,32 @@
 define(function leosSpellCheckerPluginModule(require) {
     'use strict';
 
-    // load module dependencies
     var log = require("logger");
+    var UTILS = require("core/leosUtils");
     var pluginTools = require('plugins/pluginTools');
-
     var pluginName = 'leosSpellChecker';
+
+    function _addConfigQAS(doc, serviceUrl) {
+        if (!doc.getElementById('qas-config')) {
+            var script = doc.createElement('script');
+            script.id = "qas-config"
+            script.innerHTML = `{
+                window.SPELLCHECKER_CONFIG = {
+                    SUGGESTIONS_LIMIT: 4,
+                    LANGUAGE: "en-GB",
+                    API_PROTOCOL: '${serviceUrl.protocol.substring(0, serviceUrl.protocol.length - 1)}', 
+                    API_URL: '${serviceUrl.hostname}',
+                    API_RESOURCE_PATH_CHECK: "/check", 
+                    API_RESOURCE_PATH_LANGUAGES: "/languages", 
+                    APPLICATION_SUPPLIED_LANGUAGE: false,
+                    DISABLE_USER_CHOICE_LANGUAGE: false,// Disabled for cypress tests
+                    DISABLE_USER_CHOICE_PROOFREADING_CHECKS: false,
+                    isLeos: true
+                };
+            }`;
+            doc.body.appendChild(script);
+        }
+    }
 
     function _addConfig(doc, serviceUrl) {
         if (!doc.getElementById('lsc-config')) {
@@ -61,21 +82,24 @@ define(function leosSpellCheckerPluginModule(require) {
 
     var pluginDefinition = {
         init: function init(editor) {
-            if (editor.LEOS.isSpellCheckerEnabled) {
+            if (editor.LEOS.spellCheckerName === UTILS.SPELLCHECKER.wsc) {
                 editor.disableAutoInline = true;
                 editor.config.removePlugins = 'scayt,wsc';
                 _addConfig(document, new URL(editor.LEOS.spellCheckerServiceUrl));
-                _addScript(document, `${editor.LEOS.spellCheckerSourceUrl}`);
+                _addScript(document, editor.LEOS.spellCheckerSourceUrl);
+            }
+            if (editor.LEOS.spellCheckerName === UTILS.SPELLCHECKER.qas) {
+                editor.disableAutoInline = true;
+                editor.config.removePlugins = 'scayt,wsc';
+                _addConfigQAS(document, new URL(editor.LEOS.spellCheckerServiceUrl));
             }
         }
     };
 
     pluginTools.addPlugin(pluginName, pluginDefinition);
 
-    // return plugin module
     var pluginModule = {
         name: pluginName
     };
-
     return pluginModule;
 });

@@ -559,15 +559,7 @@ export class CKEditorService {
     );
     delete config['implicitSaveAndClose'];
 
-    Object.defineProperty(
-      config,
-      'isSpellCheckerEnabled',
-      Object.getOwnPropertyDescriptor(config, 'spellCheckerEnabled'),
-    );
-    config.isSpellCheckerEnabled = JSON.stringify(
-      oldConfig.spellCheckerEnabled,
-    ) === 'true';
-    delete config['spellCheckerEnabled'];
+    config['spellCheckerName'] = oldConfig.spellCheckerName;
 
     config['refConfigs'] = oldConfig.refConfigs;
 

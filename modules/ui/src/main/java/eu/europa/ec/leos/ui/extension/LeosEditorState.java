@@ -24,7 +24,7 @@ public class LeosEditorState extends LeosJavaScriptExtensionState {
     public String[] permissions;
 
     public boolean isImplicitSaveEnabled;
-    public boolean isSpellCheckerEnabled;
+    public String spellCheckerName;
     public String spellCheckerServiceUrl;
     public String spellCheckerSourceUrl;
 

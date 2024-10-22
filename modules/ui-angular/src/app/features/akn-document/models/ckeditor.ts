@@ -4,7 +4,7 @@ import {LeosMetadata, LevelItemVO, Permission, Role} from '@/shared';
 export type CkeditorConnectorState = LeosJavaScriptExtensionState & {
   instanceType: string;
   isImplicitSaveEnabled: boolean;
-  isSpellCheckerEnabled: boolean;
+  spellCheckerName: string;
   spellCheckerServiceUrl: string;
   spellCheckerSourceUrl: string;
   tocItemsJsonArray: TocItem[];

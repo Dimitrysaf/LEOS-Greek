@@ -29,7 +29,7 @@ public class AnnotateState extends LeosJavaScriptExtensionState {
     public String annotationPopupDefaultStatus;
     public String proposalRef;
     public String connectedEntity;
-    public boolean isSpellCheckerEnabled;
+    public String spellCheckerName;
     public String spellCheckerServiceUrl;
     public String spellCheckerSourceUrl;
     public String temporaryDataId;
