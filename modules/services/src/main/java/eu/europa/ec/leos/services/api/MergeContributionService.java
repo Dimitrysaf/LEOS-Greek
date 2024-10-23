@@ -1874,13 +1874,15 @@ public class MergeContributionService {
     }
 
     private void setActionAttribute(Node doc, String elementId, String action) {
-        Node contributionNode = XercesUtils.getElementById(doc, elementId);
-        XercesUtils.insertOrUpdateAttributeValue(contributionNode, LEOS_MERGE_ACTION_ATTR, action);
-        if (!HIGHER_ELEMENTS.contains(contributionNode.getNodeName())) {
-            List<Node> descendants = XercesUtils.getDescendants(contributionNode, mainElements);
-            for (Node descendant : descendants) {
-                if (!XercesUtils.hasAttribute(descendant, LEOS_MERGE_ACTION_ATTR)) {
-                    XercesUtils.insertOrUpdateAttributeValue(descendant, LEOS_MERGE_ACTION_ATTR, action);
+        List<Node> contributionNodes = XercesUtils.getElementsById(doc, elementId);
+        for (Node contributionNode : contributionNodes) {
+            XercesUtils.insertOrUpdateAttributeValue(contributionNode, LEOS_MERGE_ACTION_ATTR, action);
+            if (!HIGHER_ELEMENTS.contains(contributionNode.getNodeName())) {
+                List<Node> descendants = XercesUtils.getDescendants(contributionNode, mainElements);
+                for (Node descendant : descendants) {
+                    if (!XercesUtils.hasAttribute(descendant, LEOS_MERGE_ACTION_ATTR)) {
+                        XercesUtils.insertOrUpdateAttributeValue(descendant, LEOS_MERGE_ACTION_ATTR, action);
+                    }
                 }
             }
         }

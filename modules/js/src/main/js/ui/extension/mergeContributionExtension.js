@@ -317,6 +317,7 @@ define(function mergeContributionExtensionModule(require) {
         wrappedEltsList.push(UTILS.HEADING);
         wrappedEltsList.push(UTILS.BLOCKCONTAINER);
         wrappedEltsList.push(UTILS.LEVEL);
+        wrappedEltsList.push(UTILS.DOCPURPOSE);
         MAIN_ELEMENT_SELECTOR = wrappedEltsList.join(',');
         _registerActionTriggers(connector);
     }
