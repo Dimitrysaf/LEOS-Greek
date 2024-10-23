@@ -12,6 +12,7 @@ class ckEditorWindow {
         subScriptBtn: () => cy.get('.cke_button__subscript'),
         superScriptBtn: () => cy.get('.cke_button__superscript'),
         insertSpecialCharacterIcon: () => cy.get('.cke_button__specialchar'),
+        insertImageIcon: () => cy.get('.cke_button__base64image'),
         showBlockBtn: () => cy.get('.cke_button__leosshowblocks'),
         sourceBtn: () => cy.get('.cke_button__sourcedialog'),
         internalReferenceIcon: () => cy.get('a.cke_button__leoscrossreference'),
@@ -31,6 +32,11 @@ class ckEditorWindow {
         pTag: () => this.elements.ckEditableInline().find('p'),
         ckEditorDialogHtml: () => cy.get('.cke_dialog_ui_html'),
         ckEditorDialogOkBtn: () => cy.get('.cke_dialog_ui_button_ok'),
+    }
+
+    uploadImageFile(location, iframeClass){
+        const iframe = cy.get("." + iframeClass).eq(1).its('0.contentDocument.body').then(cy.wrap);
+        iframe.find("input[type='file']").invoke('show').selectFile(location).wait(200);
     }
 
     replaceContentInDocPurpose(content) {
@@ -132,6 +138,10 @@ class ckEditorWindow {
 
     clickInsertSpecialCharacterIcon(){
         this.elements.insertSpecialCharacterIcon().click();
+    }
+
+    clickInsertImageIcon(){
+        this.elements.insertImageIcon().click();
     }
 
     clickDecreaseIndentIcon() {

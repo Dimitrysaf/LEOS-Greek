@@ -15,6 +15,7 @@ package eu.europa.ec.leos.services.utils;
 
 import eu.europa.ec.leos.services.structure.lang.LanguageMapHolder;
 import eu.europa.ec.leos.vo.structure.Attribute;
+import eu.europa.ec.leos.vo.structure.AutoNumbering;
 import eu.europa.ec.leos.vo.structure.LangNumConfig;
 import eu.europa.ec.leos.vo.structure.Level;
 import eu.europa.ec.leos.vo.structure.NumberingConfig;
@@ -341,7 +342,8 @@ public class StructureConfigUtils {
 
     public static boolean isAutoNumberingEnabled(List<TocItem> tocItems, String elementName, String language) {
         TocItem tocItem = getTocItemByName(tocItems, elementName);
-        return tocItem != null && (getLangNumConfigByLanguage(tocItem.getAutoNumbering().getLangNumConfigs(), language).isAuto());
+        AutoNumbering autoNumbering = tocItem != null ? tocItem.getAutoNumbering() : null;
+        return autoNumbering != null && (getLangNumConfigByLanguage(autoNumbering.getLangNumConfigs(), language).isAuto());
     }
 
     public static LangNumConfig getLangNumConfigByLanguage(List<LangNumConfig> langNumConfigs, String lang) {

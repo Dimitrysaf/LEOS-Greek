@@ -96,7 +96,7 @@
   ); // Very faint red color with adjusted opacity
 }
 
-.overlay-finalize {
+.overlay-leos-light {
   @include overlay-style(
     rgba(172, 194, 230, 0.2),
     rgb(82, 120, 168)

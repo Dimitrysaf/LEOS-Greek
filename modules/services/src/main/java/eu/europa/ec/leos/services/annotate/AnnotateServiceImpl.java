@@ -7,6 +7,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.europa.ec.leos.integration.rest.AnnotateStatusResponse;
 import eu.europa.ec.leos.integration.rest.SendTemporaryAnnotationsResponse;
 import eu.europa.ec.leos.security.LeosPermission;
@@ -79,7 +80,7 @@ public class AnnotateServiceImpl implements AnnotateService {
     }
 
     @Override
-    public String fetchFeedbackRepliesFromDB(String docName, String proposalRef, String legFileName, String storedAnnotations) {
+    public String fetchFeedbackRepliesFromDB(String docName, String proposalRef, String legFileName, String storedAnnotations, boolean setFlag) {
         URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/search")
                 .queryParam("_separate_replies", true)
                 .queryParam("group", "__world__")
@@ -101,11 +102,24 @@ public class AnnotateServiceImpl implements AnnotateService {
             JsonNode storedRepliesJson = storedAnnotsJson.get("replies");
             for (final JsonNode reply : repliesAnnots) {
                 boolean found = false;
-                JsonNode refs = reply.get("references");
-                for (final JsonNode storedAnnot : rowStoredAnnotsJson) {
-                    if (storedAnnot.get("id").asText("").equals(refs.get(0).asText("ref"))) {
-                        found = true;
+                boolean isAlreadyStored = false;
+                for (final JsonNode storedReplyAnnot : storedRepliesJson) {
+                    if (reply.get("id").asText("").equals(storedReplyAnnot.get("id").asText("id"))) {
+                        isAlreadyStored = true;
+                        ((ObjectNode) storedReplyAnnot).remove("feedbackReply");
                         break;
+                    }
+                }
+                if (!isAlreadyStored) {
+                    JsonNode refs = reply.get("references");
+                    for (final JsonNode storedAnnot : rowStoredAnnotsJson) {
+                        if (storedAnnot.get("id").asText("").equals(refs.get(0).asText("ref"))) {
+                            if (setFlag) {
+                                ((ObjectNode) reply).put("feedbackReply", true);
+                            }
+                            found = true;
+                            break;
+                        }
                     }
                 }
                 if (found) {

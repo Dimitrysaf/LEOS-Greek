@@ -1,5 +1,5 @@
 /** AKA `DocumentVO` in Java code */
-import {DocumentRole, Profile} from '@/shared';
+import {DocumentRole, Profile, Role} from '@/shared';
 
 import { TocItem } from './toc.model';
 
@@ -113,7 +113,7 @@ export interface DocumentConfig {
   trackChangesShowed: boolean;
   clonedProposal: boolean;
   langGroup: string;
-  contextRole: string;
+  contextRole: DocumentRole;
   profile: Profile;
   leosSwitchLevelArticle: boolean;
 }

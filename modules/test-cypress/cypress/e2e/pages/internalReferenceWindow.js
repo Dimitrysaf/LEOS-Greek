@@ -5,9 +5,11 @@ class internalReferenceWindow {
         bill: () => this.elements.legalActTabPanel().find('bill'),
         article: () => this.elements.bill().find('article'),
         navigationPane: () => cy.get("div[role='tabpanel'][name^='REG'] div[title='Navigation pane']"),
+        annexNavigationPane: () => cy.get("div[role='tabpanel'][name^='ANNEX'] div[title='Navigation pane']"),
         citationList: () => this.elements.navigationPane().contains('Citations').next("ul[role='group']"),
         recitalList: () => this.elements.navigationPane().contains('Recitals').next("ul[role='group']"),
-        articleList: () => this.elements.navigationPane().contains('Enacting Terms').next("ul[role='group']")
+        articleList: () => this.elements.navigationPane().contains('Enacting Terms').next("ul[role='group']"),
+        levelList: () => this.elements.annexNavigationPane().contains('Body').next("ul[role='group']")
     }
 
     clickParagraphOfArticle(paragraphNumber){
@@ -28,6 +30,10 @@ class internalReferenceWindow {
 
     clickRecitalLink(link){
         this.elements.recitalList().contains(link).click();
+    }
+
+    clickAnnexLink(link){
+        this.elements.levelList().contains(link).click();
     }
 }
 export default new internalReferenceWindow();

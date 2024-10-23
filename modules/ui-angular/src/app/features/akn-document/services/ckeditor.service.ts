@@ -236,11 +236,10 @@ export class CKEditorService {
         instanceType: process.env.NG_APP_LEOS_INSTANCE,
         tocItemsJsonArray: leosState.tocItemsJsonArray,
         tocEdition: leosState.tocEdition,
+        hasUpdatePermission: leosState.permissions && leosState.permissions.includes('CAN_UPDATE'),
       },
       { rootElement },
     );
-
-    this.actionManagerConnector.getState().hasUpdatePermission = this.documentService.hasUpdatePermission();
 
     require(['extension/actionManagerExtension'], (actionManager) => {
       actionManager.init(this.actionManagerConnector);
@@ -582,7 +581,7 @@ export class CKEditorService {
       profileTCEnabled && oldConfig.trackChangesShowed;
     config['isTrackChangesEnabled'] =
       profileTCEnabled && oldConfig.trackChangesEnabled;
-    config['permissions'] = oldConfig.userAppPermissions;
+    config['permissions'] = this.documentService.getUserPermissions();
 
     return config;
   }

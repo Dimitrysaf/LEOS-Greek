@@ -50,7 +50,6 @@ import eu.europa.ec.leos.services.store.WorkspaceService;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -63,7 +62,6 @@ import java.util.List;
 import java.util.Map;
 
 import static eu.europa.ec.leos.services.api.ApiServiceImpl.DOC_VERSION_SEPARATOR;
-import static eu.europa.ec.leos.services.collection.milestone.helpers.MilestoneHelper.PROCESSED;
 import static eu.europa.ec.leos.util.LeosDomainUtil.CMIS_PROPERTY_SPLITTER;
 import static eu.europa.ec.leos.util.LeosDomainUtil.wrapXmlFragment;
 
@@ -231,11 +229,11 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
     public String getFeedbackAnnotationsFromLeg(String legFileId, String documentRef, String proposalRef,
                                                 boolean removeRevisionPrefix) throws IOException {
         String result = legService.getFeedbackAnnotationsFromLeg(legFileId, documentRef, proposalRef);
-
         if (removeRevisionPrefix) {
             result = result.replaceAll("revision-", "");
         } else {
             result = legService.removePermissionsStoredAnnotationsFromId(result, documentRef, legFileId);
+            result = legService.fetchFeedbackRepliesByID(documentRef, proposalRef, legFileId, result);
         }
         return result;
     }
@@ -253,6 +251,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
                 result = result.replaceAll("revision-", "");
             } else {
                 result = legService.removePermissionsStoredAnnotations(result, documentRef, legDocument.getName());
+                result = legService.fetchFeedbackRepliesByName(documentRef, proposalRef, legDocument.getName(), result);
             }
             return result;
         } catch (Exception e) {
@@ -273,6 +272,7 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
                 result = result.replaceAll("revision-", "");
             } else {
                 result = legService.removePermissionsStoredAnnotations(result, documentRef, legFileName);
+                result = legService.fetchFeedbackRepliesByName(documentRef, proposalRef, legFileName, result);
             }
             return result;
         } catch (Exception e) {
@@ -286,15 +286,16 @@ public abstract class DocumentApiServiceImpl implements DocumentApiService {
         try {
             LeosPackage leosPackage = packageService.findPackageByDocumentRef(documentRef, XmlDocument.class);
 
-                LegDocument legDoc = legService.findLastContribution(leosPackage.getPath(), legFileName);
-                String result = legService.getFeedbackAnnotationsFromLeg(legDoc.getId(), documentRef, proposalRef);
+            LegDocument legDoc = legService.findLastContribution(leosPackage.getPath(), legFileName);
+            String result = legService.getFeedbackAnnotationsFromLeg(legDoc.getId(), documentRef, proposalRef);
 
-                if (removeRevisionPrefix) {
-                    result = result.replaceAll("revision-", "");
-                } else {
-                    result = legService.removePermissionsStoredAnnotations(result, documentRef, legFileName);
-                }
-                return result;
+            if (removeRevisionPrefix) {
+                result = result.replaceAll("revision-", "");
+            } else {
+                result = legService.removePermissionsStoredAnnotations(result, documentRef, legFileName);
+                result = legService.fetchFeedbackRepliesByName(documentRef, proposalRef, legFileName, result);
+            }
+            return result;
         } catch (IOException e) {
             return "";
         }

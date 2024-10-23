@@ -71,13 +71,13 @@ public class XmlContentProcessorMandate_CleanSoftActionTest extends XmlContentPr
      * 12) Delete Article 5(Points) (DELETE list, subparagraph will remain without a list)
      */
     @Test
-    public void test_bill_cleanSoftActions() {
+    public void test_bill_cleanSoftActionsAndRemoveMiscAttributes() {
         // Given
         final byte[] xmlContent = TestUtils.getFileContent(FOLDER,"test_bill_cleanSoftActions.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FOLDER,"test_bill_cleanSoftActions__expected.xml");
 
         // When
-        final byte[] resolvedContent = xercesXmlContentProcessor.cleanSoftActions(xmlContent);
+        final byte[] resolvedContent = xercesXmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
 
         // Then
         String result = squeezeXml(new String(resolvedContent));
@@ -118,13 +118,13 @@ public class XmlContentProcessorMandate_CleanSoftActionTest extends XmlContentPr
      * 7) Add new Level on top (will be -2)  (ADD)
      */
     @Test
-    public void test_annex_cleanSoftActions() {
+    public void test_annex_cleanSoftActionsAndRemoveMiscAttributes() {
         // Given
         final byte[] xmlContent = TestUtils.getFileContent(FOLDER,"test_annex_cleanSoftActions.xml");
         final byte[] xmlExpected = TestUtils.getFileContent(FOLDER,"test_annex_cleanSoftActions__expected.xml");
 
         // When
-        final byte[] resolvedContent = xercesXmlContentProcessor.cleanSoftActions(xmlContent);
+        final byte[] resolvedContent = xercesXmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
 
         // Then
         String result = squeezeXml(new String(resolvedContent));

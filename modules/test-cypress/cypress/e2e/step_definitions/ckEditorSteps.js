@@ -1,5 +1,6 @@
 import { When, And, Then } from "cypress-cucumber-preprocessor/steps";
 import ckEditorWindow from "../pages/ckEditorWindow";
+import annexPage from "../pages/annexPage";
 
 And('click delete button from keyboard in edition mode', () => {
     ckEditorWindow.clickDeleteFromKeyboardWhenCKEditorOpen();
@@ -441,6 +442,10 @@ Then('authorial note with marker {int} and title {string} is present inside reci
     ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
 });
 
+Then('authorial note with marker {int} and title {string} is present inside level in edition mode', function (markerNumber, title) {
+    ckEditorWindow.getAuthorialNoteWithMarkerNumber(markerNumber).should('have.attr', 'title', title);
+});
+
 Then('numbered paragraph {int} of article contains text {string} in edition mode', function (paragraphNumber, text) {
     ckEditorWindow.getParagraphElementOfArticle(paragraphNumber, 'paragraph').should('include.text', text);
 });
@@ -467,4 +472,24 @@ When('add {string} at offset {int} in paragraph in edition mode', function (newC
 
 When(/^click on paragraph mode icon two times present in ck editor panel$/, function () {
     ckEditorWindow.clickTwoTimesParagraphModeIcon();
+});
+
+When(`click on internal reference link {int} of level {int}`, (mReferenceNumber, levelNumber) => {
+    annexPage.clickRefOfMRefOfLevel(mReferenceNumber, levelNumber);
+});
+
+Then(`level {int} of annex is displayed`, (levelNumber) => {
+    annexPage.getLevel(levelNumber).should('be.visible');
+});
+
+When(`click on image icon present in ck editor panel`, () => {
+    ckEditorWindow.clickInsertImageIcon();
+});
+
+When(`upload an image file from a relative location {string} in iframe {string}`, (location, iframeClass) => {
+    ckEditorWindow.uploadImageFile("cypress/fixtures/images/" + location, iframeClass);
+});
+
+Then(`level {int} contains an image`, (levelNumber) => {
+    annexPage.checkLevelContainsImage(levelNumber);
 });

@@ -89,6 +89,7 @@ public class ConfigServiceImpl implements ConfigService {
             profile = profileService.getProfile(tokenService.extractUserSystemNameFromToken(clientContextToken));
         }*/
         boolean leosSwitchLevelArticle = Boolean.parseBoolean(applicationProperties.getProperty("leos.switch.level.article"));
+        int minSearchChar = Integer.parseInt(applicationProperties.getProperty("leos.search.on.minimum.characters"));
 
         appConfigResponse.setMappingUrl(mappingUrl);
         appConfigResponse.setImplicitSaveAndClose(implicitSaveEnabled);
@@ -113,6 +114,7 @@ public class ConfigServiceImpl implements ConfigService {
         appConfigResponse.setContextRole(contextRole);
         appConfigResponse.setProfile(profile);
         appConfigResponse.setLeosSwitchLevelArticle(leosSwitchLevelArticle);
+        appConfigResponse.setSearchOnMinimumCharacter(minSearchChar);
 
         return appConfigResponse;
     }

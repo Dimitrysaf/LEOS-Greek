@@ -34,5 +34,41 @@ class annexPage {
     getContentOfAnnex(levelNumber) {
         return cy.xpath("//level[" + levelNumber + "]//content//aknp");
     }
+
+    getRowFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
+        return this.getSubparagraphFromLevel(subparagraphNumber, levelNumber).find('table tbody tr');
+    }
+
+    getColumnFromTableOfSubparagraphFromLevel(subparagraphNumber, levelNumber) {
+        return this.getSubparagraphFromLevel(subparagraphNumber,  levelNumber).find('table tbody tr').eq(0).find('td');
+    }
+
+    getSubparagraphFromLevel(subparagraphNumber, levelNumber) {
+        return this.getLevel(levelNumber).children('subparagraph').eq(subparagraphNumber-1);
+    }
+
+    getLevel(levelNumber) {
+        return this.elements.level().eq(levelNumber-1);
+    }
+
+    getAuthorialNoteWithMarkerNumberFromLevel(levelNumber, markerNumber) {
+        return this.getLevel(levelNumber).find("authorialnote[marker='"+markerNumber+"']");
+    }
+
+    clickAuthorialNoteWithMarkerNumberFromLevel(levelNumber, markerNumber) {
+        this.getAuthorialNoteWithMarkerNumberFromLevel(levelNumber, markerNumber).click();
+    }
+
+    getMRefTextFromLevel(mReferenceNumber,levelNumber){
+        return this.getLevel(levelNumber).find('mref').eq(mReferenceNumber-1);
+    }
+
+    clickRefOfMRefOfLevel(mReferenceNumber, levelNumber){
+        this.getLevel(levelNumber).find('mref').eq(mReferenceNumber-1).find('ref').click();
+    }
+
+    checkLevelContainsImage(levelNumber){
+        return this.getLevel(levelNumber).find('img').should('exist');
+    }
 }
 export default new annexPage();

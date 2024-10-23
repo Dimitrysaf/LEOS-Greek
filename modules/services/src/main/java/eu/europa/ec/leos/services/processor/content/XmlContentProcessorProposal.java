@@ -77,6 +77,7 @@ import static eu.europa.ec.leos.services.support.XmlHelper.HEADING;
 import static eu.europa.ec.leos.services.support.XmlHelper.INDENT;
 import static eu.europa.ec.leos.services.support.XmlHelper.INTRO;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ACTION_ATTR;
+import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DELETABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_DEPTH_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_EDITABLE_ATTR;
 import static eu.europa.ec.leos.services.support.XmlHelper.LEOS_ID_TO_BE_REMOVED;
@@ -392,6 +393,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             XercesUtils.deleteElement(nodeToBeRemoved);
         } else {
             restoreSoftMovedElementMarkedWithAttribute(nodeToBeRemoved);
+            XercesUtils.removeAttribute(nodeToBeRemoved, LEOS_DELETABLE_ATTR);
         }
         return nodeToByteArray(document);
     }
@@ -690,7 +692,7 @@ public class XmlContentProcessorProposal extends XmlContentProcessorImpl {
             parentNode = parentNode.getParentNode();
         }
         try {
-            if (ELEMENTS_TO_BE_NUMBERED.contains(tagName)) {
+            if (ELEMENTS_TO_BE_NUMBERED.contains(tagName) && parentNode != null) {
                 numberProcessorHandler.renumberElement(parentNode, tagName, true, "EN");
                 coEditionContext.addUpdatedElement(getId(parentNode), parentNode.getNodeName(), nodeToString(parentNode), null);
             }

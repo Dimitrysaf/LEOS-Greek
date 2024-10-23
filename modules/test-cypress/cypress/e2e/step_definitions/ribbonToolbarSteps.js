@@ -1,6 +1,10 @@
 import {When, Then} from "cypress-cucumber-preprocessor/steps";
 import ribbonToolbar from "../pages/ribbonToolBar";
 
+When(`click on finalise button in ribbon toolbar`, () => {
+    ribbonToolbar.clickFinaliseBtn();
+})
+
 When(`click on change annex structure in ribbon toolbar`, () => {
     ribbonToolbar.clickChangeAnnexStructureBtn();
 });

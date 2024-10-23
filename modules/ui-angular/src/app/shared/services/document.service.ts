@@ -195,8 +195,7 @@ export class DocumentService {
     isSaved: false,
   });
   private refreshViewBS = new BehaviorSubject<DocumentViewResponse>(null);
-  private documentRefAndCategoryBS =
-    new BehaviorSubject<DocumentRefAndCategory | null>(null);
+  private documentRefAndCategoryBS = new BehaviorSubject<DocumentRefAndCategory | null>(null);
   private updatedContentToSaveAfterReplace: string = null;
   private isDocumentLoadedBS = new BehaviorSubject<boolean>(false);
   private searchResultsCounterBS = new BehaviorSubject<number>(0);
@@ -231,7 +230,7 @@ export class DocumentService {
   private refreshAnnotateCall?: () => void;
   private currentDocumentRef: string;
   private currentConfig: DocumentConfig;
-  private checkUpdatePermission: boolean;
+  private minSearchChar: number;
 
   constructor(
     private http: HttpClient,
@@ -244,6 +243,9 @@ export class DocumentService {
     private tocService: TableOfContentService,
     private envService: EnvironmentService,
   ) {
+    appConfig.config.subscribe((conf) => {
+      this.minSearchChar = conf.searchOnMinimumCharacter;
+    });
     this.trackChangesStatus$ = this.trackChangesStatusBS.asObservable();
     this.isClonedProposal$ = this.isClonedProposalBS.asObservable();
     this.didDocumentLoadAndRender$ = this.isDocumentLoadedBS.asObservable();
@@ -338,14 +340,14 @@ export class DocumentService {
         mergeMap((doc) => this.getCollaborators(doc.proposalRef)),
       )
       .subscribe((collaborators) => this.collaboratorsBS.next(collaborators));
-    this.permissions$ = this.permissionsBS.asObservable();
+    this.permissions$ = this.permissionsBS.asObservable().pipe(filter(v => v != null && v.length > 0));
     this.userRoles$ = this.userRolesBS.asObservable();
     this.collaborators$
-      .pipe(combineLatestWith(this.appConfig.config))
-      .subscribe(([collaborators, config]) => {
-        const roles = this.resolveRoles(collaborators, config);
+      .pipe(combineLatestWith(this.appConfig.config, this.documentConfig$))
+      .subscribe(([collaborators, config, documentConfig]) => {
+        const roles = this.resolveRoles(collaborators, config, documentConfig);
         this.userRolesBS.next(roles);
-        const permissions = this.resolvePermissions(collaborators, config);
+        const permissions = this.resolvePermissions(collaborators, config, documentConfig);
         this.permissionsBS.next(permissions);
       });
 
@@ -377,10 +379,7 @@ export class DocumentService {
   }
 
   hasUpdatePermission() {
-    this.permissions$.pipe(take(1)).subscribe((permissions) => {
-      this.checkUpdatePermission = permissions.includes('CAN_UPDATE');
-    })
-    return this.checkUpdatePermission;
+    return this.permissions$.pipe(map(permissions => permissions.includes('CAN_UPDATE')));
   }
 
   clearDocumentState() {
@@ -1178,6 +1177,15 @@ export class DocumentService {
     );
   }
 
+  finaliseDocument() {
+    const documentType = this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
+    return this.http
+      .post<DocumentViewResponse>(
+        `${apiBaseUrl}/secured/${documentType}/${this.documentRef}/finalise-document`,
+        {},
+      );
+  }
+
   renumberDocument() {
     const documentType =
       this.documentType === 'coverpage' ? 'coverPage' : this.documentType;
@@ -1301,7 +1309,7 @@ export class DocumentService {
   }
 
   private doSearch(parameters: DocumentSearchParams) {
-    if (parameters.searchText !== '') {
+    if (parameters.searchText !== '' && parameters.searchText.length >= this.minSearchChar) {
       this.currentSearchResults = [];
       this.http
         .post<SearchMatchVO[]>(
@@ -1505,9 +1513,9 @@ export class DocumentService {
     return [];
   }
 
-  private resolveRoles(collaborators: Collaborator[], config: LeosAppConfig) {
+  private resolveRoles(collaborators: Collaborator[], config: LeosAppConfig, documentConfig: DocumentConfig) {
     const docRoles = this.retrieveAuthority(collaborators, config);
-    return [...config.user.roles, ...docRoles, config.contextRole].filter(
+    return [...config.user.roles, ...docRoles, documentConfig.contextRole].filter(
       Boolean,
     );
   }
@@ -1515,9 +1523,13 @@ export class DocumentService {
   private resolvePermissions(
     collaborators: Collaborator[],
     config: LeosAppConfig,
+    documentConfig: DocumentConfig
   ) {
     const docRoles = this.retrieveAuthority(collaborators, config);
-    const roles = [...config.user.roles, ...docRoles, config.contextRole];
+    const roles = [...config.user.roles, ...docRoles];
+    if(documentConfig.contextRole) {
+      roles.push(documentConfig.contextRole);
+    }
     const permissions = roles.flatMap((r) => config.permissionsMap[r]);
     return [...new Set(permissions)];
   }

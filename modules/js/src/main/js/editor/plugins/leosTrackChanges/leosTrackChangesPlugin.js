@@ -29,7 +29,7 @@ define(function leosTrackChangesPluginModule(require) {
     var pluginDefinition = {
         init: function init(editor) {
             // Plugin not allowed COUNCIL
-            if (editor.LEOS.instanceType === "COUNCIL" || !editor.LEOS.isTrackChangesEnabled) {
+            if (editor.LEOS.instanceType === "COUNCIL") {
                 return;
             }
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
@@ -143,7 +143,7 @@ define(function leosTrackChangesPluginModule(require) {
                     if (elementWithPseudoElt && (elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER))
                         && !elementWithPseudoElt.getAttribute(core.ACTION_ATTR) && core.isMouseOverPseudoElt(elementWithPseudoElt, core.BEFORE, editor.LEOS.mousePosition)) {
                         editor.getSelection().fake(new CKEDITOR.dom.element(elementWithPseudoElt));
-                        if ((elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) && !elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_NUM))
+                        if ((elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_NUMBER) && elementWithPseudoElt.getAttribute(leosPluginUtils.DATA_AKN_NUM))
                             || elementWithPseudoElt.getAttribute(core.DATA_AKN_ACTION_ENTER)) {
                             return {
                                 acceptOneChangeItem: canUserAcceptChanges ? CKEDITOR.TRISTATE_OFF : CKEDITOR.TRISTATE_DISABLED,
@@ -568,8 +568,8 @@ define(function leosTrackChangesPluginModule(require) {
                     case "leosCrossReferenceWidget":
                     case "mathjax":
                     case "table":
-                        if ((editor.getSelection().isCollapsed() && (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)
-                                || core.isInsideTrackedDeletedOrSoftMovedToElement(editor))) || !editor.getSelection().isCollapsed()) {
+                        if (isTrackChangesEnabled && ((editor.getSelection().isCollapsed() && (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)
+                                || core.isInsideTrackedDeletedOrSoftMovedToElement(editor))) || !editor.getSelection().isCollapsed())) {
                             return false;
                         }
                         break;

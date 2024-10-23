@@ -76,6 +76,44 @@ Feature: Track Changes Feature
     And  paragraph 3 of article 2 contains attribute "leos:tc-original-number" with value "NEW"
     And  content of paragraph 3 of article 2 contains "two"
 
+  # Ticket LEOS#2073
+  @toggleTrackChangesAndAddText @local
+  Scenario: Toggle track changes and add text in an article in Legal Act
+    Given navigate to edit drafting application with "User1"
+    Then user is on home page
+    When click on Create act button
+    Then user is on create new legislative document window
+    When click on template "SJ-023" in create new legislative document window
+    When click on next button in create document page
+    And  provide document title "Automation Testing TC" in create document page
+    And  click on create button
+    Then user is on act viewer page
+    And  title of the act contains "Automation Testing TC" keyword
+    When click on legal act link present in act viewer page
+    Then user is on legal act page
+    And  ribbon toolbar is displayed
+    And  toc editing button is displayed and enabled
+    When enable track changes
+    Then enable track changes toggle bar is on in ribbon toolbar
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When append "Text" at offset 7 in numbered paragraph 1 of article in edition mode
+    And  click save and close button of ck editor
+    Then paragraph 1 of article 1 has below content
+      | text | "Text..."                       |
+      | ins  | "Text"                          |
+    When disable track changes
+    Then enable track changes toggle bar is off in ribbon toolbar
+    When mouseover and click on article 1
+    Then ck editor window is displayed
+    When append "updated" at offset 4 of child 1 of numbered paragraph 1 of article in edition mode
+    And  click save and close button of ck editor
+    Then paragraph 1 of article 1 has below content
+      | text | "Text..."                    |
+      | ins  | "Text"                       |
+      | text | "updated"                    |
+
+
   @addTrackChangesText @local
   Scenario: Basic tests for add track changes text in an article in Legal Act
     Given navigate to edit drafting application with "User1"

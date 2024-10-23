@@ -300,6 +300,17 @@ public class LegServiceImpl implements LegService {
         return legDocumentVOs;
     }
 
+    @Override
+    public String fetchFeedbackRepliesByID(String documentRef, String proposalRef, String legFileId, String storedAnnots) {
+        LegDocument legDoc = findLegDocumentById(legFileId);
+        return annotateService.fetchFeedbackRepliesFromDB(documentRef, proposalRef, legDoc.getName(), storedAnnots, true);
+    }
+
+    @Override
+    public String fetchFeedbackRepliesByName(String documentRef, String proposalRef, String legFileName, String storedAnnots) {
+        return annotateService.fetchFeedbackRepliesFromDB(documentRef, proposalRef, legFileName, storedAnnots, true);
+    }
+
     private LegDocumentVO getLegDocumentVO(Proposal proposal, String legStatus) {
         LegDocumentVO legDocumentVO = null;
         List<LegDocument> legDocuments = findLegDocumentByProposal(proposal.getId());
@@ -551,7 +562,7 @@ public class LegServiceImpl implements LegService {
                 if (exportOptions.isComparisonMode()) {
                     xmlContent = getComparedContent(exportOptions);
                 } else {
-                    xmlContent = xmlContentProcessor.cleanSoftActions(memorandum.getContent().get().getSource().getBytes());
+                    xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(memorandum.getContent().get().getSource().getBytes());
                     xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
                 }
                 enrichZipWithMemorandum(contentToZip, exportProposalResource, proposalRefsMap, memorandum, proposal.getMetadata().getOrNull().getRef(), xmlContent);
@@ -563,7 +574,7 @@ public class LegServiceImpl implements LegService {
                 if (exportOptions.isComparisonMode()) {
                     xmlContent = getComparedContent(exportOptions);
                 } else {
-                    xmlContent = xmlContentProcessor.cleanSoftActions(bill.getContent().get().getSource().getBytes());
+                    xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(bill.getContent().get().getSource().getBytes());
                     xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
                 }
                 if (exportOptions.isWithRelevantElements()) {
@@ -589,7 +600,7 @@ public class LegServiceImpl implements LegService {
                 if (exportOptions.isComparisonMode()) {
                     xmlContent = getComparedContent(exportOptions);
                 } else {
-                    xmlContent = xmlContentProcessor.cleanSoftActions(financialStatement.getContent().get().getSource().getBytes());
+                    xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(financialStatement.getContent().get().getSource().getBytes());
                     xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
                 }
                 enrichZipWithFinancialStatement(contentToZip, exportProposalResource, proposalRefsMap, financialStatement,
@@ -1017,7 +1028,7 @@ public class LegServiceImpl implements LegService {
         if(exportOptions.isComparisonMode()){
             xmlContent = getComparedContent(exportOptions);
         } else if(exportOptions.isCleanVersion()){
-            xmlContent = xmlContentProcessor.cleanSoftActions(annex.getContent().get().getSource().getBytes());
+            xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(annex.getContent().get().getSource().getBytes());
             xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         } else {
             xmlContent = annex.getContent().get().getSource().getBytes();
@@ -1054,7 +1065,7 @@ public class LegServiceImpl implements LegService {
         if(exportOptions.isComparisonMode()){
             xmlContent = getComparedContent(exportOptions);
         } else if(exportOptions.isCleanVersion()){
-            xmlContent = xmlContentProcessor.cleanSoftActions(explanatory.getContent().get().getSource().getBytes());
+            xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(explanatory.getContent().get().getSource().getBytes());
             xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         } else {
             xmlContent = explanatory.getContent().get().getSource().getBytes();
@@ -1481,7 +1492,7 @@ public class LegServiceImpl implements LegService {
             if (exportOptions.isWithFeedbackAnnotations()) {
                 String annotations = getAnnotationsFromZipContent(contentToZip, docName);
                 String feedbackAnnotations = annotateService.getFeedbackAnnotations(ref, legFileName, proposalRef);
-                annotations = annotateService.fetchFeedbackRepliesFromDB(ref, proposalRef, legFileName, annotations);
+                annotations = annotateService.fetchFeedbackRepliesFromDB(ref, proposalRef, legFileName, annotations, false);
                 feedbackAnnotations = processAnnotations(feedbackAnnotations, exportOptions);
                 annotations = addFeedbackAnnotations(annotations, feedbackAnnotations);
                 final byte[] xmlAnnotationContent = annotations.getBytes(UTF_8);
@@ -1739,7 +1750,7 @@ public class LegServiceImpl implements LegService {
             xmlContent = XmlHelper.cleanDiffingClassesForTag(xmlContent, XmlHelper.ATTACHMENTS, Arrays.asList(CONTENT_ADDED_CLASS, CONTENT_REMOVED_CLASS));
             xmlContent = XmlHelper.cleanDiffingClassesForTag(xmlContent, XmlHelper.PREFACE, Arrays.asList(CONTENT_ADDED_CLASS, CONTENT_REMOVED_CLASS));
         } else if (exportOptions.isCleanVersion()) {
-            xmlContent = xmlContentProcessor.cleanSoftActions(xmlContent);
+            xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
             xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         }
         xmlContent = addMetadataToBill(bill, xmlContent);
@@ -1857,7 +1868,7 @@ public class LegServiceImpl implements LegService {
             XmlDocument originalAnnex = documentContentService.getOriginalAnnex(annex);
             xmlContent = simpleCompareXmlContentsForClone(originalAnnex, annex).getBytes(UTF_8);
         } else if (exportOptions.isCleanVersion()) {
-            xmlContent = xmlContentProcessor.cleanSoftActions(xmlContent);
+            xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
             xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         }
         xmlContent = addMetadataToAnnexWithoutPreface(annex, xmlContent);
@@ -1908,7 +1919,7 @@ public class LegServiceImpl implements LegService {
             XmlDocument originalMemorandum = documentContentService.getOriginalMemorandum(memorandum);
             xmlContent = simpleCompareXmlContentsForClone(originalMemorandum, memorandum).getBytes(UTF_8);
         } else if (exportOptions.isCleanVersion()) {
-            xmlContent = xmlContentProcessor.cleanSoftActions(xmlContent);
+            xmlContent = xmlContentProcessor.cleanSoftActionsAndRemoveMiscAttributes(xmlContent);
             xmlContent = xmlContentProcessor.cleanTrackChanges(xmlContent);
         }
         xmlContent = addMetadataToMemorandum(memorandum, xmlContent);
