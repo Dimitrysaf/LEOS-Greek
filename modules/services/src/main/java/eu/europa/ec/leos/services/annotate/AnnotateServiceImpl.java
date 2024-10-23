@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import eu.europa.ec.leos.integration.rest.AnnotateStatusResponse;
 import eu.europa.ec.leos.integration.rest.SendTemporaryAnnotationsResponse;
 import eu.europa.ec.leos.security.LeosPermission;
+import org.apache.cxf.common.util.StringUtils;
 import org.apache.jena.atlas.json.JsonArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,6 +82,9 @@ public class AnnotateServiceImpl implements AnnotateService {
 
     @Override
     public String fetchFeedbackRepliesFromDB(String docName, String proposalRef, String legFileName, String storedAnnotations, boolean setFlag) {
+        if (StringUtils.isEmpty(storedAnnotations)) {
+            return "";
+        }
         URI uri = UriComponentsBuilder.fromHttpUrl(annotationHost + "/api/search")
                 .queryParam("_separate_replies", true)
                 .queryParam("group", "__world__")

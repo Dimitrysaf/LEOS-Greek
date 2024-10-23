@@ -18,7 +18,6 @@ import {BehaviorSubject, combineLatest, Subject, takeUntil} from 'rxjs';
 
 import { CKEditorService } from '@/features/akn-document/services/ckeditor.service';
 import { TrackChangesActionsService } from '@/features/akn-document/services/track-changes-actions.service';
-import { CoEditionVO } from '@/shared/models/coEditionVO.model';
 import { CoEditionServiceWS } from '@/shared/services/coEdition.websocket.service';
 import { DocumentService } from '@/shared/services/document.service';
 import { EnvironmentService } from '@/shared/services/enviroment.service';
@@ -28,7 +27,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { SecurityContext } from '@angular/core';
 
 import { TableOfContentService } from '../../services/table-of-content.service';
-import {Milestone} from "@/features/proposal-view/models/milestone.model";
+import {ContributionVO} from "@/shared/models/contribution-vo.model";
 
 const MAIN_CONTAINER_WIDTH = 500.6;
 
@@ -49,6 +48,7 @@ export class DocumentComponent
   @Input() readonly = true;
   @Input() contributionView = false;
   @Input() isDoubleCompare = false;
+  @Input() contribution: ContributionVO;
   @ViewChild('container', { static: true })
   containerElRef: ElementRef<HTMLDivElement>;
   @ViewChild('zoomScrollbar', { static: true })
@@ -77,11 +77,11 @@ export class DocumentComponent
   ) {
     this.isCNInstance = this.environmentService.isCouncil();
 
-    this.milestoneService.triggerRequestStoredDocumentAnnotations$.subscribe((request) => {
-      if (request && this.contributionView) {
-        this.milestoneService.sendRequestStoredDocumentAnnotationsFromVersionedRef(request.proposalRef, request.legFileName, request.versionedReference, false);
+    this.milestoneService.requestStoredDocumentAnnotations$.pipe(takeUntil(this.destroy$)).subscribe((request) => {
+      if (request && request.uri && this.contributionView && this.contribution) {
+        this.milestoneService.sendRequestStoredDocumentAnnotationsFromVersionedRef(this.contribution.proposalRef, this.contribution.legFileName, this.contribution.versionedReference, false, request.dbg);
       } else {
-        this.milestoneService.sendEmptyStoredDocumentAnnotations();
+        this.milestoneService.sendEmptyStoredDocumentAnnotations(request.dbg);
       }
     });
 

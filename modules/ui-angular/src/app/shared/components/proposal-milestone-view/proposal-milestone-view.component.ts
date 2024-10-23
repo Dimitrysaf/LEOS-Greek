@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import {EuiDialogComponent, EuiDialogService} from '@eui/components/eui-dialog';
 import {TranslateService} from '@ngx-translate/core';
-import {combineLatest, Subject, takeUntil} from 'rxjs';
+import {Subject, takeUntil} from 'rxjs';
 
 import {
   Milestone, MilestoneStatus,
@@ -116,8 +116,8 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
       this.status = status;
     });
 
-    this.milestonesService.requestStoredDocumentAnnotations$.subscribe(
-      (request) => this.requestStoredDocumentAnnotations(request),
+    this.milestonesService.requestStoredDocumentAnnotations$.pipe(takeUntil(this.destroy$)).subscribe(
+      (request) => this.requestStoredDocumentAnnotations(request.uri, request.dbg),
     );
 
     this.reloadDocs();
@@ -181,7 +181,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
     this.isAnnotationsPaneCollapsed = isAnnotationsPaneCollapsed;
   }
 
-  requestStoredDocumentAnnotations(request: string) {
+  requestStoredDocumentAnnotations(request: string, dbg: number) {
     if (request && this.isOpened) {
       const doc = this.documents[this.activeTabIndex];
       if (this.milestone.legFileId && !this.milestone.clone) {
@@ -190,6 +190,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           this.milestone.legFileId,
           doc.ref,
           true,
+          dbg
         );
       } else if (this.parentLegDocumentId) {
         this.milestonesService.sendRequestStoredDocumentAnnotationsFromVersionedRef(
@@ -197,6 +198,7 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           this.milestone.legDocumentName,
           doc.ref + '_' + doc.version,
           true,
+          dbg
         );
       } else {
         this.milestonesService.sendRequestStoredDocumentAnnotationsFromVersionedRef(
@@ -204,10 +206,11 @@ export class ProposalMilestoneViewComponent implements OnInit, OnDestroy {
           this.milestone.legDocumentName,
           this.milestone.versionedReference,
           true,
+          dbg
         );
       }
     } else {
-      this.milestonesService.sendEmptyStoredDocumentAnnotations();
+      this.milestonesService.sendEmptyStoredDocumentAnnotations(dbg);
     }
   }
 
