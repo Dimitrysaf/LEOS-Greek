@@ -29,7 +29,7 @@ define(function leosTrackChangesPluginModule(require) {
     var pluginDefinition = {
         init: function init(editor) {
             // Plugin not allowed COUNCIL
-            if (editor.LEOS.instanceType === "COUNCIL" || !editor.LEOS.isTrackChangesEnabled) {
+            if (editor.LEOS.instanceType === "COUNCIL") {
                 return;
             }
             var core = trackChanges.core, actions = trackChanges.actions, style = trackChangesStyle.style, table = trackChangesTable.table;
@@ -568,8 +568,8 @@ define(function leosTrackChangesPluginModule(require) {
                     case "leosCrossReferenceWidget":
                     case "mathjax":
                     case "table":
-                        if ((editor.getSelection().isCollapsed() && (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)
-                                || core.isInsideTrackedDeletedOrSoftMovedToElement(editor))) || !editor.getSelection().isCollapsed()) {
+                        if (isTrackChangesEnabled && ((editor.getSelection().isCollapsed() && (core.isInsideTrackChangeElement(editor, core.DELETE_ACTION)
+                                || core.isInsideTrackedDeletedOrSoftMovedToElement(editor))) || !editor.getSelection().isCollapsed())) {
                             return false;
                         }
                         break;
