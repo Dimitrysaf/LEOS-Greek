@@ -1,4 +1,4 @@
-import { delay, Observable, shareReplay } from 'rxjs';
+import {delay, Observable, shareReplay, takeUntil} from 'rxjs';
 
 import {MergeContributionsService} from "@/features/akn-document/services/merge-contributions.service";
 import { AbstractJavaScriptComponent } from '@/features/leos-legacy/abstract-java-script-component';
@@ -62,10 +62,10 @@ export class AnnotateConnector extends AbstractJavaScriptComponent<AnnotateConne
   }
 
   requestStoredDocumentAnnotations(uri: string) {
-    this.milestoneService.getStoredDocumentAnnotations(uri);
-    this.milestoneService.receiveStoredDocumentAnnotations$.subscribe((result) => {
-      if (result) {
-        this.receiveStoredDocumentAnnotations(result);
+    this.milestoneService.getStoredDocumentAnnotations(uri, this.dbg);
+    this.milestoneService.receiveStoredDocumentAnnotations$.pipe(takeUntil(this.destroy$)).subscribe((result) => {
+      if (result && result.annot && result.dbg && result.dbg == this.dbg) {
+        this.receiveStoredDocumentAnnotations(result.annot);
       }
     });
   }
